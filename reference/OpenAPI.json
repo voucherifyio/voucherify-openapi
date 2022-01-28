@@ -167,6 +167,7 @@
         "title": "VoucherObject",
         "type": "object",
         "description": "This is an object representing a voucher.",
+        "examples": [],
         "properties": {
           "id": {
             "type": "string",
@@ -190,18 +191,90 @@
           },
           "type": {
             "type": "string",
-            "example": "GIFT_VOUCHER"
+            "enum": [
+              "GIFT_VOUCHER",
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD"
+            ]
           },
           "discount": {
-            "type": "object",
-            "default": null
+            "default": null,
+            "oneOf": [
+              {
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "default": "AMOUNT"
+                  },
+                  "amount_off": {
+                    "type": "integer",
+                    "example": 100
+                  },
+                  "effect": {
+                    "type": "string",
+                    "enum": [
+                      "APPLY_TO_ORDER",
+                      "APPLY_TO_ITEMS",
+                      "APPLY_TO_ITEMS_PROPORTIONALLY",
+                      "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "default": "PERCENT"
+                  },
+                  "percent_off": {
+                    "type": "integer",
+                    "example": 10
+                  },
+                  "effect": {
+                    "type": "string",
+                    "enum": [
+                      "APPLY_TO_ORDER",
+                      "APPLY_TO_ITEMS"
+                    ]
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "default": "UNIT",
+                    "description": "Item(s) are automatically discounted at full value"
+                  },
+                  "unit_off": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "Number of units to subtract from the subtotal"
+                  },
+                  "unit_type": {
+                    "type": "string",
+                    "description": "The product deemed as free chosen from product  inventory (e.g. time, items)"
+                  },
+                  "effect": {
+                    "type": "string",
+                    "enum": [
+                      "ADD_MISSING_ITEMS",
+                      "ADD_NEW_ITEMS"
+                    ],
+                    "description": "Defines how the discount is applied to the customer's order"
+                  }
+                }
+              }
+            ],
+            "type": "object"
           },
           "gift": {
             "type": "object",
             "properties": {
               "amount": {
                 "type": "integer",
-                "example": "100000"
+                "example": 10000
               },
               "balance": {
                 "type": "integer",
@@ -214,8 +287,18 @@
             }
           },
           "loyalty_card": {
-            "type": "string",
-            "default": null
+            "default": null,
+            "type": "object",
+            "properties": {
+              "points": {
+                "type": "integer",
+                "example": 11000
+              },
+              "balance": {
+                "type": "integer",
+                "example": 11000
+              }
+            }
           },
           "start_date": {
             "type": "string",
@@ -346,8 +429,7 @@
           "object": {
             "type": "string"
           }
-        },
-        "examples": []
+        }
       },
       "async_actions": {
         "type": "object",
@@ -409,13 +491,13 @@
         "type": "object",
         "x-examples": {
           "example-1": {
-                "code": 400,
-                "key": "not_enough_codes",
-                "message": "Not enough codes",
-                "details": "Specify at least 1 code in codes.",
-                "request_id": "v-0a885062c80375740f"
-            }
-         },
+            "code": 400,
+            "key": "not_enough_codes",
+            "message": "Not enough codes",
+            "details": "Specify at least 1 code in codes.",
+            "request_id": "v-0a885062c80375740f"
+          }
+        },
         "title": "not_enough_codes",
         "allOf": [
           {
@@ -423,26 +505,26 @@
           },
           {
             "properties": {
-                "code": {
-                    "type": "integer",
-                    "example": 400
-                },
-                "key": {
-                    "type": "string",
-                    "example": "not_enough_codes"
-                },
-                "message": {
-                    "type": "string",
-                    "example": "Not enough codes"
-                },
-                "details": {
-                    "type": "string",
-                    "example": "Specify at least 1 code in codes."
-                },
-                "request_id": {
-                    "type": "string",
-                    "example": "v-0a885062c80375740f"
-                }
+              "code": {
+                "type": "integer",
+                "example": 400
+              },
+              "key": {
+                "type": "string",
+                "example": "not_enough_codes"
+              },
+              "message": {
+                "type": "string",
+                "example": "Not enough codes"
+              },
+              "details": {
+                "type": "string",
+                "example": "Specify at least 1 code in codes."
+              },
+              "request_id": {
+                "type": "string",
+                "example": "v-0a885062c80375740f"
+              }
             }
           }
         ]
@@ -450,15 +532,109 @@
       "error": {
         "title": "error",
         "type": "object",
-        "properties": {
-        },
+        "properties": {},
         "discriminator": {
           "propertyName": "key",
           "mapping": {
             "not_enough_codes": "not_enough_codes"
           }
         },
-        "description": "Short error response"
+        "description": "Short error response",
+        "examples": []
+      },
+      "req_vouchers_metadata_async": {
+        "title": "req_vouchers_metadata_async",
+        "type": "object",
+        "description": "Request body schema for vouchers/metadata/async.",
+        "properties": {
+          "codes": {
+            "type": "array",
+            "description": "A string array of voucher codes.",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "PROMO-CODE810",
+              "PROMO-CODE726"
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs.",
+            "example": {
+              "lang": "en",
+              "authorized_internally": true
+            }
+          }
+        },
+        "required": [
+          "codes",
+          "metadata"
+        ],
+        "x-examples": {
+          "example-1": {
+            "$ref": "#/components/examples/req_vouchers_metadata_1"
+          },
+          "example-2": {
+            "$ref": "#/components/examples/req_vouchers_metadata_2"
+          }
+        }
+      }
+    },
+    "examples": {
+      "req_vouchers_metadata_1_test": {
+        "summary": "Request Body",
+        "description": "Request body to update metadata in bulk *asynchronously*.",
+        "value": {
+          "codes": [
+            "PROMO-CODE810",
+            "PROMO-CODE726"
+          ],
+          "metadata": {
+            "lang": "en",
+            "authorized_internally": true
+          }
+        }
+      },
+      "req_vouchers_metadata_2_test": {
+        "summary": "Request Body",
+        "description": "Request body to update metadata in bulk *asynchronously*.",
+        "value": {
+          "codes": [
+            "PROMO-CODE810",
+            "PROMO-CODE726",
+            "PROMO-CODE888"
+          ],
+          "metadata": {
+            "lang": "en",
+            "authorized_internally": true
+          }
+        }
+      },
+      "req_vouchers_metadata_1": {
+        "value": {
+          "codes": [
+            "PROMO-CODE810",
+            "PROMO-CODE726"
+          ],
+          "metadata": {
+            "lang": "en",
+            "authorized_internally": true
+          }
+        }
+      },
+      "req_vouchers_metadata_2": {
+        "value": {
+          "codes": [
+            "PROMO-CODE810",
+            "PROMO-CODE726",
+            "PROMO-CODE888"
+          ],
+          "metadata": {
+            "lang": "en",
+            "authorized_internally": true
+          }
+        }
       }
     }
   },
@@ -913,7 +1089,8 @@
               "schema": {
                 "type": "object",
                 "properties": {}
-              }
+              },
+              "examples": {}
             }
           },
           "required": true
@@ -936,67 +1113,6 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "description": "",
-                "type": "object",
-                "x-examples": {
-                  "example-1": {
-                    "codes": [
-                      "PROMO-CODE810",
-                      "PROMO-CODE726"
-                    ],
-                    "metadata": {
-                      "lang": "en",
-                      "authorized_internally": true
-                    }
-                  }
-                },
-                "properties": {
-                  "codes": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "metadata": {
-                    "type": "object",
-                    "properties": {
-                      "lang": {
-                        "type": "string"
-                      },
-                      "authorized_internally": {
-                        "type": "boolean"
-                      }
-                    }
-                  }
-                },
-                "required": [
-                  "codes",
-                  "metadata"
-                ]
-              },
-              "examples": {
-                "example-1": {
-                  "value": {
-                    "codes": [
-                      "PROMO-CODE810",
-                      "PROMO-CODE726"
-                    ],
-                    "metadata": {
-                      "lang": "en",
-                      "authorized_internally": true
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "required": true,
-          "description": ""
-        },
         "responses": {
           "202": {
             "description": "Successful response.",
@@ -1004,6 +1120,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/async_actions"
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "async_action_id": "aa_0a875d56c805df6601"
+                    }
+                  }
                 }
               }
             }
@@ -1028,6 +1151,17 @@
               }
             }
           }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/req_vouchers_metadata_async"
+              }
+            }
+          },
+          "required": true,
+          "description": "Request to update vouchers metadata in bulk."
         }
       }
     },
