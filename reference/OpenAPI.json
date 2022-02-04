@@ -408,7 +408,8 @@
             ],
             "description": "Integer array corresponding to the particular days of the week in which the voucher is valid.\n\n<!-- title: My Table Title -->\n\n| Day of Week | Integer |\n| ----------- | :----: |\n| Sunday      |    0   | \n| Monday      |    1   |\n| Tuesday     |    2   |\n| Wednesday   |    3   |\n| Thursday    |    4   |\n| Friday      |    5   |\n| Saturday    |    6   |\n\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
             "items": {
-              "type": "integer"
+              "type": "integer",
+              "example": "[ 1, 2 ]"
             }
           },
           "active": {
@@ -871,12 +872,22 @@
             "properties": {
               "duration": {
                 "type": "string",
-                "description": "Defines the amount of time an earning rule will be active in ISO 8601 format. For example, an earning rule with a `duration` of `PT1H` will be valid for a duration of one hour."
+                "description": "Defines the amount of time an earning rule will be active in ISO 8601 format. For example, an earning rule with a `duration` of `PT1H` will be valid for a duration of one hour.",
+                "example": "PT1H"
               },
               "interval": {
                 "type": "string",
-                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, an earning rule with an `interval` of `P2D` will be valid every other day."
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, an earning rule with an `interval` of `P2D` will be valid every other day.",
+                "example": "P2D"
               }
+            }
+          },
+          "validity_day_of_week": {
+            "type": "array",
+            "description": "Integer array corresponding to the particular days of the week in which the earning rule is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
+            "items": {
+              "type": "integer",
+              "example": "[ 1, 2 ]"
             }
           },
           "object": {
@@ -892,8 +903,220 @@
         "required": [
           "event",
           "active",
-          "object",
-          "automation_id"
+          "object"
+        ]
+      },
+      "req_loyalties_campaignId_earning-rules": {
+        "description": "This data model represents the request body for the `/loyalties/{campaignId}/earning-rules` endpoint.",
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": "ern_P6MWOFGsv63sbTaTZBp0IHGK",
+            "created_at": "2022-02-02T13:18:32.557Z",
+            "updated_at": "2022-02-03T13:09:27.206Z",
+            "validation_rule_id": "val_6o0qdvlbh1mt",
+            "loyalty": {
+              "points": 1000,
+              "type": "FIXED"
+            },
+            "event": "order.paid",
+            "source": {
+              "banner": "Order paid 1000 points",
+              "object_id": "camp_Pfja7X91b1GoyH5wnpzCwlP3",
+              "object_type": "campaign"
+            },
+            "active": true,
+            "start_date": "2022-02-02T13:00:00.000Z",
+            "expiration_date": "2022-03-03T14:30:00.000Z",
+            "validity_timeframe": {
+              "duration": "PT1H",
+              "interval": "P1D"
+            },
+            "object": "earning_rule",
+            "automation_id": "auto_RVgObANuPToNla8LuD5aT3Zb"
+          }
+        },
+        "title": "RequestBodyLoyaltiesCampaignIDEarningRules",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "ern_P6MWOFGsv63sbTaTZBp0IHGK",
+            "description": "Assigned by the Voucherify API, identifies the earning rule object."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the earning rule was created in ISO 8601 format.",
+            "example": "2022-02-02T13:18:32.557Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the earning rule was last updated in ISO 8601 format.",
+            "example": "2022-02-03T13:09:27.206Z",
+            "format": "date-time",
+            "default": null
+          },
+          "validation_rule_id": {
+            "type": "string",
+            "example": "val_248vs7tUjlIE",
+            "description": "A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance.",
+            "default": null
+          },
+          "loyalty": {
+            "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
+            "oneOf": [
+              {
+                "description": "Fixed. Applicable to events `order.paid` and `customer.segment.entered`.",
+                "properties": {
+                  "points": {
+                    "type": "integer",
+                    "description": "The number of points to be added to the loyalty card.",
+                    "example": 1000
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Defines how the points will be added to the loyalty card. `FIXED` adds a fixed number of `points`.",
+                    "default": "FIXED"
+                  }
+                }
+              },
+              {
+                "description": "Proportional. Applicable to `order.paid`, but not to `customer.segment.entered`.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Defines how the points will be added to the loyalty card.`PROPORTIONAL` adds points based on a pre-defined ratio",
+                    "default": "PROPORTIONAL"
+                  },
+                  "order": {
+                    "type": "object",
+                    "description": "Defines proportion for calculating how many points to add to a loyalty card. The ratio is based on the order amount. For `every` dollar spent, the customer will get this many `points`.  \n",
+                    "properties": {
+                      "amount": {
+                        "type": "object",
+                        "description": "Defines the ratio based on the order amount.",
+                        "properties": {
+                          "every": {
+                            "type": "integer",
+                            "description": "Order amount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 order amount is written as 1000."
+                          },
+                          "points": {
+                            "type": "integer",
+                            "description": "Number of points awarded."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "type": "object"
+          },
+          "custom_event": {
+            "type": "object",
+            "description": "Contains the schema id of a custom event. **Required** for the custom event option in `event`.",
+            "properties": {
+              "schema_id": {
+                "type": "string",
+                "description": "Contains a unique identifier of a custom event schema. Assigned by the Voucherify API."
+              }
+            }
+          },
+          "segment": {
+            "type": "object",
+            "description": "Contains the id of a customer segment. **Required** for the `customer.segment.entered` option in `event`.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Contains a unique identifier of a customer segment. Assigned by the Voucherify API."
+              }
+            }
+          },
+          "event": {
+            "type": "string",
+            "enum": [
+              "order.paid",
+              "customer.segment.entered",
+              "custom_event_defined_in_EVENT_SCHEMA"
+            ],
+            "description": "Defines the event which triggers the earning rule to add points to a loyalty card.  \n\n- `order.paid` an event defined by the Voucherify API corresponding to an order status `PAID`. Read more here.  \n- `customer.segment.entered` an event defined by the Voucherify API corresponding to a customer entering a pre-defined customer segment. Read more here.  \n- `custom_event_name` the name of a custom event defined in the Dashboard &rarr; **Project Settings** &rarr; **EVENT SCHEMA** &rarr; **Add event definition**. Read more on defining custom events. "
+          },
+          "source": {
+            "type": "object",
+            "description": "Contains the custom earning rule name and parent campaign.",
+            "properties": {
+              "banner": {
+                "type": "string",
+                "example": "Order Paid - You will get 100 points",
+                "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+              },
+              "object_id": {
+                "type": "string",
+                "example": "camp_Pfja7X91b1GoyH5wnpzCwlP3",
+                "description": "A unique campaign identifier assigned by the Voucherify API."
+              },
+              "object_type": {
+                "type": "string",
+                "default": "campaign",
+                "description": "Defines the object associated with the earning rule. Defaults to `campaign`."
+              }
+            }
+          },
+          "active": {
+            "type": "boolean",
+            "description": "A flag to toggle the earning rule on or off. You can disable an earning rule even though it's within the active period defined by the `start_date` and `expiration_date` of the campaign or the earning rule's own `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* earning rule\n- `false` indicates an *inactive* earning rule"
+          },
+          "start_date": {
+            "type": "string",
+            "example": "2022-02-02T13:00:00.000Z",
+            "format": "date-time",
+            "description": "Activation timestamp in ISO 8601 format. Earning rule is *inactive before* this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default."
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-03-03T14:30:00.000Z",
+            "description": "Expiration timestamp in ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default."
+          },
+          "validity_timeframe": {
+            "type": "object",
+            "description": "Set recurrent time periods when the earning rule is valid. For example, valid for 1 hour every other day.",
+            "properties": {
+              "duration": {
+                "type": "string",
+                "description": "Defines the amount of time an earning rule will be active in ISO 8601 format. For example, an earning rule with a `duration` of `PT1H` will be valid for a duration of one hour.",
+                "example": "PT1H"
+              },
+              "interval": {
+                "type": "string",
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, an earning rule with an `interval` of `P2D` will be valid every other day.",
+                "example": "P2D"
+              }
+            }
+          },
+          "validity_day_of_week": {
+            "type": "array",
+            "description": "Integer array corresponding to the particular days of the week in which the earning rule is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
+            "items": {
+              "type": "integer",
+              "example": "[ 1, 2 ]"
+            }
+          },
+          "object": {
+            "type": "string",
+            "default": "earning_rule",
+            "description": "The type of object represented by JSON. Default is `earning_rule`."
+          },
+          "automation_id": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "event",
+          "active",
+          "object"
         ]
       }
     },
