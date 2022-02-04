@@ -753,7 +753,7 @@
             "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
             "oneOf": [
               {
-                "description": "Fixed",
+                "description": "Fixed. Applicable to events `order.paid`,  `customer.segment.entered`, and `custom_event`.",
                 "properties": {
                   "points": {
                     "type": "integer",
@@ -768,7 +768,7 @@
                 }
               },
               {
-                "description": "Proportional",
+                "description": "Proportional. Applicable to only `order.paid`.",
                 "properties": {
                   "type": {
                     "type": "string",
@@ -868,7 +868,7 @@
           },
           "validity_timeframe": {
             "type": "object",
-            "description": "Set recurrent time periods when the earning rule is valid. For example, valid for 1 hour every other day.",
+            "description": "Set recurrent time periods when the earning rule is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
             "properties": {
               "duration": {
                 "type": "string",
@@ -938,23 +938,14 @@
         },
         "title": "RequestBodyLoyaltiesCampaignIDEarningRules",
         "properties": {
-          "id": {
+          "event": {
             "type": "string",
-            "example": "ern_P6MWOFGsv63sbTaTZBp0IHGK",
-            "description": "Assigned by the Voucherify API, identifies the earning rule object."
-          },
-          "created_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the earning rule was created in ISO 8601 format.",
-            "example": "2022-02-02T13:18:32.557Z",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the earning rule was last updated in ISO 8601 format.",
-            "example": "2022-02-03T13:09:27.206Z",
-            "format": "date-time",
-            "default": null
+            "enum": [
+              "order.paid",
+              "customer.segment.entered",
+              "custom_event_defined_in_EVENT_SCHEMA"
+            ],
+            "description": "Defines the event which triggers the earning rule to add points to a loyalty card.  \n\n- `order.paid` an event defined by the Voucherify API corresponding to an order status `PAID`. Read more here.  \n- `customer.segment.entered` an event defined by the Voucherify API corresponding to a customer entering a pre-defined customer segment. Read more here.  \n- `custom_event_name` the name of a custom event defined in the Dashboard &rarr; **Project Settings** &rarr; **EVENT SCHEMA** &rarr; **Add event definition**. Read more on defining custom events. "
           },
           "validation_rule_id": {
             "type": "string",
@@ -966,7 +957,7 @@
             "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
             "oneOf": [
               {
-                "description": "Fixed. Applicable to events `order.paid` and `customer.segment.entered`.",
+                "description": "Fixed. Applicable to events `order.paid`,  `customer.segment.entered`, and `custom_event`.",
                 "properties": {
                   "points": {
                     "type": "integer",
@@ -978,10 +969,14 @@
                     "description": "Defines how the points will be added to the loyalty card. `FIXED` adds a fixed number of `points`.",
                     "default": "FIXED"
                   }
-                }
+                },
+                "required": [
+                  "points",
+                  "type"
+                ]
               },
               {
-                "description": "Proportional. Applicable to `order.paid`, but not to `customer.segment.entered`.",
+                "description": "Proportional. Applicable to only `order.paid`.",
                 "properties": {
                   "type": {
                     "type": "string",
@@ -1004,43 +999,22 @@
                             "type": "integer",
                             "description": "Number of points awarded."
                           }
-                        }
+                        },
+                        "required": [
+                          "every",
+                          "points"
+                        ]
                       }
                     }
                   }
-                }
+                },
+                "required": [
+                  "type",
+                  "order"
+                ]
               }
             ],
             "type": "object"
-          },
-          "custom_event": {
-            "type": "object",
-            "description": "Contains the schema id of a custom event. **Required** for the custom event option in `event`.",
-            "properties": {
-              "schema_id": {
-                "type": "string",
-                "description": "Contains a unique identifier of a custom event schema. Assigned by the Voucherify API."
-              }
-            }
-          },
-          "segment": {
-            "type": "object",
-            "description": "Contains the id of a customer segment. **Required** for the `customer.segment.entered` option in `event`.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Contains a unique identifier of a customer segment. Assigned by the Voucherify API."
-              }
-            }
-          },
-          "event": {
-            "type": "string",
-            "enum": [
-              "order.paid",
-              "customer.segment.entered",
-              "custom_event_defined_in_EVENT_SCHEMA"
-            ],
-            "description": "Defines the event which triggers the earning rule to add points to a loyalty card.  \n\n- `order.paid` an event defined by the Voucherify API corresponding to an order status `PAID`. Read more here.  \n- `customer.segment.entered` an event defined by the Voucherify API corresponding to a customer entering a pre-defined customer segment. Read more here.  \n- `custom_event_name` the name of a custom event defined in the Dashboard &rarr; **Project Settings** &rarr; **EVENT SCHEMA** &rarr; **Add event definition**. Read more on defining custom events. "
           },
           "source": {
             "type": "object",
@@ -1050,16 +1024,6 @@
                 "type": "string",
                 "example": "Order Paid - You will get 100 points",
                 "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
-              },
-              "object_id": {
-                "type": "string",
-                "example": "camp_Pfja7X91b1GoyH5wnpzCwlP3",
-                "description": "A unique campaign identifier assigned by the Voucherify API."
-              },
-              "object_type": {
-                "type": "string",
-                "default": "campaign",
-                "description": "Defines the object associated with the earning rule. Defaults to `campaign`."
               }
             }
           },
@@ -1071,17 +1035,19 @@
             "type": "string",
             "example": "2022-02-02T13:00:00.000Z",
             "format": "date-time",
-            "description": "Activation timestamp in ISO 8601 format. Earning rule is *inactive before* this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default."
+            "description": "Activation timestamp in ISO 8601 format. Earning rule is *inactive before* this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default.",
+            "default": null
           },
           "expiration_date": {
             "type": "string",
             "format": "date-time",
             "example": "2022-03-03T14:30:00.000Z",
-            "description": "Expiration timestamp in ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default."
+            "description": "Expiration timestamp in ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default.",
+            "default": null
           },
           "validity_timeframe": {
             "type": "object",
-            "description": "Set recurrent time periods when the earning rule is valid. For example, valid for 1 hour every other day.",
+            "description": "Set recurrent time periods when the earning rule is valid. For example, valid for 1 hour every other day. `start_date` **required** when including the `validity_timeframe`.",
             "properties": {
               "duration": {
                 "type": "string",
@@ -1093,7 +1059,11 @@
                 "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, an earning rule with an `interval` of `P2D` will be valid every other day.",
                 "example": "P2D"
               }
-            }
+            },
+            "required": [
+              "duration",
+              "interval"
+            ]
           },
           "validity_day_of_week": {
             "type": "array",
@@ -1103,20 +1073,38 @@
               "example": "[ 1, 2 ]"
             }
           },
-          "object": {
-            "type": "string",
-            "default": "earning_rule",
-            "description": "The type of object represented by JSON. Default is `earning_rule`."
+          "custom_event": {
+            "type": "object",
+            "description": "Contains the schema id of a custom event. **Required** for the custom event option in `event`.",
+            "default": null,
+            "required": [
+              "schema_id"
+            ],
+            "properties": {
+              "schema_id": {
+                "type": "string",
+                "description": "Contains a unique identifier of a custom event schema. Assigned by the Voucherify API."
+              }
+            }
           },
-          "automation_id": {
-            "type": "string",
-            "minLength": 1
+          "segment": {
+            "type": "object",
+            "description": "Contains the id of a customer segment. **Required** for the `customer.segment.entered` option in `event`.",
+            "default": null,
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Contains a unique identifier of a customer segment. Assigned by the Voucherify API."
+              }
+            }
           }
         },
         "required": [
           "event",
-          "active",
-          "object"
+          "loyalty"
         ]
       }
     },
