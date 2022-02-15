@@ -505,6 +505,7 @@
           },
           "validation_rules_assignments": {
             "type": "object",
+            "description": "Stores information about validation rules assigned to the voucher.",
             "properties": {
               "object": {
                 "type": "string",
@@ -621,6 +622,406 @@
             "type": "string",
             "description": "The type of object represented by JSON. Default is `voucher`.",
             "default": "voucher"
+          }
+        }
+      },
+      "req_vouchers_code_POST": {
+        "title": "req_vouchers_code_POST",
+        "type": "object",
+        "description": "Request body schema for creating a voucher.",
+        "examples": [],
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "WVPblOYX",
+            "description": "A code that identifies a voucher. Pattern can use all letters of the English alphabet, Arabic numerals, and special characters."
+          },
+          "campaign": {
+            "type": "string",
+            "example": "Gift Card Campaign",
+            "description": "A unique campaign name, identifies the voucher's parent campaign.",
+            "default": null
+          },
+          "campaign_id": {
+            "type": "string",
+            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
+            "description": "Assigned by the Voucherify API, identifies the voucher's parent campaign.",
+            "default": null
+          },
+          "category": {
+            "type": "string",
+            "default": null,
+            "description": "Tag defining the category that this voucher belongs to. Useful when listing vouchers using the List Vouchers endpoint."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "GIFT_VOUCHER",
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD"
+            ],
+            "description": "Defines the type of voucher. "
+          },
+          "discount": {
+            "default": null,
+            "oneOf": [
+              {
+                "description": "Amount type",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "default": "AMOUNT",
+                    "description": "Applies an amount discount"
+                  },
+                  "amount_off": {
+                    "type": "integer",
+                    "example": 100,
+                    "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000."
+                  },
+                  "effect": {
+                    "type": "string",
+                    "enum": [
+                      "APPLY_TO_ORDER",
+                      "APPLY_TO_ITEMS",
+                      "APPLY_TO_ITEMS_PROPORTIONALLY",
+                      "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY"
+                    ],
+                    "description": "Defines how the discount is applied to the customer's order"
+                  }
+                }
+              },
+              {
+                "description": "Percentage type",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "default": "PERCENT",
+                    "description": "Applies a percentage discount"
+                  },
+                  "percent_off": {
+                    "type": "integer",
+                    "example": 10,
+                    "description": "Percent taken off the subtotal amount"
+                  },
+                  "effect": {
+                    "type": "string",
+                    "enum": [
+                      "APPLY_TO_ORDER",
+                      "APPLY_TO_ITEMS"
+                    ],
+                    "description": "Defines how the discount is applied to the customer's order"
+                  }
+                }
+              },
+              {
+                "description": "Fixed type",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "default": "FIXED",
+                    "description": "Sets a fixed total on cart or item(s) and then calculates the discount to apply"
+                  },
+                  "effect": {
+                    "type": "string",
+                    "enum": [
+                      "APPLY_TO_ORDER",
+                      "APPLY_TO_ITEMS"
+                    ],
+                    "description": "- **APPLY\\_TO\\_ORDER**: Set fixed total on the whole cart. Discount will be calculated dynamically, based on fixed amount value. For example, if fixed amount is set to equal $10 and order amount equals $25, then the calculated discount will be $15.  \n- **APPLY\\_TO\\_ITEMS**: This type of deal applies a new price for line items. \n  Default rules:\n   - During redemption, prices will change only if the new one is lower than the old one.\n    - If a product price in the collection and the new product price you have set up differs, then the new product price will be passed during the redemption.\n    - When a product is in two collections, we always change the price to the lowest.\n    - The new price for products with several SKUs will force the price change for SKUs if their price is higher than the new price."
+                  }
+                }
+              },
+              {
+                "description": "Unit type",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "default": "UNIT",
+                    "description": "Applies a full value discount to item(s)"
+                  },
+                  "unit_off": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "Number of units to subtract from the subtotal"
+                  },
+                  "unit_type": {
+                    "type": "string",
+                    "description": "The product deemed as free, chosen from product  inventory (e.g. time, items)"
+                  },
+                  "effect": {
+                    "type": "string",
+                    "enum": [
+                      "ADD_MISSING_ITEMS",
+                      "ADD_NEW_ITEMS"
+                    ],
+                    "description": "Defines how the unit is added to the customer's order",
+                    "default": "ADD_MISSING_ITEMS"
+                  }
+                }
+              },
+              {
+                "description": "Shipping type",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "default": "UNIT",
+                    "description": "Applies a full value discount to item(s)"
+                  },
+                  "unit_off": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "Subtracts 1 shipping item from the subtotal",
+                    "default": 1
+                  },
+                  "unit_type": {
+                    "type": "string",
+                    "description": "The shipping product deemed as free",
+                    "default": "prod_5h1pp1ng"
+                  },
+                  "effect": {
+                    "type": "string",
+                    "enum": [
+                      "ADD_MISSING_ITEMS"
+                    ],
+                    "description": "Defines how the unit is added to the customer's order",
+                    "default": "ADD_MISSING_ITEMS"
+                  }
+                }
+              }
+            ],
+            "description": "Object representing discount parameters. Child attributes are present only if `type` is `DISCOUNT_VOUCHER`. Defaults to `null`. Type of discount:\n- `AMOUNT`\n- `PERCENT`\n- `UNIT`\n- `FIXED`\n\n A Free Shipping discount is a special instance of the  `UNIT` type discount.",
+            "type": "object"
+          },
+          "gift": {
+            "default": null,
+            "type": "object",
+            "description": "Object representing gift parameters. Child attributes are present only if `type` is `GIFT_VOUCHER`. Defaults to `null`.",
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "example": 10000,
+                "description": "Total voucher income. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+              },
+              "balance": {
+                "type": "integer",
+                "example": 500,
+                "description": "Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+              },
+              "effect": {
+                "type": "string",
+                "enum": [
+                  "APPLY_TO_ORDER",
+                  "APPLY_TO_ITEMS"
+                ],
+                "description": "Defines how the credits are applied to the customer's order"
+              }
+            }
+          },
+          "loyalty_card": {
+            "default": null,
+            "type": "object",
+            "description": "Object representing loyalty card parameters. Child attributes are present only if `type` is `LOYALTY_CARD`. Defaults to `null`.",
+            "properties": {
+              "points": {
+                "type": "integer",
+                "example": 7000,
+                "description": "Total points incurred over lifespan of loyalty card."
+              },
+              "balance": {
+                "type": "integer",
+                "example": 6970,
+                "description": "Points available for reward redemption."
+              }
+            }
+          },
+          "start_date": {
+            "type": "string",
+            "example": "2021-12-01T00:00:00.000Z",
+            "format": "date-time",
+            "description": "Activation timestamp in ISO 8601 format. Voucher is *inactive before* this date."
+          },
+          "expiration_date": {
+            "type": "string",
+            "example": "2021-12-31T00:00:00.000Z",
+            "format": "date-time",
+            "description": "Expiration timestamp in ISO 8601 format.  Voucher is *inactive after* this date."
+          },
+          "validity_timeframe": {
+            "type": "string",
+            "description": "Set recurrent time periods when the voucher is valid",
+            "default": null
+          },
+          "validity_day_of_week": {
+            "type": "array",
+            "default": null,
+            "enum": [
+              [
+                0
+              ],
+              [
+                1
+              ],
+              [
+                2
+              ],
+              [
+                3
+              ],
+              [
+                4
+              ],
+              [
+                5
+              ],
+              [
+                6
+              ]
+            ],
+            "description": "Integer array corresponding to the particular days of the week in which the voucher is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
+            "items": {
+              "type": "integer",
+              "example": "[ 1, 2 ]"
+            }
+          },
+          "active": {
+            "type": "boolean",
+            "description": "A flag to toggle the voucher on or off. You can disable a voucher even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* voucher\n- `false` indicates an *inactive* voucher"
+          },
+          "additional_info": {
+            "type": "string",
+            "default": null,
+            "description": "An optional field to keep any extra textual information about the code such as a code description and details."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Flag indicating whether this voucher is a referral code."
+          },
+          "validation_rules": {
+            "type": "object",
+            "description": "Stores information about validation rules assigned to the voucher.",
+            "properties": {
+              "object": {
+                "type": "string",
+                "description": "The type of object represented is by default `list`.",
+                "default": "list"
+              },
+              "data_ref": {
+                "type": "string",
+                "description": "Identifies the name of the attribute that contains the array of validation rule assignments.",
+                "default": "data"
+              },
+              "data": {
+                "type": "array",
+                "description": "Array of validation rule objects. Each validation rule object contains details about the rule.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "asgm_N7t39epaQR2SkQcW",
+                      "description": "Assigned by the Voucherify API, identifies the validation rule assignment."
+                    },
+                    "rule_id": {
+                      "type": "string",
+                      "example": "val_ssbxf1L9aKri",
+                      "description": "Assigned by the Voucherify API, identifies the validation rule."
+                    },
+                    "related_object_id": {
+                      "type": "string",
+                      "example": "camp_AaP9MC1Y0GpBII84UTIuasvb",
+                      "description": "Id of the object from which the rule originates, can be the id of the `voucher` itself or its parent `campaign`."
+                    },
+                    "related_object_type": {
+                      "type": "string",
+                      "example": "campaign",
+                      "description": "Which object does the rule originate from: the  `voucher` itself or inherited from its parent `campaign`."
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "example": "2022-02-14T15:12:06.817Z",
+                      "description": "Timestamp representing the date and time when the validation rule was created in ISO 8601 format."
+                    },
+                    "object": {
+                      "type": "string",
+                      "default": "validation_rules_assignment",
+                      "description": "The type of object represented is by default `validation_rules_assignment`"
+                    }
+                  }
+                }
+              },
+              "total": {
+                "type": "integer",
+                "description": "Total number of validation rules assigned to the voucher."
+              }
+            }
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Stores a summary of redemptions that have been applied to the voucher.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "default": null,
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              },
+              "redeemed_quantity": {
+                "type": "integer",
+                "example": 1,
+                "description": "How many times a voucher has already been redeemed."
+              },
+              "redeemed_amount": {
+                "type": "integer",
+                "example": 100000,
+                "description": "Total Amount redeemed by the voucher. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 balance is written as 10000."
+              },
+              "object": {
+                "type": "string",
+                "default": "list",
+                "description": "The type of object represented is by default `list`. To get this list, you need to make a call to the endpoint returned in the url attribute."
+              },
+              "url": {
+                "type": "string",
+                "example": "/v1/vouchers/WVPblOYX/redemptions?page=1&limit=10",
+                "description": "The endpoint where this list of redemptions can be accessed using a GET method. `/v1/vouchers/{voucher_code}/redemptions`"
+              }
+            },
+            "required": [
+              "quantity",
+              "redeemed_quantity"
+            ]
+          },
+          "request_action": {
+            "type": "string"
+          },
+          "code_config": {
+            "type": "object",
+            "description": "Defines code's pattern (prefix, suffix, length, charset, etc)",
+            "properties": {
+              "length": {
+                "type": "string",
+                "description": "Number of characters in a generated code (excluding prefix and postfix)."
+              },
+              "charset": {
+                "type": "string",
+                "description": "Characters that can appear in the code.  \n\nExamples:\n\n- Alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic Lowercase: `abcdefghijklmnopqrstuvwxyz` \n- Alphabetic Uppercase: `ABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Numbers: `0123456789`  \n- Custom: a custom character set"
+              },
+              "prefix": {
+                "type": "string",
+                "description": "A text appended before the code."
+              },
+              "postfix": {
+                "type": "string",
+                "description": "A text appended after the code."
+              },
+              "pattern": {
+                "type": "string",
+                "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
+              }
+            }
           }
         }
       },
@@ -1609,7 +2010,7 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "description": "Create a standalone voucher. You can choose from a variety of possible voucher types.\n",
+        "description": "Create a standalone voucher. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`.\n",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1619,7 +2020,8 @@
               }
             }
           },
-          "required": true
+          "required": true,
+          "description": "Returns a voucher object if the call succeeded containing details provided in the request body."
         }
       }
     },
