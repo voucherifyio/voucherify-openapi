@@ -173,7 +173,7 @@
       }
     },
     "schemas": {
-      "obj_voucher_object": {
+      "1_obj_voucher_object": {
         "title": "VoucherObject",
         "type": "object",
         "description": "This is an object representing a voucher.",
@@ -603,11 +603,7 @@
                 "example": "/v1/vouchers/WVPblOYX/redemptions?page=1&limit=10",
                 "description": "The endpoint where this list of redemptions can be accessed using a GET method. `/v1/vouchers/{voucher_code}/redemptions`"
               }
-            },
-            "required": [
-              "quantity",
-              "redeemed_quantity"
-            ]
+            }
           },
           "publish": {
             "type": "object",
@@ -637,7 +633,7 @@
           }
         }
       },
-      "req_vouchers__POST": {
+      "1_req_vouchers__POST": {
         "title": "req_vouchers__POST",
         "type": "object",
         "description": "Request body schema for creating a voucher.",
@@ -688,7 +684,7 @@
           "campaign": {
             "type": "string",
             "example": "Gift Card Campaign",
-            "description": "A unique campaign name, identifies the voucher's parent campaign.",
+            "description": "A unique campaign name, identifies the voucher's parent campaign. **Required** for `LOYALTY_CARD` type.",
             "default": null
           },
           "campaign_id": {
@@ -851,11 +847,6 @@
                 "example": 10000,
                 "description": "Total gift card income. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
               },
-              "balance": {
-                "type": "integer",
-                "example": 500,
-                "description": "Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-              },
               "effect": {
                 "type": "string",
                 "enum": [
@@ -875,11 +866,6 @@
                 "type": "integer",
                 "example": 7000,
                 "description": "Total points incurred over lifespan of loyalty card."
-              },
-              "balance": {
-                "type": "integer",
-                "example": 6970,
-                "description": "Points available for reward redemption."
               }
             }
           },
@@ -1002,12 +988,9 @@
               }
             }
           }
-        },
-        "required": [
-          "type"
-        ]
+        }
       },
-      "req_vouchers_code_POST": {
+      "1_req_vouchers_code_POST": {
         "title": "req_vouchers_code_POST",
         "type": "object",
         "description": "Request body schema for creating a voucher.",
@@ -1016,7 +999,7 @@
           "campaign": {
             "type": "string",
             "example": "Gift Card Campaign",
-            "description": "A unique campaign name, identifies the voucher's parent campaign.",
+            "description": "A unique campaign name, identifies the voucher's parent campaign. **Required** for `LOYALTY_CARD` type.",
             "default": null
           },
           "campaign_id": {
@@ -1179,11 +1162,6 @@
                 "example": 10000,
                 "description": "Total voucher income. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
               },
-              "balance": {
-                "type": "integer",
-                "example": 500,
-                "description": "Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-              },
               "effect": {
                 "type": "string",
                 "enum": [
@@ -1203,11 +1181,6 @@
                 "type": "integer",
                 "example": 7000,
                 "description": "Total points incurred over lifespan of loyalty card."
-              },
-              "balance": {
-                "type": "integer",
-                "example": 6970,
-                "description": "Points available for reward redemption."
               }
             }
           },
@@ -1304,10 +1277,7 @@
               }
             }
           }
-        },
-        "required": [
-          "type"
-        ]
+        }
       },
       "obj_earning_rule_object": {
         "description": "This is an object representing an earning rule.",
@@ -1614,7 +1584,7 @@
           }
         ]
       },
-      "req_vouchers_metadata_async": {
+      "1_req_vouchers_metadata_async": {
         "title": "req_vouchers_metadata_async",
         "type": "object",
         "description": "Request body schema for vouchers/metadata/async.",
@@ -1856,7 +1826,7 @@
           "loyalty"
         ]
       },
-      "res_async_actions": {
+      "1_res_async_actions": {
         "type": "object",
         "title": "async_actions",
         "description": "Response to bulk update for voucher metadata.",
@@ -2032,6 +2002,45 @@
             "example": "v-0a885062c80375740f"
           }
         }
+      },
+      "e_409_duplicate_found": {
+        "title": "not_enough_codes",
+        "type": "object",
+        "description": "Error: Conflict &rarr; Duplicated resource found",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "default": 409,
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "default": "duplicate_found",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "default": "Duplicated resource found",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "details": {
+            "type": "string",
+            "example": "Duplicated voucher exists with id NEW-WELCOME-COUPON",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0aa36e570e44cb3bdd"
+          },
+          "resource_id": {
+            "type": "string",
+            "example": "NEW-WELCOME-COUPON"
+          },
+          "resource_type": {
+            "type": "string",
+            "example": "voucher"
+          }
+        }
       }
     },
     "examples": {
@@ -2205,7 +2214,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/obj_voucher_object"
+                  "$ref": "#/components/schemas/1_obj_voucher_object"
                 }
               }
             }
@@ -2294,24 +2303,287 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "description": "Create a standalone voucher. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. The code path parameter can use all letters of the English alphabet, Arabic numerals, and special characters.\n",
+        "description": "Create a standalone voucher. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. The code path parameter can use all letters of the English alphabet, Arabic numerals, and special characters.  \n\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new stand alone voucher if no `campaign` name or `campaign_id` is provided. In case of the loyalty card, a campaign name is required.\n\nThis method will return an error when trying to create a voucher that already exists.\n",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/1_req_vouchers_code_POST"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "category": "New Customers",
+                    "type": "DISCOUNT_VOUCHER",
+                    "discount": {
+                      "percent_off": 10,
+                      "type": "PERCENT",
+                      "effect": "APPLY_TO_ORDER"
+                    },
+                    "start_date": "2022-01-01T00:00:00Z",
+                    "expiration_date": "2022-12-31T23:59:59Z",
+                    "validity_timeframe": {
+                      "duration": "PT1H",
+                      "interval": "P2D"
+                    },
+                    "validity_day_of_week": [
+                      1,
+                      2,
+                      3,
+                      4,
+                      5
+                    ],
+                    "active": false,
+                    "additional_info": "This voucher will remain inactive until enabled.",
+                    "redemption": {
+                      "quantity": 10
+                    },
+                    "metadata": {
+                      "test": true,
+                      "locale": "de-en"
+                    },
+                    "validation_rules": [
+                      "val_4j7DCRm2IS59"
+                    ]
+                  }
+                },
+                "example-2": {
+                  "value": {
+                    "category": "New Customers",
+                    "type": "GIFT_VOUCHER",
+                    "gift": {
+                      "amount": 10000,
+                      "effect": "APPLY_TO_ORDER"
+                    },
+                    "start_date": "2022-01-01T00:00:00Z",
+                    "active": true,
+                    "additional_info": "This gift card is enabled immediately upon creation.",
+                    "metadata": {
+                      "test": true,
+                      "locale": "de-en"
+                    }
+                  }
+                },
+                "example-3": {
+                  "value": {
+                    "category": "New Customers",
+                    "campaign": "camp_E87CubZLZ8eoQt3c4kAEZsx0",
+                    "type": "LOYALTY_CARD",
+                    "loyalty_card": {
+                      "points": 10000
+                    },
+                    "additional_info": "This loyalty card is enabled immediately upon creation.",
+                    "metadata": {
+                      "test": true,
+                      "locale": "de-en"
+                    }
+                  }
+                }
               }
             }
           },
-          "required": true,
-          "description": "Returns a voucher object if the call succeeded."
+          "description": "Specify the details of the voucher that you would like to create."
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a voucher object if the call succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/1_obj_voucher_object"
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "id": "v_MBOEmHelKwvykVZ8JcT4TE5Kla5IMJyc",
+                      "code": "welcome",
+                      "campaign": null,
+                      "campaign_id": null,
+                      "category": "New Customers",
+                      "type": "DISCOUNT_VOUCHER",
+                      "discount": {
+                        "type": "PERCENT",
+                        "percent_off": 10,
+                        "effect": "APPLY_TO_ORDER"
+                      },
+                      "gift": null,
+                      "loyalty_card": null,
+                      "start_date": "2022-01-01T00:00:00.000Z",
+                      "expiration_date": "2022-12-31T23:59:59.000Z",
+                      "validity_timeframe": {
+                        "interval": "P2D",
+                        "duration": "PT1H"
+                      },
+                      "validity_day_of_week": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                      ],
+                      "active": false,
+                      "additional_info": "This voucher will remain inactive until enabled.",
+                      "metadata": {
+                        "test": true,
+                        "locale": "de-en"
+                      },
+                      "assets": {
+                        "qr": {
+                          "id": "U2FsdGVkX1+by33CNzWu6xXjCrLKRr1+H9K3I9wOSa7idiHrMYJe0HlrWiy7INhaJf1BnaKJjLKcUC+4/hCbILtJ9lHXZWhewG5q5rmx29gK0IH2eRauw1qCZKIlXfqeGTG2T5ftPsEl1D4xf8W2MA==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2Bby33CNzWu6xXjCrLKRr1%2BH9K3I9wOSa7idiHrMYJe0HlrWiy7INhaJf1BnaKJjLKcUC%2B4%2FhCbILtJ9lHXZWhewG5q5rmx29gK0IH2eRauw1qCZKIlXfqeGTG2T5ftPsEl1D4xf8W2MA%3D%3D"
+                        },
+                        "barcode": {
+                          "id": "U2FsdGVkX19wOdFeXYXZ4Xu22L0Ummk03Urz/ZTnXUFeHeehtK4L6RTvNgVeSR+McTZR4DYNLEGydZ+Fo2xEqqM1UWyl8Bx22Pi1CxghADOcy3bAvSca7EEPpvKrCY403UWUDvaO/OEAjvVoiEuaHA==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX19wOdFeXYXZ4Xu22L0Ummk03Urz%2FZTnXUFeHeehtK4L6RTvNgVeSR%2BMcTZR4DYNLEGydZ%2BFo2xEqqM1UWyl8Bx22Pi1CxghADOcy3bAvSca7EEPpvKrCY403UWUDvaO%2FOEAjvVoiEuaHA%3D%3D"
+                        }
+                      },
+                      "is_referral_code": false,
+                      "created_at": "2022-02-17T09:05:34.668Z",
+                      "updated_at": null,
+                      "validation_rules_assignments": {
+                        "object": "list",
+                        "data_ref": "data",
+                        "data": [
+                          {
+                            "id": "asgm_74F7QZoYbUoljwQO",
+                            "rule_id": "val_4j7DCRm2IS59",
+                            "related_object_id": "v_MBOEmHelKwvykVZ8JcT4TE5Kla5IMJyc",
+                            "related_object_type": "voucher",
+                            "created_at": "2022-02-17T09:05:34.642Z",
+                            "object": "validation_rules_assignment"
+                          }
+                        ],
+                        "total": 1
+                      },
+                      "redemption": {
+                        "quantity": 10,
+                        "redeemed_quantity": 0,
+                        "object": "list",
+                        "url": "/v1/vouchers/welcome/redemptions?page=1&limit=10"
+                      },
+                      "publish": {
+                        "object": "list",
+                        "count": 0,
+                        "url": "/v1/vouchers/welcome/publications?page=1&limit=10"
+                      },
+                      "object": "voucher"
+                    }
+                  },
+                  "example-2": {
+                    "value": {
+                      "id": "v_7xaObxyK5LG62Rp0Xqpez7lqiBFL62pL",
+                      "code": "welcomegiftcard",
+                      "campaign": null,
+                      "campaign_id": null,
+                      "category": "New Customers",
+                      "type": "GIFT_VOUCHER",
+                      "discount": null,
+                      "gift": {
+                        "amount": 10000,
+                        "balance": 10000,
+                        "effect": "APPLY_TO_ORDER"
+                      },
+                      "loyalty_card": null,
+                      "start_date": "2022-01-01T00:00:00.000Z",
+                      "expiration_date": null,
+                      "validity_timeframe": null,
+                      "validity_day_of_week": null,
+                      "active": true,
+                      "additional_info": "This gift card is enabled immediately upon creation.",
+                      "metadata": {
+                        "test": true,
+                        "locale": "de-en"
+                      },
+                      "assets": {
+                        "qr": {
+                          "id": "U2FsdGVkX1+mTbI2MdzBdMJ7AsOPKvGGgRB7O4oHZv5qq8I3M/OBPJm4PV8bTtBgR+oXOU4Jv1ucbIV7yg1mzC86LVFKjO7Ptnj+63mS9QdHvvILEAulBuZZQ+hZ0HmFXjDl4Quz/kUqGwffKGTziQ==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2BmTbI2MdzBdMJ7AsOPKvGGgRB7O4oHZv5qq8I3M%2FOBPJm4PV8bTtBgR%2BoXOU4Jv1ucbIV7yg1mzC86LVFKjO7Ptnj%2B63mS9QdHvvILEAulBuZZQ%2BhZ0HmFXjDl4Quz%2FkUqGwffKGTziQ%3D%3D"
+                        },
+                        "barcode": {
+                          "id": "U2FsdGVkX184KgQ11OfpqB4WkJuH9ushSwZb0YrcN+8OaGPHxBQMiBr2axwnvQlZYv6YhqWtnc5iHByHrkg+6qYHxOLBPRMWCysIhcuUEB57IDhgYUHRPyM2bWjQadVHngGfVGCQ0CUy4PO/71RdMw==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX184KgQ11OfpqB4WkJuH9ushSwZb0YrcN%2B8OaGPHxBQMiBr2axwnvQlZYv6YhqWtnc5iHByHrkg%2B6qYHxOLBPRMWCysIhcuUEB57IDhgYUHRPyM2bWjQadVHngGfVGCQ0CUy4PO%2F71RdMw%3D%3D"
+                        }
+                      },
+                      "is_referral_code": false,
+                      "created_at": "2022-02-17T09:09:49.665Z",
+                      "updated_at": null,
+                      "redemption": {
+                        "quantity": null,
+                        "redeemed_quantity": 0,
+                        "redeemed_amount": 0,
+                        "object": "list",
+                        "url": "/v1/vouchers/welcomegiftcard/redemptions?page=1&limit=10"
+                      },
+                      "publish": {
+                        "object": "list",
+                        "count": 0,
+                        "url": "/v1/vouchers/welcomegiftcard/publications?page=1&limit=10"
+                      },
+                      "object": "voucher"
+                    }
+                  },
+                  "example-3": {
+                    "value": {
+                      "id": "v_l84t3fy3keMUiOeaHbN1cbTdW8O5eUlm",
+                      "code": "welcomeloyalty",
+                      "campaign": "Loyalty Campaign",
+                      "campaign_id": "camp_E87CubZLZ8eoQt3c4kAEZsx0",
+                      "category": "New Customers",
+                      "type": "LOYALTY_CARD",
+                      "discount": null,
+                      "gift": null,
+                      "loyalty_card": {
+                        "points": 10000,
+                        "balance": 10000
+                      },
+                      "start_date": null,
+                      "expiration_date": null,
+                      "validity_timeframe": null,
+                      "validity_day_of_week": null,
+                      "active": true,
+                      "additional_info": "This loyalty card is enabled immediately upon creation.",
+                      "metadata": {
+                        "test": true,
+                        "locale": "de-en"
+                      },
+                      "assets": {
+                        "qr": {
+                          "id": "U2FsdGVkX186PCWooyrNsjfI+nb+Y9ziUZ1k7xe+nJQ53Ms1ynNJOX6JXC6SwxS1WDhYwAKX5FxaDoKyuPf5MkQrkeB6u5bSx333ldAyLypNnqwBD2N17S64WFnTqV7eXUk3hS30wDYcz0cQAJFDcQ==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX186PCWooyrNsjfI%2Bnb%2BY9ziUZ1k7xe%2BnJQ53Ms1ynNJOX6JXC6SwxS1WDhYwAKX5FxaDoKyuPf5MkQrkeB6u5bSx333ldAyLypNnqwBD2N17S64WFnTqV7eXUk3hS30wDYcz0cQAJFDcQ%3D%3D"
+                        },
+                        "barcode": {
+                          "id": "U2FsdGVkX1/FWUg0RbOU7R7Zqg7/8Ba6oYuXrmIl7EdXGgaPMPfpePNGRzxBu4LP2dNEUO9h1Sh37MR1PxOoaemPwlgTDo/1G8dX1JjSppNoaTHhkzk2w4yutNhP7o8cq3ZBbT3TNMTKb2H3fUMc7A==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2FFWUg0RbOU7R7Zqg7%2F8Ba6oYuXrmIl7EdXGgaPMPfpePNGRzxBu4LP2dNEUO9h1Sh37MR1PxOoaemPwlgTDo%2F1G8dX1JjSppNoaTHhkzk2w4yutNhP7o8cq3ZBbT3TNMTKb2H3fUMc7A%3D%3D"
+                        }
+                      },
+                      "is_referral_code": false,
+                      "created_at": "2022-02-17T09:12:01.428Z",
+                      "updated_at": null,
+                      "redemption": {
+                        "quantity": null,
+                        "redeemed_quantity": 0,
+                        "redeemed_points": 0,
+                        "object": "list",
+                        "url": "/v1/vouchers/welcomeloyalty/redemptions?page=1&limit=10"
+                      },
+                      "publish": {
+                        "object": "list",
+                        "count": 0,
+                        "url": "/v1/vouchers/welcomeloyalty/publications?page=1&limit=10"
+                      },
+                      "object": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
     "/vouchers/": {
       "post": {
-        "summary": "",
+        "summary": "Create Voucher",
         "operationId": "post-vouchers",
         "responses": {
           "200": {
@@ -2319,7 +2591,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/obj_voucher_object"
+                  "$ref": "#/components/schemas/1_obj_voucher_object"
                 },
                 "examples": {
                   "example-1": {
@@ -2400,8 +2672,8 @@
                   },
                   "example-2": {
                     "value": {
-                      "id": "v_AbqsgJmNUll5EoBTZR23tDZFXVNB9X0L",
-                      "code": "New-GIFT-CARD-b9YGDRcO0",
+                      "id": "v_yAZyBimXtF9yQ2C5BEF9WMhNzOMJNfz6",
+                      "code": "New-GIFT-CARD-8tqB6FcyhE0",
                       "campaign": null,
                       "campaign_id": null,
                       "category": "New Customers",
@@ -2409,7 +2681,8 @@
                       "discount": null,
                       "gift": {
                         "amount": 10000,
-                        "balance": 10000
+                        "balance": 10000,
+                        "effect": "APPLY_TO_ORDER"
                       },
                       "loyalty_card": null,
                       "start_date": "2022-01-01T00:00:00.000Z",
@@ -2424,28 +2697,80 @@
                       },
                       "assets": {
                         "qr": {
-                          "id": "U2FsdGVkX19hs2Udvt1l3c3YgxfdJ7dF7xAXXJI+1QOlXgGLtDq83etyr+8P4FPj6fdyBH97pKoewdorrBBr7lBzZL0vXyvSh1FkwsNKlKlmeCt/eJgDsD86O8MZqPqKxTdiKZhDyzBkJYOSmiPSHEYfwzI6WP+wWkcel8y/v9c=",
-                          "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX19hs2Udvt1l3c3YgxfdJ7dF7xAXXJI%2B1QOlXgGLtDq83etyr%2B8P4FPj6fdyBH97pKoewdorrBBr7lBzZL0vXyvSh1FkwsNKlKlmeCt%2FeJgDsD86O8MZqPqKxTdiKZhDyzBkJYOSmiPSHEYfwzI6WP%2BwWkcel8y%2Fv9c%3D"
+                          "id": "U2FsdGVkX1+pm0q3U4i/KrjResuZpwDigEa5WcDOlwYS/bj3rsesZXDpJF5MNHMUsKqy0+wn5tY3QbjPGv0dwbqRn/OjrIRgNlP99azD0n0n9C/chiTABp8BxlJmMKKFo5AggBbQu4+Mw8Cv8V3+0Ga7ETzeehS+Yrj6c+3ioxg=",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2Bpm0q3U4i%2FKrjResuZpwDigEa5WcDOlwYS%2Fbj3rsesZXDpJF5MNHMUsKqy0%2Bwn5tY3QbjPGv0dwbqRn%2FOjrIRgNlP99azD0n0n9C%2FchiTABp8BxlJmMKKFo5AggBbQu4%2BMw8Cv8V3%2B0Ga7ETzeehS%2BYrj6c%2B3ioxg%3D"
                         },
                         "barcode": {
-                          "id": "U2FsdGVkX1/J27tKvl5gQfydL9hOSwuGBmLnQE9nvHf/lc4b9+iYAsKeCDo4RCnv/wTQtKXUYQsnQ6o7Cg58OKrBsCEbNiDaqsqzM4SpGYw1puSEy5HOPRAc5lw9AK5ozHhESCDcl3T8Y+bPSXBc8qpi6egtE2shpOAlU0lZRc8=",
-                          "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2FJ27tKvl5gQfydL9hOSwuGBmLnQE9nvHf%2Flc4b9%2BiYAsKeCDo4RCnv%2FwTQtKXUYQsnQ6o7Cg58OKrBsCEbNiDaqsqzM4SpGYw1puSEy5HOPRAc5lw9AK5ozHhESCDcl3T8Y%2BbPSXBc8qpi6egtE2shpOAlU0lZRc8%3D"
+                          "id": "U2FsdGVkX1/UaGX0zV8oXbpYah2G76V1ljYSy6hDSnWAZhpz5v10vRibGaOJUahyLcClMyxAsUhU9WXWi4BUGWIEEu510AxzxyGHOTDTjavJH0Q79PI0ciLHdujNFOgLOXWe9Ffwzj+Kvjmbhb22/SVZd/xzQlUBJcv7XboJYU0=",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2FUaGX0zV8oXbpYah2G76V1ljYSy6hDSnWAZhpz5v10vRibGaOJUahyLcClMyxAsUhU9WXWi4BUGWIEEu510AxzxyGHOTDTjavJH0Q79PI0ciLHdujNFOgLOXWe9Ffwzj%2BKvjmbhb22%2FSVZd%2FxzQlUBJcv7XboJYU0%3D"
                         }
                       },
                       "is_referral_code": false,
-                      "created_at": "2022-02-17T07:37:42.192Z",
+                      "created_at": "2022-02-17T07:49:10.834Z",
                       "updated_at": null,
                       "redemption": {
                         "quantity": null,
                         "redeemed_quantity": 0,
                         "redeemed_amount": 0,
                         "object": "list",
-                        "url": "/v1/vouchers/New-GIFT-CARD-b9YGDRcO0/redemptions?page=1&limit=10"
+                        "url": "/v1/vouchers/New-GIFT-CARD-8tqB6FcyhE0/redemptions?page=1&limit=10"
                       },
                       "publish": {
                         "object": "list",
                         "count": 0,
-                        "url": "/v1/vouchers/New-GIFT-CARD-b9YGDRcO0/publications?page=1&limit=10"
+                        "url": "/v1/vouchers/New-GIFT-CARD-8tqB6FcyhE0/publications?page=1&limit=10"
+                      },
+                      "object": "voucher"
+                    }
+                  },
+                  "example-3": {
+                    "value": {
+                      "id": "v_tVkcOhjHCz9W7q8QnuJnTGPBR2hdaYrC",
+                      "code": "New-LOYALTY-CARD-UC1",
+                      "campaign": "Loyalty Campaign",
+                      "campaign_id": "camp_E87CubZLZ8eoQt3c4kAEZsx0",
+                      "category": "New Customers",
+                      "type": "LOYALTY_CARD",
+                      "discount": null,
+                      "gift": null,
+                      "loyalty_card": {
+                        "points": 10000,
+                        "balance": 10000
+                      },
+                      "start_date": null,
+                      "expiration_date": null,
+                      "validity_timeframe": null,
+                      "validity_day_of_week": null,
+                      "active": true,
+                      "additional_info": "This loyalty card is enabled immediately upon creation.",
+                      "metadata": {
+                        "test": true,
+                        "locale": "de-en"
+                      },
+                      "assets": {
+                        "qr": {
+                          "id": "U2FsdGVkX1+6lGBFlqtS9OoY2wbAsoSupV43qa+g5sGu+R0IDTq2k85LIfbKfV9sDSYv80pP9ucsazJ6qGI9ineqQyhv9VVHdsJ2qGRiuZzpw/vRkSA0a7J9N1MpANgzqpIULZHLjYtrCQ/2el72nZ6Hpr2NkWtk19JTpNwB8tk=",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2B6lGBFlqtS9OoY2wbAsoSupV43qa%2Bg5sGu%2BR0IDTq2k85LIfbKfV9sDSYv80pP9ucsazJ6qGI9ineqQyhv9VVHdsJ2qGRiuZzpw%2FvRkSA0a7J9N1MpANgzqpIULZHLjYtrCQ%2F2el72nZ6Hpr2NkWtk19JTpNwB8tk%3D"
+                        },
+                        "barcode": {
+                          "id": "U2FsdGVkX180bvJVsyZvpAqwYXTnm4MvvH4Rur+ZhM+Mbmnva/fgYUcUbOttsFXPY/PMZ9Xi8pomVp26a7amIPguNimD8w4PMZLMavMtH7EtJ4k+0V0Wp7JUkudIKeRw2fDnQ3/0cgqvK6PMReUwFWb5nUT3ABpZDAdaOVoMDhE=",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX180bvJVsyZvpAqwYXTnm4MvvH4Rur%2BZhM%2BMbmnva%2FfgYUcUbOttsFXPY%2FPMZ9Xi8pomVp26a7amIPguNimD8w4PMZLMavMtH7EtJ4k%2B0V0Wp7JUkudIKeRw2fDnQ3%2F0cgqvK6PMReUwFWb5nUT3ABpZDAdaOVoMDhE%3D"
+                        }
+                      },
+                      "is_referral_code": false,
+                      "created_at": "2022-02-17T08:06:41.091Z",
+                      "updated_at": null,
+                      "redemption": {
+                        "quantity": null,
+                        "redeemed_quantity": 0,
+                        "redeemed_points": 0,
+                        "object": "list",
+                        "url": "/v1/vouchers/New-LOYALTY-CARD-UC1/redemptions?page=1&limit=10"
+                      },
+                      "publish": {
+                        "object": "list",
+                        "count": 0,
+                        "url": "/v1/vouchers/New-LOYALTY-CARD-UC1/publications?page=1&limit=10"
                       },
                       "object": "voucher"
                     }
@@ -2455,7 +2780,7 @@
             }
           }
         },
-        "description": "Create a standalone voucher. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`.  \n\nWhen you create a new voucher, you must specify a _____ to create it.\nCreating a new voucher will create a new stand alone voucher if no campaign name or campaign_id is provided. \n\nYou can optionally use the `code` parameter to define a specific code or the `code_config` parameter to design rules in order to create a random code. \n\nThis method will return an error when trying to create a voucher that already exists, or when ",
+        "description": "Create a standalone voucher. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. \n\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new stand alone voucher if no `campaign` name or `campaign_id` is provided. In case of the loyalty card, a campaign name is required.\n\nYou can optionally use the `code` parameter to define a specific code or the `code_config` parameter to design rules for Voucherify API to create a random code. If neither of the two parameters are passed, then a random code is generated by the Voucherify API.\n\nThis method will return an error when trying to create a voucher that already exists.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -2468,7 +2793,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/req_vouchers__POST"
+                "$ref": "#/components/schemas/1_req_vouchers__POST"
               },
               "examples": {
                 "example-1": {
@@ -2514,7 +2839,8 @@
                     "category": "New Customers",
                     "type": "GIFT_VOUCHER",
                     "gift": {
-                      "amount": 10000
+                      "amount": 10000,
+                      "effect": "APPLY_TO_ORDER"
                     },
                     "start_date": "2022-01-01T00:00:00Z",
                     "active": true,
@@ -2524,9 +2850,30 @@
                       "locale": "de-en"
                     },
                     "code_config": {
-                      "pattern": "GIFT-CARD-########",
+                      "pattern": "GIFT-CARD-##########",
                       "prefix": "New-",
                       "postfix": "0",
+                      "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    }
+                  }
+                },
+                "example-3": {
+                  "value": {
+                    "category": "New Customers",
+                    "campaign": "camp_E87CubZLZ8eoQt3c4kAEZsx0",
+                    "type": "LOYALTY_CARD",
+                    "loyalty_card": {
+                      "points": 10000
+                    },
+                    "additional_info": "This loyalty card is enabled immediately upon creation.",
+                    "metadata": {
+                      "test": true,
+                      "locale": "de-en"
+                    },
+                    "code_config": {
+                      "pattern": "LOYALTY-CARD-##",
+                      "prefix": "New-",
+                      "postfix": "1",
                       "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
                     }
                   }
@@ -2534,8 +2881,11 @@
               }
             }
           },
-          "description": ""
-        }
+          "description": "Specify the details of the voucher that you would like to create."
+        },
+        "tags": [
+          "VOUCHERS API"
+        ]
       }
     },
     "/vouchers": {
@@ -2824,7 +3174,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/res_async_actions"
+                  "$ref": "#/components/schemas/1_res_async_actions"
                 },
                 "examples": {
                   "example-1": {
@@ -2861,7 +3211,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/req_vouchers_metadata_async"
+                "$ref": "#/components/schemas/1_req_vouchers_metadata_async"
               }
             }
           },
