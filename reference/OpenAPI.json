@@ -1285,18 +1285,6 @@
         "description": "Request body schema for updating a voucher.",
         "examples": [],
         "properties": {
-          "campaign": {
-            "type": "string",
-            "example": "Gift Card Campaign",
-            "description": "A unique campaign name, identifies the voucher's parent campaign. **Required** for `LOYALTY_CARD` type.",
-            "default": null
-          },
-          "campaign_id": {
-            "type": "string",
-            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
-            "description": "Assigned by the Voucherify API, identifies the voucher's parent campaign.",
-            "default": null
-          },
           "category": {
             "type": "string",
             "default": null,
@@ -2473,7 +2461,7 @@
           "VOUCHERS API"
         ],
         "operationId": "put-vouchers-code",
-        "description": "Updates the specified voucher by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged.\n\nYou can modify the following fields:  \n\n- `category`\n- `start_date`\n- `expiration_date`\n- `active`\n- `additional_info`\n- `metadata`\n- `validity_day_of_week`\n- `validity_timeframe`  \n\nFields other than the ones listed above won't be modified. Even if provided, they will be silently skipped.",
+        "description": "Updates the specified voucher by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged.\n\nYou can modify the following fields:  \n\n- `category`\n- `start_date`\n- `expiration_date`\n- `active`\n- `additional_info`\n- `metadata`\n- `validity_day_of_week`\n- `validity_timeframe`\n- `gift` &rarr; `amount` + `effect`\n- `loyalty_card` &rarr; `points`\n- `discount` &darr;\n  - Amount type &rarr; `amount_off` + `effect`\n  - Percent type &rarr: `percent_off` + `effect`\n  - Fixed type &rarr; `effect`\n  - Unit type &rarr; `unit_off` + `unit_type` + `effect`\n  - Shipping type &rarr; `unit_off` + `unit_type` + `effect` -- probably not unit_type\n\nFields other than the ones listed above won't be modified. Even if provided, they will be silently skipped.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -2492,10 +2480,56 @@
                 "example-1": {
                   "value": {
                     "category": "Existing Customers",
+                    "discount": {
+                      "percent_off": 20,
+                      "effect": "APPLY_TO_ITEMS"
+                    },
                     "start_date": "2021-01-01T00:00:00Z",
                     "expiration_date": "2023-12-31T23:59:59Z",
                     "active": true,
                     "additional_info": "This voucher is being activated.",
+                    "metadata": {
+                      "test": false,
+                      "locale": "de-en-pl"
+                    },
+                    "validity_day_of_week": [
+                      1,
+                      2,
+                      3,
+                      4,
+                      5,
+                      6
+                    ],
+                    "validity_timeframe": {
+                      "duration": "PT1H",
+                      "interval": "P3D"
+                    }
+                  }
+                },
+                "example-2": {
+                  "value": {
+                    "category": "Existing Customers",
+                    "gift": {
+                      "amount": 20000,
+                      "effect": "APPLY_TO_ITEMS"
+                    },
+                    "start_date": "2021-01-01T00:00:00Z",
+                    "active": false,
+                    "additional_info": "This gift card is disabled.",
+                    "metadata": {
+                      "test": false,
+                      "locale": "de-en-pl"
+                    }
+                  }
+                },
+                "example-3": {
+                  "value": {
+                    "category": "Existing Customers",
+                    "loyalty_card": {
+                      "points": 20000
+                    },
+                    "active": false,
+                    "additional_info": "This loyalty card is being deactivated and points updated.",
                     "metadata": {
                       "test": false,
                       "locale": "de-en-pl"
@@ -2527,15 +2561,15 @@
                       "type": "DISCOUNT_VOUCHER",
                       "discount": {
                         "type": "PERCENT",
-                        "percent_off": 10,
-                        "effect": "APPLY_TO_ORDER"
+                        "percent_off": 20,
+                        "effect": "APPLY_TO_ITEMS"
                       },
                       "gift": null,
                       "loyalty_card": null,
                       "start_date": "2021-01-01T00:00:00.000Z",
                       "expiration_date": "2023-12-31T23:59:59.000Z",
                       "validity_timeframe": {
-                        "interval": "P2D",
+                        "interval": "P3D",
                         "duration": "PT1H"
                       },
                       "validity_day_of_week": [
@@ -2543,7 +2577,8 @@
                         2,
                         3,
                         4,
-                        5
+                        5,
+                        6
                       ],
                       "active": true,
                       "additional_info": "This voucher is being activated.",
@@ -2563,7 +2598,7 @@
                       },
                       "is_referral_code": false,
                       "created_at": "2022-02-17T09:05:34.668Z",
-                      "updated_at": "2022-02-17T09:27:01.263Z",
+                      "updated_at": "2022-02-17T11:03:05.878Z",
                       "validation_rules_assignments": {
                         "object": "list",
                         "data_ref": "data",
@@ -2589,6 +2624,123 @@
                         "object": "list",
                         "count": 0,
                         "url": "/v1/vouchers/welcome/publications?page=1&limit=10"
+                      },
+                      "object": "voucher"
+                    }
+                  },
+                  "example-2": {
+                    "value": {
+                      "id": "v_7xaObxyK5LG62Rp0Xqpez7lqiBFL62pL",
+                      "code": "welcomegiftcard",
+                      "campaign": null,
+                      "campaign_id": null,
+                      "category": "Existing Customers",
+                      "type": "GIFT_VOUCHER",
+                      "discount": null,
+                      "gift": {
+                        "amount": 20000,
+                        "balance": 20000,
+                        "effect": "APPLY_TO_ITEMS"
+                      },
+                      "loyalty_card": null,
+                      "start_date": "2021-01-01T00:00:00.000Z",
+                      "expiration_date": null,
+                      "validity_timeframe": null,
+                      "validity_day_of_week": null,
+                      "active": false,
+                      "additional_info": "This gift card is disabled.",
+                      "metadata": {
+                        "test": false,
+                        "locale": "de-en-pl"
+                      },
+                      "assets": {
+                        "qr": {
+                          "id": "U2FsdGVkX1+mTbI2MdzBdMJ7AsOPKvGGgRB7O4oHZv5qq8I3M/OBPJm4PV8bTtBgR+oXOU4Jv1ucbIV7yg1mzC86LVFKjO7Ptnj+63mS9QdHvvILEAulBuZZQ+hZ0HmFXjDl4Quz/kUqGwffKGTziQ==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2BmTbI2MdzBdMJ7AsOPKvGGgRB7O4oHZv5qq8I3M%2FOBPJm4PV8bTtBgR%2BoXOU4Jv1ucbIV7yg1mzC86LVFKjO7Ptnj%2B63mS9QdHvvILEAulBuZZQ%2BhZ0HmFXjDl4Quz%2FkUqGwffKGTziQ%3D%3D"
+                        },
+                        "barcode": {
+                          "id": "U2FsdGVkX184KgQ11OfpqB4WkJuH9ushSwZb0YrcN+8OaGPHxBQMiBr2axwnvQlZYv6YhqWtnc5iHByHrkg+6qYHxOLBPRMWCysIhcuUEB57IDhgYUHRPyM2bWjQadVHngGfVGCQ0CUy4PO/71RdMw==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX184KgQ11OfpqB4WkJuH9ushSwZb0YrcN%2B8OaGPHxBQMiBr2axwnvQlZYv6YhqWtnc5iHByHrkg%2B6qYHxOLBPRMWCysIhcuUEB57IDhgYUHRPyM2bWjQadVHngGfVGCQ0CUy4PO%2F71RdMw%3D%3D"
+                        }
+                      },
+                      "is_referral_code": false,
+                      "created_at": "2022-02-17T09:09:49.665Z",
+                      "updated_at": "2022-02-17T11:11:48.071Z",
+                      "validation_rules_assignments": {
+                        "object": "list",
+                        "data_ref": "data",
+                        "data": [],
+                        "total": 0
+                      },
+                      "redemption": {
+                        "quantity": null,
+                        "redeemed_quantity": 0,
+                        "redeemed_amount": 0,
+                        "object": "list",
+                        "url": "/v1/vouchers/welcomegiftcard/redemptions?page=1&limit=10"
+                      },
+                      "publish": {
+                        "object": "list",
+                        "count": 0,
+                        "url": "/v1/vouchers/welcomegiftcard/publications?page=1&limit=10"
+                      },
+                      "object": "voucher"
+                    }
+                  },
+                  "example-3": {
+                    "value": {
+                      "id": "v_l84t3fy3keMUiOeaHbN1cbTdW8O5eUlm",
+                      "code": "welcomeloyalty",
+                      "campaign": "Loyalty Campaign",
+                      "campaign_id": "camp_E87CubZLZ8eoQt3c4kAEZsx0",
+                      "category": "Existing Customers",
+                      "type": "LOYALTY_CARD",
+                      "discount": null,
+                      "gift": null,
+                      "loyalty_card": {
+                        "points": 20000,
+                        "balance": 20000
+                      },
+                      "start_date": null,
+                      "expiration_date": null,
+                      "validity_timeframe": null,
+                      "validity_day_of_week": null,
+                      "active": false,
+                      "additional_info": "This loyalty card is being deactivated and points updated.",
+                      "metadata": {
+                        "test": false,
+                        "locale": "de-en-pl"
+                      },
+                      "assets": {
+                        "qr": {
+                          "id": "U2FsdGVkX186PCWooyrNsjfI+nb+Y9ziUZ1k7xe+nJQ53Ms1ynNJOX6JXC6SwxS1WDhYwAKX5FxaDoKyuPf5MkQrkeB6u5bSx333ldAyLypNnqwBD2N17S64WFnTqV7eXUk3hS30wDYcz0cQAJFDcQ==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX186PCWooyrNsjfI%2Bnb%2BY9ziUZ1k7xe%2BnJQ53Ms1ynNJOX6JXC6SwxS1WDhYwAKX5FxaDoKyuPf5MkQrkeB6u5bSx333ldAyLypNnqwBD2N17S64WFnTqV7eXUk3hS30wDYcz0cQAJFDcQ%3D%3D"
+                        },
+                        "barcode": {
+                          "id": "U2FsdGVkX1/FWUg0RbOU7R7Zqg7/8Ba6oYuXrmIl7EdXGgaPMPfpePNGRzxBu4LP2dNEUO9h1Sh37MR1PxOoaemPwlgTDo/1G8dX1JjSppNoaTHhkzk2w4yutNhP7o8cq3ZBbT3TNMTKb2H3fUMc7A==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2FFWUg0RbOU7R7Zqg7%2F8Ba6oYuXrmIl7EdXGgaPMPfpePNGRzxBu4LP2dNEUO9h1Sh37MR1PxOoaemPwlgTDo%2F1G8dX1JjSppNoaTHhkzk2w4yutNhP7o8cq3ZBbT3TNMTKb2H3fUMc7A%3D%3D"
+                        }
+                      },
+                      "is_referral_code": false,
+                      "created_at": "2022-02-17T09:12:01.428Z",
+                      "updated_at": "2022-02-17T11:20:12.447Z",
+                      "validation_rules_assignments": {
+                        "object": "list",
+                        "data_ref": "data",
+                        "data": [],
+                        "total": 0
+                      },
+                      "redemption": {
+                        "quantity": null,
+                        "redeemed_quantity": 0,
+                        "redeemed_points": 0,
+                        "object": "list",
+                        "url": "/v1/vouchers/welcomeloyalty/redemptions?page=1&limit=10"
+                      },
+                      "publish": {
+                        "object": "list",
+                        "count": 0,
+                        "url": "/v1/vouchers/welcomeloyalty/publications?page=1&limit=10"
                       },
                       "object": "voucher"
                     }
