@@ -223,6 +223,7 @@
             "oneOf": [
               {
                 "description": "Amount type",
+                "type": "object",
                 "properties": {
                   "type": {
                     "type": "string",
@@ -248,6 +249,7 @@
               },
               {
                 "description": "Percentage type",
+                "type": "object",
                 "properties": {
                   "type": {
                     "type": "string",
@@ -271,6 +273,7 @@
               },
               {
                 "description": "Fixed type",
+                "type": "object",
                 "properties": {
                   "type": {
                     "type": "string",
@@ -294,6 +297,7 @@
               },
               {
                 "description": "Unit type",
+                "type": "object",
                 "properties": {
                   "type": {
                     "type": "string",
@@ -322,6 +326,7 @@
               },
               {
                 "description": "Shipping type",
+                "type": "object",
                 "properties": {
                   "type": {
                     "type": "string",
@@ -348,10 +353,24 @@
                     "default": "ADD_MISSING_ITEMS"
                   }
                 }
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_amount"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_percentage"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_fixed"
+              },
+              {
+                "type": "object"
+              },
+              {
+                "type": "object"
               }
             ],
-            "description": "Object representing discount parameters. Child attributes are present only if `type` is `DISCOUNT_VOUCHER`. Defaults to `null`. Type of discount:\n- `AMOUNT`\n- `PERCENT`\n- `UNIT`\n- `FIXED`\n\n A Free Shipping discount is a special instance of the  `UNIT` type discount.",
-            "type": "object"
+            "description": "Object representing discount parameters. Child attributes are present only if `type` is `DISCOUNT_VOUCHER`. Defaults to `null`. Type of discount:\n- `AMOUNT`\n- `PERCENT`\n- `UNIT`\n- `FIXED`\n\n A Free Shipping discount is a special instance of the  `UNIT` type discount."
           },
           "gift": {
             "default": null,
@@ -1978,6 +1997,191 @@
           "resource_type": {
             "type": "string",
             "example": "voucher"
+          }
+        }
+      },
+      "1_obj_voucher_object_discount_amount": {
+        "title": "Amount discount type",
+        "type": "object",
+        "description": "Amount discount type.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "AMOUNT",
+            "description": "Applies an amount discount"
+          },
+          "amount_off": {
+            "type": "integer",
+            "example": 100,
+            "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000."
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_ORDER",
+              "APPLY_TO_ITEMS",
+              "APPLY_TO_ITEMS_PROPORTIONALLY",
+              "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY"
+            ],
+            "description": "Defines how the discount is applied to the customer's order"
+          }
+        }
+      },
+      "1_obj_voucher_object_discount_percentage": {
+        "title": "Percentage discount type",
+        "type": "object",
+        "description": "Percentage discount type.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "PERCENT",
+            "description": "Applies a percentage discount"
+          },
+          "percent_off": {
+            "type": "integer",
+            "example": 10,
+            "description": "Percent taken off the subtotal amount"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_ORDER",
+              "APPLY_TO_ITEMS"
+            ],
+            "description": "Defines how the discount is applied to the customer's order"
+          }
+        }
+      },
+      "1_obj_voucher_object_discount_fixed": {
+        "title": "Fixed discount type",
+        "description": "Fixed discount type.",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "FIXED",
+            "description": "Sets a fixed total on cart or item(s) and then calculates the discount to apply"
+          },
+          "fixed_amount": {
+            "type": "integer",
+            "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000.",
+            "example": 1000
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_ORDER",
+              "APPLY_TO_ITEMS"
+            ],
+            "description": "- **APPLY\\_TO\\_ORDER**: Set fixed total on the whole cart. Discount will be calculated dynamically, based on fixed amount value. For example, if fixed amount is set to equal $10 and order amount equals $25, then the calculated discount will be $15.  \n- **APPLY\\_TO\\_ITEMS**: This type of deal applies a new price for line items. \n  Default rules:\n   - During redemption, prices will change only if the new one is lower than the old one.\n    - If a product price in the collection and the new product price you have set up differs, then the new product price will be passed during the redemption.\n    - When a product is in two collections, we always change the price to the lowest.\n    - The new price for products with several SKUs will force the price change for SKUs if their price is higher than the new price."
+          }
+        }
+      },
+      "1_obj_voucher_object_discount_unit_one": {
+        "title": "Unit discount type, single item",
+        "type": "object",
+        "description": "Single item type.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "UNIT",
+            "description": "Applies a full value discount to item(s)"
+          },
+          "unit_off": {
+            "type": "number",
+            "description": "Number of units to subtract from the subtotal",
+            "example": 1,
+            "format": "float"
+          },
+          "unit_type": {
+            "type": "string",
+            "description": "The product deemed as free, chosen from product  inventory (e.g. time, items)",
+            "example": "prod_0a9f9aeddb019a42db"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "ADD_NEW_ITEMS",
+              "ADD_MISSING_ITEMS"
+            ],
+            "default": "ADD_MISSING_ITEMS",
+            "description": "Defines how the unit is added to the customer's order"
+          }
+        }
+      },
+      "1_obj_voucher_object_discount_unit_multiple": {
+        "title": "Unite discount type, multiple items",
+        "type": "object",
+        "description": "Multiple item types.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Applies a full value discount to item(s)",
+            "default": "UNIT"
+          },
+          "effect": {
+            "type": "string",
+            "default": "ADD_MANY_ITEMS",
+            "description": "Defines the effect for adding multiple item types."
+          },
+          "units": {
+            "type": "array",
+            "description": "Array of objects defining items to be offered for free. Each item type can have a different discount effect assigned.",
+            "items": {
+              "type": "object",
+              "description": "Object defining a unit discount.",
+              "properties": {
+                "unit_off": {
+                  "type": "integer",
+                  "description": "Number of units to subtract from the subtotal",
+                  "example": 1
+                },
+                "unit_type": {
+                  "type": "string",
+                  "description": "The product deemed as free, chosen from product  inventory (e.g. time, items)",
+                  "example": "prod_0a9f9aeddb019a42db"
+                },
+                "effect": {
+                  "type": "string",
+                  "enum": [
+                    "ADD_NEW_ITEMS",
+                    "ADD_MISSING_ITEMS"
+                  ],
+                  "description": "Defines how the unit is added to the customer's order"
+                }
+              }
+            }
+          }
+        }
+      },
+      "1_obj_voucher_object_discount_shipping": {
+        "title": "Shipping discount type",
+        "description": "Shipping discount type.",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "UNIT",
+            "description": "Applies a full value discount to item(s)"
+          },
+          "unit_off": {
+            "type": "number",
+            "format": "float",
+            "description": "Subtracts 1 shipping item from the subtotal",
+            "default": 1
+          },
+          "unit_type": {
+            "type": "string",
+            "description": "The shipping product deemed as free",
+            "default": "prod_5h1pp1ng"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "ADD_MISSING_ITEMS"
+            ],
+            "description": "Defines how the unit is added to the customer's order",
+            "default": "ADD_MISSING_ITEMS"
           }
         }
       },
