@@ -2520,7 +2520,7 @@
         }
       },
       "1_obj_voucher_object_discount_unit_multiple_PUT": {
-        "title": "Update unite discount type, multiple items",
+        "title": "Update unit discount type, multiple items",
         "type": "object",
         "description": "Define multiple item types.",
         "properties": {
@@ -2669,7 +2669,7 @@
         "properties": {
           "type": {
             "type": "string",
-            "description": "Applies a full value discount to item(s). **Requires** child attribute `type`=`UNIT` when updating this discount.",
+            "description": "Applies a full value discount to item(s). **Requires** child attribute `type`=`UNIT` when importing this discount.",
             "default": "UNIT"
           },
           "unit_off": {
@@ -2695,7 +2695,7 @@
         }
       },
       "1_obj_vouchers_import_discount_unit_multiple": {
-        "title": "Update unite discount type, multiple items",
+        "title": "Import unit discount type, multiple items",
         "type": "object",
         "description": "Define multiple item types.",
         "properties": {
@@ -4891,7 +4891,7 @@
           "VOUCHERS API"
         ],
         "operationId": "post-vouchers-import",
-        "description": "Import standalone vouchers and gift cards into the repository.\n\n<!-- theme: info -->\n\n> #### Important notes\n>\n> - Start and expiration dates need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.\n> - Custom code attributes (not supported by-default) need to be added as code metadata.\n> - You cannot import the same codes to a single Voucherify Project.\n\nAny parameters not provided in the payload will be left blank or null.\n\nYou can import the following fields:  \n\n- `code`\n- `category`\n- `active`\n- `type`\n- `start_date`\n- `expiration_date`\n- `redemption` &rarr; `quantity`\n- `additional_info`\n- `metadata`\n\nFields other than the ones listed above won't be imported. Even if provided, they will be silently skipped.",
+        "description": "Import standalone vouchers and gift cards into the repository.\n\n<!-- theme: info -->\n\n> #### Important notes\n>\n> - Start and expiration dates need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.\n> - Custom code attributes (not supported by-default) need to be added as code metadata.\n> - You cannot import the same codes to a single Voucherify Project.\n\nAny parameters not provided in the payload will be left blank or null.\n\nFor both standalone discount vouchers and gift cards, you can import the following fields:  \n\n- `code`\n- `category`\n- `active`\n- `type`\n- `start_date`\n- `expiration_date`\n- `redemption` &rarr; `quantity`\n- `additional_info`\n- `metadata`\n\nFor gift cards, you can import the following field:\n\n- `gift` &rarr; `amount`\n\nFor discount vouchers, you can import the `discount` field; the object will slightly vary depending on the type of discount.\n\n- `discount` &darr;\n  - Amount type &rarr; `amount_off` + `effect` + **requires** `type`=`AMOUNT` \n  - Percent type &rarr; `percent_off` + `effect` + **requires** `type` = `PERCENT`\n  - Fixed type &rarr; `fixed_amount` + `effect` + **requires** `type`=`FIXED` \n  - Unit type &darr; \n    - One item &rarr; `unit_off` + `unit_type` + `effect` + **requires** `type`=`UNIT`\n    - Multiple item types &rarr; `unit_off` + `unit_type` + `effect` + **requires** higher level `type`=`UNIT` & `effect`=`ADD_MANY_ITEMS`\n  - Shipping type &rarr; `unit_off` + `unit_type` + `effect` + **requires** `type`=`UNIT`\n\nFields other than the ones listed above won't be imported. Even if provided, they will be silently skipped.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -4904,7 +4904,222 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/1_obj_vouchers_import_gift_voucher"
+                "$ref": "#/components/schemas/1_req_vouchers_import"
+              },
+              "examples": {
+                "example-1": {
+                  "value": [
+                    {
+                      "code": "PROMO-CODE30OFF-NOEFFECT",
+                      "category": "new customer acquisition",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": true,
+                      "discount": {
+                        "amount_off": 3000,
+                        "type": "AMOUNT"
+                      },
+                      "start_date": "2020-12-01T23:00:00Z",
+                      "expiration_date": "2023-12-19T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code1"
+                    },
+                    {
+                      "code": "PROMO-CODE30-PERCENT-NOEFFECT",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "percent_off": 30,
+                        "type": "PERCENT"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "GIFT-CARD-100",
+                      "type": "GIFT_VOUCHER",
+                      "active": true,
+                      "category": "new customer acquisition",
+                      "gift": {
+                        "amount": 10000
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 5
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-GIFT-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-PERCENT-EFFECT-ORDER",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "percent_off": 30,
+                        "type": "PERCENT",
+                        "effect": "APPLY_TO_ORDER"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-PERCENT-EFFECT-ITEM",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "percent_off": 30,
+                        "type": "PERCENT",
+                        "effect": "APPLY_TO_ITEMS"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-PERCENTNO-EFFECT-ADD-RANDOM-ATTRIBUTE",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "percent_off": 30,
+                        "type": "PERCENT"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1,
+                        "redeemed_quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-PERCENTNO-EFFECT-ADD-RANDOM-ATTRIBUTE",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "percent_off": 30,
+                        "type": "PERCENT"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1,
+                        "redeemed_quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-AMOUNT-EFFECT-ITEMS-PROPORTIONALLY",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "amount_off": 30,
+                        "type": "AMOUNT",
+                        "effect": "APPLY_TO_ITEMS_PROPORTIONALLY"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-FIXED-EFFECT-ORDER",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "fixed_amount": 30,
+                        "type": "FIXED",
+                        "effect": "APPLY_TO_ORDER"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-UNIT-SINGLE-EFFECT-MISSING",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "unit_off": 1,
+                        "unit_type": "prod_0a9f9aeddb019a42db",
+                        "type": "UNIT",
+                        "effect": "ADD_MISSING_ITEMS"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-UNIT-MULTIPLE",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": true,
+                      "discount": {
+                        "unit_off": 1,
+                        "unit_type": "prod_0a9f9aeddb019a42db",
+                        "type": "UNIT",
+                        "effect": "ADD_MISSING_ITEMS"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    }
+                  ]
+                }
               }
             }
           },
@@ -4942,7 +5157,7 @@
             }
           },
           "required": false,
-          "description": "Not required.MAY NEED TO UPDATE THE HEADERS - CAN'T GENERATE A -F with the Spotlight Parameters."
+          "description": "Not required. MAY NEED TO UPDATE THE HEADERS - CAN'T GENERATE A -F with the Spotlight Parameters."
         }
       }
     },
