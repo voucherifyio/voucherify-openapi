@@ -201,8 +201,8 @@
         },
         "description": "Limit search results to vouchers within the specified category"
       },
-      "campaign_id": {
-        "name": "campaign_id",
+      "campaignid_": {
+        "name": "campaignid",
         "in": "query",
         "required": false,
         "schema": {
@@ -316,6 +316,31 @@
           "type": "string"
         },
         "description": " Return values where the resource's `updated_at` field is before this date. A date value must be presented in ISO 8601 format (`2016-11-16T14:14:31Z` or `2016-11-16`)."
+      },
+      "campaign_id": {
+        "name": "campaign_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "example": "camp_Pfja7X91b1GoyH5wnpzCwlP3"
+        },
+        "description": "Assigned by the Voucherify API, identifies the campaign."
+      },
+      "campaign_type": {
+        "name": "campaign_type",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "enum": [
+            "PROMOTION",
+            "GIFT_VOUCHERS",
+            "REFERRAL_PROGRAM",
+            "DISCOUNT_COUPONS"
+          ]
+        },
+        "description": "This attribute allows filtering by campaign type."
       }
     },
     "schemas": {
@@ -5659,18 +5684,6 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          },
-          "required": false,
-          "description": "Not required."
-        },
         "responses": {
           "200": {
             "description": "Returns a voucher object if a valid identifier was provided. \n\nAdditionally, the response returns validation rules related to the voucher object. They can be inherited from a campaign.",
@@ -6259,18 +6272,10 @@
             "$ref": "#/components/parameters/force"
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              },
-              "examples": {}
-            }
-          },
-          "required": false,
-          "description": "Not required."
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
         }
       },
       "post": {
@@ -7084,7 +7089,13 @@
             "$ref": "#/components/parameters/category"
           },
           {
-            "$ref": "#/components/parameters/campaign_id"
+            "in": "query",
+            "name": "campaign_id",
+            "description": "Limit search results to vouchers within the specified campaign",
+            "schema": {
+              "type": "string",
+              "example": "camp_Pfja7X91b1GoyH5wnpzCwlP3"
+            }
           },
           {
             "$ref": "#/components/parameters/customer"
@@ -7114,18 +7125,6 @@
             "$ref": "#/components/parameters/order"
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          },
-          "required": false,
-          "description": "Not required."
-        },
         "responses": {
           "200": {
             "description": "Returns a dictionary that contains an array of vouchers. Each entry in the array is a separate voucher object. If no more vouchers are available (query parameter `page` incremented over and above the voucher count), the resulting array will be empty. The result can be narrowed down according to specified (or default) filters.",
@@ -7161,18 +7160,6 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          },
-          "required": false,
-          "description": "Not required."
-        },
         "responses": {
           "200": {
             "description": "Returns a voucher object.",
@@ -7231,18 +7218,6 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          },
-          "required": false,
-          "description": "Not required."
-        },
         "responses": {
           "200": {
             "description": "Returns a voucher object.",
@@ -8322,19 +8297,7 @@
           {
             "$ref": "#/components/parameters/X-App-Token"
           }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {}
-              }
-            }
-          },
-          "required": false,
-          "description": "Not required."
-        }
+        ]
       }
     },
     "/loyalties/{campaignId}/earning-rules": {
@@ -8724,6 +8687,494 @@
           "description": "Customize the request body based on the type of earning rules you would like to create. The request body is an array of objects. The required minimum properties to include in the payload for each object are `event` and `loyalty`. Additionally, if you choose to add a `validity_timeframe`, you must include a `start_date`. Furthermore, an earning rule `event` type:  \n\n- `customer.segment.entered` requires a `segment` object\n- a custom event requires a `custom_event` object"
         }
       }
+    },
+    "/campaigns": {
+      "post": {
+        "summary": "Create Campaign",
+        "operationId": "post-campaigns",
+        "responses": {
+          "200": {
+            "description": "Returns a campaign object if the call succeeded. The returned object will have information about the discount type and the discount amount."
+          }
+        },
+        "tags": [
+          "CAMPAIGNS API"
+        ],
+        "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n<!-- theme: info -->\n\n> #### Global uniqueness\n>\n> All campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.  \n<!-- theme: warning -->\n> #### Code generation status\n>\n> This is an asynchronous action; you can't read or modify a newly created campaign until the code generation is completed. See the `creation_status` field in [the campaign object descriptionref:the-campaign-object].",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "List Campaigns",
+        "operationId": "get-campaigns",
+        "responses": {
+          "200": {
+            "description": "A dictionary with a data property that contains an array of campaigns. The maximum number of campaigns returned is determined by the `limit` query parameter. Each entry in the array is a separate campaign object. If no more campaigns are available, the resulting array on a given page will be empty."
+          }
+        },
+        "tags": [
+          "CAMPAIGNS API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/campaign_type"
+          }
+        ],
+        "description": "Returns a list of your campaigns. The campaigns are returned sorted by creation date, with the most recent campaigns appearing first.  \n\nWhen you get a list of campaignss, you can optionally specify query parameters to customize the amount of campaigns returned per call using `limit`, which page of campaigns to return using `page`, sort the campaigns using the `order` query parameter and filter by the `campaign_type`.\n\nThis method will return an error when trying to return a limit of more than XXX campaigns."
+      }
+    },
+    "/campaigns/{campaign_id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaign_id",
+          "description": "You can either pass the `campaign_id`, which was assigned by Voucherify, or the `name` of the campaign as the path parameter value, e.g., `Loyalty%20Campaign`. ",
+          "schema": {
+            "type": "string",
+            "example": "camp_BcHeMm4QaKjqCWMQFecMp1U0"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get Campaign",
+        "tags": [
+          "CAMPAIGNS API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a campaign object if a valid identifier was provided. When requesting the campaign that has been deleted, the resource will not be returned, including a 404 HTTP status code."
+          }
+        },
+        "operationId": "get-campaigns-campaignId",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "description": "Retrieves the campaign with the given `campaign_id` or campaign `name`."
+      },
+      "put": {
+        "summary": "Update Campaign",
+        "operationId": "put-campaigns-campaign_id",
+        "responses": {
+          "200": {
+            "description": "Returns the campaign object if the update succeeded. Returns an error if update parameters are invalid (e.g. specifying an invalid campaign type)."
+          }
+        },
+        "description": "Updates the specified campaign by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged. \n\nYou can modify the following fields:  \n\n- `start_date`\n- `expiration_date`\n- `metadata`\n- `description`\n- `type` \n\nFields other than the ones listed above won't be modified. Even if provided, they will be silently skipped.   \n<!-- theme: warning -->\n> #### Vouchers will be affected\n>\n> This method will update vouchers aggregated in the campaign. It will affect all vouchers that are not published or redeemed yet.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "tags": [
+          "CAMPAIGNS API"
+        ]
+      },
+      "delete": {
+        "summary": "Delete Campaign",
+        "operationId": "delete-campaigns-campaign_id",
+        "responses": {
+          "200": {
+            "description": "Returns an `200` HTTP status code on success and an `async_action_id`. If the campaign does not exist, the API returns an error (`404` - resource not found). To check the status and result of the async action, call Get Async Action get-async-actions-1 endpoint."
+          }
+        },
+        "description": "Permanently deletes a campaign and all related vouchers. It cannot be undone. Also, the method immediately removes any redemptions on the voucher.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "boolean"
+            },
+            "in": "query",
+            "description": "If this flag is set to true, the campaign and related vouchers will be removed permanently. It means that afterwards, the user will be able to create the next campaign with the same name.",
+            "name": "force"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "tags": [
+          "CAMPAIGNS API"
+        ]
+      }
+    },
+    "/campaigns/{campaign_id}/vouchers": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "camp_BcHeMm4QaKjqCWMQFecMp1U0"
+          },
+          "name": "campaign_id",
+          "in": "path",
+          "required": true,
+          "description": "The `campaign_id` or `name` of the campaign to which voucher(s) will be added. You can either pass the `campaign_id`, which was assigned by Voucherify, or the `name` of the campaign as the path parameter value, e.g., `Loyalty%20Campaign`. "
+        }
+      ],
+      "post": {
+        "summary": "Add Vouchers to Campaign",
+        "operationId": "post-campaigns-campaign_id-vouchers",
+        "responses": {
+          "200": {
+            "description": "Returns a voucher object if the call succeeded. The returned object will have information about discount type, and discount amount, and all other which you provided to overwrite the origin one from campaign definition."
+          }
+        },
+        "tags": [
+          "CAMPAIGNS API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "name": "vouchers_count",
+            "description": "Number of vouchers that should be added"
+          }
+        ],
+        "description": "This method gives the possibility to push new vouchers to an existing campaign. New vouchers will inherit properties from the campaign profile. However, it is possible to overwrite some of them in the request body: `metadata`, `additional_info`, `redemption.quantity`, `category`, `code_config`. If you provide an optional `code_config` parameter with a voucher code configuration, then it will be used to generate new voucher codes. Otherwise, the voucher code configuration from the campaign will be used.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/campaigns/{campaign_id}/vouchers/{code}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "camp_BcHeMm4QaKjqCWMQFecMp1U0"
+          },
+          "name": "campaign_id",
+          "in": "path",
+          "required": true,
+          "description": "The `campaign_id` or `name` of the campaign to which voucher will be added. You can either pass the `campaign_id`, which was assigned by Voucherify, or the `name` of the campaign as the path parameter value, e.g., `Loyalty%20Campaign`. "
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "code",
+          "in": "path",
+          "required": true,
+          "description": "A custom **code** that identifies the voucher."
+        }
+      ],
+      "post": {
+        "summary": "Add Voucher with certain code to Campaign",
+        "operationId": "post-campaigns-campaign_id-vouchers-code",
+        "responses": {
+          "200": {
+            "description": "Returns a voucher object if the call succeeded. The returned object will have information about discount type, and discount amount, and all other which you provided to overwrite the origin one from campaign definition."
+          }
+        },
+        "tags": [
+          "CAMPAIGNS API"
+        ],
+        "description": "This method gives a possibility to push new vouchers to existing campaign. Voucher definition will be inherited from this one kept in campaign profile. However you are able to overwrite few properties inherited from campaign: `metadata`, `additional_info`, `redemption.quantity`, `category`.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          },
+          "description": ""
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ]
+      }
+    },
+    "/campaigns/{campaign_id}/import": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "campaign_id",
+          "in": "path",
+          "required": true,
+          "description": "The ID of an existing campaign to which you're importing the codes."
+        }
+      ],
+      "post": {
+        "summary": "Import Vouchers to Campaign",
+        "operationId": "post-campaigns-campaign_id-import",
+        "responses": {
+          "200": {
+            "description": "Returns `202` HTTP status code on success and id of the scheduled asynchronous action. It informs that your request has been accepted and vouchers will be added to the repository asynchronously. To check the result and status, pass the async action id using Get Async Actionrefget-async-actions-1 endpoint.\n\nReturns `400` HTTP error status code when the request includes incorrect data e.g. wrong data type or duplicated codes."
+          }
+        },
+        "tags": [
+          "CAMPAIGNS API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          },
+          "description": "Discount type, expiration date and the remaining attributes will be taken from the Campaignrefthe-campaign-object settings."
+        },
+        "description": "Imports vouchers to an **existing** campaign."
+      }
+    },
+    "/campaigns/{campaign_id}/importCSV": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "campaign_id",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "post": {
+        "summary": "Import Vouchers to Campaign by CSV",
+        "operationId": "post-campaigns-campaign_id-importCSV",
+        "responses": {
+          "200": {
+            "description": "Returns `202` HTTP status code on success and id of scheduled async action . It informs that your request has been accepted and vouchers will be added to the repository asynchronously.  To check the result and status, pass the async action id using Get Async Actionget-async-actions-1 endpoint.\n\n\nReturns `400` HTTP error status code when the CSV file includes incorrect data e.g. wrong data type or duplicated codes."
+          }
+        },
+        "tags": [
+          "CAMPAIGNS API"
+        ],
+        "description": "Imports vouchers to an **existing** campaign.  \n\n\nThe CSV file has to include headers in the first line. \n\nCurl Example\n```\ncurl -X POST \\\n  https://api.voucherify.io/v1/campaigns/TESTING-CAMPAIGN/importCSV \\\n  -F file=@/path/to/vouchers.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\nYou can import values for the following fields: `Code` (required), `Category`, and `Active`. In gift cards import, you can also include the current card balance using the `Gift Amount` header. In loyalty cards import, you can also include the current loyalty card score in points using the `Loyalty Points` header. Other CSV columns will be mapped to metadata properties. \n\nGo to the description of Import Vouchers to Campaignrefimport-vouchers to see the detailed description of supported code attributes that you can include in CSV.\n\n\n\nDiscount type, time limits, and validation rules will be taken from the campaign objectrefthe-campaign-object settings. \n\n<!-- theme: info -->\n\n> #### Active\n>\n> The CSV file is allowed in two versions - either with or without `Active` column. It indicates if voucher is enabled after import event.  ",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ]
+      }
+    },
+    "/campaigns/qualification": {
+      "post": {
+        "summary": "Examine Qualification",
+        "operationId": "post-campaigns-qualification",
+        "responses": {
+          "200": {
+            "description": "This operation returns the list of valid and active campaigns based on the qualification of given context (e.g., customer profile, redemptions metadata, order).\n\n[Read](https://docs.voucherify.io/docs/checking-eligibility-for-coupons) about Qualification API limits before you start."
+          }
+        },
+        "tags": [
+          "CAMPAIGNS API"
+        ],
+        "description": "The method can be used for sending a request to display all campaigns qualified to the given customer and context (e.g., order). The maximum number of returned campaigns is 50. A checking logic will be run only among campaigns and will ignore standalone vouchers. As a recommended subsequent step after selecting qualified campaign is to publish voucher code from that campaign. The API method for publishing will return a unique code which will belong to a given customer.\n\nAs a sample use case, you can imagine a requirement of displaying below cart the coupons (grouped in campaigns) eligible to a customer. The customer should get assigned to the particular voucher from the campaign and then might redeem that code when he places an order.\n\n[Read](https://docs.voucherify.io/docs/checking-eligibility-for-coupons) about Qualification API limits before you start.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "audienceRulesOnly",
+            "description": "This parameter set to true will ask only for verifying vouchers' validation rules only against conditions applied to audiences' attributes (belonging into segment and Customer metadata)"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "maximum": 50
+            },
+            "in": "query",
+            "name": "limit",
+            "description": "The number of campaigns to be qualified."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created_at",
+                "-created_at",
+                "updated_at",
+                "-updated_at",
+                "type",
+                "-type",
+                "code",
+                "-code",
+                "category",
+                "-category",
+                "campaign",
+                "-campaign"
+              ]
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash `-` means sorting in a descending order."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/campaigns/{campaign_id}/disable": {
+      "post": {
+        "summary": "Disable Campaign",
+        "operationId": "post-campaigns-disable",
+        "responses": {
+          "200": {
+            "description": "Returns 200 HTTP status code on success and an empty json `{}`."
+          },
+          "": {
+            "description": "Returns 200 HTTP status code on success. It informs that your request has been accepted and vouchers will be added to the repository asynchronously. To learn about operation status and result, copy the async action id from the API response and use Get Async Actionrefget-async-actions-1 endpoint."
+          }
+        },
+        "tags": [
+          "CAMPAIGNS API"
+        ],
+        "description": "There are various times when you'll want to manage a campaign's accessibility. This can be done by two API methods for managing the campaign state - *enable* and *disable*.  \n___  \nSets campaign state to **inactive**. The vouchers in this campaign can no longer be redeemed.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "camp_BcHeMm4QaKjqCWMQFecMp1U0"
+          },
+          "name": "campaign_id",
+          "in": "path",
+          "required": true,
+          "description": "The `campaign_id` or `name` of the campaign being disabled. You can either pass the `campaign_id`, which was assigned by Voucherify, or the `name` of the campaign as the path parameter value, e.g., `Loyalty%20Campaign`. "
+        }
+      ]
+    },
+    "/campaigns/{campaign_id}/enable": {
+      "post": {
+        "summary": "Enable Campaign",
+        "operationId": "post-campaigns-disable",
+        "responses": {
+          "200": {
+            "description": "Returns 200 HTTP status code on success and an empty json `{}`."
+          }
+        },
+        "tags": [
+          "CAMPAIGNS API"
+        ],
+        "description": "There are various times when you'll want to manage a campaign's accessibility. This can be done by two API methods for managing the campaign state - *enable* and *disable*.  \n___  \nSets campaign state to **active**. The vouchers in this campaign can be redeemed - only if the redemption occurs after the start date and the voucher is not expired.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "camp_BcHeMm4QaKjqCWMQFecMp1U0"
+          },
+          "name": "campaign_id",
+          "in": "path",
+          "required": true,
+          "description": "The `campaign_id` or `name` of the campaign being enabled. You can either pass the `campaign_id`, which was assigned by Voucherify or the `name` of the campaign as the path parameter value, e.g., `Loyalty%20Campaign`. "
+        }
+      ]
     }
   }
 }
