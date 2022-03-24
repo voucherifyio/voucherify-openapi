@@ -10131,6 +10131,813 @@
         "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.  \n\n<!-- theme: warning -->\n> #### Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish voucher code from. It can be either a code from a campaign or a specific voucher identified by code.  \n<!-- theme: warning -->\n> #### Publish multiple vouchers\n> In case you want to publish multiple vouchers within single publication you need to specify campaign name and number of vouchers you want to publish.  \n<!-- theme: info -->\n\n> #### Auto-update campaign\n>\n> In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use **auto-update** campaign."
       }
     },
+    "/vouchers/{code}/validate": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "code",
+          "in": "path",
+          "required": true,
+          "description": "A code that identifies the voucher (e.g., Testing7fjWdr)."
+        }
+      ],
+      "post": {
+        "summary": "Validate Voucher",
+        "operationId": "post-vouchers-code-validate",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "VALIDATIONS API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "description": "To verify a voucher code given by customer, you can use this method. It is designed for server side integration which means that is accessible only through private keys.  \n\n#### Gift Vouchers - validate Gift Card and control amount to redeem\nVoucherify also gives the possibility to create a gift card, which allows using credits to fulfill the order. A user can specify how many credits he wants to use from the gift card. The available balance of credits is counted based on policy rules attached to the Gift Voucher definition.  \n\nThis operation returns information about the validity of the code. Moreover, it returns hashed source identifier which can be used as tracking id in future calls.\n\nIf a validation session is established then the session details will be returned as well. Read more about sessions: Validation Sessionvalidation-session\n\nVoucher validation might fail because of one of these reasons:\n* `voucher not found` - voucher doesn't exist or was deletedref:delete-voucher\n* `voucher expired` - voucher is out of start date - expiration date time frame\n* `voucher is disabled` - learn more [disable voucher](#paths/vouchers/{code}/disable)\n* [disable voucher](#../paths/~1vouchers~1{code}~1disable/post)\n* [d](#/reference/OpenAPI.json/paths/~1vouchers~1{code}~1disable/post)\n* [dd](#/post-vouchers-code-disable)\n* `customer does not match segment rules` - learn more customer trackingdoc:customer-tracking \n* `order does not match validation rules` - learn more about validation rulesdoc:validation-rules"
+      }
+    },
+    "/validate": {
+      "get": {
+        "summary": "Validate Voucher (client-side)",
+        "tags": [
+          "VALIDATIONS API"
+        ],
+        "responses": {
+          "200": {
+            "description": "This operation returns information about validity of the code. Moreover it returns hashed source identifier which can be used as tracking id in future calls.\n\nIf a validation session is established then the session details will be returned as well. Read more about sessions: Validation Sessionref:validation-session .\n\nVoucher validation might fail because of one of these reasons:\n* `voucher not found` - voucher doesn't exist or was deletedref:delete-voucher\n* `voucher expired` - voucher is out of [start date - expiration date] time frame\n* `voucher is disabled` - learn more disable voucherdisable-voucher \n* `customer does not match segment rules` - learn more customer trackingcustomer-tracking\n* `order does not match validation rules` - learn more about validation rulesvalidation-rules"
+          }
+        },
+        "operationId": "get-validate",
+        "description": "To verify a voucher code given by customer, you can use this method. It is designed for client side integration which means that is accessible only through public keys. This method is designed to be run directly either in web browsers or mobile apps.\n\n\n[block:api-header]\n{\n  \"title\": \"Set customer identity (optional)\"\n}\n[/block]\nVoucherify can help you track anonymous customers. Once you integrate Voucherify.js into your web app and call validate method, Voucherify will return a tracking ID and the script will store it in a cookie. Every next validate call will be using the same tracking ID.\n\nWe are tracking users who are validating vouchers with those who consume them by a tracking_id. For that, we are setting up an identity for the user. We will generate a tracking_id on the server side unless you specify it on your own. In both cases, you will receive it in the validation response.\n\nThe returned tracking_id field should be used as customer source_id in subsequent redemption requests. The tracking_id returned from Validation API is encoded. Voucherify will recognize both values for identifying customer - the one before encryption send as a query parameter to `GET validate` request, and the version encrypted and returned as part of the validation request.\n[block:api-header]\n{\n  \"title\": \"Sample workflow\"\n}\n[/block]\nCustomer tracking workflow in a nutshell:\n\n**Client-side:**\n  * A customer visits your website.\n  * A customer validates a voucher code. That triggers a validate request to Voucherify. In request, you pass tracking_id or customer.source_id. As a result, it returns **encoded tracking_id**.\n\n**Backend:**\n  * Once the customer finishes the checkout process, your website passes the tracking_id to your backend during a redemption. It is sent as a property *source_id* in a customer object.\n  * A customer object is created and within the redemption response, you get a customer.id.\n  * You can use the customer.id or customer.source_id to fetch or modify the customer details.\n  \nA customer is created (upserted) automatically with a redemption call. Alternatively, you can create a new profile by creating a customer via a dedicated API method. Take a look at the customer object to understand the [entity's structure](https://docs.voucherify.io/reference#the-customer-object). \n[block:callout]\n{\n  \"type\": \"info\",\n  \"body\": \"Source id of the customer may be either already hashed version of tracking id you received in a response from a validation request or a custom ID you predefined (email address). Nevertheless, we recommend using identifiers delivered by Voucherify API.\",\n  \"title\": \"Customer identifier\"\n}\n[/block]\n\n[block:code]\n{\n  \"codes\": [\n    {\n      \"code\": \"curl -X GET \\\\\\n  -H \\\"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\\\" \\\\\\n  -H \\\"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\\\" \\\\\\n  -H \\\"Content-Type: application/json\\\" \\\\\\n  -H \\\"origin: yourdomain.com\\\" \\\\\\n  'https://api.voucherify.io/client/v1/validate?code=5OFF5&amount=1500&item[0][sku_id]=sku_13SWYzm3tuMXSP&item[0][quantity]=2&item[1][product_id]=prod_DSFGCz3IFxpkiL&item[1][quantity]=2'\",\n      \"language\": \"curl\",\n      \"name\": \"Example Request - Readable form\"\n    }\n  ],\n  \"sidebar\": true\n}\n[/block]\n\n[block:textarea]\n{\n  \"text\": \"[JSFiddle example](https://jsfiddle.net/voucherify/gfu2bgn5/)\",\n  \"sidebar\": true\n}\n[/block]\n\n[block:code]\n{\n  \"codes\": [\n    {\n      \"code\": \"<script type=\\\"text/javascript\\\" src=\\\"https://cdn.rawgit.com/rspective/voucherify.js/v1.4.5/dist/voucherify-1.4.5.js\\\"></script>\\n\\n<script type=\\\"text/javascript\\\">\\n  function init() {\\n    Voucherify.initialize(\\n      \\\"011240bf-d5fc-4ef1-9e82-11eb68c43bf5\\\", //YOUR-CLIENT-APPLICATION-ID-FROM-SETTINGS\\n      \\\"9e2230c5-71fb-460a-91c6-fbee64707a20\\\" //YOUR-CLIENT-TOKEN-FROM-SETTINGS\\n    );\\n  };\\n  init();\\n  \\n  //-- [Optional] If you want us to track your customers' activity, then you should invoke the following function to set identity. You have to do it only once. If the identity parameter is not passed, then we will generate it for you.\\n  Voucherify.setIdentity(\\\"your-customer-uniq-id\\\");\\n  Voucherify.validate(\\\"Testing7fjWdr\\\", function callback (response) {\\n    console.log(response);\\n  });\\n</script>\",\n      \"language\": \"html\",\n      \"name\": \"Example Code - Voucherify.js\"\n    }\n  ]\n}\n[/block]\n\n[block:api-header]\n{\n  \"title\": \"Examples\"\n}\n[/block]\n\n[block:parameters]\n{\n  \"data\": {\n    \"h-1\": \"Example Request\",\n    \"0-0\": \"Shortcut - `customer` query param instead of `customer[source_id]`\",\n    \"0-1\": \"`https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=customer_id`\",\n    \"1-0\": \"Pass `customer`'s and `redemption`'s context `metadata` in query parameters\",\n    \"1-1\": \"`https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=sure_he_is_new&metadata[shop]=1&customer[metadata][propsy]=2&metadata[test]=true`\",\n    \"2-0\": \"Use `tracking_id` instead of `source_id`\",\n    \"2-1\": \"`https://api.voucherify.io/client/v1/validate?code=IKU-mvS-JOG&amount=10100&tracking_id=sure_he_is_new_5&metadata[shop]=1&metadata[test]=true`\"\n  },\n  \"cols\": 2,\n  \"rows\": 3\n}\n[/block]\n\n[block:api-header]\n{\n  \"type\": \"basic\",\n  \"title\": \"Returns\"\n}\n[/block]",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-Client-Token"
+          },
+          {
+            "$ref": "#/components/parameters/X-Client-Application-Id"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "code",
+            "description": "A code that identifies the voucher (e.g., `Testing7fjWdr`)."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "tracking_id",
+            "description": "A tracking identifier of a user that validated a voucher. Identifier generated during voucher validation based on your internal id during the first request (e.g., email, database ID). If you do request a first time, you should pass your internal id to track customer. **Although not all information is required, the extra info helps prevent fraud.**"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "amount",
+            "description": "A positive integer representing the total amount for the order."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "order.items"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "customer.source_id"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "customer.metadata"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "session_type",
+            "description": "Required for session to be setup. Possible values are: LOCK"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "session_key",
+            "description": "The session unique identifier. Sending existing identifier will result in overwriting the existing session. If none provided then new id will be generated"
+          },
+          {
+            "schema": {
+              "type": "integer"
+            },
+            "in": "query",
+            "name": "session_ttl",
+            "description": "The value of session's lifetime in time units"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "session_ttl_unit",
+            "description": " The time unit for session's lifetime. Possible values are: MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS"
+          }
+        ]
+      }
+    },
+    "/promotions/validation": {
+      "post": {
+        "summary": "Validate Promotions",
+        "operationId": "post-promotions-validation",
+        "responses": {
+          "200": {
+            "description": "This operation returns a list of valid promotions for a given context (customer and order). You can choose which promotion to apply for example by the highest discount amount."
+          }
+        },
+        "description": "Use this method to get valid promotions for a given customer and order (private keys)\n\n[/block]\nIf a validation session is established then the session details will be returned as well. Read more about sessions: [Validation Session](ref:validation-session)\n[block:api-header]\n{\n  \"title\": \"Advanced validation filters\"\n}\n[/block]\nYou can narrow down validation to specific promotion ID or tier metadata. Here are the examples of filtering queries you can use:\n[block:parameters]\n{\n  \"data\": {\n    \"h-0\": \"Filter\",\n    \"h-1\": \"Example\",\n    \"0-0\": \"promotion_id\",\n    \"1-0\": \"tier metadata\",\n    \"0-1\": \"[filters][promotion_id][conditions][$is]={{Campaign_id}}\",\n    \"1-1\": \"[filters][metadata.{{Promotion tier metadata key}}][conditions][$is]={{Promotion tier metadata value}}\"\n  },\n  \"cols\": 2,\n  \"rows\": 2\n}\n[/block]",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "audienceRulesOnly",
+            "description": "If you add a query param AudienceRulesOnly=true, the request will be validated against customer-related rules only, the rest of attached limits and rules will be ignored."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "VALIDATIONS API"
+        ]
+      }
+    },
+    "/promotions/tiers/{tier_id}/validation": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "tier_id",
+          "in": "path",
+          "required": true,
+          "description": "Id of the promotion tier"
+        }
+      ],
+      "post": {
+        "summary": "Validate Promotion Tier",
+        "operationId": "post-promotions-tiers-tier_id-validation",
+        "responses": {
+          "200": {
+            "description": "Returns validation result in `valid` key of the promotion tier object. Returns `true` if the promotion tier rules and validation rules are satisfied given the request body parameters. Returns `false` if the data provided in the payload does not meet validation rules or promotion tier requirements."
+          }
+        },
+        "description": "To verify whether the promotion tier discount can be applied to an order. This method is designed for server side integration which means that it is accessible only through private keys.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "tags": [
+          "VALIDATIONS API"
+        ]
+      }
+    },
+    "/vouchers/{code}/redemption": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/code"
+        }
+      ],
+      "get": {
+        "summary": "Get Voucher's Redemption",
+        "tags": [
+          "REDEMPTIONS API"
+        ],
+        "responses": {
+          "200": {
+            "description": "A dictionary with a `redemption_entries` property that contains an array of voucher's redemptions."
+          }
+        },
+        "operationId": "get-vouchers-code-redemption",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Redeem Voucer",
+        "operationId": "post-vouchers-code-redemption",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "REDEMPTIONS API"
+        ],
+        "description": "To redeem a voucher, you create a redemption object. It increments redemption counter and updates history of the voucher. \n\n",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "tracking_id",
+            "description": "A tracking identifier of a user that redeemed a voucher. Identifier generated during voucher validation based on your internal id (e.g., email, database ID). If you also pass a customer ID, the tracking ID must be the ID of a source of the customer object. Otherwise, if you do not pass a customer ID, the tracking you provide must either be a token, like the ones returned by **Voucherify.js (voucher validation)**, or a string identifying customer, with the options described below. **Although not all information is required, the extra info helps prevent fraud.**"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/redemptions": {
+      "get": {
+        "summary": "List Redemptions",
+        "tags": [
+          "REDEMPTIONS API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of redemptions of all vouchers. The result can be narrowed according to specified (or default) filters, for example, you can sort redemptions by date:\n`https://api.voucherify.io/v1/redemptions?limit=3&[created_at][before]=2017-09-08T13:52:18.227Z`\n\nA dictionary with a `redemptions` property that contains an array of up to limit redemptions, starting after `created_at.after`. Each entry in the array is a separate redemption object. If no more redemptions are available, the resulting array will be empty. If you provide a non-existent customer ID, this call returns an empty object."
+          }
+        },
+        "operationId": "get-redemptions",
+        "description": "Returns a list of redemptions you’ve previously created. The redemptions are returned in sorted order, with the most recent redemptions appearing first.  \n\n#### Failed Redemptions\n\nA redemption may fail for various reasons. You can figure out an exact reason from `failure_code`:\n- `resource_not_found` - voucher with given code does not exist\n- `voucher_not_active` - voucher is not active yet (before start date)\n- `voucher_expired` - voucher has already expired (after expiration date)\n- `voucher_disabled` -  voucher has been disabled (`active: false`)\n- `quantity_exceeded` - voucher's redemptions limit has been exceeded\n- `gift_amount_exceeded` - gift amount has been exceeded\n- `customer_rules_violated` - customer did not match to the segment\n- `order_rules_violated` - order did not match validation rules\n- `invalid_order` - order was specified incorrectly\n- `invalid_amount` - order amount was specified incorrectly\n- `missing_amount` - order amount was not specified\n- `missing_order_items` - order items was not specified\n- `missing_customer` - customer was not specified",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "result",
+            "description": "A filter on the list based on the redemption result. Available options are: `SUCCESS`, `FAILURE`. You can provide multiple values by repeating the param."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "campaign",
+            "description": "A filter by the campaign redemptions originate from"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "customer",
+            "description": "Return redemptions performed by the customer with given `id`."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "2016-11-16T14:14:31Z or 2016-11-16"
+            },
+            "in": "query",
+            "name": "[created_at]",
+            "description": "A filter based on the object `created_at` field. Narrows down the results and lists redemptions done before or after a particular date time. You can use the following options: `[created_at][after]`, `[created_at][before]`. A date value must be presented in ISO 8601 format (`2016-11-16T14:14:31Z` or `2016-11-16`). An example: `[created_at][before]=2017-09-08T13:52:18.227Z`"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Redeem Stackable Discounts (Beta)",
+        "operationId": "post-redemptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "STACKABLE DISCOUNTS API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "description": "Use this method to redeem up to 5 redeemables in the single API request."
+      }
+    },
+    "/redemptions/{redemption_id}/rollback": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "redemption_id",
+          "in": "path",
+          "required": true,
+          "description": "Identifier of original redemption which is supposed to be rolled back."
+        }
+      ],
+      "post": {
+        "summary": "Rollback Redemption",
+        "operationId": "post-redemptions-redemption_id-rollback",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "REDEMPTIONS API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "reason",
+            "description": "Reason for the rollback."
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "description": "Your business logic may include a case when you need to undo a redemption. You can revert a redemption by calling this API endpoint. The operation creates a rollback entry in voucher's redemption history (`redemption.redemption_entries`) and gives 1 redemption back to the pool (decreases `redeemed_quantity` by 1). In case of gift vouchers, method returns funds back according to source redemption."
+      }
+    },
+    "/redemptions/{redemption_id}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "redemption_id",
+          "in": "path",
+          "required": true,
+          "description": "ID of previously created redemption."
+        }
+      ],
+      "get": {
+        "summary": "Get Redemption",
+        "tags": [
+          "REDEMPTIONS API"
+        ],
+        "responses": {
+          "200": {
+            "description": "It returns a redemption you’ve previously created."
+          }
+        },
+        "operationId": "get-redemptions-redemption_id",
+        "description": "Return a redemption you’ve previously created.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ]
+      }
+    },
+    "/promotions/tiers/{promotion_tier_id}/redemption": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "promotion_tier_id",
+          "in": "path",
+          "required": true,
+          "description": "Id of the promotion to be redeemed."
+        }
+      ],
+      "post": {
+        "summary": "Redeem Promotion",
+        "operationId": "post-promotions-tiers-promotion_tier_id-redemption",
+        "responses": {
+          "200": {
+            "description": "Returns a redemption object if the redeem operation succeeded. Returns an error if something goes wrong."
+          }
+        },
+        "tags": [
+          "REDEMPTIONS API"
+        ],
+        "description": "To redeem a promotion, you create a redemption object passing a context. In the previous step, you should learn about active promotions through API method for validation. That validation method will return a list of active​ promotion tiers identified by ID.  \n> #### Redemption rollback\n>\n> Do you need to undo a redemption? You can do it with redemption rollbackref:rollback-redemption.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/validations": {
+      "post": {
+        "summary": "Validate Stackable Discounts (Beta)",
+        "operationId": "post-validations",
+        "responses": {
+          "200": {
+            "description": "All codes and tiers provided in redeemables are validated during the request and the result of their validation is returned in the API response."
+          }
+        },
+        "tags": [
+          "STACKABLE DISCOUNTS API"
+        ],
+        "description": "To verify redeemables given in the request, you can use this method. It is designed for server side integration which means that is accessible only through private keys.  \n\n\n[block:api-header]\n{\n  \"title\": \"Response schema\"\n}\n[/block]\nAll codes and tiers provided in redeemables are validated during the request and the result of their validation is returned in the API response. \n[block:parameters]\n{\n  \"data\": {\n    \"h-0\": \"Response\",\n    \"h-1\": \"Description\",\n    \"0-0\": \"valid `boolean`\",\n    \"0-1\": \"If all redeemables can be applied in the given context, the API returns `true` if at least one redeemable can't be applied, the API returns `false`.\",\n    \"1-0\": \"redeemables `array of objects`\",\n    \"1-1\": \"redeemables array lists results of validation of each redeemable. If a redeemable can be applied, the API returns \\\"status\\\": \\\"APPLICABLE\\\"\",\n    \"2-0\": \"order `object`\",\n    \"2-1\": \"order object presents details of the order provided in the request after all discounts are applied. [Read more](https://docs.voucherify.io/reference/redeem-stacked-discounts#how-api-returns-calculated-discounts-and-order-amounts-in-the-response) about returned order object.\",\n    \"h-2\": \"\",\n    \"0-2\": \"\"\n  },\n  \"cols\": 2,\n  \"rows\": 3\n}\n[/block]\n\n[block:api-header]\n{\n  \"title\": \"Expanded Response\"\n}\n[/block]\nResponses will vary depending on the strings passed in the options.expand string array.\n[block:parameters]\n{\n  \"data\": {\n    \"h-0\": \"Expand Option\",\n    \"h-1\": \"Response Body\",\n    \"0-0\": \"[\\\"order\\\"]\",\n    \"1-0\": \"[\\\"redeemable\\\"]\",\n    \"2-0\": \"[\\\"order\\\", \\\"redeemable\\\"]\",\n    \"0-1\": \"- Same response as fallback response (without an options object). \\n- Order data with calculated discounts are listed in each child redeemable object. \\n- Metadata *not* included for each discount type.\",\n    \"1-1\": \"Expands redeemable objects by including `metadata` for each discount type.\",\n    \"2-1\": \"- Order data with calculated discounts are listed in each child redeemable object.\\n- Includes `metadata` for each discount type.\"\n  },\n  \"cols\": 2,\n  \"rows\": 3\n}\n[/block]\n\n[block:api-header]\n{\n  \"title\": \"Parameters\"\n}\n[/block]\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ]
+      }
+    },
+    "/redemptions/{parent_redemption_id}/rollbacks": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "parent_redemption_id",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier of a parent redemption, e.g. r_JQfm73zWSJFQxs3bGxweYjgm"
+        }
+      ],
+      "post": {
+        "summary": "Rollback Stackable Redemptions (Beta)",
+        "operationId": "post-redemptions-parent_redemption_id-rollbacks",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "STACKABLE DISCOUNTS API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/loyalties": {
+      "get": {
+        "summary": "List Loyalty Campaigns",
+        "tags": [
+          "LOYALTIES API"
+        ],
+        "responses": {
+          "200": {
+            "description": "`campaigns` which is an array of loyalty campaigns objects of the size of `limit`"
+          }
+        },
+        "operationId": "get-loyalties",
+        "description": "Returns a list of your loyalty campaigns. The campaigns are sorted by creation date, with the most recent campaigns appearing first.  ",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Create Loyalty Cards",
+        "operationId": "post-loyalties",
+        "responses": {
+          "200": {
+            "description": "Returns a campaign object with its settings but without the loyalty card codes."
+          }
+        },
+        "tags": [
+          "LOYALTIES API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "description": "Creates a batch of loyalty cards vouchersref:the-voucher-object aggregated in a single loyalty campaign. It also allows to define a custom codes pattern.  \n\n<!-- theme: info -->\n\n> #### Global uniqueness\n>In the structure representing your data, you can define a category that the voucher belongs to. You can later use the category of a voucher to group and search by specific criteria.  \n\n<!-- theme: warning -->\n> #### Asyncronous action!\n>\n> This is an asynchronous action, you can't read or modify a newly created campaign until the code generation is completed. See `creation_status` field in the campaign object descriptionref:the-campaign-object.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/loyalties/{loyalty_campaign_id_or_name}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "loyalty_campaign_id_or_name",
+          "in": "path",
+          "required": true,
+          "description": "Campaign identifier or name."
+        }
+      ],
+      "get": {
+        "summary": "Get Loyalty Campaign",
+        "tags": [
+          "LOYALTIES API"
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a campaign object for a given campaign ID. When requesting the campaign that has been deleted, the resource will not be returned with 404 status code."
+          }
+        },
+        "operationId": "get-loyalties-loyalty_campaign_id_or_name",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "description": "Get campaign by ID (e.g., camp_2boIBNQe7O9FzrwFJv0j4rUs)"
+      },
+      "post": {
+        "summary": "Update Loyalty Campaign",
+        "operationId": "post-loyalties-loyalty_campaign_id_or_name",
+        "responses": {
+          "200": {
+            "description": "Returns the campaign object if the update succeeded. Returns an error if update parameters are invalid (e.g. specifying an invalid campaign type)."
+          }
+        },
+        "tags": [
+          "LOYALTIES API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "description": "Updates a loyalty program for the following fields: `start_date`, `expiration_date`, `metadata`, `description`, `type`. Other fields won't be modified (even if provided they are silently skipped). Any parameters not provided will be left unchanged. \n\nThis method will update the loyalty cards vouchersref:the-voucher-object which have not been published or redeemed yet.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Loyalty Campaign",
+        "operationId": "delete-loyalties-loyalty_campaign_id_or_name",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "LOYALTIES API"
+        ],
+        "description": "Permanently deletes a campaign and all related loyalty cards. It cannot be undone. Also immediately removes any redemptions on loyalty cards.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "schema": {
+              "type": "boolean"
+            },
+            "in": "query",
+            "name": "force",
+            "description": "If this flag is set to true, campaign and related vouchers will be removed permanently. It means that afterwards you will be able to create next campaign with the same name."
+          }
+        ]
+      }
+    },
+    "/loyalties/{campaign_id}/rewards": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "campaign_id",
+          "in": "path",
+          "required": true,
+          "description": "A unique campaign identifier"
+        }
+      ],
+      "get": {
+        "summary": "List Reward Assignments",
+        "tags": [
+          "LOYALTIES API"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "operationId": "get-loyalties-campaign_id-rewards",
+        "description": "Returns active rewardsref:the-reward-object from a given loyalty campaign.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          }
+        ]
+      },
+      "post": {
+        "summary": "Create Reward Assignment",
+        "operationId": "post-loyalties-campaign_id-rewards",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "LOYALTIES API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "description": "Add a rewardref:the-reward-object to a loyalty campaign."
+      }
+    },
     "/segments": {
       "post": {
         "summary": "Create Segment",
