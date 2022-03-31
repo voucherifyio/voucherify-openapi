@@ -6,7 +6,7 @@ tags: [Introduction]
 
 When we make **backwards-incompatible** changes to the API, we release new, dated versions. The current version is `v2018-08-01`. Read our API changelog docapi-version-upgrades to learn more about Voucherify API versions. The changelog lists every available version. 
 
-All requests will use the API version listed in your account Project settings unless you override the API version. To set the API version for a specific request, send a `X-Voucherify-API-Version` header.  
+All requests will use the API version listed in your account **Project settings** unless you override the API version. To set the API version for a specific request, send a `X-Voucherify-API-Version` header.  
 
 <!--
 title: "Example Request"

@@ -52,7 +52,9 @@ The table below shows a list of errors that may be returned along with a brief d
 
 <!-- theme: warning -->
 > #### Customize Error Messages
-> A subset of the messages returned for the errors listed below can be customized in the UI. \nGo to **Project Settings** > Error Messages to customize an error message. Then click on *Create new translations group* to create specific error messages. [Read more here](https://support.voucherify.io/article/264-how-can-i-create-custom-errors).
+> A subset of the messages returned for the errors listed below can be customized in the UI.
+>  
+> Go to **Project Settings** > Error Messages to customize an error message. Then click on *Create new translations group* to create specific error messages. [Read more here](https://support.voucherify.io/article/264-how-can-i-create-custom-errors).
 
 | **Error** | **Reason** |
 |:---|:---|
