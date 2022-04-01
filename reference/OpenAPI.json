@@ -1847,16 +1847,21 @@
       },
       "1_res_async_actions": {
         "type": "object",
-        "title": "async_actions",
-        "description": "Response to bulk update for voucher metadata.",
+        "title": "Asynchronous Actions",
+        "description": "Response to requests that are processed asynchronously.",
         "additionalProperties": false,
         "properties": {
           "async_action_id": {
             "type": "string",
             "example": "aa_0a875d56c805df6601",
-            "description": "The id of the scheduled async action. It informs you that your request has been accepted and metadata will be added to the repository asynchronously. To check the import status and result, copy async action id from the response and pass it using this endpoint[hyperlink-endpoint]."
+            "description": "The id of the scheduled asynchronous action."
           }
-        }
+        },
+        "examples": [
+          {
+            "async_action_id": "aa_0a875d56c805df6601"
+          }
+        ]
       },
       "error": {
         "title": "error",
@@ -1925,7 +1930,7 @@
             "resource_type": "voucher"
           }
         },
-        "title": "not_found",
+        "title": "Not Found",
         "properties": {
           "code": {
             "type": "integer",
@@ -1944,20 +1949,20 @@
           },
           "details": {
             "type": "string",
-            "example": "Cannot find voucher with id IrKORhS",
             "description": "A human-readable message providing more details about the error."
           },
           "request_id": {
             "type": "string",
-            "example": "v-0a96cd820301c0483a"
+            "example": "v-0a96cd820301c0483a",
+            "description": "Request id."
           },
           "resource_id": {
             "type": "string",
-            "example": "IrKORhS"
+            "description": "Name or id of the resource, which was not found."
           },
           "resource_type": {
             "type": "string",
-            "example": "voucher"
+            "description": "Specifies the type of resource that was not found."
           }
         }
       },
@@ -2024,7 +2029,7 @@
         }
       },
       "e_409_duplicate_found": {
-        "title": "not_enough_codes",
+        "title": "Duplicated Resource",
         "type": "object",
         "description": "Error: Conflict &rarr; Duplicated resource found",
         "properties": {
@@ -2059,6 +2064,36 @@
           "resource_type": {
             "type": "string",
             "example": "voucher"
+          }
+        }
+      },
+      "e_400_duplicate_key": {
+        "title": "Duplicated Key",
+        "type": "object",
+        "description": "Error: Conflict &rarr; Duplicated key found",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "default": 400,
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "default": "duplicate_key",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "default": "Duplicate codes",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0aa36e570e44cb3bdd"
           }
         }
       },
@@ -3240,18 +3275,6 @@
               "type": "object",
               "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
             }
-          }
-        }
-      },
-      "1_res_vouchers_bulk_async": {
-        "title": "ResponseBodyVouchersMetadataAsync",
-        "type": "object",
-        "description": "Response body schema for /vouchers/bulk/async.",
-        "properties": {
-          "async_action_id": {
-            "type": "string",
-            "description": "The id of the scheduled async action. It informs that your request has been accepted and voucher(s) will be updated in the repository asynchronously. To check the update status and result, copy async action id from the response and pass it using this endpoint[hyperlink-endpoint].",
-            "example": "aa_0ab2df092385be5ca5"
           }
         }
       },
@@ -5575,6 +5598,11 @@
             "lang": "en",
             "authorized_internally": true
           }
+        }
+      },
+      "res_async_actions": {
+        "value": {
+          "async_action_id": "aa_0ab2df092385be5ca5"
         }
       }
     }
@@ -8169,17 +8197,15 @@
         },
         "responses": {
           "202": {
-            "description": "Successful response.",
+            "description": "Returns the id of the scheduled asynchronous action, informing you that your request has been accepted and the voucher(s) will be updated in the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and pass it using Get Async Action[hyperlink-to-endpoint] endpoint.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/1_res_vouchers_bulk_async"
+                  "$ref": "#/components/schemas/1_res_async_actions"
                 },
                 "examples": {
                   "example-1-Update-Metadata": {
-                    "value": {
-                      "async_action_id": "aa_0ab2df092385be5ca5"
-                    }
+                    "$ref": "#/components/examples/res_async_actions"
                   }
                 }
               }
@@ -8206,7 +8232,7 @@
         ],
         "responses": {
           "202": {
-            "description": "Successful response.",
+            "description": "Returns the id of the scheduled asynchronous action, informing you that your request has been accepted and the voucher(s) will be updated in the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and pass it using Get Async Action[hyperlink-to-endpoint] endpoint.",
             "content": {
               "application/json": {
                 "schema": {
@@ -8214,9 +8240,7 @@
                 },
                 "examples": {
                   "example-1-Update-Same-Metadata-Parameters-Bulk": {
-                    "value": {
-                      "async_action_id": "aa_0a875d56c805df6601"
-                    }
+                    "$ref": "#/components/examples/res_async_actions"
                   }
                 }
               }
@@ -8815,8 +8839,43 @@
         "summary": "Delete Campaign",
         "operationId": "delete-campaigns-campaign_id",
         "responses": {
-          "200": {
-            "description": "Returns an `200` HTTP status code on success and an `async_action_id`. If the campaign does not exist, the API returns an error (`404` - resource not found). To check the status and result of the async action, call Get Async Action get-async-actions-1 endpoint."
+          "202": {
+            "description": "Returns the id of the scheduled asynchronous action, informing you that your request has been accepted and the campaign will be deleted from the repository asynchronously. To check the deletion status and result, copy the `async_action_id` from the response and pass it using Get Async Action[hyperlink-to-endpoint] endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/1_res_async_actions"
+                },
+                "examples": {
+                  "example-1-Delete-Campaign": {
+                    "$ref": "#/components/examples/res_async_actions"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "If the campaign does not exist, the API returns a Not Found error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "example-1-Campaign-Not-Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id Spring Campaign",
+                      "request_id": "v-0adac46be8cdbfd921",
+                      "resource_id": "Spring Campaign",
+                      "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "description": "Permanently deletes a campaign and all related vouchers. This action cannot be undone. Also, this method immediately removes any redemptions on the voucher.",
@@ -8953,20 +9012,54 @@
       "parameters": [
         {
           "schema": {
-            "type": "string"
+            "type": "string",
+            "example": "camp_BcHeMm4QaKjqCWMQFecMp1U0"
           },
           "name": "campaign_id",
           "in": "path",
           "required": true,
-          "description": "The ID of an existing campaign to which you're importing the codes."
+          "description": "The ID of an existing campaign to which you're importing the codes. You can either pass the `campaign_id`, which was assigned by Voucherify, or the `name` of the campaign as the path parameter value, e.g., `Loyalty%20Campaign`. "
         }
       ],
       "post": {
         "summary": "Import Vouchers to Campaign",
         "operationId": "post-campaigns-campaign_id-import",
         "responses": {
-          "200": {
-            "description": "Returns `202` HTTP status code on success and id of the scheduled asynchronous action. It informs that your request has been accepted and vouchers will be added to the repository asynchronously. To check the result and status, pass the async action id using Get Async Actionrefget-async-actions-1 endpoint.\n\nReturns `400` HTTP error status code when the request includes incorrect data e.g. wrong data type or duplicated codes."
+          "202": {
+            "description": "Returns the id of the scheduled asynchronous action, informing you that your request has been accepted and the vouchers will be imported to the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and pass it using Get Async Action[hyperlink-to-endpoint] endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/1_res_async_actions"
+                },
+                "examples": {
+                  "example-1": {
+                    "$ref": "#/components/examples/res_async_actions"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the request includes incorrect data, e.g. a wrong data type or duplicated codes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_duplicate_key"
+                },
+                "examples": {
+                  "example-1-Duplicate-Codes": {
+                    "value": {
+                      "code": 400,
+                      "key": "duplicate_key",
+                      "message": "Duplicate codes",
+                      "details": "2 voucher codes(s) already exist.",
+                      "request_id": "v-0adaccaba61502e4b3"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -9010,7 +9103,22 @@
         "operationId": "post-campaigns-campaign_id-importCSV",
         "responses": {
           "200": {
-            "description": "Returns `202` HTTP status code on success and id of scheduled async action . It informs that your request has been accepted and vouchers will be added to the repository asynchronously.  To check the result and status, pass the async action id using Get Async Actionget-async-actions-1 endpoint.\n\n\nReturns `400` HTTP error status code when the CSV file includes incorrect data e.g. wrong data type or duplicated codes."
+            "description": "Returns the id of the scheduled asynchronous action, informing you that your request has been accepted and the vouchers will be imported to the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and pass it using Get Async Action[hyperlink-to-endpoint] endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/1_res_async_actions"
+                },
+                "examples": {
+                  "example-1": {
+                    "$ref": "#/components/examples/res_async_actions"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the CSV file includes incorrect data, e.g. a wrong data type or duplicated codes."
           }
         },
         "tags": [
