@@ -1888,7 +1888,7 @@
             "request_id": "v-0a96c19b1a41c03999"
           }
         },
-        "title": "missing_param",
+        "title": "Missing Parameters",
         "properties": {
           "code": {
             "type": "integer",
@@ -1954,11 +1954,11 @@
           "request_id": {
             "type": "string",
             "example": "v-0a96cd820301c0483a",
-            "description": "Request id."
+            "description": "Request ID."
           },
           "resource_id": {
             "type": "string",
-            "description": "Name or id of the resource, which was not found."
+            "description": "Name or ID of the resource, which was not found."
           },
           "resource_type": {
             "type": "string",
@@ -1966,8 +1966,58 @@
           }
         }
       },
+      "e_404_resource_in_use": {
+        "description": "Error: Resource In Use",
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "code": 404,
+            "key": "not_found",
+            "message": "Resource not found",
+            "details": "Cannot find voucher with id IrKORhS",
+            "request_id": "v-0a96cd820301c0483a",
+            "resource_id": "IrKORhS",
+            "resource_type": "voucher"
+          }
+        },
+        "title": "Resource In Use",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "default": 400,
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "default": "resource_in_use",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "default": "Resource in use",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0a96cd820301c0483a",
+            "description": "Request ID."
+          },
+          "related_object_ids": {
+            "type": "string",
+            "description": "Name or ID of the resources that are related."
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "Specifies the type of resource that is related."
+          }
+        }
+      },
       "e_400_invalid_payload": {
-        "title": "invalid_payload",
+        "title": "Invalid Payload",
         "type": "object",
         "description": "Error: Bad Request &rarr; Invalid Payload",
         "properties": {
@@ -1998,7 +2048,7 @@
         }
       },
       "e_400_not_enough_codes": {
-        "title": "not_enough_codes",
+        "title": "Not Enough Codes",
         "type": "object",
         "description": "Error: Bad Request &rarr; Not enough codes",
         "properties": {
@@ -11430,11 +11480,13 @@
       "parameters": [
         {
           "schema": {
-            "type": "string"
+            "type": "string",
+            "example": "camp_0dJG7cCAjquzcxWmZ634bA0C"
           },
           "name": "campaign_id",
           "in": "path",
-          "required": true
+          "required": true,
+          "description": "The `campaign_id` or `name` of the loyalty campaign. You can either pass the `campaign_id`, which was assigned by Voucherify, or the `name` of the campaign as the path parameter value, e.g., `Loyalty%20Campaign`. "
         },
         {
           "schema": {
@@ -11442,7 +11494,8 @@
           },
           "name": "earning_rule_id",
           "in": "path",
-          "required": true
+          "required": true,
+          "description": "A unique earning rule ID."
         }
       ],
       "get": {
@@ -11500,8 +11553,42 @@
         "summary": "Delete Earning Rule",
         "operationId": "delete-loyalties-campaign_id-earning-rules-earning_rule_id",
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          },
+          "404": {
+            "description": "Returns an error indicating that the loyalty campaign or earning rule with given ID was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Earning Rule Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find earning_rule with id ern_10S9ijStRZsf65xd12aydn4f",
+                      "request_id": "v-0ae2bdc5f11027e81a",
+                      "resource_id": "ern_10S9ijStRZsf65xd12aydn4f",
+                      "resource_type": "earning_rule"
+                    }
+                  },
+                  "Loyalty Campaign Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id Summer Loyalty Campaign",
+                      "request_id": "v-0ae2be04d146b71e50",
+                      "resource_id": "Summer Loyalty Campaign",
+                      "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -11514,7 +11601,8 @@
           {
             "$ref": "#/components/parameters/X-App-Token"
           }
-        ]
+        ],
+        "description": "This method deletes an earning rule for a specific loyalty campaign."
       }
     },
     "/loyalties/{campaign_id}/earning-rules": {
@@ -12253,20 +12341,44 @@
       "parameters": [
         {
           "schema": {
-            "type": "string"
+            "type": "string",
+            "example": "cust_J1CDUdbqn5Exva8ASWk1Fq0j"
           },
           "name": "customer_id",
           "in": "path",
           "required": true,
-          "description": "A Voucherify customer identifier or source_id"
+          "description": "A Voucherify customer ID or source ID."
         }
       ],
       "delete": {
         "summary": "Delete Customer",
         "operationId": "delete-customers-customer_id",
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          },
+          "404": {
+            "description": "Returns an error indicating that the customer with given ID was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Customer Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id cust_7pm0hh0yemiydeFsdYXZlr1",
+                      "request_id": "v-0ae398fd9ac683dc84",
+                      "resource_id": "cust_7pm0hh0yemiydeFsdYXZlr1",
+                      "resource_type": "customer"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -12279,7 +12391,8 @@
           {
             "$ref": "#/components/parameters/X-App-Token"
           }
-        ]
+        ],
+        "description": "This method deletes a customer."
       },
       "put": {
         "summary": "Update Customer",
@@ -12860,7 +12973,7 @@
           "name": "product_id",
           "in": "path",
           "required": true,
-          "description": "A Voucherify product identifier or source_id"
+          "description": "A Voucherify product ID or source ID."
         }
       ],
       "get": {
@@ -12918,8 +13031,31 @@
         "summary": "Delete Product",
         "operationId": "delete-products-product_id",
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          },
+          "404": {
+            "description": "Returns an error indicating that the product with given ID was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Product Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find product with id prod_0a4934c50ddc5dbae",
+                      "request_id": "v-0ae39cd7de8683dfd8",
+                      "resource_id": "prod_0a4934c50ddc5dbae",
+                      "resource_type": "product"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "parameters": [
@@ -12940,7 +13076,8 @@
         ],
         "tags": [
           "PRODUCTS API"
-        ]
+        ],
+        "description": "This method deletes a product."
       }
     },
     "/products/metadata/async": {
@@ -13115,7 +13252,7 @@
           "name": "product_id",
           "in": "path",
           "required": true,
-          "description": "A [Voucherify product]  (the-product-object) unique identifier or product source_id"
+          "description": "A [Voucherify product]  (the-product-object) unique ID or product source ID."
         },
         {
           "schema": {
@@ -13124,7 +13261,7 @@
           "name": "sku_id",
           "in": "path",
           "required": true,
-          "description": "A Voucherify SKU identifier or SKU source_id"
+          "description": "A Voucherify SKU ID or SKU source ID."
         }
       ],
       "put": {
@@ -13161,8 +13298,42 @@
         "summary": "Delete SKU",
         "operationId": "delete-products-product_id-skus-sku_id",
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          },
+          "404": {
+            "description": "Returns an error indicating that the product or sku with given ID was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Product Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find product with id 123-567-343",
+                      "request_id": "v-0ae3a0d26fd40ecd11",
+                      "resource_id": "123-567-343",
+                      "resource_type": "product"
+                    }
+                  },
+                  "SKU Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find sku with id sku_0ae3a06b20019ba8f",
+                      "request_id": "v-0ae3a1534d940ecd81",
+                      "resource_id": "sku_0ae3a06b20019ba8f",
+                      "resource_type": "sku"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -13183,19 +13354,21 @@
             "name": "force",
             "description": "If this flag is set to `true`, the SKU will be removed permanently. Going forward, the user will be able to create another SKU with exactly the same `source_id`."
           }
-        ]
+        ],
+        "description": "This method deletes a product SKU."
       }
     },
     "/product-collections/{product_collection_id}": {
       "parameters": [
         {
           "schema": {
-            "type": "string"
+            "type": "string",
+            "example": "pc_41V4DiQQO8YGqj0J2oZD57j4"
           },
           "name": "product_collection_id",
           "in": "path",
           "required": true,
-          "description": "Unique identifier of Product Collection, example id: pc_13hIG3zDvaKrb6feNecV004A"
+          "description": "A unique product collection ID."
         }
       ],
       "get": {
@@ -13223,14 +13396,62 @@
         "summary": "Delete Product Collection",
         "operationId": "delete-product-collections-product_collection_id",
         "responses": {
-          "200": {
-            "description": "OK"
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          },
+          "400": {
+            "description": "Returns an error indicating that the product collection with given ID is in use by other resources.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_resource_in_use"
+                },
+                "examples": {
+                  "Product Colllection In Use": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_in_use",
+                      "message": "Resource in use",
+                      "details": "Resource products_collection with id pc_41V4DiQQO8YGqj0J2oZD57j4 is in use by validation_ruless with ids [val_9TB89AjZeVEJ]",
+                      "request_id": "v-0ae3a63aff940ed1b2",
+                      "related_object_ids": [
+                        "val_9TB89AjZeVEJ"
+                      ],
+                      "related_object_type": "validation_rules"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error indicating that the product collection with given ID was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Product Collection Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find products_collection with id pc_41V4DiQQO8YGqj0J2oZD57j",
+                      "request_id": "v-0ae3a49261d027b870",
+                      "resource_id": "pc_41V4DiQQO8YGqj0J2oZD57j",
+                      "resource_type": "products_collection"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
           "PRODUCT COLLECTIONS API"
         ],
-        "description": "Deletes product collection.",
+        "description": "This method deletes a product collection.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
