@@ -48,7 +48,7 @@ The following table presents the type of sessions that can be established.
 | session.ttl<br>`number`<br>optional | Value for the period of time that the session is active. Units for this parameter are defines by session.ttl_unit | "session": {<br>"type": "LOCK",<br>"ttl": 7,<br>"ttl_unit": "DAYS"<br>} |
 
 
-<!-- theme: infor -->
+<!-- theme: info -->
 
 > #### Default session time  
 > If you won't establish session timeframe by passing the session.ttl and session.ttl_unit, it'll be active throughout 7 days.
