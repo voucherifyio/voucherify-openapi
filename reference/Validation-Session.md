@@ -12,7 +12,7 @@ The session can be released in one of the following ways:
 
   * expiration time passes
   * redemption is being registered for the session
-  * manual release using a dedicated API endpoint (for vouchers only: [Release Validation Session]  (ref:release-validation-session) )
+  * manual release using a dedicated API endpoint (for vouchers only: [Release Validation Session](OpenAPI.json/paths/~1vouchers~1{code}~1sessions~1{session_key}/delete) )
 
 <!-- theme: danger -->
 
@@ -53,4 +53,4 @@ The following table presents the type of sessions that can be established.
 > #### Default session time  
 > If you won't establish session timeframe by passing the session.ttl and session.ttl_unit, it'll be active throughout 7 days.
 
-You can always release established sessions by calling [Release Validation Session] (ref:release-validation-session) endpoint.
+You can always release established sessions by calling [Release Validation Session](OpenAPI.json/paths/~1vouchers~1{code}~1sessions~1{session_key}/delete) endpoint.
