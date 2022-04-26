@@ -3408,7 +3408,7 @@
           "properties": {
             "code": {
               "type": "string",
-              "description": "An array of voucher codes."
+              "description": "Unique voucher code."
             },
             "metadata": {
               "type": "object",
@@ -6363,15 +6363,11 @@
                   "properties": {
                     "1": {
                       "type": "object",
-                      "required": [
-                        "rules",
-                        "conditions"
-                      ],
                       "description": "Defines the rule.",
                       "properties": {
                         "name": {
                           "type": "string",
-                          "description": "Voucherify specific rule name.  The list of available names is provided below.  \n| **Name** |\n|:---|\n| **Customer** |\n| customer.segment<br>customer.metadata* |\n| **Order** |\n| order.amount<br>order.items.count<br>order.items.price_any<br>order.items.price_each<br>order.items.metadata_any<br>order.items.metadata_each<br>order.metadata* |\n| **Campaign** |\n| campaign.orders.amount_discounted<br>campaign.orders.amount<br>campaign.redemptions.count<br>campaign.redemptions.customers_count<br>campaign.redemptions.customers_count.daily |\n| **Redemption** |\n| redemption.gift.amount<br>redemption.count.per_customer<br>redemption.count.per_customer.daily<br>redemption.api_key<br>redemption.count.per_api_key<br>redemption.user.login<br>redemption.count.per_user<br>redemption.metadata*<br>redemption.reward.pay_with_points.points_used |\n| **Product** |\n| product.id<br>product.price<br>product.quantity<br>product.discount_applicable<br>product.metadata*<br>product.metadata.aggregated_quantity<br>product.metadata.aggregated_amount<br>product.metadata.discount_applicable<br>product.metadata.match_all |\n| **SKU** |\n| sku.id<br>sku.price<br>sku.quantity<br>sku.discount_applicable |\n| **Publication** |\n| publication.redeemable_by_linked_customer |\n| **Custom Event** |\n| custom_event.metadata* |\n| **Order items** |\n| order.items.every<br>order.items.any<br>order.items.none<br>order.items.cheapest<br>order.items.most_expensive |\n| order.items.quantity<br>order.items.aggregated_quantity<br>order.items.price<br>order.items.aggregated_amount<br>order.items.metadata* |  \n\n___\n*Requires the `property` field to be defined."
+                          "description": "Voucherify specific rule name.  The list of available names is provided below.  \n| **Name** |\n|:---|\n| **Customer** |\n| customer.segment<br>customer.metadata* |\n| **Order** |\n| order.amount<br>order.items.count<br>order.items.price_any<br>order.items.price_each<br>order.items.metadata_any<br>order.items.metadata_each<br>order.metadata* |\n| **Campaign** |\n| campaign.orders.amount_discounted<br>campaign.orders.amount<br>campaign.redemptions.count<br>campaign.redemptions.customers_count<br>campaign.redemptions.customers_count.daily |\n| **Redemption** |\n| redemption.gift.amount<br>redemption.count.per_customer<br>redemption.count.per_customer.daily<br>redemption.api_key<br>redemption.count.per_api_key<br>redemption.user.login<br>redemption.count.per_user<br>redemption.metadata*<br>redemption.reward.pay_with_points.points_used |\n| **Product** |\n| product.id<br>product.price<br>product.quantity<br>product.discount_applicable<br>product.metadata*<br>product.metadata.aggregated_quantity<br>product.metadata.aggregated_amount<br>product.metadata.discount_applicable<br>product.metadata.match_all |\n| **SKU** |\n| sku.id<br>sku.price<br>sku.quantity<br>sku.discount_applicable |\n| **Publication** |\n| publication.redeemable_by_linked_customer |\n| **Custom Event** |\n| custom_event.metadata* |\n| **Order items** |\n| order.items.every<br>order.items.any<br>order.items.none<br>order.items.cheapest<br>order.items.most_expensive |\n| order.items.quantity<br>order.items.aggregated_quantity<br>order.items.price<br>order.items.aggregated_amount<br>order.items.metadata* |  \n\n\n*Requires the `property` field to be defined."
                         },
                         "rules": {
                           "type": "object"
@@ -6382,16 +6378,23 @@
                         },
                         "conditions": {
                           "type": "object",
-                          "required": [
-                            "$less_than_or_equal"
-                          ],
                           "description": "A set of key value pairs representing the condition name and value. The list of available conditions is provided below:    \n| **Condition (key)** | **Definition** | **Does not support Types** |\n|:---|:---|:---|\n| $is |  |  |\n| $is_not |  |  |\n| $in |  |  |\n| $less_than |  | boolean |\n| $less_than_or_equal |  | boolean |\n| $more_than |  | boolean |\n| $more_than_or_equal |  | boolean |\n| $starts_with |  | boolean, number |\n| $ends_with |  | boolean, number |\n| $contains |  | boolean, number |\n| $timeframe |  | boolean, number |\n| $dow |  | boolean, string |\n| $count |  | boolean, string |\n| $count_more |  | boolean, string |\n| $count_less |  | boolean, string |",
                           "properties": {
-                            "$less_than_or_equal": {
+                            "$one_of_voucherify_conditions": {
                               "type": "array",
                               "items": {
                                 "type": "object"
                               }
+                            }
+                          }
+                        },
+                        "error": {
+                          "type": "object",
+                          "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
+                          "properties": {
+                            "message": {
+                              "type": "string",
+                              "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rule."
                             }
                           }
                         }
@@ -6418,25 +6421,53 @@
                   "properties": {
                     "excluded": {
                       "type": "array",
+                      "description": "Defines which items are excluded in a discount.",
                       "items": {
-                        "type": "object"
+                        "type": "object",
+                        "description": "Defines the excluded item.",
+                        "properties": {
+                          "object": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "source_id": {
+                            "type": "string"
+                          },
+                          "strict": {
+                            "type": "boolean"
+                          }
+                        }
                       }
                     },
                     "included": {
                       "type": "array",
+                      "description": "Defines which items are included in a discount.",
                       "items": {
-                        "type": "object"
+                        "type": "object",
+                        "description": "Defines the included item.",
+                        "properties": {
+                          "object": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "source_id": {
+                            "type": "string"
+                          },
+                          "strict": {
+                            "type": "boolean"
+                          }
+                        }
                       }
                     },
                     "included_all": {
-                      "type": "boolean"
+                      "type": "boolean",
+                      "description": "Indicates whether all items are included in the discount."
                     }
-                  },
-                  "required": [
-                    "excluded",
-                    "included",
-                    "included_all"
-                  ]
+                  }
                 },
                 "created_at": {
                   "type": "string",
@@ -7408,9 +7439,18 @@
             "description": "A human-readable message providing a short description about the result."
           },
           "failed": {
-            "type": "array",
             "description": "If any records failed during the process, this array shows the failure details.",
-            "items": {}
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Unique voucher code."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Detailed failure cause for the voucher code import."
+              }
+            }
           }
         }
       },
@@ -14314,7 +14354,7 @@
         "operationId": "post-customers-metadata-async",
         "responses": {
           "202": {
-            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and customers will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint."
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and customers will be updated in the repository asynchronously. To check the update status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint."
           }
         },
         "tags": [
@@ -14338,7 +14378,7 @@
             }
           }
         },
-        "description": "Using this endpoint you can update a customers' metadata in asynchronous operation. In one request it is possible to update a maximum of 100 records. In the response body, you get a unique async action identifier. If a requested object was not found then an upsert will happen, which will be shown as { found: false, updated: true } in the get async action request."
+        "description": "Update several customers metadata properties in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier. If a requested customer object is not found, then an **upsert** occurs. This is reflected in the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```"
       }
     },
     "/customers/bulk/async": {
@@ -14347,7 +14387,10 @@
         "operationId": "post-customers-bulk-async",
         "responses": {
           "202": {
-            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and customers will be updated in the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint."
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and customers will be updated in the repository asynchronously. To check the update status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint."
+          },
+          "400": {
+            "description": "{\n    \"code\": 400,\n    \"key\": \"metadata_validation_failed\",\n    \"message\": \"Metadata validation failed\",\n    \"details\": \"acquisition_channel: must be a string, property is required, must be equal to one of Facebook,Twitter,Website (actual value is 'true')\",\n    \"request_id\": \"v-0afb29d91094432cea\"\n}"
           },
           "429": {
             "description": "Too Many Requests",
@@ -14373,7 +14416,7 @@
         "tags": [
           "CUSTOMERS API"
         ],
-        "description": "Using this endpoint you can update several customers in one asynchronous operation. In one request it is possible to update a maximum of 100 records. In the response body, you get a unique async action identifier. If a requested object was not found then an upsert will happen, which will be shown as { found: false, updated: true } in the get async action request.",
+        "description": "Update several customers in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier. If a requested customer object is not found, then an **upsert** occurs. This is reflected in the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```",
         "requestBody": {
           "content": {
             "application/json": {
@@ -14900,13 +14943,13 @@
         "operationId": "post-products-metadata-async",
         "responses": {
           "202": {
-            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and updates will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint."
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and updates will be added to the repository asynchronously. To check the update status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint."
           }
         },
         "tags": [
           "PRODUCTS API"
         ],
-        "description": "Using this endpoint you can update product metadata in asynchronous operation. In one request it is possible to update a maximum of 100 records. In the response body, you get a unique async action identifier. If a requested object was not found then an upsert will happen, which will be shown as { found: false, updated: true } in the get async action request.",
+        "description": "Update several product metadata properties in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier. If a requested product object is not found, then an **upsert** occurs. This is reflected in the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```",
         "requestBody": {
           "content": {
             "application/json": {
@@ -14934,13 +14977,13 @@
         "operationId": "post-products-bulk-async",
         "responses": {
           "202": {
-            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and updates will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint."
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and updates will be added to the repository asynchronously. To check the update status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint."
           }
         },
         "tags": [
           "PRODUCTS API"
         ],
-        "description": "Using this endpoint you can update several products in one asynchronous operation. In one request it is possible to update a maximum of 100 records. In the response body, you get a unique async action identifier. If a requested object was not found then an upsert will happen, which will be shown as { found: false, updated: true } in the get async action request.",
+        "description": "Update several products in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier. If a requested product object is not found, then an **upsert** occurs. This is reflected in the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```",
         "requestBody": {
           "content": {
             "application/json": {
@@ -16183,30 +16226,6 @@
                   "$ref": "#/components/schemas/17_res_get_async_actions_GET"
                 },
                 "examples": {
-                  "VOUCHERS.IMPORT_CSV": {
-                    "value": {
-                      "id": "aa_0aeb9d677ad5be8f49",
-                      "type": "VOUCHERS.IMPORT_CSV",
-                      "status": "DONE",
-                      "result": {
-                        "message": "3 voucher(s) imported successfully, 2 failed.",
-                        "failed": [
-                          {
-                            "code": "CODE4",
-                            "row": 4,
-                            "reason": "Voucher type must be one of DISCOUNT_VOUCHER, GIFT_VOUCHER, LOYALTY_CARD, LUCKY_DRAW_CODE"
-                          },
-                          {
-                            "code": "CODE5",
-                            "row": 5,
-                            "reason": "Invalid Discount Type"
-                          }
-                        ]
-                      },
-                      "created_at": "2022-04-14T10:02:17.451Z",
-                      "object": "async_action"
-                    }
-                  },
                   "CAMPAIGN.VOUCHERS_IMPORT": {
                     "value": {
                       "id": "aa_0af9b22296cf473a10",
@@ -16309,6 +16328,235 @@
                         ]
                       },
                       "created_at": "2022-04-25T10:07:13.068Z",
+                      "object": "async_action"
+                    }
+                  },
+                  "CUSTOMERS.BULK_UPDATE": {
+                    "value": {
+                      "id": "aa_0afb2c1ed4140e8443",
+                      "type": "CUSTOMERS.BULK_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "results": [
+                          {
+                            "source_id": "name.lastname@gmail.com",
+                            "updated": true,
+                            "found": true
+                          },
+                          {
+                            "source_id": "name.lastname@voucherify.io",
+                            "updated": true,
+                            "found": true
+                          },
+                          {
+                            "source_id": "name.lastname@yahoo.com",
+                            "updated": true,
+                            "found": true
+                          }
+                        ]
+                      },
+                      "created_at": "2022-04-26T12:03:02.608Z",
+                      "object": "async_action"
+                    }
+                  },
+                  "CUSTOMERS.METADATA_UPDATE": {
+                    "value": {
+                      "id": "aa_0afb2e58508f4731db",
+                      "type": "CUSTOMERS.METADATA_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "results": [
+                          {
+                            "source_id": "name.lastname@gmail.com",
+                            "updated": false,
+                            "found": true
+                          },
+                          {
+                            "source_id": "name.lastname@yahoo.com",
+                            "updated": false,
+                            "found": true
+                          }
+                        ]
+                      },
+                      "created_at": "2022-04-26T12:12:45.762Z",
+                      "object": "async_action"
+                    }
+                  },
+                  "CUSTOMERS.METADATA_KEY_PURGE": {
+                    "value": {
+                      "id": "aa_0afb30ce65158134b9",
+                      "type": "CUSTOMERS.METADATA_KEY_PURGE",
+                      "status": "DONE",
+                      "result": {
+                        "message": "Updated 2 customers."
+                      },
+                      "created_at": "2022-04-26T12:23:30.964Z",
+                      "object": "async_action"
+                    }
+                  },
+                  "PRODUCTS.BULK_UPDATE": {
+                    "value": {
+                      "id": "aa_0afb34d59e540e8953",
+                      "type": "PRODUCTS.BULK_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "results": [
+                          {
+                            "source_id": "123-567-3433",
+                            "updated": false,
+                            "found": true
+                          },
+                          {
+                            "source_id": "test_volleyball",
+                            "updated": true,
+                            "found": true
+                          }
+                        ]
+                      },
+                      "created_at": "2022-04-26T12:41:06.937Z",
+                      "object": "async_action"
+                    }
+                  },
+                  "PRODUCTS.METADATA_UPDATE": {
+                    "value": {
+                      "id": "aa_0afb373b0f540e8ab9",
+                      "type": "PRODUCTS.METADATA_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "results": [
+                          {
+                            "source_id": "123-567-3433",
+                            "updated": true,
+                            "found": true
+                          },
+                          {
+                            "source_id": "test_volleyball",
+                            "updated": true,
+                            "found": true
+                          }
+                        ]
+                      },
+                      "created_at": "2022-04-26T12:51:35.101Z",
+                      "object": "async_action"
+                    }
+                  },
+                  "PRODUCTS.METADATA_KEY_PURGE": {
+                    "value": {
+                      "id": "aa_0afb3811c1d581419c",
+                      "type": "PRODUCTS.METADATA_KEY_PURGE",
+                      "status": "DONE",
+                      "result": {
+                        "message": "Updated 1 products."
+                      },
+                      "created_at": "2022-04-26T12:55:14.951Z",
+                      "object": "async_action"
+                    }
+                  },
+                  "VOUCHERS.IMPORT": {
+                    "value": {
+                      "id": "aa_0afb38bf938f4737e9",
+                      "type": "VOUCHERS.IMPORT",
+                      "status": "DONE",
+                      "result": {
+                        "message": "0 voucher(s) imported successfully, 3 failed.",
+                        "failed": [
+                          {
+                            "code": "PROMO-CODE31",
+                            "reason": "unit: must be a number, property is required (actual value is 'EUR')"
+                          },
+                          {
+                            "code": "PROMO-CODE21",
+                            "reason": "unit: must be a number, property is required (actual value is 'EUR')"
+                          },
+                          {
+                            "code": "GIFT-CARD-100-1",
+                            "reason": "unit: must be a number, property is required (actual value is 'EUR')"
+                          }
+                        ]
+                      },
+                      "created_at": "2022-04-26T12:58:12.943Z",
+                      "object": "async_action"
+                    }
+                  },
+                  "VOUCHERS.IMPORT_CSV": {
+                    "value": {
+                      "id": "aa_0aeb9d677ad5be8f49",
+                      "type": "VOUCHERS.IMPORT_CSV",
+                      "status": "DONE",
+                      "result": {
+                        "message": "3 voucher(s) imported successfully, 2 failed.",
+                        "failed": [
+                          {
+                            "code": "CODE4",
+                            "row": 4,
+                            "reason": "Voucher type must be one of DISCOUNT_VOUCHER, GIFT_VOUCHER, LOYALTY_CARD, LUCKY_DRAW_CODE"
+                          },
+                          {
+                            "code": "CODE5",
+                            "row": 5,
+                            "reason": "Invalid Discount Type"
+                          }
+                        ]
+                      },
+                      "created_at": "2022-04-14T10:02:17.451Z",
+                      "object": "async_action"
+                    }
+                  },
+                  "VOUCHERS.BULK_UPDATE": {
+                    "value": {
+                      "id": "aa_0afb3c4274cf4739f4",
+                      "type": "VOUCHERS.BULK_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "results": [
+                          {
+                            "code": "PROMO-CODE81019",
+                            "updated": false,
+                            "found": false
+                          },
+                          {
+                            "code": "PROMO-CODE7264786",
+                            "updated": false,
+                            "found": false
+                          }
+                        ]
+                      },
+                      "created_at": "2022-04-26T13:13:33.395Z",
+                      "object": "async_action"
+                    }
+                  },
+                  "VOUCHERS.METADATA_UPDATE": {
+                    "value": {
+                      "id": "aa_0afb3a817b940e8ca1",
+                      "type": "VOUCHERS.METADATA_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "results": [
+                          {
+                            "code": "CODE4",
+                            "updated": true,
+                            "found": true
+                          },
+                          {
+                            "code": "CODE3",
+                            "updated": true,
+                            "found": true
+                          }
+                        ]
+                      },
+                      "created_at": "2022-04-26T13:05:53.646Z",
+                      "object": "async_action"
+                    }
+                  },
+                  "VOUCHERS.METADATA_KEY_PURGE": {
+                    "value": {
+                      "id": "aa_0afb3d009a55814a48",
+                      "type": "VOUCHERS.METADATA_KEY_PURGE",
+                      "status": "DONE",
+                      "result": {
+                        "message": "Updated 2 vouchers."
+                      },
+                      "created_at": "2022-04-26T13:16:48.105Z",
                       "object": "async_action"
                     }
                   }
