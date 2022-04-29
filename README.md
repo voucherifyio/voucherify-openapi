@@ -2,9 +2,9 @@
 ---
 This repository contains OpenAPI specification for Voucherify's API.
 
-Version supported: `3.1.0`
-
-**Status**: _Under development_
+ - **Version supported**: `3.1.0`  
+ - **Spec location**: `/reference`  
+ - **Status**: _Under development_
 
 This OpenAPI specfication is a work in progress. Continued efforts are being made to update this OpenAPI specification. 
 
