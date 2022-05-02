@@ -46,12 +46,20 @@
       "description": "Sandbox"
     },
     {
+      "url": "https://download.voucherify.io/v1",
+      "description": "Download Files"
+    },
+    {
       "url": "https://dev.api.voucherify.io/v1",
-      "description": "Development (server)"
+      "description": "Development"
     },
     {
       "url": "https://dev.api.voucherify.io/client/v1",
-      "description": "Development (client)"
+      "description": "Development Client"
+    },
+    {
+      "url": "https://dev.download.voucherify.io/v1",
+      "description": "Development Download"
     }
   ],
   "components": {
@@ -6594,15 +6602,86 @@
       "16_obj_export_object": {
         "title": "Export Object",
         "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          }
-        },
-        "description": "This is an object representing an export. \n\nThe `/exports` endpoint allows you to retrieve Voucherify objects such as [vouchers](OpenAPI.json/components/schemas/1_obj_voucher_object), [redemptions](OpenAPI.json/components/schemas/7_obj_redemption_object), [publications](OpenAPI.json/components/schemas/5_obj_publication_object), [customers](OpenAPI.json/components/schemas/9_obj_customer_object), and [orders](OpenAPI.json/components/schemas/10_obj_order_object) as a CSV file. This functionality works asynchronously and comes down to the following steps:  \n* create an export object and return its `id` so you can track its `status`\n* trigger a CSV file generation, change the status to `SCHEDULED`\n* when the generation is over, store the file in S3 and change the `status` to `DONE`\n* now you can [get](OpenAPI.json/paths/~1exports~1{export_id}/get) it\n\nWith `parameters` you can select which `fields` will be exported and `filter` out the relevant data\n\n<!--\ntitle: \"Request Body\"\nlineNumbers: true\n-->\n```json\n{\n    \"fields\": [\n        \"code\",\n        \"voucher_type\"\n    ],\n    \"filters\": {\n        \"categories\": {\n            \"conditions\": {\n                \"$in\": [\n                    \"postman\"\n                ]\n            }\n        }\n    }\n}\n```\n\n\n## Fields values\nHere is a list of the fields you can export for particular objects.  \n| **Object** | **Fields** |\n|:---|:---|\n| voucher | code<br>voucher_type<br>value<br>discount_type<br>campaign<br>category<br>start_date<br>expiration_date<br>gift_balance<br>loyalty_balance<br>redemption_quantity<br>redemption_count<br>active<br>qr_code<br>bar_code<br>metadata<br>\"metadata.X\" *where X is a single metadata property*<br>id<br>is_referral_code<br>created_at<br>updated_at<br>validity_timeframe_interval<br>validity_timeframe_duration<br>validity_day_of_week<br>discount_amount_limit<br>campaign_id<br>additional_info<br>customer_id<br>discount_unit_type<br>discount_unit_effect<br>customer_source_id |\n| redemption | object<br>date<br>voucher_code<br>campaign<br>promotion_tier_id<br>customer_id<br>tracking_id<br>order_amount<br>gift_amount<br>loyalty_points<br>result<br>failure_code<br>failure_message<br>metadata<br>\"metadata.X\" *where X is a single metadata property* |\n| publication | voucher_code<br>customer_id<br>date<br>channel<br>campaign<br>metadata<br>is_winner<br>\"metadata.X\" *where X is a single metadata property* |\n| customer | name, id<br>description<br>email<br>source_id<br>created_at<br>address_city<br>address_state<br>address_line_1<br>address_line_2<br>address_country<br>address_postal_code<br>metadata<br>\"metadata.X\" *where X is a single metadata property*<br>redemptions_total_redeemed<br>redemptions_total_failed<br>redemptions_total_succeeded<br>redemptions_total_rolled_back<br>redemptions_total_rollback_failed<br>redemptions_total_rollback_succeeded<br>orders_total_amount<br>orders_total_count<br>orders_average_amount<br>orders_last_order_amount<br>orders_last_order_date<br>loyalty_points<br>loyalty_referred_customers<br>updated_at<br>phone<br>birthdate |\n| order | id<br>source_id<br>status<br>created_at<br>updated_at<br>amount<br>discount_amount<br>items_discount_amount<br>total_discount_amount<br>total_amount<br>customer_id<br>referrer_id |\n| points expiration | id<br>campaign_id<br>voucher_id<br>expires_at<br>points |\n\n\n## Pagination and example request\nVoucherify allows you to specify the timeframe for the records you want to retrieve. Thanks to this mechanism it should be easy to implement a pagination mechanism. See the example of request body: \n\n<!--\ntitle: \"Request body\"\nlineNumbers: true\n-->\n```json\n{\n    \"exported_object\": \"redemption\",\n    \"parameters\": {\n        \"order\": \"-created_at\", // results start from the latest resources, \"created_at\" sorts from the oldest to the newest resources\n        \"fields\": [\n            \"id\",\n            \"object\",\n            \"date\",\n            \"voucher_code\",\n            \"customer_id\",\n            \"result\"\n        ],\n        \"filters\": {\n            \"junction\": \"and\",\n            \"created_at\": {\n                \"conditions\": {\n                    \"$after\": [\n                        \"2018-05-30T22:00:00.000Z\"\n                    ],\n                    \"$before\": [\n                        \"2018-06-29T22:00:00.000Z\"\n                    ]\n                }\n            }\n        }\n    }\n}\n```\n\nAn export request will almost always result in a single file being generated by the system. However, in the case when your volume of data is large, the system can split the results into multiple chunks.\n\n## Response schema  \n\n| **Attributes** | **Description** | **Example** |\n|:---|:---|:---|\n| id | - | exp_8A4J1QLYeBrZsa7XNs1OZBpj |\n| created_at | - | 2017-02-24T13:10:50Z |\n| status | SCHEDULED, DONE, or ERROR | DONE |\n| channel | Info how the export was triggered | API |\n| exported_object | voucher, redemption, customer or publication | voucher |\n| parameters | Defines `fields` and `filters` for retrieved objects | { \"fields\": [ \"code\", \"voucher_type\" ], \"filters\": { \"categories\": { \"conditions\": { \"$in\": [ \"postman\" ] } } } } |\n| result | URL to a CSV file | { \"url\": \"https://s3-eu-west-1.amazonaws.com/voucherify-exports/mike%40voucherify.io/export_moGIxqMuCYxLNUJFviiJ8uVA.csv\" } |",
+        "description": "This is an object representing an export. \n\nThe `/exports` endpoint allows you to retrieve Voucherify objects such as [vouchers](OpenAPI.json/components/schemas/1_obj_voucher_object), [redemptions](OpenAPI.json/components/schemas/7_obj_redemption_object), [publications](OpenAPI.json/components/schemas/5_obj_publication_object), [customers](OpenAPI.json/components/schemas/9_obj_customer_object), and [orders](OpenAPI.json/components/schemas/10_obj_order_object) as a CSV file. This functionality works asynchronously and comes down to the following steps:  \n* create an export object and return its `id` so you can track its `status`\n* trigger a CSV file generation, change the status to `SCHEDULED`\n* when the generation is over, store the file in S3 and change the `status` to `DONE`\n* now you can [get](OpenAPI.json/paths/~1exports~1{export_id}/get) it\n\nWith `parameters` you can select which `fields` will be exported and `filter` out the relevant data\n\n<!--\ntitle: \"Request Body\"\nlineNumbers: true\n-->\n```json\n{\n    \"fields\": [\n        \"code\",\n        \"voucher_type\"\n    ],\n    \"filters\": {\n        \"categories\": {\n            \"conditions\": {\n                \"$in\": [\n                    \"postman\"\n                ]\n            }\n        }\n    }\n}\n```\n\n\n## Fields values\nHere is a list of the fields you can export for particular objects.  \n| **Object** | **Fields** |\n|:---|:---|\n| voucher | code<br>voucher_type<br>value<br>discount_type<br>campaign<br>category<br>start_date<br>expiration_date<br>gift_balance<br>loyalty_balance<br>redemption_quantity<br>redemption_count<br>active<br>qr_code<br>bar_code<br>metadata<br>\"metadata.X\" *where X is a single metadata property*<br>id<br>is_referral_code<br>created_at<br>updated_at<br>validity_timeframe_interval<br>validity_timeframe_duration<br>validity_day_of_week<br>discount_amount_limit<br>campaign_id<br>additional_info<br>customer_id<br>discount_unit_type<br>discount_unit_effect<br>customer_source_id |\n| redemption | object<br>date<br>voucher_code<br>campaign<br>promotion_tier_id<br>customer_id<br>tracking_id<br>order_amount<br>gift_amount<br>loyalty_points<br>result<br>failure_code<br>failure_message<br>metadata<br>\"metadata.X\" *where X is a single metadata property* |\n| publication | voucher_code<br>customer_id<br>date<br>channel<br>campaign<br>metadata<br>is_winner<br>\"metadata.X\" *where X is a single metadata property* |\n| customer | name, id<br>description<br>email<br>source_id<br>created_at<br>address_city<br>address_state<br>address_line_1<br>address_line_2<br>address_country<br>address_postal_code<br>metadata<br>\"metadata.X\" *where X is a single metadata property*<br>redemptions_total_redeemed<br>redemptions_total_failed<br>redemptions_total_succeeded<br>redemptions_total_rolled_back<br>redemptions_total_rollback_failed<br>redemptions_total_rollback_succeeded<br>orders_total_amount<br>orders_total_count<br>orders_average_amount<br>orders_last_order_amount<br>orders_last_order_date<br>loyalty_points<br>loyalty_referred_customers<br>updated_at<br>phone<br>birthdate |\n| order | id<br>source_id<br>status<br>created_at<br>updated_at<br>amount<br>discount_amount<br>items_discount_amount<br>total_discount_amount<br>total_amount<br>customer_id<br>referrer_id |\n| points expiration | id<br>campaign_id<br>voucher_id<br>expires_at<br>points |\n\n\n## Pagination and example request\nVoucherify allows you to specify the timeframe for the records you want to retrieve. Thanks to this mechanism it should be easy to implement a pagination mechanism. See the example of request body: \n\n<!--\ntitle: \"Request body\"\nlineNumbers: true\n-->\n```json\n{\n    \"exported_object\": \"redemption\",\n    \"parameters\": {\n        \"order\": \"-created_at\", // results start from the latest resources, \"created_at\" sorts from the oldest to the newest resources\n        \"fields\": [\n            \"id\",\n            \"object\",\n            \"date\",\n            \"voucher_code\",\n            \"customer_id\",\n            \"result\"\n        ],\n        \"filters\": {\n            \"junction\": \"and\",\n            \"created_at\": {\n                \"conditions\": {\n                    \"$after\": [\n                        \"2018-05-30T22:00:00.000Z\"\n                    ],\n                    \"$before\": [\n                        \"2018-06-29T22:00:00.000Z\"\n                    ]\n                }\n            }\n        }\n    }\n}\n```\n\nAn export request will almost always result in a single file being generated by the system. However, when your volume of data is large, the system may split the results into multiple chunks.",
         "x-tags": [
           "EXPORTS API"
-        ]
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique export ID.",
+            "example": "exp_FFfp9o7daWuJqJCKp5xqqli4"
+          },
+          "object": {
+            "type": "string",
+            "default": "export",
+            "description": "The type of object being represented. This object stores information about the export."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2022-04-28T11:23:20.922Z",
+            "description": "Timestamp representing the date and time when the export was scheduled in ISO 8601 format."
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the export. Informs you whether the export has already been completed.",
+            "enum": [
+              "SCHEDULED",
+              "IN_PROGRESS",
+              "DONE",
+              "ERROR"
+            ]
+          },
+          "channel": {
+            "type": "string",
+            "description": "The channel through which the export was triggered.",
+            "enum": [
+              "API"
+            ]
+          },
+          "exported_object": {
+            "type": "string",
+            "description": "The type of exported object.",
+            "enum": [
+              "order",
+              "voucher",
+              "publication",
+              "redemption",
+              "customer",
+              "points_expiration"
+            ]
+          },
+          "parameters": {
+            "type": "object",
+            "description": "List of fields and filters that were passed in the request body to create the export.",
+            "properties": {
+              "order": {
+                "type": "string",
+                "description": "How the export was filtered, where the dash `-` preceding a sorting option means sorting in a descending order."
+              },
+              "fields": {
+                "type": "array",
+                "description": "Array of strings containing the data that was exported. These fields define the headers in the CSV file.",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "filters": {
+                "type": "object"
+              }
+            }
+          },
+          "result": {
+            "type": "object",
+            "description": "Contains the URL of the CSV file.",
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "URL of the CSV file location."
+              }
+            }
+          }
+        }
       },
       "16_res_list_exports_GET": {
         "description": "Response schema for listing exports.",
@@ -6699,132 +6778,14 @@
             "uniqueItems": true,
             "description": "An array of export objects.",
             "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Unique export id.",
-                  "example": "exp_KUV7R7tclwVoblbxmRqnIr6T"
-                },
-                "object": {
-                  "type": "string",
-                  "default": "export",
-                  "description": "The type of object represented by each nested object in the JSON `exports` array. This object stores information about the export."
-                },
-                "created_at": {
-                  "type": "string",
-                  "description": "Timestamp representing the date and time when the export was scheduled in ISO 8601 format.",
-                  "example": "2022-04-27T09:34:48.677Z"
-                },
-                "status": {
-                  "type": "string",
-                  "description": "Export status.",
-                  "enum": [
-                    "SCHEDULED",
-                    "IN_PROGRESS",
-                    "DONE",
-                    "ERROR"
-                  ]
-                },
-                "channel": {
-                  "type": "string",
-                  "description": "How the export was triggered.",
-                  "example": "API"
-                },
-                "exported_object": {
-                  "type": "string",
-                  "description": "The type of object represented by this export.",
-                  "enum": [
-                    "points_expiration",
-                    "voucher",
-                    "order",
-                    "publication",
-                    "redemption",
-                    "customer"
-                  ]
-                },
-                "parameters": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "description": "Unique campaign ID."
-                    },
-                    "order": {
-                      "type": "string",
-                      "description": "How the export was filtered, where the dash `-` preceding a sorting option means sorting in a descending order."
-                    },
-                    "fields": {
-                      "type": "array",
-                      "items": {
-                        "type": "object"
-                      }
-                    },
-                    "filters": {
-                      "type": "object",
-                      "required": [
-                        "junction",
-                        "campaign_id"
-                      ],
-                      "properties": {
-                        "junction": {
-                          "type": "string",
-                          "minLength": 1
-                        },
-                        "campaign_id": {
-                          "type": "object",
-                          "required": [
-                            "conditions"
-                          ],
-                          "properties": {
-                            "conditions": {
-                              "type": "object",
-                              "required": [
-                                "$in"
-                              ],
-                              "properties": {
-                                "$in": {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object"
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "required": [
-                    "fields",
-                    "filters"
-                  ]
-                },
-                "result": {
-                  "type": "object",
-                  "description": "Contains the URL of the CSV file.",
-                  "properties": {
-                    "url": {
-                      "type": "string",
-                      "description": "URL of the CSV file location.\n"
-                    }
-                  },
-                  "required": [
-                    "url"
-                  ]
-                }
-              }
+              "$ref": "#/components/schemas/16_obj_export_object"
             }
           },
           "total": {
             "type": "integer",
             "description": "Total number of exports."
           }
-        },
-        "required": [
-          "total"
-        ]
+        }
       },
       "16_req_create_export_POST": {
         "description": "Request schema for creating an export.",
@@ -6887,95 +6848,6 @@
           }
         }
       },
-      "16_res_create_export_POST": {
-        "description": "Response schema for creating an export.",
-        "type": "object",
-        "x-examples": {
-          "example-1": {
-            "id": "exp_FFfp9o7daWuJqJCKp5xqqli4",
-            "object": "export",
-            "created_at": "2022-04-28T11:23:20.922Z",
-            "status": "SCHEDULED",
-            "channel": "API",
-            "exported_object": "redemption",
-            "parameters": {
-              "fields": [
-                "id",
-                "voucher_code",
-                "loyalty_points"
-              ]
-            },
-            "result": null
-          }
-        },
-        "title": "Create Export Response Body",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Export unique ID.",
-            "example": "exp_FFfp9o7daWuJqJCKp5xqqli4"
-          },
-          "object": {
-            "type": "string",
-            "default": "export",
-            "description": "The type of object represented by JSON. This object stores information about the export."
-          },
-          "created_at": {
-            "type": "string",
-            "example": "2022-04-28T11:23:20.922Z",
-            "description": "Timestamp representing the date and time when the export was scheduled in ISO 8601 format."
-          },
-          "status": {
-            "type": "string",
-            "description": "Status of the export. Informs you whether the export has already been completed."
-          },
-          "channel": {
-            "type": "string",
-            "description": "The channel through which the export was created.",
-            "enum": [
-              "API"
-            ]
-          },
-          "exported_object": {
-            "type": "string",
-            "description": "The type of exported object.",
-            "enum": [
-              "order",
-              "voucher",
-              "publication",
-              "redemption",
-              "customer",
-              "points_expiration"
-            ]
-          },
-          "parameters": {
-            "type": "object",
-            "description": "List of fields and filters that were passed in the request body to create the export.",
-            "properties": {
-              "fields": {
-                "type": "array",
-                "description": "Array of strings containing the data that was exported. These fields define the headers in the CSV file.",
-                "items": {
-                  "type": "object"
-                }
-              },
-              "filters": {
-                "type": "object"
-              }
-            }
-          },
-          "result": {
-            "type": "object",
-            "description": "Contains the URL of the CSV file.",
-            "properties": {
-              "url": {
-                "type": "string",
-                "description": "URL of the CSV file location."
-              }
-            }
-          }
-        }
-      },
       "16_req_obj_create_export_POST_order": {
         "description": "List of available fields and filters that can be exported with an order.",
         "title": "order",
@@ -7000,7 +6872,7 @@
                 "metadata"
               ]
             ],
-            "description": "Array of strings containing the data that you would like to export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique order ID. | ord_A69RIxEdRsPuC6i8gFGVHUft |\n| source_id | Unique order source ID. | 8638 |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the order was created. | 2022-03-09T09:16:32.521Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the order was last updated. | 2022-03-09T09:16:33.331Z |\n| status | Order status. | `PAID`, `CREATED`, `FULFILLED`, `CANCELED` |\n| amount | Total amount of order items. | 7700 |\n| discount_amount | Represents total amount of the discount applied to whole cart. | 500 |\n| items_discount_amount | Represents total amount of the discount applied to order line items. | 100 |\n| total_discount_amount | All discounts applied to the order including discounts applied to particular order line items and discounts applied to the whole cart. | 600 |\n| total_amount | Total order amount after applying all discounts. | 7100 |\n| customer_id | Customer unique ID. | cust_2G4fUQdCXUqp35nXNleav7bO |\n| referrer_id | Referrer unique ID. | cust_IkrTR674vvQvr9a4rDMiqglY |\n| metadata | Order metadata; expressed as metadata.X, where X is the name of the custom metadata property. | 1 |",
+            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique order ID. | ord_A69RIxEdRsPuC6i8gFGVHUft |\n| source_id | Unique order source ID. | 8638 |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the order was created. | 2022-03-09T09:16:32.521Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the order was last updated. | 2022-03-09T09:16:33.331Z |\n| status | Order status. | `PAID`, `CREATED`, `FULFILLED`, `CANCELED` |\n| amount | Total amount of order items. | 7700 |\n| discount_amount | Represents total amount of the discount applied to whole cart. | 500 |\n| items_discount_amount | Represents total amount of the discount applied to order line items. | 100 |\n| total_discount_amount | All discounts applied to the order including discounts applied to particular order line items and discounts applied to the whole cart. | 600 |\n| total_amount | Total order amount after applying all discounts. | 7100 |\n| customer_id | Customer unique ID. | cust_2G4fUQdCXUqp35nXNleav7bO |\n| referrer_id | Referrer unique ID. | cust_IkrTR674vvQvr9a4rDMiqglY |\n| metadata | Order metadata; expressed as metadata.X, where X is the name of the custom metadata property. | 1 |",
             "items": {
               "type": "string"
             }
@@ -7051,7 +6923,7 @@
                 "customer_source_id"
               ]
             ],
-            "description": "Array of strings containing the data that you would like to export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique voucher ID. | v_HSnGD2vNIHYighTQxwcB4dtVAv8VOmZD |\n| code | Unique voucher code. | WELCOME100 |\n| voucher_type | Type of voucher. | `DISCOUNT_VOUCHER`, `GIFT_VOUCHER`, `LOYALTY_CARD` |\n| value | Value of voucher. | `DISCOUNT_VOUCHER` : amount, percent, unit<br>`GIFT_VOUCHER`: amount left to spend<br>`LOYALTY_CARD`: available usable points |\n| discount_type | The type of discount for a `DISCOUNT_VOUCHER`. | `AMOUNT`, `PERCENT`, `UNIT`, `FIXED` |\n| campaign | Unique campaign name. | Summer Discounts 20% off |\n| category | Tag defining the category that this voucher belongs to. |  |\n| start_date | Start date defines when the code starts to be active. Activation timestamp in ISO 8601 format. Voucher is _inactive_ before this date. | 2020-12-10T23:00:00.000Z |\n| expiration_date | Expiration date defines when the code expires. Expiration timestamp in ISO 8601 format. Voucher is _inactive_ after this date. | 2023-12-31T23:00:00.000Z |\n| gift_balance | Amount left to spend. | 1000 |\n| loyalty_balance | Available usable points. | 2000 |\n| redemption_quantity | Maximum number of times a voucher can be redeemed. | 2 |\n| redemption_count | Total redemptions. | 59 |\n| active | Boolean indicating whether the voucher is available for use. | `true`, `false` |\n| qr_code | URL to QR representation of encrypted code. |  |\n| bar_code | URL to barcode representation of encrypted code. |  |\n| metadata | Custom voucher metadata. |  |\n| is_referral_code | Boolean indicating whether the voucher is a referral code. | `true`, `false` |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the voucher was created. | 2022-04-14T09:55:46.814Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the voucher was last updated. | 2022-04-14T10:02:18.036Z |\n| validity_timeframe_interval | Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a voucher with an interval of `P2D` will be active every other day. | P2D |\n| validity_timeframe_duration | Defines the amount of time the voucher will be active in ISO 8601 format. For example, a voucher with a duration of `PT1H` will be valid for a duration of one hour. | PT1H |\n| validity_day_of_week | Array corresponding to the particular days of the week in which the voucher is valid. | \"1,2,3,4,5\" |\n| discount_amount_limit | For `PERCENT` discount type, this is the maximum threshold allowed to be deducted. | 50 |\n| campaign_id | Parent campaign ID. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| additional_info | An optional field to keep any extra textual information about the code such as a code description and details. |  |\n| customer_id | Unique customer ID of the assigned owner to whom the voucher was published. | cust_7iUa6ICKyU6gH40dBU25kQU1 |\n| discount_unit_type | For `UNIT` discount type, either a shipping or product ID for a `UNIT` discount with one product. | prod_5h1pp1ng, prod_0a9f9aeddb019a42db |\n| discount_unit_effect | `UNIT` discount effect. | `ADD_MANY_ITEMS`, `ADD_MISSING_ITEMS`,`ADD_NEW_ITEMS` |\n| customer_source_id | Unique customer source id of the assigned owner to whom the voucher was published. | name.lastname@email.com |\n",
+            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique voucher ID. | v_HSnGD2vNIHYighTQxwcB4dtVAv8VOmZD |\n| code | Unique voucher code. | WELCOME100 |\n| voucher_type | Type of voucher. | `DISCOUNT_VOUCHER`, `GIFT_VOUCHER`, `LOYALTY_CARD` |\n| value | Value of voucher. | `DISCOUNT_VOUCHER` : amount, percent, unit<br>`GIFT_VOUCHER`: amount left to spend<br>`LOYALTY_CARD`: available usable points |\n| discount_type | The type of discount for a `DISCOUNT_VOUCHER`. | `AMOUNT`, `PERCENT`, `UNIT`, `FIXED` |\n| campaign | Unique campaign name. | Summer Discounts 20% off |\n| category | Tag defining the category that this voucher belongs to. |  |\n| start_date | Start date defines when the code starts to be active. Activation timestamp in ISO 8601 format. Voucher is _inactive_ before this date. | 2020-12-10T23:00:00.000Z |\n| expiration_date | Expiration date defines when the code expires. Expiration timestamp in ISO 8601 format. Voucher is _inactive_ after this date. | 2023-12-31T23:00:00.000Z |\n| gift_balance | Amount left to spend. | 1000 |\n| loyalty_balance | Available usable points. | 2000 |\n| redemption_quantity | Maximum number of times a voucher can be redeemed. | 2 |\n| redemption_count | Total redemptions. | 59 |\n| active | Boolean indicating whether the voucher is available for use. | `true`, `false` |\n| qr_code | URL to QR representation of encrypted code. |  |\n| bar_code | URL to barcode representation of encrypted code. |  |\n| metadata | Custom voucher metadata. |  |\n| is_referral_code | Boolean indicating whether the voucher is a referral code. | `true`, `false` |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the voucher was created. | 2022-04-14T09:55:46.814Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the voucher was last updated. | 2022-04-14T10:02:18.036Z |\n| validity_timeframe_interval | Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a voucher with an interval of `P2D` will be active every other day. | P2D |\n| validity_timeframe_duration | Defines the amount of time the voucher will be active in ISO 8601 format. For example, a voucher with a duration of `PT1H` will be valid for a duration of one hour. | PT1H |\n| validity_day_of_week | Array corresponding to the particular days of the week in which the voucher is valid. | \"1,2,3,4,5\" |\n| discount_amount_limit | For `PERCENT` discount type, this is the maximum threshold allowed to be deducted. | 50 |\n| campaign_id | Parent campaign ID. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| additional_info | An optional field to keep any extra textual information about the code such as a code description and details. |  |\n| customer_id | Unique customer ID of the assigned owner to whom the voucher was published. | cust_7iUa6ICKyU6gH40dBU25kQU1 |\n| discount_unit_type | For `UNIT` discount type, either a shipping or product ID for a `UNIT` discount with one product. | prod_5h1pp1ng, prod_0a9f9aeddb019a42db |\n| discount_unit_effect | `UNIT` discount effect. | `ADD_MANY_ITEMS`, `ADD_MISSING_ITEMS`,`ADD_NEW_ITEMS` |\n| customer_source_id | Unique customer source id of the assigned owner to whom the voucher was published. | name.lastname@email.com |\n",
             "items": {
               "type": "string"
             }
@@ -7080,7 +6952,7 @@
                 "metadata"
               ]
             ],
-            "description": "Array of strings containing the data that you would like to export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| voucher_code | Unique voucher code. | WELCOME100 |\n| customer_id | Customer unique ID. | cust_7iUa6ICKyU6gH40dBU25kQU1 |\n| customer_source_id | Unique customer source id of the assigned owner to whom the voucher was published. | name.lastname@email.com |\n| date | Timestamp in ISO 8601 format representing the date and time when the voucher was published. | 2022-04-28T10:19:30.792Z |\n| channel | Publication channel. | voucherify-website |\n| campaign | Unique campaign name. | Summer Discounts 20% off |\n| is_winner |  |  |\n| metadata | Custom publication metadata. |  |\n",
+            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| voucher_code | Unique voucher code. | WELCOME100 |\n| customer_id | Customer unique ID. | cust_7iUa6ICKyU6gH40dBU25kQU1 |\n| customer_source_id | Unique customer source id of the assigned owner to whom the voucher was published. | name.lastname@email.com |\n| date | Timestamp in ISO 8601 format representing the date and time when the voucher was published. | 2022-04-28T10:19:30.792Z |\n| channel | Publication channel. | voucherify-website |\n| campaign | Unique campaign name. | Summer Discounts 20% off |\n| is_winner |  |  |\n| metadata | Custom publication metadata. |  |\n",
             "items": {
               "type": "string"
             }
@@ -7118,7 +6990,7 @@
                 "metadata"
               ]
             ],
-            "description": "Array of strings containing the data that you would like to export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique redemption ID. | r_0acf3a6dae00e679c8, rf_0acf3a495740e679b8 |\n| object | Object being exported; by default `redemption`. | redemption |\n| date | Timestamp in ISO 8601 format representing the date and time when the voucher was redeemed. | 2022-03-23T08:52:24.867Z |\n| voucher_code | Unique voucher code redeemed. | WELCOME100 |\n| campaign | Parent campaign name of voucher if applicable. | Summer Discounts 20% off |\n| promotion_tier_id |  | promo_Mwy9XpA0TLctSGriM5kum0qp |\n| customer_id | Unique customer ID of redeeming customer. | cust_nk0N1uNQ1YnupAoJGOgvsODC |\n| customer_source_id | Unique source ID of redeeming customer. | name.lastname@email.com |\n| customer_name | Customer name. | John Smith |\n| tracking_id |  | track_Pw6r3ejnml43kIwNS4Zj09KZ67xOfLUy |\n| order_amount | Total order amount before applying all discounts. | 1000 |\n| gift_amount | Gift credits used for redemption. | 10 |\n| loyalty_points |  | 12 |\n| result | Tells you whether the redemption succeeded. | `SUCCESS`, `FAILURE` |\n| failure_code | Internal Voucherify code for reason why redemption failed. | invalid_customer |\n| failure_message | A human-readable message providing a short description explaining why the redemption failed. | Customer must be a holder of a loyalty card. |\n| metadata | Custom redemption metadata. |  |",
+            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique redemption ID. | r_0acf3a6dae00e679c8, rf_0acf3a495740e679b8 |\n| object | Object being exported; by default `redemption`. | redemption |\n| date | Timestamp in ISO 8601 format representing the date and time when the voucher was redeemed. | 2022-03-23T08:52:24.867Z |\n| voucher_code | Unique voucher code redeemed. | WELCOME100 |\n| campaign | Parent campaign name of voucher if applicable. | Summer Discounts 20% off |\n| promotion_tier_id |  | promo_Mwy9XpA0TLctSGriM5kum0qp |\n| customer_id | Unique customer ID of redeeming customer. | cust_nk0N1uNQ1YnupAoJGOgvsODC |\n| customer_source_id | Unique source ID of redeeming customer. | name.lastname@email.com |\n| customer_name | Customer name. | John Smith |\n| tracking_id |  | track_Pw6r3ejnml43kIwNS4Zj09KZ67xOfLUy |\n| order_amount | Total order amount before applying all discounts. | 1000 |\n| gift_amount | Gift credits used for redemption. | 10 |\n| loyalty_points |  | 12 |\n| result | Tells you whether the redemption succeeded. | `SUCCESS`, `FAILURE` |\n| failure_code | Internal Voucherify code for reason why redemption failed. | invalid_customer |\n| failure_message | A human-readable message providing a short description explaining why the redemption failed. | Customer must be a holder of a loyalty card. |\n| metadata | Custom redemption metadata. |  |",
             "items": {
               "type": "string"
             }
@@ -7169,7 +7041,7 @@
                 "birthdate"
               ]
             ],
-            "description": "Array of strings containing the data that you would like to export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| name | Customer name. | John Smith |\n| id | Unique customer ID. | cust_J1CDUdbqn5Exva8ASWk1Fq0j |\n| description | An arbitrary string that you can attach to a customer object. | Customer requesting to be added to VIP tier. |\n| email | Customer's email. | name.lastname@email.com |\n| source_id | Unique custom customer identifier. | name.lastname@email.com |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the customer was created. | 2022-02-03T13:10:11.928Z |\n| address_city | City | Houston |\n| address_state | State | TX |\n| address_line_1 | First line of customer's address. | 72738 Main St |\n| address_line_2 | Second line of customer's address. | Bld 2, Apt 4 |\n| address_country | Country | United States of America |\n| address_postal_code | Postal code (ZIP code) | 77042-4143 |\n| redemptions_total_redeemed | Total customer redemptions. | 5 |\n| redemptions_total_failed | Total customer failed redemptions. | 2 |\n| redemptions_total_succeeded | Total customer succeeded redemptions. | 3 |\n| redemptions_total_rolled_back | Total customer redemptions that were rolled back. | 3 |\n| redemptions_total_rollback_failed | Total customer redemptions that were unsuccessfully rolled back. | 2 |\n| redemptions_total_rollback_succeeded | Total customer redemptions that were successfully rolled back. | 1 |\n| orders_total_amount | Total sum of order amounts over customer lifetime. Value is multiplied by 100 to precisely represent 2 decimal places. | 10000 (represents $100) |\n| orders_total_count | Total number of customer orders. Value is multiplied by 100 to precisely represent 2 decimal places. | 2 |\n| orders_average_amount | Average amount spent on orders. Value is multiplied by 100 to precisely represent 2 decimal places. | 50 |\n| orders_last_order_amount | How much did the customer spend on their last order. Value is multiplied by 100 to precisely represent 2 decimal places. | 50 |\n| orders_last_order_date | When was the last customer order; timestamp in ISO 8601 format representing the date and time. | 2022-02-03T13:17:30.630Z |\n| loyalty_points |  |  |\n| loyalty_referred_customers | How many customers were referred by this customer. |  |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the customer was updated. | 2022-02-14T14:10:14.305Z |\n| phone | Customer's phone number. | +1 (294) 752-1846 |\n| ~birthday~ | ~Customer's birthday.~ |  |\n| metadata | Customer metadata. |  |2-04-29 |\n| birthdate | Customer's birthdate. | 2022-04-29",
+            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| name | Customer name. | John Smith |\n| id | Unique customer ID. | cust_J1CDUdbqn5Exva8ASWk1Fq0j |\n| description | An arbitrary string that you can attach to a customer object. | Customer requesting to be added to VIP tier. |\n| email | Customer's email. | name.lastname@email.com |\n| source_id | Unique custom customer identifier. | name.lastname@email.com |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the customer was created. | 2022-02-03T13:10:11.928Z |\n| address_city | City | Houston |\n| address_state | State | TX |\n| address_line_1 | First line of customer's address. | 72738 Main St |\n| address_line_2 | Second line of customer's address. | Bld 2, Apt 4 |\n| address_country | Country | United States of America |\n| address_postal_code | Postal code (ZIP code) | 77042-4143 |\n| redemptions_total_redeemed | Total customer redemptions. | 5 |\n| redemptions_total_failed | Total customer failed redemptions. | 2 |\n| redemptions_total_succeeded | Total customer succeeded redemptions. | 3 |\n| redemptions_total_rolled_back | Total customer redemptions that were rolled back. | 3 |\n| redemptions_total_rollback_failed | Total customer redemptions that were unsuccessfully rolled back. | 2 |\n| redemptions_total_rollback_succeeded | Total customer redemptions that were successfully rolled back. | 1 |\n| orders_total_amount | Total sum of order amounts over customer lifetime. Value is multiplied by 100 to precisely represent 2 decimal places. | 10000 (represents $100) |\n| orders_total_count | Total number of customer orders. Value is multiplied by 100 to precisely represent 2 decimal places. | 2 |\n| orders_average_amount | Average amount spent on orders. Value is multiplied by 100 to precisely represent 2 decimal places. | 50 |\n| orders_last_order_amount | How much did the customer spend on their last order. Value is multiplied by 100 to precisely represent 2 decimal places. | 50 |\n| orders_last_order_date | When was the last customer order; timestamp in ISO 8601 format representing the date and time. | 2022-02-03T13:17:30.630Z |\n| loyalty_points |  |  |\n| loyalty_referred_customers | How many customers were referred by this customer. |  |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the customer was updated. | 2022-02-14T14:10:14.305Z |\n| phone | Customer's phone number. | +1 (294) 752-1846 |\n| ~birthday~ | ~Customer's birthday.~ |  |\n| metadata | Customer metadata. |  |2-04-29 |\n| birthdate | Customer's birthdate. | 2022-04-29",
             "items": {
               "type": "string"
             }
@@ -7196,7 +7068,7 @@
                 "points"
               ]
             ],
-            "description": "Array of strings containing the data that you would like to export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:  \n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Loyalty points bucket ID. | lopb_Wl1o3EjJIHSNjvO5BDLy4z1n |\n| campaign_id | Campaign ID of the parent loyalty campaign. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| voucher_id | Voucher ID of the parent loyalty card. | v_YLn0WVWXSXbUfDvxgrgUbtfJ3SQIY655 |\n| status | Status of the loyalty points bucket. | `ACTIVE` or `INACTIVE` |\n| expires_at | Timestamp in ISO 8601 format representing the date when the points expire. | 2022-06-30 |\n| points | Number of points. | 1000 |",
+            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:  \n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Loyalty points bucket ID. | lopb_Wl1o3EjJIHSNjvO5BDLy4z1n |\n| campaign_id | Campaign ID of the parent loyalty campaign. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| voucher_id | Voucher ID of the parent loyalty card. | v_YLn0WVWXSXbUfDvxgrgUbtfJ3SQIY655 |\n| status | Status of the loyalty points bucket. | `ACTIVE` or `INACTIVE` |\n| expires_at | Timestamp in ISO 8601 format representing the date when the points expire. | 2022-06-30 |\n| points | Number of points. | 1000 |",
             "items": {
               "type": "string",
               "enum": [
@@ -14775,7 +14647,7 @@
         ],
         "responses": {
           "200": {
-            "description": "\n"
+            "description": ""
           },
           "": {
             "content": {
@@ -17297,7 +17169,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/16_res_create_export_POST"
+                  "$ref": "#/components/schemas/16_obj_export_object"
                 }
               }
             }
@@ -17356,23 +17228,128 @@
         "description": "List all exports. "
       }
     },
-    "/exports/{exportId}": {
+    "/exports/{export_Id}": {
       "parameters": [
         {
           "schema": {
             "type": "string"
           },
+          "name": "export_Id",
+          "in": "path",
+          "required": true,
+          "description": "Unique export object ID."
+        }
+      ],
+      "get": {
+        "summary": "Get Export",
+        "responses": {
+          "200": {
+            "description": "Returns the export object. The URL is stored in the `result` object. It contains the token used for authorization.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/16_obj_export_object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error indicating that the export with given ID was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find export with id exp_8fNoLwgVPuhoxNzVsr50kq0",
+                      "request_id": "v-0b029305af4524cf42",
+                      "resource_id": "exp_8fNoLwgVPuhoxNzVsr50kq0",
+                      "resource_type": "export"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "get-exports-export_id-?token=-token",
+        "description": "Get the URL of the generated CSV file.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "tags": [
+          "EXPORTS API"
+        ]
+      }
+    },
+    "/exports/{exportId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "exp_ex6zq0x0EEa9S0N68QcqhxcQ"
+          },
           "name": "exportId",
           "in": "path",
           "required": true,
-          "description": "Export object id"
+          "description": "Unique export object ID."
         }
       ],
       "get": {
         "summary": "Download Export",
-        "responses": {},
+        "responses": {
+          "200": {
+            "description": "Returns contents of CSV file."
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string",
+                      "default": 401,
+                      "description": "Error's HTTP status code."
+                    },
+                    "message": {
+                      "type": "string",
+                      "default": "Unauthorized",
+                      "description": "A human-readable message providing a short description about the error."
+                    },
+                    "key": {
+                      "type": "string",
+                      "default": "unauthorized",
+                      "description": "Short string describing the kind of error which occurred."
+                    }
+                  }
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "operationId": "get-exports-export_id-?token=-token",
-        "description": "This API provides a secure way to download generated exports.\nIf you have a valid token and do not provide X-App-Id and X-App-Token headers, then your link will work for 15 minutes only. In a short future, authentication headers will be obligatory.",
+        "description": "Download the contents of the exported CSV file. \n\n<!-- theme: info -->\n\n> #### Important notes\n>\n> **Base URL:** `https://download.voucherify.io/v1`  \n> **Token:** Can be found within the `result` parameter of the [Get Export](OpenAPI.json/paths/~1exports~1{export_Id}/get) method response.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -17382,11 +17359,13 @@
           },
           {
             "schema": {
-              "type": "string"
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5hbnQiOiJz"
             },
             "in": "query",
             "name": "token",
-            "description": "Token used for authorization"
+            "description": "Token used for authorization.",
+            "required": true
           }
         ],
         "tags": [
