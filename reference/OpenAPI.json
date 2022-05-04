@@ -5897,6 +5897,85 @@
           "LOYALTIES API"
         ]
       },
+      "8_obj_export_object_points_expiration": {
+        "title": "Points Expirations Export Object",
+        "type": "object",
+        "description": "This is an object representing an export of points expirations. ",
+        "x-tags": [
+          "EXPORTS API"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique export ID.",
+            "example": "exp_FFfp9o7daWuJqJCKp5xqqli4"
+          },
+          "object": {
+            "type": "string",
+            "default": "export",
+            "description": "The type of object being represented. This object stores information about the export."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2022-04-28T11:23:20.922Z",
+            "description": "Timestamp representing the date and time when the export was scheduled in ISO 8601 format."
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the export. Informs you whether the export has already been completed.",
+            "enum": [
+              "SCHEDULED",
+              "IN_PROGRESS",
+              "DONE",
+              "ERROR"
+            ]
+          },
+          "channel": {
+            "type": "string",
+            "description": "The channel through which the export was triggered.",
+            "enum": [
+              "API"
+            ]
+          },
+          "exported_object": {
+            "type": "string",
+            "description": "The type of exported object.",
+            "enum": [
+              "points_expiration"
+            ]
+          },
+          "parameters": {
+            "type": "object",
+            "description": "List of fields and filters that were passed in the request body to create the export.",
+            "properties": {
+              "order": {
+                "type": "string",
+                "description": "How the export was filtered, where the dash `-` preceding a sorting option means sorting in a descending order."
+              },
+              "fields": {
+                "type": "array",
+                "description": "Array of strings containing the data that was exported. These fields define the headers in the CSV file.",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "filters": {
+                "type": "object"
+              }
+            }
+          },
+          "result": {
+            "type": "object",
+            "description": "Contains the URL of the CSV file.",
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "URL of the CSV file location."
+              }
+            }
+          }
+        }
+      },
       "9_obj_customer_object": {
         "title": "Customer Object",
         "type": "object",
@@ -14609,20 +14688,25 @@
           "description": "Unique campaign ID."
         }
       ],
-      "get": {
+      "post": {
         "summary": "Create Points Expiration Export",
+        "operationId": "post-loyalties-campaignId-points-expiration-export",
+        "responses": {
+          "200": {
+            "description": "Returns an object with the export ID of the scheduled generation of CSV file with exported points expirations. You can use either the [Get Export](OpenAPI.json/paths/~1exports~1{export_id}/get) endpoint to view the status and obtain the URL of the CSV file or [Download Export](OpenAPI.json/paths/~1exports~1{exportId}/get) endpoint to download the CSV file.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/8_obj_export_object_points_expiration"
+                }
+              }
+            }
+          }
+        },
         "tags": [
           "LOYALTIES API"
         ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "": {
-            "description": "Returns an object with the export id of the scheduled generation of CSV file with exported points expirations. You can use either the [Get Export](OpenAPI.json/paths/~1exports~1{export_id}/get) endpoint to view the status and obtain the URL of the CSV file or [Download Export](OpenAPI.json/paths/~1exports~1{exportId}/get) endpoint to download the CSV file."
-          }
-        },
-        "operationId": "get-loyalties-campaignId-members-memberId-points-expiration",
+        "description": "Schedule the generation of a points expiration CSV file for a particular campaign.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -14630,8 +14714,7 @@
           {
             "$ref": "#/components/parameters/X-App-Token"
           }
-        ],
-        "description": "Schedule the generation of a points expiration CSV file for a particular campaign."
+        ]
       }
     },
     "/customers": {
@@ -17409,6 +17492,11 @@
               "text/plain": {
                 "schema": {
                   "type": "string"
+                },
+                "examples": {
+                  "CSV file contents": {
+                    "value": "ID,Code,Voucher Type,Value v_mKNYXWf5168jyW3EvwnAf73d7vnTiXaa,iuCvt3BT,GIFT_VOUCHER,2000.00 v_xb5KuIw90ViUY7NrNbDZzf1JwFmyTUi0,M3X8IwW8,GIFT_VOUCHER,2000.00 v_flCSHFGOfjxuM582jhriJTWQuetb2xHX,6vpzmKaC,GIFT_VOUCHER,2050.00 v_YtzZG4UJaWm9DNCY3AvIqVbc7Dt5WToU,lRvBOUPl,LOYALTY_CARD,0"
+                  }
                 }
               }
             }
@@ -17450,7 +17538,7 @@
             }
           },
           "403": {
-            "description": "Returns an error if Application ID and Secret Key do not match the exported object ID.",
+            "description": "Returns an error if Application ID and Secret Key do not match the base URL.",
             "content": {
               "application/json": {
                 "schema": {
@@ -17471,7 +17559,7 @@
           }
         },
         "operationId": "get-exports-export_id-?token=-token",
-        "description": "Download the contents of the exported CSV file. \n\n<!-- theme: info -->\n\n> #### Important notes\n>\n> **Base URL:** `https://download.voucherify.io/v1`  \n> **Token:** Can be found within the `result` parameter of the [Get Export](OpenAPI.json/paths/~1exports~1{export_Id}/get) method response.",
+        "description": "Download the contents of the exported CSV file. \n\n<!-- theme: info -->\n\n> #### Important notes\n>\n> **Base URL:** `https://download.voucherify.io/v1`  \n> **Token:** Can be found within the `result` parameter of the [Get Export](OpenAPI.json/paths/~1exports~1{export_id}/get) method response.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
