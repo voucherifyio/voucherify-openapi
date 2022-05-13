@@ -4814,19 +4814,6 @@
           "CAMPAIGNS API"
         ]
       },
-      "2_req_campaigns_campaign_importCSV": {
-        "type": "object",
-        "title": "Import Vouchers to Campaign by CSV Request Body",
-        "description": "Request body schema for `campaigns/{campaign_id}/importCSV`.",
-        "format": "binary",
-        "properties": {
-          "file": {
-            "type": "string",
-            "format": "binary",
-            "description": "The property name 'file' will be used for the file path."
-          }
-        }
-      },
       "3_obj_promotion_tier_object": {
         "title": "Promotion Tier Object",
         "type": "object",
@@ -5453,6 +5440,91 @@
           "loyalty"
         ]
       },
+      "8_req_loyalties_campaign_id_members_member_id_balance": {
+        "title": "Add or Remove Points Balance Request Body",
+        "type": "object",
+        "description": "Request schema for adding or removing points from a loyalty card.",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "Incremental balance to be added to/subtracted from the loyalty card.  \n\nTo add points: `100`  \nTo subtract points, add a minus: `-100`"
+          },
+          "expiration_date": {
+            "type": "string",
+            "description": "Set expiration date for added points, i.e. `YYYY-MM-DD`. This parameter is **required** only when `expiration_type` is set to `CUSTOM_DATE`.",
+            "example": "2020-05-30"
+          },
+          "expiration_type": {
+            "type": "string",
+            "default": "PROGRAM_RULES",
+            "enum": [
+              "PROGRAM_RULES",
+              "NON_EXPIRING",
+              "CUSTOM_DATE"
+            ],
+            "description": "Set the type of expiration for added points.  \n- `PROGRAM_RULES`: Inherit rules from campaign.\n- `NON_EXPIRING`: Points never expire.\n- `CUSTOM_DATE`: Points expire on a particular date. **Requires** `expiration_date` parameter."
+          }
+        }
+      },
+      "8_res_loyalties_campaign_id_members_member_id_balance": {
+        "description": "Response body schema for `/loyalties/{campaign_Id}/members/{member_Id}/balance`",
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "amount": 100,
+            "total": 10100,
+            "balance": 10100,
+            "type": "gift_voucher",
+            "object": "balance",
+            "related_object": {
+              "type": "voucher",
+              "id": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
+            }
+          }
+        },
+        "examples": [],
+        "title": "Add or Remove Loyalty Card Balance Response Body",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "The incremental points/removed added to the current balance on the loyalty card."
+          },
+          "total": {
+            "type": "integer",
+            "description": "The total of points accrued over the lifetime of the loyalty card."
+          },
+          "balance": {
+            "type": "integer",
+            "description": "The balance after adding/removing points."
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of voucher being modified.",
+            "default": "loyalty_card"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON. Default is `balance`.",
+            "default": "balance"
+          },
+          "related_object": {
+            "type": "object",
+            "description": "Defines the object that is being modified with the values that are returned in the balance object.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The object being modified.",
+                "default": "voucher"
+              },
+              "id": {
+                "type": "string",
+                "description": "Identifies the loyalty card that is being modified, this is the ID that was assigned by the Voucherify API.",
+                "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
+              }
+            }
+          }
+        }
+      },
       "8_obj_export_object_points_expiration": {
         "title": "Points Expirations Export Object",
         "type": "object",
@@ -5557,19 +5629,6 @@
         "x-tags": [
           "CUSTOMERS API"
         ]
-      },
-      "9_req_customers_importCSV": {
-        "type": "object",
-        "title": "Import Customers by CSV Request Body",
-        "description": "Request body schema for customers/importCSV",
-        "format": "binary",
-        "properties": {
-          "file": {
-            "type": "string",
-            "format": "binary",
-            "description": "The property name 'file' will be used for the file path."
-          }
-        }
       },
       "10_obj_order_object": {
         "title": "Order Object",
@@ -7755,6 +7814,22 @@
           }
         }
       },
+      "a_req_importCSV": {
+        "type": "object",
+        "title": "Import CSV file",
+        "description": "Request body schema for importing data using a CSV file.",
+        "format": "binary",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "The property name 'file' will be used for the file path."
+          }
+        },
+        "required": [
+          "file"
+        ]
+      },
       "a_res_async_actions": {
         "type": "object",
         "title": "Asynchronous Actions",
@@ -8163,6 +8238,36 @@
           "message": {
             "type": "string",
             "default": "Duplicate codes",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0aa36e570e44cb3bdd"
+          }
+        }
+      },
+      "e_400_duplicate_source_id": {
+        "title": "Duplicate Source ID",
+        "type": "object",
+        "description": "Error: Conflict &rarr; Duplicate source_id found",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "default": 400,
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "default": "duplicate_source_id",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "default": "Duplicate source_id",
             "description": "A human-readable message providing a short description about the error."
           },
           "details": {
@@ -10345,7 +10450,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/1_req_vouchers_importCSV"
+                "$ref": "#/components/schemas/a_req_importCSV"
               }
             }
           },
@@ -10353,7 +10458,7 @@
         },
         "responses": {
           "200": {
-            "description": "Returns id of the scheduled async action. The response informs you that your request has been accepted and vouchers will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint.",
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and vouchers will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11440,7 +11545,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/2_req_campaigns_campaign_importCSV"
+                "$ref": "#/components/schemas/a_req_importCSV"
               }
             }
           },
@@ -14366,7 +14471,7 @@
           "name": "campaign_id",
           "in": "path",
           "required": true,
-          "description": "A unique campaign identifier"
+          "description": "A unique campaign identifier."
         },
         {
           "schema": {
@@ -14379,11 +14484,18 @@
         }
       ],
       "post": {
-        "summary": "Add Loyalty Card Balance",
+        "summary": "Add/Remove Loyalty Card Balance",
         "operationId": "post-loyalties-campaign_id-members-member_id-balance",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Returns a balance object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/8_res_loyalties_campaign_id_members_member_id_balance"
+                }
+              }
+            }
           }
         },
         "parameters": [
@@ -14398,13 +14510,13 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/8_req_loyalties_campaign_id_members_member_id_balance"
               }
             }
-          }
+          },
+          "description": ""
         },
-        "description": "This method gives adds balance to an existing loyalty card.",
+        "description": "This method gives adds or removes balance to an existing loyalty card.",
         "tags": [
           "LOYALTIES API"
         ]
@@ -14554,6 +14666,49 @@
           }
         ],
         "description": "Retrieves the list of activities for the given `member_id` related to voucher and customer who is a holder of the voucher.",
+        "tags": [
+          "LOYALTIES API"
+        ]
+      }
+    },
+    "/loyalties/members/{member_id}/rewards": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "MmFAzfDe"
+          },
+          "name": "member_id",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty card assigned to a particular customer."
+        }
+      ],
+      "get": {
+        "summary": "Get Member Rewards",
+        "operationId": "get-loyalties-campaign_id-members-member_id-activities",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "in": "query",
+            "name": "affordable_only",
+            "description": "Limit the results to rewards that the customer can actually afford (only rewards whose price in points is not higher than the loyalty points balance on a loyalty card). Set this flag to `true` to return rewards which the customer can actually afford.",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "description": "Retrieves the list of rewards that the given customer (identified by `member_id`, which is a loyalty card assigned to a particular customer) **can get in exchange for loyalty points**.  \n\nYou can use the `affordable_only` parameter to limit the results to rewards that the customer can actually afford (only rewards whose price in points is not higher than the loyalty points balance on a loyalty card).",
         "tags": [
           "LOYALTIES API"
         ]
@@ -14917,6 +15072,16 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Returns an error indicating that a customer with given source_id was found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_duplicate_source_id"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -14960,7 +15125,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/9_req_customers_importCSV"
+                "$ref": "#/components/schemas/a_req_importCSV"
               }
             }
           },
@@ -15878,6 +16043,88 @@
         ],
         "description": "This method deletes a product SKU."
       }
+    },
+    "/products/importCSV": {
+      "post": {
+        "summary": "Import Products using CSV",
+        "operationId": "post-vouchers-importCSV",
+        "description": "Import products into the repository using a CSV file.\n\nThe CSV file has to include headers in the first line.  \n\nCurl Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/products/importCSV \\\n  -F file=@/path/to/products.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\n<!-- theme: info -->\n\n> #### Standard product fields mapping\n>\n> - Create a **comma separated value (CSV) file** or download our CSV import template. You can find an example template [here](https://s3.amazonaws.com/helpscout.net/docs/assets/5902f1c12c7d3a057f88a36d/attachments/627b82ed68d51e779443f550/Import_products_template.csv).\n> - Supported CSV file headers: `name,source_id,price,attributes,image_url,Metadata_property_name`\n> - **Name** is a **required** field. The remaining fields in the CSV template are optional.\n> - Override/Update products' **names** in Voucherify using this method. Data will be updated for each product included in the CSV file whose **source_id** matches a Source id in Voucherify. No other data can be updated other than the product name.\n> - Note that dates and date-time attributes need to be provided in compliance with the **ISO 8601 norms**. For example, 2022-03-11T09:00:00.000Z or 2022-03-11\n>    - `YYYY-MM-DD`\n>    - `YYYY-MM-DDTHH`\n>    - `YYYY-MM-DDTHH:mm`\n>    - `YYYY-MM-DDTHH:mm:ss`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ss.SSSZ`\n> - Columns that can't be mapped to standard fields, will be mapped to **Custom attributes** and added as **products' metadata**. There is no limit on the number of custom attributes that you can import as metadata. \n> - To provide the proper data type, you need to add all custom attributes to the metadata schema **before importing the file**.\n> - **Product attributes** (not custom attributes) need to be separated by a comma and enclosed in double quotes, i.e \"attribute1,attribute2\".\n> - Headers with metadata names **can't contain white-space characters**.\n> - If you import metadata defined in the schema as **arrays (multiple)**, you need to separate each value using a comma, for example:  \n>    - array of strings: \"subscribed,premium\"  \n>    - array of numbers: \"123,234\". \n>    - array of dates: \"2000-01-01,2000-01-02\"",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/a_req_importCSV"
+              }
+            }
+          },
+          "description": "The file path is stored in the form `file` header."
+        },
+        "responses": {
+          "200": {
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and products will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/a_res_async_actions"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "PRODUCTS API"
+        ]
+      },
+      "parameters": []
+    },
+    "/skus/importCSV": {
+      "post": {
+        "summary": "Import SKUs using CSV",
+        "operationId": "post-vouchers-importCSV",
+        "description": "Import SKUs into the repository using a CSV file.\n\nThe CSV file has to include headers in the first line. All properties which cannot be mapped to standard SKU fields will be added to the metadata object. You can find an example template [here](https://s3.amazonaws.com/helpscout.net/docs/assets/5902f1c12c7d3a057f88a36d/attachments/627b98d08c9b585083488a4c/Import_SKUS_template.csv). \n\nCurl Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/skus/importCSV \\\n  -F file=@/path/to/skus.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\n<!-- theme: info -->\n\n> #### Standard SKU fields mapping\n>\n> - **Required** fields are source_id and product_id.\n> - Supported CSV file headers: `product_id,sku,source_id,price,image_url,attributes`\n> - SKU **source_id**'s must be unique in the entire product catalog, no duplicates allowed.\n> - SKU attributes need to be in the form of a stringy-fied json, i.e.`\"{'color':'blue'}\"`. These attributes must be defined in the **product** beforehand in order for you to be able to import them to the SKU.\n> - You can use this method to update the following parameters in bulk: **sku** and the sku **price**.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/a_req_importCSV"
+              }
+            }
+          },
+          "description": "The file path is stored in the form `file` header."
+        },
+        "responses": {
+          "200": {
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and SKUs will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/a_res_async_actions"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "PRODUCTS API"
+        ]
+      },
+      "parameters": []
     },
     "/product-collections/{product_collection_id}": {
       "parameters": [
