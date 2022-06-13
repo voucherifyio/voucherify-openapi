@@ -340,7 +340,9 @@
             "PROMOTION",
             "GIFT_VOUCHERS",
             "REFERRAL_PROGRAM",
-            "DISCOUNT_COUPONS"
+            "DISCOUNT_COUPONS",
+            "LOYALTY_PROGRAM",
+            "LUCKY_DRAW"
           ]
         },
         "description": "This attribute allows filtering by campaign type."
@@ -4797,9 +4799,12 @@
         }
       },
       "res_empty_json": {
-        "title": "Empty JSON",
         "type": "object",
-        "description": "Schema model for an empty json."
+        "description": "Schema model for an empty json.",
+        "title": "Empty JSON",
+        "examples": [
+          {}
+        ]
       },
       "2_obj_campaign_object": {
         "title": "Campaign Object",
@@ -4839,6 +4844,19 @@
         "x-tags": [
           "REWARDS API"
         ]
+      },
+      "4_res_list_rewards": {
+        "title": "List Rewards",
+        "x-stoplight": {
+          "id": "atrqiez3e8l92"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "description": "Response body schema for `/rewards`."
       },
       "5_obj_publication_object": {
         "title": "Publication Object",
@@ -5863,6 +5881,32 @@
             }
           }
         }
+      },
+      "8_res_loyalties_campaignId_rewards": {
+        "title": "List Reward Assignments",
+        "x-stoplight": {
+          "id": "u131oicowebzy"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "description": "Response body schema for `/loyalties/campaign_id/reward`."
+      },
+      "8_res_loyalties_campaignId_reward-assignments": {
+        "title": "List Reward Assignments",
+        "x-stoplight": {
+          "id": "0bsu64g02hoeh"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "description": "Response body schema for `/loyalties/{campaign_id}/reward-assignments`."
       },
       "9_obj_customer_object": {
         "title": "Customer Object",
@@ -11406,7 +11450,7 @@
         "operationId": "get-campaigns",
         "responses": {
           "200": {
-            "description": "A dictionary with a data property that contains an array of campaigns. The maximum number of campaigns returned is determined by the `limit` query parameter. Each entry in the array is a separate campaign object. If no more campaigns are available, the resulting array on a given page will be empty."
+            "description": "Returns a dictionary with a `campaign` property that contains an array of campaigns. The maximum number of campaigns returned is determined by the `limit` query parameter. Each entry in the array is a separate campaign object. If no more campaigns are available, the resulting array on a given page will be empty."
           }
         },
         "tags": [
@@ -11429,7 +11473,7 @@
             "$ref": "#/components/parameters/campaign_type"
           }
         ],
-        "description": "Returns a list of your campaigns. The campaigns are returned sorted by creation date, with the most recent campaigns appearing first.  \n\nWhen you get a list of campaignss, you can optionally specify query parameters to customize the amount of campaigns returned per call using `limit`, which page of campaigns to return using `page`, sort the campaigns using the `order` query parameter and filter by the `campaign_type`.\n\nThis method will return an error when trying to return a limit of more than XXX campaigns."
+        "description": "Retrieve a list of campaigns in a project. \n\nThe campaigns are returned sorted by creation date, with the most recent campaigns appearing first.  \n\nWhen you get a list of campaigns, you can optionally specify query parameters to customize the amount of campaigns returned per call using `limit`, which page of campaigns to return using `page`, sort the campaigns using the `order` query parameter and filter the results by the `campaign_type`.\n\nThis method will return an error when trying to return a limit of more than XXX campaigns."
       }
     },
     "/campaigns/{campaign_id}": {
@@ -11501,14 +11545,14 @@
         "operationId": "delete-campaigns-campaign_id",
         "responses": {
           "202": {
-            "description": "Returns the id of the scheduled asynchronous action, informing you that your request has been accepted and the campaign will be deleted from the repository asynchronously. To check the deletion status and result, copy the `async_action_id` from the response and pass it using [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint.",
+            "description": "Returns the ID of the scheduled asynchronous action, informing you that your request has been accepted and the campaign will be deleted from the repository asynchronously. To check the deletion status and result, copy the `async_action_id` from the response and pass it using [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/a_res_async_actions"
                 },
                 "examples": {
-                  "example-1-Delete-Campaign": {
+                  "Delete-Campaign": {
                     "$ref": "#/components/examples/res_async_actions"
                   }
                 }
@@ -11523,7 +11567,7 @@
                   "$ref": "#/components/schemas/e_404_not_found"
                 },
                 "examples": {
-                  "example-1-Campaign-Not-Found": {
+                  "Campaign-Not-Found": {
                     "value": {
                       "code": 404,
                       "key": "not_found",
@@ -11898,7 +11942,7 @@
                   "$ref": "#/components/schemas/res_empty_json"
                 },
                 "examples": {
-                  "example-1-Empty-JSON": {
+                  "Empty-JSON": {
                     "value": {}
                   }
                 }
@@ -11913,7 +11957,7 @@
                   "$ref": "#/components/schemas/e_404_not_found"
                 },
                 "examples": {
-                  "example-1-Not-Found": {
+                  "Not-Found": {
                     "value": {
                       "code": 404,
                       "key": "not_found",
@@ -11968,7 +12012,7 @@
                   "$ref": "#/components/schemas/res_empty_json"
                 },
                 "examples": {
-                  "example-1-Empty-JSON": {
+                  "Empty-JSON": {
                     "value": {}
                   }
                 }
@@ -11983,7 +12027,7 @@
                   "$ref": "#/components/schemas/e_404_not_found"
                 },
                 "examples": {
-                  "example-1-Not-Found": {
+                  "Not-Found": {
                     "value": {
                       "code": 404,
                       "key": "not_found",
@@ -12498,7 +12542,14 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/4_res_list_rewards"
+                }
+              }
+            }
           }
         },
         "operationId": "get-rewards",
@@ -12514,8 +12565,18 @@
           },
           {
             "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "rewa_m9hEAu10KsPcLhGXiHG85aY0"
+            },
+            "in": "query",
+            "name": "assignment_id",
+            "description": "A unique reward assignment ID. Use this parameter to get the reward details given an assignment ID."
           }
-        ]
+        ],
+        "description": "Retrieve rewards."
       },
       "post": {
         "summary": "Create Reward",
@@ -13768,7 +13829,14 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/8_res_loyalties_campaignId_rewards"
+                }
+              }
+            }
           }
         },
         "operationId": "get-loyalties-campaign_id-rewards",
@@ -13785,6 +13853,15 @@
           },
           {
             "$ref": "#/components/parameters/page"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "rewa_m9hEAu10KsPcLhGXiHG85aY0"
+            },
+            "in": "query",
+            "name": "assignment_id",
+            "description": "A unique reward assignment ID."
           }
         ]
       },
@@ -13922,6 +13999,63 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ]
+      }
+    },
+    "/loyalties/{campaign_id}/reward-assignments": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "camp_pqZjuhG6Mgtp4GD0zD7b8hA3"
+          },
+          "name": "campaign_id",
+          "in": "path",
+          "required": true,
+          "description": "The `campaign_id` or `name` of the loyalty campaign. You can either pass the `campaign_id`, which was assigned by Voucherify, or the `name` of the campaign as the path parameter value, e.g., `Loyalty%20Campaign`. "
+        }
+      ],
+      "get": {
+        "summary": "List Reward Assignments",
+        "tags": [
+          "LOYALTIES API"
+        ],
+        "operationId": "get-loyalties-campaign_id-reward-assignments-assignment_id",
+        "description": "Returns reward assignments from a given loyalty campaign.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "rewa_m9hEAu10KsPcLhGXiHG85aY0"
+            },
+            "in": "query",
+            "name": "assignment_id",
+            "description": "A unique reward assignment ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/8_res_loyalties_campaignId_reward-assignments"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/loyalties/{campaign_id}/rewards/{assignment_id}": {
