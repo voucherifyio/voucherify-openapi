@@ -4884,6 +4884,72 @@
           "VALIDATIONS API"
         ]
       },
+      "19_req_validations": {
+        "title": "Validate Stackable Discounts (Beta) Request Body",
+        "type": "object",
+        "description": "This data model represents the request body for the `/validations` endpoint.",
+        "x-tags": [
+          "VALIDATIONS API"
+        ],
+        "properties": {
+          "options": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Configure parameters returned in the response.",
+            "properties": {
+              "expand": {
+                "type": "array",
+                "description": "Expand array lets you configure params included in the response. Depending on the strings included in the array, the response will contain different details.  \n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"order\"] | - Same response as fallback response (without an options object).<br>- Order data with calculated discounts are listed in each child redeemable object.<br>- Metadata not included for each discount type. |\n| [\"redeemable\"] | Expands redeemable objects by including `metadata` for each discount type. |\n| [\"order\", \"redeemable\"] | - Order data with calculated discounts are listed in each child redeemable object.<br>- Includes `metadata` for each discount type. |\n",
+                "items": {
+                  "type": "string",
+                  "example": "order"
+                }
+              }
+            }
+          },
+          "redeemables": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 5,
+            "items": {
+              "type": "object"
+            }
+          },
+          "session": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The session object required to establish a session between multiple parallel validation and redemption requests. Read more on [establishing a validation session](../docs/stackableDiscounts/Establish-Validation-Session.md)."
+          },
+          "order": {
+            "description": "Order object enables you to pass purchase transaction data. Read what properties you can use in the [Order object reference](OpenAPI.json/components/schemas/10_obj_order_object).",
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "customer": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Stores data of the customer related to the redemption. Read more about the [Customer object](OpenAPI.json/components/schemas/9_obj_customer_object)."
+          },
+          "metadata": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "A set of key/value pairs that you can attach to a redemption object. It can be useful for storing additional information about the redemption in a structured format."
+          }
+        },
+        "required": [
+          "redeemables"
+        ]
+      },
       "7_obj_redemption_object": {
         "title": "Redemption Object",
         "type": "object",
@@ -5992,17 +6058,455 @@
         "title": "Add or Remove Loyalty Card Balance"
       },
       "9_obj_customer_object": {
-        "title": "Customer Object",
         "type": "object",
         "properties": {
           "id": {
             "type": "string"
+          },
+          "source_id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "birthdate": {
+            "type": "string"
+          },
+          "address": {
+            "type": "object",
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              },
+              "line_1": {
+                "type": "string"
+              },
+              "line_2": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "postal_code": {
+                "type": "string"
+              }
+            }
+          },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "redemptions": {
+                "type": "object",
+                "properties": {
+                  "total_redeemed": {
+                    "type": "integer"
+                  },
+                  "total_failed": {
+                    "type": "integer"
+                  },
+                  "total_succeeded": {
+                    "type": "integer"
+                  },
+                  "total_rolled_back": {
+                    "type": "integer"
+                  },
+                  "total_rollback_failed": {
+                    "type": "integer"
+                  },
+                  "total_rollback_succeeded": {
+                    "type": "integer"
+                  },
+                  "gift": {
+                    "type": "object",
+                    "properties": {
+                      "redeemed_amount": {
+                        "type": "integer"
+                      },
+                      "amount_to_go": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "loyalty_card": {
+                    "type": "object",
+                    "properties": {
+                      "redeemed_points": {
+                        "type": "integer"
+                      },
+                      "points_to_go": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              },
+              "orders": {
+                "type": "object",
+                "properties": {
+                  "total_amount": {
+                    "type": "integer"
+                  },
+                  "total_count": {
+                    "type": "integer"
+                  },
+                  "average_amount": {
+                    "type": "integer"
+                  },
+                  "last_order_amount": {
+                    "type": "integer"
+                  },
+                  "last_order_date": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "loyalty": {
+            "type": "object",
+            "properties": {
+              "points": {
+                "type": "integer"
+              },
+              "referred_customers": {
+                "type": "integer"
+              },
+              "campaigns": {
+                "type": "object",
+                "properties": {
+                  "Tiers": {
+                    "type": "object",
+                    "properties": {
+                      "points": {
+                        "type": "integer"
+                      },
+                      "referred_customers": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "Reward": {
+                    "type": "object",
+                    "properties": {
+                      "points": {
+                        "type": "integer"
+                      },
+                      "referred_customers": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "Tiers 2": {
+                    "type": "object",
+                    "properties": {
+                      "points": {
+                        "type": "integer"
+                      },
+                      "referred_customers": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "Loyalty Program 1": {
+                    "type": "object",
+                    "properties": {
+                      "points": {
+                        "type": "integer"
+                      },
+                      "referred_customers": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "Proportional Earning Rules": {
+                    "type": "object",
+                    "properties": {
+                      "points": {
+                        "type": "integer"
+                      },
+                      "referred_customers": {
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "v20220131-NewEarningRules-ValidonDaysANDTimeFrame": {
+                    "type": "object",
+                    "properties": {
+                      "points": {
+                        "type": "integer"
+                      },
+                      "referred_customers": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "referrals": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "integer"
+              },
+              "campaigns": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "acquisition_channel": {
+                "type": "string"
+              }
+            }
+          },
+          "system_metadata": {
+            "type": "object",
+            "properties": {
+              "consents": {
+                "type": "object",
+                "properties": {
+                  "unsubscribed": {
+                    "type": "object",
+                    "properties": {
+                      "date": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I": {
+                    "type": "object",
+                    "properties": {
+                      "date": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "cnst_VCmucIvAsmDYw2PPAok6bcYy": {
+                    "type": "object",
+                    "properties": {
+                      "date": {
+                        "type": "string"
+                      },
+                      "value": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "assets": {
+            "type": "object",
+            "properties": {
+              "cockpit_url": {
+                "type": "string"
+              }
+            }
+          },
+          "object": {
+            "type": "string"
           }
         },
-        "description": "This is an object representing a customer.  \n\nThis entity allows you to:\n* store customer details in Voucherify,\n* link [redemptions](OpenAPI.json/components/schemas/7_obj_redemption_object) and validations to a particular customer,\n* build customer segments and use them in [validation rules] (doc:validation-rules). \n\nGo to [Customers] (doc:customers) to understand segmentation and tracking.",
-        "x-tags": [
-          "CUSTOMERS API"
-        ]
+        "x-examples": {
+          "example-1": {
+            "id": "cust_sehkNIi8Uq2qQuRqSr7xn4Zi",
+            "source_id": "bob.smith@rspective.pl",
+            "email": "bob.smith@rspective.pl",
+            "phone": "+1 (294) 752-1846",
+            "birthdate": "2022-04-29",
+            "address": {
+              "city": "New York",
+              "state": "New York",
+              "line_1": "100 Main St",
+              "line_2": "Blg 2 Apt 3",
+              "country": "United States",
+              "postal_code": "12345"
+            },
+            "summary": {
+              "redemptions": {
+                "total_redeemed": 11,
+                "total_failed": 7,
+                "total_succeeded": 4,
+                "total_rolled_back": 1,
+                "total_rollback_failed": 0,
+                "total_rollback_succeeded": 1,
+                "gift": {
+                  "redeemed_amount": 0,
+                  "amount_to_go": 0
+                },
+                "loyalty_card": {
+                  "redeemed_points": 0,
+                  "points_to_go": 387475
+                }
+              },
+              "orders": {
+                "total_amount": 694200,
+                "total_count": 22,
+                "average_amount": 31555,
+                "last_order_amount": 24900,
+                "last_order_date": "2022-06-09T12:54:42.314Z"
+              }
+            },
+            "loyalty": {
+              "points": 387475,
+              "referred_customers": 0,
+              "campaigns": {
+                "Tiers": {
+                  "points": 154,
+                  "referred_customers": 0
+                },
+                "Reward": {
+                  "points": 15,
+                  "referred_customers": 0
+                },
+                "Tiers 2": {
+                  "points": 10,
+                  "referred_customers": 0
+                },
+                "Loyalty Program 1": {
+                  "points": 0,
+                  "referred_customers": 0
+                },
+                "Proportional Earning Rules": {
+                  "points": 86446,
+                  "referred_customers": 0
+                },
+                "v20220131-NewEarningRules-ValidonDaysANDTimeFrame": {
+                  "points": 300850,
+                  "referred_customers": 0
+                }
+              }
+            },
+            "referrals": {
+              "total": 0,
+              "campaigns": []
+            },
+            "metadata": {
+              "acquisition_channel": "Facebook"
+            },
+            "system_metadata": {
+              "consents": {
+                "unsubscribed": {
+                  "date": "2022-05-10T08:50:10.338Z",
+                  "value": false
+                },
+                "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I": {
+                  "date": "2022-05-10T08:50:10.338Z",
+                  "value": false
+                },
+                "cnst_VCmucIvAsmDYw2PPAok6bcYy": {
+                  "date": "2022-05-10T08:50:10.338Z",
+                  "value": false
+                }
+              }
+            },
+            "created_at": "2021-12-29T06:35:32.476Z",
+            "updated_at": "2022-06-14T09:56:22.212Z",
+            "assets": {
+              "cockpit_url": "https://dev.cockpits.voucherify.io/customers?token=U2FsdGVkX1%2BnpQd60txn1YAtQ%2BitfR2JOHbrwciLULwvBwLFSHpNoH7RhgGt6"
+            },
+            "object": "customer"
+          }
+        },
+        "title": "Customer object",
+        "description": "This is an ojbect representing a customer.  \n\nThis entity allows you to:\n* store customer details in Voucherify,\n* link [redemptions](OpenAPI.json/components/schemas/7_obj_redemption_object) and validations to a particular customer,\n* build customer segments and use them in [validation rules] (doc:validation-rules). \n\nGo to [Customers] (doc:customers) to understand segmentation and tracking."
+      },
+      "9_res_customers_customerId_permanent-deletion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "related_object_id": {
+            "type": "string"
+          },
+          "related_object": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "data_json": {
+            "type": "object",
+            "properties": {
+              "events": {
+                "type": "integer"
+              },
+              "customer_events": {
+                "type": "integer"
+              },
+              "daily_events": {
+                "type": "integer"
+              },
+              "segments": {
+                "type": "integer"
+              },
+              "orders": {
+                "type": "integer"
+              },
+              "order_events": {
+                "type": "integer"
+              },
+              "customer": {
+                "type": "integer"
+              }
+            }
+          },
+          "object": {
+            "type": "string"
+          }
+        },
+        "x-examples": {
+          "example-1": {
+            "id": "del_5PQxA5AgP94MubKQT8KlVg5e",
+            "created_at": "2022-06-28T13:51:55.171Z",
+            "related_object_id": "cust_W8n9I8pJDXlM69j49iKJeUYp",
+            "related_object": "customer",
+            "status": "DONE",
+            "data_json": {
+              "events": 2,
+              "customer_events": 7,
+              "daily_events": 0,
+              "segments": 0,
+              "orders": 1,
+              "order_events": 4,
+              "customer": 1
+            },
+            "object": "pernament_deletion"
+          }
+        },
+        "title": "Customer Permanent Deletion Response Body",
+        "description": "Response body schema for `/customers/{customerId}/permanent-deletion`."
       },
       "9_obj_customer_activity_object": {
         "title": "Customer Activity Object",
@@ -6018,17 +6522,228 @@
         ]
       },
       "10_obj_order_object": {
-        "title": "Order Object",
         "type": "object",
         "properties": {
           "id": {
             "type": "string"
+          },
+          "source_id": {
+            "type": "null"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer"
+          },
+          "discount_amount": {
+            "type": "integer"
+          },
+          "total_discount_amount": {
+            "type": "integer"
+          },
+          "total_amount": {
+            "type": "integer"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "object": {
+                  "type": "string"
+                },
+                "product_id": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "integer"
+                },
+                "amount": {
+                  "type": "integer"
+                },
+                "price": {
+                  "type": "integer"
+                },
+                "subtotal_amount": {
+                  "type": "integer"
+                },
+                "product": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "source_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "price": {
+                      "type": "integer"
+                    }
+                  }
+                },
+                "sku_id": {
+                  "type": "string"
+                },
+                "sku": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "source_id": {
+                      "type": "string"
+                    },
+                    "sku": {
+                      "type": "string"
+                    },
+                    "price": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {}
+          },
+          "customer": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "object": {
+                "type": "string"
+              }
+            }
+          },
+          "referrer": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "object": {
+                "type": "string"
+              }
+            }
+          },
+          "customer_id": {
+            "type": "string"
+          },
+          "referrer_id": {
+            "type": "string"
+          },
+          "object": {
+            "type": "string"
+          },
+          "redemptions": {
+            "type": "object",
+            "properties": {
+              "r_0abe82a2154879ee5c": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string"
+                  },
+                  "related_object_type": {
+                    "type": "string"
+                  },
+                  "related_object_id": {
+                    "type": "string"
+                  },
+                  "related_object_parent_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           }
         },
-        "description": "This is an object representing an order.  \n\nThe purchase transactions can be tracked in Voucherify by the creation of an order object. You can create, retrieve, and pay individual orders, as well as list and export all of them in a CSV format. Orders are identified by a unique ID.\n\nOrders are automatically created during the [redeem voucher](OpenAPI.json/paths/~1vouchers~1{code}~1redemption/post) and [redeem promotion](OpenAPI.json/paths/~1promotions~1tiers~1{promotion_tier_id}~1redemption/post) call.\n\n<!-- theme: info -->\n> #### order.id and order session\n>\n> If you use the same order.id in more than one redemption request, all valid discounts provided in the redemption payload will be applied to the given order.\n> \n> Each time you use particular order in your requests, the API will automatically trigger a new session linked to the order.id. The session is active during the request and ends asynchronously after the request is completed. The session mechanism ensures that the particular order.id can be used in one API request at once.",
-        "x-tags": [
-          "ORDERS API"
-        ]
+        "x-examples": {
+          "example-1": {
+            "id": "ord_mtAx6xnppgrXAegfKjGnZg59",
+            "source_id": null,
+            "created_at": "2022-03-10T09:13:40.590Z",
+            "updated_at": "2022-03-10T09:13:41.341Z",
+            "status": "PAID",
+            "amount": 77789,
+            "discount_amount": 0,
+            "total_discount_amount": 0,
+            "total_amount": 77789,
+            "items": [
+              {
+                "object": "order_item",
+                "product_id": "prod_0a7e62db1fca8322a2",
+                "quantity": 1,
+                "amount": 70000,
+                "price": 70000,
+                "subtotal_amount": 70000,
+                "product": {
+                  "id": "prod_0a7e62db1fca8322a2",
+                  "source_id": "prod_anJ03RZZq74z4v",
+                  "name": "Apple iPhone 8",
+                  "price": 20000
+                }
+              },
+              {
+                "object": "order_item",
+                "product_id": "prod_0a41e31b3081c2834d",
+                "sku_id": "sku_0a41e31c7b41c28358",
+                "quantity": 1,
+                "amount": 7789,
+                "price": 7789,
+                "subtotal_amount": 7789,
+                "product": {
+                  "id": "prod_0a41e31b3081c2834d",
+                  "source_id": "r4",
+                  "name": "Books",
+                  "price": 1599
+                },
+                "sku": {
+                  "id": "sku_0a41e31c7b41c28358",
+                  "source_id": "emailme@myemail.please",
+                  "sku": "Comics",
+                  "price": 7789
+                }
+              }
+            ],
+            "metadata": {},
+            "customer": {
+              "id": "cust_nk0N1uNQ1YnupAoJGOgvsODC",
+              "object": "customer"
+            },
+            "referrer": {
+              "id": "cust_7iUa6ICKyU6gH40dBU25kQU1",
+              "object": "customer"
+            },
+            "customer_id": "cust_nk0N1uNQ1YnupAoJGOgvsODC",
+            "referrer_id": "cust_7iUa6ICKyU6gH40dBU25kQU1",
+            "object": "order",
+            "redemptions": {
+              "r_0abe82a2154879ee5c": {
+                "date": "2022-03-10T09:13:40.693Z",
+                "related_object_type": "voucher",
+                "related_object_id": "v_7HxHkf4VAkMuc8u4lZs78lyRwhRze5UE",
+                "related_object_parent_id": "camp_BcHeMm4QaKjqCWMQFecMp1U0"
+              }
+            }
+          }
+        },
+        "title": "Order object",
+        "description": "This is an object representing an order.  \n\nThe purchase transactions can be tracked in Voucherify by the creation of an order object. You can create, retrieve, and pay individual orders, as well as list and export all of them in a CSV format. Orders are identified by a unique ID.\n\nOrders are automatically created during the [redeem voucher](OpenAPI.json/paths/~1vouchers~1{code}~1redemption/post) and [redeem promotion](OpenAPI.json/paths/~1promotions~1tiers~1{promotion_tier_id}~1redemption/post) call.\n\n<!-- theme: info -->\n> #### order.id and order session\n>\n> If you use the same order.id in more than one redemption request, all valid discounts provided in the redemption payload will be applied to the given order.\n> \n> Each time you use particular order in your requests, the API will automatically trigger a new session linked to the order.id. The session is active during the request and ends asynchronously after the request is completed. The session mechanism ensures that the particular order.id can be used in one API request at once."
       },
       "10_obj_order_item_object": {
         "title": "Order Item Object",
@@ -7278,6 +7993,10 @@
       "17_obj_async_action_object": {
         "title": "Async Action Object",
         "type": "object",
+        "description": "This is an object representing an asynchronous action.",
+        "x-tags": [
+          "ASYNC ACTIONS API"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -7300,6 +8019,8 @@
               "PRODUCTS.BULK_UPDATE",
               "PRODUCTS.METADATA_UPDATE",
               "PRODUCTS.METADATA_KEY_PURGE",
+              "PRODUCTS.IMPORT_CSV",
+              "SKUS.IMPORT_CSV",
               "VOUCHERS.IMPORT",
               "VOUCHERS.IMPORT_CSV",
               "VOUCHERS.BULK_UPDATE",
@@ -7353,6 +8074,12 @@
                 "$ref": "#/components/schemas/17_res_obj_get_async_action_result_products_metadata_update"
               },
               {
+                "$ref": "#/components/schemas/17_res_obj_get_async_action_result_products_import_csv"
+              },
+              {
+                "$ref": "#/components/schemas/17_res_obj_get_async_action_result_skus_import_csv"
+              },
+              {
                 "$ref": "#/components/schemas/17_res_obj_get_async_action_result_products_metadata_key_purge"
               },
               {
@@ -7375,262 +8102,26 @@
           "created_at": {
             "type": "string",
             "description": "Timestamp representing the date and time when the async action was scheduled in ISO 8601 format.",
-            "example": "2022-04-07T07:42:44.442Z"
+            "example": "2022-06-23T11:21:45.578Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2022-06-23T11:21:46.795Z",
+            "description": "Timestamp representing the date and time when the async action was updated in ISO 8601 format."
+          },
+          "processing_time": {
+            "type": "string",
+            "example": "1217",
+            "description": "The length of time it took to process the request in milliseconds."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0b45cee140c3c9b5ca"
           },
           "object": {
             "type": "string",
             "default": "async_action",
             "description": "The type of object represented by JSON. This object stores information about the async action."
-          }
-        },
-        "description": "This is an object representing an asynchronous action.",
-        "x-tags": [
-          "ASYNC ACTIONS API"
-        ]
-      },
-      "18_res_list_consents_GET": {
-        "description": "Response body schema for listing consents.",
-        "type": "object",
-        "x-examples": {
-          "example-1": {
-            "groups": {
-              "object": "list",
-              "data_ref": "data",
-              "data": [
-                {
-                  "id": "cnstgr_3c7Z3rcOLv51bsXlRtTZPYj8",
-                  "name": "Consent group",
-                  "description": "Consent group",
-                  "consents": [
-                    "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I"
-                  ],
-                  "created_at": "2022-04-13T09:12:47.743Z",
-                  "updated_at": null,
-                  "object": "consent_group"
-                }
-              ],
-              "total": 1
-            },
-            "consents": {
-              "object": "list",
-              "data_ref": "data",
-              "data": [
-                {
-                  "id": "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                  "name": "Consent",
-                  "description": "Consent for marketing",
-                  "category": "New",
-                  "created_at": "2022-04-13T09:11:27.037Z",
-                  "updated_at": null,
-                  "object": "consent"
-                }
-              ],
-              "total": 1
-            }
-          }
-        },
-        "examples": [
-          {
-            "groups": {
-              "object": "list",
-              "data_ref": "data",
-              "data": [
-                {
-                  "id": "cnstgr_3c7Z3rcOLv51bsXlRtTZPYj8",
-                  "name": "Consent group",
-                  "description": "Consent group",
-                  "consents": [
-                    "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                    "cnst_VCmucIvAsmDYw2PPAok6bcYy"
-                  ],
-                  "created_at": "2022-04-13T09:12:47.743Z",
-                  "updated_at": "2022-04-13T09:45:46.616Z",
-                  "object": "consent_group"
-                },
-                {
-                  "id": "cnstgr_EAIakTj5lNG2ZpiQEauGqBlY",
-                  "name": "Consent group 2",
-                  "description": "Consent group 2",
-                  "consents": [
-                    "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                    "cnst_VCmucIvAsmDYw2PPAok6bcYy"
-                  ],
-                  "created_at": "2022-04-13T10:03:46.564Z",
-                  "updated_at": null,
-                  "object": "consent_group"
-                }
-              ],
-              "total": 2
-            },
-            "consents": {
-              "object": "list",
-              "data_ref": "data",
-              "data": [
-                {
-                  "id": "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                  "name": "Consent",
-                  "description": "Consent for marketing",
-                  "category": "New",
-                  "created_at": "2022-04-13T09:11:27.037Z",
-                  "updated_at": null,
-                  "object": "consent"
-                },
-                {
-                  "id": "cnst_VCmucIvAsmDYw2PPAok6bcYy",
-                  "name": "Consent 2",
-                  "description": "Consent 2",
-                  "category": "Trial",
-                  "created_at": "2022-04-13T09:45:37.597Z",
-                  "updated_at": null,
-                  "object": "consent"
-                }
-              ],
-              "total": 2
-            }
-          }
-        ],
-        "title": "List Consents Response Body",
-        "properties": {
-          "groups": {
-            "type": "object",
-            "description": "Contains marketing permission groups' definitions.",
-            "properties": {
-              "object": {
-                "type": "string",
-                "default": "list",
-                "description": "Stores information about marketing permission groups."
-              },
-              "data_ref": {
-                "type": "string",
-                "default": "data",
-                "description": "Identifies the name of the attribute that contains the array of marketing permission groups."
-              },
-              "data": {
-                "type": "array",
-                "uniqueItems": false,
-                "description": "An array of marketing permission groups.",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "description": "Contains a marketing permission group's definition.",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "example": "cnstgr_3c7Z3rcOLv51bsXlRtTZPYj8",
-                      "description": "Unique group ID."
-                    },
-                    "name": {
-                      "type": "string",
-                      "description": "Marketing permission group name."
-                    },
-                    "description": {
-                      "type": "string",
-                      "description": "Marketing permission group category."
-                    },
-                    "consents": {
-                      "type": "array",
-                      "description": "List of consents that are assigned to the group.",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "example": "2022-04-13T09:12:47.743Z",
-                      "description": "Timestamp representing the date and time when the group was created in ISO 8601 format."
-                    },
-                    "updated_at": {
-                      "type": [
-                        "string",
-                        "null"
-                      ],
-                      "format": "date-time",
-                      "example": "2022-05-14T09:11:27.037Z",
-                      "description": "Timestamp representing the date and time when the group was updated in ISO 8601 format."
-                    },
-                    "object": {
-                      "type": "string",
-                      "default": "consent_group",
-                      "description": "Stores information about a marketing permission group."
-                    }
-                  }
-                }
-              },
-              "total": {
-                "type": "integer",
-                "description": "Total number of groups."
-              }
-            }
-          },
-          "consents": {
-            "type": "object",
-            "description": "Contains opt-in consents' definitions.",
-            "properties": {
-              "object": {
-                "type": "string",
-                "default": "list",
-                "description": "Stores information about opt-in consents."
-              },
-              "data_ref": {
-                "type": "string",
-                "default": "data",
-                "description": "Identifies the name of the attribute that contains the array of opt-in consents."
-              },
-              "data": {
-                "type": "array",
-                "uniqueItems": false,
-                "description": "An array of consents.",
-                "items": {
-                  "type": "object",
-                  "additionalProperties": false,
-                  "description": "Contains an opt-in consent definition.",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "example": "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                      "description": "Unique consent ID."
-                    },
-                    "name": {
-                      "type": "string",
-                      "description": "Consent name."
-                    },
-                    "description": {
-                      "type": "string",
-                      "description": "Consent description."
-                    },
-                    "category": {
-                      "type": "string",
-                      "description": "Consent category."
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "example": "2022-04-13T09:11:27.037Z",
-                      "description": "Timestamp representing the date and time when the consent was created in ISO 8601 format."
-                    },
-                    "updated_at": {
-                      "type": [
-                        "string",
-                        "null"
-                      ],
-                      "format": "date-time",
-                      "example": "2022-05-14T09:11:27.037Z",
-                      "description": "Timestamp representing the date and time when the consent was updated in ISO 8601 format."
-                    },
-                    "object": {
-                      "type": "string",
-                      "default": "consent",
-                      "description": "Stores information about an opt-in consent."
-                    }
-                  }
-                }
-              },
-              "total": {
-                "type": "integer",
-                "description": "Total number of consents."
-              }
-            }
           }
         }
       },
@@ -7751,6 +8242,11 @@
                   "type": "string",
                   "description": "Timestamp representing the date and time when the async action was scheduled in ISO 8601 format.",
                   "example": "2022-04-07T07:42:44.442Z"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "description": "Timestamp representing the date and time when the async action was updated in ISO 8601 format.",
+                  "example": "2022-06-22T07:58:21.703Z"
                 },
                 "object": {
                   "type": "string",
@@ -8077,6 +8573,67 @@
           }
         }
       },
+      "17_res_obj_get_async_action_result_products_import_csv": {
+        "title": "PRODUCTS.IMPORT_CSV",
+        "type": "object",
+        "description": "Result schema for a PRODUCTS.IMPORT_CSV async action type.",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description about the result."
+          },
+          "failed": {
+            "type": "array",
+            "description": "If any records failed during the process, this array shows the failure details.",
+            "items": {
+              "type": "object",
+              "description": "Contains the details regarding a CSV file line item failed import.",
+              "properties": {
+                "row": {
+                  "type": "integer",
+                  "description": "The CSV file row number where the product definition is recorded. The row counter excludes the file headers row."
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Detailed failure cause for the product import."
+                }
+              }
+            }
+          }
+        }
+      },
+      "17_res_obj_get_async_action_result_skus_import_csv": {
+        "title": "SKUS.IMPORT_CSV",
+        "type": "object",
+        "description": "Result schema for a SKUS.IMPORT_CSV async action type.",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description about the result.",
+            "example": "2 sku(s) imported successfully, 6 failed."
+          },
+          "failed": {
+            "type": "array",
+            "description": "If any records failed during the process, this array shows the failure details.",
+            "items": {
+              "type": "object",
+              "description": "Contains the details regarding a CSV file line item failed import.",
+              "properties": {
+                "row": {
+                  "type": "integer",
+                  "description": "The CSV file row number where the SKU definition is recorded. The row counter excludes the file headers row.",
+                  "example": 2
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Detailed failure cause for the SKU import.",
+                  "example": "Resource sku with id size-small is in use by products with ids [prod_0b0e3441c2462eff2c]"
+                }
+              }
+            }
+          }
+        }
+      },
       "17_res_obj_get_async_action_result_vouchers_import": {
         "title": "VOUCHERS.IMPORT",
         "type": "object",
@@ -8198,6 +8755,252 @@
           "message": {
             "type": "string",
             "description": "A human-readable message providing a short description about the result."
+          }
+        }
+      },
+      "18_res_list_consents_GET": {
+        "description": "Response body schema for listing consents.",
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "groups": {
+              "object": "list",
+              "data_ref": "data",
+              "data": [
+                {
+                  "id": "cnstgr_3c7Z3rcOLv51bsXlRtTZPYj8",
+                  "name": "Consent group",
+                  "description": "Consent group",
+                  "consents": [
+                    "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I"
+                  ],
+                  "created_at": "2022-04-13T09:12:47.743Z",
+                  "updated_at": null,
+                  "object": "consent_group"
+                }
+              ],
+              "total": 1
+            },
+            "consents": {
+              "object": "list",
+              "data_ref": "data",
+              "data": [
+                {
+                  "id": "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
+                  "name": "Consent",
+                  "description": "Consent for marketing",
+                  "category": "New",
+                  "created_at": "2022-04-13T09:11:27.037Z",
+                  "updated_at": null,
+                  "object": "consent"
+                }
+              ],
+              "total": 1
+            }
+          }
+        },
+        "examples": [
+          {
+            "groups": {
+              "object": "list",
+              "data_ref": "data",
+              "data": [
+                {
+                  "id": "cnstgr_3c7Z3rcOLv51bsXlRtTZPYj8",
+                  "name": "Consent group",
+                  "description": "Consent group",
+                  "consents": [
+                    "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
+                    "cnst_VCmucIvAsmDYw2PPAok6bcYy"
+                  ],
+                  "created_at": "2022-04-13T09:12:47.743Z",
+                  "updated_at": "2022-04-13T09:45:46.616Z",
+                  "object": "consent_group"
+                },
+                {
+                  "id": "cnstgr_EAIakTj5lNG2ZpiQEauGqBlY",
+                  "name": "Consent group 2",
+                  "description": "Consent group 2",
+                  "consents": [
+                    "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
+                    "cnst_VCmucIvAsmDYw2PPAok6bcYy"
+                  ],
+                  "created_at": "2022-04-13T10:03:46.564Z",
+                  "updated_at": null,
+                  "object": "consent_group"
+                }
+              ],
+              "total": 2
+            },
+            "consents": {
+              "object": "list",
+              "data_ref": "data",
+              "data": [
+                {
+                  "id": "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
+                  "name": "Consent",
+                  "description": "Consent for marketing",
+                  "category": "New",
+                  "created_at": "2022-04-13T09:11:27.037Z",
+                  "updated_at": null,
+                  "object": "consent"
+                },
+                {
+                  "id": "cnst_VCmucIvAsmDYw2PPAok6bcYy",
+                  "name": "Consent 2",
+                  "description": "Consent 2",
+                  "category": "Trial",
+                  "created_at": "2022-04-13T09:45:37.597Z",
+                  "updated_at": null,
+                  "object": "consent"
+                }
+              ],
+              "total": 2
+            }
+          }
+        ],
+        "title": "List Consents Response Body",
+        "properties": {
+          "groups": {
+            "type": "object",
+            "description": "Contains marketing permission groups' definitions.",
+            "properties": {
+              "object": {
+                "type": "string",
+                "default": "list",
+                "description": "Stores information about marketing permission groups."
+              },
+              "data_ref": {
+                "type": "string",
+                "default": "data",
+                "description": "Identifies the name of the attribute that contains the array of marketing permission groups."
+              },
+              "data": {
+                "type": "array",
+                "uniqueItems": false,
+                "description": "An array of marketing permission groups.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "Contains a marketing permission group's definition.",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "cnstgr_3c7Z3rcOLv51bsXlRtTZPYj8",
+                      "description": "Unique group ID."
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Marketing permission group name."
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Marketing permission group category."
+                    },
+                    "consents": {
+                      "type": "array",
+                      "description": "List of consents that are assigned to the group.",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2022-04-13T09:12:47.743Z",
+                      "description": "Timestamp representing the date and time when the group was created in ISO 8601 format."
+                    },
+                    "updated_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time",
+                      "example": "2022-05-14T09:11:27.037Z",
+                      "description": "Timestamp representing the date and time when the group was updated in ISO 8601 format."
+                    },
+                    "object": {
+                      "type": "string",
+                      "default": "consent_group",
+                      "description": "Stores information about a marketing permission group."
+                    }
+                  }
+                }
+              },
+              "total": {
+                "type": "integer",
+                "description": "Total number of groups."
+              }
+            }
+          },
+          "consents": {
+            "type": "object",
+            "description": "Contains opt-in consents' definitions.",
+            "properties": {
+              "object": {
+                "type": "string",
+                "default": "list",
+                "description": "Stores information about opt-in consents."
+              },
+              "data_ref": {
+                "type": "string",
+                "default": "data",
+                "description": "Identifies the name of the attribute that contains the array of opt-in consents."
+              },
+              "data": {
+                "type": "array",
+                "uniqueItems": false,
+                "description": "An array of consents.",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "Contains an opt-in consent definition.",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
+                      "description": "Unique consent ID."
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Consent name."
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Consent description."
+                    },
+                    "category": {
+                      "type": "string",
+                      "description": "Consent category."
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2022-04-13T09:11:27.037Z",
+                      "description": "Timestamp representing the date and time when the consent was created in ISO 8601 format."
+                    },
+                    "updated_at": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time",
+                      "example": "2022-05-14T09:11:27.037Z",
+                      "description": "Timestamp representing the date and time when the consent was updated in ISO 8601 format."
+                    },
+                    "object": {
+                      "type": "string",
+                      "default": "consent",
+                      "description": "Stores information about an opt-in consent."
+                    }
+                  }
+                }
+              },
+              "total": {
+                "type": "integer",
+                "description": "Total number of consents."
+              }
+            }
           }
         }
       },
@@ -13787,23 +14590,22 @@
         "operationId": "post-validations",
         "responses": {
           "200": {
-            "description": "All codes and tiers provided in redeemables are validated during the request and the result of their validation is returned in the API response. \n\n| **Response** | **Description** |\n|:---|:---|\n| valid `boolean` | If all redeemables can be applied in the given context, the API returns `true` if at least one redeemable can't be applied, the API returns `false`. |\n| redeemables `array of objects` | redeemables array lists results of validation of each redeemable. If a redeemable can be applied, the API returns \"status\": \"APPLICABLE\" |\n| order `object` | order object presents details of the order provided in the request after all discounts are applied. [Read more](OpenAPI.json/paths/~1redemptions/post) about returned order object. |\n"
+            "description": "All codes and tiers provided in redeemables are validated during the request and the result of their validation is returned in the API response. \n\n| **Response** | **Description** |\n|:---|:---|\n| valid `boolean` | If **all** redeemables can be applied in the given context, the API returns `true`. Otherwise, if at least one redeemable can't be applied, the API returns `false`. |\n| redeemables `array of objects` | The `redeemables` array lists the validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"` |\n| order `object` | The `order` object presents details of the order provided in the request after all discounts are applied. [Read more](OpenAPI.json/paths/~1redemptions/post) about the returned order object. |\n"
           }
         },
         "tags": [
           "STACKABLE DISCOUNTS API"
         ],
-        "description": "To verify redeemables given in the request, you can use this method. It is designed for server side integration which means that it is accessible only through private keys.  ",
+        "description": "Verify redeemables provided in the request. This method is designed for server side integration which means that it is accessible only through private keys.  ",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/19_req_validations"
               }
             }
           },
-          "description": "#### Expanded Response  \n\nResponses will vary depending on the strings passed in the options.expand string array.\n  \n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"order\"] | - Same response as fallback response (without an options object).<br>- Order data with calculated discounts are listed in each child redeemable object.<br>- Metadata not included for each discount type. |\n| [\"redeemable\"] | Expands redeemable objects by including `metadata` for each discount type. |\n| [\"order\", \"redeemable\"] | - Order data with calculated discounts are listed in each child redeemable object.<br>- Includes `metadata` for each discount type. |\n"
+          "description": "#### Expanded Response  \n\nResponses will vary depending on the strings passed in the `options.expand` string array. You can customize the response by using one of the following combinations of strings.\n  \n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"order\"] | - Same response as fallback response (without an options object).<br>- Order data with calculated discounts are listed in each child redeemable object.<br>- Metadata not included for each discount type. |\n| [\"redeemable\"] | Expands redeemable objects by including `metadata` for each discount type. |\n| [\"order\", \"redeemable\"] | - Order data with calculated discounts are listed in each child redeemable object.<br>- Includes `metadata` for each discount type. |\n"
         },
         "parameters": [
           {
@@ -16093,7 +16895,7 @@
         ]
       }
     },
-    "/customers/{customer_id}": {
+    "/customers/{customerId}": {
       "get": {
         "summary": "Get Customer",
         "tags": [
@@ -16101,21 +16903,51 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Returns a customer object if a valid identifier was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/9_obj_customer_object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found. When requesting the id of a customer that has been deleted or does not exist in the system, the resource will not be returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id cust_sehkNIi8Uq2qQuRqSr7xn4Z",
+                      "request_id": "v-0b4c590350857970df",
+                      "resource_id": "cust_sehkNIi8Uq2qQuRqSr7xn4Z",
+                      "resource_type": "customer"
+                    }
+                  }
+                }
+              }
+            }
           },
           "": {
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {}
+                  "$ref": "#/components/schemas/9_obj_customer_object"
                 }
               }
-            }
+            },
+            "description": ""
           }
         },
         "operationId": "get-customers",
-        "description": "For details check out \"Customer tracking\" section",
+        "description": "Retrieve customer details.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -16131,7 +16963,7 @@
             "type": "string",
             "example": "cust_J1CDUdbqn5Exva8ASWk1Fq0j"
           },
-          "name": "customer_id",
+          "name": "customerId",
           "in": "path",
           "required": true,
           "description": "A Voucherify customer ID or source ID."
@@ -16186,10 +17018,17 @@
         "operationId": "put-customers-customer_id",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Returns a customer object if updates were successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/9_obj_customer_object"
+                }
+              }
+            }
           },
           "400": {
-            "description": "Returns an error indicating that a customer with given source_id was found.",
+            "description": "Returns an error indicating that a customer with given `source_id` was found.",
             "content": {
               "application/json": {
                 "schema": {
@@ -16202,7 +17041,7 @@
         "tags": [
           "CUSTOMERS API"
         ],
-        "description": "For details check out \"Customer tracking\" section",
+        "description": "Updates the specified customer by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged.\n\nYou can modify the following fields:  ",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -16219,7 +17058,8 @@
                 "properties": {}
               }
             }
-          }
+          },
+          "description": ""
         }
       }
     },
@@ -16257,13 +17097,13 @@
       },
       "parameters": []
     },
-    "/customers/{customer_id}/permanent-deletion": {
+    "/customers/{customerId}/permanent-deletion": {
       "parameters": [
         {
           "schema": {
             "type": "string"
           },
-          "name": "customer_id",
+          "name": "customerId",
           "in": "path",
           "required": true,
           "description": "A Voucherify customer identifier or source_id."
@@ -16274,13 +17114,44 @@
         "operationId": "post-customers-customer_id-permanent-deletion",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/9_res_customers_customerId_permanent-deletion"
+                },
+                "examples": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id cust_W8n9I8pJDXlM69j49iKJeYp",
+                      "request_id": "v-0b4c62635a154e96f1",
+                      "resource_id": "cust_W8n9I8pJDXlM69j49iKJeYp",
+                      "resource_type": "customer"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
           "CUSTOMERS API"
         ],
-        "description": "The organization user can remove consumer data permanently from the Voucherify system by using this API method. It d​eletes all customer data and connected resources. It makes customer profile forgotten by Voucherify.",
+        "description": "The organization user can remove consumer data permanently from the Voucherify system by using this API method. It d​eletes all customer data and connected resources. It makes the customer profile forgotten by Voucherify.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -18169,7 +19040,7 @@
           }
         },
         "operationId": "get-async-actions",
-        "description": "Track asynchronous operations scheduled in your project.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action.\n\n| **Types by Context** | **Endpoint** | **Dashboard** |\n|:---|:---|:---|\n| **CAMPAIGN** |  |  |\n| CAMPAIGN.VOUCHERS_IMPORT<br>CAMPAIGN.VOUCHERS_IMPORT_CSV<br>CAMPAIGN.VOUCHERS_UPDATE<br>CAMPAIGN.VOUCHERS_DELETE<br>CAMPAIGN.VOUCHERS_GENERATE | POST   [/campaigns/{campaign_id}/import](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1import/post)<br>POST   [/campaigns/{campaign_id}/importCSV](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1importCSV/post)<br>~PUT    [/campaigns/{campaign_id}](OpenAPI.json/paths/~1campaigns~1{campaign_id}/put)~<br>DELETE [/campaigns/{campaign_id}](OpenAPI.json/paths/~1campaigns~1{campaign_id}/delete})<br>POST   [/campaigns](OpenAPI.json/paths/~1campaigns/post) | NA<br>[Campaigns &rarr; Import CSV file](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally)<br>~NA~<br>[Campaigns &rarr; Delete](https://support.voucherify.io/article/64-maintenance#delete-campaign)<br>[Campaign Manager](https://support.voucherify.io/article/26-how-do-i-get-started-with-voucherify#campaign) |\n| **CUSTOMERS** |  |  |\n| CUSTOMERS.IMPORT_CSV<br>CUSTOMERS.BULK_UPDATE<br>CUSTOMERS.METADATA_UPDATE<br>CUSTOMERS.METADATA_KEY_PURGE | POST [/customers/importCSV](OpenAPI.json/paths/~1customers~1importCSV/post)<br>POST [/customers/bulk/async](OpenAPI.json/paths/~1customers~1bulk~1async/post)<br>POST [/customers/metadata/async](OpenAPI.json/paths/~1customers~1metadata~1async/post)<br>NA | [Customers &rarr; Import CSV](https://support.voucherify.io/article/67-how-to-import-my-customers#csv-import)<br>NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |\n| **PRODUCTS** |  |  |\n| PRODUCTS.BULK_UPDATE<br>PRODUCTS.METADATA_UPDATE<br>PRODUCTS.METADATA_KEY_PURGE<br>PRODUCTS.IMPORT_CSV<br>SKUS.IMPORT_CSV | POST [/products/bulk/async](OpenAPI.json/paths/~1products~1bulk~1async/post)<br>POST [/products/metadata/async](OpenAPI.json/paths/~1products~1metadata~1async/post)<br>NA<br>POST [/products/importCSV](OpenAPI.json/paths/~1products~1importCSV/post)<br>POST [/skus/importCSV](OpenAPI.json/paths/~1skus~1importCSV/post) | NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance)<br>[Products &rarr; Import from CSV file](https://support.voucherify.io/article/574-data-import)<br>[Products &rarr; Import from CSV file](https://support.voucherify.io/article/574-data-import) |\n| **VOUCHERS** |  |  |\n| VOUCHERS.IMPORT<br>VOUCHERS.IMPORT_CSV<br>VOUCHERS.BULK_UPDATE<br>VOUCHERS.METADATA_UPDATE<br>VOUCHERS.METADATA_KEY_PURGE | POST [/vouchers/import](OpenAPI.json/paths/~1vouchers~1import/post)<br>POST [/vouchers/importCSV](OpenAPI.json/paths/~1vouchers~1importCSV/post)<br>POST [/vouchers/bulk/async](OpenAPI.json/paths/~1vouchers~1bulk~1async/post)<br>POST [/vouchers/metadata/async](OpenAPI.json/paths/~1vouchers~1metadata~1async/post)<br>NA | NA<br>[Vouchers &rarr; Import CSV file](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally)<br>NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |",
+        "description": "Track asynchronous operations scheduled in your project.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action.\n\n| **Types by Context** | **Endpoint** | **Dashboard** |\n|:---|:---|:---|\n| **CAMPAIGN** |  |  |\n| CAMPAIGN.VOUCHERS_IMPORT<br>CAMPAIGN.VOUCHERS_IMPORT_CSV<br>CAMPAIGN.VOUCHERS_UPDATE<br>CAMPAIGN.VOUCHERS_DELETE<br>CAMPAIGN.VOUCHERS_GENERATE | POST   [/campaigns/{campaign_id}/import](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1import/post)<br>POST   [/campaigns/{campaign_id}/importCSV](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1importCSV/post)<br>~PUT    [/campaigns/{campaign_id}](OpenAPI.json/paths/~1campaigns~1{campaign_id}/put)~<br>DELETE [/campaigns/{campaign_id}](OpenAPI.json/paths/~1campaigns~1{campaign_id}/delete})<br>POST   [/campaigns](OpenAPI.json/paths/~1campaigns/post) | NA<br>[Campaigns &rarr; Import CSV file](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally)<br>~NA~<br>[Campaigns &rarr; Delete](https://support.voucherify.io/article/64-maintenance#delete-campaign)<br>[Campaign Manager](https://support.voucherify.io/article/26-how-do-i-get-started-with-voucherify#campaign) |\n| **CUSTOMERS** |  |  |\n| CUSTOMERS.IMPORT_CSV<br>CUSTOMERS.BULK_UPDATE<br>CUSTOMERS.METADATA_UPDATE<br>CUSTOMERS.METADATA_KEY_PURGE | POST [/customers/importCSV](OpenAPI.json/paths/~1customers~1importCSV/post)<br>POST [/customers/bulk/async](OpenAPI.json/paths/~1customers~1bulk~1async/post)<br>POST [/customers/metadata/async](OpenAPI.json/paths/~1customers~1metadata~1async/post)<br>NA | [Customers &rarr; Import CSV](https://support.voucherify.io/article/67-how-to-import-my-customers#csv-import)<br>NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |\n| **PRODUCTS** |  |  |\n| PRODUCTS.BULK_UPDATE<br>PRODUCTS.METADATA_UPDATE<br>PRODUCTS.METADATA_KEY_PURGE<br>PRODUCTS.IMPORT_CSV<br>SKUS.IMPORT_CSV | POST [/products/bulk/async](OpenAPI.json/paths/~1products~1bulk~1async/post)<br>POST [/products/metadata/async](OpenAPI.json/paths/~1products~1metadata~1async/post)<br>NA<br>POST [/products/importCSV](OpenAPI.json/paths/~1products~1importCSV/post)<br>POST [/skus/importCSV](OpenAPI.json/paths/~1skus~1importCSV/post) | NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance)<br>[Products &rarr; Import CSV file](https://support.voucherify.io/article/574-data-import)<br>[Products &rarr; Import CSV file](https://support.voucherify.io/article/574-data-import) |\n| **VOUCHERS** |  |  |\n| VOUCHERS.IMPORT<br>VOUCHERS.IMPORT_CSV<br>VOUCHERS.BULK_UPDATE<br>VOUCHERS.METADATA_UPDATE<br>VOUCHERS.METADATA_KEY_PURGE | POST [/vouchers/import](OpenAPI.json/paths/~1vouchers~1import/post)<br>POST [/vouchers/importCSV](OpenAPI.json/paths/~1vouchers~1importCSV/post)<br>POST [/vouchers/bulk/async](OpenAPI.json/paths/~1vouchers~1bulk~1async/post)<br>POST [/vouchers/metadata/async](OpenAPI.json/paths/~1vouchers~1metadata~1async/post)<br>NA | NA<br>[Vouchers &rarr; Import CSV file](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally)<br>NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -18558,6 +19429,47 @@
                       "created_at": "2022-04-26T13:16:48.105Z",
                       "object": "async_action"
                     }
+                  },
+                  "SKUS.IMPORT_CSV": {
+                    "value": {
+                      "id": "aa_0b0e6c284557d624ba",
+                      "type": "SKUS.IMPORT_CSV",
+                      "status": "DONE",
+                      "result": {
+                        "message": "2 sku(s) imported successfully, 6 failed.",
+                        "failed": [
+                          {
+                            "row": 2,
+                            "reason": "Resource sku with id size-small is in use by products with ids [prod_0b0e3441c2462eff2c]"
+                          },
+                          {
+                            "row": 3,
+                            "reason": "Resource sku with id size-medium is in use by products with ids [prod_0b0e3441c2462eff2c]"
+                          },
+                          {
+                            "row": 4,
+                            "reason": "Resource sku with id size-large is in use by products with ids [prod_0b0e3441c2462eff2c]"
+                          },
+                          {
+                            "row": 5,
+                            "reason": "Invalid attributes key. Allowed attributes: blue,production"
+                          },
+                          {
+                            "row": 6,
+                            "reason": "Invalid attributes key. Allowed attributes: blue,production"
+                          },
+                          {
+                            "row": 7,
+                            "reason": "Invalid attributes key. Allowed attributes: blue,production"
+                          }
+                        ]
+                      },
+                      "created_at": "2022-05-11T10:53:57.909Z",
+                      "updated_at": "2022-05-11T10:53:59.107Z",
+                      "processing_time": 1198,
+                      "request_id": "v-0b0e6c2780144355c1",
+                      "object": "async_action"
+                    }
                   }
                 }
               }
@@ -18588,7 +19500,7 @@
           }
         },
         "operationId": "get-async-actions-async_action_id",
-        "description": "Check the result of a scheduled asynchronous operation.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action.\n\n| **Types by Context** | **Endpoint** | **Dashboard** |\n|:---|:---|:---|\n| **CAMPAIGN** |  |  |\n| CAMPAIGN.VOUCHERS_IMPORT<br>CAMPAIGN.VOUCHERS_IMPORT_CSV<br>CAMPAIGN.VOUCHERS_UPDATE<br>CAMPAIGN.VOUCHERS_DELETE<br>CAMPAIGN.VOUCHERS_GENERATE | POST   [/campaigns/{campaign_id}/import](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1import/post)<br>POST   [/campaigns/{campaign_id}/importCSV](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1importCSV/post)<br>~PUT    [/campaigns/{campaign_id}](OpenAPI.json/paths/~1campaigns~1{campaign_id}/put)~<br>DELETE [/campaigns/{campaign_id}](OpenAPI.json/paths/~1campaigns~1{campaign_id}/delete})<br>POST   [/campaigns](OpenAPI.json/paths/~1campaigns/post) | NA<br>[Campaigns &rarr; Import CSV file](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally)<br>~NA~<br>[Campaigns &rarr; Delete](https://support.voucherify.io/article/64-maintenance#delete-campaign)<br>[Campaign Manager](https://support.voucherify.io/article/26-how-do-i-get-started-with-voucherify#campaign) |\n| **CUSTOMERS** |  |  |\n| CUSTOMERS.IMPORT_CSV<br>CUSTOMERS.BULK_UPDATE<br>CUSTOMERS.METADATA_UPDATE<br>CUSTOMERS.METADATA_KEY_PURGE | POST [/customers/importCSV](OpenAPI.json/paths/~1customers~1importCSV/post)<br>POST [/customers/bulk/async](OpenAPI.json/paths/~1customers~1bulk~1async/post)<br>POST [/customers/metadata/async](OpenAPI.json/paths/~1customers~1metadata~1async/post)<br>NA | [Customers &rarr; Import CSV](https://support.voucherify.io/article/67-how-to-import-my-customers#csv-import)<br>NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |\n| **PRODUCTS** |  |  |\n| PRODUCTS.BULK_UPDATE<br>PRODUCTS.METADATA_UPDATE<br>PRODUCTS.METADATA_KEY_PURGE<br>PRODUCTS.IMPORT_CSV<br>SKUS.IMPORT_CSV | POST [/products/bulk/async](OpenAPI.json/paths/~1products~1bulk~1async/post)<br>POST [/products/metadata/async](OpenAPI.json/paths/~1products~1metadata~1async/post)<br>NA<br>POST [/products/importCSV](OpenAPI.json/paths/~1products~1importCSV/post)<br>POST [/skus/importCSV](OpenAPI.json/paths/~1skus~1importCSV/post) | NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance)<br>[Products &rarr; Import from CSV file](https://support.voucherify.io/article/574-data-import)<br>[Products &rarr; Import from CSV file](https://support.voucherify.io/article/574-data-import) |\n| **VOUCHERS** |  |  |\n| VOUCHERS.IMPORT<br>VOUCHERS.IMPORT_CSV<br>VOUCHERS.BULK_UPDATE<br>VOUCHERS.METADATA_UPDATE<br>VOUCHERS.METADATA_KEY_PURGE | POST [/vouchers/import](OpenAPI.json/paths/~1vouchers~1import/post)<br>POST [/vouchers/importCSV](OpenAPI.json/paths/~1vouchers~1importCSV/post)<br>POST [/vouchers/bulk/async](OpenAPI.json/paths/~1vouchers~1bulk~1async/post)<br>POST [/vouchers/metadata/async](OpenAPI.json/paths/~1vouchers~1metadata~1async/post)<br>NA | NA<br>[Vouchers &rarr; Import CSV file](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally)<br>NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |",
+        "description": "Check the result of a scheduled asynchronous operation.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action.\n\n| **Types by Context** | **Endpoint** | **Dashboard** |\n|:---|:---|:---|\n| **CAMPAIGN** |  |  |\n| CAMPAIGN.VOUCHERS_IMPORT<br>CAMPAIGN.VOUCHERS_IMPORT_CSV<br>CAMPAIGN.VOUCHERS_UPDATE<br>CAMPAIGN.VOUCHERS_DELETE<br>CAMPAIGN.VOUCHERS_GENERATE | POST   [/campaigns/{campaign_id}/import](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1import/post)<br>POST   [/campaigns/{campaign_id}/importCSV](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1importCSV/post)<br>~PUT    [/campaigns/{campaign_id}](OpenAPI.json/paths/~1campaigns~1{campaign_id}/put)~<br>DELETE [/campaigns/{campaign_id}](OpenAPI.json/paths/~1campaigns~1{campaign_id}/delete})<br>POST   [/campaigns](OpenAPI.json/paths/~1campaigns/post) | NA<br>[Campaigns &rarr; Import CSV file](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally)<br>~NA~<br>[Campaigns &rarr; Delete](https://support.voucherify.io/article/64-maintenance#delete-campaign)<br>[Campaign Manager](https://support.voucherify.io/article/26-how-do-i-get-started-with-voucherify#campaign) |\n| **CUSTOMERS** |  |  |\n| CUSTOMERS.IMPORT_CSV<br>CUSTOMERS.BULK_UPDATE<br>CUSTOMERS.METADATA_UPDATE<br>CUSTOMERS.METADATA_KEY_PURGE | POST [/customers/importCSV](OpenAPI.json/paths/~1customers~1importCSV/post)<br>POST [/customers/bulk/async](OpenAPI.json/paths/~1customers~1bulk~1async/post)<br>POST [/customers/metadata/async](OpenAPI.json/paths/~1customers~1metadata~1async/post)<br>NA | [Customers &rarr; Import CSV](https://support.voucherify.io/article/67-how-to-import-my-customers#csv-import)<br>NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |\n| **PRODUCTS** |  |  |\n| PRODUCTS.BULK_UPDATE<br>PRODUCTS.METADATA_UPDATE<br>PRODUCTS.METADATA_KEY_PURGE<br>PRODUCTS.IMPORT_CSV<br>SKUS.IMPORT_CSV | POST [/products/bulk/async](OpenAPI.json/paths/~1products~1bulk~1async/post)<br>POST [/products/metadata/async](OpenAPI.json/paths/~1products~1metadata~1async/post)<br>NA<br>POST [/products/importCSV](OpenAPI.json/paths/~1products~1importCSV/post)<br>POST [/skus/importCSV](OpenAPI.json/paths/~1skus~1importCSV/post) | NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance)<br>[Products &rarr; Import CSV file](https://support.voucherify.io/article/574-data-import)<br>[Products &rarr; Import CSV file](https://support.voucherify.io/article/574-data-import) |\n| **VOUCHERS** |  |  |\n| VOUCHERS.IMPORT<br>VOUCHERS.IMPORT_CSV<br>VOUCHERS.BULK_UPDATE<br>VOUCHERS.METADATA_UPDATE<br>VOUCHERS.METADATA_KEY_PURGE | POST [/vouchers/import](OpenAPI.json/paths/~1vouchers~1import/post)<br>POST [/vouchers/importCSV](OpenAPI.json/paths/~1vouchers~1importCSV/post)<br>POST [/vouchers/bulk/async](OpenAPI.json/paths/~1vouchers~1bulk~1async/post)<br>POST [/vouchers/metadata/async](OpenAPI.json/paths/~1vouchers~1metadata~1async/post)<br>NA | NA<br>[Vouchers &rarr; Import CSV file](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally)<br>NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
