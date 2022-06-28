@@ -6508,6 +6508,65 @@
         "title": "Customer Permanent Deletion Response Body",
         "description": "Response body schema for `/customers/{customerId}/permanent-deletion`."
       },
+      "9_req_customers_metadata_async": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": "del_5PQxA5AgP94MubKQT8KlVg5e",
+            "created_at": "2022-06-28T13:51:55.171Z",
+            "related_object_id": "cust_W8n9I8pJDXlM69j49iKJeUYp",
+            "related_object": "customer",
+            "status": "DONE",
+            "data_json": {
+              "events": 2,
+              "customer_events": 7,
+              "daily_events": 0,
+              "segments": 0,
+              "orders": 1,
+              "order_events": 4,
+              "customer": 1
+            },
+            "object": "pernament_deletion"
+          }
+        },
+        "title": "Update Customers Metadata in bulk Request Body",
+        "description": "Request body schema for `/customers/metadata/async`.",
+        "properties": {
+          "source_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      },
+      "9_req_customers_customerId_put": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": "del_5PQxA5AgP94MubKQT8KlVg5e",
+            "created_at": "2022-06-28T13:51:55.171Z",
+            "related_object_id": "cust_W8n9I8pJDXlM69j49iKJeUYp",
+            "related_object": "customer",
+            "status": "DONE",
+            "data_json": {
+              "events": 2,
+              "customer_events": 7,
+              "daily_events": 0,
+              "segments": 0,
+              "orders": 1,
+              "order_events": 4,
+              "customer": 1
+            },
+            "object": "pernament_deletion"
+          }
+        },
+        "title": "Update Customer Request Body",
+        "description": "Request body schema for `/customers/{customerId}`."
+      },
       "9_obj_customer_activity_object": {
         "title": "Customer Activity Object",
         "type": "object",
@@ -6744,6 +6803,30 @@
         },
         "title": "Order object",
         "description": "This is an object representing an order.  \n\nThe purchase transactions can be tracked in Voucherify by the creation of an order object. You can create, retrieve, and pay individual orders, as well as list and export all of them in a CSV format. Orders are identified by a unique ID.\n\nOrders are automatically created during the [redeem voucher](OpenAPI.json/paths/~1vouchers~1{code}~1redemption/post) and [redeem promotion](OpenAPI.json/paths/~1promotions~1tiers~1{promotion_tier_id}~1redemption/post) call.\n\n<!-- theme: info -->\n> #### order.id and order session\n>\n> If you use the same order.id in more than one redemption request, all valid discounts provided in the redemption payload will be applied to the given order.\n> \n> Each time you use particular order in your requests, the API will automatically trigger a new session linked to the order.id. The session is active during the request and ends asynchronously after the request is completed. The session mechanism ensures that the particular order.id can be used in one API request at once."
+      },
+      "10_req_orders_post": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": "del_5PQxA5AgP94MubKQT8KlVg5e",
+            "created_at": "2022-06-28T13:51:55.171Z",
+            "related_object_id": "cust_W8n9I8pJDXlM69j49iKJeUYp",
+            "related_object": "customer",
+            "status": "DONE",
+            "data_json": {
+              "events": 2,
+              "customer_events": 7,
+              "daily_events": 0,
+              "segments": 0,
+              "orders": 1,
+              "order_events": 4,
+              "customer": 1
+            },
+            "object": "pernament_deletion"
+          }
+        },
+        "title": "Create Order Request Body",
+        "description": "Request body schema for POST `/orders`."
       },
       "10_obj_order_item_object": {
         "title": "Order Item Object",
@@ -17054,12 +17137,11 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/9_req_customers_customerId_put"
               }
             }
           },
-          "description": ""
+          "description": "Specify the parameters to be updated."
         }
       }
     },
@@ -17114,7 +17196,7 @@
         "operationId": "post-customers-customer_id-permanent-deletion",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Returns a permanent deletion object and status of the deletion.",
             "content": {
               "application/json": {
                 "schema": {
@@ -17168,7 +17250,14 @@
         "operationId": "post-customers-metadata-async",
         "responses": {
           "202": {
-            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and customers will be updated in the repository asynchronously. To check the update status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint."
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and customers will be updated in the repository asynchronously. To check the update status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/a_res_async_actions"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -17182,17 +17271,16 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
+        "description": "Update several customers metadata properties in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier.  \n\nIf a requested customer object is not found, then an **upsert** occurs. This is reflected in the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/9_req_customers_metadata_async"
               }
             }
           }
-        },
-        "description": "Update several customers metadata properties in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier. If a requested customer object is not found, then an **upsert** occurs. This is reflected in the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```"
+        }
       }
     },
     "/customers/bulk/async": {
@@ -17201,10 +17289,35 @@
         "operationId": "post-customers-bulk-async",
         "responses": {
           "202": {
-            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and customers will be updated in the repository asynchronously. To check the update status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint."
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and customers will be updated in the repository asynchronously. To check the update status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/a_res_async_actions"
+                }
+              }
+            }
           },
           "400": {
-            "description": "{\n    \"code\": 400,\n    \"key\": \"metadata_validation_failed\",\n    \"message\": \"Metadata validation failed\",\n    \"details\": \"acquisition_channel: must be a string, property is required, must be equal to one of Facebook,Twitter,Website (actual value is 'true')\",\n    \"request_id\": \"v-0afb29d91094432cea\"\n}"
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_metadata_validation_failed"
+                },
+                "examples": {
+                  "Failed": {
+                    "value": {
+                      "code": 400,
+                      "key": "metadata_validation_failed",
+                      "message": "Metadata validation failed",
+                      "details": "acquisition_channel: must be a string, property is required, must be equal to one of Facebook,Twitter,Website (actual value is 'true')",
+                      "request_id": "v-0afb29d91094432cea"
+                    }
+                  }
+                }
+              }
+            }
           },
           "429": {
             "description": "Too Many Requests",
@@ -17230,7 +17343,7 @@
         "tags": [
           "CUSTOMERS API"
         ],
-        "description": "Update several customers in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier. If a requested customer object is not found, then an **upsert** occurs. This is reflected in the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```",
+        "description": "Update several customers in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier.  \n\nIf a requested customer object is not found, then an **upsert** occurs. This is reflected in the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```",
         "requestBody": {
           "content": {
             "application/json": {
@@ -17239,7 +17352,8 @@
                 "properties": {}
               }
             }
-          }
+          },
+          "description": ""
         },
         "parameters": [
           {
@@ -17251,13 +17365,13 @@
         ]
       }
     },
-    "/customers/{customer_id}/consents": {
+    "/customers/{customerId}/consents": {
       "parameters": [
         {
           "schema": {
             "type": "string"
           },
-          "name": "customer_id",
+          "name": "customerId",
           "in": "path",
           "required": true,
           "description": "A Voucherify customer identifier or source_id"
@@ -17432,7 +17546,7 @@
           }
         },
         "operationId": "get-orders",
-        "description": "Returns a list of your orders.\n\n",
+        "description": "Returns a list of orders.\n\n",
         "parameters": [
           {
             "$ref": "#/components/parameters/limit"
@@ -17453,7 +17567,14 @@
         "operationId": "post-orders",
         "responses": {
           "200": {
-            "description": "Returns an order object if the creating succeeded. Returns an error if something goes wrong."
+            "description": "Returns an order object if the operation succeeded. Returns an error if something goes wrong.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/10_obj_order_object"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -17471,13 +17592,12 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/10_req_orders_post"
               }
             }
           }
         },
-        "description": "It creates an order object and triggers order creation event."
+        "description": "Creates an order object and triggers an order creation event."
       }
     },
     "/orders/{order_id}": {
