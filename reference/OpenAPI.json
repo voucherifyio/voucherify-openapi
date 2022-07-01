@@ -4912,8 +4912,28 @@
             "type": "array",
             "minItems": 1,
             "maxItems": 5,
+            "description": "An array of redeemables. You can combine `voucher`(s) and `promotion_tier`(s). Alternatively, send one unique`promotion_stack` in the array.",
             "items": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "object": {
+                  "type": "string",
+                  "description": "Redeemable object type.",
+                  "enum": [
+                    "voucher",
+                    "promotion_tier",
+                    "promotion_stack"
+                  ]
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Redeemable code or unique ID such as:  \n- discount code, loyalty card, gift card, referral code: `DiscountCode100`, `v_6ZPI2BLMtpc6zz8pQVjQgxJH3D4ac3ZT`  \n- promotion tier: `promo_Mwy9XpA0TLctSGriM5kum0qp` \n- promotion stack: `stack_KxSD0GahLUg9ULB6TseGfUHJ` "
+                }
+              },
+              "required": [
+                "object",
+                "id"
+              ]
             }
           },
           "session": {
@@ -4948,6 +4968,366 @@
         "required": [
           "redeemables"
         ]
+      },
+      "19_res_validations": {
+        "x-examples": {
+          "example-1": {
+            "valid": false,
+            "redeemables": [
+              {
+                "status": "APPLICABLE",
+                "id": "eee33463",
+                "object": "voucher",
+                "result": {},
+                "metadata": {
+                  "MetadataTest": "eee33463"
+                }
+              },
+              {
+                "status": "INAPPLICABLE",
+                "id": "promo_Mwy9XpA0TLctSGriM5kum0qp",
+                "object": "promotion_tier",
+                "result": {
+                  "error": {
+                    "code": 400,
+                    "key": "promotion_inactive",
+                    "message": "Inactive Promotion",
+                    "details": "Promotion Tier with id: promo_Mwy9XpA0TLctSGriM5kum0qp has already expired.",
+                    "request_id": "v-0b4feeeb149646dda3",
+                    "error": {
+                      "message": "Promotion expired."
+                    }
+                  }
+                },
+                "metadata": {
+                  "MetadataTestPromotionTier": "promo_Mwy9XpA0TLctSGriM5kum0qp"
+                }
+              }
+            ],
+            "tracking_id": "track_VAVW6qltuo1/z+G2GI2LPw=="
+          }
+        },
+        "title": "Validate Stackable Discounts Response Body",
+        "description": "Response body schema for POST `/validations`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/19_res_validations-true"
+          },
+          {
+            "$ref": "#/components/schemas/19_res_validations-false"
+          }
+        ]
+      },
+      "19_res_validations-false": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "valid": false,
+            "redeemables": [
+              {
+                "status": "APPLICABLE",
+                "id": "eee33463",
+                "object": "voucher",
+                "result": {},
+                "metadata": {
+                  "MetadataTest": "eee33463"
+                }
+              },
+              {
+                "status": "INAPPLICABLE",
+                "id": "promo_Mwy9XpA0TLctSGriM5kum0qp",
+                "object": "promotion_tier",
+                "result": {
+                  "error": {
+                    "code": 400,
+                    "key": "promotion_inactive",
+                    "message": "Inactive Promotion",
+                    "details": "Promotion Tier with id: promo_Mwy9XpA0TLctSGriM5kum0qp has already expired.",
+                    "request_id": "v-0b4feeeb149646dda3",
+                    "error": {
+                      "message": "Promotion expired."
+                    }
+                  }
+                },
+                "metadata": {
+                  "MetadataTestPromotionTier": "promo_Mwy9XpA0TLctSGriM5kum0qp"
+                }
+              }
+            ],
+            "tracking_id": "track_VAVW6qltuo1/z+G2GI2LPw=="
+          }
+        },
+        "title": "False",
+        "description": "Response body schema for POST `/validations`.",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "description": "The result of the validation. It takes all of the redeemables into account and returns a `false` if at least one redeemable is inapplicable. Returns `true` if all redeemables are applicable.",
+            "default": false
+          },
+          "redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"`.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "APPLICABLE",
+                    "INAPPLICABLE",
+                    "SKIPPED"
+                  ],
+                  "description": "Indicates whether the redeemable can be applied or not applied based on the validation rules. `SKIPPED` indicates that the validation stopped once it identified at least one unapplicable redeemable and did not continue to validate the given redeemable."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Redeemable ID."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "Redeemable's object type.",
+                  "enum": [
+                    "voucher",
+                    "promotion_tier",
+                    "promotion_stack"
+                  ]
+                },
+                "result": {
+                  "type": "object",
+                  "description": "Provides details for an inapplicable redeemable.",
+                  "properties": {
+                    "error": {
+                      "$ref": "#/components/schemas/e_error"
+                    }
+                  }
+                },
+                "metadata": {
+                  "type": "object",
+                  "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable."
+                }
+              }
+            }
+          },
+          "tracking_id": {
+            "type": "string",
+            "example": "track_VAVo1/z+G2GI2LPw=="
+          }
+        }
+      },
+      "19_res_validations-true": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "valid": false,
+            "redeemables": [
+              {
+                "status": "APPLICABLE",
+                "id": "eee33463",
+                "object": "voucher",
+                "result": {},
+                "metadata": {
+                  "MetadataTest": "eee33463"
+                }
+              },
+              {
+                "status": "INAPPLICABLE",
+                "id": "promo_Mwy9XpA0TLctSGriM5kum0qp",
+                "object": "promotion_tier",
+                "result": {
+                  "error": {
+                    "code": 400,
+                    "key": "promotion_inactive",
+                    "message": "Inactive Promotion",
+                    "details": "Promotion Tier with id: promo_Mwy9XpA0TLctSGriM5kum0qp has already expired.",
+                    "request_id": "v-0b4feeeb149646dda3",
+                    "error": {
+                      "message": "Promotion expired."
+                    }
+                  }
+                },
+                "metadata": {
+                  "MetadataTestPromotionTier": "promo_Mwy9XpA0TLctSGriM5kum0qp"
+                }
+              }
+            ],
+            "tracking_id": "track_VAVW6qltuo1/z+G2GI2LPw=="
+          }
+        },
+        "title": "True",
+        "description": "Response body schema for POST `/validations`.",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "description": "The result of the validation. It takes all of the redeemables into account and returns a `false` if at least one redeemable is inapplicable. Returns `true` if all redeemables are applicable.",
+            "default": true
+          },
+          "redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"`.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "APPLICABLE"
+                  ],
+                  "description": "Indicates whether the redeemable can be applied or not applied based on the validation rules."
+                },
+                "id": {
+                  "type": "string",
+                  "description": "Redeemable ID."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "Redeemable's object type.",
+                  "enum": [
+                    "voucher",
+                    "promotion_tier",
+                    "promotion_stack"
+                  ]
+                },
+                "order": {
+                  "type": "object",
+                  "description": "Contains the effect of the particular redeemable on the order object properties."
+                },
+                "applicable_to": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "data_ref": {
+                      "type": "string",
+                      "default": "data"
+                    },
+                    "object": {
+                      "type": "string",
+                      "default": "list"
+                    }
+                  }
+                },
+                "inapplicable_to": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {}
+                    },
+                    "total": {
+                      "type": "integer"
+                    },
+                    "data_ref": {
+                      "type": "string",
+                      "default": "data"
+                    },
+                    "object": {
+                      "type": "string",
+                      "default": "list"
+                    }
+                  }
+                },
+                "result": {
+                  "description": "Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/19_obj_validations-true_result_voucher_code"
+                    },
+                    {
+                      "$ref": "#/components/schemas/19_obj_validations-true_result_gift_gard"
+                    },
+                    {
+                      "$ref": "#/components/schemas/19_obj_validations-true_result_loyalty_card"
+                    }
+                  ]
+                },
+                "metadata": {
+                  "type": "object",
+                  "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable."
+                }
+              }
+            }
+          },
+          "order": {
+            "type": "object",
+            "description": "Contains the combined effect of all redeemables taken into account on the order object properties."
+          },
+          "tracking_id": {
+            "type": "string",
+            "example": "track_VAVo1/z+G2GI2LPw=="
+          }
+        }
+      },
+      "19_obj_validations-true_result_voucher_code": {
+        "type": "object",
+        "title": "Coupon Code",
+        "description": "This is a `result` object representing the results for a coupon code in POST `/validations` response body.",
+        "properties": {
+          "discount": {
+            "description": "The result of the validation. It takes all of the redeemables into account and returns a `false` if at least one redeemable is inapplicable. Returns `true` if all redeemables are applicable.",
+            "default": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_amount"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_percentage"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_fixed"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_one"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_multiple"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_shipping"
+              }
+            ]
+          }
+        }
+      },
+      "19_obj_validations-true_result_gift_gard": {
+        "type": "object",
+        "title": "Gift Card",
+        "description": "This is a `result` object representing the results for a gift card in POST `/validations` response body.",
+        "properties": {
+          "gift": {
+            "description": "Stores the amount of gift card credits to be applied in the redemption.",
+            "default": true,
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "integer",
+                "description": "Total number of gift card credits to be applied in the redemption."
+              }
+            }
+          }
+        }
+      },
+      "19_obj_validations-true_result_loyalty_card": {
+        "type": "object",
+        "title": "Loyalty Card",
+        "description": "This is a `result` object representing the results for a loyalty card in POST `/validations` response body.",
+        "properties": {
+          "loyalty_card": {
+            "description": "Stores the amount of loyalty card points to be applied in the redemption.",
+            "type": "object",
+            "properties": {
+              "points": {
+                "type": "integer",
+                "description": "Total number of loyalty points to be applied in the redemption."
+              }
+            }
+          }
+        }
       },
       "7_obj_redemption_object": {
         "title": "Redemption Object",
@@ -11151,6 +11531,43 @@
         "description": "Short error response",
         "examples": []
       },
+      "e_error": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0a885062c80375740f"
+          },
+          "error": {
+            "type": "object",
+            "description": "Contains custom user-defined error message translation.",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "Error message translation defined in Dashboard &rarr; Project Settings &rarr; Error Messages"
+              }
+            }
+          }
+        }
+      },
       "e_400_missing_param": {
         "description": "Error: Bad Request &rarr; Missing Parameters",
         "type": "object",
@@ -11203,7 +11620,7 @@
           },
           "key": {
             "type": "string",
-            "default": "not_enough_codes",
+            "default": "invalid_payload",
             "description": "Short string describing the kind of error which occurred."
           },
           "message": {
@@ -11213,7 +11630,6 @@
           },
           "details": {
             "type": "string",
-            "example": "Property should have required property 'metadata'",
             "description": "A human-readable message providing more details about the error."
           },
           "request_id": {
@@ -16690,7 +17106,54 @@
         "operationId": "post-validations",
         "responses": {
           "200": {
-            "description": "All codes and tiers provided in redeemables are validated during the request and the result of their validation is returned in the API response. \n\n| **Response** | **Description** |\n|:---|:---|\n| valid `boolean` | If **all** redeemables can be applied in the given context, the API returns `true`. Otherwise, if at least one redeemable can't be applied, the API returns `false`. |\n| redeemables `array of objects` | The `redeemables` array lists the validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"` |\n| order `object` | The `order` object presents details of the order provided in the request after all discounts are applied. [Read more](OpenAPI.json/paths/~1redemptions/post) about the returned order object. |\n"
+            "description": "All codes and tiers provided in redeemables are validated during the request and the result of their validation is returned in the API response. \n\n| **Response** | **Description** |\n|:---|:---|\n| valid `boolean` | If **all** redeemables can be applied in the given context, the API returns `true`. Otherwise, if at least one redeemable can't be applied, the API returns `false`. |\n| redeemables `array of objects` | The `redeemables` array lists the validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"` |\n| order `object` | The `order` object presents details of the order provided in the request after all discounts are applied. [Read more](OpenAPI.json/paths/~1redemptions/post) about the returned order object. |\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/19_res_validations"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload is missing an `\"object\"` or `\"id\"` property in the redeemables array, if you add more than one promotion stack or attempt to join stacks with vouchers/promotion tiers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .redeemables[1] should have required property 'id'",
+                      "request_id": "v-0b4ff38ab8c8164573"
+                    }
+                  },
+                  "Duplicated Redeemables": {
+                    "value": {
+                      "code": 400,
+                      "key": "duplicated_redeemables",
+                      "message": "Duplicated redeemables detected",
+                      "details": "Duplicated redeemables detected in one redemption",
+                      "request_id": "v-0b4ffecfb408165300"
+                    }
+                  },
+                  "Invalid Redeemables": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_redeemables",
+                      "message": "Invalid redeemables",
+                      "details": "Promotion Stack cannot be use with other redeemables",
+                      "request_id": "v-0b5007812f48165d6b"
+                    }
+                  }
+                }
+              }
+            },
+            "headers": {}
           }
         },
         "tags": [
