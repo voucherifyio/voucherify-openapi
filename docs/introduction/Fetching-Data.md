@@ -94,6 +94,7 @@ lineNumbers: true
 | **Redemptions** | `campaign_name`<br>`customer`<br>`voucher_code`<br>`related_object_id`<br>`related_object_parent_id` | `{api-url}/redemptions?customer=customer_id`<br><br>`{api-url}/redemptions?customer=source_id` |
 | **Customers** | `email`<br>`name` | `{api-url}/customers?email=test@voucherify.io` |
 | **Publications** | `campaign_name`<br>`customer_id`<br>`voucher_code`<br>`result`<br>`voucher_type`<br>`is_referral_code`<br>`parent_object_id`<br>`related_object_id` | `{api-url}/publications?campaign_name=TEST` |
+| **Validation Rule Assignments** | `related_object_id`<br>`rule` | `{api-url}/validation-rules-assignments?related_object_id=promo_id` |
 
 ### Advanced filters for fetching resources
 
