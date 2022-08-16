@@ -85,6 +85,7 @@ The table below shows a list of errors that may be returned along with a brief d
 | `missing_order_items` | order items were not specified |
 | `missing_order_items_amount` | missing order item's amount(s) |
 | `missing_reward` | reward is missing |
+| `multiple_requests` | multiple requests detected; i.e. when a redemption is in progress and a session lock is in place, then an attempt to validate the voucher will result in this error because it is unknown whether the voucher can or cannot be used |
 | `no_voucher_suitable_for_publication` | lack of vouchers suitable for publication |
 | `not_found` | resource with given ID/code does not exist |
 | `order_rules_violated` | order did not match validation rules |
