@@ -11798,6 +11798,40 @@
           }
         }
       },
+      "10_req_update_order": {
+        "type": "object",
+        "title": "Update Order Request Body",
+        "description": "Request body schema for **PUT** `/orders/{orderId}`.",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "The order status.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "CANCELED",
+              "FULLFILLED"
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts."
+          },
+          "metadata": {
+            "type": "string",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
+          },
+          "customer": {
+            "$ref": "#/components/schemas/10_req_orders_customer_object"
+          },
+          "referrer": {
+            "$ref": "#/components/schemas/10_req_orders_referrer_object"
+          },
+          "items": {
+            "$ref": "#/components/schemas/10_req_orders_items_array"
+          }
+        }
+      },
       "10_req_orders_import": {
         "type": "array",
         "title": "Import Orders Request Body",
@@ -28046,7 +28080,105 @@
         "operationId": "put-orders-order_id",
         "responses": {
           "200": {
-            "description": "Returns the order object if the update succeeded. Returns an error if update parameters are invalid."
+            "description": "Returns the order object if the update succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/10_obj_order_object"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "ord_cRKOEXiBOj0EZKF7g9n6l0eH",
+                      "source_id": "new",
+                      "created_at": "2022-09-09T09:20:01.660Z",
+                      "updated_at": "2022-09-09T09:41:00.881Z",
+                      "status": "CANCELED",
+                      "amount": 121700,
+                      "total_amount": 121700,
+                      "items": [
+                        {
+                          "object": "order_item",
+                          "source_id": "prod_1",
+                          "related_object": "product",
+                          "quantity": 2,
+                          "amount": 120000,
+                          "price": 60000,
+                          "subtotal_amount": 120000,
+                          "product": {
+                            "id": "prod_0b7d7c4e814be5c502",
+                            "source_id": "prod_1",
+                            "name": "Apple iPhone 12",
+                            "metadata": {
+                              "color": [
+                                "purple"
+                              ],
+                              "vendor": "mall"
+                            },
+                            "price": 60000
+                          }
+                        },
+                        {
+                          "object": "order_item",
+                          "source_id": "ComicBook_1",
+                          "related_object": "sku",
+                          "product_id": "prod_0b7d7dfb05cbe5c616",
+                          "quantity": 1,
+                          "amount": 1700,
+                          "price": 1700,
+                          "subtotal_amount": 1700,
+                          "product": {
+                            "id": "prod_0b7d7dfb05cbe5c616",
+                            "source_id": "Books",
+                            "name": "Comic Books1",
+                            "metadata": {
+                              "color": [
+                                "silver"
+                              ],
+                              "vendor": "Bookstore1"
+                            },
+                            "price": 2100
+                          },
+                          "sku": {
+                            "id": "sku_0b7d7dfb090be5c619",
+                            "source_id": "ComicBook_1",
+                            "sku": "Comics1",
+                            "metadata": {
+                              "color": [
+                                "golden"
+                              ],
+                              "vendor": "islands"
+                            },
+                            "price": 1700
+                          }
+                        }
+                      ],
+                      "metadata": {
+                        "location_id": [
+                          "L1",
+                          "L2"
+                        ],
+                        "payment_mean": [
+                          "paypal",
+                          "credit-card"
+                        ]
+                      },
+                      "customer": {
+                        "id": "cust_H0nXrItO1DNV3UiPIl54HA5o",
+                        "object": "customer"
+                      },
+                      "referrer": {
+                        "id": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv",
+                        "object": "customer"
+                      },
+                      "customer_id": "cust_H0nXrItO1DNV3UiPIl54HA5o",
+                      "referrer_id": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv",
+                      "object": "order"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -28056,11 +28188,18 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/10_req_update_order"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "status": "CANCELED"
+                  }
+                }
               }
             }
-          }
+          },
+          "description": "Specify the parameters of the order that are to be updated."
         },
         "parameters": [
           {
@@ -28070,7 +28209,7 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "description": "Updates the specified order by setting the values of the parameters passed. Any parameters not provided will be left unchanged."
+        "description": "Updates the specified order by setting the values of the parameters passed in the request body. Any parameters not provided will be left unchanged."
       }
     },
     "/orders/export": {
