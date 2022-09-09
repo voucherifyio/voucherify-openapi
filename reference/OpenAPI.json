@@ -11832,6 +11832,24 @@
           }
         }
       },
+      "10_req_create_order_export": {
+        "type": "object",
+        "title": "Create Order Export Request Body",
+        "description": "Request body schema for **POST** `/orders/export`.",
+        "properties": {
+          "parameters": {
+            "type": "object",
+            "description": "Contains the parameters that define the data to be exported.",
+            "properties": {
+              "fields": {
+                "type": "array",
+                "description": "Contains an array of order data fields to be exported.",
+                "items": {}
+              }
+            }
+          }
+        }
+      },
       "10_req_orders_import": {
         "type": "array",
         "title": "Import Orders Request Body",
@@ -15358,7 +15376,7 @@
                 "metadata"
               ]
             ],
-            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique order ID. | ord_A69RIxEdRsPuC6i8gFGVHUft |\n| source_id | Unique order source ID. | 8638 |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the order was created. | 2022-03-09T09:16:32.521Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the order was last updated. | 2022-03-09T09:16:33.331Z |\n| status | Order status. | `PAID`, `CREATED`, `FULFILLED`, `CANCELED` |\n| amount | Total amount of order items. | 7700 |\n| discount_amount | Represents total amount of the discount applied to whole cart. | 500 |\n| items_discount_amount | Represents total amount of the discount applied to order line items. | 100 |\n| total_discount_amount | All discounts applied to the order including discounts applied to particular order line items and discounts applied to the whole cart. | 600 |\n| total_amount | Total order amount after applying all discounts. | 7100 |\n| customer_id | Customer unique ID. | cust_2G4fUQdCXUqp35nXNleav7bO |\n| referrer_id | Referrer unique ID. | cust_IkrTR674vvQvr9a4rDMiqglY |\n| metadata | Order metadata; expressed as metadata.X, where X is the name of the custom metadata property. | 1 |",
+            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combination of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique order ID. | ord_A69RIxEdRsPuC6i8gFGVHUft |\n| source_id | Unique order source ID. | 8638 |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the order was created. | 2022-03-09T09:16:32.521Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the order was last updated. | 2022-03-09T09:16:33.331Z |\n| status | Order status. | `PAID`, `CREATED`, `FULFILLED`, `CANCELED` |\n| amount | Total amount of order items. | 7700 |\n| discount_amount | Represents total amount of the discount applied to whole cart. | 500 |\n| items_discount_amount | Represents total amount of the discount applied to order line items. | 100 |\n| total_discount_amount | All discounts applied to the order including discounts applied to particular order line items and discounts applied to the whole cart. | 600 |\n| total_amount | Total order amount after applying all discounts. | 7100 |\n| customer_id | Customer unique ID. | cust_2G4fUQdCXUqp35nXNleav7bO |\n| referrer_id | Referrer unique ID. | cust_IkrTR674vvQvr9a4rDMiqglY |\n| metadata | Order metadata; expressed as metadata.X, where X is the name of the custom metadata property. | 1 |",
             "items": {
               "type": "string"
             }
@@ -28218,7 +28236,45 @@
         "operationId": "post-orders-export",
         "responses": {
           "200": {
-            "description": "Returns the `id` of the export object and `status` of the file generation process. The `id` is used in the [Get Export](OpenAPI.json/paths/~1exports~1{export_id}/get) method to generate the url for the downloadable CSV file or in the [Download Export](OpenAPI.json/paths/~1exports~1{exportId}/get) method to return the contents of the CSV file. The status indicates whether the file has been scheduled for creation."
+            "description": "Returns the `id` of the export object and `status` of the file generation process. The `id` is used in the [Get Export](OpenAPI.json/paths/~1exports~1{export_id}/get) method to generate the url for the downloadable CSV file or in the [Download Export](OpenAPI.json/paths/~1exports~1{exportId}/get) method to return the contents of the CSV file. The status indicates whether the file has been scheduled for creation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/16_obj_export_object"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "exp_pT2Y1mgYsAgRAqsWTGf7PQX7",
+                      "object": "export",
+                      "created_at": "2022-09-09T10:45:52.362Z",
+                      "status": "SCHEDULED",
+                      "channel": "API",
+                      "exported_object": "order",
+                      "parameters": {
+                        "fields": [
+                          "id",
+                          "source_id",
+                          "status",
+                          "created_at",
+                          "updated_at",
+                          "amount",
+                          "discount_amount",
+                          "items_discount_amount",
+                          "total_discount_amount",
+                          "total_amount",
+                          "customer_id",
+                          "referrer_id",
+                          "metadata.payment_mean"
+                        ]
+                      },
+                      "result": null,
+                      "user_id": null
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -28236,13 +28292,36 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/10_req_create_order_export"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "parameters": {
+                      "fields": [
+                        "id",
+                        "source_id",
+                        "status",
+                        "created_at",
+                        "updated_at",
+                        "amount",
+                        "discount_amount",
+                        "items_discount_amount",
+                        "total_discount_amount",
+                        "total_amount",
+                        "customer_id",
+                        "referrer_id",
+                        "metadata.payment_mean"
+                      ]
+                    }
+                  }
+                }
               }
             }
-          }
+          },
+          "description": "Specify which order parameters you would like to export."
         },
-        "description": "Creates a downloadable CSV file containing a list of orders.\n\nThe parameters listed in the payload resembles headers in the CSV file. To include a parameter to the file, add it to parameters.fields.\n\nThe available filters are all [order object](OpenAPI.json/components/schemas/10_obj_order_object) attributes. Additionally, any metadata defined in the metadata schema can be downloaded.\n\nPassing an empty JSON will generate a file containing three default fields: `id`, `source_id`, and `status`."
+        "description": "Creates a downloadable CSV file containing a list of orders.\n\nThe parameters listed in the payload resembles headers in the CSV file. To include a parameter to the file, add it to parameters.fields.\n\nThe available filters are all [order object](OpenAPI.json/components/schemas/10_obj_order_object) attributes. Additionally, any metadata defined in the metadata schema can be exported.\n\nPassing an empty JSON will generate a file containing three default fields: `id`, `source_id`, and `status`.\n\nThe fields array is an array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combination of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique order ID. | ord_A69RIxEdRsPuC6i8gFGVHUft |\n| source_id | Unique order source ID. | 8638 |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the order was created. | 2022-03-09T09:16:32.521Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the order was last updated. | 2022-03-09T09:16:33.331Z |\n| status | Order status. | `PAID`, `CREATED`, `FULFILLED`, `CANCELED` |\n| amount | Total amount of order items. | 7700 |\n| discount_amount | Represents total amount of the discount applied to whole cart. | 500 |\n| items_discount_amount | Represents total amount of the discount applied to order line items. | 100 |\n| total_discount_amount | All discounts applied to the order including discounts applied to particular order line items and discounts applied to the whole cart. | 600 |\n| total_amount | Total order amount after applying all discounts. | 7100 |\n| customer_id | Customer unique ID. | cust_2G4fUQdCXUqp35nXNleav7bO |\n| referrer_id | Referrer unique ID. | cust_IkrTR674vvQvr9a4rDMiqglY |\n| metadata | Order metadata; expressed as metadata.X, where X is the name of the custom metadata property; i.e. `metadata.payment_mean` | 1 |"
       }
     },
     "/orders/import": {
