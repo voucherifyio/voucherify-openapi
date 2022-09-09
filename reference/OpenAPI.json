@@ -11235,6 +11235,9 @@
         },
         "title": "Order object",
         "description": "This is an object representing an order.  \n\nThe purchase transactions can be tracked in Voucherify by the creation of an order object. You can create, retrieve, and pay individual orders, as well as list and export all of them in a CSV format. Orders are identified by a unique ID.\n\nOrders are automatically created during the [redeem voucher](OpenAPI.json/paths/~1vouchers~1{code}~1redemption/post) and [redeem promotion](OpenAPI.json/paths/~1promotions~1tiers~1{promotion_tier_id}~1redemption/post) call.\n\n<!-- theme: info -->\n> #### order.id and order session\n>\n> If you use the same order.id in more than one redemption request, all valid discounts provided in the redemption payload will be applied to the given order.\n> \n> Each time you use particular order in your requests, the API will automatically trigger a new session linked to the order.id. The session is active during the request and ends asynchronously after the request is completed. The session mechanism ensures that the particular order.id can be used in one API request at once.",
+        "x-tags": [
+          "ORDERS API"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -11271,7 +11274,7 @@
           },
           "discount_amount": {
             "type": "integer",
-            "description": "Sum of all order-level discounts applied to the order.  \n`sum(redeemables.order.applied_discount_amount)`"
+            "description": "Sum of all order-level discounts applied to the order."
           },
           "items_discount_amount": {
             "type": "integer",
@@ -11285,21 +11288,9 @@
             "type": "integer",
             "description": "Order amount after applying all the discounts.  \n`total_amount` = `amount` - `total_discount_amount`"
           },
-          "applied_discount_amount": {
-            "type": "integer",
-            "description": "Sum of all order-level discounts applied in a particular request.  \n`sum(redeemables.order.applied_discount_amount)`"
-          },
-          "items_applied_discount_amount": {
-            "type": "integer",
-            "description": "Sum of all product-specific discounts applied in a particular request.  \n`sum(items, i => i.applied_discount_amount)`"
-          },
-          "total_applied_discount_amount": {
-            "type": "integer",
-            "description": "Sum of all order-level AND all product-specific discounts applied in a particular request.  \n`total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount`"
-          },
           "items": {
             "type": "array",
-            "description": "Array of order items showing the effects of particular discounts on the item-level.",
+            "description": "Array of order items that have been applied to the order. Each order item can show the effects of particular discounts on the item-level.",
             "items": {
               "type": "object",
               "properties": {
@@ -11326,13 +11317,17 @@
                   "type": "integer",
                   "description": "Represents a total pre-discount amount of order item (`price` * `quantity`)."
                 },
+                "discount_amount": {
+                  "type": "integer",
+                  "description": "The item-level discount applied to the item."
+                },
                 "price": {
                   "type": "integer",
                   "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
                 },
                 "subtotal_amount": {
                   "type": "integer",
-                  "description": "Final order item amount after the applied item-level discount.  If there are no item-level discounts applied, this item is equal to the `amount`.   \n`subtotal_amount`=`amount`-`applied_discount_amount`"
+                  "description": "Final order item amount after the applied item-level discount.  If there are no item-level discounts applied, this item is equal to the `amount`.   \n`subtotal_amount`=`amount`-`discount_amount`"
                 },
                 "product": {
                   "type": "object",
@@ -11436,11 +11431,234 @@
             "type": "string",
             "default": "order",
             "description": "The type of object represented by JSON. This object stores information about the order."
+          },
+          "redemptions": {
+            "description": "Contains information about redemptions that were applied for the order.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/10_obj_order_object_unstacked_redemptions"
+              },
+              {
+                "$ref": "#/components/schemas/10_obj_order_object_stacked_redemptions"
+              }
+            ]
+          }
+        }
+      },
+      "10_obj_order_object_unstacked_redemptions": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": "ord_mtAx6xnppgrXAegfKjGnZg59",
+            "source_id": null,
+            "created_at": "2022-03-10T09:13:40.590Z",
+            "updated_at": "2022-03-10T09:13:41.341Z",
+            "status": "PAID",
+            "amount": 77789,
+            "discount_amount": 0,
+            "total_discount_amount": 0,
+            "total_amount": 77789,
+            "items": [
+              {
+                "object": "order_item",
+                "product_id": "prod_0a7e62db1fca8322a2",
+                "quantity": 1,
+                "amount": 70000,
+                "price": 70000,
+                "subtotal_amount": 70000,
+                "product": {
+                  "id": "prod_0a7e62db1fca8322a2",
+                  "source_id": "prod_anJ03RZZq74z4v",
+                  "name": "Apple iPhone 8",
+                  "price": 20000
+                }
+              },
+              {
+                "object": "order_item",
+                "product_id": "prod_0a41e31b3081c2834d",
+                "sku_id": "sku_0a41e31c7b41c28358",
+                "quantity": 1,
+                "amount": 7789,
+                "price": 7789,
+                "subtotal_amount": 7789,
+                "product": {
+                  "id": "prod_0a41e31b3081c2834d",
+                  "source_id": "r4",
+                  "name": "Books",
+                  "price": 1599
+                },
+                "sku": {
+                  "id": "sku_0a41e31c7b41c28358",
+                  "source_id": "emailme@myemail.please",
+                  "sku": "Comics",
+                  "price": 7789
+                }
+              }
+            ],
+            "metadata": {},
+            "customer": {
+              "id": "cust_nk0N1uNQ1YnupAoJGOgvsODC",
+              "object": "customer"
+            },
+            "referrer": {
+              "id": "cust_7iUa6ICKyU6gH40dBU25kQU1",
+              "object": "customer"
+            },
+            "customer_id": "cust_nk0N1uNQ1YnupAoJGOgvsODC",
+            "referrer_id": "cust_7iUa6ICKyU6gH40dBU25kQU1",
+            "object": "order",
+            "redemptions": {
+              "r_0abe82a2154879ee5c": {
+                "date": "2022-03-10T09:13:40.693Z",
+                "related_object_type": "voucher",
+                "related_object_id": "v_7HxHkf4VAkMuc8u4lZs78lyRwhRze5UE",
+                "related_object_parent_id": "camp_BcHeMm4QaKjqCWMQFecMp1U0"
+              }
+            }
           }
         },
+        "title": "Unstacked Redemption",
+        "description": "Redemption object representing a single redemption.",
         "x-tags": [
           "ORDERS API"
-        ]
+        ],
+        "properties": {
+          "redemption_ID": {
+            "type": "object",
+            "description": "The property name is the unique redemption ID; i.e. `r_0ba186c4824e4881e1`. This object contains information about the redemption of an incentive.",
+            "properties": {
+              "date": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the redemption was created in ISO 8601 format.",
+                "example": "2022-09-02T17:06:56.649Z"
+              },
+              "related_object_type": {
+                "type": "string",
+                "description": "The source of the incentive.",
+                "enum": [
+                  "voucher",
+                  "promotion_tier"
+                ]
+              },
+              "related_object_id": {
+                "type": "string",
+                "description": "Unique ID of the related object that defines the incentive."
+              },
+              "related_object_parent_id": {
+                "type": "string",
+                "description": "Represent's the campaign ID of the voucher if the redemption was based on a voucher that was part of bulk codes generated within a campaign."
+              }
+            }
+          }
+        }
+      },
+      "10_obj_order_object_stacked_redemptions": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": "ord_mtAx6xnppgrXAegfKjGnZg59",
+            "source_id": null,
+            "created_at": "2022-03-10T09:13:40.590Z",
+            "updated_at": "2022-03-10T09:13:41.341Z",
+            "status": "PAID",
+            "amount": 77789,
+            "discount_amount": 0,
+            "total_discount_amount": 0,
+            "total_amount": 77789,
+            "items": [
+              {
+                "object": "order_item",
+                "product_id": "prod_0a7e62db1fca8322a2",
+                "quantity": 1,
+                "amount": 70000,
+                "price": 70000,
+                "subtotal_amount": 70000,
+                "product": {
+                  "id": "prod_0a7e62db1fca8322a2",
+                  "source_id": "prod_anJ03RZZq74z4v",
+                  "name": "Apple iPhone 8",
+                  "price": 20000
+                }
+              },
+              {
+                "object": "order_item",
+                "product_id": "prod_0a41e31b3081c2834d",
+                "sku_id": "sku_0a41e31c7b41c28358",
+                "quantity": 1,
+                "amount": 7789,
+                "price": 7789,
+                "subtotal_amount": 7789,
+                "product": {
+                  "id": "prod_0a41e31b3081c2834d",
+                  "source_id": "r4",
+                  "name": "Books",
+                  "price": 1599
+                },
+                "sku": {
+                  "id": "sku_0a41e31c7b41c28358",
+                  "source_id": "emailme@myemail.please",
+                  "sku": "Comics",
+                  "price": 7789
+                }
+              }
+            ],
+            "metadata": {},
+            "customer": {
+              "id": "cust_nk0N1uNQ1YnupAoJGOgvsODC",
+              "object": "customer"
+            },
+            "referrer": {
+              "id": "cust_7iUa6ICKyU6gH40dBU25kQU1",
+              "object": "customer"
+            },
+            "customer_id": "cust_nk0N1uNQ1YnupAoJGOgvsODC",
+            "referrer_id": "cust_7iUa6ICKyU6gH40dBU25kQU1",
+            "object": "order",
+            "redemptions": {
+              "r_0abe82a2154879ee5c": {
+                "date": "2022-03-10T09:13:40.693Z",
+                "related_object_type": "voucher",
+                "related_object_id": "v_7HxHkf4VAkMuc8u4lZs78lyRwhRze5UE",
+                "related_object_parent_id": "camp_BcHeMm4QaKjqCWMQFecMp1U0"
+              }
+            }
+          }
+        },
+        "title": "Stacked Redemption",
+        "description": "Redemption object representing a stacked redemption.",
+        "x-tags": [
+          "ORDERS API"
+        ],
+        "properties": {
+          "redemption_ID": {
+            "type": "object",
+            "description": "The property name is the unique parent redemption ID; i.e. `r_0ba186c4824e4881e1`. This object contains information about the redemption of multiple incentives.",
+            "properties": {
+              "date": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the redemption was created in ISO 8601 format.",
+                "example": "2022-09-02T17:06:56.649Z"
+              },
+              "related_object_type": {
+                "type": "string",
+                "description": "The source of the incentive.",
+                "default": "redemption"
+              },
+              "related_object_id": {
+                "type": "string",
+                "description": "Unique ID of the parent redemption.",
+                "example": "r_0ba186c4824e4881e1"
+              },
+              "stacked": {
+                "type": "array",
+                "description": "Contains a list of unique IDs of child redemptions, which belong to the stacked incentives.",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       },
       "10_res_list_orders": {
         "type": "object",
@@ -12068,7 +12286,7 @@
             "type": "string"
           }
         },
-        "description": "This is an object representing an order item.  \n\nOrder Items are always specified within [the order object](OpenAPI.json/components/schemas/10_obj_order_object). They can be related either to [products](OpenAPI.json/components/schemas/11_obj_product_object) or [SKUs](OpenAPI.json/components/schemas/11_obj_sku_object).\n\nProduct/SKU details sent within an order item will be used on top of Product/SKU already stored in the system during the [Redeem Voucher](OpenAPI.json/paths/~1vouchers~1{code}~1redemption/post), [Validate Voucher](OpenAPI.json/paths/~1vouchers~1{code}~1validate), [Validate Promotions](OpenAPI.json/paths/~1promotions~1validation) and [Redeem Promotion](ref:redeem-promotion) requests - details in the table below.",
+        "description": "This is an object representing an order item.  \n\nOrder Items are always specified within [the order object](OpenAPI.json/components/schemas/10_obj_order_object). They can be related either to [products](OpenAPI.json/components/schemas/11_obj_product_object) or [SKUs](OpenAPI.json/components/schemas/11_obj_sku_object).\n\nProduct/SKU details sent within an order item will be used on top of Product/SKU already stored in the system during the [Redeem Voucher](OpenAPI.json/paths/~1vouchers~1{code}~1redemption/post), [Validate Voucher](OpenAPI.json/paths/~1vouchers~1{code}~1validate), [Validate Promotions](OpenAPI.json/paths/~1promotions~1validation) and [Redeem Promotion](ref:redeem-promotion) requests.",
         "x-tags": [
           "ORDERS API"
         ]
@@ -26825,7 +27043,7 @@
         ],
         "responses": {
           "200": {
-            "description": "A dictionary with a data property that contains an array of up to limit orders. Each entry in the array is a separate order object. If no more orders are available, the resulting array will be empty.",
+            "description": "A dictionary with a data property that contains an array of up to limit orders. Each entry in the array is a separate order object. If you decide to use the page filter and on a certain page, there are no more orders are available, the resulting array will be empty.",
             "content": {
               "application/json": {
                 "schema": {
