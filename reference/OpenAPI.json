@@ -11762,27 +11762,41 @@
       },
       "10_req_orders_post": {
         "type": "object",
-        "x-examples": {
-          "example-1": {
-            "id": "del_5PQxA5AgP94MubKQT8KlVg5e",
-            "created_at": "2022-06-28T13:51:55.171Z",
-            "related_object_id": "cust_W8n9I8pJDXlM69j49iKJeUYp",
-            "related_object": "customer",
-            "status": "DONE",
-            "data_json": {
-              "events": 2,
-              "customer_events": 7,
-              "daily_events": 0,
-              "segments": 0,
-              "orders": 1,
-              "order_events": 4,
-              "customer": 1
-            },
-            "object": "pernament_deletion"
-          }
-        },
         "title": "Create Order Request Body",
-        "description": "Request body schema for POST `/orders`."
+        "description": "Request body schema for POST `/orders`.",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s order ID if it is different from the Voucherify order ID. It is really useful in case of an integration between multiple systems. It can be an order ID from a CRM system, database or 3rd-party service."
+          },
+          "status": {
+            "type": "string",
+            "description": "The order status.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "CANCELED",
+              "FULLFILLED"
+            ]
+          },
+          "amount": {
+            "type": "string",
+            "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts."
+          },
+          "metadata": {
+            "type": "string",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
+          },
+          "customer": {
+            "$ref": "#/components/schemas/10_req_orders_customer_object"
+          },
+          "referrer": {
+            "$ref": "#/components/schemas/10_req_orders_referrer_object"
+          },
+          "items": {
+            "$ref": "#/components/schemas/10_req_orders_items_array"
+          }
+        }
       },
       "10_req_orders_import": {
         "type": "array",
@@ -11814,8 +11828,7 @@
               "$ref": "#/components/schemas/10_req_orders_referrer_object"
             },
             "items": {
-              "type": "array",
-              "items": {}
+              "$ref": "#/components/schemas/10_req_orders_items_array"
             }
           }
         }
@@ -27735,11 +27748,102 @@
         "operationId": "post-orders",
         "responses": {
           "200": {
-            "description": "Returns an order object if the operation succeeded. Returns an error if something goes wrong.",
+            "description": "Returns an order object if the operation succeeded.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/10_obj_order_object"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "ord_cRKOEXiBOj0EZKF7g9n6l0eH",
+                      "source_id": "new",
+                      "created_at": "2022-09-09T09:20:01.660Z",
+                      "updated_at": "2022-09-09T09:24:43.604Z",
+                      "status": "FULFILLED",
+                      "amount": 121700,
+                      "total_amount": 121700,
+                      "items": [
+                        {
+                          "object": "order_item",
+                          "source_id": "prod_1",
+                          "related_object": "product",
+                          "quantity": 2,
+                          "amount": 120000,
+                          "price": 60000,
+                          "subtotal_amount": 120000,
+                          "product": {
+                            "id": "prod_0b7d7c4e814be5c502",
+                            "source_id": "prod_1",
+                            "name": "Apple iPhone 12",
+                            "metadata": {
+                              "color": [
+                                "purple"
+                              ],
+                              "vendor": "mall"
+                            },
+                            "price": 60000
+                          }
+                        },
+                        {
+                          "object": "order_item",
+                          "source_id": "ComicBook_1",
+                          "related_object": "sku",
+                          "product_id": "prod_0b7d7dfb05cbe5c616",
+                          "quantity": 1,
+                          "amount": 1700,
+                          "price": 1700,
+                          "subtotal_amount": 1700,
+                          "product": {
+                            "id": "prod_0b7d7dfb05cbe5c616",
+                            "source_id": "Books",
+                            "name": "Comic Books1",
+                            "metadata": {
+                              "color": [
+                                "silver"
+                              ],
+                              "vendor": "Bookstore1"
+                            },
+                            "price": 2100
+                          },
+                          "sku": {
+                            "id": "sku_0b7d7dfb090be5c619",
+                            "source_id": "ComicBook_1",
+                            "sku": "Comics1",
+                            "metadata": {
+                              "color": [
+                                "golden"
+                              ],
+                              "vendor": "islands"
+                            },
+                            "price": 1700
+                          }
+                        }
+                      ],
+                      "metadata": {
+                        "location_id": [
+                          "L1",
+                          "L2"
+                        ],
+                        "payment_mean": [
+                          "paypal",
+                          "credit-card"
+                        ]
+                      },
+                      "customer": {
+                        "id": "cust_H0nXrItO1DNV3UiPIl54HA5o",
+                        "object": "customer"
+                      },
+                      "referrer": {
+                        "id": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv",
+                        "object": "customer"
+                      },
+                      "customer_id": "cust_H0nXrItO1DNV3UiPIl54HA5o",
+                      "referrer_id": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv",
+                      "object": "order"
+                    }
+                  }
                 }
               }
             }
@@ -27761,9 +27865,115 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/10_req_orders_post"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "source_id": "new",
+                    "status": "FULFILLED",
+                    "metadata": {
+                      "location_id": [
+                        "L1",
+                        "L2"
+                      ],
+                      "payment_mean": [
+                        "paypal",
+                        "credit-card"
+                      ]
+                    },
+                    "customer": {
+                      "source_id": "bob.smith.1@email.com",
+                      "name": "Bob Smith",
+                      "description": "A nice customer",
+                      "email": "bob.smith.1@email.com",
+                      "phone": "+1 933 222 3333",
+                      "address": {
+                        "city": "New York",
+                        "country": "United Statese",
+                        "line_1": "123 Main St",
+                        "line_2": "APT 3 BLG 4",
+                        "postal_code": "10001",
+                        "state": "NY"
+                      },
+                      "metadata": {
+                        "lang": "en",
+                        "test": false
+                      },
+                      "birthdate": "2022-01-02"
+                    },
+                    "referrer": {
+                      "source_id": "jane.smith@email.com",
+                      "name": "Jane Smith",
+                      "description": "A really nice customer",
+                      "email": "jane.smith@email.com",
+                      "phone": "+1 933 222 3334",
+                      "address": {
+                        "city": "New York",
+                        "country": "United States",
+                        "line_1": "123 Main St.",
+                        "line_2": "APT 3 BLG 4",
+                        "postal_code": "10001",
+                        "state": "NY"
+                      },
+                      "metadata": {
+                        "lang": "en",
+                        "test": false
+                      },
+                      "birthday": "2022-03-03"
+                    },
+                    "items": [
+                      {
+                        "source_id": "prod_1",
+                        "related_object": "product",
+                        "quantity": 2,
+                        "product": {
+                          "name": "Apple iPhone 12",
+                          "price": 60000,
+                          "metadata": {
+                            "color": [
+                              "purple"
+                            ],
+                            "vendor": "mall"
+                          },
+                          "override": true
+                        }
+                      },
+                      {
+                        "source_id": "ComicBook_1",
+                        "related_object": "sku",
+                        "quantity": 1,
+                        "product": {
+                          "source_id": "Books",
+                          "name": "Comic Books1",
+                          "price": 2100,
+                          "metadata": {
+                            "color": [
+                              "silver"
+                            ],
+                            "vendor": "Bookstore1"
+                          },
+                          "override": true
+                        },
+                        "sku": {
+                          "sku": "Comics1",
+                          "source_id": "ComicBook_1",
+                          "price": 1700,
+                          "metadata": {
+                            "color": [
+                              "golden"
+                            ],
+                            "vendor": "islands"
+                          },
+                          "override": true
+                        }
+                      }
+                    ]
+                  }
+                }
               }
             }
-          }
+          },
+          "description": "Specify the order parameters."
         },
         "description": "Creates an order object and triggers an order creation event."
       }
