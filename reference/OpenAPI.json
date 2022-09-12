@@ -12609,6 +12609,32 @@
           }
         }
       },
+      "11_req_update_products_metadata_in_bulk": {
+        "type": "object",
+        "x-examples": {},
+        "description": "Request schema for **POST** `/products/metadata/async`.",
+        "title": "Update Products' Metadata in Bulk Request Body",
+        "x-tags": [
+          "PRODUCTS API"
+        ],
+        "properties": {
+          "source_ids": {
+            "type": "array",
+            "description": "Array of unique product source IDs.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
+          }
+        },
+        "required": [
+          "source_ids",
+          "metadata"
+        ]
+      },
       "11_req_update_product": {
         "type": "object",
         "x-examples": {
@@ -29585,7 +29611,51 @@
         "operationId": "post-products-metadata-async",
         "responses": {
           "202": {
-            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and updates will be added to the repository asynchronously. To check the update status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint."
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and updates will be added to the repository asynchronously. To check the update status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/a_res_async_actions"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "async_action_id": "aa_0a875d56c805df6601"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the request parameters are not provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_error_no_translation"
+                },
+                "examples": {
+                  "Not enough source IDs": {
+                    "value": {
+                      "code": 400,
+                      "key": "not_enough_source_ids",
+                      "message": "Not enough source_ids",
+                      "details": "Specify at least 1 ID in source_ids.",
+                      "request_id": "v-0bae421d05078dcdb4"
+                    }
+                  },
+                  "Invalid Payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload should have required property 'metadata'",
+                      "request_id": "v-0bae428dab8ca61825"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -29596,12 +29666,25 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/11_req_update_products_metadata_in_bulk"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "source_ids": [
+                      "123-567-3433",
+                      "test_volleyball"
+                    ],
+                    "metadata": {
+                      "label": true,
+                      "origin": "PL"
+                    }
+                  }
+                }
               }
             }
           },
-          "description": ""
+          "description": "Specify the list of product source IDs and the metadata key value pairs to be udpated for these products."
         },
         "parameters": [
           {
