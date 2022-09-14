@@ -14495,7 +14495,7 @@
           },
           "name": {
             "type": "string",
-            "description": "Custom, unique validation rule name.",
+            "description": "Custom, unique name for set of validation rules.",
             "example": "Business Validation Rule"
           },
           "rules": {
@@ -14746,6 +14746,200 @@
             "type": "string",
             "default": "validation_rules",
             "description": "The type of object represented by JSON. This object stores information about the validation rule."
+          }
+        }
+      },
+      "13_req_create_validation_rule": {
+        "title": "Create Validation Rule Request Body",
+        "type": "object",
+        "description": "Request body schema for **POST** `/validation-rules`.",
+        "x-tags": [
+          "VALIDATION RULES API"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Custom, unique name for the set of validation rules.",
+            "example": "Business Validation Rule"
+          },
+          "rules": {
+            "type": "object",
+            "description": "Contains all the rule definitions for the validation rule. It is a set of key value pairs representing the rules and logic between the rules. The keys are numbered consequtively beginning from `1`. The values are objects containing the rule conditions.",
+            "properties": {
+              "1": {
+                "type": "object",
+                "description": "Defines the rule.",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Voucherify specific rule name.  The list of available names is provided below.  \n| **Name** |\n|:---|\n| **Customer** |\n| customer.segment<br>customer.metadata* |\n| **Order** |\n| order.amount<br>order.items.count<br>order.items.price_any<br>order.items.price_each<br>order.items.metadata_any<br>order.items.metadata_each<br>order.metadata* |\n| **Campaign** |\n| campaign.orders.amount_discounted<br>campaign.orders.amount<br>campaign.redemptions.count<br>campaign.redemptions.count.daily<br>campaign.redemptions.count.monthy<br>campaign.redemptions.customers_count<br>campaign.redemptions.customers_count.daily<br>campaign.redemptions.customers_count.monthly |\n| **Redemption** |\n| redemption.gift.amount<br>redemption.count.daily<br>redemption.count.monthly<br>redemption.count.per_customer<br>redemption.count.per_customer.daily<br>redemption.count.per_customer.monthly<br>redemption.api_key<br>redemption.count.per_api_key<br>redemption.user.login<br>redemption.count.per_user<br>redemption.metadata*<br>redemption.reward.pay_with_points.points_used |\n| **Product** |\n| product.id<br>product.price<br>product.quantity<br>product.discount_applicable<br>product.metadata*<br>product.metadata.aggregated_quantity<br>product.metadata.aggregated_amount<br>product.metadata.discount_applicable<br>product.metadata.match_all |\n| **SKU** |\n| sku.id<br>sku.price<br>sku.quantity<br>sku.discount_applicable |\n| **Publication** |\n| publication.redeemable_by_linked_customer |\n| **Custom Event** |\n| custom_event.metadata* |\n| **Order items** |\n| order.items.every<br>order.items.any<br>order.items.none<br>order.items.cheapest<br>order.items.most_expensive |\n| order.items.quantity<br>order.items.aggregated_quantity<br>order.items.price<br>order.items.aggregated_amount<br>order.items.metadata* |  \n\n\n*Requires the `property` field to be defined."
+                  },
+                  "property": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Custom name for a metadata property associated with the condition to be satisfied. **Required** if the property `name` is any of the following: \n| **Name** |\n|:---|\n| customer_metadata |\n| custom_event_metadata |\n| order_items_metadata |\n| order_metadata |\n| product_metadata |\n| redemption_metadata |"
+                  },
+                  "conditions": {
+                    "type": "object",
+                    "description": "A set of key value pairs representing the condition name and value. The list of available conditions is provided below:    \n| **Condition (key)** | **Definition** | **Does not support Types** |\n|:---|:---|:---|\n| $is | A property is a predefined value. |  |\n| $is_not | A property is not a predefined value. |  |\n| $in | A property either one value in a predefined list of values. |  |\n| $less_than | A property is less than a predefined value. | boolean |\n| $less_than_or_equal | A property is less than or equal to a predefined value. | boolean |\n| $more_than | A property is more than a predefined value. | boolean |\n| $more_than_or_equal | A property is more than or equal to a predefined value. | boolean |\n| $starts_with | A property starts with the predefined sequence of characters. | boolean, number |\n| $ends_with | A property ends with the predefined sequence of characters. | boolean, number |\n| $contains | A property contains the predefined sequence of characters. | boolean, number |\n| $timeframe |  | boolean, number |\n| $dow |  | boolean, string |\n| $count |  | boolean, string |\n| $count_more |  | boolean, string |\n| $count_less |  | boolean, string |",
+                    "properties": {
+                      "$one_of_voucherify_conditions": {
+                        "type": "array",
+                        "description": "Contains a set of conditions for the rule.",
+                        "items": {
+                          "type": [
+                            "string",
+                            "integer",
+                            "boolean"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "rules": {
+                    "type": "object",
+                    "description": "Contains all the nested rule definitions for the validation rule. It is a set of key value pairs representing the rules and logic between the rules. The keys are numbered consequtively beginning from `1`. The values are objects containing the rule conditions.",
+                    "properties": {
+                      "1": {
+                        "type": "object",
+                        "description": "Defines the nested rule.",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "property": {
+                            "type": "string"
+                          },
+                          "conditions": {
+                            "type": "object"
+                          },
+                          "rules": {
+                            "type": "object"
+                          }
+                        }
+                      },
+                      "logic": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "error": {
+                    "type": "object",
+                    "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rule."
+                      }
+                    }
+                  }
+                }
+              },
+              "logic": {
+                "type": "string",
+                "example": "(1 and 2) and (3)",
+                "description": "Defines the logic between the rules."
+              }
+            }
+          },
+          "error": {
+            "type": "object",
+            "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rules.",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rules."
+              }
+            }
+          },
+          "applicable_to": {
+            "type": "object",
+            "properties": {
+              "excluded": {
+                "type": "array",
+                "description": "Defines which items are excluded in a discount.",
+                "items": {
+                  "type": "object",
+                  "description": "Defines the excluded item.",
+                  "properties": {
+                    "object": {
+                      "type": "string",
+                      "enum": [
+                        "product",
+                        "sku",
+                        "products_collection"
+                      ],
+                      "description": "The type of object being excluded in the rule."
+                    },
+                    "id": {
+                      "type": "string",
+                      "description": "Unique product ID, SKU ID, product collection ID i.e. `prod_0b72b00ffed198e344z`,  `sku_0b7d7dfb090be5c619`, `pc_4ndRXAsTOzwSdHcQcxf489uU`."
+                    },
+                    "source_id": {
+                      "type": "string"
+                    },
+                    "strict": {
+                      "type": "boolean"
+                    },
+                    "effect": {
+                      "type": "string",
+                      "enum": [
+                        "APPLY_TO_EVERY"
+                      ],
+                      "description": "Discount effect for an excluded resource."
+                    }
+                  }
+                }
+              },
+              "included": {
+                "type": "array",
+                "description": "Defines which items are included in a discount.",
+                "items": {
+                  "type": "object",
+                  "description": "Defines the included item.",
+                  "properties": {
+                    "object": {
+                      "type": "string",
+                      "enum": [
+                        "product",
+                        "sku",
+                        "products_collection"
+                      ],
+                      "description": "The type of object being included in the rule."
+                    },
+                    "id": {
+                      "type": "string",
+                      "description": "Unique product ID, SKU ID, product collection ID i.e. `prod_0b72b00ffed198e344z`,  `sku_0b7d7dfb090be5c619`, `pc_4ndRXAsTOzwSdHcQcxf489uU`."
+                    },
+                    "source_id": {
+                      "type": "string"
+                    },
+                    "strict": {
+                      "type": "boolean"
+                    },
+                    "effect": {
+                      "type": "string",
+                      "enum": [
+                        "APPLY_TO_EVERY",
+                        "APPLY_TO_CHEAPEST",
+                        "APPLY_TO_MOST_EXPENSIVE"
+                      ],
+                      "description": "Discount effect for an included resource."
+                    },
+                    "quantity_limit": {
+                      "type": "integer",
+                      "description": "A limit on the number of units that at maximum can qualify for a discount. This property is present for an AMOUNT type discount when the effect is applied to ITEMS and each unit of matched products has the same discount value."
+                    }
+                  }
+                }
+              },
+              "included_all": {
+                "type": "boolean",
+                "description": "Indicates whether all items are included in the discount."
+              }
+            }
           }
         }
       },
@@ -15169,7 +15363,7 @@
                 },
                 "name": {
                   "type": "string",
-                  "description": "Custom, unique validation rule name."
+                  "description": "Custom, unique name for the set of validation rules."
                 },
                 "rules": {
                   "type": "object",
@@ -18120,6 +18314,39 @@
             "example": "v-0a884c6be8c3756f42"
           }
         }
+      },
+      "e_400_invalid_validation_rules": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "code": 400,
+            "key": "invalid_validation_rules",
+            "message": "Invalid Validation Rule Definition",
+            "details": "Rule 'custom_event.metadata' must have a 'property'"
+          }
+        },
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code.",
+            "default": 400
+          },
+          "key": {
+            "type": "string",
+            "default": "invalid_validation_rules",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          }
+        },
+        "title": "Invalid Validation Rules",
+        "description": "Error: Bad Request &rarr; Invalid Validation Rules"
       },
       "e_400_not_enough_codes": {
         "title": "Not Enough Codes",
@@ -31472,19 +31699,92 @@
         "operationId": "post-validation-rules",
         "responses": {
           "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request. \n\n{\n    \"code\": 400,\n    \"key\": \"invalid_validation_rules\",\n    \"message\": \"Invalid Validation Rule Definition\",\n    \"details\": \"Rule 'customer.metadata' must have a 'property'\"\n}",
+            "description": "Returns a validation rule object.",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {}
+                  "$ref": "#/components/schemas/13_obj_validation_rule_object"
                 },
                 "examples": {
-                  "example-1": {
-                    "value": {}
+                  "Example": {
+                    "value": {
+                      "id": "val_eR1c41hu0vUU",
+                      "name": "Business Validation Rule",
+                      "rules": {
+                        "1": {
+                          "name": "string",
+                          "property": "string",
+                          "conditions": {
+                            "$one_of_voucherify_conditions": [
+                              "string"
+                            ]
+                          },
+                          "rules": {
+                            "1": {
+                              "name": "string",
+                              "property": "string",
+                              "conditions": {},
+                              "rules": {}
+                            },
+                            "logic": "string"
+                          },
+                          "error": {
+                            "message": "string"
+                          }
+                        },
+                        "logic": "(1 and 2) and (3)"
+                      },
+                      "error": {
+                        "message": "string"
+                      },
+                      "applicable_to": {
+                        "excluded": [
+                          {
+                            "object": "product",
+                            "id": "string",
+                            "source_id": "string",
+                            "strict": true,
+                            "effect": "APPLY_TO_EVERY"
+                          }
+                        ],
+                        "included": [
+                          {
+                            "object": "product",
+                            "id": "string",
+                            "source_id": "string",
+                            "strict": true,
+                            "effect": "APPLY_TO_EVERY",
+                            "quantity_limit": 0
+                          }
+                        ],
+                        "included_all": true
+                      },
+                      "created_at": "2022-03-23T07:44:00.444Z",
+                      "updated_at": "2022-04-26T08:35:54.960Z",
+                      "type": "basic",
+                      "context_type": "earning_rule.order.paid",
+                      "object": "validation_rules"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the request parameters were not specified correctly.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_validation_rules"
+                },
+                "examples": {
+                  "Invalid Validation Rules": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_validation_rules",
+                      "message": "Invalid Validation Rule Definition",
+                      "details": "Rule 'custom_event.metadata' must have a 'property'"
+                    }
                   }
                 }
               }
@@ -31506,12 +31806,102 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/13_req_create_validation_rule"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "name": "Set of Validation Rules",
+                    "error": {
+                      "message": "Your order does not meet at least one of the required criteria."
+                    },
+                    "applicable_to": {
+                      "included_all": false,
+                      "excluded": [
+                        {
+                          "object": "product",
+                          "id": "prod_0bae45ffc7003ffc52",
+                          "source_id": "second_product",
+                          "strict": false,
+                          "effect": "APPLY_TO_EVERY"
+                        }
+                      ],
+                      "included": [
+                        {
+                          "object": "product",
+                          "id": "prod_0b72b00ffed198e344",
+                          "source_id": null,
+                          "effect": "APPLY_TO_MOST_EXPENSIVE",
+                          "quantity_limit": 1
+                        },
+                        {
+                          "object": "products_collection",
+                          "id": "pc_4ndRXAsTOzwSdHcQcxf489uU",
+                          "source_id": null,
+                          "effect": "APPLY_TO_EVERY",
+                          "quantity_limit": 5
+                        }
+                      ]
+                    },
+                    "rules": {
+                      "1": {
+                        "name": "order.metadata",
+                        "property": "location",
+                        "rules": {},
+                        "conditions": {
+                          "$is": [
+                            "Santorini"
+                          ]
+                        },
+                        "error": {
+                          "message": "Your order must be placed at one of our Santorini shops."
+                        }
+                      },
+                      "2": {
+                        "name": "custom_event.metadata",
+                        "property": "test",
+                        "rules": {},
+                        "conditions": {
+                          "$greater_than_or_equal": [
+                            1
+                          ]
+                        }
+                      },
+                      "3": {
+                        "name": "order.items.every",
+                        "rules": {
+                          "1": {
+                            "name": "order.items.metadata",
+                            "property": "test",
+                            "rules": {},
+                            "conditions": {
+                              "$greater_than_or_equal": [
+                                1
+                              ]
+                            }
+                          }
+                        },
+                        "conditions": {
+                          "$is": [
+                            {
+                              "id": "<PROD_ID>",
+                              "effect": "APPLY_TO_EVERY",
+                              "object": "product",
+                              "source_id": "<SOURCE_ID>"
+                            }
+                          ]
+                        }
+                      },
+                      "logic": "1 or 2"
+                    }
+                  }
+                }
               }
             }
-          }
-        }
+          },
+          "description": "Specify the validation rules parameters."
+        },
+        "description": "Create validation rules."
       }
     },
     "/validation-rules/{validationRuleId}": {
