@@ -2211,12 +2211,16 @@
           "type": {
             "type": "string",
             "default": "AMOUNT",
-            "description": "Applies an amount discount"
+            "description": "Applies an amount discount."
           },
           "amount_off": {
             "type": "integer",
             "example": 100,
-            "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000."
+            "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the amount being calculated by the formula, i.e. the `amount_off_formula` parameter is present in the amount definition, this value becomes the **fallback value**. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the amount off."
+          },
+          "amount_off_formula": {
+            "type": "string",
+            "description": "Formula used to calculated the discount."
           },
           "effect": {
             "type": "string",
@@ -2224,9 +2228,10 @@
               "APPLY_TO_ORDER",
               "APPLY_TO_ITEMS",
               "APPLY_TO_ITEMS_PROPORTIONALLY",
-              "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY"
+              "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY",
+              "APPLY_TO_ITEMS_BY_QUANTITY"
             ],
-            "description": "Defines how the discount is applied to the customer's order"
+            "description": "Defines how the discount is applied to the customer's order."
           }
         }
       },
@@ -2243,9 +2248,17 @@
           "percent_off": {
             "type": "integer",
             "example": 10,
-            "description": "Percent taken off the subtotal amount",
+            "description": "Percent taken off the subtotal amount. In case of the percent being calculated by the formula, i.e. the `percent_off_formula` parameter is present in the percent definition, this value becomes the **fallback value**. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the percent off.",
             "minimum": 0,
             "maximum": 100
+          },
+          "percent_off_formula": {
+            "type": "string",
+            "description": "Formula used to calculated the discount."
+          },
+          "amount_limit": {
+            "type": "integer",
+            "description": "Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600."
           },
           "effect": {
             "type": "string",
@@ -2269,8 +2282,12 @@
           },
           "fixed_amount": {
             "type": "integer",
-            "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000.",
+            "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the fixed amount being calculated by the formula, i.e. the `fixed_amount_formula` parameter is present in the fixed amount definition, this value becomes the **fallback value**. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.",
             "example": 1000
+          },
+          "fixed_amount_formula": {
+            "type": "string",
+            "description": "Formula used to calculated the discount."
           },
           "effect": {
             "type": "string",
@@ -2294,7 +2311,7 @@
           },
           "unit_off": {
             "type": "number",
-            "description": "Number of units to subtract from the subtotal",
+            "description": "Number of units to be granted a full value discount. In case of the unit being calculated by the formula, i.e. the `unit_off_formula` parameter is present in the unit definition, this value becomes the **fallback value**. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the unit value.",
             "example": 1,
             "format": "float"
           },
@@ -2302,6 +2319,10 @@
             "type": "string",
             "description": "The product deemed as free, chosen from product  inventory (e.g. time, items)",
             "example": "prod_0a9f9aeddb019a42db"
+          },
+          "unit_off_formula": {
+            "type": "string",
+            "description": "Formula used to calculated the discount."
           },
           "effect": {
             "type": "string",
@@ -2861,7 +2882,7 @@
       "1_req_vouchers_import": {
         "title": "Import Vouchers Request Body",
         "type": "array",
-        "description": "Request body schema for vouchers/import.",
+        "description": "Request body schema for **POST** `/vouchers/import`.",
         "items": {
           "anyOf": [
             {
@@ -2997,7 +3018,7 @@
                 "$ref": "#/components/schemas/1_obj_vouchers_import_discount_unit_multiple"
               },
               {
-                "$ref": "#/components/schemas/1_obj_s_import_discount_shipping"
+                "$ref": "#/components/schemas/1_obj_vouchers_import_discount_shipping"
               }
             ]
           },
@@ -19671,7 +19692,7 @@
           },
           "in": "path",
           "name": "code",
-          "description": "A unique **code** that identifies the voucher or a voucher ID assigned by Voucherify, i.e. `v_OBVfpTVf24DBz0HZmKVZa5UEl1DUg2bn`.",
+          "description": "A unique **code** that identifies the voucher.",
           "required": true
         }
       ],
@@ -20931,6 +20952,70 @@
                       "locale": "de-en"
                     }
                   }
+                },
+                "Amount Discount with Formula": {
+                  "value": {
+                    "category": "First",
+                    "type": "DISCOUNT_VOUCHER",
+                    "discount": {
+                      "type": "AMOUNT",
+                      "amount_off": 100,
+                      "amount_off_formula": "IF(CUSTOMER_METADATA(\"favorite_brands\") contains \"Nike\";20;CUSTOMER_METADATA(\"age\"))",
+                      "effect": "APPLY_TO_ORDER"
+                    },
+                    "start_date": "2020-01-01T00:00:00Z",
+                    "expiration_date": "2022-12-31T23:59:59Z",
+                    "validity_timeframe": {
+                      "duration": "PT1H",
+                      "interval": "P2D"
+                    },
+                    "validity_day_of_week": [
+                      1,
+                      2,
+                      3,
+                      4,
+                      5
+                    ],
+                    "active": true,
+                    "additional_info": "This voucher can be used with other coupons.",
+                    "redemption": {
+                      "quantity": 100
+                    },
+                    "metadata": {
+                      "Season": "Spring"
+                    }
+                  }
+                },
+                "Percent Discount with Formula": {
+                  "value": {
+                    "category": "First",
+                    "type": "DISCOUNT_VOUCHER",
+                    "discount": {
+                      "type": "PERCENT",
+                      "percent_off": 40,
+                      "percent_off_formula": "IF(CUSTOMER_METADATA(\"favorite_brands\") contains \"Nike\";20;CUSTOMER_METADATA(\"age\"))",
+                      "amount_limit": 1700,
+                      "effect": "APPLY_TO_ORDER"
+                    },
+                    "start_date": "2020-01-01T00:00:00Z",
+                    "expiration_date": "2022-12-31T23:59:59Z",
+                    "validity_timeframe": {
+                      "duration": "PT1H",
+                      "interval": "P2D"
+                    },
+                    "validity_day_of_week": [
+                      0,
+                      1
+                    ],
+                    "active": true,
+                    "additional_info": "This voucher can be used with other coupons.",
+                    "redemption": {
+                      "quantity": 101
+                    },
+                    "metadata": {
+                      "Season": "Fall"
+                    }
+                  }
                 }
               }
             }
@@ -21123,6 +21208,146 @@
                         "object": "list",
                         "count": 0,
                         "url": "/v1/vouchers/welcomeloyalty/publications?page=1&limit=10"
+                      },
+                      "object": "voucher"
+                    }
+                  },
+                  "Amount Discount with Formula": {
+                    "value": {
+                      "id": "v_pmjVYKEDFzMqwNroHTlFcI1yKLqUcVVS",
+                      "code": "amount1",
+                      "campaign": null,
+                      "campaign_id": null,
+                      "category": "First",
+                      "category_id": "cat_0bb343dee3cdb5ec0c",
+                      "categories": [
+                        {
+                          "id": "cat_0bb343dee3cdb5ec0c",
+                          "name": "First",
+                          "hierarchy": 1,
+                          "created_at": "2022-09-16T11:47:19.568Z",
+                          "object": "category"
+                        }
+                      ],
+                      "type": "DISCOUNT_VOUCHER",
+                      "discount": {
+                        "type": "AMOUNT",
+                        "amount_off": 100,
+                        "amount_off_formula": "IF(CUSTOMER_METADATA(\"favorite_brands\") contains \"Nike\";20;CUSTOMER_METADATA(\"age\"))",
+                        "effect": "APPLY_TO_ORDER"
+                      },
+                      "gift": null,
+                      "loyalty_card": null,
+                      "start_date": "2020-01-01T00:00:00.000Z",
+                      "expiration_date": "2022-12-31T23:59:59.000Z",
+                      "validity_timeframe": {
+                        "interval": "P2D",
+                        "duration": "PT1H"
+                      },
+                      "validity_day_of_week": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                      ],
+                      "active": true,
+                      "additional_info": "This voucher can be used with other coupons.",
+                      "metadata": {
+                        "Season": "Spring"
+                      },
+                      "assets": {
+                        "qr": {
+                          "id": "U2FsdGVkX1+aMFY2yoGxlWkhulvTPR8RlMZtfOaWXnL6PCnegsV73aCTsue+JlUrQsbh+dmp2gJigaVixgvyC7/zUxQjf8tnVT4R79G4LmUkltHMqHsaf++fsP1G07nDl9/2WHh/QVb6z4KP/DX5Dw==",
+                          "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2BaMFY2yoGxlWkhulvTPR8RlMZtfOaWXnL6PCnegsV73aCTsue%2BJlUrQsbh%2Bdmp2gJigaVixgvyC7%2FzUxQjf8tnVT4R79G4LmUkltHMqHsaf%2B%2BfsP1G07nDl9%2F2WHh%2FQVb6z4KP%2FDX5Dw%3D%3D"
+                        },
+                        "barcode": {
+                          "id": "U2FsdGVkX1+X2OimwSCEmGvGrZXXK+b4OrStQELVsHRup8Su+uISCOBz7xWdbpoLVJlSFepcRxSNUUdjcbpgKH7YNfaclrta8Ig6/GK/4YFlh0cPKCGOG5WWyXWzxxmVgVqRdI7KR8/hdaq2FCQeWA==",
+                          "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BX2OimwSCEmGvGrZXXK%2Bb4OrStQELVsHRup8Su%2BuISCOBz7xWdbpoLVJlSFepcRxSNUUdjcbpgKH7YNfaclrta8Ig6%2FGK%2F4YFlh0cPKCGOG5WWyXWzxxmVgVqRdI7KR8%2Fhdaq2FCQeWA%3D%3D"
+                        }
+                      },
+                      "is_referral_code": false,
+                      "created_at": "2022-09-19T14:22:50.552Z",
+                      "updated_at": null,
+                      "redemption": {
+                        "quantity": 100,
+                        "redeemed_quantity": 0,
+                        "object": "list",
+                        "url": "/v1/vouchers/amount1/redemptions?page=1&limit=10"
+                      },
+                      "publish": {
+                        "object": "list",
+                        "count": 0,
+                        "url": "/v1/vouchers/amount1/publications?page=1&limit=10"
+                      },
+                      "object": "voucher"
+                    }
+                  },
+                  "Percent Discount with Formula": {
+                    "value": {
+                      "id": "v_9PbXndxO3S8xfztwMtIvuMXReonF248m",
+                      "code": "percent1",
+                      "campaign": null,
+                      "campaign_id": null,
+                      "category": "First",
+                      "category_id": "cat_0bb343dee3cdb5ec0c",
+                      "categories": [
+                        {
+                          "id": "cat_0bb343dee3cdb5ec0c",
+                          "name": "First",
+                          "hierarchy": 1,
+                          "created_at": "2022-09-16T11:47:19.568Z",
+                          "object": "category"
+                        }
+                      ],
+                      "type": "DISCOUNT_VOUCHER",
+                      "discount": {
+                        "type": "PERCENT",
+                        "amount_limit": 1700,
+                        "percent_off": 40,
+                        "percent_off_formula": "IF(CUSTOMER_METADATA(\"favorite_brands\") contains \"Nike\";20;CUSTOMER_METADATA(\"age\"))",
+                        "effect": "APPLY_TO_ORDER"
+                      },
+                      "gift": null,
+                      "loyalty_card": null,
+                      "start_date": "2020-01-01T00:00:00.000Z",
+                      "expiration_date": "2022-12-31T23:59:59.000Z",
+                      "validity_timeframe": {
+                        "interval": "P2D",
+                        "duration": "PT1H"
+                      },
+                      "validity_day_of_week": [
+                        0,
+                        1
+                      ],
+                      "active": true,
+                      "additional_info": "This voucher can be used with other coupons.",
+                      "metadata": {
+                        "Season": "Fall"
+                      },
+                      "assets": {
+                        "qr": {
+                          "id": "U2FsdGVkX19MPtNCPjoG/pKloolK+BZH/OCIpjYqj+B6IVJJmTYKeBINcB0JioL/tSw3iuK4FvgF8VyDyTfL26IpzbT81DDOnKeFIDUJraQDJiKxWcrG/RCFsVky4olBJ+GZFb9pLpN5gC/rn0pqYw==",
+                          "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX19MPtNCPjoG%2FpKloolK%2BBZH%2FOCIpjYqj%2BB6IVJJmTYKeBINcB0JioL%2FtSw3iuK4FvgF8VyDyTfL26IpzbT81DDOnKeFIDUJraQDJiKxWcrG%2FRCFsVky4olBJ%2BGZFb9pLpN5gC%2Frn0pqYw%3D%3D"
+                        },
+                        "barcode": {
+                          "id": "U2FsdGVkX1/J73XXWgMf2BsVM21kpnFLQak5dpGzThYNTYPT62U6q+5RDlh/CXylkTrhegRnWJw1HA7iehT8iUoV4M4cV0KBdp5WgJ3lXeFZcpX3Mpu0T02PRcYbdCIiSO1kO50Y8Hg/heHcshw22Q==",
+                          "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2FJ73XXWgMf2BsVM21kpnFLQak5dpGzThYNTYPT62U6q%2B5RDlh%2FCXylkTrhegRnWJw1HA7iehT8iUoV4M4cV0KBdp5WgJ3lXeFZcpX3Mpu0T02PRcYbdCIiSO1kO50Y8Hg%2FheHcshw22Q%3D%3D"
+                        }
+                      },
+                      "is_referral_code": false,
+                      "created_at": "2022-09-19T14:41:30.976Z",
+                      "updated_at": null,
+                      "redemption": {
+                        "quantity": 101,
+                        "redeemed_quantity": 0,
+                        "object": "list",
+                        "url": "/v1/vouchers/percent1/redemptions?page=1&limit=10"
+                      },
+                      "publish": {
+                        "object": "list",
+                        "count": 0,
+                        "url": "/v1/vouchers/percent1/publications?page=1&limit=10"
                       },
                       "object": "voucher"
                     }
@@ -22259,7 +22484,7 @@
                 "$ref": "#/components/schemas/1_req_vouchers_import"
               },
               "examples": {
-                "example-1-Array-Of-Vouchers": {
+                "Example": {
                   "value": [
                     {
                       "code": "PROMO-CODE30OFF-NO-EFFECT",
@@ -22491,14 +22716,14 @@
         },
         "responses": {
           "202": {
-            "description": "Returns id of the scheduled async action. The response informs you that your request has been accepted and vouchers will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint.",
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and vouchers will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the [Get Async Action](OpenAPI.json/paths/~1async-actions~1{async_action_id}/get) endpoint.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/a_res_async_actions"
                 },
                 "examples": {
-                  "example-1-Async-Action-Id": {
+                  "Example": {
                     "value": {
                       "async_action_id": "aa_0aac93c6af84485df3"
                     }
@@ -22543,6 +22768,13 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/a_res_async_actions"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "async_action_id": "aa_0a875d56c805df6601"
+                    }
+                  }
                 }
               }
             }
