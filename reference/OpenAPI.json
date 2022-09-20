@@ -1275,11 +1275,13 @@
           "campaign": {
             "type": "string",
             "example": "Gift Card Campaign",
-            "description": "A unique campaign name, identifies the voucher's parent campaign. **Required** for `LOYALTY_CARD` type."          },
+            "description": "A unique campaign name, identifies the voucher's parent campaign. **Required** for `LOYALTY_CARD` type."
+          },
           "campaign_id": {
             "type": "string",
             "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
-            "description": "Assigned by the Voucherify API, identifies the voucher's parent campaign."          },
+            "description": "Assigned by the Voucherify API, identifies the voucher's parent campaign."
+          },
           "category": {
             "type": "string",
             "description": "Tag defining the category that this voucher belongs to. Useful when listing vouchers using the List Vouchers endpoint."
@@ -5517,17 +5519,465 @@
         ]
       },
       "2_obj_campaign_object": {
-        "title": "Campaign Object",
         "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
+        "x-examples": {
+          "example-1": {
+            "id": "camp_f7fBbQxUuTN7dI7tGOo5XMDA",
+            "name": "Loyalty Program Fall 2022",
+            "campaign_type": "LOYALTY_PROGRAM",
+            "type": "AUTO_UPDATE",
+            "voucher": {
+              "type": "LOYALTY_CARD",
+              "loyalty_card": {
+                "points": 0,
+                "expiration_rules": {
+                  "period_type": "MONTH",
+                  "period_value": 7,
+                  "rounding_type": "END_OF_YEAR"
+                }
+              },
+              "redemption": {
+                "quantity": null
+              },
+              "code_config": {
+                "length": 8,
+                "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                "pattern": "########",
+                "prefix": "LOYALTY-CARD-"
+              },
+              "is_referral_code": false
+            },
+            "auto_join": true,
+            "join_once": true,
+            "use_voucher_metadata_schema": true,
+            "vouchers_count": 1,
+            "active": true,
+            "metadata": {},
+            "created_at": "2022-09-19T07:56:22.103Z",
+            "creation_status": "DONE",
+            "vouchers_generation_status": "DONE",
+            "protected": false,
+            "category_id": "cat_0bb343dee3cdb5ec0c",
+            "object": "campaign"
           }
         },
+        "title": "Campaign Object",
         "description": "This is an object representing a campaign.",
-        "x-tags": [
-          "CAMPAIGNS API"
-        ]
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique campaign ID, assigned by Voucherify.",
+            "example": "camp_f7fBbQxUuTN7dI7tGOo5XMDA"
+          },
+          "name": {
+            "type": "string",
+            "description": "Campaign name."
+          },
+          "campaign_type": {
+            "type": "string",
+            "enum": [
+              "LOYALTY_PROGRAM",
+              "GIFT_VOUCHERS",
+              "DISCOUNT_COUPONS",
+              "PROMOTION",
+              "REFERRAL_PROGRAM",
+              "LUCKY_DRAW"
+            ],
+            "description": "Type of campaign."
+          },
+          "type": {
+            "type": "string",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria    \n-  `STATIC`: vouchers need to be manually published",
+            "enum": [
+              "AUTO_UPDATE",
+              "STATIC"
+            ]
+          },
+          "voucher": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
+              },
+              {
+                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
+              },
+              {
+                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_LOYALTY_CARD"
+              }
+            ]
+          },
+          "lucky_draw": {
+            "type": "object"
+          },
+          "auto_join": {
+            "type": "boolean",
+            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled."
+          },
+          "join_once": {
+            "type": "boolean",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
+          },
+          "use_voucher_metadata_schema": {
+            "type": "boolean",
+            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
+          },
+          "validity_timeframe": {
+            "type": "object",
+            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+            "properties": {
+              "interval": {
+                "type": "string",
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
+              },
+              "duration": {
+                "type": "string",
+                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
+              }
+            }
+          },
+          "validity_day_of_week": {
+            "type": "string",
+            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  "
+          },
+          "activity_duration_after_publishing": {
+            "type": "string",
+            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
+          },
+          "vouchers_count": {
+            "type": "integer",
+            "description": "Total number of unique vouchers in campaign."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
+            "example": "2022-09-20T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
+            "example": "2022-09-30T00:00:00.000Z"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "A flag to toggle the campaign on or off. You can disable a campaign even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* campaign\n- `false` indicates an *inactive* campaign"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2021-12-01T08:00:50.038Z",
+            "description": "Timestamp representing the date and time when the campaign was created in ISO 8601 format."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-09-20T09:18:19.623Z",
+            "description": "Timestamp representing the date and time when the voucher was updated in ISO 8601 format."
+          },
+          "creation_status": {
+            "type": "string",
+            "enum": [
+              "DONE",
+              "IN_PROGRESS",
+              "FAILED",
+              "DRAFT",
+              "MODIFYING"
+            ],
+            "description": "Indicates the status of the campaign creation."
+          },
+          "vouchers_generation_status": {
+            "type": "string",
+            "description": "Indicates the status of the campaign's vouchers."
+          },
+          "protected": {
+            "type": "boolean"
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Unique category ID that this campaign belongs to.",
+            "example": "cat_0b688929a2476386a7"
+          },
+          "categories": {
+            "$ref": "#/components/schemas/20_obj_category_object"
+          },
+          "object": {
+            "type": "string",
+            "default": "campaign",
+            "description": "The type of object represented by JSON. This object stores information about the campaign."
+          }
+        }
+      },
+      "2_res_list_campaigns": {
+        "type": "object",
+        "description": "Schema model for **GET** `/campaigns`.",
+        "title": "List Campaigns Response Body",
+        "examples": [],
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON. This object stores information about campaigns in a dictionary.",
+            "default": "list"
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "Identifies the name of the attribute that contains the array of campaign objects.",
+            "default": "campaigns"
+          },
+          "campaigns": {
+            "type": "array",
+            "description": "Contains array of campaign objects.",
+            "items": {
+              "$ref": "#/components/schemas/2_obj_campaign_object"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of campaigns."
+          }
+        }
+      },
+      "2_obj_campaign_object_voucher_object_DISCOUNT": {
+        "type": "object",
+        "description": "Schema model for a discount voucher.",
+        "title": "Discount Voucher",
+        "examples": [],
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "DISCOUNT_VOUCHER",
+            "description": "Type of voucher."
+          },
+          "discount": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_amount"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_percentage"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_fixed"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_one"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_multiple"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_shipping"
+              }
+            ],
+            "description": "Defines the voucher discount type and details."
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              }
+            }
+          },
+          "code_config": {
+            "type": "object",
+            "description": "Defines code's pattern (prefix, suffix, length, charset, etc). ",
+            "properties": {
+              "length": {
+                "type": "string",
+                "description": "Number of characters in a generated code (excluding prefix and postfix)."
+              },
+              "charset": {
+                "type": "string",
+                "description": "Characters that can appear in the code.  \n\nExamples:\n\n- Alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic Lowercase: `abcdefghijklmnopqrstuvwxyz` \n- Alphabetic Uppercase: `ABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Numbers: `0123456789`  \n- Custom: a custom character set"
+              },
+              "prefix": {
+                "type": "string",
+                "description": "A text appended before the code."
+              },
+              "postfix": {
+                "type": "string",
+                "description": "A text appended after the code."
+              },
+              "pattern": {
+                "type": "string",
+                "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
+              }
+            }
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Indicates whether the voucher is a referral code; this is `true` for campaign type `REFERRAL_PROGRAM`."
+          }
+        }
+      },
+      "2_obj_campaign_object_voucher_object_GIFT_CARD": {
+        "type": "object",
+        "description": "Schema model for a gift card.",
+        "title": "Gift Card",
+        "examples": [],
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "GIFT_VOUCHER",
+            "description": "Type of voucher."
+          },
+          "gift": {
+            "description": "Defines the gift card details.",
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "description": "Initial gift card income to be applied to the gift card at voucher generation. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+              },
+              "effect": {
+                "type": "string",
+                "description": "Defines how the credits are applied to the customer's order.",
+                "enum": [
+                  "APPLY_TO_ORDER",
+                  "APPLY_TO_ITEMS"
+                ]
+              }
+            }
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              }
+            }
+          },
+          "code_config": {
+            "type": "object",
+            "description": "Defines code's pattern (prefix, suffix, length, charset, etc). ",
+            "properties": {
+              "length": {
+                "type": "string",
+                "description": "Number of characters in a generated code (excluding prefix and postfix)."
+              },
+              "charset": {
+                "type": "string",
+                "description": "Characters that can appear in the code.  \n\nExamples:\n\n- Alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic Lowercase: `abcdefghijklmnopqrstuvwxyz` \n- Alphabetic Uppercase: `ABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Numbers: `0123456789`  \n- Custom: a custom character set"
+              },
+              "prefix": {
+                "type": "string",
+                "description": "A text appended before the code."
+              },
+              "postfix": {
+                "type": "string",
+                "description": "A text appended after the code."
+              },
+              "pattern": {
+                "type": "string",
+                "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
+              }
+            }
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Indicates whether the voucher is a referral code; this is `true` for campaign type `REFERRAL_PROGRAM`."
+          }
+        }
+      },
+      "2_obj_campaign_object_voucher_object_LOYALTY_CARD": {
+        "type": "object",
+        "description": "Schema model for a loyalty card.",
+        "title": "Loyalty Card",
+        "examples": [],
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "LOYALTY_CARD",
+            "description": "Type of voucher."
+          },
+          "loyalty_card": {
+            "description": "Defines the loyalty card details.",
+            "type": "object",
+            "properties": {
+              "points": {
+                "type": "integer",
+                "description": "Initial loyalty card income in points to be applied to the loyalty card at voucher generation."
+              },
+              "expiration_rules": {
+                "type": "object",
+                "description": "Defines point expiration rules.",
+                "properties": {
+                  "period_type": {
+                    "type": "string",
+                    "enum": [
+                      "MONTH"
+                    ],
+                    "description": "The expiration period."
+                  },
+                  "period_value": {
+                    "type": "integer",
+                    "description": "How many periods should pass before the expiration occurs."
+                  },
+                  "rounding_type": {
+                    "type": "string",
+                    "enum": [
+                      "END_OF_MONTH",
+                      "END_OF_QUARTER",
+                      "END_OF_HALF_YEAR",
+                      "END_OF_YEAR",
+                      "PARTICULAR_MONTH"
+                    ],
+                    "description": "Round up expiration till the end of the given period type."
+                  }
+                }
+              }
+            }
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              }
+            }
+          },
+          "code_config": {
+            "type": "object",
+            "description": "Defines code's pattern (prefix, suffix, length, charset, etc). ",
+            "properties": {
+              "length": {
+                "type": "string",
+                "description": "Number of characters in a generated code (excluding prefix and postfix)."
+              },
+              "charset": {
+                "type": "string",
+                "description": "Characters that can appear in the code.  \n\nExamples:\n\n- Alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic Lowercase: `abcdefghijklmnopqrstuvwxyz` \n- Alphabetic Uppercase: `ABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Numbers: `0123456789`  \n- Custom: a custom character set"
+              },
+              "prefix": {
+                "type": "string",
+                "description": "A text appended before the code."
+              },
+              "postfix": {
+                "type": "string",
+                "description": "A text appended after the code."
+              },
+              "pattern": {
+                "type": "string",
+                "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
+              }
+            }
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Indicates whether the voucher is a referral code; this is `true` for campaign type `REFERRAL_PROGRAM`."
+          }
+        }
       },
       "3_obj_promotion_tier_object": {
         "title": "Promotion Tier Object",
@@ -11149,6 +11599,7 @@
           },
           "customers": {
             "type": "array",
+            "description": "Contains array of customer objects.",
             "items": {
               "$ref": "#/components/schemas/9_obj_customer_object"
             }
@@ -12471,6 +12922,7 @@
           },
           "orders": {
             "type": "array",
+            "description": "Contains array of order objects.",
             "items": {
               "$ref": "#/components/schemas/10_obj_order_object"
             }
@@ -13481,6 +13933,7 @@
           },
           "products": {
             "type": "array",
+            "description": "Contains array of product objects.",
             "items": {
               "$ref": "#/components/schemas/11_obj_list_products_product_object"
             }
@@ -23480,7 +23933,14 @@
         "operationId": "post-campaigns",
         "responses": {
           "200": {
-            "description": "Returns a campaign object if the call succeeded. The returned object will have information about the discount type and the discount amount."
+            "description": "Returns a campaign object if the call succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/2_obj_campaign_object"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -23511,7 +23971,272 @@
         "operationId": "get-campaigns",
         "responses": {
           "200": {
-            "description": "Returns a dictionary with a `campaign` property that contains an array of campaigns. The maximum number of campaigns returned is determined by the `limit` query parameter. Each entry in the array is a separate campaign object. If no more campaigns are available, the resulting array on a given page will be empty."
+            "description": "Returns a dictionary with a `campaign` property that contains an array of campaigns. The maximum number of campaigns returned is determined by the `limit` query parameter. Each entry in the array is a separate campaign object. If no more campaigns are available, the resulting array on a given page will be empty.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/2_res_list_campaigns"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "campaigns",
+                      "campaigns": [
+                        {
+                          "id": "camp_SibPsDRKQvg3SUtptgPZCNZb",
+                          "name": "Voucher Metadata",
+                          "campaign_type": "DISCOUNT_COUPONS",
+                          "type": "AUTO_UPDATE",
+                          "voucher": {
+                            "type": "DISCOUNT_VOUCHER",
+                            "discount": {
+                              "type": "PERCENT",
+                              "amount_limit": 4400,
+                              "percent_off": 30,
+                              "effect": "APPLY_TO_ORDER"
+                            },
+                            "redemption": {
+                              "quantity": null
+                            },
+                            "code_config": {
+                              "length": 9,
+                              "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                              "pattern": "#########",
+                              "prefix": "Discount-",
+                              "postfix": "YY"
+                            },
+                            "is_referral_code": false,
+                            "start_date": "2022-09-20T00:00:00.000Z",
+                            "expiration_date": "2022-09-30T00:00:00.000Z",
+                            "validity_timeframe": {
+                              "interval": "P3D",
+                              "duration": "P1D"
+                            }
+                          },
+                          "auto_join": false,
+                          "join_once": false,
+                          "use_voucher_metadata_schema": false,
+                          "start_date": "2022-09-20T00:00:00.000Z",
+                          "expiration_date": "2022-09-30T00:00:00.000Z",
+                          "validity_timeframe": {
+                            "interval": "P3D",
+                            "duration": "P1D"
+                          },
+                          "validity_day_of_week": [
+                            1,
+                            2,
+                            3,
+                            4
+                          ],
+                          "activity_duration_after_publishing": "P24D",
+                          "vouchers_count": 1,
+                          "active": true,
+                          "metadata": {
+                            "region": "AMER"
+                          },
+                          "created_at": "2022-09-20T09:32:29.530Z",
+                          "creation_status": "DONE",
+                          "vouchers_generation_status": "DONE",
+                          "protected": false,
+                          "category_id": null,
+                          "object": "campaign"
+                        },
+                        {
+                          "id": "camp_HgsbCKauXmEoPnnh8aas0ISe",
+                          "name": "Static Campaign",
+                          "campaign_type": "DISCOUNT_COUPONS",
+                          "type": "STATIC",
+                          "voucher": {
+                            "type": "DISCOUNT_VOUCHER",
+                            "discount": {
+                              "type": "AMOUNT",
+                              "amount_off": 3000,
+                              "effect": "APPLY_TO_ORDER"
+                            },
+                            "redemption": {
+                              "quantity": 1
+                            },
+                            "code_config": {
+                              "length": 8,
+                              "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                              "pattern": "########"
+                            },
+                            "is_referral_code": false
+                          },
+                          "auto_join": false,
+                          "join_once": true,
+                          "use_voucher_metadata_schema": true,
+                          "vouchers_count": 1,
+                          "active": true,
+                          "metadata": {},
+                          "created_at": "2022-09-20T07:52:34.499Z",
+                          "updated_at": "2022-09-20T11:38:13.501Z",
+                          "creation_status": "DONE",
+                          "vouchers_generation_status": "DONE",
+                          "protected": false,
+                          "category_id": null,
+                          "object": "campaign"
+                        },
+                        {
+                          "id": "camp_f7fBbQxUuTN7dI7tGOo5XMDA",
+                          "name": "Loyalty Program Fall 2022",
+                          "campaign_type": "LOYALTY_PROGRAM",
+                          "type": "AUTO_UPDATE",
+                          "voucher": {
+                            "type": "LOYALTY_CARD",
+                            "loyalty_card": {
+                              "points": 0,
+                              "expiration_rules": {
+                                "period_type": "MONTH",
+                                "period_value": 7,
+                                "rounding_type": "END_OF_YEAR"
+                              }
+                            },
+                            "redemption": {
+                              "quantity": null
+                            },
+                            "code_config": {
+                              "length": 8,
+                              "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                              "pattern": "########",
+                              "prefix": "LOYALTY-CARD-"
+                            },
+                            "is_referral_code": false
+                          },
+                          "auto_join": true,
+                          "join_once": true,
+                          "use_voucher_metadata_schema": true,
+                          "vouchers_count": 1,
+                          "active": true,
+                          "metadata": {},
+                          "created_at": "2022-09-19T07:56:22.103Z",
+                          "creation_status": "DONE",
+                          "vouchers_generation_status": "DONE",
+                          "protected": false,
+                          "category_id": "cat_0bb343dee3cdb5ec0c",
+                          "object": "campaign"
+                        },
+                        {
+                          "id": "camp_4tHsQEDUOER6PeW8SoMdnHH6",
+                          "name": "Dynamic Discounts",
+                          "campaign_type": "DISCOUNT_COUPONS",
+                          "type": "AUTO_UPDATE",
+                          "voucher": {
+                            "type": "DISCOUNT_VOUCHER",
+                            "discount": {
+                              "type": "PERCENT",
+                              "percent_off": 5,
+                              "percent_off_formula": "IF(ORDER_AMOUNT > 300;15;5)",
+                              "effect": "APPLY_TO_ORDER"
+                            },
+                            "redemption": {
+                              "quantity": null
+                            },
+                            "code_config": {
+                              "length": 8,
+                              "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                              "pattern": "########",
+                              "prefix": "DYNAMIC-"
+                            },
+                            "is_referral_code": false
+                          },
+                          "auto_join": false,
+                          "join_once": false,
+                          "use_voucher_metadata_schema": true,
+                          "vouchers_count": 1,
+                          "active": true,
+                          "metadata": {
+                            "marketing_text": "Purchases above $300 are eligible for a 15% discount."
+                          },
+                          "created_at": "2022-07-12T15:12:02.575Z",
+                          "updated_at": "2022-07-20T10:48:05.617Z",
+                          "category": "test",
+                          "creation_status": "DONE",
+                          "vouchers_generation_status": "DONE",
+                          "protected": false,
+                          "category_id": "cat_0b688929a2476386a8",
+                          "object": "campaign"
+                        },
+                        {
+                          "id": "camp_JlsseNSDO7l4neFtev6p6945",
+                          "name": "$20 OFF Entire Order",
+                          "campaign_type": "DISCOUNT_COUPONS",
+                          "type": "AUTO_UPDATE",
+                          "voucher": {
+                            "type": "DISCOUNT_VOUCHER",
+                            "discount": {
+                              "type": "AMOUNT",
+                              "amount_off": 2000,
+                              "effect": "APPLY_TO_ORDER"
+                            },
+                            "redemption": {
+                              "quantity": null
+                            },
+                            "code_config": {
+                              "length": 8,
+                              "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                              "pattern": "########",
+                              "prefix": "$20OFFORDER-"
+                            },
+                            "is_referral_code": false
+                          },
+                          "auto_join": false,
+                          "join_once": false,
+                          "use_voucher_metadata_schema": true,
+                          "vouchers_count": 1,
+                          "active": true,
+                          "metadata": {},
+                          "created_at": "2022-07-11T09:43:36.057Z",
+                          "creation_status": "DONE",
+                          "vouchers_generation_status": "DONE",
+                          "protected": false,
+                          "category_id": null,
+                          "object": "campaign"
+                        },
+                        {
+                          "id": "camp_Uj3cNbWSgt7Zl4AyHM7Sa5Qk",
+                          "name": "3% OFF Entire Order",
+                          "campaign_type": "DISCOUNT_COUPONS",
+                          "type": "AUTO_UPDATE",
+                          "voucher": {
+                            "type": "DISCOUNT_VOUCHER",
+                            "discount": {
+                              "type": "PERCENT",
+                              "percent_off": 3,
+                              "effect": "APPLY_TO_ORDER"
+                            },
+                            "redemption": {
+                              "quantity": null
+                            },
+                            "code_config": {
+                              "length": 8,
+                              "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                              "pattern": "########",
+                              "prefix": "3%OFFORDER-"
+                            },
+                            "is_referral_code": false
+                          },
+                          "auto_join": false,
+                          "join_once": false,
+                          "use_voucher_metadata_schema": true,
+                          "vouchers_count": 1,
+                          "active": true,
+                          "metadata": {},
+                          "created_at": "2022-07-11T09:41:12.087Z",
+                          "creation_status": "DONE",
+                          "vouchers_generation_status": "DONE",
+                          "protected": false,
+                          "category_id": null,
+                          "object": "campaign"
+                        }
+                      ],
+                      "total": 6
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -23532,9 +24257,32 @@
           },
           {
             "$ref": "#/components/parameters/campaign_type"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "default": "category"
+            },
+            "in": "query",
+            "name": "expand",
+            "description": "Include an expanded `categories` object in the response."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created_at",
+                "-created_at",
+                "updated_at",
+                "-updated_at"
+              ]
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
           }
         ],
-        "description": "Retrieve a list of campaigns in a project. \n\nThe campaigns are returned sorted by creation date, with the most recent campaigns appearing first.  \n\nWhen you get a list of campaigns, you can optionally specify query parameters to customize the amount of campaigns returned per call using `limit`, which page of campaigns to return using `page`, sort the campaigns using the `order` query parameter and filter the results by the `campaign_type`.\n\nThis method will return an error when trying to return a limit of more than XXX campaigns."
+        "description": "Retrieve a list of campaigns in a project. \n\nThe campaigns are returned sorted by creation date, with the most recent campaigns appearing first.  \n\nWhen you get a list of campaigns, you can optionally specify query parameters to customize the amount of campaigns returned per call using `limit`, which page of campaigns to return using `page`, sort the campaigns using the `order` query parameter and filter the results by the `campaign_type`.\n\nThis method will return an error when trying to return a limit of more than 100 campaigns."
       }
     },
     "/campaigns/{campaign_id}": {
@@ -23556,7 +24304,83 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns a campaign object if a valid identifier was provided. When requesting the campaign that has been deleted, the resource will not be returned, including a 404 HTTP status code."
+            "description": "Returns a campaign object if a valid identifier was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/2_obj_campaign_object"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "camp_JlsseNSDO7l4neFtev6p6945",
+                      "name": "$20 OFF Entire Order",
+                      "campaign_type": "DISCOUNT_COUPONS",
+                      "type": "AUTO_UPDATE",
+                      "voucher": {
+                        "type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "amount_off": 2000,
+                          "effect": "APPLY_TO_ORDER"
+                        },
+                        "redemption": {
+                          "quantity": null
+                        },
+                        "code_config": {
+                          "length": 8,
+                          "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                          "pattern": "########",
+                          "prefix": "$20OFFORDER-"
+                        },
+                        "is_referral_code": false
+                      },
+                      "auto_join": false,
+                      "join_once": false,
+                      "use_voucher_metadata_schema": true,
+                      "vouchers_count": 1,
+                      "active": true,
+                      "metadata": {},
+                      "created_at": "2022-07-11T09:43:36.057Z",
+                      "creation_status": "DONE",
+                      "vouchers_generation_status": "DONE",
+                      "protected": false,
+                      "validation_rules_assignments": {
+                        "object": "list",
+                        "data_ref": "data",
+                        "data": [],
+                        "total": 0
+                      },
+                      "category_id": null,
+                      "object": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when requesting the campaign that has been deleted or cannot be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_jcErmtGAOmHUAy0oUgkwKnP",
+                      "request_id": "v-0bb8694614d58bf2a8",
+                      "resource_id": "camp_jcErmtGAOmHUAy0oUgkwKnP",
+                      "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "operationId": "get-campaigns-campaignId",
@@ -23575,10 +24399,17 @@
         "operationId": "put-campaigns-campaign_id",
         "responses": {
           "200": {
-            "description": "Returns the campaign object if the update succeeded. Returns an error if update parameters are invalid (e.g. specifying an invalid campaign type)."
+            "description": "Returns the campaign object if the update succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/2_obj_campaign_object"
+                }
+              }
+            }
           }
         },
-        "description": "Updates the specified campaign by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged. \n\nYou can modify the following fields:  \n\n- `start_date`\n- `expiration_date`\n- `metadata`\n- `description`\n- `type` \n\nFields other than the ones listed above won't be modified. Even if provided, they will be silently skipped.   \n<!-- theme: warning -->\n> #### Vouchers will be affected\n>\n> This method will update vouchers aggregated in the campaign. It will affect all vouchers that are not published or redeemed yet.",
+        "description": "Updates the specified campaign by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged. \n\nYou can modify the following fields:  \n\n- `start_date`\n- `expiration_date`\n- `metadata`\n- `description`\n- `type` \n\nFields other than the ones listed above won't be modified. Even if provided, they will be silently skipped.   \n<!-- theme: warning -->\n> #### Vouchers will be affected\n>\n> This method will update vouchers aggregated in the campaign. It will affect all vouchers that are not published or redeemed yet.\n\nReturns an error if update parameters are invalid (e.g. specifying an invalid campaign type).",
         "requestBody": {
           "content": {
             "application/json": {
@@ -23587,7 +24418,8 @@
                 "properties": {}
               }
             }
-          }
+          },
+          "description": "Specify the campaign parameters to be updated."
         },
         "parameters": [
           {
