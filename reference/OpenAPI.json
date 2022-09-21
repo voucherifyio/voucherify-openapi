@@ -6071,112 +6071,44 @@
         "description": "Request body schema for **POST** `/campaigns/{campaignId}/vouchers`.",
         "examples": [],
         "properties": {
-          "name": {
+          "category_id": {
             "type": "string",
-            "description": "Campaign name."
-          },
-          "campaign_type": {
-            "type": "string",
-            "enum": [
-              "LOYALTY_PROGRAM",
-              "GIFT_VOUCHERS",
-              "DISCOUNT_COUPONS",
-              "PROMOTION",
-              "REFERRAL_PROGRAM",
-              "LUCKY_DRAW"
-            ],
-            "description": "Type of campaign."
-          },
-          "type": {
-            "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
-            "enum": [
-              "AUTO_UPDATE",
-              "STATIC"
-            ]
-          },
-          "voucher": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
-              },
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
-              },
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_LOYALTY_CARD"
-              }
-            ]
-          },
-          "auto_join": {
-            "type": "boolean",
-            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled."
-          },
-          "join_once": {
-            "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
-          },
-          "use_voucher_metadata_schema": {
-            "type": "boolean",
-            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
-          },
-          "validity_timeframe": {
-            "type": "object",
-            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
-            "properties": {
-              "interval": {
-                "type": "string",
-                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
-              },
-              "duration": {
-                "type": "string",
-                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
-              }
-            }
-          },
-          "validity_day_of_week": {
-            "type": "string",
-            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  "
-          },
-          "activity_duration_after_publishing": {
-            "type": "string",
-            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
-          },
-          "vouchers_count": {
-            "type": "integer",
-            "description": "Total number of unique vouchers in campaign (size of campaign)."
+            "description": "Unique category ID that you would like to assign to the voucher.",
+            "example": "cat_0b688929a2476386a7"
           },
           "start_date": {
             "type": "string",
             "format": "date-time",
-            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
+            "description": "Activation timestamp defines when the voucher starts to be active in ISO 8601 format. Voucher is *inactive before* this date. ",
             "example": "2022-09-20T00:00:00.000Z"
           },
           "expiration_date": {
             "type": "string",
             "format": "date-time",
-            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
+            "description": "Expiration timestamp defines when the voucher expires in ISO 8601 format.  Voucher is *inactive after* this date.",
             "example": "2022-09-30T00:00:00.000Z"
           },
           "active": {
             "type": "boolean",
-            "description": "A flag to toggle the campaign on or off. You can disable a campaign even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* campaign\n- `false` indicates an *inactive* campaign"
+            "description": "A flag to toggle the voucher on or off. You can disable a voucher even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* voucher\n- `false` indicates an *inactive* voucher"
           },
           "metadata": {
             "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
+            "description": "The metadata object stores all custom attributes assigned to the voucher. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
           },
-          "protected": {
-            "type": "boolean"
+          "redemption": {
+            "type": "object",
+            "description": "Stores the quantity of redemptions that can be applied to the voucher.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              }
+            }
           },
-          "category_id": {
+          "additional_info": {
             "type": "string",
-            "description": "Unique category ID that this campaign belongs to.",
-            "example": "cat_0b688929a2476386a7"
-          },
-          "category": {
-            "type": "string",
-            "description": "The category assigned to the campaign."
+            "description": "An optional field to keep any extra textual information about the code such as a code description and details."
           }
         }
       },
@@ -25234,7 +25166,21 @@
         "operationId": "post-campaigns-campaign_id-vouchers",
         "responses": {
           "200": {
-            "description": "Returns a voucher object if the call succeeded. The returned object will have information about discount type, and discount amount, and all other which you provided to overwrite the origin one from campaign definition."
+            "description": "Returns a voucher object if the call succeeded for a voucher count of 1 and an async_action_id if the request was made to create more than 1 voucher.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/1_obj_voucher_object"
+                    },
+                    {
+                      "$ref": "#/components/schemas/a_res_async_actions"
+                    }
+                  ]
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -25253,19 +25199,43 @@
             },
             "in": "query",
             "name": "vouchers_count",
-            "description": "Number of vouchers that should be added"
+            "description": "Number of vouchers that should be added."
           }
         ],
-        "description": "This method gives the possibility to push new vouchers to an existing campaign. New vouchers will inherit properties from the campaign profile. However, it is possible to overwrite some of them in the request body: `metadata`, `additional_info`, `redemption.quantity`, `category`, `code_config`. If you provide an optional `code_config` parameter with a voucher code configuration, then it will be used to generate new voucher codes. Otherwise, the voucher code configuration from the campaign will be used.",
+        "description": "This method gives the possibility to push new vouchers to an existing campaign. New vouchers will inherit properties from the campaign profile. However, it is possible to overwrite some of them in the request body. If you provide an optional `code_config` parameter with a voucher code configuration, then it will be used to generate new voucher codes. Otherwise, the voucher code configuration from the campaign will be used.",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/2_req_add_vouchers_to_campaign"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "category_id": "cat_0bb81a481615a37b5e",
+                    "start_date": "2022-09-24T00:00:00Z",
+                    "expiration_date": "2022-09-25T23:59:59Z",
+                    "active": false,
+                    "redemption": {
+                      "quantity": null
+                    },
+                    "code_config": {
+                      "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                      "length": 8,
+                      "prefix": "Add-",
+                      "pattern": null,
+                      "postfix": "-API"
+                    },
+                    "additional_info": "Voucher added using API",
+                    "metadata": {
+                      "Season": "Fall"
+                    }
+                  }
+                }
               }
             }
           },
-          "description": "Specify the voucher parameters."
+          "description": "Specify the voucher parameters that you would like to overwrite."
         }
       }
     },
@@ -36692,7 +36662,7 @@
           }
         },
         "operationId": "get-async-actions",
-        "description": "Track asynchronous operations scheduled in your project.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action. If you would like to learn more about importing data into Voucherify, read more [here](https://support.voucherify.io/article/574-data-import).\n\n| **Types by Context** | **Endpoint** | **Dashboard** |\n|:---|:---|:---|\n| **CAMPAIGN** |  |  |\n| CAMPAIGN.VOUCHERS_IMPORT<br>CAMPAIGN.VOUCHERS_IMPORT_CSV<br>CAMPAIGN.VOUCHERS_UPDATE<br>CAMPAIGN.VOUCHERS_DELETE<br>CAMPAIGN.VOUCHERS_GENERATE | POST   [/campaigns/{campaign_id}/import](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1import/post)<br>POST   [/campaigns/{campaign_id}/importCSV](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1importCSV/post)<br>~PUT    [/campaigns/{campaign_id}](OpenAPI.json/paths/~1campaigns~1{campaign_id}/put)~<br>DELETE [/campaigns/{campaign_id}](OpenAPI.json/paths/~1campaigns~1{campaign_id}/delete})<br>POST   [/campaigns](OpenAPI.json/paths/~1campaigns/post) | NA<br>[Campaigns &rarr; Import CSV file](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally)<br>~NA~<br>[Campaigns &rarr; Delete](https://support.voucherify.io/article/64-maintenance#delete-campaign)<br>[Campaign Manager](https://support.voucherify.io/article/46-bulk-unique-codes-campaign) |\n| **CUSTOMERS** |  |  |\n| CUSTOMERS.IMPORT_CSV<br>CUSTOMERS.BULK_UPDATE<br>CUSTOMERS.METADATA_UPDATE<br>CUSTOMERS.METADATA_KEY_PURGE | POST [/customers/importCSV](OpenAPI.json/paths/~1customers~1importCSV/post)<br>POST [/customers/bulk/async](OpenAPI.json/paths/~1customers~1bulk~1async/post)<br>POST [/customers/metadata/async](OpenAPI.json/paths/~1customers~1metadata~1async/post)<br>NA | [Customers &rarr; Import CSV](https://support.voucherify.io/article/67-how-to-import-my-customers#csv-import)<br>NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |\n| **PRODUCTS** |  |  |\n| PRODUCTS.BULK_UPDATE<br>PRODUCTS.METADATA_UPDATE<br>PRODUCTS.METADATA_KEY_PURGE<br>PRODUCTS.IMPORT_CSV<br>SKUS.IMPORT_CSV | POST [/products/bulk/async](OpenAPI.json/paths/~1products~1bulk~1async/post)<br>POST [/products/metadata/async](OpenAPI.json/paths/~1products~1metadata~1async/post)<br>NA<br>POST [/products/importCSV](OpenAPI.json/paths/~1products~1importCSV/post)<br>POST [/skus/importCSV](OpenAPI.json/paths/~1skus~1importCSV/post) | NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance)<br>[Products &rarr; Import CSV file](https://support.voucherify.io/article/574-data-import)<br>[Products &rarr; Import CSV file](https://support.voucherify.io/article/574-data-import) |\n| **VOUCHERS** |  |  |\n| VOUCHERS.IMPORT<br>VOUCHERS.IMPORT_CSV<br>VOUCHERS.BULK_UPDATE<br>VOUCHERS.METADATA_UPDATE<br>VOUCHERS.METADATA_KEY_PURGE | POST [/vouchers/import](OpenAPI.json/paths/~1vouchers~1import/post)<br>POST [/vouchers/importCSV](OpenAPI.json/paths/~1vouchers~1importCSV/post)<br>POST [/vouchers/bulk/async](OpenAPI.json/paths/~1vouchers~1bulk~1async/post)<br>POST [/vouchers/metadata/async](OpenAPI.json/paths/~1vouchers~1metadata~1async/post)<br>NA | NA<br>[Vouchers &rarr; Import CSV file](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally)<br>NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |",
+        "description": "Track asynchronous operations scheduled in your project.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action. If you would like to learn more about importing data into Voucherify, read more [here](https://support.voucherify.io/article/574-data-import).\n\n| **Types by Context** | **Endpoint** | **Dashboard** |\n|:---|:---|:---|\n| **CAMPAIGN** |  |  |\n| CAMPAIGN.VOUCHERS_IMPORT<br>CAMPAIGN.VOUCHERS_IMPORT_CSV<br>CAMPAIGN.VOUCHERS_UPDATE<br>CAMPAIGN.VOUCHERS_DELETE<br>CAMPAIGN.VOUCHERS_GENERATE | **POST**   [/campaigns/{campaignId}/import](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1import/post)<br>**POST**   [/campaigns/{campaignId}/importCSV](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1importCSV/post)<br>~**POST**    [/campaigns/{campaignId}/vouchers](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1vouchers/post)~<br>**DELETE** [/campaigns/{campaignId}](OpenAPI.json/paths/~1campaigns~1{campaign_id}/delete})<br>**POST**   [/campaigns](OpenAPI.json/paths/~1campaigns/post)<br>**POST**    [/campaigns/{campaignId}/vouchers](OpenAPI.json/paths/~1campaigns~1{campaign_id}~1vouchers/post) | NA<br>[Campaigns &rarr; Import CSV file](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally)<br>~NA~<br>[Campaigns &rarr; Delete](https://support.voucherify.io/article/64-maintenance#delete-campaign)<br>[Campaign Manager](https://support.voucherify.io/article/46-bulk-unique-codes-campaign) |\n| **CUSTOMERS** |  |  |\n| CUSTOMERS.IMPORT_CSV<br>CUSTOMERS.BULK_UPDATE<br>CUSTOMERS.METADATA_UPDATE<br>CUSTOMERS.METADATA_KEY_PURGE | POST [/customers/importCSV](OpenAPI.json/paths/~1customers~1importCSV/post)<br>POST [/customers/bulk/async](OpenAPI.json/paths/~1customers~1bulk~1async/post)<br>POST [/customers/metadata/async](OpenAPI.json/paths/~1customers~1metadata~1async/post)<br>NA | [Customers &rarr; Import CSV](https://support.voucherify.io/article/67-how-to-import-my-customers#csv-import)<br>NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |\n| **PRODUCTS** |  |  |\n| PRODUCTS.BULK_UPDATE<br>PRODUCTS.METADATA_UPDATE<br>PRODUCTS.METADATA_KEY_PURGE<br>PRODUCTS.IMPORT_CSV<br>SKUS.IMPORT_CSV | POST [/products/bulk/async](OpenAPI.json/paths/~1products~1bulk~1async/post)<br>POST [/products/metadata/async](OpenAPI.json/paths/~1products~1metadata~1async/post)<br>NA<br>POST [/products/importCSV](OpenAPI.json/paths/~1products~1importCSV/post)<br>POST [/skus/importCSV](OpenAPI.json/paths/~1skus~1importCSV/post) | NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance)<br>[Products &rarr; Import CSV file](https://support.voucherify.io/article/574-data-import)<br>[Products &rarr; Import CSV file](https://support.voucherify.io/article/574-data-import) |\n| **VOUCHERS** |  |  |\n| VOUCHERS.IMPORT<br>VOUCHERS.IMPORT_CSV<br>VOUCHERS.BULK_UPDATE<br>VOUCHERS.METADATA_UPDATE<br>VOUCHERS.METADATA_KEY_PURGE | POST [/vouchers/import](OpenAPI.json/paths/~1vouchers~1import/post)<br>POST [/vouchers/importCSV](OpenAPI.json/paths/~1vouchers~1importCSV/post)<br>POST [/vouchers/bulk/async](OpenAPI.json/paths/~1vouchers~1bulk~1async/post)<br>POST [/vouchers/metadata/async](OpenAPI.json/paths/~1vouchers~1metadata~1async/post)<br>NA | NA<br>[Vouchers &rarr; Import CSV file](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally)<br>NA<br>NA<br>[Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
