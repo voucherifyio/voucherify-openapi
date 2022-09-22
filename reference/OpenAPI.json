@@ -7104,6 +7104,150 @@
           }
         }
       },
+      "3_req_update_promotion_tier": {
+        "type": "object",
+        "description": "Request body schema for updating a promotion tier within a campaign in **POST** `/promotions/tiers/{promotionTierId}`.",
+        "x-examples": {
+          "example-1": {
+            "id": "promo_63fYCt81Aw0h7lzyRkrGZh9p",
+            "created_at": "2021-12-15T11:34:01.333Z",
+            "updated_at": "2022-02-09T09:20:05.603Z",
+            "name": "Hot Promotion - Tier 1",
+            "banner": "Get Tier 1 Discount 10zl",
+            "action": {
+              "discount": {
+                "type": "AMOUNT",
+                "amount_off": 1000,
+                "effect": "APPLY_TO_ORDER"
+              }
+            },
+            "metadata": {
+              "ProductionMetaData": "Hot Promotion - Tier 1"
+            },
+            "hierarchy": 1,
+            "promotion_id": "camp_5h0wc453_5",
+            "campaign": {
+              "id": "camp_5h0wc453_5",
+              "start_date": null,
+              "expiration_date": null,
+              "active": true,
+              "category_id": "cat_0b688929a2476386a6",
+              "object": "campaign"
+            },
+            "campaign_id": "camp_5h0wc453_5",
+            "active": true,
+            "summary": {
+              "redemptions": {
+                "total_redeemed": 11
+              },
+              "orders": {
+                "total_amount": 1414979,
+                "total_discount_amount": 11000
+              }
+            },
+            "object": "promotion_tier",
+            "validation_rule_assignments": {
+              "object": "list",
+              "data_ref": "data",
+              "data": [
+                {
+                  "id": "asgm_QqYs7GGVy7cuh3L9",
+                  "rule_id": "val_5h0wc453_4",
+                  "related_object_id": "promo_63fYCt81Aw0h7lzyRkrGZh9p",
+                  "related_object_type": "promotion_tier",
+                  "created_at": "2021-12-15T11:34:01.333Z",
+                  "object": "validation_rules_assignment"
+                }
+              ],
+              "total": 1
+            }
+          }
+        },
+        "title": "Update Promotion Tier Request Body",
+        "x-tags": [
+          "PROMOTIONS API"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the promotion tier."
+          },
+          "banner": {
+            "type": "string",
+            "description": "Text to be displayed to your customers on your website.\t"
+          },
+          "action": {
+            "type": "object",
+            "description": "Contains details about the discount applied by the promotion tier.",
+            "properties": {
+              "discount": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/1_obj_voucher_object_discount_amount"
+                  },
+                  {
+                    "$ref": "#/components/schemas/1_obj_voucher_object_discount_percentage"
+                  },
+                  {
+                    "$ref": "#/components/schemas/1_obj_voucher_object_discount_fixed"
+                  },
+                  {
+                    "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_one"
+                  },
+                  {
+                    "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_multiple"
+                  },
+                  {
+                    "$ref": "#/components/schemas/1_obj_voucher_object_discount_shipping"
+                  }
+                ],
+                "description": "The type of discount that will be applied to a customer's order."
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the promotion tier. A set of key/value pairs that you can attach to a promotion tier object. It can be useful for storing additional information about the promotion tier in a structured format."
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Activation timestamp defines when the promotion tier starts to be active in ISO 8601 format. Promotion tier is *inactive before* this date. ",
+            "format": "date-time",
+            "example": "2022-09-23T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "description": "Activation timestamp defines when the promotion tier expires in ISO 8601 format. Promotion tier is *inactive after* this date. ",
+            "format": "date-time",
+            "example": "2022-09-26T00:00:00.000Z"
+          },
+          "validity_timeframe": {
+            "type": "object",
+            "description": "Set recurrent time periods when the promotion tier is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+            "properties": {
+              "interval": {
+                "type": "string",
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a promotion tier with an `interval` of `P2D` will be active every other day."
+              },
+              "duration": {
+                "type": "string",
+                "description": "Defines the amount of time the promotion tier will be active in ISO 8601 format. For example, a promotion tier with a `duration` of `P1D` will be valid for a duration of one day."
+              }
+            }
+          },
+          "validity_day_of_week": {
+            "type": "array",
+            "description": "Integer array corresponding to the particular days of the week in which the promotion tier is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "hierarchy": {
+            "type": "integer",
+            "description": "The promotions hierarchy defines the order in which the discounts from different tiers will be applied to a customer's order. If a customer qualifies for discounts from more than one tier, discounts will be applied in the order defined in the hierarchy. If you update a hierarchy of a promotion tier, then the remaining promotion tier hierarchies will be recalculated."
+          }
+        }
+      },
       "3_res_list_promotion_tiers": {
         "type": "object",
         "description": "Promotion Tiers",
@@ -26985,7 +27129,88 @@
         "operationId": "put-promotions-tiers-promotionTierId",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Returns a promotion tier object if the update was successful.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/3_obj_promotion_tier_object"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "promo_hINAfBAVhmFuSAzi3vptfyxW",
+                      "created_at": "2022-09-22T12:40:23.286Z",
+                      "updated_at": "2022-09-22T12:40:58.626Z",
+                      "name": "Order more than $100 USD",
+                      "banner": "Order more than $100 USD",
+                      "action": {
+                        "discount": {
+                          "type": "PERCENT",
+                          "percent_off": 25,
+                          "effect": "APPLY_TO_ORDER"
+                        }
+                      },
+                      "metadata": {
+                        "level": "A-21"
+                      },
+                      "hierarchy": 1,
+                      "campaign": {
+                        "id": "camp_VEL7UX0jZjrvLx3hfNZBVzpq",
+                        "start_date": "2022-09-21T00:00:00.000Z",
+                        "expiration_date": "2022-09-30T00:00:00.000Z",
+                        "validity_day_of_week": [
+                          1,
+                          2,
+                          3,
+                          4,
+                          5
+                        ],
+                        "active": true,
+                        "object": "campaign"
+                      },
+                      "campaign_id": null,
+                      "active": false,
+                      "start_date": "2022-09-22T00:00:00.000Z",
+                      "expiration_date": "2022-09-29T00:00:00.000Z",
+                      "validity_timeframe": {
+                        "interval": "P3D",
+                        "duration": "P2D"
+                      },
+                      "validity_day_of_week": [
+                        1,
+                        2,
+                        3
+                      ],
+                      "summary": {
+                        "redemptions": {
+                          "total_redeemed": 0
+                        },
+                        "orders": {
+                          "total_amount": 0,
+                          "total_discount_amount": 0
+                        }
+                      },
+                      "object": "promotion_tier",
+                      "validation_rule_assignments": {
+                        "object": "list",
+                        "data_ref": "data",
+                        "data": [
+                          {
+                            "id": "asgm_8e3e53ZgDNcoRGAI",
+                            "rule_id": "val_q8qUBMOh5qIQ",
+                            "related_object_id": "promo_hINAfBAVhmFuSAzi3vptfyxW",
+                            "related_object_type": "promotion_tier",
+                            "created_at": "2022-09-22T12:40:23.286Z",
+                            "object": "validation_rules_assignment"
+                          }
+                        ],
+                        "total": 1
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "description": "This method updates a promotion tier.",
@@ -27004,11 +27229,41 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/3_req_update_promotion_tier"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "name": "Order more than $100 USD",
+                    "banner": "Order more than $100 USD",
+                    "action": {
+                      "discount": {
+                        "type": "PERCENT",
+                        "percent_off": 25,
+                        "effect": "APPLY_TO_ORDER"
+                      }
+                    },
+                    "metadata": {
+                      "level": "A-21"
+                    },
+                    "hierarchy": 1,
+                    "start_date": "2022-09-22T00:00:00.000Z",
+                    "expiration_date": "2022-09-29T00:00:00.000Z",
+                    "validity_timeframe": {
+                      "interval": "P3D",
+                      "duration": "P2D"
+                    },
+                    "validity_day_of_week": [
+                      1,
+                      2,
+                      3
+                    ]
+                  }
+                }
               }
             }
-          }
+          },
+          "description": "Specify the promotion tier parameters that you would like to update."
         }
       },
       "delete": {
