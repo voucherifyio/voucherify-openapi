@@ -7280,6 +7280,103 @@
           }
         }
       },
+      "3_res_list_promotion_stacks": {
+        "type": "object",
+        "description": "Promotion Stacks",
+        "x-examples": {},
+        "title": "Promotion Stacks",
+        "x-tags": [
+          "PROMOTIONS API"
+        ],
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about promotion stacks in a dictionary."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of promotion stack objects."
+          },
+          "data": {
+            "type": "array",
+            "description": "Contains array of promotion stack objects.",
+            "items": {
+              "$ref": "#/components/schemas/3_obj_promotion_stack_object"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of promotion stacks."
+          }
+        }
+      },
+      "3_obj_promotion_stack_object": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": "stack_p0WhtyyDU95crobleMpRabhH",
+            "name": "First stack",
+            "created_at": "2022-09-22T13:03:25.740Z",
+            "campaign_id": "camp_99HUWI53bVyLzPN1Fg5TBLWX",
+            "object": "promotion_stack",
+            "tiers": {
+              "ids": [
+                "promo_dJNhAEeV5sR5oPQq1UrUdnMC",
+                "promo_aaAF8mVAzA0PF1igia2OC63d"
+              ],
+              "hierarchy_mode": "MANUAL"
+            }
+          }
+        },
+        "title": "Promotion Stack Object",
+        "description": "Model schema for a promotion stack.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "stack_p0WhtyyDU95crobleMpRabhH",
+            "description": "Unique promotion stack ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Promotion stack name."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2022-09-22T13:03:25.740Z",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the promotion stack was created in ISO 8601 format."
+          },
+          "campaign_id": {
+            "type": "string",
+            "example": "camp_99HUWI53bVyLzPN1Fg5TBLWX",
+            "description": "Promotion stack's parent campaign's unique ID."
+          },
+          "object": {
+            "type": "string",
+            "default": "promotion_stack",
+            "description": "The type of object represented by JSON. This object stores information about the promotion tier."
+          },
+          "tiers": {
+            "type": "object",
+            "description": "Contains the tier configuration.",
+            "properties": {
+              "ids": {
+                "type": "array",
+                "description": "Contains the list of tiers in a pre-defined sequence.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "hierarchy_mode": {
+                "type": "string",
+                "default": "MANUAL"
+              }
+            }
+          }
+        }
+      },
       "3_res_list_promotion_tiers_from_campaign": {
         "type": "object",
         "description": "Promotion Tiers",
@@ -27802,29 +27899,75 @@
         ]
       }
     },
-    "/promotions/{campaign_id}/stacks": {
+    "/promotions/{campaignId}/stacks": {
       "parameters": [
         {
           "schema": {
             "type": "string"
           },
-          "name": "campaign_id",
+          "name": "campaignId",
           "in": "path",
           "required": true,
-          "description": "Id of the campaign"
+          "description": "Unique campaign ID."
         }
       ],
       "get": {
-        "summary": "List Promotion Stacks",
+        "summary": "List Promotion Stacks in Campaign",
         "tags": [
           "PROMOTIONS API"
         ],
         "responses": {
           "200": {
-            "description": "Returns a list if a valid promotion campaign identifier was provided in the path.\n\n`data` An array of stack objects.\n`id` An internal id corresponding to the stack id.\n`name` Contains the name of the stack.\n`tiers` An object containing the `ids` of the stacked promotion tiers.  \n\nReturns an error if an incorrect campaign id is provided."
+            "description": "Returns a list of promotion stack objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/3_res_list_promotion_stacks"
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "stack_p0WhtyyDU95crobleMpRabhH",
+                          "name": "First stack",
+                          "created_at": "2022-09-22T13:03:25.740Z",
+                          "campaign_id": "camp_99HUWI53bVyLzPN1Fg5TBLWX",
+                          "object": "promotion_stack",
+                          "tiers": {
+                            "ids": [
+                              "promo_dJNhAEeV5sR5oPQq1UrUdnMC",
+                              "promo_aaAF8mVAzA0PF1igia2OC63d"
+                            ],
+                            "hierarchy_mode": "MANUAL"
+                          }
+                        },
+                        {
+                          "id": "stack_XAzn8AFR3Ks3DBPLAQxV7zHe",
+                          "name": "Second stack",
+                          "created_at": "2022-09-22T13:03:25.903Z",
+                          "campaign_id": "camp_99HUWI53bVyLzPN1Fg5TBLWX",
+                          "object": "promotion_stack",
+                          "tiers": {
+                            "ids": [
+                              "promo_aaAF8mVAzA0PF1igia2OC63d",
+                              "promo_dJNhAEeV5sR5oPQq1UrUdnMC"
+                            ],
+                            "hierarchy_mode": "MANUAL"
+                          }
+                        }
+                      ],
+                      "total": 2
+                    }
+                  }
+                }
+              }
+            }
           }
         },
-        "operationId": "get-promotions-campaign_id-stacks",
+        "operationId": "get-promotions-campaignId-stacks",
         "description": "This method enables you to list promotion stacks from a specified campaign.",
         "parameters": [
           {
@@ -27837,7 +27980,7 @@
       },
       "post": {
         "summary": "Create Promotion Stack",
-        "operationId": "post-promotions-campaign_id-stacks",
+        "operationId": "post-promotions-campaignId-stacks",
         "responses": {
           "200": {
             "description": "Returns a new stack object if a valid promotion campaign identifier was provided in the path and available promotion ids in the payload.\n\n`id` An internal id corresponding to the stack id.\n`name` Contains the name of the stack.\n`tiers` An object containing the `ids` of the stacked promotion tiers.  \n\nReturns an error if an incorrect campaign id or promotion id is provided."
