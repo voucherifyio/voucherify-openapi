@@ -5573,6 +5573,10 @@
             "type": "string",
             "description": "Campaign name."
           },
+          "description": {
+            "type": "string",
+            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
+          },
           "campaign_type": {
             "type": "string",
             "enum": [
@@ -5834,6 +5838,10 @@
             "type": "string",
             "description": "Campaign name."
           },
+          "description": {
+            "type": "string",
+            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
+          },
           "campaign_type": {
             "type": "string",
             "enum": [
@@ -5909,12 +5917,12 @@
           },
           "category_id": {
             "type": "string",
-            "description": "Unique category ID that this campaign belongs to.",
+            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
             "example": "cat_0b688929a2476386a7"
           },
           "category": {
             "type": "string",
-            "description": "The category assigned to the campaign."
+            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
           },
           "metadata": {
             "type": "object",
@@ -6054,22 +6062,6 @@
         "description": "Request body schema for **PUT** `/campaigns/{campaignId}`.",
         "examples": [],
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Campaign name."
-          },
-          "campaign_type": {
-            "type": "string",
-            "enum": [
-              "LOYALTY_PROGRAM",
-              "GIFT_VOUCHERS",
-              "DISCOUNT_COUPONS",
-              "PROMOTION",
-              "REFERRAL_PROGRAM",
-              "LUCKY_DRAW"
-            ],
-            "description": "Type of campaign."
-          },
           "type": {
             "type": "string",
             "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
@@ -6078,18 +6070,9 @@
               "STATIC"
             ]
           },
-          "voucher": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
-              },
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
-              },
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_LOYALTY_CARD"
-              }
-            ]
+          "description": {
+            "type": "string",
+            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
           },
           "auto_join": {
             "type": "boolean",
@@ -6098,10 +6081,6 @@
           "join_once": {
             "type": "boolean",
             "description": "If this value is set to `true`, customers will be able to join the campaign only once."
-          },
-          "use_voucher_metadata_schema": {
-            "type": "boolean",
-            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
           },
           "validity_timeframe": {
             "type": "object",
@@ -6125,10 +6104,6 @@
             "type": "string",
             "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
           },
-          "vouchers_count": {
-            "type": "integer",
-            "description": "Total number of unique vouchers in campaign (size of campaign)."
-          },
           "start_date": {
             "type": "string",
             "format": "date-time",
@@ -6141,10 +6116,6 @@
             "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
             "example": "2022-09-30T00:00:00.000Z"
           },
-          "active": {
-            "type": "boolean",
-            "description": "A flag to toggle the campaign on or off. You can disable a campaign even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* campaign\n- `false` indicates an *inactive* campaign"
-          },
           "metadata": {
             "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
@@ -6154,12 +6125,12 @@
           },
           "category_id": {
             "type": "string",
-            "description": "Unique category ID that this campaign belongs to.",
+            "description": "Unique category ID that this campaign belongs to. Either pass this parameter or the `category` parameter.",
             "example": "cat_0b688929a2476386a7"
           },
           "category": {
             "type": "string",
-            "description": "The category assigned to the campaign."
+            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id` parameter."
           }
         }
       },
@@ -26679,17 +26650,104 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/2_obj_campaign_object"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "camp_FZL4iTTdZw36nZOoXYQ172fQ",
+                      "name": "Loyalty Campaign",
+                      "campaign_type": "LOYALTY_PROGRAM",
+                      "type": "AUTO_UPDATE",
+                      "voucher": {
+                        "type": "LOYALTY_CARD",
+                        "loyalty_card": {
+                          "points": 1000,
+                          "expiration_rules": {
+                            "period_type": "MONTH",
+                            "period_value": 3,
+                            "rounding_type": "END_OF_YEAR"
+                          }
+                        },
+                        "redemption": {
+                          "quantity": 10
+                        },
+                        "code_config": {
+                          "length": 7,
+                          "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                          "pattern": "LOYALTY-CARD-#######"
+                        },
+                        "is_referral_code": false,
+                        "start_date": "2020-08-16T00:00:00.000Z",
+                        "expiration_date": "2023-12-26T00:00:00.000Z",
+                        "validity_timeframe": {
+                          "interval": "P2D",
+                          "duration": "P1D"
+                        }
+                      },
+                      "auto_join": false,
+                      "join_once": false,
+                      "use_voucher_metadata_schema": false,
+                      "description": "New description",
+                      "start_date": "2020-08-16T00:00:00.000Z",
+                      "expiration_date": "2023-12-26T00:00:00.000Z",
+                      "validity_timeframe": {
+                        "interval": "P2D",
+                        "duration": "P1D"
+                      },
+                      "validity_day_of_week": [
+                        0,
+                        1,
+                        2
+                      ],
+                      "activity_duration_after_publishing": "P24D",
+                      "vouchers_count": 2,
+                      "active": true,
+                      "metadata": {
+                        "region": "APAC"
+                      },
+                      "created_at": "2022-09-21T09:39:45.479Z",
+                      "updated_at": "2022-09-23T09:47:00.205Z",
+                      "category": "First",
+                      "creation_status": "MODIFYING",
+                      "vouchers_generation_status": "MODIFYING",
+                      "protected": false,
+                      "validation_rules_assignments": {
+                        "object": "list",
+                        "data_ref": "data",
+                        "data": [],
+                        "total": 0
+                      },
+                      "category_id": "cat_0bb343dee3cdb5ec0c",
+                      "categories": [
+                        {
+                          "id": "cat_0bb343dee3cdb5ec0c",
+                          "name": "First",
+                          "hierarchy": 1,
+                          "created_at": "2022-09-16T11:47:19.568Z",
+                          "object": "category"
+                        }
+                      ],
+                      "object": "campaign"
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "description": "Updates the specified campaign by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged. \n\nYou can modify the following fields:  \n\n- `start_date`\n- `expiration_date`\n- `metadata`\n- `description`\n- `type` \n\nFields other than the ones listed above won't be modified. Even if provided, they will be silently skipped.   \n<!-- theme: warning -->\n> #### Vouchers will be affected\n>\n> This method will update vouchers aggregated in the campaign. It will affect all vouchers that are not published or redeemed yet.\n\nReturns an error if update parameters are invalid (e.g. specifying an invalid campaign type).",
+        "description": "Updates the specified campaign by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged. \n\nFields other than the ones listed in the request body won't be modified. Even if provided, they will be silently skipped.   \n<!-- theme: warning -->\n> #### Vouchers will be affected\n>\n> This method will update vouchers aggregated in the campaign. It will affect all vouchers that are not published or redeemed yet.",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/2_req_update_campaign"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "description": "New description"
+                  }
+                }
               }
             }
           },
