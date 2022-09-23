@@ -6379,8 +6379,31 @@
           "additional_info": {
             "type": "string",
             "description": "An optional field to keep any extra textual information about the code such as a code description and details."
+          },
+          "loyalty_card": {
+            "type": "object",
+            "description": " Assign an initial points balance for a loyalty card. Context: `LOYALTY_PROGRAM`.",
+            "properties": {
+              "points": {
+                "type": "integer",
+                "description": "The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card."
+              }
+            }
+          },
+          "gift": {
+            "type": "object",
+            "description": "Assign an initial cash balance for a gift card. Context: `GIFT_VOUCHERS`.",
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "description": "The cash balance to assign to the gift card. This is the current gift card balance."
+              }
+            }
           }
-        }
+        },
+        "required": [
+          "code"
+        ]
       },
       "2_req_examine_qualification": {
         "type": "object",
@@ -27235,6 +27258,15 @@
                       "details": "2 voucher codes(s) already exist.",
                       "request_id": "v-0adaccaba61502e4b3"
                     }
+                  },
+                  "Missing Code": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_voucher",
+                      "message": "Invalid Voucher",
+                      "details": "Found 1 voucher(s) without 'code' value",
+                      "request_id": "v-0bbc38ce088c8b2f9a"
+                    }
                   }
                 }
               }
@@ -27298,6 +27330,98 @@
                       "active": true
                     }
                   ]
+                },
+                "Gift Cards": {
+                  "value": [
+                    {
+                      "code": "CODE13",
+                      "category": "First",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "season": "Fall"
+                      },
+                      "additional_info": "secret-code1",
+                      "gift": {
+                        "amount": 500
+                      },
+                      "active": true
+                    },
+                    {
+                      "code": "CODE14",
+                      "category": "Second",
+                      "redemption": {
+                        "quantity": 18
+                      },
+                      "metadata": {
+                        "season": "Fall"
+                      },
+                      "additional_info": "secret-code1",
+                      "gift": {
+                        "amount": 2000
+                      },
+                      "active": true
+                    },
+                    {
+                      "code": "CODE15",
+                      "category_id": "cat_0bb343dee3cdb5ec0c",
+                      "redemption": {
+                        "quantity": 4
+                      },
+                      "metadata": {
+                        "season": "Fall"
+                      },
+                      "additional_info": "secret-code1",
+                      "active": false
+                    }
+                  ]
+                },
+                "Loyalty Cards": {
+                  "value": [
+                    {
+                      "code": "CODE10",
+                      "category": "First",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "season": "Fall"
+                      },
+                      "additional_info": "secret-code1",
+                      "loyalty_card": {
+                        "points": 300
+                      },
+                      "active": true
+                    },
+                    {
+                      "code": "CODE11",
+                      "category": "Second",
+                      "redemption": {
+                        "quantity": 18
+                      },
+                      "metadata": {
+                        "season": "Fall"
+                      },
+                      "additional_info": "secret-code1",
+                      "loyalty_card": {
+                        "points": 2000
+                      },
+                      "active": true
+                    },
+                    {
+                      "code": "CODE12",
+                      "category_id": "cat_0bb343dee3cdb5ec0c",
+                      "redemption": {
+                        "quantity": 4
+                      },
+                      "metadata": {
+                        "season": "Fall"
+                      },
+                      "additional_info": "secret-code1",
+                      "active": true
+                    }
+                  ]
                 }
               }
             }
@@ -27330,7 +27454,7 @@
                   "$ref": "#/components/schemas/a_res_async_actions"
                 },
                 "examples": {
-                  "example-1": {
+                  "Example": {
                     "$ref": "#/components/examples/res_async_actions"
                   }
                 }
@@ -27344,7 +27468,7 @@
         "tags": [
           "CAMPAIGNS API"
         ],
-        "description": "Imports vouchers to an **existing** campaign.  \n\n\nThe CSV file has to include headers in the first line. \n\nCurl Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/campaigns/TEST-CAMPAIGN/importCSV \\\n  -F file=@/path/to/campaigns.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\nYou can import values for the following fields: `Code` (required), `Category`, and `Active`. In gift cards import, you can also include the current card balance using the `Gift Amount` header. In loyalty cards import, you can also include the current loyalty card score in points using the `Loyalty Points` header. Other CSV columns will be mapped to metadata properties. \n\nGo to the description of Import Vouchers to Campaignrefimport-vouchers to see the detailed description of supported code attributes that you can include in CSV.\n\n\n\nDiscount type, time limits, and validation rules will be taken from the [campaign object](OpenAPI.json/components/schemas/2_obj_campaign_object) settings. \n\n<!-- theme: info -->\n\n> #### Active\n>\n> The CSV file is allowed in two versions - either with or without `Active` column. It indicates if voucher is enabled after import event.  ",
+        "description": "Imports vouchers to an **existing** campaign.  \n\n\nThe CSV file has to include headers in the first line. \n\nCurl Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/campaigns/TEST-CAMPAIGN/importCSV \\\n  -F file=@/path/to/campaigns.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\nYou can import values for the following fields: `Code` (**required**), `Category`, `Active`. In a gift cards import, you can also include the current card balance using the `Gift Amount` header. In a loyalty cards import, you can also include the current loyalty card score in points using the `Loyalty Points` header. Remaining CSV columns will be mapped to metadata properties. \n\nDiscount type, time limits, and validation rules will be taken from the [campaign object](OpenAPI.json/components/schemas/2_obj_campaign_object) settings. \n\n\n| **Active** | **Code** | **Loyalty Points** | **Gift Amount** | **Category** | **Custom_metadata_property** |\n|---|---|---|---|---|---|\n| Use `true` or `false` to enable or disable the voucher; this flag can be used to turn off the ability to redeem a voucher even though it is within the campaign's start/end validity timeframe. | The unique voucher code. | The number of points to be added to the loyalty card. If you leave this undefined, then the initial number of points will be set according to the campaign settings.<br>Context: `LOYALTY_PROGRAM` | The initial gift card balance.<br>Context: `GIFT_VOUCHERS` | A custom tag for the voucher to help you filter codes; you can either import the category name or a unique Voucherify-assigned category ID. | Any additional data that you would like to store for the given loyalty card as a Custom attribute. Remember to define the metadata schema in the Dashboard prior to importing codes. |\n|<!-- theme: info -->\n\n> #### Active\n>\n> The CSV file is allowed in two versions; either with or without a column titled `Active`. It indicates whether the voucher is enabled after the import event.  ",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
