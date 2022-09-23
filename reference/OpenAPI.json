@@ -7377,6 +7377,50 @@
           }
         }
       },
+      "3_req_create_promotion_stack": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": "stack_p0WhtyyDU95crobleMpRabhH",
+            "name": "First stack",
+            "created_at": "2022-09-22T13:03:25.740Z",
+            "campaign_id": "camp_99HUWI53bVyLzPN1Fg5TBLWX",
+            "object": "promotion_stack",
+            "tiers": {
+              "ids": [
+                "promo_dJNhAEeV5sR5oPQq1UrUdnMC",
+                "promo_aaAF8mVAzA0PF1igia2OC63d"
+              ],
+              "hierarchy_mode": "MANUAL"
+            }
+          }
+        },
+        "title": "Create Promotion Stack Request Body",
+        "description": "Model schema for a creating a promotion stack using **POST** `/promotions/{campaignId}/stacks`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Promotion stack name."
+          },
+          "tiers": {
+            "type": "object",
+            "description": "Contains the tier configuration.",
+            "properties": {
+              "ids": {
+                "type": "array",
+                "description": "Contains the list of tiers in a pre-defined sequence.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "hierarchy_mode": {
+                "type": "string",
+                "example": "MANUAL"
+              }
+            }
+          }
+        }
+      },
       "3_res_list_promotion_tiers_from_campaign": {
         "type": "object",
         "description": "Promotion Tiers",
@@ -27983,7 +28027,67 @@
         "operationId": "post-promotions-campaignId-stacks",
         "responses": {
           "200": {
-            "description": "Returns a new stack object if a valid promotion campaign identifier was provided in the path and available promotion ids in the payload.\n\n`id` An internal id corresponding to the stack id.\n`name` Contains the name of the stack.\n`tiers` An object containing the `ids` of the stacked promotion tiers.  \n\nReturns an error if an incorrect campaign id or promotion id is provided."
+            "description": "Returns a new stack object if a valid promotion campaign identifier was provided in the path and available promotion IDs in the payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/3_obj_promotion_stack_object"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "stack_q2AmzFvOMCmg4Wdu5bDBlME6",
+                      "name": "Fifth Stack",
+                      "created_at": "2022-09-23T07:44:53.888Z",
+                      "campaign_id": "camp_99HUWI53bVyLzPN1Fg5TBLWX",
+                      "object": "promotion_stack",
+                      "tiers": {
+                        "ids": [
+                          "promo_aaAF8mVAzA0PF1igia2OC63d",
+                          "promo_t9zdL6XMFk7B8fQ23zxELtdE",
+                          "promo_dJNhAEeV5sR5oPQq1UrUdnMC"
+                        ],
+                        "hierarchy_mode": "MANUAL"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the campaign or promotion tier cannot be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Campaign Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_99HUWI53bVyLzPN1Fg5TBLW",
+                      "request_id": "v-0bbc10de5886137afd",
+                      "resource_id": "camp_99HUWI53bVyLzPN1Fg5TBLW",
+                      "resource_type": "campaign"
+                    }
+                  },
+                  "Promotion Tier Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find promotion_tier with id promo_dJNhAEeV5sR5oPQq1UrUdnM",
+                      "request_id": "v-0bbc11186303fa288a",
+                      "resource_id": "promo_dJNhAEeV5sR5oPQq1UrUdnM",
+                      "resource_type": "promotion_tier"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -27997,16 +28101,31 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "description": "This method creates one promotion stack given promotion tier ids.",
+        "description": "This method creates one promotion stack. The sequence of promotion tier IDs will determine the promotion stacking order.",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/3_req_create_promotion_stack"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "name": "Fifth Stack",
+                    "tiers": {
+                      "ids": [
+                        "promo_aaAF8mVAzA0PF1igia2OC63d",
+                        "promo_t9zdL6XMFk7B8fQ23zxELtdE",
+                        "promo_dJNhAEeV5sR5oPQq1UrUdnMC"
+                      ],
+                      "hierarchy_mode": "MANUAL"
+                    }
+                  }
+                }
               }
             }
-          }
+          },
+          "description": "Specify the order of promotion tiers for the promotion stack."
         }
       }
     },
