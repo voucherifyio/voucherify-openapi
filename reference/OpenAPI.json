@@ -2849,7 +2849,7 @@
         "properties": {
           "amount": {
             "type": "integer",
-            "description": "The incremental amout to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+            "description": "The incremental amount to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
           }
         },
         "required": [
@@ -2877,7 +2877,7 @@
         "properties": {
           "amount": {
             "type": "integer",
-            "description": "The incremental amout added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+            "description": "The incremental amount added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
           },
           "total": {
             "type": "integer",
@@ -8464,6 +8464,7 @@
           },
           "data": {
             "type": "array",
+            "description": "Contains array of reward objects.",
             "items": {
               "$ref": "#/components/schemas/4_obj_reward_object"
             }
@@ -9247,15 +9248,664 @@
       "5_obj_publication_object": {
         "title": "Publication Object",
         "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          }
-        },
         "description": "This is an object representing a publication. ",
         "x-tags": [
           "DISTRIBUTIONS API"
-        ]
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "pub_BbjAXnmm8e0SIm3zG8qvvFCP0KuLywtp",
+            "description": "Unique publication ID, assigned by Voucherify."
+          },
+          "object": {
+            "type": "string",
+            "default": "publication",
+            "description": "The type of object represented by the JSON. This object stores information about the publication."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2022-09-23T09:57:00.434Z",
+            "description": "Timestamp representing the date and time when the publication was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "customer_id": {
+            "type": "string",
+            "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+            "description": "Unique customer ID of the customer receiving the publication."
+          },
+          "tracking_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format."
+          },
+          "channel": {
+            "type": "string",
+            "description": "How the publication was originated.",
+            "enum": [
+              "voucherify-website"
+            ]
+          },
+          "source_id": {
+            "type": "null"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS"
+            ],
+            "description": "Status of the publication attempt."
+          },
+          "customer": {
+            "type": "object",
+            "description": "Contains information about the customer to whom the publication was directed.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique customer ID, assigned by Voucherify.",
+                "example": "cust_eWgXlBBiY6THFRJwX45Iakv4"
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's name."
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant’s customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service."
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs attached to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
+              },
+              "object": {
+                "type": "string",
+                "default": "customer",
+                "description": "The type of object represented by the JSON. This object stores information about the customer."
+              }
+            }
+          },
+          "voucher": {
+            "description": "Contains information about the voucher being published.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/5_obj_publication_object_discount"
+              },
+              {
+                "$ref": "#/components/schemas/5_obj_publication_object_loyalty_card"
+              },
+              {
+                "$ref": "#/components/schemas/5_obj_publication_object_gift_card"
+              }
+            ]
+          },
+          "vouchers_id": {
+            "type": "array",
+            "description": "Contains the unique internal voucher ID that was assigned by Voucherify.",
+            "items": {
+              "type": "string",
+              "example": "[ v_Bw3qWZWv47yb1Onra8F2LlFI1enLakfA ]"
+            }
+          }
+        }
+      },
+      "5_obj_publication_object_discount": {
+        "title": "Discount Voucher",
+        "type": "object",
+        "description": "This is an object representing a publication of a discount voucher. ",
+        "x-tags": [
+          "DISTRIBUTIONS API"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by the JSON. This object stores information about the voucher.",
+            "default": "voucher"
+          },
+          "campaign": {
+            "type": "string",
+            "description": "Name of voucher's parent campaign."
+          },
+          "discount": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_amount"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_percentage"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_fixed"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_one"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_multiple"
+              },
+              {
+                "$ref": "#/components/schemas/1_obj_voucher_object_discount_shipping"
+              }
+            ]
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Whether this voucher is a referral code."
+          }
+        }
+      },
+      "5_obj_publication_object_loyalty_card": {
+        "title": "Loyalty Card",
+        "type": "object",
+        "description": "This is an object representing a publication of a loyalty card. ",
+        "x-tags": [
+          "DISTRIBUTIONS API"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by the JSON. This object stores information about the voucher.",
+            "default": "voucher"
+          },
+          "campaign": {
+            "type": "string",
+            "description": "Name of voucher's parent campaign."
+          },
+          "loyalty_card": {
+            "type": "object",
+            "description": "Contains information about the loyalty card being published.",
+            "properties": {
+              "points": {
+                "type": "integer",
+                "description": "The incremental points to be added to the loyalty card as the initial balance on the card."
+              },
+              "balance": {
+                "type": "integer",
+                "description": "The points balance after the incremental points are added to the loyalty card."
+              }
+            }
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Whether this voucher is a referral code."
+          }
+        }
+      },
+      "5_obj_publication_object_gift_card": {
+        "title": "Gift Card",
+        "type": "object",
+        "description": "This is an object representing a publication of a gift card. ",
+        "x-tags": [
+          "DISTRIBUTIONS API"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by the JSON. This object stores information about the voucher.",
+            "default": "voucher"
+          },
+          "campaign": {
+            "type": "string",
+            "description": "Name of voucher's parent campaign."
+          },
+          "gift": {
+            "type": "object",
+            "description": "Contains information about the gift card being published.",
+            "properties": {
+              "amount": {
+                "type": "integer",
+                "description": "The incremental amount to be added as the initial balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+              },
+              "balance": {
+                "type": "integer",
+                "description": "The credit balance on the gift card after the initial incremental amount is added to the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+              },
+              "effect": {
+                "type": "string",
+                "enum": [
+                  "APPLY_TO_ORDER",
+                  "APPLY_TO_ITEMS"
+                ],
+                "description": "How the credits are applied to the customer's order."
+              }
+            }
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Whether this voucher is a referral code."
+          }
+        }
+      },
+      "5_res_list_publications": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "object": "list",
+            "data_ref": "publications",
+            "publications": [
+              {
+                "id": "pub_BbjAXnmm8e0SIm3zG8qvvFCP0KuLywtp",
+                "object": "publication",
+                "created_at": "2022-09-23T09:57:00.434Z",
+                "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                "tracking_id": "36_samuel_janik",
+                "metadata": {},
+                "channel": "voucherify-website",
+                "source_id": null,
+                "result": "SUCCESS",
+                "customer": {
+                  "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                  "name": "Samuel Janik",
+                  "email": "samuel.janik@voucherify.io",
+                  "source_id": "36_samuel_janik",
+                  "metadata": {
+                    "age": 26,
+                    "favorite_brands": [
+                      "Nike",
+                      "Adidas",
+                      "Reebok"
+                    ],
+                    "accepts_marketing": false,
+                    "acquisition_channel": "Facebook"
+                  },
+                  "object": "customer"
+                },
+                "voucher": {
+                  "code": "LOYALTY-CARD-zZdzv56",
+                  "object": "voucher",
+                  "campaign": "Loyalty Campaign",
+                  "loyalty_card": {
+                    "points": 1000,
+                    "balance": 1000
+                  },
+                  "is_referral_code": false
+                },
+                "vouchers_id": [
+                  "v_huYLlrlhImDVZIhX6LSQ1BNUnd8r6ORO"
+                ]
+              },
+              {
+                "id": "pub_bNk9rmeBRoXIAOuGMiNIKc6ntJ2Mmf24",
+                "object": "publication",
+                "created_at": "2022-09-20T12:40:04.124Z",
+                "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                "tracking_id": "36_samuel_janik",
+                "metadata": {},
+                "channel": "voucherify-website",
+                "source_id": null,
+                "result": "SUCCESS",
+                "customer": {
+                  "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                  "name": "Samuel Janik",
+                  "email": "samuel.janik@voucherify.io",
+                  "source_id": "36_samuel_janik",
+                  "metadata": {
+                    "age": 26,
+                    "favorite_brands": [
+                      "Nike",
+                      "Adidas",
+                      "Reebok"
+                    ],
+                    "accepts_marketing": false,
+                    "acquisition_channel": "Facebook"
+                  },
+                  "object": "customer"
+                },
+                "voucher": {
+                  "code": "RHY2bJ0A",
+                  "object": "voucher",
+                  "campaign": "Static Campaign",
+                  "discount": {
+                    "type": "AMOUNT",
+                    "amount_off": 3000,
+                    "effect": "APPLY_TO_ORDER"
+                  },
+                  "is_referral_code": false
+                },
+                "vouchers_id": [
+                  "v_pdwaxZix5XIgBVPfw2vkMlcl33YSVFFR"
+                ]
+              },
+              {
+                "id": "pub_61G7f9mZl7AoqtNRz8uVOhOCjbvm9r3k",
+                "object": "publication",
+                "created_at": "2022-09-19T08:23:49.218Z",
+                "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                "tracking_id": "36_samuel_janik",
+                "metadata": {},
+                "channel": "voucherify-website",
+                "source_id": null,
+                "result": "SUCCESS",
+                "customer": {
+                  "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                  "name": "Samuel Janik",
+                  "email": "samuel.janik@voucherify.io",
+                  "source_id": "36_samuel_janik",
+                  "metadata": {
+                    "age": 26,
+                    "favorite_brands": [
+                      "Nike",
+                      "Adidas",
+                      "Reebok"
+                    ],
+                    "accepts_marketing": false,
+                    "acquisition_channel": "Facebook"
+                  },
+                  "object": "customer"
+                },
+                "voucher": {
+                  "code": "FB-array-string",
+                  "object": "voucher",
+                  "campaign": null,
+                  "discount": {
+                    "type": "AMOUNT",
+                    "amount_off": 400,
+                    "amount_off_formula": "IF(CUSTOMER_METADATA(\"favorite_brands\") contains \"Nike\";20;CUSTOMER_METADATA(\"age\"))",
+                    "effect": "APPLY_TO_ORDER"
+                  },
+                  "is_referral_code": false
+                },
+                "vouchers_id": [
+                  "v_OBVfpTVf24DBz0HZmKVZa5UEl1DUg2bn"
+                ]
+              },
+              {
+                "id": "pub_MjtnDCyy5mupkuLUfzYW4Gva576xNg36",
+                "object": "publication",
+                "created_at": "2022-09-19T07:58:17.360Z",
+                "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                "tracking_id": "36_samuel_janik",
+                "metadata": {},
+                "channel": "voucherify-website",
+                "source_id": null,
+                "result": "SUCCESS",
+                "customer": {
+                  "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                  "name": "Samuel Janik",
+                  "email": "samuel.janik@voucherify.io",
+                  "source_id": "36_samuel_janik",
+                  "metadata": {
+                    "age": 26,
+                    "favorite_brands": [
+                      "Nike",
+                      "Adidas",
+                      "Reebok"
+                    ],
+                    "accepts_marketing": false,
+                    "acquisition_channel": "Facebook"
+                  },
+                  "object": "customer"
+                },
+                "voucher": {
+                  "code": "LOYALTY-CARD-xLPbpbXR",
+                  "object": "voucher",
+                  "campaign": "Loyalty Program Fall 2022",
+                  "loyalty_card": {
+                    "points": 0,
+                    "balance": 0
+                  },
+                  "is_referral_code": false
+                },
+                "vouchers_id": [
+                  "v_hrMBBeT4sOP9VSGPmj5KAgJwX202UjiY"
+                ]
+              },
+              {
+                "id": "pub_MpjXL2Yk9fMxk2zAMIozgxUNNKXcJutT",
+                "object": "publication",
+                "created_at": "2022-07-11T11:09:15.985Z",
+                "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                "tracking_id": "36_samuel_janik",
+                "metadata": {},
+                "channel": "voucherify-website",
+                "source_id": null,
+                "result": "SUCCESS",
+                "customer": {
+                  "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                  "name": "Samuel Janik",
+                  "email": "samuel.janik@voucherify.io",
+                  "source_id": "36_samuel_janik",
+                  "metadata": {
+                    "accepts_marketing": false
+                  },
+                  "object": "customer"
+                },
+                "voucher": {
+                  "code": "DYNAMIC-GCuRBufm",
+                  "object": "voucher",
+                  "campaign": "Dynamic Discounts",
+                  "discount": {
+                    "type": "PERCENT",
+                    "percent_off": 5,
+                    "percent_off_formula": "IF(ORDER_AMOUNT > 300;15;5)",
+                    "effect": "APPLY_TO_ORDER"
+                  },
+                  "is_referral_code": false
+                },
+                "vouchers_id": [
+                  "v_XqCo3jtzIbZ459xiOSurNFvf13x5ajNL"
+                ]
+              },
+              {
+                "id": "pub_MIev6Xk3sj3F9ygq04BQZwoOuq1fvFc3",
+                "object": "publication",
+                "created_at": "2022-07-11T09:43:47.552Z",
+                "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                "tracking_id": "36_samuel_janik",
+                "metadata": {},
+                "channel": "voucherify-website",
+                "source_id": null,
+                "result": "SUCCESS",
+                "customer": {
+                  "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                  "name": "Samuel Janik",
+                  "email": "samuel.janik@voucherify.io",
+                  "source_id": "36_samuel_janik",
+                  "metadata": {
+                    "accepts_marketing": false
+                  },
+                  "object": "customer"
+                },
+                "voucher": {
+                  "code": "$20OFFORDER-YVWZY9UG",
+                  "object": "voucher",
+                  "campaign": "$20 OFF Entire Order",
+                  "discount": {
+                    "type": "AMOUNT",
+                    "amount_off": 2000,
+                    "effect": "APPLY_TO_ORDER"
+                  },
+                  "is_referral_code": false
+                },
+                "vouchers_id": [
+                  "v_l2g6Sn7MN57Tovzc4K4BG1mJ4L9CRnRF"
+                ]
+              },
+              {
+                "id": "pub_Yce8n95dtuOnZMdnnGdXhP3wF9jWAZjG",
+                "object": "publication",
+                "created_at": "2022-07-11T09:41:26.148Z",
+                "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                "tracking_id": "36_samuel_janik",
+                "metadata": {},
+                "channel": "voucherify-website",
+                "source_id": null,
+                "result": "SUCCESS",
+                "customer": {
+                  "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                  "name": "Samuel Janik",
+                  "email": "samuel.janik@voucherify.io",
+                  "source_id": "36_samuel_janik",
+                  "metadata": {
+                    "accepts_marketing": false
+                  },
+                  "object": "customer"
+                },
+                "voucher": {
+                  "code": "3%OFFORDER-6xIhSPEy",
+                  "object": "voucher",
+                  "campaign": "3% OFF Entire Order",
+                  "discount": {
+                    "type": "PERCENT",
+                    "percent_off": 3,
+                    "effect": "APPLY_TO_ORDER"
+                  },
+                  "is_referral_code": false
+                },
+                "vouchers_id": [
+                  "v_ldDKvBLm7146SOQURP37ctUrIWao9ZXn"
+                ]
+              },
+              {
+                "id": "pub_6Dwrd74EsH3NvwIvmgmVWd2D5VAorZr7",
+                "object": "publication",
+                "created_at": "2022-07-11T08:32:17.179Z",
+                "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                "tracking_id": "36_samuel_janik",
+                "metadata": {},
+                "channel": "voucherify-website",
+                "source_id": null,
+                "result": "SUCCESS",
+                "customer": {
+                  "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                  "name": "Samuel Janik",
+                  "email": "samuel.janik@voucherify.io",
+                  "source_id": "36_samuel_janik",
+                  "metadata": {
+                    "accepts_marketing": false
+                  },
+                  "object": "customer"
+                },
+                "voucher": {
+                  "code": "PERCENT-3%-iHtdMe3B",
+                  "object": "voucher",
+                  "campaign": "3% OFF Entire Order",
+                  "discount": {
+                    "type": "PERCENT",
+                    "percent_off": 3,
+                    "effect": "APPLY_TO_ORDER"
+                  },
+                  "is_referral_code": false
+                },
+                "vouchers_id": [
+                  "v_QUig3fv8Sdna03r38RyopsT51BMwHF5a"
+                ]
+              },
+              {
+                "id": "pub_Fd2sBx5cLkLMzhtmY01FcJd07nVtcNYu",
+                "object": "publication",
+                "created_at": "2022-07-11T08:27:22.042Z",
+                "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                "tracking_id": "36_samuel_janik",
+                "metadata": {},
+                "channel": "voucherify-website",
+                "source_id": null,
+                "result": "SUCCESS",
+                "customer": {
+                  "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                  "name": "Samuel Janik",
+                  "email": "samuel.janik@voucherify.io",
+                  "source_id": "36_samuel_janik",
+                  "metadata": {
+                    "accepts_marketing": false
+                  },
+                  "object": "customer"
+                },
+                "voucher": {
+                  "code": "AMOUNT-20-IHQjlYIT",
+                  "object": "voucher",
+                  "campaign": "$20 OFF Entire Order",
+                  "discount": {
+                    "type": "AMOUNT",
+                    "amount_off": 2000,
+                    "effect": "APPLY_TO_ORDER"
+                  },
+                  "is_referral_code": false
+                },
+                "vouchers_id": [
+                  "v_Bw3qWZWv47yb1Onra8F2LlFI1enLakfA"
+                ]
+              },
+              {
+                "id": "pub_DrZmAClTGuFGLko3GIBBox79sK6Bt0gh",
+                "object": "publication",
+                "created_at": "2022-07-11T08:19:39.772Z",
+                "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                "tracking_id": "36_samuel_janik",
+                "metadata": {},
+                "channel": "voucherify-website",
+                "source_id": null,
+                "result": "SUCCESS",
+                "customer": {
+                  "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                  "name": "Samuel Janik",
+                  "email": "samuel.janik@voucherify.io",
+                  "source_id": "36_samuel_janik",
+                  "metadata": {
+                    "accepts_marketing": false
+                  },
+                  "object": "customer"
+                },
+                "voucher": {
+                  "code": "LOYALTY-CARD-zOR2sV9Q",
+                  "object": "voucher",
+                  "campaign": "Loyalty Program",
+                  "loyalty_card": {
+                    "points": 0,
+                    "balance": 0
+                  },
+                  "is_referral_code": false
+                },
+                "vouchers_id": [
+                  "v_pQZDYaH8LzoOvgh3234DqZQjGJgbPov6"
+                ]
+              }
+            ],
+            "total": 38
+          }
+        },
+        "description": "Response body schema for listing publications using **GET** `/publications`.",
+        "title": "List Publications Response Body",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about publications in a dictionary."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "publications",
+            "description": "Identifies the name of the attribute that contains the array of publications."
+          },
+          "publications": {
+            "type": "array",
+            "description": "Contains array of publication objects.",
+            "items": {
+              "$ref": "#/components/schemas/5_obj_publication_object"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of publications."
+          }
+        }
       },
       "6_obj_validation_object": {
         "title": "Validation Object",
@@ -30185,7 +30835,35 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns a list of publications you’ve previously created with [create publication](OpenAPI.json/paths/~1publications/post) or implicitly by the distribution manager. The publications are returned in sorted order, with the most recent ones appearing first.  \n\n<!-- theme: warning -->\n> #### Pagination!\n>\n> If you want to scroll through a huge set of records, it is recommended to use [Exports API](OpenAPI.json/components/schemas/16_obj_export_object). This API will return an error `page_over_limit` if you reach a page above 1000.\n\n`filters` query param allow for joining multiple parameters with logical operators. The syntax looks as follows:\n\n`filters[<field_name>][conditions][<operator>][<index>]=<value>`\n\nOperators:\n```\n    \"$in\"\n    \"$not_in\"\n    \"$is\"\n    \"$is_not\"\n    \"$has_value\"\n    \"$is_unknown\"\n    \"$contains\"\n    \"$starts_with\"\n    \"$ends_with\"\n    \"$more_than\"\n    \"$less_than\"\n    \"$more_than_equal\"\n    \"$less_than_equal\"\n```\n\nExample 1 - list publications of a given customer\n```\nGET /v1/publications?filters[customer_id][conditions][$is][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL\n```\n\nExample 2 - list publications of 2 customers\n```\nGET /v1/publications?filters[customer_id][conditions][$in][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL&filters[customer_id][conditions][$in][1]=cust_aR7NfHusxT7PdTMAKMfWDXnc\n```\nor with the `junction` operator\n```\nGET /v1/publications?filters[customer_id][conditions][$is][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL&filters[customer_id][conditions][$is][1]=cust_aR7NfHusxT7PdTMAKMfWDXnc&filters[junction]=OR\n```"
+            "description": "Returns a list of publications you’ve previously created with [create publication](OpenAPI.json/paths/~1publications/post) or implicitly by the distribution manager. The publications are returned in sorted order, with the most recent ones appearing first.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/5_res_list_publications"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if you request a page higher than 1000.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_error_no_translation"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 400,
+                      "key": "page_over_limit",
+                      "message": "Listing resource above 1000 page is not supported",
+                      "details": "Property .page cannot be higher than 1000",
+                      "request_id": "v-0bc2a39574c61362af"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "operationId": "get-publications",
@@ -30266,7 +30944,8 @@
             "name": "filters",
             "description": "Allows for combining the filters mentioned above, see below for the reference"
           }
-        ]
+        ],
+        "description": "Retrieve publications.\n\n\n<!-- theme: warning -->\n> #### Pagination!\n>\n> If you want to scroll through a huge set of records, it is recommended to use the [Exports API](OpenAPI.json/components/schemas/16_obj_export_object). This API will return an error `page_over_limit` if you reach a page above 1000.\n\n`filters` query param allow for joining multiple parameters with logical operators. The syntax looks as follows:\n\n`filters[<field_name>][conditions][<operator>][<index>]=<value>`\n\nOperators:\n```\n    \"$in\"\n    \"$not_in\"\n    \"$is\"\n    \"$is_not\"\n    \"$has_value\"\n    \"$is_unknown\"\n    \"$contains\"\n    \"$starts_with\"\n    \"$ends_with\"\n    \"$more_than\"\n    \"$less_than\"\n    \"$more_than_equal\"\n    \"$less_than_equal\"\n```\n\nExample 1 - list publications of a given customer\n```\nGET /v1/publications?filters[customer_id][conditions][$is][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL\n```\n\nExample 2 - list publications of 2 customers\n```\nGET /v1/publications?filters[customer_id][conditions][$in][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL&filters[customer_id][conditions][$in][1]=cust_aR7NfHusxT7PdTMAKMfWDXnc\n```\nor with the `junction` operator\n```\nGET /v1/publications?filters[customer_id][conditions][$is][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL&filters[customer_id][conditions][$is][1]=cust_aR7NfHusxT7PdTMAKMfWDXnc&filters[junction]=OR\n```"
       },
       "post": {
         "summary": "Create Publication",
