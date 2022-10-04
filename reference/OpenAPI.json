@@ -10246,15 +10246,672 @@
         },
         "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`."
       },
-      "6_res_validate_voucher": {
-        "title": "Validate Voucher Response Body",
+      "6_res_validate_voucher_false": {
         "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
+        "x-examples": {
+          "example-1": {
+            "valid": false,
+            "reason": "voucher is disabled",
+            "error": {
+              "message": "Voucher has been disabled and is not active anymore. 代金券不再有效."
+            },
+            "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+            "code": "WFf5XAUc",
+            "metadata": {}
           }
         },
-        "description": "Response schema model for validating a voucher using **POST** `/vouchers/{code}/validate`."
+        "title": "Validate Voucher for Non-Valid Voucher Response Body",
+        "description": "Response schema for a voucher that is not valid.",
+        "examples": [
+          {
+            "valid": false,
+            "reason": "voucher is disabled",
+            "error": {
+              "message": "Voucher has been disabled and is not active anymore."
+            },
+            "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+            "code": "WFf5XAUc",
+            "metadata": {}
+          }
+        ],
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "default": false
+          },
+          "reason": {
+            "type": "string"
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string"
+              }
+            }
+          },
+          "tracking_id": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
+          }
+        }
+      },
+      "6_res_validate_voucher_discount_amount": {
+        "title": "Amount Discount",
+        "type": "object",
+        "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "AMOUNT",
+            "description": "Defines the type of voucher."
+          },
+          "effect": {
+            "type": "string",
+            "description": "Defines how the discount is applied to the customer's order.",
+            "enum": [
+              "APPLY_TO_ORDER",
+              "APPLY_TO_ITEMS",
+              "APPLY_TO_ITEMS_PROPORTIONALLY",
+              "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY",
+              "APPLY_TO_ITEMS_BY_QUANTITY"
+            ]
+          },
+          "amount_off": {
+            "type": "integer",
+            "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. "
+          }
+        }
+      },
+      "6_res_validate_voucher_discount_percent": {
+        "title": "Percent Discount",
+        "type": "object",
+        "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "PERCENT",
+            "description": "Defines the type of voucher."
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_ORDER",
+              "APPLY_TO_ITEMS"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
+          },
+          "percent_off": {
+            "type": "integer",
+            "description": "The percent discount that the customer will receive."
+          }
+        }
+      },
+      "6_res_validate_voucher_discount_fixed": {
+        "title": "Fixed Discount",
+        "type": "object",
+        "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value. A fixed discounts sets a fixed total on cart or item(s) and then calculates the discount to apply.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "FIXED",
+            "description": "Type of discount."
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_ORDER",
+              "APPLY_TO_ITEMS"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
+          },
+          "fixed_amount": {
+            "type": "integer"
+          }
+        }
+      },
+      "6_res_validate_voucher_discount_unit": {
+        "title": "Unit Discount, single item",
+        "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/6_res_validate_voucher_discount_unit_product"
+          },
+          {
+            "$ref": "#/components/schemas/6_res_validate_voucher_discount_unit_sku"
+          }
+        ]
+      },
+      "6_res_validate_voucher_discount_unit_product": {
+        "title": "Unit Discount, single item",
+        "type": "object",
+        "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "UNIT",
+            "description": "Discount type."
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "ADD_MISSING_ITEMS",
+              "ADD_NEW_ITEMS"
+            ],
+            "description": "Defines how the unit is added to the customer's order."
+          },
+          "unit_off": {
+            "type": "integer",
+            "description": "Number of units to be granted a full value discount."
+          },
+          "unit_type": {
+            "type": "string",
+            "example": "prod_0a9f9ab4ab019a42d5",
+            "description": "The product deemed as free, chosen from product inventory (e.g. time, items)."
+          },
+          "product": {
+            "type": "object",
+            "description": "Contains information about the product.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique product ID, assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Product's source ID."
+              },
+              "name": {
+                "type": "string",
+                "description": "Product name."
+              }
+            }
+          }
+        }
+      },
+      "6_res_validate_voucher_discount_unit_sku": {
+        "title": "Unit Discount, single item",
+        "type": "object",
+        "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "UNIT",
+            "description": "Discount type."
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "ADD_MISSING_ITEMS",
+              "ADD_NEW_ITEMS"
+            ],
+            "description": "Defines how the unit is added to the customer's order."
+          },
+          "unit_off": {
+            "type": "integer",
+            "description": "Number of units to be granted a full value discount."
+          },
+          "unit_type": {
+            "type": "string",
+            "example": "sku_0bae3b28f610fd0da1",
+            "description": "The product variant deemed as free, chosen from product inventory (e.g. time, items)."
+          },
+          "sku": {
+            "type": "object",
+            "description": "Contains information about the SKU.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "sku_0bae3b28f610fd0da1",
+                "description": "Unique SKU ID, assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Product variant's source ID."
+              },
+              "sku": {
+                "type": "string",
+                "description": "Product varient's name."
+              }
+            }
+          },
+          "product": {
+            "type": "object",
+            "description": "Contains information about the parent product.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique parent product ID, assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Source ID of parent product."
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of parent product."
+              }
+            }
+          }
+        }
+      },
+      "6_res_validate_voucher_discount_unit_multiple": {
+        "title": "Unit Discount, multiple items",
+        "type": "object",
+        "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "UNIT",
+            "description": "Discount type."
+          },
+          "effect": {
+            "type": "string",
+            "default": "ADD_MANY_ITEMS",
+            "description": "Defines how the discount is applied to the customer's order."
+          },
+          "units": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_unit_product_multiple"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_unit_sku_multiple"
+              }
+            ]
+          }
+        }
+      },
+      "6_res_validate_voucher_discount_unit_product_multiple": {
+        "title": "Unit Discount, single item",
+        "type": "object",
+        "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
+        "properties": {
+          "effect": {
+            "type": "string",
+            "enum": [
+              "ADD_MISSING_ITEMS",
+              "ADD_NEW_ITEMS"
+            ],
+            "description": "Defines how the unit is added to the customer's order."
+          },
+          "unit_off": {
+            "type": "integer",
+            "description": "Number of units to be granted a full value discount."
+          },
+          "unit_type": {
+            "type": "string",
+            "example": "prod_0a9f9ab4ab019a42d5",
+            "description": "The product deemed as free, chosen from product inventory (e.g. time, items)."
+          },
+          "product": {
+            "type": "object",
+            "description": "Contains information about the product.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique product ID, assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Product's source ID."
+              },
+              "name": {
+                "type": "string",
+                "description": "Product name."
+              }
+            }
+          }
+        }
+      },
+      "6_res_validate_voucher_discount_unit_sku_multiple": {
+        "title": "Unit Discount, single item",
+        "type": "object",
+        "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
+        "properties": {
+          "effect": {
+            "type": "string",
+            "enum": [
+              "ADD_MISSING_ITEMS",
+              "ADD_NEW_ITEMS"
+            ],
+            "description": "Defines how the unit is added to the customer's order."
+          },
+          "unit_off": {
+            "type": "integer",
+            "description": "Number of units to be granted a full value discount."
+          },
+          "unit_type": {
+            "type": "string",
+            "example": "sku_0bae3b28f610fd0da1",
+            "description": "The product variant deemed as free, chosen from product inventory (e.g. time, items)."
+          },
+          "sku": {
+            "type": "object",
+            "description": "Contains information about the SKU.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "sku_0bae3b28f610fd0da1",
+                "description": "Unique SKU ID, assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Product variant's source ID."
+              },
+              "sku": {
+                "type": "string",
+                "description": "Product varient's name."
+              }
+            }
+          },
+          "product": {
+            "type": "object",
+            "description": "Contains information about the parent product.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique parent product ID, assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Source ID of parent product."
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of parent product."
+              }
+            }
+          }
+        }
+      },
+      "6_res_validate_voucher_discount_shipping": {
+        "title": "Shipping Discount",
+        "type": "object",
+        "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "effect": {
+            "type": "string"
+          },
+          "amount_off": {
+            "type": "string"
+          }
+        }
+      },
+      "6_res_validate_voucher": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "valid": true,
+            "applicable_to": {
+              "data": [
+                {
+                  "object": "product",
+                  "id": "prod_0b7d7c4e814be5c502",
+                  "source_id": "prod_1",
+                  "strict": false,
+                  "effect": "APPLY_TO_EVERY",
+                  "quantity_limit": 3
+                }
+              ],
+              "total": 1,
+              "data_ref": "data",
+              "object": "list"
+            },
+            "inapplicable_to": {
+              "data": [],
+              "total": 0,
+              "data_ref": "data",
+              "object": "list"
+            },
+            "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+            "order": {
+              "amount": 6000,
+              "total_amount": 6000,
+              "items": [
+                {
+                  "object": "order_item",
+                  "product_id": "prod_0a9f9ab4ab019a42d5",
+                  "quantity": 1,
+                  "amount": 2900,
+                  "price": 2900,
+                  "subtotal_amount": 2900,
+                  "product": {
+                    "id": "prod_0a9f9ab4ab019a42d5",
+                    "name": "Red T-Shirt",
+                    "price": 2900
+                  }
+                },
+                {
+                  "object": "order_item",
+                  "product_id": "prod_0a9f9aeddb019a42db",
+                  "quantity": 1,
+                  "amount": 3100,
+                  "price": 3100,
+                  "subtotal_amount": 3100,
+                  "product": {
+                    "id": "prod_0a9f9aeddb019a42db",
+                    "name": "Blue T-Shirt",
+                    "price": 3100
+                  }
+                }
+              ],
+              "metadata": {},
+              "customer_id": null,
+              "referrer_id": null,
+              "object": "order"
+            },
+            "code": "KvtdDZfv",
+            "discount": {
+              "type": "AMOUNT",
+              "effect": "APPLY_TO_ITEMS_BY_QUANTITY",
+              "amount_off": 300
+            },
+            "metadata": {},
+            "campaign": "Test - Discount Effect - Amount - Items - each unit of matched product 2",
+            "campaign_id": "camp_W8DJVd8J0btqXT6FBwn7BSkC"
+          }
+        },
+        "title": "Validate Voucher Response Body",
+        "description": "Response schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "description": "Indicates whether the voucher is valid within the context of the parameters provided in the request body."
+          },
+          "applicable_to": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "object": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "source_id": {
+                      "type": "string"
+                    },
+                    "strict": {
+                      "type": "boolean"
+                    },
+                    "effect": {
+                      "type": "string"
+                    },
+                    "quantity_limit": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              },
+              "total": {
+                "type": "integer"
+              },
+              "data_ref": {
+                "type": "string",
+                "default": "data"
+              },
+              "object": {
+                "type": "string",
+                "default": "list"
+              }
+            }
+          },
+          "inapplicable_to": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "total": {
+                "type": "integer"
+              },
+              "data_ref": {
+                "type": "string",
+                "default": "data"
+              },
+              "object": {
+                "type": "string",
+                "default": "list"
+              }
+            }
+          },
+          "tracking_id": {
+            "type": "string"
+          },
+          "order": {
+            "type": "object",
+            "description": "If the voucher is a unit type, then the order items will be added according to the discount effect within the order objects items parameter.",
+            "properties": {
+              "amount": {
+                "type": "integer"
+              },
+              "total_amount": {
+                "type": "integer"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "object": {
+                      "type": "string"
+                    },
+                    "product_id": {
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "amount": {
+                      "type": "integer"
+                    },
+                    "price": {
+                      "type": "integer"
+                    },
+                    "subtotal_amount": {
+                      "type": "integer"
+                    },
+                    "product": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "price": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "metadata": {
+                "type": "object"
+              },
+              "customer_id": {
+                "type": "null"
+              },
+              "referrer_id": {
+                "type": "null"
+              },
+              "object": {
+                "type": "string"
+              }
+            }
+          },
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
+          },
+          "discount": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_amount"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_percent"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_fixed"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_unit"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_unit_multiple"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_shipping"
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-04T00:00:00.000Z",
+            "description": "Activation timestamp defines when the voucher starts to be active in ISO 8601 format. Voucher is _inactive_ before this date."
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-31T00:00:00.000Z",
+            "description": "Expiration timestamp defines when the voucher expires in ISO 8601 format. Voucher is _inactive_ after this date."
+          },
+          "campaign": {
+            "type": "string",
+            "description": "Voucher's parent campaign name."
+          },
+          "campaign_id": {
+            "type": "string",
+            "example": "camp_W8DJVd8J0btqXT6FBwn7BSkC",
+            "description": "Voucher's parent campaign's unique ID."
+          }
+        }
       },
       "6_req_validate_promotion": {
         "title": "Validate Promotion Request Body",
@@ -31665,7 +32322,7 @@
         "operationId": "post-vouchers-code-validate",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Returns information whether the voucher is valid in the context of the parameter values provided in the request body.",
             "content": {
               "application/json": {
                 "schema": {
