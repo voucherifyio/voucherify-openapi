@@ -2181,9 +2181,6 @@
           },
           "effect": {
             "type": "string",
-            "enum": [
-              "ADD_MISSING_ITEMS"
-            ],
             "description": "Defines how the unit is added to the customer's order.",
             "default": "ADD_MISSING_ITEMS"
           }
@@ -10238,13 +10235,292 @@
       },
       "6_req_validate_voucher": {
         "title": "Validate Voucher Request Body",
+        "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/6_req_validate_voucher_discount_code"
+          },
+          {
+            "$ref": "#/components/schemas/6_req_validate_voucher_gift_card"
+          },
+          {
+            "$ref": "#/components/schemas/6_req_validate_voucher_loyalty_card"
+          }
+        ]
+      },
+      "6_req_validate_voucher_discount_code": {
+        "title": "Discount Code",
         "type": "object",
+        "description": "Request schema model for validating a discount code voucher using **POST** `/vouchers/{code}/validate`.",
         "properties": {
-          "id": {
+          "session": {
+            "$ref": "#/components/schemas/6_req_session_lock_discount_code"
+          }
+        }
+      },
+      "6_req_validate_voucher_gift_card": {
+        "title": "Gift Card",
+        "type": "object",
+        "description": "Request schema model for validating a gift card voucher using **POST** `/vouchers/{code}/validate`.",
+        "properties": {
+          "session": {
+            "$ref": "#/components/schemas/6_req_session_lock_gift_card"
+          },
+          "gift": {
+            "type": "object",
+            "description": "Contains information on the number of gift card credits that the customer want to apply to the order.",
+            "properties": {
+              "credits": {
+                "type": "integer",
+                "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+              }
+            }
+          }
+        }
+      },
+      "6_req_validate_voucher_loyalty_card": {
+        "title": "Loyalty Card",
+        "type": "object",
+        "description": "Request schema model for validating a loyalty card voucher using **POST** `/vouchers/{code}/validate`.",
+        "properties": {
+          "session": {
+            "$ref": "#/components/schemas/6_req_session_lock_loyalty_card"
+          },
+          "reward": {
+            "type": "object",
+            "description": "Contains information about the reward that the customer wants to redeem and the number of points the customer is choosing to use for the reward.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique reward ID assigned by Voucherify. The reward must be assigned to the campaign in order for the user to be able to use the reward."
+              },
+              "points": {
+                "type": "integer",
+                "description": "The number of loyalty points that the user wants to spend in order to fulfill the order. The number of points cannot be higher than the current balance on the loyalty card. If the user gives more points than he/she has on the loyalty card, the application will return an error code in response."
+              }
+            }
+          }
+        }
+      },
+      "6_req_validate_voucher_unpublished_discount_code": {
+        "title": "Unpublished Discount Code",
+        "type": "object",
+        "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
+        "properties": {
+          "session": {
             "type": "string"
           }
-        },
-        "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`."
+        }
+      },
+      "6_req_session_lock_discount_code": {
+        "title": "Session Lock",
+        "type": "object",
+        "description": "Schema model for `session` lock object. The session object is **required** to establish a session between multiple parallel validation and redemption requests. If you only send the `type` parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a [validation session](docs/validations/Validation-Session.md).",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "This parameter is **required** to establish a new session. The session locks the redemption **quantity** by 1.",
+            "enum": [
+              "LOCK"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "description": "The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated.",
+            "example": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts"
+          },
+          "ttl_unit": {
+            "type": "string",
+            "description": "Defines the type of unit in which the session time is counted.",
+            "enum": [
+              "HOURS",
+              "DAYS",
+              "MINUTES",
+              "SECONDS",
+              "MILLISECONDS",
+              "MICROSECONDS",
+              "NANOSECONDS"
+            ]
+          },
+          "ttl": {
+            "type": "integer",
+            "description": "Value for the period of time that the session is active. Units for this parameter are defined by the `session.ttl_unit` parameter."
+          }
+        }
+      },
+      "6_req_session_lock_gift_card": {
+        "title": "Session Lock",
+        "type": "object",
+        "description": "Schema model for `session` lock object. The session object is **required** to establish a session between multiple parallel validation and redemption requests. If you only send the `type` parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a [validation session](docs/validations/Validation-Session.md).",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "This parameter is **required** to establish a new session. The session locks the redemption **quantity** by 1 and the redemption **gift credits** specified within the request.",
+            "enum": [
+              "LOCK"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "description": "The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated.",
+            "example": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts"
+          },
+          "ttl_unit": {
+            "type": "string",
+            "description": "Defines the type of unit in which the session time is counted.",
+            "enum": [
+              "HOURS",
+              "DAYS",
+              "MINUTES",
+              "SECONDS",
+              "MILLISECONDS",
+              "MICROSECONDS",
+              "NANOSECONDS"
+            ]
+          },
+          "ttl": {
+            "type": "integer",
+            "description": "Value for the period of time that the session is active. Units for this parameter are defined by the `session.ttl_unit` parameter."
+          }
+        }
+      },
+      "6_req_session_lock_loyalty_card": {
+        "title": "Session Lock",
+        "type": "object",
+        "description": "Schema model for `session` lock object. The session object is **required** to establish a session between multiple parallel validation and redemption requests. If you only send the `type` parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a [validation session](docs/validations/Validation-Session.md).",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "This parameter is **required** to establish a new session. The session locks the redemption **quantity** by 1 and the redemption **loyalty points** specified within the request.",
+            "enum": [
+              "LOCK"
+            ]
+          },
+          "key": {
+            "type": "string",
+            "description": "The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated.",
+            "example": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts"
+          },
+          "ttl_unit": {
+            "type": "string",
+            "description": "Defines the type of unit in which the session time is counted.",
+            "enum": [
+              "HOURS",
+              "DAYS",
+              "MINUTES",
+              "SECONDS",
+              "MILLISECONDS",
+              "MICROSECONDS",
+              "NANOSECONDS"
+            ]
+          },
+          "ttl": {
+            "type": "integer",
+            "description": "Value for the period of time that the session is active. Units for this parameter are defined by the `session.ttl_unit` parameter."
+          }
+        }
+      },
+      "6_res_session_lock_discount_voucher": {
+        "title": "Session Lock",
+        "type": "object",
+        "description": "Schema model for `session` lock object. The session object contains information about the session key that was used to establish a session between multiple parallel validation and redemption requests.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "This session locks the redemption **quantity** by 1.",
+            "default": "LOCK"
+          },
+          "key": {
+            "type": "string",
+            "description": "The session unique ID assigned by Voucherify or your own unique session ID. ",
+            "example": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts"
+          },
+          "ttl_unit": {
+            "type": "string",
+            "description": "Defines the type of unit in which the session time is counted.",
+            "enum": [
+              "HOURS",
+              "DAYS",
+              "MINUTES",
+              "SECONDS",
+              "MILLISECONDS",
+              "MICROSECONDS",
+              "NANOSECONDS"
+            ]
+          },
+          "ttl": {
+            "type": "integer",
+            "description": "Value for the period of time that the session is active. Units for this parameter are defined by the `session.ttl_unit` parameter."
+          }
+        }
+      },
+      "6_res_session_lock_gift_card": {
+        "title": "Session Lock",
+        "type": "object",
+        "description": "Schema model for `session` lock object. The session object contains information about the session key that was used to establish a session between multiple parallel validation and redemption requests.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "This session locks the redemption **quantity** by 1 and the redemption **gift credits** specified within the request.",
+            "default": "LOCK"
+          },
+          "key": {
+            "type": "string",
+            "description": "The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated.",
+            "example": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts"
+          },
+          "ttl_unit": {
+            "type": "string",
+            "description": "Defines the type of unit in which the session time is counted.",
+            "enum": [
+              "HOURS",
+              "DAYS",
+              "MINUTES",
+              "SECONDS",
+              "MILLISECONDS",
+              "MICROSECONDS",
+              "NANOSECONDS"
+            ]
+          },
+          "ttl": {
+            "type": "integer",
+            "description": "Value for the period of time that the session is active. Units for this parameter are defined by the `session.ttl_unit` parameter."
+          }
+        }
+      },
+      "6_res_session_lock_loyalty_card": {
+        "title": "Session Lock",
+        "type": "object",
+        "description": "Schema model for `session` lock object. The session object contains information about the session key that was used to establish a session between multiple parallel validation and redemption requests.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "This session locks the redemption **quantity** by 1 and the redemption **loyalty points** specified within the request.",
+            "default": "LOCK"
+          },
+          "key": {
+            "type": "string",
+            "description": "The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated.",
+            "example": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts"
+          },
+          "ttl_unit": {
+            "type": "string",
+            "description": "Defines the type of unit in which the session time is counted.",
+            "enum": [
+              "HOURS",
+              "DAYS",
+              "MINUTES",
+              "SECONDS",
+              "MILLISECONDS",
+              "MICROSECONDS",
+              "NANOSECONDS"
+            ]
+          },
+          "ttl": {
+            "type": "integer",
+            "description": "Value for the period of time that the session is active. Units for this parameter are defined by the `session.ttl_unit` parameter."
+          }
+        }
       },
       "6_res_validate_voucher_false": {
         "type": "object",
@@ -10260,7 +10536,7 @@
             "metadata": {}
           }
         },
-        "title": "Validate Voucher for Non-Valid Voucher Response Body",
+        "title": "Not Valid",
         "description": "Response schema for a voucher that is not valid.",
         "examples": [
           {
@@ -10272,21 +10548,59 @@
             "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
             "code": "WFf5XAUc",
             "metadata": {}
+          },
+          {
+            "valid": false,
+            "reason": "Customer must be a holder of a loyalty card.",
+            "error": {
+              "message": "You are not the right person."
+            },
+            "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+            "code": "3TCjkel8",
+            "metadata": {}
+          },
+          {
+            "valid": false,
+            "reason": "loyalty card points exceeded",
+            "error": {
+              "message": "You need more loyalty points to be able to redeem a reward."
+            },
+            "tracking_id": "track_QjgJ4Z5Gv10OpRCXZM8cMIOPCB1PNuli",
+            "code": "pfeDMTsj",
+            "metadata": {}
+          },
+          {
+            "valid": false,
+            "reason": "order does not match validation rules",
+            "error": {
+              "code": 400,
+              "key": "order_rules_violated",
+              "message": "order does not match validation rules",
+              "details": "Loyalty Card cannot be redeemed because of violated validation rules: val_RU9fm8GiQaRT",
+              "request_id": "v-0bcbde194f1305ad88"
+            },
+            "tracking_id": "track_QjgJ4Z5Gv10OpRCXZM8cMIOPCB1PNuli",
+            "code": "pfeDMTsj",
+            "metadata": {}
           }
         ],
         "properties": {
           "valid": {
             "type": "boolean",
-            "default": false
+            "default": false,
+            "description": "Indicates whether the voucher is valid within the context of the parameters provided in the request body."
           },
           "reason": {
-            "type": "string"
+            "type": "string",
+            "description": "System generated cause for the voucher being invalid in the context of the provided parameters."
           },
           "error": {
             "type": "object",
+            "description": "Detailed failure cause for the invalid voucher if the reason has a translation defined in the Dashboard &rarr; Project Settings &rarr; Error Messages.",
             "properties": {
               "message": {
-                "type": "string"
+                "type": "string",
+                "description": "Customized error message."
               }
             }
           },
@@ -10530,7 +10844,7 @@
         }
       },
       "6_res_validate_voucher_discount_unit_product_multiple": {
-        "title": "Unit Discount, single item",
+        "title": "Product Item",
         "type": "object",
         "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
         "properties": {
@@ -10572,7 +10886,7 @@
         }
       },
       "6_res_validate_voucher_discount_unit_sku_multiple": {
-        "title": "Unit Discount, single item",
+        "title": "SKU Item",
         "type": "object",
         "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
         "properties": {
@@ -10638,17 +10952,67 @@
         "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
         "properties": {
           "type": {
-            "type": "string"
+            "type": "string",
+            "default": "UNIT",
+            "description": "Discount type."
           },
           "effect": {
-            "type": "string"
+            "type": "string",
+            "description": "Defines how the unit is added to the customer's order.",
+            "default": "ADD_MISSING_ITEMS"
           },
-          "amount_off": {
-            "type": "string"
+          "unit_off": {
+            "type": "integer",
+            "description": "Number of units to be granted a full value discount.",
+            "default": 1
+          },
+          "unit_type": {
+            "type": "string",
+            "description": "The shipping \"product\" deemed as free.",
+            "default": "prod_5h1pp1ng"
+          },
+          "product": {
+            "type": "object",
+            "description": "Contains information about the shipping \"product\".",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique shipping \"product\" ID, assigned by Voucherify.",
+                "default": "prod_5h1pp1ng"
+              },
+              "source_id": {
+                "type": "string",
+                "description": "\"Product's\" source ID.",
+                "default": "5h1pp1ng"
+              },
+              "name": {
+                "type": "string",
+                "description": "\"Product\" name.",
+                "default": "Shipping"
+              }
+            }
           }
         }
       },
       "6_res_validate_voucher": {
+        "x-examples": {
+          "example-1": {}
+        },
+        "title": "Valid",
+        "description": "Response schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/6_res_validate_voucher_discount_code"
+          },
+          {
+            "$ref": "#/components/schemas/6_res_validate_voucher_gift_card"
+          },
+          {
+            "$ref": "#/components/schemas/6_res_validate_voucher_loyalty_card"
+          }
+        ]
+      },
+      "6_res_validate_voucher_discount_code": {
         "type": "object",
         "x-examples": {
           "example-1": {
@@ -10722,76 +11086,18 @@
             "campaign_id": "camp_W8DJVd8J0btqXT6FBwn7BSkC"
           }
         },
-        "title": "Validate Voucher Response Body",
-        "description": "Response schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
+        "title": "Valid - Discount Code",
+        "description": "Response schema model for validating a discount code using **POST** `/vouchers/{code}/validate`.",
         "properties": {
           "valid": {
             "type": "boolean",
             "description": "Indicates whether the voucher is valid within the context of the parameters provided in the request body."
           },
           "applicable_to": {
-            "type": "object",
-            "properties": {
-              "data": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "object": {
-                      "type": "string"
-                    },
-                    "id": {
-                      "type": "string"
-                    },
-                    "source_id": {
-                      "type": "string"
-                    },
-                    "strict": {
-                      "type": "boolean"
-                    },
-                    "effect": {
-                      "type": "string"
-                    },
-                    "quantity_limit": {
-                      "type": "integer"
-                    }
-                  }
-                }
-              },
-              "total": {
-                "type": "integer"
-              },
-              "data_ref": {
-                "type": "string",
-                "default": "data"
-              },
-              "object": {
-                "type": "string",
-                "default": "list"
-              }
-            }
+            "$ref": "#/components/schemas/6_res_applicable_to_object"
           },
           "inapplicable_to": {
-            "type": "object",
-            "properties": {
-              "data": {
-                "type": "array",
-                "items": {
-                  "type": "object"
-                }
-              },
-              "total": {
-                "type": "integer"
-              },
-              "data_ref": {
-                "type": "string",
-                "default": "data"
-              },
-              "object": {
-                "type": "string",
-                "default": "list"
-              }
-            }
+            "$ref": "#/components/schemas/6_res_inapplicable_to_object"
           },
           "tracking_id": {
             "type": "string"
@@ -10910,6 +11216,773 @@
             "type": "string",
             "example": "camp_W8DJVd8J0btqXT6FBwn7BSkC",
             "description": "Voucher's parent campaign's unique ID."
+          },
+          "session": {
+            "$ref": "#/components/schemas/6_res_session_lock_discount_voucher"
+          }
+        }
+      },
+      "6_res_validate_voucher_gift_card": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "valid": true,
+            "applicable_to": {
+              "data": [
+                {
+                  "object": "product",
+                  "id": "prod_0b7d7c4e814be5c502",
+                  "source_id": "prod_1",
+                  "strict": false,
+                  "effect": "APPLY_TO_EVERY",
+                  "quantity_limit": 3
+                }
+              ],
+              "total": 1,
+              "data_ref": "data",
+              "object": "list"
+            },
+            "inapplicable_to": {
+              "data": [],
+              "total": 0,
+              "data_ref": "data",
+              "object": "list"
+            },
+            "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+            "order": {
+              "amount": 6000,
+              "total_amount": 6000,
+              "items": [
+                {
+                  "object": "order_item",
+                  "product_id": "prod_0a9f9ab4ab019a42d5",
+                  "quantity": 1,
+                  "amount": 2900,
+                  "price": 2900,
+                  "subtotal_amount": 2900,
+                  "product": {
+                    "id": "prod_0a9f9ab4ab019a42d5",
+                    "name": "Red T-Shirt",
+                    "price": 2900
+                  }
+                },
+                {
+                  "object": "order_item",
+                  "product_id": "prod_0a9f9aeddb019a42db",
+                  "quantity": 1,
+                  "amount": 3100,
+                  "price": 3100,
+                  "subtotal_amount": 3100,
+                  "product": {
+                    "id": "prod_0a9f9aeddb019a42db",
+                    "name": "Blue T-Shirt",
+                    "price": 3100
+                  }
+                }
+              ],
+              "metadata": {},
+              "customer_id": null,
+              "referrer_id": null,
+              "object": "order"
+            },
+            "code": "KvtdDZfv",
+            "discount": {
+              "type": "AMOUNT",
+              "effect": "APPLY_TO_ITEMS_BY_QUANTITY",
+              "amount_off": 300
+            },
+            "metadata": {},
+            "campaign": "Test - Discount Effect - Amount - Items - each unit of matched product 2",
+            "campaign_id": "camp_W8DJVd8J0btqXT6FBwn7BSkC"
+          }
+        },
+        "title": "Valid - Gift Card",
+        "description": "Response schema model for validating a gift card using **POST** `/vouchers/{code}/validate`.",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "description": "Indicates whether the voucher is valid within the context of the parameters provided in the request body."
+          },
+          "applicable_to": {
+            "$ref": "#/components/schemas/6_res_applicable_to_object"
+          },
+          "inapplicable_to": {
+            "$ref": "#/components/schemas/6_res_inapplicable_to_object"
+          },
+          "tracking_id": {
+            "type": "string"
+          },
+          "order": {
+            "type": "object",
+            "description": "If the voucher is a unit type, then the order items will be added according to the discount effect within the order objects items parameter.",
+            "properties": {
+              "amount": {
+                "type": "integer"
+              },
+              "total_amount": {
+                "type": "integer"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "object": {
+                      "type": "string"
+                    },
+                    "product_id": {
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "amount": {
+                      "type": "integer"
+                    },
+                    "price": {
+                      "type": "integer"
+                    },
+                    "subtotal_amount": {
+                      "type": "integer"
+                    },
+                    "product": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "price": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "metadata": {
+                "type": "object"
+              },
+              "customer_id": {
+                "type": "null"
+              },
+              "referrer_id": {
+                "type": "null"
+              },
+              "object": {
+                "type": "string"
+              }
+            }
+          },
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
+          },
+          "discount": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_amount"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_percent"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_fixed"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_unit"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_unit_multiple"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_shipping"
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-04T00:00:00.000Z",
+            "description": "Activation timestamp defines when the voucher starts to be active in ISO 8601 format. Voucher is _inactive_ before this date."
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-31T00:00:00.000Z",
+            "description": "Expiration timestamp defines when the voucher expires in ISO 8601 format. Voucher is _inactive_ after this date."
+          },
+          "campaign": {
+            "type": "string",
+            "description": "Voucher's parent campaign name."
+          },
+          "campaign_id": {
+            "type": "string",
+            "example": "camp_W8DJVd8J0btqXT6FBwn7BSkC",
+            "description": "Voucher's parent campaign's unique ID."
+          },
+          "session": {
+            "$ref": "#/components/schemas/6_res_session_lock_gift_card"
+          }
+        }
+      },
+      "6_res_validate_voucher_loyalty_card": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "valid": true,
+            "applicable_to": {
+              "data": [
+                {
+                  "object": "product",
+                  "id": "prod_0b7d7c4e814be5c502",
+                  "source_id": "prod_1",
+                  "strict": false,
+                  "effect": "APPLY_TO_EVERY",
+                  "quantity_limit": 3
+                }
+              ],
+              "total": 1,
+              "data_ref": "data",
+              "object": "list"
+            },
+            "inapplicable_to": {
+              "data": [],
+              "total": 0,
+              "data_ref": "data",
+              "object": "list"
+            },
+            "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+            "order": {
+              "amount": 6000,
+              "total_amount": 6000,
+              "items": [
+                {
+                  "object": "order_item",
+                  "product_id": "prod_0a9f9ab4ab019a42d5",
+                  "quantity": 1,
+                  "amount": 2900,
+                  "price": 2900,
+                  "subtotal_amount": 2900,
+                  "product": {
+                    "id": "prod_0a9f9ab4ab019a42d5",
+                    "name": "Red T-Shirt",
+                    "price": 2900
+                  }
+                },
+                {
+                  "object": "order_item",
+                  "product_id": "prod_0a9f9aeddb019a42db",
+                  "quantity": 1,
+                  "amount": 3100,
+                  "price": 3100,
+                  "subtotal_amount": 3100,
+                  "product": {
+                    "id": "prod_0a9f9aeddb019a42db",
+                    "name": "Blue T-Shirt",
+                    "price": 3100
+                  }
+                }
+              ],
+              "metadata": {},
+              "customer_id": null,
+              "referrer_id": null,
+              "object": "order"
+            },
+            "code": "KvtdDZfv",
+            "discount": {
+              "type": "AMOUNT",
+              "effect": "APPLY_TO_ITEMS_BY_QUANTITY",
+              "amount_off": 300
+            },
+            "metadata": {},
+            "campaign": "Test - Discount Effect - Amount - Items - each unit of matched product 2",
+            "campaign_id": "camp_W8DJVd8J0btqXT6FBwn7BSkC"
+          }
+        },
+        "title": "Valid - Loyalty Card",
+        "description": "Response schema model for validating a loyalty card using **POST** `/vouchers/{code}/validate`.",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "description": "Indicates whether the voucher is valid within the context of the parameters provided in the request body."
+          },
+          "applicable_to": {
+            "$ref": "#/components/schemas/6_res_applicable_to_object"
+          },
+          "inapplicable_to": {
+            "$ref": "#/components/schemas/6_res_inapplicable_to_object"
+          },
+          "tracking_id": {
+            "type": "string"
+          },
+          "order": {
+            "type": "object",
+            "description": "If the voucher is a unit type, then the order items will be added according to the discount effect within the order objects items parameter.",
+            "properties": {
+              "amount": {
+                "type": "integer"
+              },
+              "total_amount": {
+                "type": "integer"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "object": {
+                      "type": "string"
+                    },
+                    "product_id": {
+                      "type": "string"
+                    },
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "amount": {
+                      "type": "integer"
+                    },
+                    "price": {
+                      "type": "integer"
+                    },
+                    "subtotal_amount": {
+                      "type": "integer"
+                    },
+                    "product": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "price": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "metadata": {
+                "type": "object"
+              },
+              "customer_id": {
+                "type": "null"
+              },
+              "referrer_id": {
+                "type": "null"
+              },
+              "object": {
+                "type": "string"
+              }
+            }
+          },
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
+          },
+          "loyalty": {
+            "type": "object",
+            "description": "Contains the cost of reward in points.",
+            "properties": {
+              "points_cost": {
+                "type": "integer",
+                "description": "Number of points that wlil be deducted from loyaty card for the associated reward."
+              }
+            }
+          },
+          "reward": {
+            "type": "object",
+            "description": "Contains information about the reward that is being validated.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique reward ID assigned by Voucherify.",
+                "example": "rew_Crmu3hu2FKZWZIML59AeAs1n"
+              },
+              "assignment_id": {
+                "type": "string",
+                "example": "rewa_xZr6Ks0j5AHeMRVdELmpI9sc",
+                "description": "Unique reward assignment ID assigned by Voucherify."
+              },
+              "points": {
+                "type": "string",
+                "description": "Number of points applied to the reward."
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-04T00:00:00.000Z",
+            "description": "Activation timestamp defines when the voucher starts to be active in ISO 8601 format. Voucher is _inactive_ before this date."
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-31T00:00:00.000Z",
+            "description": "Expiration timestamp defines when the voucher expires in ISO 8601 format. Voucher is _inactive_ after this date."
+          },
+          "campaign": {
+            "type": "string",
+            "description": "Voucher's parent campaign name."
+          },
+          "campaign_id": {
+            "type": "string",
+            "example": "camp_W8DJVd8J0btqXT6FBwn7BSkC",
+            "description": "Voucher's parent campaign's unique ID."
+          },
+          "session": {
+            "$ref": "#/components/schemas/6_res_session_lock_loyalty_card"
+          }
+        }
+      },
+      "6_res_applicable_to_object": {
+        "title": "Included  Items",
+        "type": "object",
+        "description": "Contains list of items that qualify in the scope of the voucher. These are definitions of included products, SKUs, and product collections. These can be discounted.",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "Contains array of items to which the discount can apply.",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/6_res_product_collection"
+                },
+                {
+                  "$ref": "#/components/schemas/6_res_product"
+                },
+                {
+                  "$ref": "#/components/schemas/6_res_sku"
+                },
+                {
+                  "$ref": "#/components/schemas/6_res_sku_alternative"
+                }
+              ]
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of objects defining included products, SKUs, or product collections."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of included objects."
+          },
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about included products, SKUs, or product collections in a dictionary."
+          }
+        }
+      },
+      "6_res_inapplicable_to_object": {
+        "title": "Excluded Items",
+        "type": "object",
+        "description": "Contains list of items that **do not** qualify in the scope of the voucher. These are definitions of excluded products, SKUs, and product collections. These **CANNOT** be discounted.",
+        "properties": {
+          "data": {
+            "description": "Contains array of items to which the discount cannot apply.",
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/6_res_product_collection_excluded"
+                },
+                {
+                  "$ref": "#/components/schemas/6_res_product_excluded"
+                },
+                {
+                  "$ref": "#/components/schemas/6_res_sku_excluded"
+                }
+              ]
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of objects defining excluded products, SKUs, or product collections."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of excluded objects."
+          },
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about excluded products, SKUs, or product collections in a dictionary."
+          }
+        }
+      },
+      "6_res_product_collection": {
+        "title": "Product Collection",
+        "type": "object",
+        "description": "Contains definition for a product collection.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "products_collection",
+            "description": "This object stores information about the product collection."
+          },
+          "id": {
+            "type": "string",
+            "example": "pc_4ndRXAsTOzwSdHcQcxf489uU",
+            "description": "Unique product collection ID assigned by Voucherify."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_EVERY",
+              "APPLY_TO_CHEAPEST",
+              "APPLY_TO_MOST_EXPENSIVE"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
+          },
+          "quantity_limit": {
+            "type": "integer",
+            "description": "The maximum number of units allowed to be discounted per order line item."
+          },
+          "aggregated_quantity_limit": {
+            "type": "integer",
+            "description": "The maximum number of units allowed to be discounted combined across all matched order line items."
+          }
+        }
+      },
+      "6_res_product_collection_excluded": {
+        "title": "Product Collection",
+        "type": "object",
+        "description": "Contains definition for a product collection.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "products_collection",
+            "description": "This object stores information about the product collection."
+          },
+          "id": {
+            "type": "string",
+            "example": "pc_4ndRXAsTOzwSdHcQcxf489uU",
+            "description": "Unique product collection ID assigned by Voucherify."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_EVERY"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
+          }
+        }
+      },
+      "6_res_sku": {
+        "title": "SKU",
+        "type": "object",
+        "description": "Contains definition for a product variant.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "sku",
+            "description": "This object stores information about the product variant."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique SKU ID assigned by Voucherify.",
+            "example": "sku_0b7d7dfb090be5c619"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The source ID from your inventory system."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_EVERY",
+              "APPLY_TO_CHEAPEST",
+              "APPLY_TO_MOST_EXPENSIVE"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
+          },
+          "quantity_limit": {
+            "type": "integer",
+            "description": "The maximum number of units allowed to be discounted per order line item."
+          },
+          "aggregated_quantity_limit": {
+            "type": "integer",
+            "description": "The maximum number of units allowed to be discounted combined across all matched order line items."
+          }
+        }
+      },
+      "6_res_sku_alternative": {
+        "title": "SKU (different context)",
+        "type": "object",
+        "description": "Contains definition for a product variant.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "sku",
+            "description": "This object stores information about the product variant."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique SKU ID assigned by Voucherify.",
+            "example": "sku_0b7d7dfb090be5c619"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The source ID from your inventory system."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "Parent product's unique ID assigned by Voucherify."
+          },
+          "product_source_id": {
+            "type": "string",
+            "description": "Parent product's source ID from your inventory system."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_EVERY",
+              "APPLY_TO_CHEAPEST",
+              "APPLY_TO_MOST_EXPENSIVE"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
+          },
+          "quantity_limit": {
+            "type": "integer",
+            "description": "The maximum number of units allowed to be discounted per order line item."
+          },
+          "aggregated_quantity_limit": {
+            "type": "integer",
+            "description": "The maximum number of units allowed to be discounted combined across all matched order line items."
+          }
+        }
+      },
+      "6_res_sku_excluded": {
+        "title": "SKU",
+        "type": "object",
+        "description": "Contains definition for a product variant.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "sku",
+            "description": "This object stores information about the product variant."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique SKU ID assigned by Voucherify.",
+            "example": "sku_0b7d7dfb090be5c619"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The source ID from your inventory system."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_EVERY"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
+          }
+        }
+      },
+      "6_res_product": {
+        "title": "Product",
+        "type": "object",
+        "description": "Contains definition for a product.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "product",
+            "description": "This product stores information about the product."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique product ID assigned by Voucherify.",
+            "example": "prod_0bae2dc5a090fd0184"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The product ID from your inventory system."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_EVERY",
+              "APPLY_TO_CHEAPEST",
+              "APPLY_TO_MOST_EXPENSIVE"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
+          },
+          "quantity_limit": {
+            "type": "integer",
+            "description": "The maximum number of units allowed to be discounted per order line item."
+          },
+          "aggregated_quantity_limit": {
+            "type": "integer",
+            "description": "The maximum number of units allowed to be discounted combined across all matched order line items."
+          }
+        }
+      },
+      "6_res_product_excluded": {
+        "title": "Product",
+        "type": "object",
+        "description": "Contains definition for a product.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "product",
+            "description": "This product stores information about the product."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique product ID assigned by Voucherify.",
+            "example": "prod_0bae2dc5a090fd0184"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The product ID from your inventory system."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_EVERY"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
           }
         }
       },
@@ -16891,6 +17964,9 @@
         },
         "description": "This is an object representing a product.  \n\nThis entity should be used to map product items from your inventory management system. The aim of products is to build  validation rules which reflect product-specific campaigns.",
         "title": "Product Object",
+        "x-tags": [
+          "PRODUCTS API"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -16900,7 +17976,7 @@
           "source_id": {
             "type": "string",
             "example": "productSourceID16",
-            "description": "Unique product source ID."
+            "description": "Unique product source ID from your inventory system."
           },
           "name": {
             "type": "string",
@@ -16945,10 +18021,7 @@
           "skus": {
             "$ref": "#/components/schemas/11_res_get_product_skus_object"
           }
-        },
-        "x-tags": [
-          "PRODUCTS API"
-        ]
+        }
       },
       "11_req_create_product": {
         "type": "object",
@@ -32326,7 +33399,38 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/6_res_validate_voucher"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/6_res_validate_voucher"
+                    },
+                    {
+                      "$ref": "#/components/schemas/6_res_validate_voucher_false"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if request body is missing parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_error"
+                },
+                "examples": {
+                  "Missing reward": {
+                    "value": {
+                      "code": 400,
+                      "key": "missing_reward",
+                      "message": "Missing reward",
+                      "details": "A reward is required when redeeming a LOYALTY_CARD",
+                      "request_id": "v-0bcb925c6d90f7f8fc",
+                      "error": {
+                        "message": "Missing reward = please add one."
+                      }
+                    }
+                  }
                 }
               }
             }
