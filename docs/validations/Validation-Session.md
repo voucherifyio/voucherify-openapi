@@ -45,7 +45,7 @@ The following table presents the type of sessions that can be established.
 | session.type<br>`string`<br>required | Type of the session. Required to establish a new session.<br>Supported session types are listed in the table above. | "session":{<br>"type": "LOCK"<br>} |
 | session.key<br>`string`<br>optional | Unique session identifier. | "session": {<br>"key": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts",<br>"type": "LOCK"<br>} |
 | session.ttl_unit<br>`string`<br>optional | Defines the type of unit in which session time is counted. Allowed values: DAYS, HOURS, MICROSECONDS, MILLISECONDS, MINUTES, NANOSECONDS, SECONDS | "session": {<br>"type": "LOCK",<br>"ttl": 7,<br>"ttl_unit": "DAYS"<br>} |
-| session.ttl<br>`number`<br>optional | Value for the period of time that the session is active. Units for this parameter are defines by session.ttl_unit | "session": {<br>"type": "LOCK",<br>"ttl": 7,<br>"ttl_unit": "DAYS"<br>} |
+| session.ttl<br>`number`<br>optional | Value for the period of time that the session is active. Units for this parameter are defined by session.ttl_unit | "session": {<br>"type": "LOCK",<br>"ttl": 7,<br>"ttl_unit": "DAYS"<br>} |
 
 
 <!-- theme: info -->
