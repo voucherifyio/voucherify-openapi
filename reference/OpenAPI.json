@@ -10222,15 +10222,23 @@
       },
       "6_obj_validation_object": {
         "title": "Validation Object",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          }
-        },
         "description": "This is an object representing a validation.",
         "x-tags": [
           "VALIDATIONS API"
+        ],
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/6_res_validate_voucher_discount_code"
+          },
+          {
+            "$ref": "#/components/schemas/6_res_validate_voucher_gift_card"
+          },
+          {
+            "$ref": "#/components/schemas/6_res_validate_voucher_loyalty_card"
+          },
+          {
+            "$ref": "#/components/schemas/6_res_validate_voucher_false"
+          }
         ]
       },
       "6_req_validate_voucher": {
@@ -33969,7 +33977,7 @@
         ],
         "responses": {
           "200": {
-            "description": "This operation returns information about validity of the code. Moreover it returns hashed source identifier which can be used as tracking id in future calls.\n\nIf a validation session is established then the session details will be returned as well. Read more about sessions: Validation Sessionref:validation-session .\n\nVoucher validation might fail because of one of these reasons:\n* `voucher not found` - voucher doesn't exist or was deletedref:delete-voucher\n* `voucher expired` - voucher is out of [start date - expiration date] time frame\n* `voucher is disabled` - learn more disable voucherdisable-voucher \n* `customer does not match segment rules` - learn more customer trackingcustomer-tracking\n* `order does not match validation rules` - learn more about validation rulesvalidation-rules"
+            "description": "This operation returns information about validity of the code. Moreover, it returns a hashed source identifier which can be used as tracking ID in future calls."
           }
         },
         "operationId": "get-validate",
@@ -33983,11 +33991,12 @@
           },
           {
             "schema": {
-              "type": "string"
+              "type": "string",
+              "example": "7fjWdr"
             },
             "in": "query",
             "name": "code",
-            "description": "A code that identifies the voucher (e.g., `Testing7fjWdr`)."
+            "description": "A code that identifies the voucher."
           },
           {
             "schema": {
@@ -33995,7 +34004,7 @@
             },
             "in": "query",
             "name": "tracking_id",
-            "description": "A tracking identifier of a user that validated a voucher. Identifier generated during voucher validation based on your internal id during the first request (e.g., email, database ID). If you do request a first time, you should pass your internal id to track customer. **Although not all information is required, the extra info helps prevent fraud.**"
+            "description": "A tracking identifier of a user that validated the voucher. Identifier generated during voucher validation based on your internal ID during the first request (e.g., email, database ID). If you do request for the first time, you should pass your internal ID to track customer. **Although not all information is required, the extra info helps prevent fraud.**"
           },
           {
             "schema": {
@@ -34003,7 +34012,7 @@
             },
             "in": "query",
             "name": "amount",
-            "description": "A positive integer representing the total amount for the order."
+            "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts."
           },
           {
             "schema": {
@@ -34028,19 +34037,23 @@
           },
           {
             "schema": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "LOCK"
+              ]
             },
             "in": "query",
             "name": "session_type",
-            "description": "Required for session to be setup. Possible values are: LOCK"
+            "description": "Schema model for `session` lock object. The session object is **required** to establish a session between multiple parallel validation and redemption requests. If you only send the `type` parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a [validation session](docs/validations/Validation-Session.md). This parameter is **required** to establish a new session. The session locks the redemption **quantity** by 1."
           },
           {
             "schema": {
-              "type": "string"
+              "type": "string",
+              "example": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts"
             },
             "in": "query",
             "name": "session_key",
-            "description": "The session unique identifier. Sending existing identifier will result in overwriting the existing session. If none provided then new id will be generated"
+            "description": "The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated."
           },
           {
             "schema": {
@@ -34048,15 +34061,23 @@
             },
             "in": "query",
             "name": "session_ttl",
-            "description": "The value of session's lifetime in time units"
+            "description": "Value of session's lifetime in time units.  It is the value for the period of time that the session is active. Units for this parameter are defined by the `session_ttl_unit` parameter."
           },
           {
             "schema": {
-              "type": "string"
+              "type": "string",
+              "enum": [
+                "HOURS",
+                "DAYS",
+                "MINUTES",
+                "SECONDS",
+                "MILLISECONDS",
+                "NICROSECONDS"
+              ]
             },
             "in": "query",
             "name": "session_ttl_unit",
-            "description": " The time unit for session's lifetime. Possible values are: MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS"
+            "description": " The time unit for session's lifetime. "
           }
         ]
       }
