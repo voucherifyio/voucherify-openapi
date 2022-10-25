@@ -346,6 +346,95 @@
           "format": "hostname"
         },
         "description": "Indicates the origin (scheme, hostname, and port)."
+      },
+      "session2": {
+        "name": "session",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/6_req_session_lock_discount_code"
+            },
+            {
+              "$ref": "#/components/schemas/6_req_session_lock_gift_card"
+            },
+            {
+              "$ref": "#/components/schemas/6_req_session_lock_loyalty_card"
+            }
+          ]
+        },
+        "style": "deepObject",
+        "explode": true,
+        "description": "The session object required to establish a session between multiple parallel validation and redemption requests."
+      },
+      "session": {
+        "name": "session",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "object",
+          "description": "Schema model for `session` lock object. The session object is **required** to establish a session between multiple parallel validation and redemption requests. If you only send the `type` parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a [validation session](docs/validations/Validation-Session.md).",
+          "properties": {
+            "type": {
+              "type": "string",
+              "description": "This parameter is **required** to establish a new session. The session locks the redemption **quantity** by 1 and addtionally the redemption **gift credits** specified within the request for a gift card and the **loyalty points** for a loyalty card.",
+              "enum": [
+                "LOCK"
+              ]
+            },
+            "key": {
+              "type": "string",
+              "description": "The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated.",
+              "example": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts"
+            },
+            "ttl_unit": {
+              "type": "string",
+              "description": "Defines the type of unit in which the session time is counted.",
+              "enum": [
+                "HOURS",
+                "DAYS",
+                "MINUTES",
+                "SECONDS",
+                "MILLISECONDS",
+                "MICROSECONDS",
+                "NANOSECONDS"
+              ]
+            },
+            "ttl": {
+              "type": "integer",
+              "description": "Value for the period of time that the session is active. Units for this parameter are defined by the `session.ttl_unit` parameter."
+            }
+          }
+        },
+        "style": "deepObject",
+        "explode": true,
+        "description": "The session object required to establish a session between multiple parallel validation and redemption requests."
+      },
+      "metadata": {
+        "name": "metadata",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "object",
+          "description": "Metadata key value pairs.",
+          "properties": {}
+        },
+        "style": "deepObject",
+        "explode": true,
+        "description": "A set of key/value pairs that you can send to check against vouchers requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Advanced_ &rarr; _Redemption metadata satisfy_ or _Basic Builder_ &rarr; _Attributes match_ &rarr; _REDEMPTION METADATA_. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule)."
+      },
+      "item": {
+        "name": "item",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "$ref": "#/components/schemas/6_query_validate_voucher_client_side_orders_order_item"
+        },
+        "description": "Array of order items.",
+        "style": "deepObject",
+        "explode": true
       }
     },
     "schemas": {
@@ -10461,7 +10550,7 @@
         }
       },
       "6_req_session_lock_discount_code": {
-        "title": "Session Lock",
+        "title": "Discount Code Session Lock",
         "type": "object",
         "description": "Schema model for `session` lock object. The session object is **required** to establish a session between multiple parallel validation and redemption requests. If you only send the `type` parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a [validation session](docs/validations/Validation-Session.md).",
         "properties": {
@@ -10497,7 +10586,7 @@
         }
       },
       "6_req_session_lock_gift_card": {
-        "title": "Session Lock",
+        "title": "Gift Card Session Lock",
         "type": "object",
         "description": "Schema model for `session` lock object. The session object is **required** to establish a session between multiple parallel validation and redemption requests. If you only send the `type` parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a [validation session](docs/validations/Validation-Session.md).",
         "properties": {
@@ -10533,7 +10622,7 @@
         }
       },
       "6_req_session_lock_loyalty_card": {
-        "title": "Session Lock",
+        "title": "Loyalty Card Session Lock",
         "type": "object",
         "description": "Schema model for `session` lock object. The session object is **required** to establish a session between multiple parallel validation and redemption requests. If you only send the `type` parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a [validation session](docs/validations/Validation-Session.md).",
         "properties": {
@@ -12443,6 +12532,43 @@
             "type": "string",
             "default": "order",
             "description": "The type of object represented by JSON. This object stores information about the order."
+          }
+        }
+      },
+      "6_query_validate_voucher_client_side_orders_order_item": {
+        "type": "object",
+        "title": "Order Item",
+        "description": "This object represents an order line item.",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s product/SKU ID (if it is different from the Voucherify product/SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
+          },
+          "related_object": {
+            "type": "string",
+            "description": "Used along with the `source_id` property, can be set to either `sku` or `product`."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "A unique product ID assigned by Voucherify.",
+            "example": "prod_0a7e62db1fca8322a2"
+          },
+          "sku_id": {
+            "type": "string",
+            "description": "A unique SKU ID assigned by Voucherify.",
+            "example": "sku_0a41e31c7b41c28358"
+          },
+          "quantity": {
+            "type": "string",
+            "description": "The quantity of the particular item in the cart."
+          },
+          "price": {
+            "type": "string",
+            "description": "The unit price of the item."
+          },
+          "amount": {
+            "type": "string",
+            "description": "The total amount of the order item (`price` * `quantity`)."
           }
         }
       },
@@ -35344,11 +35470,87 @@
         ],
         "responses": {
           "200": {
-            "description": "This operation returns information about validity of the code. Moreover, it returns a hashed source identifier which can be used as tracking ID in future calls."
+            "description": "Returns information whether the voucher is valid in the context of the parameter values provided in the query parameters. Moreover, it returns a hashed source identifier which can be used as tracking ID in future calls.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/6_res_validate_voucher"
+                    },
+                    {
+                      "$ref": "#/components/schemas/6_res_validate_voucher_false"
+                    }
+                  ]
+                },
+                "examples": {
+                  "Wrong customer": {
+                    "value": {
+                      "valid": false,
+                      "reason": "customer does not match validation rules",
+                      "error": {
+                        "message": "Only the gift card owner can apply credits from the gift card to the order."
+                      },
+                      "tracking_id": "track_0nmdnu/6xIb6NTN0Ea40oFmM4wD5QYlxAgKdSn6wh+oychkbEcMNB5RhcTj+zcKBEcGnUZkAXxg=",
+                      "code": "GIFT-CARD-kW4aEsfB",
+                      "metadata": {}
+                    }
+                  },
+                  "Validation Rule Not Satisfied": {
+                    "value": {
+                      "valid": false,
+                      "reason": "redemption does not match validation rules",
+                      "error": {
+                        "code": 400,
+                        "key": "redemption_rules_violated",
+                        "message": "redemption does not match validation rules",
+                        "details": "Discount Coupon cannot be redeemed because of violated validation rules: val_WuupvE7OVXyo",
+                        "request_id": "v-0be54f4afa0357c12f"
+                      },
+                      "tracking_id": "track_0nmdnu/6xIb6NTN0Ea40oFmM4wD5QYlxAgKdSn6wh+oychkbEcMNB5RhcTj+zcKBEcGnUZkAXxg=",
+                      "code": "PAYINEUROS",
+                      "metadata": {
+                        "shoutout": "Pay in euros to get 10 Euros off, any other currency to get 5 off in that currency."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if missing required parameters or tracking IDs come from the same origin.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_error_no_translation"
+                },
+                "examples": {
+                  "Missing customer": {
+                    "value": {
+                      "code": 400,
+                      "key": "missing_customer",
+                      "message": "Missing customer",
+                      "details": "Customer is required to validate rules",
+                      "request_id": "v-0be548ae620abb0a73"
+                    }
+                  },
+                  "Ambiguous tracking ID": {
+                    "value": {
+                      "code": 400,
+                      "key": "ambiguous_tracking_id",
+                      "message": "Ambiguous trackingId ('track_0nmdnu/6xIb6NTN0Ea40oFmM4wD5QYlxAgKdSn6wh+oychkbEcMNB5RhcTj+zcKBEcGnUZkAXxg=' vs. 'track_Mcg5qK0jIStHAopLoM+nM6ua9crMFQrLt+qSe2YCbmTrTT8932kSlg==')",
+                      "details": "The customer cannot be identified as two different identifiers have been used between requests from same origin.",
+                      "request_id": "v-0be550a5a84abb30f8"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "operationId": "get-validate",
-        "description": "To verify a voucher code given by customer, you can use this method. It is designed for client side integration which means that is accessible only through public keys. This method is designed to be run directly either in web browsers or mobile apps.\n\n### Set customer identity (optional)\n\nVoucherify can help you track anonymous customers. Once you integrate Voucherify.js into your web app and call validate method, Voucherify will return a tracking ID and the script will store it in a cookie. Every next validate call will be using the same tracking ID.\n\nWe are tracking users who are validating vouchers with those who consume them by a tracking_id. For that, we are setting up an identity for the user. We will generate a tracking_id on the server side unless you specify it on your own. In both cases, you will receive it in the validation response.\n\nThe returned tracking_id field should be used as customer source_id in subsequent redemption requests. The tracking_id returned from Validation API is encoded. Voucherify will recognize both values for identifying customer - the one before encryption send as a query parameter to `GET validate` request, and the version encrypted and returned as part of the validation request.\n\n### Sample workflow\n\nCustomer tracking workflow in a nutshell:\n\n**Client-side:**\n  * A customer visits your website.\n  * A customer validates a voucher code. That triggers a validate request to Voucherify. In request, you pass tracking_id or customer.source_id. As a result, it returns **encoded tracking_id**.\n\n**Backend:**\n  * Once the customer finishes the checkout process, your website passes the tracking_id to your backend during a redemption. It is sent as a property *source_id* in a customer object.\n  * A customer object is created and within the redemption response, you get a customer.id.\n  * You can use the customer.id or customer.source_id to fetch or modify the customer details.\n  \nA customer is created (upserted) automatically with a redemption call. Alternatively, you can create a new profile by creating a customer via a dedicated API method. Take a look at the customer object to understand the [entity's structure](https://docs.voucherify.io/reference#the-customer-object). \n\n<!-- theme: info -->\n\n> #### Customer identifier\n>\n> Source id of the customer may be either already hashed version of tracking id you received in a response from a validation request or a custom ID you predefined (email address). Nevertheless, we recommend using identifiers delivered by Voucherify API.\n\n<!--\ntitle: \"Example Code - Readable form\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=5OFF5&amount=1500&item[0][sku_id]=sku_13SWYzm3tuMXSP&item[0][quantity]=2&item[1][product_id]=prod_DSFGCz3IFxpkiL&item[1][quantity]=2'\n```\n\n\n### [JSFiddle Example](https://jsfiddle.net/voucherify/gfu2bgn5/)\n<!--\ntitle: \"Example Code - Voucherify.js\"\nlineNumbers: true\n-->\n```javascript\n<script type=\"text/javascript\" src=\"https://cdn.rawgit.com/rspective/voucherify.js/v1.4.5/dist/voucherify-1.4.5.js\"></script>\n\n<script type=\"text/javascript\">\n  function init() {\n    Voucherify.initialize(\n      \"011240bf-d5fc-4ef1-9e82-11eb68c43bf5\", //YOUR-CLIENT-APPLICATION-ID-FROM-SETTINGS\n      \"9e2230c5-71fb-460a-91c6-fbee64707a20\" //YOUR-CLIENT-TOKEN-FROM-SETTINGS\n    );\n  };\n  init();\n  \n  //-- [Optional] If you want us to track your customers' activity, then you should invoke the following function to set identity. You have to do it only once. If the identity parameter is not passed, then we will generate it for you.\n  Voucherify.setIdentity(\"your-customer-uniq-id\");\n  Voucherify.validate(\"Testing7fjWdr\", function callback (response) {\n    console.log(response);\n  });\n</script>\n```\n\n### Examples with Query Parameters\n\n| **Query Parameters** | **Example URL** |\n|:---|:---|\n| Shortcut - `customer` query param instead of `customer[source_id]` | `https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=customer_id` |\n| Pass `customer`'s and `redemption`'s context `metadata` in query parameters | `https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=sure_he_is_new&metadata[shop]=1&customer[metadata][propsy]=2&metadata[test]=true` |\n| Use `tracking_id` instead of `source_id` | `https://api.voucherify.io/client/v1/validate?code=IKU-mvS-JOG&amount=10100&tracking_id=sure_he_is_new_5&metadata[shop]=1&metadata[test]=true` |\n\n### Returns\n\nThis operation returns information about validity of the code. Moreover it returns hashed source identifier which can be used as tracking id in future calls.\n\nIf a validation session is established then the session details will be returned as well. Read more about sessions: Validation Session .\n\nVoucher validation might fail because of one of these reasons:\n\n* `voucher not found` - voucher doesn't exist or was deleted LINK\n* `voucher expired` - voucher is out of [start date - expiration date] time frame\n* `voucher is disabled` - learn more disable voucher LINK\n* `customer does not match segment rules` - learn more customer tracking LINK\n* `order does not match validation rules` - learn more about validation rules LINK",
+        "description": "To verify a voucher code given by customer, you can use this method. It is designed for client side integration which means that is accessible only through public keys. This method is designed to be run directly either in web browsers or mobile apps.\n\n<!-- theme: info -->\n\n> #### Specifying gift credits and loyalty points\n>\n> This endpoint does not support specifying the specific amount of gift credits to apply to an order nor the specific amount of loyalty points to an order. It calculates the amount that is available on the card and applies as much credits or points as possible to cover the total amount. \n\n### Set customer identity (optional)\n\nVoucherify can help you track anonymous customers. Once you integrate Voucherify.js into your web app and call validate method, Voucherify will return a tracking ID and the script will store it in a cookie. Every next validate call will be using the same tracking ID.\n\nWe are tracking users who are validating vouchers with those who consume them by a tracking_id. For that, we are setting up an identity for the user. We will generate a tracking_id on the server side unless you specify it on your own. In both cases, you will receive it in the validation response.\n\nThe returned tracking_id field should be used as customer source_id in subsequent redemption requests. The tracking_id returned from Validation API is encoded. Voucherify will recognize both values for identifying customer - the one before encryption send as a query parameter to `GET validate` request, and the version encrypted and returned as part of the validation request.\n\n### Sample workflow\n\nCustomer tracking workflow in a nutshell:\n\n**Client-side:**\n  * A customer visits your website.\n  * A customer validates a voucher code. That triggers a validate request to Voucherify. In request, you pass tracking_id or customer.source_id. As a result, it returns **encoded tracking_id**.\n\n**Backend:**\n  * Once the customer finishes the checkout process, your website passes the tracking_id to your backend during a redemption. It is sent as a property *source_id* in a customer object.\n  * A customer object is created and within the redemption response, you get a customer.id.\n  * You can use the customer.id or customer.source_id to fetch or modify the customer details.\n  \nA customer is created (upserted) automatically with a redemption call. Alternatively, you can create a new profile by creating a customer via a dedicated API method. Take a look at the customer object to understand the [entity's structure](https://docs.voucherify.io/reference#the-customer-object). \n\n<!-- theme: info -->\n\n> #### Customer identifier\n>\n> Source id of the customer may be either already hashed version of tracking id you received in a response from a validation request or a custom ID you predefined (email address). Nevertheless, we recommend using identifiers delivered by Voucherify API.\n\n<!--\ntitle: \"Example Code - Readable form\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=5OFF5&amount=1500&item[0][sku_id]=sku_13SWYzm3tuMXSP&item[0][quantity]=2&item[1][product_id]=prod_DSFGCz3IFxpkiL&item[1][quantity]=2'\n```\n\n\n### [JSFiddle Example](https://jsfiddle.net/voucherify/gfu2bgn5/)\n<!--\ntitle: \"Example Code - Voucherify.js\"\nlineNumbers: true\n-->\n```javascript\n<script type=\"text/javascript\" src=\"https://cdn.rawgit.com/rspective/voucherify.js/v1.4.5/dist/voucherify-1.4.5.js\"></script>\n\n<script type=\"text/javascript\">\n  function init() {\n    Voucherify.initialize(\n      \"011240bf-d5fc-4ef1-9e82-11eb68c43bf5\", //YOUR-CLIENT-APPLICATION-ID-FROM-SETTINGS\n      \"9e2230c5-71fb-460a-91c6-fbee64707a20\" //YOUR-CLIENT-TOKEN-FROM-SETTINGS\n    );\n  };\n  init();\n  \n  //-- [Optional] If you want us to track your customers' activity, then you should invoke the following function to set identity. You have to do it only once. If the identity parameter is not passed, then we will generate it for you.\n  Voucherify.setIdentity(\"your-customer-uniq-id\");\n  Voucherify.validate(\"Testing7fjWdr\", function callback (response) {\n    console.log(response);\n  });\n</script>\n```\n\n### Examples with Query Parameters\n\n| **Query Parameters** | **Example URL** |\n|:---|:---|\n| Shortcut - `customer` query param instead of `customer[source_id]` | `https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=customer_id` |\n| Pass `customer`'s and `redemption`'s context `metadata` in query parameters | `https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=sure_he_is_new&metadata[shop]=1&customer[metadata][propsy]=2&metadata[test]=true` |\n| Use `tracking_id` instead of `source_id` | `https://api.voucherify.io/client/v1/validate?code=IKU-mvS-JOG&amount=10100&tracking_id=sure_he_is_new_5&metadata[shop]=1&metadata[test]=true` |\n\n### Returns\n\nThis operation returns information about validity of the code. Moreover it returns hashed source identifier which can be used as tracking id in future calls.\n\nIf a validation session is established then the session details will be returned as well. Read more about sessions: Validation Session .\n\nVoucher validation might fail because of one of these reasons:\n\n* `voucher not found` - voucher doesn't exist or was deleted LINK\n* `voucher expired` - voucher is out of [start date - expiration date] time frame\n* `voucher is disabled` - learn more disable voucher LINK\n* `customer does not match segment rules` - learn more customer tracking LINK\n* `order does not match validation rules` - learn more about validation rules LINK",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-Client-Token"
@@ -35371,7 +35573,7 @@
             },
             "in": "query",
             "name": "tracking_id",
-            "description": "A tracking identifier of a user that validated the voucher. Identifier generated during voucher validation based on your internal ID during the first request (e.g., email, database ID). If you do request for the first time, you should pass your internal ID to track customer. **Although not all information is required, the extra info helps prevent fraud.**"
+            "description": "A tracking identifier of a user that validated the voucher. This identifier is generated during voucher validation based on your internal ID (e.g., email, database ID) during the first request. If the request is performed for the first time, pass the internal ID to track the customer. **Although not all information is required, the extra information helps prevent fraud.**"
           },
           {
             "schema": {
@@ -35379,14 +35581,7 @@
             },
             "in": "query",
             "name": "amount",
-            "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts."
-          },
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "order.items"
+            "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order. This amount is the sum of the order items' amounts."
           },
           {
             "schema": {
@@ -35405,17 +35600,6 @@
           {
             "schema": {
               "type": "string",
-              "enum": [
-                "LOCK"
-              ]
-            },
-            "in": "query",
-            "name": "session_type",
-            "description": "Schema model for `session` lock object. The session object is **required** to establish a session between multiple parallel validation and redemption requests. If you only send the `type` parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a [validation session](docs/validations/Validation-Session.md). This parameter is **required** to establish a new session. The session locks the redemption **quantity** by 1."
-          },
-          {
-            "schema": {
-              "type": "string",
               "example": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts"
             },
             "in": "query",
@@ -35428,7 +35612,7 @@
             },
             "in": "query",
             "name": "session_ttl",
-            "description": "Value of session's lifetime in time units.  It is the value for the period of time that the session is active. Units for this parameter are defined by the `session_ttl_unit` parameter."
+            "description": "Value for the period of time that the session is active. Units for this parameter are defined by the `session_ttl_unit` parameter."
           },
           {
             "schema": {
@@ -35439,12 +35623,27 @@
                 "MINUTES",
                 "SECONDS",
                 "MILLISECONDS",
-                "NICROSECONDS"
+                "MICROSECONDS",
+                "NANOSECONDS"
               ]
             },
             "in": "query",
             "name": "session_ttl_unit",
-            "description": " The time unit for session's lifetime. "
+            "description": "Defines the type of unit in which the session time is counted."
+          },
+          {
+            "$ref": "#/components/parameters/metadata"
+          },
+          {
+            "$ref": "#/components/parameters/item"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "session_type",
+            "description": " The session is required to establish a session between multiple parallel validation and redemption requests. This parameter is required to establish a new session. The session locks the **redemption quantity by 1** and additionally the redemption **gift credits** specified within the request for a gift card and the **loyalty points** for a loyalty card."
           }
         ]
       }
