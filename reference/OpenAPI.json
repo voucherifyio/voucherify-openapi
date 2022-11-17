@@ -2098,7 +2098,7 @@
           },
           "fixed_amount_formula": {
             "type": "string",
-            "description": "Formula used to calculated the discounted price of an item or a new order total."
+            "description": "Formula used to calculate the discounted price of an item or a new order total."
           },
           "effect": {
             "type": "string",
@@ -11677,13 +11677,28 @@
                   "$ref": "#/components/schemas/6_res_product_collection"
                 },
                 {
+                  "$ref": "#/components/schemas/6_res_product_collection_unit"
+                },
+                {
+                  "$ref": "#/components/schemas/6_res_product_collection_fixed_amount"
+                },
+                {
                   "$ref": "#/components/schemas/6_res_product"
+                },
+                {
+                  "$ref": "#/components/schemas/6_res_product_unit"
+                },
+                {
+                  "$ref": "#/components/schemas/6_res_product_fixed_amount"
                 },
                 {
                   "$ref": "#/components/schemas/6_res_sku"
                 },
                 {
-                  "$ref": "#/components/schemas/6_res_sku_alternative"
+                  "$ref": "#/components/schemas/6_res_sku_unit"
+                },
+                {
+                  "$ref": "#/components/schemas/6_res_sku_unit_fixed_amount"
                 }
               ]
             }
@@ -11768,6 +11783,35 @@
               "APPLY_TO_MOST_EXPENSIVE"
             ],
             "description": "Defines how the discount is applied to the customer's order."
+          }
+        }
+      },
+      "6_res_product_collection_unit": {
+        "title": "Product Collection for Unit Discount",
+        "type": "object",
+        "description": "Contains definition for a product collection.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "products_collection",
+            "description": "This object stores information about the product collection."
+          },
+          "id": {
+            "type": "string",
+            "example": "pc_4ndRXAsTOzwSdHcQcxf489uU",
+            "description": "Unique product collection ID assigned by Voucherify."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_EVERY",
+              "APPLY_TO_CHEAPEST",
+              "APPLY_TO_MOST_EXPENSIVE"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
           },
           "quantity_limit": {
             "type": "integer",
@@ -11776,6 +11820,44 @@
           "aggregated_quantity_limit": {
             "type": "integer",
             "description": "The maximum number of units allowed to be discounted combined across all matched order line items."
+          }
+        }
+      },
+      "6_res_product_collection_fixed_amount": {
+        "title": "Product Collection for Fixed Amount Discount",
+        "type": "object",
+        "description": "Contains definition for a product collection.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "products_collection",
+            "description": "This object stores information about the product collection."
+          },
+          "id": {
+            "type": "string",
+            "example": "pc_4ndRXAsTOzwSdHcQcxf489uU",
+            "description": "Unique product collection ID assigned by Voucherify."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "price": {
+            "type": "integer",
+            "description": "New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the `price_formula` parameter is present in the fixed price definition, this value becomes the **fallback value**. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price."
+          },
+          "price_formula": {
+            "type": "string",
+            "description": "Formula used to calculate the discounted price of an item.",
+            "example": "\"IF(ORDER_AMOUNT > 300;ORDER_ITEM_PRICE * 0.8;ORDER_ITEM_PRICE)"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_EVERY",
+              "APPLY_TO_CHEAPEST",
+              "APPLY_TO_MOST_EXPENSIVE"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
           }
         }
       },
@@ -11825,6 +11907,14 @@
             "type": "string",
             "description": "The source ID from your inventory system."
           },
+          "product_id": {
+            "type": "string",
+            "description": "Parent product's unique ID assigned by Voucherify."
+          },
+          "product_source_id": {
+            "type": "string",
+            "description": "Parent product's source ID from your inventory system."
+          },
           "strict": {
             "type": "boolean"
           },
@@ -11836,19 +11926,11 @@
               "APPLY_TO_MOST_EXPENSIVE"
             ],
             "description": "Defines how the discount is applied to the customer's order."
-          },
-          "quantity_limit": {
-            "type": "integer",
-            "description": "The maximum number of units allowed to be discounted per order line item."
-          },
-          "aggregated_quantity_limit": {
-            "type": "integer",
-            "description": "The maximum number of units allowed to be discounted combined across all matched order line items."
           }
         }
       },
-      "6_res_sku_alternative": {
-        "title": "SKU (different context)",
+      "6_res_sku_unit": {
+        "title": "SKU for Unit Discount",
         "type": "object",
         "description": "Contains definition for a product variant.",
         "properties": {
@@ -11893,6 +11975,56 @@
           "aggregated_quantity_limit": {
             "type": "integer",
             "description": "The maximum number of units allowed to be discounted combined across all matched order line items."
+          }
+        }
+      },
+      "6_res_sku_unit_fixed_amount": {
+        "title": "SKU for Amount Discount",
+        "type": "object",
+        "description": "Contains definition for a product variant.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "sku",
+            "description": "This object stores information about the product variant."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique SKU ID assigned by Voucherify.",
+            "example": "sku_0b7d7dfb090be5c619"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The source ID from your inventory system."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "Parent product's unique ID assigned by Voucherify."
+          },
+          "product_source_id": {
+            "type": "string",
+            "description": "Parent product's source ID from your inventory system."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "price": {
+            "type": "integer",
+            "description": "New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the `price_formula` parameter is present in the fixed price definition, this value becomes the **fallback value**. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price."
+          },
+          "price_formula": {
+            "type": "string",
+            "description": "Formula used to calculate the discounted price of an item.",
+            "example": "IF(ORDER_AMOUNT > 200;ORDER_ITEM_PRICE * 0.2;6)"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_EVERY",
+              "APPLY_TO_CHEAPEST",
+              "APPLY_TO_MOST_EXPENSIVE"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
           }
         }
       },
@@ -11957,6 +12089,39 @@
               "APPLY_TO_MOST_EXPENSIVE"
             ],
             "description": "Defines how the discount is applied to the customer's order."
+          }
+        }
+      },
+      "6_res_product_unit": {
+        "title": "Product for Unit Discount",
+        "type": "object",
+        "description": "Contains definition for a product.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "product",
+            "description": "This object stores information about the product."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique product ID assigned by Voucherify.",
+            "example": "prod_0bae2dc5a090fd0184"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The product ID from your inventory system."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_EVERY",
+              "APPLY_TO_CHEAPEST",
+              "APPLY_TO_MOST_EXPENSIVE"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
           },
           "quantity_limit": {
             "type": "integer",
@@ -11965,6 +12130,48 @@
           "aggregated_quantity_limit": {
             "type": "integer",
             "description": "The maximum number of units allowed to be discounted combined across all matched order line items."
+          }
+        }
+      },
+      "6_res_product_fixed_amount": {
+        "title": "Product for Fixed Amount Discount",
+        "type": "object",
+        "description": "Contains definition for a product.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "product",
+            "description": "This object stores information about the product."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique product ID assigned by Voucherify.",
+            "example": "prod_0bae2dc5a090fd0184"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The product ID from your inventory system."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "price": {
+            "type": "integer",
+            "description": "New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the `price_formula` parameter is present in the fixed price definition, this value becomes the **fallback value**. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price."
+          },
+          "price_formula": {
+            "type": "string",
+            "description": "Formula used to calculate the discounted price of an item.",
+            "example": "IF(ORDER_AMOUNT > 300;ORDER_ITEM_PRICE * 0.8;ORDER_ITEM_PRICE)"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "APPLY_TO_EVERY",
+              "APPLY_TO_CHEAPEST",
+              "APPLY_TO_MOST_EXPENSIVE"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
           }
         }
       },
@@ -36232,12 +36439,1807 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/6_res_validate_promotion"
+                },
+                "examples": {
+                  "Customer Rules Only": {
+                    "value": {
+                      "valid": true,
+                      "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+                      "promotions": [
+                        {
+                          "valid": true,
+                          "applicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+                          "order": {
+                            "amount": 9351000,
+                            "initial_amount": 72100,
+                            "items_discount_amount": 9340400,
+                            "total_discount_amount": 9340400,
+                            "total_amount": 10600,
+                            "items_applied_discount_amount": 9340400,
+                            "total_applied_discount_amount": 9340400,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9aeddb019a42db",
+                                "quantity": 1,
+                                "amount": 3100,
+                                "price": 3100,
+                                "subtotal_amount": 3100,
+                                "product": {
+                                  "id": "prod_0a9f9aeddb019a42db",
+                                  "name": "Blue T-Shirt",
+                                  "price": 3100
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "sku_id": "sku_0b7d7dfb090be5c619",
+                                "quantity": 23,
+                                "discount_quantity": 22,
+                                "initial_quantity": 1,
+                                "amount": 39100,
+                                "discount_amount": 37400,
+                                "initial_amount": 1700,
+                                "applied_discount_amount": 37400,
+                                "price": 1700,
+                                "subtotal_amount": 1700,
+                                "product": {
+                                  "id": "prod_0b7d7dfb05cbe5c616",
+                                  "source_id": "Books",
+                                  "name": "Comic Books1",
+                                  "price": 2100
+                                },
+                                "sku": {
+                                  "id": "sku_0b7d7dfb090be5c619",
+                                  "source_id": "ComicBook_1",
+                                  "sku": "Comics1",
+                                  "price": 1700
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b72b0bd64d198e3ae",
+                                "quantity": 222,
+                                "discount_quantity": 222,
+                                "initial_quantity": 1,
+                                "amount": 333000,
+                                "discount_amount": 333000,
+                                "initial_amount": 1500,
+                                "applied_discount_amount": 333000,
+                                "price": 1500,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0b72b0bd64d198e3ae",
+                                  "source_id": "vase_1",
+                                  "name": "Vase - Boho Vintage",
+                                  "price": 1500
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7c4e814be5c502",
+                                "quantity": 111,
+                                "discount_quantity": 111,
+                                "initial_quantity": 1,
+                                "amount": 6660000,
+                                "discount_amount": 6660000,
+                                "initial_amount": 60000,
+                                "applied_discount_amount": 6660000,
+                                "price": 60000,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0b7d7c4e814be5c502",
+                                  "source_id": "prod_1",
+                                  "name": "Apple iPhone 12",
+                                  "price": 60000
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0bae2dc5a090fd0184",
+                                "sku_id": "sku_0bae3b28f610fd0da1",
+                                "quantity": 11,
+                                "discount_quantity": 11,
+                                "initial_quantity": 0,
+                                "amount": 2310000,
+                                "discount_amount": 2310000,
+                                "initial_amount": 0,
+                                "applied_discount_amount": 2310000,
+                                "price": 210000,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0bae2dc5a090fd0184",
+                                  "source_id": "first_product",
+                                  "name": "Samsung Phone 1",
+                                  "price": 220000
+                                },
+                                "sku": {
+                                  "id": "sku_0bae3b28f610fd0da1",
+                                  "source_id": "first_product_sku_1",
+                                  "sku": "Samsung phone 256GB",
+                                  "price": 210000
+                                }
+                              }
+                            ],
+                            "metadata": {
+                              "payment_mean": [
+                                "credit-card"
+                              ]
+                            },
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "id": "promo_ByIIAHC1Mz9ouJsitzAWsush",
+                          "name": "Multiple",
+                          "discount": {
+                            "type": "UNIT",
+                            "effect": "ADD_MANY_ITEMS",
+                            "units": [
+                              {
+                                "effect": "ADD_MISSING_ITEMS",
+                                "unit_off": 11,
+                                "unit_type": "sku_0bae3b28f610fd0da1",
+                                "sku": {
+                                  "id": "sku_0bae3b28f610fd0da1",
+                                  "source_id": "first_product_sku_1",
+                                  "sku": "Samsung phone 256GB"
+                                },
+                                "product": {
+                                  "id": "prod_0bae2dc5a090fd0184",
+                                  "source_id": "first_product",
+                                  "name": "Samsung Phone 1"
+                                }
+                              },
+                              {
+                                "effect": "ADD_NEW_ITEMS",
+                                "unit_off": 22,
+                                "unit_type": "sku_0b7d7dfb090be5c619",
+                                "sku": {
+                                  "id": "sku_0b7d7dfb090be5c619",
+                                  "source_id": "ComicBook_1",
+                                  "sku": "Comics1"
+                                },
+                                "product": {
+                                  "id": "prod_0b7d7dfb05cbe5c616",
+                                  "source_id": "Books",
+                                  "name": "Comic Books1"
+                                }
+                              },
+                              {
+                                "effect": "ADD_MISSING_ITEMS",
+                                "unit_off": 111,
+                                "unit_type": "prod_0b7d7c4e814be5c502",
+                                "product": {
+                                  "id": "prod_0b7d7c4e814be5c502",
+                                  "source_id": "prod_1",
+                                  "name": "Apple iPhone 12"
+                                }
+                              },
+                              {
+                                "effect": "ADD_MISSING_ITEMS",
+                                "unit_off": 222,
+                                "unit_type": "prod_0b72b0bd64d198e3ae",
+                                "product": {
+                                  "id": "prod_0b72b0bd64d198e3ae",
+                                  "source_id": "vase_1",
+                                  "name": "Vase - Boho Vintage"
+                                }
+                              }
+                            ]
+                          },
+                          "campaign": {
+                            "id": "camp_JtoaZ8Qgpf6FkMAy2wWiOJWH",
+                            "start_date": null,
+                            "expiration_date": null,
+                            "active": true,
+                            "object": "campaign"
+                          },
+                          "hierarchy": 1,
+                          "discount_amount": 9340400,
+                          "applied_discount_amount": 9340400,
+                          "metadata": {},
+                          "object": "promotion_tier"
+                        },
+                        {
+                          "valid": true,
+                          "applicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+                          "order": {
+                            "amount": 9522100,
+                            "initial_amount": 72100,
+                            "items_discount_amount": 9450000,
+                            "total_discount_amount": 9450000,
+                            "total_amount": 72100,
+                            "items_applied_discount_amount": 9450000,
+                            "total_applied_discount_amount": 9450000,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9aeddb019a42db",
+                                "quantity": 1,
+                                "amount": 3100,
+                                "price": 3100,
+                                "subtotal_amount": 3100,
+                                "product": {
+                                  "id": "prod_0a9f9aeddb019a42db",
+                                  "name": "Blue T-Shirt",
+                                  "price": 3100
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "sku_id": "sku_0b7d7dfb090be5c619",
+                                "quantity": 1,
+                                "amount": 1700,
+                                "price": 1700,
+                                "subtotal_amount": 1700,
+                                "product": {
+                                  "id": "prod_0b7d7dfb05cbe5c616",
+                                  "source_id": "Books",
+                                  "name": "Comic Books1",
+                                  "price": 2100
+                                },
+                                "sku": {
+                                  "id": "sku_0b7d7dfb090be5c619",
+                                  "source_id": "ComicBook_1",
+                                  "sku": "Comics1",
+                                  "price": 1700
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b72b0bd64d198e3ae",
+                                "quantity": 1,
+                                "amount": 1500,
+                                "price": 1500,
+                                "subtotal_amount": 1500,
+                                "product": {
+                                  "id": "prod_0b72b0bd64d198e3ae",
+                                  "source_id": "vase_1",
+                                  "name": "Vase - Boho Vintage",
+                                  "price": 1500
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7c4e814be5c502",
+                                "quantity": 1,
+                                "amount": 60000,
+                                "price": 60000,
+                                "subtotal_amount": 60000,
+                                "product": {
+                                  "id": "prod_0b7d7c4e814be5c502",
+                                  "source_id": "prod_1",
+                                  "name": "Apple iPhone 12",
+                                  "price": 60000
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0bae2dc5a090fd0184",
+                                "sku_id": "sku_0bae3b28f610fd0da1",
+                                "quantity": 45,
+                                "discount_quantity": 45,
+                                "initial_quantity": 0,
+                                "amount": 9450000,
+                                "discount_amount": 9450000,
+                                "initial_amount": 0,
+                                "applied_discount_amount": 9450000,
+                                "price": 210000,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0bae2dc5a090fd0184",
+                                  "source_id": "first_product",
+                                  "name": "Samsung Phone 1",
+                                  "price": 220000
+                                },
+                                "sku": {
+                                  "id": "sku_0bae3b28f610fd0da1",
+                                  "source_id": "first_product_sku_1",
+                                  "sku": "Samsung phone 256GB",
+                                  "price": 210000
+                                }
+                              }
+                            ],
+                            "metadata": {
+                              "payment_mean": [
+                                "credit-card"
+                              ]
+                            },
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "id": "promo_ZWkx6R0I1Ts3N9HL4kfTdxOm",
+                          "name": "Add new SKU",
+                          "discount": {
+                            "type": "UNIT",
+                            "effect": "ADD_NEW_ITEMS",
+                            "unit_off": 45,
+                            "unit_type": "sku_0bae3b28f610fd0da1",
+                            "sku": {
+                              "id": "sku_0bae3b28f610fd0da1",
+                              "source_id": "first_product_sku_1",
+                              "sku": "Samsung phone 256GB"
+                            },
+                            "product": {
+                              "id": "prod_0bae2dc5a090fd0184",
+                              "source_id": "first_product",
+                              "name": "Samsung Phone 1"
+                            }
+                          },
+                          "campaign": {
+                            "id": "camp_40LC42P5NFbkkD4RWoJ4btks",
+                            "start_date": null,
+                            "expiration_date": null,
+                            "active": true,
+                            "object": "campaign"
+                          },
+                          "hierarchy": 4,
+                          "discount_amount": 9450000,
+                          "applied_discount_amount": 9450000,
+                          "metadata": {},
+                          "object": "promotion_tier"
+                        },
+                        {
+                          "valid": true,
+                          "applicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+                          "order": {
+                            "amount": 109500,
+                            "initial_amount": 72100,
+                            "items_discount_amount": 39100,
+                            "total_discount_amount": 39100,
+                            "total_amount": 70400,
+                            "items_applied_discount_amount": 39100,
+                            "total_applied_discount_amount": 39100,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9aeddb019a42db",
+                                "quantity": 1,
+                                "amount": 3100,
+                                "price": 3100,
+                                "subtotal_amount": 3100,
+                                "product": {
+                                  "id": "prod_0a9f9aeddb019a42db",
+                                  "name": "Blue T-Shirt",
+                                  "price": 3100
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "sku_id": "sku_0b7d7dfb090be5c619",
+                                "quantity": 23,
+                                "discount_quantity": 23,
+                                "initial_quantity": 1,
+                                "amount": 39100,
+                                "discount_amount": 39100,
+                                "initial_amount": 1700,
+                                "applied_discount_amount": 39100,
+                                "price": 1700,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0b7d7dfb05cbe5c616",
+                                  "source_id": "Books",
+                                  "name": "Comic Books1",
+                                  "price": 2100
+                                },
+                                "sku": {
+                                  "id": "sku_0b7d7dfb090be5c619",
+                                  "source_id": "ComicBook_1",
+                                  "sku": "Comics1",
+                                  "price": 1700
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b72b0bd64d198e3ae",
+                                "quantity": 1,
+                                "amount": 1500,
+                                "price": 1500,
+                                "subtotal_amount": 1500,
+                                "product": {
+                                  "id": "prod_0b72b0bd64d198e3ae",
+                                  "source_id": "vase_1",
+                                  "name": "Vase - Boho Vintage",
+                                  "price": 1500
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7c4e814be5c502",
+                                "quantity": 1,
+                                "amount": 60000,
+                                "price": 60000,
+                                "subtotal_amount": 60000,
+                                "product": {
+                                  "id": "prod_0b7d7c4e814be5c502",
+                                  "source_id": "prod_1",
+                                  "name": "Apple iPhone 12",
+                                  "price": 60000
+                                }
+                              }
+                            ],
+                            "metadata": {
+                              "payment_mean": [
+                                "credit-card"
+                              ]
+                            },
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "id": "promo_NcdD0zLo6FUhKWpNrNuP3Pte",
+                          "name": "Add missing SKU",
+                          "discount": {
+                            "type": "UNIT",
+                            "effect": "ADD_MISSING_ITEMS",
+                            "unit_off": 23,
+                            "unit_type": "sku_0b7d7dfb090be5c619",
+                            "sku": {
+                              "id": "sku_0b7d7dfb090be5c619",
+                              "source_id": "ComicBook_1",
+                              "sku": "Comics1"
+                            },
+                            "product": {
+                              "id": "prod_0b7d7dfb05cbe5c616",
+                              "source_id": "Books",
+                              "name": "Comic Books1"
+                            }
+                          },
+                          "campaign": {
+                            "id": "camp_40LC42P5NFbkkD4RWoJ4btks",
+                            "start_date": null,
+                            "expiration_date": null,
+                            "active": true,
+                            "object": "campaign"
+                          },
+                          "hierarchy": 3,
+                          "discount_amount": 39100,
+                          "applied_discount_amount": 39100,
+                          "metadata": {},
+                          "object": "promotion_tier"
+                        },
+                        {
+                          "valid": true,
+                          "applicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+                          "order": {
+                            "amount": 76100,
+                            "initial_amount": 72100,
+                            "items_discount_amount": 4000,
+                            "total_discount_amount": 4000,
+                            "total_amount": 72100,
+                            "items_applied_discount_amount": 4000,
+                            "total_applied_discount_amount": 4000,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9aeddb019a42db",
+                                "quantity": 1,
+                                "amount": 3100,
+                                "price": 3100,
+                                "subtotal_amount": 3100,
+                                "product": {
+                                  "id": "prod_0a9f9aeddb019a42db",
+                                  "name": "Blue T-Shirt",
+                                  "price": 3100
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "sku_id": "sku_0b7d7dfb090be5c619",
+                                "quantity": 1,
+                                "amount": 1700,
+                                "price": 1700,
+                                "subtotal_amount": 1700,
+                                "product": {
+                                  "id": "prod_0b7d7dfb05cbe5c616",
+                                  "source_id": "Books",
+                                  "name": "Comic Books1",
+                                  "price": 2100
+                                },
+                                "sku": {
+                                  "id": "sku_0b7d7dfb090be5c619",
+                                  "source_id": "ComicBook_1",
+                                  "sku": "Comics1",
+                                  "price": 1700
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b72b0bd64d198e3ae",
+                                "quantity": 1,
+                                "amount": 1500,
+                                "price": 1500,
+                                "subtotal_amount": 1500,
+                                "product": {
+                                  "id": "prod_0b72b0bd64d198e3ae",
+                                  "source_id": "vase_1",
+                                  "name": "Vase - Boho Vintage",
+                                  "price": 1500
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7c4e814be5c502",
+                                "quantity": 1,
+                                "amount": 60000,
+                                "price": 60000,
+                                "subtotal_amount": 60000,
+                                "product": {
+                                  "id": "prod_0b7d7c4e814be5c502",
+                                  "source_id": "prod_1",
+                                  "name": "Apple iPhone 12",
+                                  "price": 60000
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b72b00ffed198e344",
+                                "quantity": 8,
+                                "discount_quantity": 8,
+                                "initial_quantity": 0,
+                                "amount": 4000,
+                                "discount_amount": 4000,
+                                "initial_amount": 0,
+                                "applied_discount_amount": 4000,
+                                "price": 500,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0b72b00ffed198e344",
+                                  "source_id": "roses_1",
+                                  "name": "Bouquet - Romantic Roses",
+                                  "price": 500
+                                }
+                              }
+                            ],
+                            "metadata": {
+                              "payment_mean": [
+                                "credit-card"
+                              ]
+                            },
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "id": "promo_nGr1SWuy9vduABkbbJkl8cHb",
+                          "name": "Add new order items",
+                          "banner": "Add Romantic Roses",
+                          "discount": {
+                            "type": "UNIT",
+                            "effect": "ADD_NEW_ITEMS",
+                            "unit_off": 8,
+                            "unit_type": "prod_0b72b00ffed198e344",
+                            "product": {
+                              "id": "prod_0b72b00ffed198e344",
+                              "source_id": "roses_1",
+                              "name": "Bouquet - Romantic Roses"
+                            }
+                          },
+                          "campaign": {
+                            "id": "camp_40LC42P5NFbkkD4RWoJ4btks",
+                            "start_date": null,
+                            "expiration_date": null,
+                            "active": true,
+                            "object": "campaign"
+                          },
+                          "hierarchy": 2,
+                          "discount_amount": 4000,
+                          "applied_discount_amount": 4000,
+                          "metadata": {},
+                          "object": "promotion_tier"
+                        },
+                        {
+                          "valid": true,
+                          "applicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+                          "order": {
+                            "amount": 78100,
+                            "initial_amount": 72100,
+                            "items_discount_amount": 7500,
+                            "total_discount_amount": 7500,
+                            "total_amount": 70600,
+                            "items_applied_discount_amount": 7500,
+                            "total_applied_discount_amount": 7500,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9aeddb019a42db",
+                                "quantity": 1,
+                                "amount": 3100,
+                                "price": 3100,
+                                "subtotal_amount": 3100,
+                                "product": {
+                                  "id": "prod_0a9f9aeddb019a42db",
+                                  "name": "Blue T-Shirt",
+                                  "price": 3100
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "sku_id": "sku_0b7d7dfb090be5c619",
+                                "quantity": 1,
+                                "amount": 1700,
+                                "price": 1700,
+                                "subtotal_amount": 1700,
+                                "product": {
+                                  "id": "prod_0b7d7dfb05cbe5c616",
+                                  "source_id": "Books",
+                                  "name": "Comic Books1",
+                                  "price": 2100
+                                },
+                                "sku": {
+                                  "id": "sku_0b7d7dfb090be5c619",
+                                  "source_id": "ComicBook_1",
+                                  "sku": "Comics1",
+                                  "price": 1700
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b72b0bd64d198e3ae",
+                                "quantity": 5,
+                                "discount_quantity": 5,
+                                "initial_quantity": 1,
+                                "amount": 7500,
+                                "discount_amount": 7500,
+                                "initial_amount": 1500,
+                                "applied_discount_amount": 7500,
+                                "price": 1500,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0b72b0bd64d198e3ae",
+                                  "source_id": "vase_1",
+                                  "name": "Vase - Boho Vintage",
+                                  "price": 1500
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7c4e814be5c502",
+                                "quantity": 1,
+                                "amount": 60000,
+                                "price": 60000,
+                                "subtotal_amount": 60000,
+                                "product": {
+                                  "id": "prod_0b7d7c4e814be5c502",
+                                  "source_id": "prod_1",
+                                  "name": "Apple iPhone 12",
+                                  "price": 60000
+                                }
+                              }
+                            ],
+                            "metadata": {
+                              "payment_mean": [
+                                "credit-card"
+                              ]
+                            },
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "id": "promo_R50x0A66V6jmPhM7YYOcFZfL",
+                          "name": "Add missing order items",
+                          "banner": "Add Boho Vintage",
+                          "discount": {
+                            "type": "UNIT",
+                            "effect": "ADD_MISSING_ITEMS",
+                            "unit_off": 5,
+                            "unit_type": "prod_0b72b0bd64d198e3ae",
+                            "product": {
+                              "id": "prod_0b72b0bd64d198e3ae",
+                              "source_id": "vase_1",
+                              "name": "Vase - Boho Vintage"
+                            }
+                          },
+                          "campaign": {
+                            "id": "camp_40LC42P5NFbkkD4RWoJ4btks",
+                            "start_date": null,
+                            "expiration_date": null,
+                            "active": true,
+                            "object": "campaign"
+                          },
+                          "hierarchy": 1,
+                          "discount_amount": 7500,
+                          "applied_discount_amount": 7500,
+                          "metadata": {},
+                          "object": "promotion_tier"
+                        },
+                        {
+                          "valid": true,
+                          "applicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+                          "order": {
+                            "amount": 72100,
+                            "total_amount": 72100,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9aeddb019a42db",
+                                "quantity": 1,
+                                "amount": 3100,
+                                "price": 3100,
+                                "subtotal_amount": 3100,
+                                "product": {
+                                  "id": "prod_0a9f9aeddb019a42db",
+                                  "name": "Blue T-Shirt",
+                                  "price": 3100
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "sku_id": "sku_0b7d7dfb090be5c619",
+                                "quantity": 1,
+                                "amount": 1700,
+                                "price": 1700,
+                                "subtotal_amount": 1700,
+                                "product": {
+                                  "id": "prod_0b7d7dfb05cbe5c616",
+                                  "source_id": "Books",
+                                  "name": "Comic Books1",
+                                  "price": 2100
+                                },
+                                "sku": {
+                                  "id": "sku_0b7d7dfb090be5c619",
+                                  "source_id": "ComicBook_1",
+                                  "sku": "Comics1",
+                                  "price": 1700
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b72b0bd64d198e3ae",
+                                "quantity": 1,
+                                "amount": 1500,
+                                "price": 1500,
+                                "subtotal_amount": 1500,
+                                "product": {
+                                  "id": "prod_0b72b0bd64d198e3ae",
+                                  "source_id": "vase_1",
+                                  "name": "Vase - Boho Vintage",
+                                  "price": 1500
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7c4e814be5c502",
+                                "quantity": 1,
+                                "amount": 60000,
+                                "price": 60000,
+                                "subtotal_amount": 60000,
+                                "product": {
+                                  "id": "prod_0b7d7c4e814be5c502",
+                                  "source_id": "prod_1",
+                                  "name": "Apple iPhone 12",
+                                  "price": 60000
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_5h1pp1ng",
+                                "quantity": 1,
+                                "discount_quantity": 1,
+                                "initial_quantity": 0,
+                                "product": {
+                                  "id": "prod_5h1pp1ng",
+                                  "source_id": "5h1pp1ng",
+                                  "name": "Shipping"
+                                }
+                              }
+                            ],
+                            "metadata": {
+                              "payment_mean": [
+                                "credit-card"
+                              ]
+                            },
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "id": "promo_jp2l6wRcTL4cARG5E8XRo42A",
+                          "name": "Get",
+                          "banner": "Free shipping",
+                          "discount": {
+                            "type": "UNIT",
+                            "effect": "ADD_MISSING_ITEMS",
+                            "unit_off": 1,
+                            "unit_type": "prod_5h1pp1ng",
+                            "product": {
+                              "id": "prod_5h1pp1ng",
+                              "source_id": "5h1pp1ng",
+                              "name": "Shipping"
+                            }
+                          },
+                          "campaign": {
+                            "id": "camp_wCEdu2igBcyv7CNna9ughGKc",
+                            "start_date": null,
+                            "expiration_date": null,
+                            "active": true,
+                            "object": "campaign"
+                          },
+                          "hierarchy": 1,
+                          "metadata": {
+                            "has_budget": true,
+                            "audience_restricted": false
+                          },
+                          "object": "promotion_tier"
+                        },
+                        {
+                          "valid": true,
+                          "applicable_to": {
+                            "data": [
+                              {
+                                "object": "products_collection",
+                                "id": "pc_a11pr0dUc75",
+                                "strict": false,
+                                "price": 800,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "product",
+                                "id": "prod_0a9f9ab4ab019a42d5",
+                                "source_id": "prod_0a9f9ab4ab019a42d5",
+                                "strict": true,
+                                "price": 800,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "product",
+                                "id": "prod_0a9f9aeddb019a42db",
+                                "source_id": "prod_0a9f9aeddb019a42db",
+                                "strict": true,
+                                "price": 800,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "sku",
+                                "id": "sku_0b7d7dfb090be5c619",
+                                "source_id": "ComicBook_1",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "product_source_id": "Books",
+                                "strict": true,
+                                "price": 800,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "product",
+                                "id": "prod_0b72b0bd64d198e3ae",
+                                "source_id": "vase_1",
+                                "strict": true,
+                                "price": 800,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "product",
+                                "id": "prod_0b7d7c4e814be5c502",
+                                "source_id": "prod_1",
+                                "strict": true,
+                                "price": 800,
+                                "effect": "APPLY_TO_EVERY"
+                              }
+                            ],
+                            "total": 6,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+                          "order": {
+                            "amount": 72100,
+                            "items_discount_amount": 67300,
+                            "total_discount_amount": 67300,
+                            "total_amount": 4800,
+                            "items_applied_discount_amount": 67300,
+                            "total_applied_discount_amount": 67300,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "discount_amount": 2100,
+                                "applied_discount_amount": 2100,
+                                "price": 2900,
+                                "subtotal_amount": 800,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9aeddb019a42db",
+                                "quantity": 1,
+                                "amount": 3100,
+                                "discount_amount": 2300,
+                                "applied_discount_amount": 2300,
+                                "price": 3100,
+                                "subtotal_amount": 800,
+                                "product": {
+                                  "id": "prod_0a9f9aeddb019a42db",
+                                  "name": "Blue T-Shirt",
+                                  "price": 3100
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "discount_amount": 2100,
+                                "applied_discount_amount": 2100,
+                                "price": 2900,
+                                "subtotal_amount": 800,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "sku_id": "sku_0b7d7dfb090be5c619",
+                                "quantity": 1,
+                                "amount": 1700,
+                                "discount_amount": 900,
+                                "applied_discount_amount": 900,
+                                "price": 1700,
+                                "subtotal_amount": 800,
+                                "product": {
+                                  "id": "prod_0b7d7dfb05cbe5c616",
+                                  "source_id": "Books",
+                                  "name": "Comic Books1",
+                                  "price": 2100
+                                },
+                                "sku": {
+                                  "id": "sku_0b7d7dfb090be5c619",
+                                  "source_id": "ComicBook_1",
+                                  "sku": "Comics1",
+                                  "price": 1700
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b72b0bd64d198e3ae",
+                                "quantity": 1,
+                                "amount": 1500,
+                                "discount_amount": 700,
+                                "applied_discount_amount": 700,
+                                "price": 1500,
+                                "subtotal_amount": 800,
+                                "product": {
+                                  "id": "prod_0b72b0bd64d198e3ae",
+                                  "source_id": "vase_1",
+                                  "name": "Vase - Boho Vintage",
+                                  "price": 1500
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7c4e814be5c502",
+                                "quantity": 1,
+                                "amount": 60000,
+                                "discount_amount": 59200,
+                                "applied_discount_amount": 59200,
+                                "price": 60000,
+                                "subtotal_amount": 800,
+                                "product": {
+                                  "id": "prod_0b7d7c4e814be5c502",
+                                  "source_id": "prod_1",
+                                  "name": "Apple iPhone 12",
+                                  "price": 60000
+                                }
+                              }
+                            ],
+                            "metadata": {
+                              "payment_mean": [
+                                "credit-card"
+                              ]
+                            },
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "id": "promo_WEloFBBJ8JJDCxrtR1FPy6t1",
+                          "name": "Get Amount Off",
+                          "banner": "Every product is worth 8",
+                          "discount": {
+                            "type": "FIXED",
+                            "effect": "APPLY_TO_ITEMS"
+                          },
+                          "campaign": {
+                            "id": "camp_Ds2u0MSFGuKhDuR3jEa5dHBx",
+                            "start_date": null,
+                            "expiration_date": null,
+                            "active": true,
+                            "object": "campaign"
+                          },
+                          "hierarchy": 2,
+                          "discount_amount": 67300,
+                          "applied_discount_amount": 67300,
+                          "metadata": {
+                            "has_budget": true,
+                            "audience_restricted": false
+                          },
+                          "object": "promotion_tier"
+                        }
+                      ]
+                    }
+                  },
+                  "Campaign specific": {
+                    "value": {
+                      "valid": true,
+                      "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+                      "promotions": [
+                        {
+                          "valid": true,
+                          "applicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+                          "order": {
+                            "amount": 72100,
+                            "discount_amount": 100,
+                            "total_discount_amount": 100,
+                            "total_amount": 72000,
+                            "applied_discount_amount": 100,
+                            "total_applied_discount_amount": 100,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9aeddb019a42db",
+                                "quantity": 1,
+                                "amount": 3100,
+                                "price": 3100,
+                                "subtotal_amount": 3100,
+                                "product": {
+                                  "id": "prod_0a9f9aeddb019a42db",
+                                  "name": "Blue T-Shirt",
+                                  "price": 3100
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "sku_id": "sku_0b7d7dfb090be5c619",
+                                "quantity": 1,
+                                "amount": 1700,
+                                "price": 1700,
+                                "subtotal_amount": 1700,
+                                "product": {
+                                  "id": "prod_0b7d7dfb05cbe5c616",
+                                  "source_id": "Books",
+                                  "name": "Comic Books1",
+                                  "price": 2100
+                                },
+                                "sku": {
+                                  "id": "sku_0b7d7dfb090be5c619",
+                                  "source_id": "ComicBook_1",
+                                  "sku": "Comics1",
+                                  "price": 1700
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b72b0bd64d198e3ae",
+                                "quantity": 1,
+                                "amount": 1500,
+                                "price": 1500,
+                                "subtotal_amount": 1500,
+                                "product": {
+                                  "id": "prod_0b72b0bd64d198e3ae",
+                                  "source_id": "vase_1",
+                                  "name": "Vase - Boho Vintage",
+                                  "price": 1500
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7c4e814be5c502",
+                                "quantity": 1,
+                                "amount": 60000,
+                                "price": 60000,
+                                "subtotal_amount": 60000,
+                                "product": {
+                                  "id": "prod_0b7d7c4e814be5c502",
+                                  "source_id": "prod_1",
+                                  "name": "Apple iPhone 12",
+                                  "price": 60000
+                                }
+                              }
+                            ],
+                            "metadata": {
+                              "payment_mean": [
+                                "credit-card"
+                              ]
+                            },
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "id": "promo_g83qUzYZpfX0OMAFOVoQuOYG",
+                          "name": "1",
+                          "discount": {
+                            "type": "AMOUNT",
+                            "effect": "APPLY_TO_ORDER",
+                            "amount_off": 100
+                          },
+                          "campaign": {
+                            "id": "camp_nYcAyjFXmEaBU0nB7EQ4hVTr",
+                            "start_date": null,
+                            "expiration_date": null,
+                            "active": true,
+                            "categories": [
+                              {
+                                "id": "cat_0b5f66bc97ce5be3c6",
+                                "name": "Sixth",
+                                "hierarchy": 6,
+                                "created_at": "2022-07-13T08:27:14.926Z",
+                                "object": "category"
+                              }
+                            ],
+                            "object": "campaign"
+                          },
+                          "hierarchy": 1,
+                          "discount_amount": 100,
+                          "applied_discount_amount": 100,
+                          "metadata": {},
+                          "object": "promotion_tier"
+                        }
+                      ]
+                    }
+                  },
+                  "Promotion Tier Metadata": {
+                    "value": {
+                      "valid": true,
+                      "tracking_id": "track_oNgl7cQ8tVTg/fIVul/GKA==",
+                      "promotions": [
+                        {
+                          "valid": true,
+                          "applicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "tracking_id": "track_oNgl7cQ8tVTg/fIVul/GKA==",
+                          "order": {
+                            "amount": 72100,
+                            "total_amount": 72100,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9aeddb019a42db",
+                                "quantity": 1,
+                                "amount": 3100,
+                                "price": 3100,
+                                "subtotal_amount": 3100,
+                                "product": {
+                                  "id": "prod_0a9f9aeddb019a42db",
+                                  "name": "Blue T-Shirt",
+                                  "price": 3100
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "price": 2900,
+                                "subtotal_amount": 2900,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "sku_id": "sku_0b7d7dfb090be5c619",
+                                "quantity": 1,
+                                "amount": 1700,
+                                "price": 1700,
+                                "subtotal_amount": 1700,
+                                "product": {
+                                  "id": "prod_0b7d7dfb05cbe5c616",
+                                  "source_id": "Books",
+                                  "name": "Comic Books1",
+                                  "price": 2100
+                                },
+                                "sku": {
+                                  "id": "sku_0b7d7dfb090be5c619",
+                                  "source_id": "ComicBook_1",
+                                  "sku": "Comics1",
+                                  "price": 1700
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b72b0bd64d198e3ae",
+                                "quantity": 1,
+                                "amount": 1500,
+                                "price": 1500,
+                                "subtotal_amount": 1500,
+                                "product": {
+                                  "id": "prod_0b72b0bd64d198e3ae",
+                                  "source_id": "vase_1",
+                                  "name": "Vase - Boho Vintage",
+                                  "price": 1500
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7c4e814be5c502",
+                                "quantity": 1,
+                                "amount": 60000,
+                                "price": 60000,
+                                "subtotal_amount": 60000,
+                                "product": {
+                                  "id": "prod_0b7d7c4e814be5c502",
+                                  "source_id": "prod_1",
+                                  "name": "Apple iPhone 12",
+                                  "price": 60000
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_5h1pp1ng",
+                                "quantity": 1,
+                                "discount_quantity": 1,
+                                "initial_quantity": 0,
+                                "product": {
+                                  "id": "prod_5h1pp1ng",
+                                  "source_id": "5h1pp1ng",
+                                  "name": "Shipping"
+                                }
+                              }
+                            ],
+                            "metadata": {
+                              "payment_mean": [
+                                "credit-card"
+                              ]
+                            },
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "id": "promo_jp2l6wRcTL4cARG5E8XRo42A",
+                          "name": "Get",
+                          "banner": "Free shipping",
+                          "discount": {
+                            "type": "UNIT",
+                            "effect": "ADD_MISSING_ITEMS",
+                            "unit_off": 1,
+                            "unit_type": "prod_5h1pp1ng",
+                            "product": {
+                              "id": "prod_5h1pp1ng",
+                              "source_id": "5h1pp1ng",
+                              "name": "Shipping"
+                            }
+                          },
+                          "campaign": {
+                            "id": "camp_wCEdu2igBcyv7CNna9ughGKc",
+                            "start_date": null,
+                            "expiration_date": null,
+                            "active": true,
+                            "object": "campaign"
+                          },
+                          "hierarchy": 1,
+                          "metadata": {
+                            "has_budget": true,
+                            "audience_restricted": false
+                          },
+                          "object": "promotion_tier"
+                        },
+                        {
+                          "valid": true,
+                          "applicable_to": {
+                            "data": [
+                              {
+                                "object": "products_collection",
+                                "id": "pc_a11pr0dUc75",
+                                "strict": false,
+                                "price": 800,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "product",
+                                "id": "prod_0a9f9ab4ab019a42d5",
+                                "source_id": "prod_0a9f9ab4ab019a42d5",
+                                "strict": true,
+                                "price": 800,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "product",
+                                "id": "prod_0a9f9aeddb019a42db",
+                                "source_id": "prod_0a9f9aeddb019a42db",
+                                "strict": true,
+                                "price": 800,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "sku",
+                                "id": "sku_0b7d7dfb090be5c619",
+                                "source_id": "ComicBook_1",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "product_source_id": "Books",
+                                "strict": true,
+                                "price": 800,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "product",
+                                "id": "prod_0b72b0bd64d198e3ae",
+                                "source_id": "vase_1",
+                                "strict": true,
+                                "price": 800,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "product",
+                                "id": "prod_0b7d7c4e814be5c502",
+                                "source_id": "prod_1",
+                                "strict": true,
+                                "price": 800,
+                                "effect": "APPLY_TO_EVERY"
+                              }
+                            ],
+                            "total": 6,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "tracking_id": "track_oNgl7cQ8tVTg/fIVul/GKA==",
+                          "order": {
+                            "amount": 72100,
+                            "items_discount_amount": 67300,
+                            "total_discount_amount": 67300,
+                            "total_amount": 4800,
+                            "items_applied_discount_amount": 67300,
+                            "total_applied_discount_amount": 67300,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "discount_amount": 2100,
+                                "applied_discount_amount": 2100,
+                                "price": 2900,
+                                "subtotal_amount": 800,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9aeddb019a42db",
+                                "quantity": 1,
+                                "amount": 3100,
+                                "discount_amount": 2300,
+                                "applied_discount_amount": 2300,
+                                "price": 3100,
+                                "subtotal_amount": 800,
+                                "product": {
+                                  "id": "prod_0a9f9aeddb019a42db",
+                                  "name": "Blue T-Shirt",
+                                  "price": 3100
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a9f9ab4ab019a42d5",
+                                "quantity": 1,
+                                "amount": 2900,
+                                "discount_amount": 2100,
+                                "applied_discount_amount": 2100,
+                                "price": 2900,
+                                "subtotal_amount": 800,
+                                "product": {
+                                  "id": "prod_0a9f9ab4ab019a42d5",
+                                  "name": "Red T-Shirt",
+                                  "price": 2900
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "sku_id": "sku_0b7d7dfb090be5c619",
+                                "quantity": 1,
+                                "amount": 1700,
+                                "discount_amount": 900,
+                                "applied_discount_amount": 900,
+                                "price": 1700,
+                                "subtotal_amount": 800,
+                                "product": {
+                                  "id": "prod_0b7d7dfb05cbe5c616",
+                                  "source_id": "Books",
+                                  "name": "Comic Books1",
+                                  "price": 2100
+                                },
+                                "sku": {
+                                  "id": "sku_0b7d7dfb090be5c619",
+                                  "source_id": "ComicBook_1",
+                                  "sku": "Comics1",
+                                  "price": 1700
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b72b0bd64d198e3ae",
+                                "quantity": 1,
+                                "amount": 1500,
+                                "discount_amount": 700,
+                                "applied_discount_amount": 700,
+                                "price": 1500,
+                                "subtotal_amount": 800,
+                                "product": {
+                                  "id": "prod_0b72b0bd64d198e3ae",
+                                  "source_id": "vase_1",
+                                  "name": "Vase - Boho Vintage",
+                                  "price": 1500
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7c4e814be5c502",
+                                "quantity": 1,
+                                "amount": 60000,
+                                "discount_amount": 59200,
+                                "applied_discount_amount": 59200,
+                                "price": 60000,
+                                "subtotal_amount": 800,
+                                "product": {
+                                  "id": "prod_0b7d7c4e814be5c502",
+                                  "source_id": "prod_1",
+                                  "name": "Apple iPhone 12",
+                                  "price": 60000
+                                }
+                              }
+                            ],
+                            "metadata": {
+                              "payment_mean": [
+                                "credit-card"
+                              ]
+                            },
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "id": "promo_WEloFBBJ8JJDCxrtR1FPy6t1",
+                          "name": "Get Amount Off",
+                          "banner": "Every product is worth 8",
+                          "discount": {
+                            "type": "FIXED",
+                            "effect": "APPLY_TO_ITEMS"
+                          },
+                          "campaign": {
+                            "id": "camp_Ds2u0MSFGuKhDuR3jEa5dHBx",
+                            "start_date": null,
+                            "expiration_date": null,
+                            "active": true,
+                            "object": "campaign"
+                          },
+                          "hierarchy": 2,
+                          "discount_amount": 67300,
+                          "applied_discount_amount": 67300,
+                          "metadata": {
+                            "has_budget": true,
+                            "audience_restricted": false
+                          },
+                          "object": "promotion_tier"
+                        }
+                      ]
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "description": "Use this method to get valid promotions for a given customer and order.\n\nIf a validation session is established, then the session details will be returned as well. Read more about sessions: [Validation Session](../docs/validations/Validation-Session.md).\n\n### Advanced validation filters\n\nYou can narrow down a validation to a specific promotion ID or tier metadata. Here are the examples of filtering queries you can use:\n\n| **Filter** | **Example** |\n|:---|:---|\n| promotion_id | [filters][promotion_id][conditions][$is]={{campaign_id}} |\n| tier metadata | [filters][metadata.{{promotion tier metadata key}}][conditions][$is]={{promotion tier metadata value}} |\n\n<!--\ntitle: \"Validate Promotion\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  'https://api.voucherify.io/v1/promotions/validation?'\n```\n<!--\ntitle: \"Validate Promotion\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  'https://api.voucherify.io/v1/promotions/validation?'\n```\n<!--\ntitle: \"Validate Promotion\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  'https://api.voucherify.io/v1/promotions/validation?'\n```\n<!--\ntitle: \"Validate Promotion\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  'https://api.voucherify.io/v1/promotions/validation?'\n```",
+        "description": "Use this method to get valid promotions for a given customer and order.\n\n### Advanced validation filters\n\nYou can narrow down a validation to a specific promotion ID or tier metadata. Here are the examples of filtering queries you can use:\n\n| **Filter** | **Example** |\n|:---|:---|\n| promotion_id | [filters][promotion_id][conditions][$is]={{campaign_id}} |\n| tier metadata | [filters][metadata.{{promotion tier metadata key}}][conditions][$is]={{promotion tier metadata value}} |\n\n<!--\ntitle: \"Validate promotion against customer rules\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }'/\n  'https://api.voucherify.io/v1/promotions/validation?audienceRulesOnly=true'\n```\n<!--\ntitle: \"Validate promotion for specific campaign\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    },\n    \"metadata\": {\n        \"store_names\": \"Store 1 - New York - Broadway\"\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][promotion_id][conditions][$is]=camp_nYcAyjFXmEaBU0nB7EQ4hVTr'\n```\n<!--\ntitle: \"Validate promotion based on tier metadata\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][metadata.has_budget][conditions][$is]=true'\n```",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -36286,9 +38288,152 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/6_req_validate_promotion"
+              },
+              "examples": {
+                "Customer Rules Only": {
+                  "value": {
+                    "customer": {
+                      "id": "cust_gN9KgORZECfdhG9qT6n82Zr7"
+                    },
+                    "order": {
+                      "items": [
+                        {
+                          "product_id": "prod_0a9f9ab4ab019a42d5",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0a9f9aeddb019a42db",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0a9f9ab4ab019a42d5",
+                          "quantity": "1"
+                        },
+                        {
+                          "sku_id": "sku_0b7d7dfb090be5c619",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0b72b0bd64d198e3ae",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0b7d7c4e814be5c502",
+                          "quantity": 1
+                        }
+                      ],
+                      "metadata": {
+                        "payment_mean": [
+                          "credit-card"
+                        ]
+                      }
+                    },
+                    "options": {
+                      "expand": [
+                        "category"
+                      ]
+                    }
+                  }
+                },
+                "Campaign Specific": {
+                  "value": {
+                    "customer": {
+                      "source_id": "test-user@voucherify.io"
+                    },
+                    "order": {
+                      "items": [
+                        {
+                          "product_id": "prod_0a9f9ab4ab019a42d5",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0a9f9aeddb019a42db",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0a9f9ab4ab019a42d5",
+                          "quantity": "1"
+                        },
+                        {
+                          "sku_id": "sku_0b7d7dfb090be5c619",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0b72b0bd64d198e3ae",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0b7d7c4e814be5c502",
+                          "quantity": 1
+                        }
+                      ],
+                      "metadata": {
+                        "payment_mean": [
+                          "credit-card"
+                        ]
+                      }
+                    },
+                    "options": {
+                      "expand": [
+                        "category"
+                      ]
+                    },
+                    "metadata": {
+                      "store_names": "Store 1 - New York - Broadway"
+                    }
+                  }
+                },
+                "Promotion Tier Metadata": {
+                  "value": {
+                    "customer": {
+                      "name": "Joe McDonald",
+                      "email": "joey@email.com",
+                      "source_id": "123_source_id"
+                    },
+                    "order": {
+                      "items": [
+                        {
+                          "product_id": "prod_0a9f9ab4ab019a42d5",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0a9f9aeddb019a42db",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0a9f9ab4ab019a42d5",
+                          "quantity": "1"
+                        },
+                        {
+                          "sku_id": "sku_0b7d7dfb090be5c619",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0b72b0bd64d198e3ae",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0b7d7c4e814be5c502",
+                          "quantity": 1
+                        }
+                      ],
+                      "metadata": {
+                        "payment_mean": [
+                          "credit-card"
+                        ]
+                      }
+                    },
+                    "options": {
+                      "expand": [
+                        "category"
+                      ]
+                    }
+                  }
+                }
               }
             }
-          }
+          },
+          "description": "Provide the customer and order context."
         },
         "tags": [
           "VALIDATIONS API"
