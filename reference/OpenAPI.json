@@ -10899,7 +10899,7 @@
         ]
       },
       "6_res_validate_voucher_discount_unit_product": {
-        "title": "Unit Discount, single item",
+        "title": "Unit Discount, Product",
         "type": "object",
         "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
         "properties": {
@@ -10946,7 +10946,7 @@
         }
       },
       "6_res_validate_voucher_discount_unit_sku": {
-        "title": "Unit Discount, single item",
+        "title": "Unit Discount, SKU",
         "type": "object",
         "description": "This is an object representing the discount that the customer would receive in the context of the provided request body parameters. If the discount is calculated based on a formula, this object will return either the discount calculated based on the formula or the fallback value.",
         "properties": {
@@ -12881,7 +12881,7 @@
           "expiration_date": {
             "type": "string",
             "format": "date-time",
-            "example": "2022-11-01T00:00:00.000Z",
+            "example": "2022-11-04T00:00:00.000Z",
             "description": "Activation timestamp defines when the promotion tier expires in ISO 8601 format. Promotion tier is *inactive* after this date."
           },
           "campaign": {
@@ -12944,22 +12944,412 @@
       "6_req_validate_promotion_tier": {
         "title": "Validate Promotion Tier Request Body",
         "type": "object",
+        "description": "Request schema model for validating a promotion using **POST** `/promotions/tiers/{tierId}/validation`.",
         "properties": {
-          "id": {
-            "type": "string"
+          "customer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_req_validate_voucher_customer_id"
+              },
+              {
+                "$ref": "#/components/schemas/6_req_validate_voucher_customer_source_id"
+              },
+              {
+                "$ref": "#/components/schemas/9_req_create_customer"
+              }
+            ],
+            "description": "Customer's information."
+          },
+          "order": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_req_validate_voucher_order_id"
+              },
+              {
+                "$ref": "#/components/schemas/6_req_validate_voucher_order_source_id"
+              },
+              {
+                "$ref": "#/components/schemas/10_req_create_order"
+              }
+            ],
+            "description": "Order information."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of key/value pairs that you can send in the request body to check against vouchers requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Advanced_ &rarr; _Redemption metadata satisfy_ or _Basic Builder_ &rarr; _Attributes match_ &rarr; _REDEMPTION METADATA_. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule)."
           }
-        },
-        "description": "Request schema model for validating a promotion using **POST** `/promotions/tiers/{tierId}/validation`."
+        }
       },
       "6_res_validate_promotion_tier": {
         "title": "Validate Promotion Tier Response Body",
+        "description": "Response schema model for validating a promotion using **POST** `/promotions/tiers/{tierId}/validation`.",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/6_res_validate_promotion_tier_true"
+          },
+          {
+            "$ref": "#/components/schemas/6_res_validate_promotion_tier_false"
+          }
+        ]
+      },
+      "6_res_validate_promotion_tier_true": {
+        "title": "Promotion Tier Valid",
         "type": "object",
+        "description": "Response schema model for valid promotion tier when validating a promotion using **POST** `/promotions/tiers/{tierId}/validation`.",
         "properties": {
-          "id": {
+          "valid": {
+            "type": "string",
+            "description": "Indicates whether the promotion is valid within the context of the parameters provided in the request body and filters in the query parameters."
+          },
+          "applicable_to": {
+            "$ref": "#/components/schemas/6_res_applicable_to_object"
+          },
+          "inapplicable_to": {
+            "$ref": "#/components/schemas/6_res_inapplicable_to_object"
+          },
+          "tracking_id": {
             "type": "string"
+          },
+          "order": {
+            "$ref": "#/components/schemas/6_obj_order_object"
+          },
+          "id": {
+            "type": "string",
+            "example": "promo_4TqHr24boFISDrcOHSlfAxwm",
+            "description": "Unique promotion tier ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Custom promotion tier name."
+          },
+          "banner": {
+            "type": "string",
+            "description": "Text to be displayed to your customers on your website.",
+            "example": "Get 45% off items"
+          },
+          "discount": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_amount"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_percent"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_fixed"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_unit"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_unit_multiple"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_shipping"
+              }
+            ],
+            "description": "Contains information about the discount to be applied to the order."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-11-02T00:00:00.000Z",
+            "description": "Activation timestamp defines when the promotion tier starts to be active in ISO 8601 format. Campaign is *inactive* before this date."
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-11-04T00:00:00.000Z",
+            "description": "Activation timestamp defines when the promotion tier expires in ISO 8601 format. Promotion tier is *inactive* after this date."
+          },
+          "campaign": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "camp_h8RyP6FV94F3Ev2odP24j5p1",
+                "description": "Unique promotion tier ID."
+              },
+              "start_date": {
+                "type": "string",
+                "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive* before this date.",
+                "example": "2022-11-01T00:00:00.000Z",
+                "format": "date-time"
+              },
+              "expiration_date": {
+                "type": "string",
+                "description": "Activation timestamp defines when the campaign expires in ISO 8601 format. Promotion tier is *inactive* after this date.",
+                "example": "2022-11-30T00:00:00.000Z",
+                "format": "date-time"
+              },
+              "active": {
+                "type": "boolean",
+                "description": "A flag indicating whether the campaign is active or not active. A campaign can be disabled even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* campaign\n- `false` indicates an *inactive* campaign"
+              },
+              "categories": {
+                "$ref": "#/components/schemas/20_obj_category_object"
+              },
+              "object": {
+                "type": "string",
+                "default": "campaign",
+                "description": "The type of object represented by the campaign object. This object stores information about the campaign."
+              }
+            }
+          },
+          "hierarchy": {
+            "type": "integer",
+            "description": "The promotions hierarchy defines the order in which the discounts from different tiers will be applied to a customer's order. If a customer qualifies for discounts from more than one tier, discounts will be applied in the order defined in the hierarchy."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "The calculated discount amount based on the discount type and effect."
+          },
+          "applied_discount_amount": {
+            "type": "integer",
+            "description": "The effective discount amount that would be applied to the order."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the promotion tier. A set of key/value pairs that you can attach to a promotion tier object. It can be useful for storing additional information about the promotion tier in a structured format."
+          },
+          "object": {
+            "type": "string",
+            "default": "promotion_tier",
+            "description": "The type of object represented by JSON. This object stores information about the promotion tier."
+          }
+        }
+      },
+      "6_res_validate_promotion_tier_false": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "valid": false,
+            "reason": "promotion not active now",
+            "error": {
+              "message": "nononononononon active no more"
+            },
+            "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+            "id": "promo_ByIIAHC1Mz9ouJsitzAWsush",
+            "name": "Multiple",
+            "discount": {
+              "type": "UNIT",
+              "effect": "ADD_MANY_ITEMS",
+              "units": [
+                {
+                  "effect": "ADD_MISSING_ITEMS",
+                  "unit_off": 11,
+                  "unit_type": "sku_0bae3b28f610fd0da1"
+                },
+                {
+                  "effect": "ADD_NEW_ITEMS",
+                  "unit_off": 22,
+                  "unit_type": "sku_0b7d7dfb090be5c619"
+                },
+                {
+                  "effect": "ADD_MISSING_ITEMS",
+                  "unit_off": 111,
+                  "unit_type": "prod_0b7d7c4e814be5c502"
+                },
+                {
+                  "effect": "ADD_MISSING_ITEMS",
+                  "unit_off": 222,
+                  "unit_type": "prod_0b72b0bd64d198e3ae"
+                }
+              ]
+            },
+            "start_date": "2022-11-01T12:00:00.000Z",
+            "expiration_date": "2023-01-31T00:00:00.000Z",
+            "campaign": {
+              "id": "camp_JtoaZ8Qgpf6FkMAy2wWiOJWH",
+              "start_date": "2022-11-01T12:00:00.000Z",
+              "expiration_date": "2023-01-31T00:00:00.000Z",
+              "active": true,
+              "object": "campaign"
+            },
+            "hierarchy": 1,
+            "metadata": {},
+            "object": "promotion_tier"
           }
         },
-        "description": "Response schema model for validating a promotion using **POST** `/promotions/tiers/{tierId}/validation`."
+        "description": "Response schema model for a non-valid promotion tier when validating a promotion using **POST** `/promotions/tiers/{tierId}/validation`.",
+        "title": "Promotion Tier Not Valid",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "description": "Response schema for a voucher that is not valid."
+          },
+          "reason": {
+            "type": "string",
+            "description": "System generated cause for the voucher being invalid in the context of the provided parameters."
+          },
+          "error": {
+            "description": "Detailed failure cause for the invalid voucher if the reason has a translation defined in the Dashboard &rarr; Project Settings &rarr; Error Messages.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_res_validate_promotion_tier_false_custom_message"
+              },
+              {
+                "$ref": "#/components/schemas/e_error_no_translation"
+              }
+            ]
+          },
+          "tracking_id": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "example": "promo_ByIIAHC1Mz9ouJsitzAWsush",
+            "description": "Promotion tier ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Custom promotion tier name."
+          },
+          "banner": {
+            "type": "string",
+            "description": "Text to be displayed to your customers on your website.",
+            "example": "Get 25% off"
+          },
+          "discount": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_amount"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_percent"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_fixed"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_unit"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_unit_multiple"
+              },
+              {
+                "$ref": "#/components/schemas/6_res_validate_voucher_discount_shipping"
+              }
+            ],
+            "description": "Contains information about the discount to be applied to the order."
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Activation timestamp defines when the promotion tier starts to be active in ISO 8601 format. Campaign is *inactive* before this date.",
+            "format": "date-time",
+            "example": "2022-11-02T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "description": "Activation timestamp defines when the promotion tier expires in ISO 8601 format. Promotion tier is *inactive* after this date.",
+            "format": "date-time",
+            "example": "2022-11-04T00:00:00.000Z"
+          },
+          "campaign": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique promotion tier ID."
+              },
+              "start_date": {
+                "type": "string",
+                "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive* before this date.",
+                "format": "date-time",
+                "example": "2022-11-01T00:00:00.000Z"
+              },
+              "expiration_date": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Activation timestamp defines when the campaign expires in ISO 8601 format. Promotion tier is *inactive* after this date.",
+                "example": "2022-11-30T00:00:00.000Z"
+              },
+              "active": {
+                "type": "boolean",
+                "description": "A flag indicating whether the campaign is active or not active. A campaign can be disabled even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* campaign\n- `false` indicates an *inactive* campaign"
+              },
+              "object": {
+                "type": "string",
+                "description": "The type of object represented by the campaign object. This object stores information about the campaign.",
+                "default": "campaign"
+              }
+            }
+          },
+          "hierarchy": {
+            "type": "integer",
+            "description": "The promotions hierarchy defines the order in which the discounts from different tiers will be applied to a customer's order. If a customer qualifies for discounts from more than one tier, discounts will be applied in the order defined in the hierarchy."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the promotion tier. A set of key/value pairs that you can attach to a promotion tier object. It can be useful for storing additional information about the promotion tier in a structured format."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON. This object stores information about the promotion tier.",
+            "default": "promotion_tier"
+          }
+        }
+      },
+      "6_res_validate_promotion_tier_false_custom_message": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "valid": false,
+            "reason": "promotion not active now",
+            "error": {
+              "message": "nononononononon active no more"
+            },
+            "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+            "id": "promo_ByIIAHC1Mz9ouJsitzAWsush",
+            "name": "Multiple",
+            "discount": {
+              "type": "UNIT",
+              "effect": "ADD_MANY_ITEMS",
+              "units": [
+                {
+                  "effect": "ADD_MISSING_ITEMS",
+                  "unit_off": 11,
+                  "unit_type": "sku_0bae3b28f610fd0da1"
+                },
+                {
+                  "effect": "ADD_NEW_ITEMS",
+                  "unit_off": 22,
+                  "unit_type": "sku_0b7d7dfb090be5c619"
+                },
+                {
+                  "effect": "ADD_MISSING_ITEMS",
+                  "unit_off": 111,
+                  "unit_type": "prod_0b7d7c4e814be5c502"
+                },
+                {
+                  "effect": "ADD_MISSING_ITEMS",
+                  "unit_off": 222,
+                  "unit_type": "prod_0b72b0bd64d198e3ae"
+                }
+              ]
+            },
+            "start_date": "2022-11-01T12:00:00.000Z",
+            "expiration_date": "2023-01-31T00:00:00.000Z",
+            "campaign": {
+              "id": "camp_JtoaZ8Qgpf6FkMAy2wWiOJWH",
+              "start_date": "2022-11-01T12:00:00.000Z",
+              "expiration_date": "2023-01-31T00:00:00.000Z",
+              "active": true,
+              "object": "campaign"
+            },
+            "hierarchy": 1,
+            "metadata": {},
+            "object": "promotion_tier"
+          }
+        },
+        "description": "Custom Error Message",
+        "title": "Custom Message",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Customized error message."
+          }
+        }
       },
       "19_req_validations": {
         "title": "Validate Stackable Discounts (Beta) Request Body",
@@ -30624,18 +31014,11 @@
         "operationId": "post-campaigns-campaign_id-vouchers",
         "responses": {
           "200": {
-            "description": "Returns a voucher object if the call succeeded for a voucher count of 1 and an `async_action_id` if the request was made to create more than 1 voucher.",
+            "description": "Returns a voucher object if the call succeeded for a voucher count of 1.",
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/1_obj_voucher_object"
-                    },
-                    {
-                      "$ref": "#/components/schemas/a_res_async_actions"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/1_obj_voucher_object"
                 },
                 "examples": {
                   "Example": {
@@ -30643,6 +31026,16 @@
                       "async_action_id": "aa_0bb96ebb7ec3720252"
                     }
                   }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Returns an `async_action_id` if the request was made to create more than 1 voucher.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/a_res_async_actions"
                 }
               }
             }
@@ -35539,7 +35932,7 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "description": "To verify a voucher code given by a customer, you can use this method. It is designed for a server side integration, which means that is accessible only through private keys.  \n\n#### Gift Vouchers - validate Gift Card and control amount to redeem\nVoucherify also gives the possibility to create a gift card, which allows using credits to fulfill the order. A user can specify how many credits he wants to use from the gift card. The available balance of credits is counted based on policy rules attached to the Gift Voucher definition.  \n\nThis operation returns information about the validity of the code. Moreover, it returns a hashed source identifier which can be used as a tracking ID in future calls.\n\nIf a validation session is established, then the session details will be returned as well. Read more about sessions [here](docs/validations/Validation-Session.md).\n\nVoucher validation might fail because of one of these reasons:\n* `voucher not found` - voucher doesn't exist or was [deleted](OpenAPI.json/paths/~1vouchers~1{code}/delete)\n* `voucher expired` - voucher is out of start date - expiration date time frame\n* `voucher is disabled` - learn more about a [disabled voucher](OpenAPI.json/paths/~1vouchers~1{code}~1disable/post)\n* `customer does not match segment rules` - learn more [customer tracking](doc:customer-tracking) \n* `order does not match validation rules` - learn more about [validation rules](doc:validation-rules)",
+        "description": "To verify a voucher code given by a customer, you can use this method. It is designed for a server side integration, which means that is accessible only through private keys.  \n\n<!-- theme: danger -->\n> #### Important  \n>\n> This endpoint supports the validation of a single promotion tier. If you need to validate more than one incentive, you can use the [Stackable discounts API](OpenAPI.json/paths/~1validations/post). The stacking discounts API lets you validate up to 5 incentives per call. Before integrating Voucherify, choose which validation endpoint you prefer to use.\n\n#### Gift Vouchers - validate Gift Card and control amount to redeem\nVoucherify also gives the possibility to create a gift card, which allows using credits to fulfill the order. A user can specify how many credits he wants to use from the gift card. The available balance of credits is counted based on policy rules attached to the Gift Voucher definition.  \n\nThis operation returns information about the validity of the code. Moreover, it returns a hashed source identifier which can be used as a tracking ID in future calls.\n\nIf a validation session is established, then the session details will be returned as well. Read more about sessions [here](docs/validations/Validation-Session.md).\n\nVoucher validation might fail because of one of these reasons:\n* `voucher not found` - voucher doesn't exist or was [deleted](OpenAPI.json/paths/~1vouchers~1{code}/delete)\n* `voucher expired` - voucher is out of start date - expiration date time frame\n* `voucher is disabled` - learn more about a [disabled voucher](OpenAPI.json/paths/~1vouchers~1{code}~1disable/post)\n* `customer does not match segment rules` - learn more [customer tracking](doc:customer-tracking) \n* `order does not match validation rules` - learn more about [validation rules](doc:validation-rules)",
         "requestBody": {
           "content": {
             "application/json": {
@@ -36279,7 +36672,7 @@
           }
         },
         "operationId": "get-validate",
-        "description": "To verify a voucher code given by customer, you can use this method. It is designed for client side integration which means that is accessible only through public keys. This method is designed to be run directly either in web browsers or mobile apps.\n\n<!-- theme: info -->\n\n> #### Specifying gift credits and loyalty points\n>\n> This endpoint does not support specifying the specific amount of gift credits to apply to an order nor the specific amount of loyalty points to an order. It calculates the amount that is available on the card and applies as much credits or points as possible to cover the total amount. \n\n### Set customer identity (optional)\n\nVoucherify can help you track anonymous customers. Once you integrate Voucherify into your web app and call the validate method, Voucherify will return a tracking ID and the script will store it in a cookie. Each subsequent validate call will use the same tracking ID.\n\nVoucherify tracks a user using a tracking ID to see if the user who is validating vouchers is the same as the one who consuming them. Voucherify does this by setting up an identity for the user. A `tracking_id` will be generated on the server side, unless you specify your own `tracking_id`. In both cases, you will receive the `tracking_id` in the validation response.\n\nThe returned `tracking_id` field should be used as the customer `source_id` in subsequent redemption requests. Moreover, the `tracking_id` returned from Validation API is encoded. Voucherify will recognize both values for identifying customer - the one before encryption sent as a query parameter to the **GET** `/validate` request, and the version encrypted and returned as part of the validation request.\n\n### Sample workflow\n\nCustomer tracking workflow in a nutshell:\n\n**Client-side:**\n  * A customer visits your website.\n  * A customer validates a voucher code. That triggers a validate request to be sent to Voucherify. In the request, you pass the tracking_id or customer.source_id. As a result, the API call to this endpoint returns an **encoded** `tracking_id`.\n\n**Backend:**\n  * Once the customer finishes the checkout process, your website passes the `tracking_id` to your backend during a redemption call. The `tracking_id` is sent as a value assigned to the property *source_id* in a customer object.\n  * A customer object is created and within the redemption response, you get a customer `id`.\n  * You can use the customer `id` or the customer `source_id` to fetch or modify the customer details.\n  \nA customer is created (upserted) automatically with a redemption call. Alternatively, you can create a new profile by creating a customer via a dedicated API method. Take a look at the customer object to understand the [entity's structure](OpenAPI.json/components/schemas/9_obj_customer_object). \n\n<!-- theme: info -->\n\n> #### Customer identifier\n>\n> The source id of the customer may either be an already hashed version of the `tracking_id`, which you received in a response from a validation request or a custom ID you predefined (i.e. an email address). Nevertheless, we recommend using identifiers delivered by Voucherify API.\n\n<!--\ntitle: \"Validate Discount Voucher\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=PAYINEUROS&session_type=LOCK&session_key=A&session_ttl=1&session_ttl_unit=NANOSECONDS&customer=cust_4vMj8Twr5nBzvTrNCgipMb6M&[order][metadata][currency]=EUR&[metadata][location_id][0]=L1&[item][0][source_id]=webinar_BF_sweater_pink_sweater&[item][0][quantity]=2&[item][0][related_object]=product'\n```\n<!--\ntitle: \"Validate Loyalty Card\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=LOYALTY-CARD-ng3Kb9tM&session_type=LOCK&session_key=A&session_ttl=1&session_ttl_unit=NANOSECONDS&customer[source_id]=286401dc-6f4c-4ebb-8ca2-9f78b3e84c7d&[order][metadata][currency]=EUR&[customer][metadata][age]=24&[customer][metadata][acquisition_channel]=Facebook&[metadata][location_id][0]=L1&[item][0][source_id]=webinar_BF_sweater_pink_sweater&[item][0][quantity]=2&[item][0][related_object]=product&[item][1][source_id]=webinar_BF_pants_gray_sweat_pants&[item][1][quantity]=2&[item][1][related_object]=product&[item][2][product_id]=prod_0bd76bb4aa003890cb&[item][2][quantity]=2&[item][3][source_id]=M0E20000000ELDH&[item][3][quantity]=3&[item][3][related_object]=sku'\n```\n<!--\ntitle: \"Validate Gift Card\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=GIFT-CARD-kW4aEsfB&session_type=LOCK&session_key=A&session_ttl=1&session_ttl_unit=NANOSECONDS&customer[source_id]=286401dc-6f4c-4ebb-8ca2-9f78b3e84c7d&[order][metadata][currency]=EUR&[customer][metadata][age]=24&[customer][metadata][acquisition_channel]=Facebook&[metadata][location_id][0]=L1&[item][0][source_id]=webinar_BF_sweater_pink_sweater&[item][0][quantity]=2&[item][0][related_object]=product&[item][1][source_id]=webinar_BF_pants_gray_sweat_pants&[item][1][quantity]=2&[item][1][related_object]=product&[item][2][product_id]=prod_0bd76bb4aa003890cb&[item][2][quantity]=2&[item][3][source_id]=M0E20000000ELDH&[item][3][quantity]=3&[item][3][related_object]=sku&[item][4][sku_id]=sku_0b661e41fc0d35a8f1&[item][4][quantity]=4'\n```\n<!--\ntitle: \"Validate Referral Card\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=REFERRAL-CODE-OxBakPYf&amount=10000'\n```\n\n### [JSFiddle Example](https://jsfiddle.net/voucherify/gfu2bgn5/)\n<!--\ntitle: \"Example Code - Voucherify.js\"\nlineNumbers: true\n-->\n```javascript\n<script type=\"text/javascript\" src=\"https://cdn.rawgit.com/rspective/voucherify.js/v1.4.5/dist/voucherify-1.4.5.js\"></script>\n\n<script type=\"text/javascript\">\n  function init() {\n    Voucherify.initialize(\n      \"011240bf-d5fc-4ef1-9e82-11eb68c43bf5\", //YOUR-CLIENT-APPLICATION-ID-FROM-SETTINGS\n      \"9e2230c5-71fb-460a-91c6-fbee64707a20\" //YOUR-CLIENT-TOKEN-FROM-SETTINGS\n    );\n  };\n  init();\n  \n  //-- [Optional] If you want us to track your customers' activity, then you should invoke the following function to set identity. You have to do it only once. If the identity parameter is not passed, then we will generate it for you.\n  Voucherify.setIdentity(\"your-customer-uniq-id\");\n  Voucherify.validate(\"Testing7fjWdr\", function callback (response) {\n    console.log(response);\n  });\n</script>\n```\n\n### Examples with Query Parameters\n\n| **Query Parameters** | **Example URL** |\n|:---|:---|\n| Shortcut - `customer` query param instead of `customer[source_id]` | `https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=customer_id` |\n| Pass `customer`'s and `redemption`'s context `metadata` in query parameters | `https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=sure_he_is_new&metadata[shop]=1&customer[metadata][propsy]=2&metadata[test]=true` |\n| Use `tracking_id` instead of `source_id` | `https://api.voucherify.io/client/v1/validate?code=IKU-mvS-JOG&amount=10100&tracking_id=sure_he_is_new_5&metadata[shop]=1&metadata[test]=true` |\n\n### Reasons why a validation might fail\n\nVoucher validation might fail because of one of these reasons:\n\n* `voucher not found` - voucher doesn't exist or was [deleted](OpenAPI.json/paths/~1vouchers~1{code}/delete)\n* `voucher expired` - voucher is out of [start date - expiration date] timeframe\n* `voucher is disabled` - learn more about [disabled vouchers](OpenAPI.json/paths/~1vouchers~1{code}~1disable)\n* `customer does not match segment rules` - learn more customer tracking LINK\n* `order does not match validation rules` - learn more about validation rules LINK",
+        "description": "To verify a voucher code given by customer, you can use this method. It is designed for client side integration which means that is accessible only through public keys. This method is designed to be run directly either in web browsers or mobile apps.\n\n<!-- theme: danger -->\n> #### Important  \n>\n> This endpoint supports the validation of a single promotion tier. If you need to validate more than one incentive, you can use the [Stackable discounts API](OpenAPI.json/paths/~1validations/post). The stacking discounts API lets you validate up to 5 incentives per call. Before integrating Voucherify, choose which validation endpoint you prefer to use.\n\n<!-- theme: info -->\n\n> #### Specifying gift credits and loyalty points\n>\n> This endpoint does not support specifying the specific amount of gift credits to apply to an order nor the specific amount of loyalty points to an order. It calculates the amount that is available on the card and applies as much credits or points as possible to cover the total amount. \n\n### Set customer identity (optional)\n\nVoucherify can help you track anonymous customers. Once you integrate Voucherify into your web app and call the validate method, Voucherify will return a tracking ID and the script will store it in a cookie. Each subsequent validate call will use the same tracking ID.\n\nVoucherify tracks a user using a tracking ID to see if the user who is validating vouchers is the same as the one who consuming them. Voucherify does this by setting up an identity for the user. A `tracking_id` will be generated on the server side, unless you specify your own `tracking_id`. In both cases, you will receive the `tracking_id` in the validation response.\n\nThe returned `tracking_id` field should be used as the customer `source_id` in subsequent redemption requests. Moreover, the `tracking_id` returned from Validation API is encoded. Voucherify will recognize both values for identifying customer - the one before encryption sent as a query parameter to the **GET** `/validate` request, and the version encrypted and returned as part of the validation request.\n\n### Sample workflow\n\nCustomer tracking workflow in a nutshell:\n\n**Client-side:**\n  * A customer visits your website.\n  * A customer validates a voucher code. That triggers a validate request to be sent to Voucherify. In the request, you pass the tracking_id or customer.source_id. As a result, the API call to this endpoint returns an **encoded** `tracking_id`.\n\n**Backend:**\n  * Once the customer finishes the checkout process, your website passes the `tracking_id` to your backend during a redemption call. The `tracking_id` is sent as a value assigned to the property *source_id* in a customer object.\n  * A customer object is created and within the redemption response, you get a customer `id`.\n  * You can use the customer `id` or the customer `source_id` to fetch or modify the customer details.\n  \nA customer is created (upserted) automatically with a redemption call. Alternatively, you can create a new profile by creating a customer via a dedicated API method. Take a look at the customer object to understand the [entity's structure](OpenAPI.json/components/schemas/9_obj_customer_object). \n\n<!-- theme: info -->\n\n> #### Customer identifier\n>\n> The source id of the customer may either be an already hashed version of the `tracking_id`, which you received in a response from a validation request or a custom ID you predefined (i.e. an email address). Nevertheless, we recommend using identifiers delivered by Voucherify API.\n\n<!--\ntitle: \"Validate Discount Voucher\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=PAYINEUROS&session_type=LOCK&session_key=A&session_ttl=1&session_ttl_unit=NANOSECONDS&customer=cust_4vMj8Twr5nBzvTrNCgipMb6M&[order][metadata][currency]=EUR&[metadata][location_id][0]=L1&[item][0][source_id]=webinar_BF_sweater_pink_sweater&[item][0][quantity]=2&[item][0][related_object]=product'\n```\n<!--\ntitle: \"Validate Loyalty Card\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=LOYALTY-CARD-ng3Kb9tM&session_type=LOCK&session_key=A&session_ttl=1&session_ttl_unit=NANOSECONDS&customer[source_id]=286401dc-6f4c-4ebb-8ca2-9f78b3e84c7d&[order][metadata][currency]=EUR&[customer][metadata][age]=24&[customer][metadata][acquisition_channel]=Facebook&[metadata][location_id][0]=L1&[item][0][source_id]=webinar_BF_sweater_pink_sweater&[item][0][quantity]=2&[item][0][related_object]=product&[item][1][source_id]=webinar_BF_pants_gray_sweat_pants&[item][1][quantity]=2&[item][1][related_object]=product&[item][2][product_id]=prod_0bd76bb4aa003890cb&[item][2][quantity]=2&[item][3][source_id]=M0E20000000ELDH&[item][3][quantity]=3&[item][3][related_object]=sku'\n```\n<!--\ntitle: \"Validate Gift Card\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=GIFT-CARD-kW4aEsfB&session_type=LOCK&session_key=A&session_ttl=1&session_ttl_unit=NANOSECONDS&customer[source_id]=286401dc-6f4c-4ebb-8ca2-9f78b3e84c7d&[order][metadata][currency]=EUR&[customer][metadata][age]=24&[customer][metadata][acquisition_channel]=Facebook&[metadata][location_id][0]=L1&[item][0][source_id]=webinar_BF_sweater_pink_sweater&[item][0][quantity]=2&[item][0][related_object]=product&[item][1][source_id]=webinar_BF_pants_gray_sweat_pants&[item][1][quantity]=2&[item][1][related_object]=product&[item][2][product_id]=prod_0bd76bb4aa003890cb&[item][2][quantity]=2&[item][3][source_id]=M0E20000000ELDH&[item][3][quantity]=3&[item][3][related_object]=sku&[item][4][sku_id]=sku_0b661e41fc0d35a8f1&[item][4][quantity]=4'\n```\n<!--\ntitle: \"Validate Referral Card\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=REFERRAL-CODE-OxBakPYf&amount=10000'\n```\n\n### [JSFiddle Example](https://jsfiddle.net/voucherify/gfu2bgn5/)\n<!--\ntitle: \"Example Code - Voucherify.js\"\nlineNumbers: true\n-->\n```javascript\n<script type=\"text/javascript\" src=\"https://cdn.rawgit.com/rspective/voucherify.js/v1.4.5/dist/voucherify-1.4.5.js\"></script>\n\n<script type=\"text/javascript\">\n  function init() {\n    Voucherify.initialize(\n      \"011240bf-d5fc-4ef1-9e82-11eb68c43bf5\", //YOUR-CLIENT-APPLICATION-ID-FROM-SETTINGS\n      \"9e2230c5-71fb-460a-91c6-fbee64707a20\" //YOUR-CLIENT-TOKEN-FROM-SETTINGS\n    );\n  };\n  init();\n  \n  //-- [Optional] If you want us to track your customers' activity, then you should invoke the following function to set identity. You have to do it only once. If the identity parameter is not passed, then we will generate it for you.\n  Voucherify.setIdentity(\"your-customer-uniq-id\");\n  Voucherify.validate(\"Testing7fjWdr\", function callback (response) {\n    console.log(response);\n  });\n</script>\n```\n\n### Examples with Query Parameters\n\n| **Query Parameters** | **Example URL** |\n|:---|:---|\n| Shortcut - `customer` query param instead of `customer[source_id]` | `https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=customer_id` |\n| Pass `customer`'s and `redemption`'s context `metadata` in query parameters | `https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=sure_he_is_new&metadata[shop]=1&customer[metadata][propsy]=2&metadata[test]=true` |\n| Use `tracking_id` instead of `source_id` | `https://api.voucherify.io/client/v1/validate?code=IKU-mvS-JOG&amount=10100&tracking_id=sure_he_is_new_5&metadata[shop]=1&metadata[test]=true` |\n\n### Reasons why a validation might fail\n\nVoucher validation might fail because of one of these reasons:\n\n* `voucher not found` - voucher doesn't exist or was [deleted](OpenAPI.json/paths/~1vouchers~1{code}/delete)\n* `voucher expired` - voucher is out of [start date - expiration date] timeframe\n* `voucher is disabled` - learn more about [disabled vouchers](OpenAPI.json/paths/~1vouchers~1{code}~1disable)\n* `customer does not match segment rules` - learn more customer tracking LINK\n* `order does not match validation rules` - learn more about validation rules LINK",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-Client-Token"
@@ -38432,21 +38825,20 @@
         ]
       }
     },
-    "/promotions/tiers/{tier_id}/validation": {
+    "/promotions/tiers/{tierId}/validation": {
       "parameters": [
         {
           "schema": {
             "type": "string"
           },
-          "name": "tier_id",
+          "name": "tierId",
           "in": "path",
-          "required": true,
-          "description": "Id of the promotion tier"
+          "required": true
         }
       ],
       "post": {
         "summary": "Validate Promotion Tier",
-        "operationId": "post-promotions-tiers-tier_id-validation",
+        "operationId": "post-promotions-tiers-tierId-validation",
         "responses": {
           "200": {
             "description": "Returns validation result in `valid` key of the promotion tier object. Returns `true` if the promotion tier rules and validation rules are satisfied given the request body parameters. Returns `false` if the data provided in the payload does not meet validation rules or promotion tier requirements.",
@@ -38454,12 +38846,258 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/6_res_validate_promotion_tier"
+                },
+                "examples": {
+                  "Promotion Valid": {
+                    "value": {
+                      "valid": true,
+                      "applicable_to": {
+                        "data": [],
+                        "total": 0,
+                        "data_ref": "data",
+                        "object": "list"
+                      },
+                      "inapplicable_to": {
+                        "data": [],
+                        "total": 0,
+                        "data_ref": "data",
+                        "object": "list"
+                      },
+                      "tracking_id": "track_OWyBVb1mg1qnieLLNygh19A0Ia7FsJck",
+                      "order": {
+                        "id": "ord_71uW6qnB5CFZlLHCeCNC4qtS",
+                        "source_id": null,
+                        "created_at": "2022-11-17T12:17:55.096Z",
+                        "updated_at": null,
+                        "status": "CREATED",
+                        "amount": 9918200,
+                        "initial_amount": 468200,
+                        "items_discount_amount": 9450000,
+                        "total_discount_amount": 9450000,
+                        "total_amount": 468200,
+                        "items_applied_discount_amount": 9450000,
+                        "total_applied_discount_amount": 9450000,
+                        "items": [
+                          {
+                            "object": "order_item",
+                            "source_id": "webinar_BF_sweater_pink_sweater",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 6500,
+                            "price": 6500,
+                            "subtotal_amount": 6500
+                          },
+                          {
+                            "object": "order_item",
+                            "source_id": "webinar_BF_pants_navy_sweat_pants",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 6000,
+                            "price": 6000,
+                            "subtotal_amount": 6000
+                          },
+                          {
+                            "object": "order_item",
+                            "source_id": "5h1pp1ng",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 2000,
+                            "price": 2000,
+                            "subtotal_amount": 2000,
+                            "product": {
+                              "id": "prod_5h1pp1ng",
+                              "source_id": "5h1pp1ng",
+                              "name": "Shipping"
+                            }
+                          },
+                          {
+                            "object": "order_item",
+                            "source_id": "webinar_BF_pants_gray_sweat_pants",
+                            "related_object": "product",
+                            "quantity": 2,
+                            "amount": 10000,
+                            "price": 5000,
+                            "subtotal_amount": 10000
+                          },
+                          {
+                            "object": "order_item",
+                            "source_id": "webinar_BF_sweater_pearl",
+                            "related_object": "product",
+                            "quantity": 2,
+                            "amount": 22000,
+                            "price": 11000,
+                            "subtotal_amount": 22000
+                          },
+                          {
+                            "object": "order_item",
+                            "product_id": "prod_0b7d7dfb05cbe5c616",
+                            "sku_id": "sku_0b7d7dfb090be5c619",
+                            "quantity": 1,
+                            "amount": 1700,
+                            "price": 1700,
+                            "subtotal_amount": 1700,
+                            "product": {
+                              "id": "prod_0b7d7dfb05cbe5c616",
+                              "source_id": "Books",
+                              "name": "Comic Books1",
+                              "price": 2100
+                            },
+                            "sku": {
+                              "id": "sku_0b7d7dfb090be5c619",
+                              "source_id": "ComicBook_1",
+                              "sku": "Comics1",
+                              "price": 1700
+                            }
+                          },
+                          {
+                            "object": "order_item",
+                            "product_id": "prod_0bae32322150fd0546",
+                            "quantity": 2,
+                            "amount": 420000,
+                            "price": 210000,
+                            "subtotal_amount": 420000,
+                            "product": {
+                              "id": "prod_0bae32322150fd0546",
+                              "name": "Samsung Phone",
+                              "price": 210000
+                            }
+                          },
+                          {
+                            "object": "order_item",
+                            "product_id": "prod_0bae2dc5a090fd0184",
+                            "sku_id": "sku_0bae3b28f610fd0da1",
+                            "quantity": 45,
+                            "discount_quantity": 45,
+                            "initial_quantity": 0,
+                            "amount": 9450000,
+                            "discount_amount": 9450000,
+                            "initial_amount": 0,
+                            "applied_discount_amount": 9450000,
+                            "price": 210000,
+                            "subtotal_amount": 0,
+                            "product": {
+                              "id": "prod_0bae2dc5a090fd0184",
+                              "source_id": "first_product",
+                              "name": "Samsung Phone 1",
+                              "price": 220000
+                            },
+                            "sku": {
+                              "id": "sku_0bae3b28f610fd0da1",
+                              "source_id": "first_product_sku_1",
+                              "sku": "Samsung phone 256GB",
+                              "price": 210000
+                            }
+                          }
+                        ],
+                        "metadata": {},
+                        "customer_id": null,
+                        "referrer_id": null,
+                        "object": "order"
+                      },
+                      "id": "promo_ZWkx6R0I1Ts3N9HL4kfTdxOm",
+                      "name": "Add new SKU",
+                      "discount": {
+                        "type": "UNIT",
+                        "effect": "ADD_NEW_ITEMS",
+                        "unit_off": 45,
+                        "unit_type": "sku_0bae3b28f610fd0da1",
+                        "sku": {
+                          "id": "sku_0bae3b28f610fd0da1",
+                          "source_id": "first_product_sku_1",
+                          "sku": "Samsung phone 256GB"
+                        },
+                        "product": {
+                          "id": "prod_0bae2dc5a090fd0184",
+                          "source_id": "first_product",
+                          "name": "Samsung Phone 1"
+                        }
+                      },
+                      "campaign": {
+                        "id": "camp_40LC42P5NFbkkD4RWoJ4btks",
+                        "start_date": null,
+                        "expiration_date": null,
+                        "active": true,
+                        "object": "campaign"
+                      },
+                      "hierarchy": 4,
+                      "discount_amount": 9450000,
+                      "applied_discount_amount": 9450000,
+                      "metadata": {},
+                      "object": "promotion_tier"
+                    }
+                  },
+                  "Promotion Invalid with Error Message": {
+                    "value": {
+                      "valid": false,
+                      "reason": "redemption does not match validation rules",
+                      "error": {
+                        "code": 400,
+                        "key": "redemption_rules_violated",
+                        "message": "redemption does not match validation rules",
+                        "details": "Promotion Tier cannot be redeemed because of violated validation rules: val_eqSA1dXOv491",
+                        "request_id": "v-0c034585fd16cf6958"
+                      },
+                      "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+                      "id": "promo_R50x0A66V6jmPhM7YYOcFZfL",
+                      "name": "Add missing order items",
+                      "banner": "Add Boho Vintage",
+                      "discount": {
+                        "type": "UNIT",
+                        "effect": "ADD_MISSING_ITEMS",
+                        "unit_off": 5,
+                        "unit_type": "prod_0b72b0bd64d198e3ae"
+                      },
+                      "campaign": {
+                        "id": "camp_40LC42P5NFbkkD4RWoJ4btks",
+                        "start_date": null,
+                        "expiration_date": null,
+                        "active": true,
+                        "object": "campaign"
+                      },
+                      "hierarchy": 1,
+                      "metadata": {
+                        "has_budget": true
+                      },
+                      "object": "promotion_tier"
+                    }
+                  },
+                  "Promotion Invalid with Custom Message": {
+                    "value": {
+                      "valid": false,
+                      "reason": "Inactive Promotion",
+                      "error": {
+                        "message": "Promotion is inactive this weekend."
+                      },
+                      "tracking_id": "track_OWyBVb1mg1oMY1lADmgwuXCw/qYHp5h0",
+                      "id": "promo_R50x0A66V6jmPhM7YYOcFZfL",
+                      "name": "Add missing order items",
+                      "banner": "Add Boho Vintage",
+                      "discount": {
+                        "type": "UNIT",
+                        "effect": "ADD_MISSING_ITEMS",
+                        "unit_off": 5,
+                        "unit_type": "prod_0b72b0bd64d198e3ae"
+                      },
+                      "campaign": {
+                        "id": "camp_40LC42P5NFbkkD4RWoJ4btks",
+                        "start_date": null,
+                        "expiration_date": null,
+                        "active": true,
+                        "object": "campaign"
+                      },
+                      "hierarchy": 1,
+                      "metadata": {
+                        "has_budget": true
+                      },
+                      "object": "promotion_tier"
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "description": "To verify whether the promotion tier discount can be applied to an order. This method is designed for server side integration which means that it is accessible only through private keys.",
+        "description": "To verify whether the promotion tier discount can be applied to an order. This method is designed for server side integration which means that it is accessible only through private keys.\n\n<!-- theme: danger -->\n> #### Important  \n>\n> This endpoint supports the validation of a single promotion tier. If you need to validate more than one incentive, you can use the [Stackable discounts API](OpenAPI.json/paths/~1validations/post). The stacking discounts API lets you validate up to 5 incentives per call. Before integrating Voucherify, choose which validation endpoint you prefer to use.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -38473,9 +39111,46 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/6_req_validate_promotion_tier"
+              },
+              "examples": {
+                "Using IDs": {
+                  "value": {
+                    "customer": {
+                      "source_id": "test-user@email.io"
+                    },
+                    "order": {
+                      "id": "ord_71uW6qnB5CFZlLHCeCNC4qtS"
+                    }
+                  }
+                },
+                "Using Redemption Metadata": {
+                  "value": {
+                    "customer": {
+                      "source_id": "test-user@email.com"
+                    },
+                    "order": {
+                      "amount": 200000,
+                      "items": [
+                        {
+                          "product_id": "prod_anJ03RZZq74z4v",
+                          "quantity": 2
+                        },
+                        {
+                          "sku_id": "sku_0KtP4rvwEECQ2U",
+                          "related_object": "sku",
+                          "quantity": 1
+                        }
+                      ]
+                    },
+                    "metadata": {
+                      "store_names": "Store 1 - New York - Broadway"
+                    }
+                  }
+                }
               }
             }
-          }
+          },
+          "description": "Provide the customer and order context."
         },
         "tags": [
           "VALIDATIONS API"
