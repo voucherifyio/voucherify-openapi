@@ -17983,6 +17983,56 @@
           "LOYALTIES API"
         ]
       },
+      "8_res_list_loyalty_campaigns": {
+        "title": "List Loyalty Campaigns Response Body",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "description": "Response body schema for listing loyalty campaigns using **GET** `/loyalties`."
+      },
+      "8_req_create_loyalty_cards": {
+        "title": "Create Loyalty Cards Request Body",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "description": "Request body schema for creating a loyalty campaign using **POST** `/loyalties`."
+      },
+      "8_res_create_loyalty_cards": {
+        "title": "Create Loyalty Cards Response Body",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "description": "Response body schema for creating a loyalty campaign using **POST** `/loyalties`."
+      },
+      "8_res_get_loyalty_campaign": {
+        "title": "Get Loyalty Campaign Response Body",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "description": "Response body schema for retrieving a loyalty campaign using **GET** `/loyalties/{campaignId}`."
+      },
+      "8_req_update_loyalty_campaign": {
+        "title": "Update Loyalty Campaign Request Body",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "description": "Request body schema for updating a loyalty campaign using **PUT** `/loyalties/{campaignId}`."
+      },
       "8_req_loyalties_campaignId_earning-rules": {
         "description": "This data model represents the request body for the `/loyalties/{campaignId}/earning-rules` endpoint.",
         "type": "object",
@@ -18610,7 +18660,7 @@
           }
         }
       },
-      "8_res_loyalties_campaignId_rewards": {
+      "8_res_list_reward_assignments": {
         "title": "List Reward Assignments",
         "x-stoplight": {
           "id": "u131oicowebzy"
@@ -18621,7 +18671,33 @@
             "type": "string"
           }
         },
-        "description": "Response body schema for `/loyalties/campaign_id/reward`."
+        "description": "Response body schema for **GET** `/loyalties/{campaignId}/rewards`."
+      },
+      "8_req_create_reward_assignment": {
+        "title": "Create Reward Assignment Request Body",
+        "x-stoplight": {
+          "id": "u131oicowebzy"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "description": "Request body schema for **POST** `/loyalties/{campaignId}/rewards`."
+      },
+      "8_res_create_reward_assignment": {
+        "title": "Create Reward Assignment Response Body",
+        "x-stoplight": {
+          "id": "u131oicowebzy"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "description": "Response body schema for **POST** `/loyalties/{campaignId}/rewards`."
       },
       "8_res_loyalties_campaignId_reward-assignments": {
         "title": "List Reward Assignments",
@@ -42447,11 +42523,18 @@
         ],
         "responses": {
           "200": {
-            "description": "`campaigns` which is an array of loyalty campaigns objects of the size of `limit`"
+            "description": "Returns a dictionary with loyalty program objects. The loyalty campaigns are returned sorted by creation date, with the most recent campaigns appearing first.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/8_res_list_loyalty_campaigns"
+                }
+              }
+            }
           }
         },
         "operationId": "get-loyalties",
-        "description": "Returns a list of your loyalty campaigns. The campaigns are sorted by creation date, with the most recent campaigns appearing first.  ",
+        "description": "Returns a list of your loyalty campaigns.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -42472,7 +42555,14 @@
         "operationId": "post-loyalties",
         "responses": {
           "200": {
-            "description": "Returns a campaign object with its settings but without the loyalty card codes."
+            "description": "Returns a campaign object with its settings but without the loyalty card codes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/8_res_create_loyalty_cards"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -42486,13 +42576,12 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "description": "Creates a batch of loyalty cards vouchersref:the-voucher-object aggregated in a single loyalty campaign. It also allows to define a custom codes pattern.  \n\n<!-- theme: info -->\n\n> #### Global uniqueness\n>In the structure representing your data, you can define a category that the voucher belongs to. You can later use the category of a voucher to group and search by specific criteria.  \n\n<!-- theme: warning -->\n> #### Asyncronous action!\n>\n> This is an asynchronous action, you can't read or modify a newly created campaign until the code generation is completed. See `creation_status` field in the [campaign object](OpenAPI.json/components/schemas/2_obj_campaign_object) description.",
+        "description": "Creates a batch of [loyalty cards](OpenAPI.json/components/schemas/8_obj_loyalty_card_object) aggregated in a single loyalty campaign. It also allows you to define a custom codes pattern.  \n\n<!-- theme: info -->\n\n> #### Global uniqueness\n> All codes are unique across the whole project. Voucherify won't allow to generate the same codes in any of your campaigns.\n\n<!-- theme: warning -->\n> #### Asyncronous action!\n>\n> This is an asynchronous action, you can't read or modify a newly created campaign until the code generation is completed. See `creation_status` field in the [loyalty campaign object](OpenAPI.json/components/schemas/8_obj_loyalty_campaign_object) description.",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/8_req_create_loyalty_cards"
               }
             }
           }
@@ -42519,7 +42608,24 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns a campaign object for a given campaign ID. When requesting the campaign that has been deleted, the resource will not be returned with 404 status code."
+            "description": "Returns a loyalty campaign object for a given loyalty campaign ID. ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/8_res_get_loyalty_campaign"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the campaign does not exist or has been deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                }
+              }
+            }
           }
         },
         "operationId": "get-loyalties-loyalty_campaignId_or_name",
@@ -42531,14 +42637,21 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "description": "Get campaign by ID (e.g., camp_2boIBNQe7O9FzrwFJv0j4rUs)"
+        "description": "Retrieve a loyalty campaign by ID (e.g., camp_2boIBNQe7O9FzrwFJv0j4rUs)."
       },
-      "post": {
+      "put": {
         "summary": "Update Loyalty Campaign",
-        "operationId": "post-loyalties-loyalty_campaignId_or_name",
+        "operationId": "put-loyalties-loyalty_campaignId_or_name",
         "responses": {
           "200": {
-            "description": "Returns the campaign object if the update succeeded. Returns an error if update parameters are invalid (e.g. specifying an invalid campaign type)."
+            "description": "Returns the campaign object if the update succeeded. Returns an error if update parameters are invalid (e.g. specifying an invalid campaign type).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/8_obj_loyalty_campaign_object"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -42552,13 +42665,12 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "description": "Updates a loyalty program for the following fields: `start_date`, `expiration_date`, `metadata`, `description`, `type`, `loyalty_card`. Other fields won't be modified (even if provided they are silently skipped). Any parameters not provided will be left unchanged. \n\nThis method will update the loyalty cards vouchersref:the-voucher-object which have not been published or redeemed yet.",
+        "description": "Updates a loyalty program for the following fields: `start_date`, `expiration_date`, `metadata`, `description`, `type`, `loyalty_card`. Other fields won't be modified (even if provided they are silently skipped). Any parameters not provided will be left unchanged. \n\nThis method will update the [loyalty cards](OpenAPI.json/components/schemas/8_obj_loyalty_card_object) which have not been published or redeemed yet.",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/8_req_update_loyalty_campaign"
               }
             }
           }
@@ -42647,7 +42759,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_res_loyalties_campaignId_rewards"
+                  "$ref": "#/components/schemas/8_res_list_reward_assignments"
                 }
               }
             }
@@ -42684,7 +42796,14 @@
         "operationId": "post-loyalties-campaignId-rewards",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/8_res_create_reward_assignment"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -42702,8 +42821,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {}
+                "$ref": "#/components/schemas/8_req_create_reward_assignment"
               }
             }
           }
