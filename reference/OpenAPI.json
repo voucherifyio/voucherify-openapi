@@ -5607,6 +5607,9 @@
         },
         "title": "Campaign Object",
         "description": "This is an object representing a campaign.",
+        "x-tags": [
+          "CAMPAIGNS API"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -5746,7 +5749,8 @@
             "description": "Indicates the status of the campaign's vouchers."
           },
           "protected": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates that the resource cannot be deleted because it is used internally by Voucherify."
           },
           "category_id": {
             "type": "string",
@@ -5829,10 +5833,7 @@
           "promotion": {
             "$ref": "#/components/schemas/3_res_list_promotion_tiers_from_campaign"
           }
-        },
-        "x-tags": [
-          "CAMPAIGNS API"
-        ]
+        }
       },
       "2_req_create_campaign": {
         "type": "object",
@@ -6166,9 +6167,6 @@
           "metadata": {
             "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
-          },
-          "protected": {
-            "type": "boolean"
           },
           "category_id": {
             "type": "string",
@@ -20631,7 +20629,7 @@
           },
           "phone": {
             "type": "string",
-            "description": "Customer's phone number."
+            "description": "Customer's phone number.  This parameter is mandatory when you try to send out codes to customers via an SMS channel."
           },
           "address": {
             "type": "object",
@@ -20912,26 +20910,23 @@
         "title": "Customer Object",
         "examples": [
           {
-            "id": "cust_CSnYd37MXmrbS19XCrghjBsv",
-            "source_id": "source_123",
+            "id": "cust_4vMj8Twr5nBzvTrNCgipMb6M",
+            "source_id": "08dd9b5a",
             "name": "Bob Smith",
-            "description": "A frequent customer",
             "email": "bob.smith@email.com",
-            "phone": "+1 933 222 3333",
-            "birthdate": "2022-01-01",
             "address": {
               "city": "New York",
               "state": "NY",
-              "line_1": "123 Main St.",
-              "line_2": "APT 3 BLG 4",
-              "country": "United States",
+              "line_1": "678 Main St",
+              "line_2": null,
+              "country": "USA",
               "postal_code": "10001"
             },
             "summary": {
               "redemptions": {
-                "total_redeemed": 0,
+                "total_redeemed": 5,
                 "total_failed": 0,
-                "total_succeeded": 0,
+                "total_succeeded": 5,
                 "total_rolled_back": 0,
                 "total_rollback_failed": 0,
                 "total_rollback_succeeded": 0,
@@ -20941,33 +20936,54 @@
                 },
                 "loyalty_card": {
                   "redeemed_points": 0,
-                  "points_to_go": 0
+                  "points_to_go": 830
                 }
               },
               "orders": {
-                "total_amount": 0,
-                "total_count": 0,
-                "average_amount": 0,
-                "last_order_amount": 0
+                "total_amount": 94600,
+                "total_count": 5,
+                "average_amount": 18920,
+                "last_order_amount": 27500,
+                "last_order_date": "2022-09-15T11:11:36.630Z"
               }
             },
             "loyalty": {
-              "points": 0,
+              "points": 830,
               "referred_customers": 0,
-              "campaigns": {}
+              "campaigns": {
+                "Loyalty Campaign - Webinar": {
+                  "points": 830,
+                  "referred_customers": 0
+                }
+              }
             },
             "referrals": {
               "total": 0,
               "campaigns": []
             },
             "metadata": {
-              "lang": "en",
-              "test": true
+              "age": 24,
+              "loyalty_customer": "true",
+              "acquisition_channel": "Facebook"
             },
-            "system_metadata": {},
-            "created_at": "2022-08-30T06:32:07.380Z",
+            "system_metadata": {
+              "consents": {
+                "cnst_lbgOBhHTuDrB7sjIhFjvIALj": {
+                  "date": "2022-11-22T15:48:50.219Z",
+                  "value": true
+                }
+              }
+            },
+            "created_at": "2022-09-15T10:33:46.388Z",
+            "updated_at": "2022-11-22T15:48:50.220Z",
+            "assets": {
+              "cockpit_url": "https://cockpits.voucherify.io/customers?token=U2FsdGVkX186yavyLJyykWa9KfhE1J850qWbQ1B%2BjKBZ0wrIzBNaW1WR6tNZo71Y5oTWG6PYpI9BpXDSnzz7CRfQ3lu7M151btz2vlYVxbd2eHNOjTFEwTbD8wK4moLONgtTlPM8ze42nmutFk5GUBepUEhxHRfbk8zekWqWvo8%2FbnAJsPl2rxYyaggwXQDj"
+            },
             "object": "customer"
           }
+        ],
+        "x-tags": [
+          "CUSTOMERS API"
         ],
         "properties": {
           "id": {
@@ -21210,24 +21226,29 @@
             "properties": {
               "consents": {
                 "type": "object",
+                "description": "Stores a list of consent ID's along with the timestamp and decision on accepting or rejecting a marketing permission.",
                 "properties": {
-                  "consent_name_or_ID": {
+                  "consentId": {
                     "type": "object",
+                    "description": "Unique ID of a consent, i.e. `cnst_lbgOBhHTuDrB7sjIhFjvIALj`.",
                     "properties": {
                       "date": {
                         "type": "string",
-                        "description": "Timestamp representing the date and time when ________ in ISO 8601 format.",
-                        "example": "2022-05-10T08:50:10.338Z"
+                        "description": "Timestamp representing the date and time when a consent was accepted or rejected in ISO 8601 format.",
+                        "example": "2022-05-10T08:50:10.338Z",
+                        "format": "date-time"
                       },
                       "value": {
-                        "type": "boolean"
+                        "type": "boolean",
+                        "description": "Accepted: `true`, Rejected: `false`"
                       }
                     }
                   }
                 }
               },
               "source": {
-                "type": "string"
+                "type": "string",
+                "description": "Takes on the name of the source of the integration if the customer was created through an integration, i.e. `Bigcommerce` or `Shopify`."
               }
             }
           },
@@ -21258,10 +21279,7 @@
             "description": "The type of object represented by the JSON. This object stores information about the customer.",
             "default": "customer"
           }
-        },
-        "x-tags": [
-          "CUSTOMERS API"
-        ]
+        }
       },
       "9_res_list_customers": {
         "type": "object",
