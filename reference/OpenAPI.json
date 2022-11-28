@@ -21652,11 +21652,6 @@
             "type": "integer",
             "description": "Incremental balance to be added to/subtracted from the loyalty card.  \n\nTo add points: `100`  \nTo subtract points, add a minus: `-100`"
           },
-          "expiration_date": {
-            "type": "string",
-            "description": "Set expiration date for added points, i.e. `YYYY-MM-DD`. This parameter is **required** only when `expiration_type` is set to `CUSTOM_DATE`.",
-            "example": "2020-05-30"
-          },
           "expiration_type": {
             "type": "string",
             "default": "PROGRAM_RULES",
@@ -21666,6 +21661,11 @@
               "CUSTOM_DATE"
             ],
             "description": "Set the type of expiration for added points.  \n- `PROGRAM_RULES`: Inherit rules from campaign.\n- `NON_EXPIRING`: Points never expire.\n- `CUSTOM_DATE`: Points expire on a particular date. **Requires** `expiration_date` parameter."
+          },
+          "expiration_date": {
+            "type": "string",
+            "description": "Set expiration date for added points, i.e. `YYYY-MM-DD`. This parameter is **required** only when `expiration_type` is set to `CUSTOM_DATE`.",
+            "example": "2020-05-30"
           }
         }
       },
@@ -50118,7 +50118,8 @@
       "parameters": [
         {
           "schema": {
-            "type": "string"
+            "type": "string",
+            "example": "camp_7s3uXI44aKfIk5IhmeOPr6ic"
           },
           "name": "campaignId",
           "in": "path",
@@ -50127,7 +50128,8 @@
         },
         {
           "schema": {
-            "type": "string"
+            "type": "string",
+            "example": "MmFAzfDe"
           },
           "name": "memberId",
           "in": "path",
@@ -50136,7 +50138,7 @@
         }
       ],
       "post": {
-        "summary": "Add/Remove Loyalty Card Balance",
+        "summary": "Add or Remove Loyalty Card Balance",
         "operationId": "post-loyalties-campaignId-members-memberId-balance",
         "responses": {
           "200": {
@@ -50145,6 +50147,55 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/8_res_add_remove_points_balance"
+                },
+                "examples": {
+                  "Add balance": {
+                    "value": {
+                      "points": -100,
+                      "total": 13436,
+                      "balance": 13136,
+                      "type": "loyalty_card",
+                      "object": "balance",
+                      "related_object": {
+                        "type": "voucher",
+                        "id": "v_0aMj6Mdp0i3zuXrd9NnBKboc7746mlgF"
+                      }
+                    }
+                  },
+                  "Deduct balance": {
+                    "value": {
+                      "points": -100,
+                      "total": 13436,
+                      "balance": 13136,
+                      "type": "loyalty_card",
+                      "object": "balance",
+                      "related_object": {
+                        "type": "voucher",
+                        "id": "v_0aMj6Mdp0i3zuXrd9NnBKboc7746mlgF"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the expiration date was defined incorrectly in the request payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_error_no_translation"
+                },
+                "examples": {
+                  "Invalid expiration date": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_expiration_date",
+                      "message": "Invalid Expiration Date",
+                      "details": "Expiration date cannot be set in the past",
+                      "request_id": "v-0c118b1611424ca899"
+                    }
+                  }
                 }
               }
             }
@@ -50163,12 +50214,26 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/8_req_add_remove_points_balance"
+              },
+              "examples": {
+                "Add points": {
+                  "value": {
+                    "points": 100,
+                    "expiration_type": "CUSTOM_DATE",
+                    "expiration_date": "2023-05-30"
+                  }
+                },
+                "Deduct points": {
+                  "value": {
+                    "points": -100
+                  }
+                }
               }
             }
           },
-          "description": ""
+          "description": "Specify the point adjustment along with the expiration mechanism."
         },
-        "description": "This method gives adds or removes balance to an existing loyalty card.",
+        "description": "This method adds or removes balance to an existing loyalty card. The removal of points will consume the points that expire the soonest.",
         "tags": [
           "LOYALTIES API"
         ]
@@ -50215,6 +50280,27 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Returns an error if the expiration date was specified incorrectly in the request payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_error_no_translation"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .expiration_date cannot be recognized as a ISO-8601 compliant date",
+                      "request_id": "v-0c118c6f7c0e6751ab"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -50228,7 +50314,7 @@
             "$ref": "#/components/parameters/X-App-Token"
           }
         ],
-        "description": "This method gives adds or removes balance to an existing loyalty card.",
+        "description": "This method gives adds or removes balance to an existing loyalty card. The removal of points will consume the points that expire the soonest.",
         "requestBody": {
           "content": {
             "application/json": {
