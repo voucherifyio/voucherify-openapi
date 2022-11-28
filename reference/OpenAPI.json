@@ -21730,8 +21730,23 @@
       },
       "8_req_transfer_loyalty_points": {
         "description": "Request body schema for transferring points from a loyalty card.",
-        "type": "object",
-        "title": "Transfer Loyalty Points Request Body"
+        "type": "array",
+        "title": "Transfer Loyalty Points Request Body",
+        "items": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "description": "Unique loyalty card code from which the user wants to transfer loyalty points (source).",
+              "example": "L-CARD-02hgnq4"
+            },
+            "points": {
+              "type": "integer",
+              "description": "The number of loyalty points that the user wants to transfer to another loyalty card. The number of points cannot be higher than the current balance on the loyalty card (source).",
+              "example": 2
+            }
+          }
+        }
       },
       "8_req_redeem_reward": {
         "description": "Request body schema for redeeming a reward.",
@@ -50350,7 +50365,7 @@
           "name": "campaignId",
           "in": "path",
           "required": true,
-          "description": "A unique identifier of the loyalty campaign containing the voucher to which the loyalty points will be sent."
+          "description": "A unique identifier of the loyalty campaign containing the voucher to which the loyalty points will be sent (destination)."
         },
         {
           "schema": {
@@ -50359,7 +50374,7 @@
           "name": "memberId",
           "in": "path",
           "required": true,
-          "description": "A unique code identifying the loyalty card to which the user wants to transfer loyalty points."
+          "description": "A unique code identifying the loyalty card to which the user wants to transfer loyalty points (destination)."
         }
       ],
       "post": {
@@ -50367,17 +50382,17 @@
         "operationId": "post-loyalties-campaignId-members-memberId-transfers",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Returns a loyalty card object for the loaded loyalty card, ie. the one that that points were transferred to from the other cards(s).",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_obj_loyalty_card_object"
+                  "$ref": "#/components/schemas/8_obj_loyalty_card_object_non_expanded_categories"
                 }
               }
             }
           }
         },
-        "description": "This HTTP POST request method gives a possibility to transfer points between different loyalty cards. In the request, you need to provide the campaign ID and the loyalty card ID you want the points to be transferred to in the URL. In the request body, you have to provide the loyalty cards you want the points to be transferred from and the number of points to transfer from each card.",
+        "description": "Transfer points between different loyalty cards. You need to provide the campaign ID and the loyalty card ID you want the points to be transferred to as path parameters in the URL. In the request body, you provide the loyalty cards you want the points to be transferred from and the number of points to transfer from each card.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -50393,7 +50408,8 @@
                 "$ref": "#/components/schemas/8_req_transfer_loyalty_points"
               }
             }
-          }
+          },
+          "description": "Provide the loyalty cards you want the points to be transferred from and the number of points to transfer from each card."
         },
         "tags": [
           "LOYALTIES API"
