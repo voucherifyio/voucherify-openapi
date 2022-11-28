@@ -21751,7 +21751,24 @@
       "8_req_redeem_reward": {
         "description": "Request body schema for redeeming a reward.",
         "type": "object",
-        "title": "Redeem Reward Request Body"
+        "title": "Redeem Reward Request Body",
+        "properties": {
+          "reward": {
+            "type": "object",
+            "description": "Contains information about the reward to be redeemed.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique reward ID. The reward must be assigned to the campaign.",
+                "example": "rew_eSi4eYJk7o3tOycvweicR2z7"
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of key/value pairs that you can send in the request body to check against vouchers requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Advanced_ &rarr; _Redemption metadata satisfy_ or _Basic Builder_ &rarr; _Attributes match_ &rarr; _REDEMPTION METADATA_. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule)."
+          }
+        }
       },
       "8_res_redeem_reward": {
         "description": "Response body schema for redeeming a reward.",
@@ -22349,26 +22366,45 @@
         "x-stoplight": {
           "id": "u131oicowebzy"
         },
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
+        "type": "array",
+        "description": "Request body schema for **POST** `/loyalties/{campaignId}/rewards`.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "reward": {
+              "type": "string",
+              "example": "rew_2yGflHThU2yJwFECEFKrXBI2",
+              "description": "Unique reward ID."
+            },
+            "parameters": {
+              "type": "object",
+              "description": "An object that defines the price of the reward in loyalty points.",
+              "properties": {
+                "loyalty": {
+                  "type": "object",
+                  "description": "Stores the points parameter.",
+                  "properties": {
+                    "points": {
+                      "type": "integer",
+                      "description": "Defines how many points are required to obtain the reward."
+                    }
+                  }
+                }
+              }
+            }
           }
-        },
-        "description": "Request body schema for **POST** `/loyalties/{campaignId}/rewards`."
+        }
       },
       "8_res_create_reward_assignment": {
         "title": "Create Reward Assignment Response Body",
         "x-stoplight": {
           "id": "u131oicowebzy"
         },
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          }
-        },
-        "description": "Response body schema for **POST** `/loyalties/{campaignId}/rewards`."
+        "type": "array",
+        "description": "Response body schema for **POST** `/loyalties/{campaignId}/rewards`.",
+        "items": {
+          "$ref": "#/components/schemas/4_obj_reward_assignment_object"
+        }
       },
       "8_res_get_reward_assignment": {
         "title": "Get Reward Assignment",
@@ -47134,7 +47170,7 @@
           "name": "campaignId",
           "in": "path",
           "required": true,
-          "description": "The campaign ID or name of the loyalty campaign. You can either pass the campaign ID, which was assigned by Voucherify, or the `name` of the campaign as the path parameter value, e.g., `Loyalty%20Campaign`. "
+          "description": "Unique campaign ID or name of the loyalty campaign. You can either pass the campaign ID, which was assigned by Voucherify, or the `name` of the campaign as the path parameter value, e.g., `Loyalty%20Campaign`. "
         }
       ],
       "get": {
@@ -47233,11 +47269,68 @@
         "operationId": "post-loyalties-campaignId-rewards",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Returns a list of reward assignment objects.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/8_res_create_reward_assignment"
+                },
+                "examples": {
+                  "Example": {
+                    "value": [
+                      {
+                        "id": "rewa_Iw9VopmlLm0topBG17ZH1gp5",
+                        "reward_id": "rew_wg2pvCr5LDhCq4uVQZ9LhuZm",
+                        "related_object_id": "camp_fkZ28pe7DUAEmmabofkxHI8N",
+                        "related_object_type": "campaign",
+                        "parameters": {
+                          "loyalty": {
+                            "points": 2
+                          }
+                        },
+                        "created_at": "2022-11-28T18:54:19.747Z",
+                        "updated_at": null,
+                        "object": "reward_assignment"
+                      },
+                      {
+                        "id": "rewa_tAFZ7cHiTwZyOg1QaWHt6yYv",
+                        "reward_id": "rew_z35ffKoH0tCcck8EL56p6SIs",
+                        "related_object_id": "camp_fkZ28pe7DUAEmmabofkxHI8N",
+                        "related_object_type": "campaign",
+                        "parameters": {
+                          "loyalty": {
+                            "points": 2
+                          }
+                        },
+                        "created_at": "2022-11-28T18:54:19.747Z",
+                        "updated_at": null,
+                        "object": "reward_assignment"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns an error if there's a reward assignment created for the given reward.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_409_duplicate_found"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 409,
+                      "key": "duplicate_found",
+                      "message": "Duplicated resource found",
+                      "details": "Duplicated reward_assignment exists with id rewa_50O40FgyojhUiZAs3vDQbKiC",
+                      "request_id": "v-0c11a10ed2ce676da9",
+                      "resource_id": "rewa_50O40FgyojhUiZAs3vDQbKiC",
+                      "resource_type": "reward_assignment"
+                    }
+                  }
                 }
               }
             }
@@ -47259,11 +47352,34 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/8_req_create_reward_assignment"
+              },
+              "examples": {
+                "Example": {
+                  "value": [
+                    {
+                      "reward": "rew_wg2pvCr5LDhCq4uVQZ9LhuZm",
+                      "parameters": {
+                        "loyalty": {
+                          "points": 2
+                        }
+                      }
+                    },
+                    {
+                      "reward": "rew_z35ffKoH0tCcck8EL56p6SIs",
+                      "parameters": {
+                        "loyalty": {
+                          "points": 2
+                        }
+                      }
+                    }
+                  ]
+                }
               }
             }
-          }
+          },
+          "description": "Define the cost of the rewards in loyalty points."
         },
-        "description": "Add a [reward](OpenAPI.json/components/schemas/4_obj_reward_object) to a loyalty campaign."
+        "description": "Add [rewards](OpenAPI.json/components/schemas/4_obj_reward_object) to a loyalty campaign."
       }
     },
     "/loyalties/{campaignId}/reward-assignments": {
@@ -47871,7 +47987,7 @@
             }
           }
         },
-        "description": "Through this method, an integration tries to exchange points from a loyalty card for a specified reward. This API method returns an assigned award in response. It means that if a requesting customer gets a coupon code with a discount for the next order, that discount code will be visible in response as part of the reward object definition.",
+        "description": "Exchange points from a loyalty card for a specified reward. This API method returns an assigned award in the response. It means that if a requesting customer gets a coupon code with a discount for the next order, that discount code will be visible in response as part of the reward object definition.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -47887,7 +48003,8 @@
                 "$ref": "#/components/schemas/8_req_redeem_reward"
               }
             }
-          }
+          },
+          "description": "Specify the reward to be redeemed."
         },
         "tags": [
           "LOYALTIES API"
@@ -47912,7 +48029,7 @@
         "operationId": "post-loyalties-members-memberId-redemption",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -47960,7 +48077,8 @@
                 "$ref": "#/components/schemas/8_req_redeem_reward"
               }
             }
-          }
+          },
+          "description": "Specify the reward to be redeemed."
         }
       }
     },
