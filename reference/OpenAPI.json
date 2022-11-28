@@ -22064,19 +22064,27 @@
                 "type": "string",
                 "description": "How the export was filtered, where the dash `-` preceding a sorting option means sorting in a descending order.",
                 "enum": [
-                  "expires_at"
+                  "expires_at",
+                  "-expires_at"
                 ]
               },
               "fields": {
                 "type": "array",
-                "description": "Array of strings containing the data that was exported. These fields define the headers in the CSV file. \n\n The array can be a combintation of any of the following available fields:  \n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Loyalty points bucket ID. | lopb_Wl1o3EjJIHSNjvO5BDLy4z1n |\n| campaign_id | Campaign ID of the parent loyalty campaign. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| voucher_id | Voucher ID of the parent loyalty card. | v_YLn0WVWXSXbUfDvxgrgUbtfJ3SQIY655 |\n| status | Status of the loyalty points bucket. | `ACTIVE` or `INACTIVE` |\n| expires_at | Timestamp in ISO 8601 format representing the date when the points expire. | 2022-06-30 |\n| points | Number of points. | 1000 |",
+                "description": "Array of strings containing the data that was exported. These fields define the headers in the CSV file. \n\n The array can be a combination of any of the following available fields:  \n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Loyalty points bucket ID. | lopb_Wl1o3EjJIHSNjvO5BDLy4z1n |\n| campaign_id | Campaign ID of the parent loyalty campaign. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| voucher_id | Voucher ID of the parent loyalty card. | v_YLn0WVWXSXbUfDvxgrgUbtfJ3SQIY655 |\n| status | Status of the loyalty points bucket. | `ACTIVE` or `INACTIVE` |\n| expires_at | Timestamp in ISO 8601 format representing the date when the points expire. | 2022-06-30 |\n| points | Number of points. | 1000 |",
                 "items": {
                   "type": "string"
                 }
               },
               "filters": {
-                "type": "object",
-                "description": "Data filters used to narrow the data records to be returned in the export."
+                "description": "Data filters used to narrow the data records to be returned in the export.",
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/8_req_filter_campaign_id"
+                  },
+                  {
+                    "$ref": "#/components/schemas/8_req_filter_voucher_id"
+                  }
+                ]
               }
             }
           },
@@ -22125,15 +22133,94 @@
                 }
               },
               "filters": {
-                "type": "object",
-                "description": "Data filters used to narrow the data records to be returned in the export."
+                "description": "Data filters used to narrow the data records to be returned in the export.",
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/8_req_filter_campaign_id"
+                  },
+                  {
+                    "$ref": "#/components/schemas/8_req_filter_voucher_id"
+                  }
+                ]
               }
             }
+          }
+        }
+      },
+      "8_req_filter_campaign_id": {
+        "title": "Filter by campaign ID",
+        "type": "object",
+        "description": "Filter conditions set on the campaign ID.",
+        "properties": {
+          "campaign_id": {
+            "$ref": "#/components/schemas/8_req_filter_conditions"
           },
-          "user_id": {
+          "junction": {
             "type": "string",
-            "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0Fr",
-            "description": " The user_id identifies the specific user who initiated the export through the Voucherify Dashboard; this `user_id` is returned when the channel value is `WEBSITE`."
+            "description": "Filter by conditions set on the `junction` parameter indicating how the `conditions` should be accounted for in the query. An `and` is an all-inclusive logical operator, meaning the `and` operator displays a record if all the conditions separated by AND are TRUE, while  an `or` operator displays a record if any of the conditions separated by OR is TRUE."
+          }
+        }
+      },
+      "8_req_filter_voucher_id": {
+        "title": "Filter by voucher ID",
+        "type": "object",
+        "description": "Filter conditions set on the voucher ID.",
+        "properties": {
+          "voucher_id": {
+            "$ref": "#/components/schemas/8_req_filter_conditions"
+          },
+          "junction": {
+            "type": "string",
+            "description": "Filter by conditions set on the `junction` parameter indicating how the `conditions` should be accounted for in the query. An `and` is an all-inclusive logical operator, meaning the `and` operator displays a record if all the conditions separated by AND are TRUE, while  an `or` operator displays a record if any of the conditions separated by OR is TRUE."
+          }
+        }
+      },
+      "8_req_filter_junction": {
+        "title": "Filter by campaign ID",
+        "type": "object",
+        "description": "Filter conditions by campaign ID.",
+        "x-tags": [
+          "EXPORTS API"
+        ],
+        "properties": {
+          "junction": {
+            "type": "string",
+            "description": "Filter by conditions set on the `junction` parameter indicating how the `conditions` should be accounted for in the query. An `and` is an all-inclusive logical operator, meaning the `and` operator displays a record if all the conditions separated by AND are TRUE, while  an `or` operator displays a record if any of the conditions separated by OR is TRUE."
+          }
+        }
+      },
+      "8_req_filter_conditions": {
+        "title": "Filter by conditions",
+        "type": "object",
+        "description": "Data filters used to narrow the data records to be returned in the result.",
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "description": "Data filters used to narrow the data records to be returned in the result.",
+            "properties": {
+              "$in": {
+                "type": "array",
+                "description": "Array of resource values that should be included in the results.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "$not_in": {
+                "type": "array",
+                "description": "Array of resource values that should be included in the results.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "$is": {
+                "type": "string",
+                "description": "Specify the exact resource value."
+              },
+              "$is_not": {
+                "type": "string",
+                "description": "Results should omit this value."
+              }
+            }
           }
         }
       },
@@ -51599,6 +51686,42 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/8_obj_export_object_points_expiration"
+                },
+                "examples": {
+                  "Specific Vouchers": {
+                    "value": {
+                      "id": "exp_zC3eXAFss17XTMzMkkov4KGq",
+                      "object": "export",
+                      "created_at": "2022-11-28T13:00:23.621Z",
+                      "status": "SCHEDULED",
+                      "channel": "API",
+                      "exported_object": "points_expiration",
+                      "parameters": {
+                        "order": "-expires_at",
+                        "fields": [
+                          "id",
+                          "campaign_id",
+                          "voucher_id",
+                          "status",
+                          "expires_at",
+                          "points"
+                        ],
+                        "filters": {
+                          "junction": "and",
+                          "voucher_id": {
+                            "conditions": {
+                              "$in": [
+                                "v_0aMj6Mdp0i3zuXrd9NnBKboc7746mlgF",
+                                "v_YLn0WVWXSXbUfDvxgrgUbtfJ3SQIY655"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "result": null,
+                      "user_id": null
+                    }
+                  }
                 }
               }
             }
@@ -51621,9 +51744,38 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/8_req_export_points_expirations"
+              },
+              "examples": {
+                "Specific Vouchers": {
+                  "value": {
+                    "parameters": {
+                      "fields": [
+                        "id",
+                        "campaign_id",
+                        "voucher_id",
+                        "status",
+                        "expires_at",
+                        "points"
+                      ],
+                      "order": "-expires_at",
+                      "filters": {
+                        "junction": "and",
+                        "voucher_id": {
+                          "conditions": {
+                            "$in": [
+                              "v_0aMj6Mdp0i3zuXrd9NnBKboc7746mlgF",
+                              "v_YLn0WVWXSXbUfDvxgrgUbtfJ3SQIY655"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
-          }
+          },
+          "description": "Specify the data filters, types of data to return and order in which the results should be returned."
         }
       }
     },
