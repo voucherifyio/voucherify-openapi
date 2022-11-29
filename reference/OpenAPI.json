@@ -5871,6 +5871,79 @@
           },
           "promotion": {
             "$ref": "#/components/schemas/3_res_list_promotion_tiers_from_campaign"
+          },
+          "loyalty_tiers_expiration": {
+            "type": "object",
+            "description": "Defines the expiration mechanism for loyal tiers.",
+            "properties": {
+              "qualification_type": {
+                "type": "string",
+                "enum": [
+                  "BALANCE",
+                  "POINTS_IN_PERIOD"
+                ],
+                "description": "Tier qualification.   \n\n`BALANCE`: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier."
+              },
+              "start_date": {
+                "type": "object",
+                "description": "Defines the conditions for the start date of the tier.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "IMMEDIATE",
+                      "NEXT_PERIOD"
+                    ],
+                    "description": "What triggers the tier to be valid for a customer.    \n`IMMEDIATE`: After reaching minimum required points"
+                  }
+                }
+              },
+              "expiration_date": {
+                "type": "object",
+                "description": "Defines the conditions for the expiration date of a tier.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "CUSTOM",
+                      "BALANCE_DROP",
+                      "END_OF_NEXT_PERIOD",
+                      "END_OF_PERIOD"
+                    ],
+                    "description": "What triggers the tier to expire for a customer."
+                  },
+                  "extend": {
+                    "type": "string",
+                    "description": "Defines the amount of time the tier will be active in ISO 8601 format. For example, a tier with a duration of P3M will be valid for a duration of 3 months."
+                  },
+                  "rounding": {
+                    "type": "object",
+                    "description": "Defines the rounding mechanism for tier expiration.",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "CUSTOM",
+                          "MONTH",
+                          "QUARTER",
+                          "HALF_YEAR",
+                          "YEAR"
+                        ],
+                        "description": "Period to which the expiration will be rounded to."
+                      },
+                      "strategy": {
+                        "type": "string",
+                        "enum": [
+                          "END",
+                          "START"
+                        ],
+                        "description": "Which portion of the period should the rounding be applied to."
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -6024,7 +6097,7 @@
                 "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
               },
               {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_LOYALTY_CARD"
+                "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
               }
             ]
           },
@@ -6847,6 +6920,93 @@
           "is_referral_code": {
             "type": "boolean",
             "description": "Indicates whether the voucher is a referral code; this is `true` for campaign type `REFERRAL_PROGRAM`."
+          }
+        }
+      },
+      "2_req_campaign_object_voucher_object_LOYALTY_CARD": {
+        "type": "object",
+        "description": "Schema model for a loyalty card.",
+        "title": "Loyalty Card",
+        "examples": [],
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "LOYALTY_CARD",
+            "description": "Type of voucher."
+          },
+          "loyalty_card": {
+            "description": "Defines the loyalty card details.",
+            "type": "object",
+            "properties": {
+              "points": {
+                "type": "integer",
+                "description": "Initial loyalty card income in points to be applied to the loyalty card at voucher generation."
+              },
+              "expiration_rules": {
+                "type": "object",
+                "description": "Defines point expiration rules.",
+                "properties": {
+                  "period_type": {
+                    "type": "string",
+                    "enum": [
+                      "MONTH"
+                    ],
+                    "description": "The expiration period."
+                  },
+                  "period_value": {
+                    "type": "integer",
+                    "description": "How many periods should pass before the expiration occurs."
+                  },
+                  "rounding_type": {
+                    "type": "string",
+                    "enum": [
+                      "END_OF_MONTH",
+                      "END_OF_QUARTER",
+                      "END_OF_HALF_YEAR",
+                      "END_OF_YEAR",
+                      "PARTICULAR_MONTH"
+                    ],
+                    "description": "Round up expiration till the end of the given period type."
+                  }
+                }
+              }
+            }
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              }
+            }
+          },
+          "code_config": {
+            "type": "object",
+            "description": "Defines code's pattern (prefix, suffix, length, charset, etc). ",
+            "properties": {
+              "length": {
+                "type": "string",
+                "description": "Number of characters in a generated code (excluding prefix and postfix)."
+              },
+              "charset": {
+                "type": "string",
+                "description": "Characters that can appear in the code.  \n\nExamples:\n\n- Alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic Lowercase: `abcdefghijklmnopqrstuvwxyz` \n- Alphabetic Uppercase: `ABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Numbers: `0123456789`  \n- Custom: a custom character set"
+              },
+              "prefix": {
+                "type": "string",
+                "description": "A text appended before the code."
+              },
+              "postfix": {
+                "type": "string",
+                "description": "A text appended after the code."
+              },
+              "pattern": {
+                "type": "string",
+                "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
+              }
+            }
           }
         }
       },
@@ -23315,14 +23475,173 @@
         }
       },
       "8_req_create_loyalty_cards": {
-        "title": "Create Loyalty Cards Request Body",
         "type": "object",
+        "title": "Create  Loyalty Campaign Request Body",
+        "description": "Request body schema for creating a loyalty campaign using **POSTloyaltiesaigns`.",
+        "examples": [],
         "properties": {
-          "id": {
+          "name": {
+            "type": "string",
+            "description": "Campaign name."
+          },
+          "description": {
+            "type": "string",
+            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
+          },
+          "type": {
+            "type": "string",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
+            "enum": [
+              "AUTO_UPDATE",
+              "STATIC"
+            ]
+          },
+          "auto_join": {
+            "type": "boolean",
+            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled. CONTEXT: `LOYALTY_PROGRAM`."
+          },
+          "join_once": {
+            "type": "boolean",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
+          },
+          "use_voucher_metadata_schema": {
+            "type": "boolean",
+            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
+          },
+          "vouchers_count": {
+            "type": "integer",
+            "description": "Total number of unique vouchers in campaign (size of campaign)."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
+            "example": "2022-09-20T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
+            "example": "2022-09-30T00:00:00.000Z"
+          },
+          "validity_timeframe": {
+            "type": "object",
+            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+            "properties": {
+              "interval": {
+                "type": "string",
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
+              },
+              "duration": {
+                "type": "string",
+                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
+              }
+            }
+          },
+          "validity_day_of_week": {
+            "type": "array",
+            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "activity_duration_after_publishing": {
+            "type": "string",
+            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
+          },
+          "loyalty_tiers_expiration": {
+            "type": "object",
+            "description": "Defines the expiration mechanism for loyal tiers.",
+            "properties": {
+              "qualification_type": {
+                "type": "string",
+                "enum": [
+                  "BALANCE",
+                  "POINTS_IN_PERIOD"
+                ],
+                "description": "Tier qualification.   \n\n`BALANCE`: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier."
+              },
+              "start_date": {
+                "type": "object",
+                "description": "Defines the conditions for the start date of the tier.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "IMMEDIATE",
+                      "NEXT_PERIOD"
+                    ],
+                    "description": "What triggers the tier to be valid for a customer.    \n`IMMEDIATE`: After reaching minimum required points"
+                  }
+                }
+              },
+              "expiration_date": {
+                "type": "object",
+                "description": "Defines the conditions for the expiration date of a tier.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "CUSTOM",
+                      "BALANCE_DROP",
+                      "END_OF_NEXT_PERIOD",
+                      "END_OF_PERIOD"
+                    ],
+                    "description": "What triggers the tier to expire for a customer."
+                  },
+                  "extend": {
+                    "type": "string",
+                    "description": "Defines the amount of time the tier will be active in ISO 8601 format. For example, a tier with a duration of P3M will be valid for a duration of 3 months."
+                  },
+                  "rounding": {
+                    "type": "object",
+                    "description": "Defines the rounding mechanism for tier expiration.",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "CUSTOM",
+                          "MONTH",
+                          "QUARTER",
+                          "HALF_YEAR",
+                          "YEAR"
+                        ],
+                        "description": "Period to which the expiration will be rounded to."
+                      },
+                      "strategy": {
+                        "type": "string",
+                        "enum": [
+                          "END",
+                          "START"
+                        ],
+                        "description": "Which portion of the period should the rounding be applied to."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
+            "example": "cat_0b688929a2476386a7"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
+          },
+          "": {
             "type": "string"
           }
-        },
-        "description": "Request body schema for creating a loyalty campaign using **POST** `/loyalties`."
+        }
       },
       "8_res_create_loyalty_cards": {
         "title": "Create Loyalty Cards Response Body",
@@ -48577,7 +48896,7 @@
         ]
       },
       "post": {
-        "summary": "Create Loyalty Cards",
+        "summary": "Create Loyalty Campaign",
         "operationId": "post-loyalties",
         "responses": {
           "200": {
@@ -48585,7 +48904,127 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_res_create_loyalty_cards"
+                  "$ref": "#/components/schemas/8_obj_loyalty_campaign_object"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "camp_wGlqXtnHddb39DvHuuhvvbxi",
+                      "name": "Loyalty Program 4",
+                      "campaign_type": "LOYALTY_PROGRAM",
+                      "type": "STATIC",
+                      "voucher": {
+                        "type": "LOYALTY_CARD",
+                        "loyalty_card": {
+                          "points": 0,
+                          "expiration_rules": {
+                            "period_type": "MONTH",
+                            "period_value": 3,
+                            "rounding_type": "END_OF_QUARTER"
+                          }
+                        },
+                        "redemption": {
+                          "quantity": 2
+                        },
+                        "code_config": {
+                          "length": 7,
+                          "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                          "pattern": "L-CARD-#######"
+                        },
+                        "is_referral_code": false,
+                        "start_date": "2016-10-26T00:00:00.000Z",
+                        "expiration_date": "2024-10-26T00:00:00.000Z",
+                        "validity_timeframe": {
+                          "interval": "P1D",
+                          "duration": "PT1H"
+                        }
+                      },
+                      "auto_join": true,
+                      "join_once": true,
+                      "use_voucher_metadata_schema": true,
+                      "description": "This is a campaign description.",
+                      "start_date": "2016-10-26T00:00:00.000Z",
+                      "expiration_date": "2024-10-26T00:00:00.000Z",
+                      "validity_timeframe": {
+                        "interval": "P1D",
+                        "duration": "PT1H"
+                      },
+                      "validity_day_of_week": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                      ],
+                      "activity_duration_after_publishing": "P24D",
+                      "vouchers_count": 0,
+                      "active": true,
+                      "metadata": {
+                        "test": true
+                      },
+                      "created_at": "2022-11-29T13:10:30.848Z",
+                      "category": "New Customers",
+                      "creation_status": "IN_PROGRESS",
+                      "vouchers_generation_status": "IN_PROGRESS",
+                      "protected": false,
+                      "validation_rules_assignments": {
+                        "object": "list",
+                        "data_ref": "data",
+                        "data": [],
+                        "total": 0
+                      },
+                      "category_id": "cat_0b6152ce12414820dc",
+                      "categories": [
+                        {
+                          "id": "cat_0b6152ce12414820dc",
+                          "name": "New Customers",
+                          "hierarchy": 0,
+                          "created_at": "2022-07-14T20:17:07.657Z",
+                          "object": "category"
+                        }
+                      ],
+                      "loyalty_tiers_expiration": {
+                        "qualification_type": "BALANCE",
+                        "start_date": {
+                          "type": "IMMEDIATE"
+                        },
+                        "expiration_date": {
+                          "type": "CUSTOM",
+                          "extend": "P3M",
+                          "rounding": {
+                            "type": "MONTH",
+                            "strategy": "END"
+                          }
+                        }
+                      },
+                      "object": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns an error if a loyalty campaign with the same name already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 409,
+                      "key": "duplicate_found",
+                      "message": "Duplicated resource found",
+                      "details": "Duplicated campaign exists with name Loyalty Program 2",
+                      "request_id": "v-0c12951ec58e67577e",
+                      "resource_id": "Loyalty Program 2",
+                      "resource_type": "campaign"
+                    }
+                  }
                 }
               }
             }
@@ -48608,9 +49047,73 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/8_req_create_loyalty_cards"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "name": "Loyalty Program 4",
+                    "description": "This is a campaign description.",
+                    "auto_join": true,
+                    "join_once": true,
+                    "use_voucher_metadata_schema": true,
+                    "start_date": "2016-10-26T00:00:00Z",
+                    "expiration_date": "2024-10-26T00:00:00Z",
+                    "validity_timeframe": {
+                      "duration": "PT1H",
+                      "interval": "P1D"
+                    },
+                    "validity_day_of_week": [
+                      0,
+                      1,
+                      2,
+                      3,
+                      4,
+                      5
+                    ],
+                    "activity_duration_after_publishing": "P24D",
+                    "category_id": "cat_0b6152ce12414820dc",
+                    "vouchers_count": 2,
+                    "voucher": {
+                      "type": "LOYALTY_CARD",
+                      "loyalty_card": {
+                        "points": 0,
+                        "expiration_rules": {
+                          "period_type": "MONTH",
+                          "period_value": 3,
+                          "rounding_type": "END_OF_QUARTER"
+                        }
+                      },
+                      "redemption": {
+                        "quantity": 2
+                      },
+                      "code_config": {
+                        "pattern": "L-CARD-#######"
+                      }
+                    },
+                    "metadata": {
+                      "test": true
+                    },
+                    "type": "STATIC",
+                    "loyalty_tiers_expiration": {
+                      "qualification_type": "BALANCE",
+                      "start_date": {
+                        "type": "IMMEDIATE"
+                      },
+                      "expiration_date": {
+                        "type": "CUSTOM",
+                        "extend": "P3M",
+                        "rounding": {
+                          "type": "MONTH",
+                          "strategy": "END"
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
-          }
+          },
+          "description": "Specify the loyalty campaign details."
         }
       }
     },
