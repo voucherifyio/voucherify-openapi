@@ -10510,14 +10510,16 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "The ID of an existing customer that will be linked to redemption in this request."
+            "description": "The ID of an existing customer that will be linked to redemption in this request.",
+            "example": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv"
           }
         }
       },
       "6_req_validate_voucher_customer_id_string": {
+        "type": "string",
         "title": "Customer ID",
         "description": "You can pass the unique customer ID that was assigned by Voucherify.",
-        "type": "string"
+        "example": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv"
       },
       "6_req_validate_voucher_customer_source_id": {
         "title": "Customer Source ID",
@@ -32092,17 +32094,76 @@
         "type": "object",
         "description": "Request schema for tracking a custom event.",
         "properties": {
-          "name": {
-            "type": "string"
+          "event": {
+            "type": "string",
+            "description": "Event name. This is the same name that you used to define a custom event in the **Dashboard** > **Project Settings** > **Event Schema**."
+          },
+          "customer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_req_validate_voucher_customer_id"
+              },
+              {
+                "$ref": "#/components/schemas/6_req_validate_voucher_customer_source_id"
+              },
+              {
+                "$ref": "#/components/schemas/9_req_create_customer"
+              }
+            ],
+            "type": "object"
+          },
+          "referral": {
+            "type": "object",
+            "description": "If a **conversion event** for a referral program is set to a custom event, then you need to send the referral code in the payload to make a record of the conversion event. ",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "A code through which a new visitor has been referred to a service."
+              },
+              "referrer_id": {
+                "type": "string",
+                "description": "Unique ID of the referring person - it is optional and not required if the referral **code** is provided.",
+                "example": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv"
+              }
+            }
+          },
+          "loyalty": {
+            "type": "object",
+            "description": "If an earning rule in a loyalty program is based on a custom event. This objects let's you specify the loyalty card to which the custom event should be attributed to.",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Code of the loyalty card to receive points based on the calculation method defined in the related earning rule. An earning rule is triggered for the loyalty card when the event passed in the `event` parameter of the request payload gets sent along with this loyalty card code."
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the event. A set of key/value pairs that you can attach to an event object. It can be useful for storing additional information about the event in a structured format. Event metadata schema is defined in the **Dashboard** > **Project Settings** > **Event Schema** > **Edit particular event** > **Metadata property definition**."
+          }
+        }
+      },
+      "15_res_track_custom_event": {
+        "title": "Track Custom Event Request Body",
+        "type": "object",
+        "description": "Request schema for tracking a custom event.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "event"
+          },
+          "type": {
+            "type": "string",
+            "description": "The event name."
           },
           "customer": {
             "type": "object"
           },
           "referral": {
-            "type": "object"
+            "type": "null"
           },
           "loyalty": {
-            "type": "object"
+            "type": "null"
           }
         }
       },
@@ -62485,7 +62546,46 @@
         "operationId": "post-events",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Returns the event type if the event was received by the application.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/15_res_track_custom_event"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "event",
+                      "type": "cart_abandoned",
+                      "customer": {},
+                      "referral": null,
+                      "loyalty": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the request payload is incomplete.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_error_no_translation"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .referral should have required property 'code'",
+                      "request_id": "v-0c15694e0e022146dd"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -62493,10 +62593,45 @@
         ],
         "parameters": [
           {
-            "$ref": "#/components/parameters/X-App-Id"
+            "in": "header",
+            "name": "X-App-Id",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Application ID"
           },
           {
-            "$ref": "#/components/parameters/X-App-Token"
+            "in": "header",
+            "name": "X-App-Token",
+            "description": "Application Secret Key",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "X-Client-Application-Id",
+            "description": "Application ID"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "X-Client-Token",
+            "description": "Application Secret Key"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "hostname"
+            },
+            "in": "header",
+            "name": "origin",
+            "description": "Indicates the origin (scheme, hostname, and port)."
           }
         ],
         "description": "To track a custom event, you create an event object.  \n\nThe event object must be linked to the customer who performs the action. If a customer doesn't exist in Voucherify, the customer will be created.  \n\n<!-- theme: info -->\n\n> #### Also available on client-side\n>\n> This method is also accessible through public keys which you can use in client-side​ apps: mobile and web browser apps.\n> - Use `X-Client-Application-Id` as the application ID header.\n> - Use `X-Client-Token` as the appliction secret key header.\n> - Use client-side base URL.\n> - Use an `origin` header for your custom domain.",
@@ -62505,6 +62640,43 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/15_req_track_custom_event"
+              },
+              "examples": {
+                "Referral triggered by custom event": {
+                  "value": {
+                    "event": "user_subscribed",
+                    "customer": {
+                      "source_id": "source_customer_event"
+                    },
+                    "referral": {
+                      "code": "46jL0kYI",
+                      "referrer_id": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv"
+                    },
+                    "metadata": {
+                      "login": "bob",
+                      "pricing_plan": "PP1",
+                      "volume_number": 4
+                    }
+                  }
+                },
+                "Earning rule triggered by custom event": {
+                  "value": {
+                    "event": "cart_abandoned",
+                    "customer": {
+                      "source_id": "source_customer_event"
+                    },
+                    "loyalty": {
+                      "code": "6CB4KDAu"
+                    },
+                    "metadata": {
+                      "date": "2022-12-01",
+                      "flag": true,
+                      "text": "Cart abandoned event",
+                      "date_time": "2022-12-01T09:24:33.061Z",
+                      "number": 1
+                    }
+                  }
+                }
               }
             }
           },
