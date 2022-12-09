@@ -1,6 +1,6 @@
 name: Sync OpenAPI definition to ReadMe
 
-# Run workflow for every push to the `main` branch
+# Run workflow for every push to the `master` branch
 on:
   push:
     branches:
@@ -15,8 +15,21 @@ jobs:
 
       # Run GitHub Action to sync OpenAPI file at ./path-to-file.json
       - name: GitHub Action
-        # We recommend specifying a fixed version, i.e. @v8
-        # Docs: https://docs.github.com/actions/using-workflows/workflow-syntax-for-github-actions#example-using-versioned-actions
-        uses: readmeio/rdme@v8
+        uses: readmeio/rdme@v8.0.0
         with:
           rdme: openapi ./reference/OpenAPI.json --key=${{ secrets.README_API_KEY }} --id=${{ secrets.API_DEFINITION_ID }}
+
+
+      # First we're going to perform a dry run of syncing process.
+      # We do this on every push to ensure that an actual sync will work properly
+      - name: Sync docs to ReadMe (dry run)
+        uses: ./
+        with:
+          rdme: docs ./documentation --key=${{ secrets.README_API_KEY }} --version=${{ secrets.README_MAIN_VERSION }} --dryRun
+
+      # And finally, we perform an actual sync to ReadMe if we're on the main branch
+      - name: Sync docs to ReadMe
+        if: github.event_name == 'push' && github.event.ref == 'refs/heads/master'
+        uses: readmeio/rdme@8.0.0
+        with:
+          rdme: docs ./docs --key=${{ secrets.README_API_KEY }} --version=${{ secrets.README_MAIN_VERSION }}
