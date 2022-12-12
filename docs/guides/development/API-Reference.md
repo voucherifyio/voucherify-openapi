@@ -6,3 +6,5 @@ slug: api-reference
 ---
 
 LINK TO VOUCHERIFY's API Reference
+
+https://docs.voucherify.io/reference/introduction-1

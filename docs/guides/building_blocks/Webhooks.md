@@ -6,3 +6,5 @@ slug: webhooks
 ---
 
 LINK TO VOUCHERIFY's Webhooks document
+
+https://support.voucherify.io/article/68-webhooks-notifications
