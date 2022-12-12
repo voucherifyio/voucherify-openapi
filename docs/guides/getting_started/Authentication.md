@@ -15,11 +15,11 @@ Voucherify uses *OAuth 2.0* to authorize requests to the platform. It is publish
 
 To get access to the Voucherify API, the client application needs to pass `Application ID` and `Application Secret Key`. You can get (and reset) these tokens in the *Project settings*.
 
-IMAGE
+![Project Settings](../../assets/img/guides_getting_started_authentication_project_settings_1.png "Project Settings")
 
 By default, there are two pairs of authentication keys. The first, Application Keys, are meant to authorize your requests to Voucherify API. You can create more Application Keys for each user.
 
-IMAGE
+![Application Keys](../../assets/img/guides_getting_started_authentication_application_keys_2.png "Application Keys")
 
 A generated pair of `Application ID` and `Application Secret Key` must be attached to every HTTP request as custom headers: `X-App-Id`, `X-App-Token`.
 
@@ -40,13 +40,13 @@ The second authentication mechanism uses publishable keys. It is meant to be use
 
 See [voucherify.js](https://docs.voucherify.io/docs/client-side-api) as an example.
 
-IMAGE
+![Client-Side Keys](../../assets/img/guides_getting_started_authentication_client_side_keys_3.png "Client-Side Keys")
 
 > :construction: Domain whitelist
 > 
 > Remember to whitelist your domain/mobile app origin in the Project settings > Client-side Settings to allow client-side connections.
 
-IMAGE
+![Domain Settings](../../assets/img/guides_getting_started_authentication_domain_settings_4.png "Domain Settings")
 
 ### Client-side request headers
 

@@ -160,7 +160,7 @@ There are two types of segments in Voucherify:
 - **Static** – always contains the same number of customers.
 - **Auto-update** – customers dynamically join or leave if they match a given filter (e.g., if you [update a customer's property](https://docs.voucherify.io/reference#update-customer) and it matches the filter, the customer will automatically join the segment).
 
-##Static
+## Static
 
 This is how you can create a static segment programmatically. Add [customer ids](https://docs.voucherify.io/reference#the-customer-object) in `customers`. 
 
@@ -235,7 +235,7 @@ To get more complex scenarios you can use multiple modifiers. If you're not sure
             }
 ```
 
-##Segment operators reference
+## Segment operators reference
 
 Filters allow you to group customers by:
 - Name	

@@ -239,7 +239,7 @@ When redeeming the code, the session object needs to define session.type and ses
 
 If the redemption request includes a proper session.key value, the request is validated and the redemption is executed. When Voucherify registers a new redemption for the locked resource, the session is automatically released. 
 
-IMAGE
+![Redemption success](../../assets/img/guides_campaigns_recipes_locking_validation_session_redemption_successful_1.png "Successful redemption")
 
 In case you'd like to remove an established session manually, use [Release Validation Session](ref:release-validation-session) endpoint.
 

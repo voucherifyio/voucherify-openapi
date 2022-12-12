@@ -11,11 +11,11 @@ Voucherify supports free shipping discount which is a specific use case of a [un
 
 Initially, the price of the shipping is set to 0. 
 
-IMAGE
+![Product catalog](../../assets/img/guides_discount_recipes_free_shipping_discount_product_catalog_1.png "Product catalog")
 
 To add a new shipping charge, open the product details, and choose edit (the pencil icon). Then, set up a new price and confirm with Save. 
 
-IMAGE
+![New Price](../../assets/img/guides_discount_recipes_free_shipping_discount_new_price_2.png "New price")
 
 To add a new shipping charge, open the product details, and choose edit (the pencil icon). Then, set up a new price and confirm with Save. 
 
@@ -60,13 +60,13 @@ We're going to create a unique codes campaign and a cart-level promotion, both w
 
 Open the Campaign Manager with the Plus.
 
-IMAGE
+![Create campaign](../../assets/img/guides_discount_recipes_free_shipping_discount_create_campaign_3.png "Create campaign")
 
 In the next step, you need to choose between discount coupons (codes with free shipping) or promotion (free shipping automatically applied). Let's go with discount coupons first.
 
 - Discount codes
 
-IMAGE
+![Create campaign](../../assets/img/guides_discount_recipes_free_shipping_discount_choose_campaign_type_4.png "Create campaign")
 
 In the first section, add Campaign details:
 
@@ -74,23 +74,23 @@ In the first section, add Campaign details:
 - Add the campaign name.
 - Define code redemption limit and code count.
 
-IMAGE
+![Campaign details](../../assets/img/guides_discount_recipes_free_shipping_discount_campaign_details_5.png "Campaign details")
 
 When campaign details are ready, go to the next step and add time limits (optional).
 
-IMAGE
+![Campaign timeframe](../../assets/img/guides_discount_recipes_free_shipping_discount_timeframe_6.png "Campaign timeframe")
 
 The third step is crucial for setting up a free shipping discount. In this section, you can define a discount type. To offer shipping for free, choose Free Shipping.
 
-IMAGE
+![Free shipping discount](../../assets/img/guides_discount_recipes_free_shipping_discount_type_7.png "Free shipping discount")
 
 You can attach additional limits and rules to free shipping discounts by adding [validation rules](https://support.voucherify.io/article/53-validation-rules).
 
-IMAGE
+![Validation rule](../../assets/img/guides_discount_recipes_free_shipping_discount_validation_rule_8.png "Validation rule")
 
 When ready, go to the next step. In the fourth section, you can add [metadata attributes](https://support.voucherify.io/article/99-schema-validation-metadata).
 
-IMAGE
+![Campaign metadata](../../assets/img/guides_discount_recipes_free_shipping_discount_metadata_9.png "Campaign metadata")
 
 The last section shows a summary of the created campaign, if everything is fine, click Save and it's ready.
 
@@ -98,7 +98,7 @@ The last section shows a summary of the created campaign, if everything is fine,
 
 In the case of [cart-level promotion](https://support.voucherify.io/article/519-create-cart-level-promotions), the free shipping discount is defined in the second section of the Campaign Manager, as a part of the level settings. If you want to offer only free shipping in this promotion, then you need only one promotion level.
 
-IMAGE
+![Free shipping promotion](../../assets/img/guides_discount_recipes_free_shipping_discount_promotion_10.png "Free shipping promotion")
 
 ### Free shipping discount created via API
 
@@ -535,4 +535,4 @@ In the response body, you can see that the shipping was added to the order items
 
 The discount amount is equal to the previously added shipping fee.
 
-IMAGE
+![API Response](../../assets/img/guides_discount_recipes_free_shipping_discount_api_response_11.png "API Response")

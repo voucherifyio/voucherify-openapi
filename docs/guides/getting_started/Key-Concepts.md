@@ -28,12 +28,12 @@ The general idea is that the more often you stick to our conventions, the less t
 
 Voucherify doesn't want to enforce any rigid structures. After all, the only required action is to call the redemption method and provide something to redeem. We believe this approach should give your team the freedom and flexibility to respond to opportunities and changing demands.
 
-## **Voucherify objects**
+## Voucherify objects
 
 When you visit Voucherify [API reference](https://docs.voucherify.io/reference), you'll notice that the platform provides CRUD endpoints for every object which takes part in the promotion workflow. Let's run through the most important ones.
 
 
-## **Redemption**
+## Redemption
 
 Let's start off with the most important. Irrespective of the campaign type, every time you want to apply an incentive to a customer's cart, you need to invoke the [redemption](https://docs.voucherify.io/reference/the-redemption-object). 
 
@@ -50,7 +50,7 @@ There are three things you can redeem:
 * [Redeem Reward](https://docs.voucherify.io/reference/redeem-loyalty-card) use for loyalty programs
 
 
-## **Voucher**
+## Voucher
 
 A [voucher](https://docs.voucherify.io/reference#the-voucher-object) represents a voucher/coupon/referral/gift certificate code. The core feature of a voucher is its unique code and discount value. Each voucher also has (optionally) a start and expiration date, a validity timeframe, a code pattern, a redemption count limit, a status (active/inactive), and a link to the respective QR and barcode. A voucher can exist as a standalone instance (e.g. “BLCKFRDY”) or as part of a [campaign](https://docs.voucherify.io/docs/campaigns-1) (bulk unique codes sharing the same properties).
 
@@ -58,7 +58,7 @@ A [voucher](https://docs.voucherify.io/reference#the-voucher-object) represents 
 [Vouchers in dashboard](https://support.voucherify.io/article/512-complete-user-guide-on-discounts)
 
 
-## **Promotion tier**
+## Promotion tier
 
 This [object](https://docs.voucherify.io/reference#the-promotion-object) represents a discount that is automatically applied to eligible customers. To define `conditions` when the promotion should be applied, you can use customer attributes and history as well as information about the order structure. The tier also comes with a `banner` you can display on your web and mobile apps to entice customers to put more items into their carts. 
 
@@ -66,7 +66,7 @@ This [object](https://docs.voucherify.io/reference#the-promotion-object) represe
 [Promotions in dashboard](https://support.voucherify.io/article/519-create-cart-level-promotions)
 
 
-## **Earning rules and rewards**
+## Earning rules and rewards
 
 These two objects are relevant for [loyalty programs](https://docs.voucherify.io/docs/loyalty-program). The [Earning Rule object](https://docs.voucherify.io/reference#create-earning-rule) defines an action (event) that assigns a particular number of loyalty points to a customer's account. There are three types of events that you can use in earning rules: a customer entered a segment, an order paid event, or a custom event.
 
@@ -76,7 +76,7 @@ Whereas the Reward object enables you to add coupons, gift cards, material produ
 [Earning rules and rewards in dashboard](https://support.voucherify.io/article/491-getting-started-with-loyalty-programs)
 
 
-## **Campaign**
+## Campaign
 
 Both vouchers and promotion tiers can be grouped into a [campaign](https://docs.voucherify.io/reference#the-campaign-object). In the case of vouchers, the campaign can be used to control and monitor them in bulk. For example, define the number and pattern of generated codes, set expiration dates, deactivate all codes in one click, etc. In the case of promotion tiers, it's a collection of tiers that you can use when listing active promotions. Besides coupon and promotion tiers, you can create gift card, referral, loyalty, and giveaway campaigns.
 
@@ -84,7 +84,7 @@ Both vouchers and promotion tiers can be grouped into a [campaign](https://docs.
 [Campaigns in dashboard](https://support.voucherify.io/article/64-maintenance)
 
 
-## **Validation rules**
+## Validation rules
 
 The heart of Voucherify is the rules engine which you can use to set up promotion limits. They can include various constraints, e.g.:
 
@@ -97,7 +97,7 @@ The heart of Voucherify is the rules engine which you can use to set up promotio
 [Validation rules](https://docs.voucherify.io/docs/validation-rules) reference
 [Validation rules in dashboard](https://support.voucherify.io/article/529-validation-rules-campaign-limits)
 
-## **Metadata**
+## Metadata
 
 Voucherify allows you to enhance default objects with custom attributes. You can attach a set of key-value pairs, nested objects, and arrays to objects. Additionally, you can define their schema and validate data sent to the platform.
 
@@ -107,14 +107,14 @@ Voucherify supports the following types for the custom fields: `text`, `number`,
 [Metadata in dashboard](https://support.voucherify.io/article/99-schema-validation-metadata)
 
 
-## **Events & Webhooks**
+## Events & Webhooks
 
 If you want to build validation rules around the recency and frequency of a given behavior, you can use custom [events](https://docs.voucherify.io/reference/the-custom-event-object). These are objects best suited for tracking high-value customer interactions with your application. [Webhooks](https://docs.voucherify.io/docs/webhooks) on the other hand can be used to notify external systems about any relevant actions performed with Voucherify.
 
 [Events](ref:the-custom-event-object) reference
 [Events in dashboard](https://support.voucherify.io/article/111-custom-events)
 
-## **Distributions & Publication**
+## Distributions & Publication
 
 Voucherify offers tools for sending out codes (unique coupons, referral codes, gift cards, loyalty cards) and other promotional messages like (“you earned 10 loyalty points”) to customers. The possible channels include but are not limited to: email, SMS, live chat, push notifications.
 

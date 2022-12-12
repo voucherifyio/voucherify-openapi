@@ -227,7 +227,7 @@ If we try spending more than the current balance, Voucherify returns an error me
 
 The voucher can be redeemed using the Dashboard as well. Just go to the voucher details view, press `REDEEM` and provide the amount in the popup. 
 
-IMAGE
+![Manual Redemption](../../assets/img/guides_building_blocks_vouchers_manual_redemption_1.png "Manual redemption")
 
 ## Recharge
 

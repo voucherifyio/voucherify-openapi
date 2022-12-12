@@ -583,7 +583,7 @@ POST https://URL/v1/redemptions/{parent_redemption_id}/rollbacks
 
 Redemption of more than one redeemable can be only called via API. In your dashboard, you have an overview of all redemptions including stacked discounts. You can see child redemptions of single redeemables and parent redemptions that gather details of all child redemptions executed within the same API request. 
 
-IMAGE
+![Parent and child redemptions](../../assets/img/guides_discount_recipes_stackable_discounts_api_child_redemptions_1.png "Parent and child redemptions")
 
 ## Apply discount to the already created order
 

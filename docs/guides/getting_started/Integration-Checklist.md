@@ -13,7 +13,7 @@ Voucherify is an API-first Promotion Engine for digital teams. With our programm
 
 Voucherify offers a REST-based API and a web dashboard to create and manage promotional campaigns. Our dedicated endpoints help you deliver personalized incentives to any channel, device, and e-commerce solution while keeping your data in secure, highly available environments. This is achieved with real-time data synchronization with CRM, product inventory, distribution channels, and any customer touchpoints. 
 
-IMAGE
+![Welcome Diagram](../../assets/img/guides_getting_started_integration_checklist_welcome_diagram_1.png "Welcome Diagram")
 
 The majority of development work is required at the beginning: 
 * Connecting the Promotion Engine to the checkout.

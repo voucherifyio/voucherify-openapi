@@ -9,7 +9,7 @@ Sometimes it's important to validate a promo code or promotion on the client-sid
 
 Among other features it delivers [Voucherify React Widgets](https://github.com/voucherifyio/voucherify-js-sdk#-voucherify-react-widget)
 
-GIF
+![React Widget](../../assets/img/guides_development_client_side_api_widget_1.gif "React Widget")
 
 Voucherify JS SDK offers many client-side features:
 * `validate widget` which enables your customers to validate their codes and check its validity in a given context.
@@ -26,10 +26,10 @@ Visit :fa-github-alt: [Github repository](https://github.com/voucherifyio/vouche
 > 
 > To use Voucherify client-side features you have to white-list your domain in the [Client-side Settings](https://app.voucherify.io/#/app/configuration/proj_f1r5Tpr0J3Ct).
 
-IMAGE
+![Domain Settings](../../assets/img/guides_development_client_side_api_domain_settings_2.png "Domain Settings")
 
 > :construction: Enable client-side features
 > 
 > You have to activate particular client-side options in the [Project Settings](https://app.voucherify.io/#/app/configuration/proj_f1r5Tpr0J3Ct).
 
-IMAGE
+![Client-Side Settings](../../assets/img/guides_development_client_side_api_client_side_settings_3.png "Client-Side Settings")

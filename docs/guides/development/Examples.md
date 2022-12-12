@@ -15,11 +15,11 @@ LIST OF RECEPIES
 * Node.js, Vanilla JS  — [Github](https://github.com/voucherifyio/voucherify-examples) | [Replit](https://replit.com/@Voucherify/Voucherify-Starter-UI)
 * Next.js, TypeScript — [Github](https://github.com/voucherifyio/voucherify-examples-next) | [Replit] (https://replit.com/@Voucherify/Voucherify-Starter-UI-with-NEXTjs-and-Typescript)
 
-IMAGE
+![Hot Beans](../../assets/img/guides_development_examples_hot_beans_1.png "Hot Beans")
 
 🧑‍💻 Voucherify x [commercetools](https://commercetools.com) integration based on [Sunrise SPA (Vue.js)](https://github.com/commercetools/sunrise-spa) frontend — [Github](https://github.com/voucherifyio/sunrise-for-commerce-tools-integration/)
 
-IMAGE
+![commercetools](../../assets/img/guides_development_examples_commercetools_2.png "commercetools")
 
 ## Postman test cases
 
@@ -29,13 +29,13 @@ The list of API requests examples, it covers simple calls and more complex promo
 
 To run it on your account, you should provide your **[sandbox](doc:testing)** application keys in the environment and enable client-side operations in Project Settings (remember to whitelist the requests with `*` in the client-side settings section).
 
-IMAGE
+![Postman Environment](../../assets/img/guides_development_examples_postman_environment_3.png "Postman Environment")
 
 ## Voucherify.js
 
 To manage promotional activities on the frontend, consider using Voucherify open source web SDK – [JS](https://github.com/voucherifyio/voucherify-js-sdk). Here is a couple of [examples](https://github.com/voucherifyio/voucherify-js-sdk/tree/main/examples) demonstrating its capabilities: 
 
-IMAGE
+![Voucherify JS](../../assets/img/guides_development_examples_voucherify_js_4.png "Voucherify JS")
 
 ## Figma Promo UI Kits
 
@@ -44,4 +44,4 @@ Looking for ready designs for the best promotions experience in your ecommerce s
 * [Download Coupon & Promotions UI Kit on Figma](https://www.figma.com/community/file/1100356622702326488)
 * [Download Referral UI Kit on Figma](https://www.figma.com/community/file/1039555483777372722)
 
-IMAGE
+![Figma](../../assets/img/guides_development_examples_figma_5.png "Figma")
