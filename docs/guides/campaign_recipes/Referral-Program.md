@@ -7,3 +7,5 @@ stoplight-id: f32f915657527
 ---
 
 Link to other document
+
+https://support.voucherify.io/article/48-referral-program-basics

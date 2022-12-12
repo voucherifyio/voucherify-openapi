@@ -6,3 +6,5 @@ slug: error-codes
 ---
 
 LINK TO VOUCHERIFY's Errors file in API Reference
+
+https://docs.voucherify.io/reference/errors
