@@ -38,7 +38,7 @@ To speed up client-side redeem integration, you can use the voucherify.js librar
 `Voucherify.redeem("gfct5ZWI1nL", { order: { amount: 5000 } }, **function** callback (response) { })`
 ```
 
-IMAGE
+![UI Widget](../../assets/img/guides_building_blocks_redemption_redeem_widget_1.gif "Web widget")
 
 **Client-side caution**
 

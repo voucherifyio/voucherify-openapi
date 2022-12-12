@@ -13,7 +13,7 @@ Voucherify allows for launching product-specific promotions. For example, you ca
 > 
 > [SKU object reference](ref:the-sku-object)
 
-##Catalog structure
+## Catalog structure
 
 **One product – many variants**
 
@@ -142,7 +142,7 @@ When validating code or promotion, Voucherify treats SKUs as products. It means,
 
 If you use [product metadata](https://support.voucherify.io/article/515-products) in validation rules and pass product SKU in [Validate Voucher](ref:validate-voucher) or [Redeem Voucher](ref:redeem-voucher) request, the app checks if SKU metadata match validation rules. If SKU metadata matches validation rules, validation is succeeded.
 
-IMAGE
+![Validation Rules Product Metadata](../../assets/img/guides_building_blocks_products_validation_rules_product_metadata_1.png "Product metadata in validation rules")
 
 ```curl Validate Voucher
 POST  https://api.voucherify.io/v1/vouchers/SALE25/validate

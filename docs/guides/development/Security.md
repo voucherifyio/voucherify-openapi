@@ -44,5 +44,4 @@ To increase the security of public client operations, Voucherify will accept onl
 * yourdomain.com – this covers any instances of your site called without www and all paths within that domain.
 * \* – this allows requests from any domain.
 
-IMAGE
-
+![Domain Settings](../../assets/img/guides_development_security_domain_settings_1.png "Domain Settings")

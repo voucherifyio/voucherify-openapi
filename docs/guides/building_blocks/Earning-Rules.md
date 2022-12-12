@@ -568,9 +568,9 @@ Below you can see example request and response schemas for [creating earning rul
 <p>
 	 First, define your events in the Event Schema in the Project Settings.&nbsp;
 </p>
-<p>
-	<img src="https://lh6.googleusercontent.com/ipKs7aeELt3Ir7EHEnHjkEK-qY5okRQOdRB_qVi3TwEt8-6qEt0Dz_m7ojaejegYy9RqxwOmFCs2ZIBd2OvN1DALLkcKxwrRlsm5HiCWjFzdX8yEQUE3_pwLG87YfzdnF9BPbAHz" width="602" height="380" style="margin-top: 0px;">
-</p>
+
+![Custom Events Metadata](../../assets/img/guides_building_blocks_earning_rules_add_new_schema_1.png "Custom events metadata")
+
 <p>
 	 The Schema gathers definitions of all events that you can later pass to Voucherify and use in your loyalty campaigns.&nbsp;
 </p>

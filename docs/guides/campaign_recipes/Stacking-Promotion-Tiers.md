@@ -46,8 +46,7 @@ Dedicated endpoints in [Promotions API](https://docs.voucherify.io/reference/cre
 
 To redeem or validate the stack, you need to pass its id in API request. Please note that only **one stack** at the time is accepted for these methods. To retrieve the stack id, the first step is to use the GET method on the `/stacks` endpoint; see documentation on [List Promotion Stacks](ref:list-promotion-stacks).
 
-
-IMAGE
+![Stacking API](../../assets/img/guides_campaigns_recipes_stacking_promotion_tiers_diagram_1.png "Stacking API")
 
 Here is an example of a promotion stack validation. 
 

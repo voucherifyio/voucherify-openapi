@@ -14,8 +14,7 @@ As a result, when a customer is eligible for a promotion and redeems a code, the
 
 To set up a unit discount via the dashboard, you need to provide the following information:
 
-IMAGE
-
+![Unit type discount](../../assets/img/guides_discount_recipes_free_items_unit_discount_1.png "Unit type discount")
 
 **Unit value** defines the number of free items attached to the code.
 **Unit type **is a product offered for free chosen from your Product Inventory.
@@ -751,7 +750,7 @@ In the response body, you can see that despite that one t-shirt is already in th
 
 In the order items object, you can see that a free item was added to the cart.
 
-IMAGE
+![API Response](../../assets/img/guides_discount_recipes_free_items_api_response_2.png "API response")
 
 ## Redemption of the code with discount effect ADD_MISSING_ITEMS
 
@@ -900,7 +899,7 @@ Now, let's use the same order while redeeming a discount code with the same valu
 
 As you can see in the response body, the discount was applied to the product already added to the cart by a customer. The number of items in the cart matched the number of free units from the code so there were no additional items added by Voucherify.
 
-IMAGE 
+![API Response](../../assets/img/guides_discount_recipes_free_items_api_response_3.png "API response") 
 
 ## Redemption of the code with discount effect ADD_MANY_ITEMS
 
@@ -1098,6 +1097,4 @@ Finally, let's redeem a discount code for multiple free item types.
 
 As you can see in the response body, the discount was applied to the products in the cart. Each item type was added according the discount effect defined for that particular item type.
 
-IMAGE
-
-
+![API Response](../../assets/img/guides_discount_recipes_free_items_api_response_4.png "API response")

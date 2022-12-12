@@ -339,7 +339,7 @@ Create a voucher, campaign, or cart-level promotion with the *apply to items* di
 **Step 3: Assign validation rules**
 [Create Validation Rules Assignment](ref:create-validation-rules-assignment) to attach validation rules with discounted products to the created discount. If you create a campaign in the dashboard, you can create new rules on the spot or select existing rules from the list. Choosing the rules in the Manager automatically assigns them to the campaign. [Read more about validation rules](https://support.voucherify.io/article/529-validation-rules-campaign-limits)
 
-IMAGE
+![Validation Rules](../../assets/img/guides_discount_recipes_discount_effects_create_validation_rule_1.png "Validation rules")
 
 **Redemption**
 While redeeming the code, each item defined in the validation rules will be discounted. 
@@ -590,7 +590,7 @@ While redeeming the code, each item defined in the validation rules will be disc
 
 ---
 
-###Apply to Items Proportionally
+### Apply to Items Proportionally
 *Discount type: amount* 
 Using this effect, the discount is divided and applied only to particular items defined by validation rules. While creating a discount, you need to add effect to the discount object and define the list of discounted products using validation rules. 
 
@@ -882,7 +882,7 @@ While redeeming the code, each item defined in validation rules will be discount
 
 ---
 
-###Apply to Items Proportionally by Quantity
+### Apply to Items Proportionally by Quantity
 *Discount type: amount* 
 Likewise, the discount is divided and applied only to particular items defined by validation rules. While creating a discount, you need to add effect to the discount object and define the list of discounted products using validation rules. 
 
@@ -955,7 +955,7 @@ Here is an example of a validation rule that limits the quantity of each product
 
 ---
 
-###Add Missing Items
+### Add Missing Items
 *Discount type: unit* 
 
 This effect adds items to the cart only if a customer has fewer free items than offered by the code. For example, let's assume that the code gives one free t-shirt:  
@@ -983,7 +983,7 @@ The discount gives multiple types of free item(s) to customers. Free item units 
 
 ---
 
-###Default Effect
+### Default Effect
 Here are the default effects that API adds in the case you won't define it in your discounts.
 
 TABLE

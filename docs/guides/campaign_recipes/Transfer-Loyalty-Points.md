@@ -168,7 +168,7 @@ In the response, you can see that the customer doesn't have enough points to get
 
 This entity describes loyalty points transfer between Campaigns and Customers. If the customer has two or more assigned loyalty cards, Voucherify gives the opportunity to transfer points from one card to another - e.g., when the customer does not have enough points on the loyalty card to receive the reward. Points can be transferred between cards in the same and different loyalty campaigns and for the same and different customers.
 
-IMAGE
+![Transfer points](../../assets/img/guides_campaigns_recipes_transfer_loyalty_points_transfer_1.png "Transfer points")
 
 To transfer points from one card to another ({id}), we need to call the transfer endpoint with the following request body:
 
@@ -249,7 +249,7 @@ In the body parameters, you need to add the following data:
 
 As a result, the balance on both cards has changed.
 
-IMAGE
+![Wallet](../../assets/img/guides_campaigns_recipes_transfer_loyalty_points_wallet_2.png "Wallet")
 
 ## Points redemption
 
@@ -410,5 +410,4 @@ Where campaignId is a unique id of a loyalty campaign and the memberId is a loya
 
 In the dashboard, you can see that the points from the loyalty card were spent on the reward and the balance was updated.
 
-IMAGE
-
+![Loyalty Card Balance](../../assets/img/guides_campaigns_recipes_transfer_loyalty_points_balance_3.png "Loyalty card balance")
