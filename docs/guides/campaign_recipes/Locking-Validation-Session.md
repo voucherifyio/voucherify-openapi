@@ -23,7 +23,12 @@ Read on to learn step-by-step instructions on how to lock a code usage until its
 
 You can establish the locking session while validating the code. Put the `session` object in your request by following the session object reference.
 
-TABLE
+| **Parameter** | **Description** | **Example** |
+|:---|:---|:---|
+| session.type<br>`string`<br>required | Type of the session. Required to establish a new session.<br>Supported session types are listed in the table at the end of this guide. | "session":{<br>"type": "LOCK"<br>} |
+| session.key<br>`string`<br>optional | Unique session identifier. | "session": {<br>"key": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts",<br>"type": "LOCK"<br>} |
+| session.ttl_unit<br>`string`<br>optional<br><br>Default value for session is 7 days | Defines the type of unit for session time. Allowed values: DAYS, HOURS, MICROSECONDS, MILLISECONDS, MINUTES, NANOSECONDS, SECONDS | "session": {<br>"type": "LOCK",<br>"ttl": 7,<br>"ttl_unit": "DAYS"<br>} |
+| session.ttl<br>`number`<br>optional<br><br>Default value for session is 7 days | Value for the period of time that the session is active. Units for this paremter are defines by session.ttl_unit | "session": {<br>"type": "LOCK",<br>"ttl": 7,<br>"ttl_unit": "DAYS"<br>} |
 
 To link a request with the given session, always use the same session key for session-related validation and redemption requests. You can use your own session key or the system will generate one for you once the session option is enabled with the request.
 
@@ -253,7 +258,9 @@ In case you'd like to remove an established session manually, use [Release Valid
 
 The following table presents the type of sessions that can be established.
 
-TABLE
+| **Session Type** | **Behaviour** |
+|:---|:---|
+| LOCK | Locks the following parameters within the session:<br><br>- redemption quantity by 1 <br>- redemption gift credits specified with the requests <br>- redemption loyalty points specified with the request |
 
 You can always release established sessions by calling [Release Validation Session](ref:release-validation-session) endpoint. 
 

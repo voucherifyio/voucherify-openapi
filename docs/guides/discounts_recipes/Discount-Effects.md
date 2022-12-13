@@ -50,7 +50,11 @@ The effect is an optional discount property that is applied to coupon, in-cart, 
 
 Here's a list of all effects that you can add to different discount types. 
 
-TABLE
+| Discount Type | **Effects** |
+|:---|:---|
+| **Amount discount** | “APPLY_TO_ORDER”<br>“APPLY_TO_ITEMS”<br>"APPLY_TO_ITEMS_PROPORTIONALLY”<br>"APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY"<br>"APPLY_TO_ITEMS_BY_QUANTITY" |
+| **Percentage discount** | “APPLY_TO_ORDER”<br>“APPLY_TO_ITEMS” |
+| **Unit discount** | “ADD_NEW_ITEMS”<br>“ADD_MISSING_ITEMS”<br>"ADD_MANY_ITEMS" |
 
 ---
 
@@ -986,7 +990,11 @@ The discount gives multiple types of free item(s) to customers. Free item units 
 ### Default Effect
 Here are the default effects that API adds in the case you won't define it in your discounts.
 
-TABLE
+| **Discount Type** | **Default Effect** |
+|:---|:---|
+| AMOUNT | - If you define included or excluded products: "APPLY_TO_ITEMS"<br>- If you don't define included or excluded products: "APPLY_TO_ORDER" |
+| PERCENT | - If you define included or excluded products: "APPLY_TO_ITEMS"<br>- If you don't define included or excluded products: "APPLY_TO_ORDER" |
+| UNIT | "ADD_MISSING_ITEMS"<br>"ADD_NEW_ITEMS" |
 
 ### Effects and Validation Rules
 Discount effects work in parallel with the remaining [Validation rules](doc:validation-rules) that specify included and excluded items, required cart structure and other redemption circumstances.

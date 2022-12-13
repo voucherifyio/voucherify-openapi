@@ -36,9 +36,20 @@ To access test store, go to your Sandbox project and click on the Showcase butto
 ### Test data
 The Sandbox project is populated with test campaigns, **standalone** codes, customers and products, for example:
 
-TABLE
+| **Campaigns:** |  |
+|:---|:---|
+| 15% off for Illy - Arabica (Discount coupons) | 15% off Illy Arabica (test product) |
+| Referral Reward - 15% Discount (Discount coupons) | 15% off applied to whole cart |
+| **Standalone codes:** |  |
+| 50%UPTO100 | 50% off, the maxium discount amount per order is $100 |
+| 15%VISA | 15% off if order is oaid with Visa Card (order metadata: card is Visa). |
+| 50%OFF | 50% off, no validation rules |
+| BLCKFRDY | $10 off, no validation rules |
 
-TABLE 2
+| **Test Customers** |
+|:---|
+| Jane Doe |
+| John Doe |
 
 ## [deprecated] Sandbox for accounts created before 09/08/2021  
 
@@ -61,6 +72,22 @@ The sandbox API includes the same endpoints as the production API, keep in mind 
 
 We have prepared a starting set of test data. You get 5 different single vouchers and 10 vouchers in a campaign:
 
-TABLE
+| **Code** | **Campaign** | **Discount** | **Redemptions** | **Expiration Date** |
+|---|---|---|---|---|
+| `voucherify.io-10-amount-off` |  | 10 USD/EUR/... off | unlimited | never |
+| `voucherify.io-10-percent-off` |  | 10% off | unlimited | never |
+| `voucherify.io-10-unit-off` |  | 10 units off | unlimited | never |
+| `voucherify.io-expired` |  | 10% off | unlimited | 2015-12-31 |
+| `voucherify.io-exceeded` |  | 10 USD/EUR/... off | 1 (already redeemed) | never |
+| `voucherify.io-sandbox-01` | voucherify.io-sandbox | 50% off | unlimited | never |
+| `voucherify.io-sandbox-02` | voucherify.io-sandbox | 50% off | unlimited | never |
+| `voucherify.io-sandbox-03` | voucherify.io-sandbox | 50% off | unlimited | never |
+| `voucherify.io-sandbox-04` | voucherify.io-sandbox | 50% off | unlimited | never |
+| `voucherify.io-sandbox-05` | voucherify.io-sandbox | 50% off | unlimited | never |
+| `voucherify.io-sandbox-06` | voucherify.io-sandbox | 50% off | unlimited | never |
+| `voucherify.io-sandbox-07` | voucherify.io-sandbox | 50% off | unlimited | never |
+| `voucherify.io-sandbox-08` | voucherify.io-sandbox | 50% off | unlimited | never |
+| `voucherify.io-sandbox-09` | voucherify.io-sandbox | 50% off | unlimited | never |
+| `voucherify.io-sandbox-10` | voucherify.io-sandbox | 50% off | unlimited | never |
 
 You can create more test vouchers using the [Create Voucher](ref:create-voucher) endpoint.

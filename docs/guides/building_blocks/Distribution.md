@@ -168,7 +168,12 @@ publish":{
 
 This table lists built-in publication channels.
 
-TABLE
+| **Channel** | **Record** |
+|:---|:---|
+| Manual distribution | `Dashboard` |
+| Automatic distribution | `Automation` |
+| Referral program | `Automation` |
+| Explicit [create publication](ref:create-publication) call | API (default, can be modified) |
 
 If you want to track which customers got their codes so far, you can use the [list](https://docs.voucherify.io/v2017-04-20/reference#list-publications) endpoint. The publications are returned in sorted order, with the most recent ones appearing first.
 
