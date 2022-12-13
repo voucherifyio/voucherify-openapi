@@ -10,7 +10,97 @@ order: 2
 
 ## Sample workflows
 
-LIST OF RECEPIES
+
+[block:tutorial-tile]
+{
+  "title": "Fixed-code voucher redeemable once per customer",
+  "emoji": "📗",
+  "backgroundColor": "#018FF4",
+  "slug": "fixed-code-voucher-redeemable-once-per-customer",
+  "_id": "6228843ade0a5f03de8da9b0",
+  "id": "6228843ade0a5f03de8da9b0",
+  "link": "https://docs.voucherify.io/v2018-08-01/recipes/fixed-code-voucher-redeemable-once-per-customer",
+  "align": "default"
+}
+[/block]
+
+[block:tutorial-tile]
+{
+  "title": "Unique promo codes with discount for specific product",
+  "emoji": "📗",
+  "backgroundColor": "#018FF4",
+  "slug": "unique-promo-codes-with-discount-for-specific-product",
+  "_id": "622b09e81987da0014dc8f08",
+  "id": "622b09e81987da0014dc8f08",
+  "link": "https://docs.voucherify.io/v2018-08-01/recipes/unique-promo-codes-with-discount-for-specific-product",
+  "align": "default"
+}
+[/block]
+
+[block:tutorial-tile]
+{
+  "title": "Cart-level promotion with tiers based on total order value",
+  "id": "62305f17fe9d93001359abec",
+  "slug": "cart-level-promotion-with-tiers-based-on-total-order-value",
+  "backgroundColor": "#018FF4",
+  "emoji": "📗",
+  "link": "https://docs.voucherify.io/v2018-08-01/recipes/cart-level-promotion-with-tiers-based-on-total-order-value",
+  "align": "default",
+  "_id": "62305f17fe9d93001359abec"
+}
+[/block]
+
+[block:tutorial-tile]
+{
+  "title": "Gift card campaign for VIP customers",
+  "emoji": "📗",
+  "backgroundColor": "#018FF4",
+  "slug": "gift-card-campaign-for-vip-customers",
+  "_id": "6231fa4d8e119f002eeb782b",
+  "id": "6231fa4d8e119f002eeb782b",
+  "link": "https://docs.voucherify.io/v2018-08-01/recipes/gift-card-campaign-for-vip-customers",
+  "align": "default"
+}
+[/block]
+
+[block:tutorial-tile]
+{
+  "title": "Retrieving applicable vouchers",
+  "emoji": "📗",
+  "backgroundColor": "#018FF4",
+  "slug": "retrieving-applicable-vouchers",
+  "_id": "62349731ec110904c3f033b1",
+  "id": "62349731ec110904c3f033b1",
+  "link": "https://docs.voucherify.io/v2018-08-01/recipes/retrieving-applicable-vouchers",
+  "align": "default"
+}
+[/block]
+
+[block:tutorial-tile]
+{
+  "title": "Multi-tiered referral program",
+  "emoji": "📗",
+  "backgroundColor": "#018FF4",
+  "slug": "multi-tiered-referral-program",
+  "_id": "62557f899fb776009ecd9a27",
+  "id": "62557f899fb776009ecd9a27",
+  "link": "https://docs.voucherify.io/v2018-08-01/recipes/multi-tiered-referral-program",
+  "align": "default"
+}
+[/block]
+
+[block:tutorial-tile]
+{
+  "title": "Multi-tiered loyalty program",
+  "emoji": "📗",
+  "backgroundColor": "#018FF4",
+  "slug": "multi-tiered-loyalty-program",
+  "_id": "62b060177fff3a0021c79b6d",
+  "id": "62b060177fff3a0021c79b6d",
+  "link": "https://docs.voucherify.io/v2018-08-01/recipes/multi-tiered-loyalty-program",
+  "align": "default"
+}
+[/block]
 
 ## Sample integrations build by our team
 
