@@ -1,12 +1,11 @@
 ---
-tags: [STACKABLE DISCOUNTS API]
+title: API Overview
+excerpt: Schema description
+category: 636284b7e6b02c00a136e873
+slug: stacking-api-overview
 ---
 
 # Stacking API Overview
-<!-- theme: danger -->
-> #### Beta feature
->
-> Stackable discounts API is currently in Open Beta. Note that Beta features **can change during the beta period**. Feel free to test the feature and [share your feedback](https://www.voucherify.io/contact-support). For more updates, please follow our [release notes](https://support.voucherify.io/article/23-whats-new-in-voucherify).
 
 Stackable Discounts API enables you to validate and redeem up to 5 objects in a single request. You can use coupons, gift cards, promotion tiers, loyalty, and referral codes. In the redemption request, you need to provide a list of redeemables that define redeemed/validated objects.
 
