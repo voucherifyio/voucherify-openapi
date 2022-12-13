@@ -9,9 +9,7 @@ Welcome to Voucherify! We’re excited to be your partner in building a future-p
 
 You must first create an [account](http://app.voucherify.io/#/signup) — Voucherify offers a **free tier** (“Sandbox project”) you can use to build a proof of concept and, further, test it in production. 
 
-<div>
-<iframe src="https://player.vimeo.com/video/685819484?h=5332d0408e" width="640" height="360" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-</div>
+[First API Call](https://player.vimeo.com/video/685819484?h=5332d0408e "@embed")
 
 ## Join the dashboard
 

@@ -1,5 +1,8 @@
 ---
-tags: [STACKABLE DISCOUNTS API]
+title: Establish Validation Session
+excerpt: Schema description
+category: 636284b7e6b02c00a136e873
+slug: establish-validation-session
 ---
 
 # Establish Validation Session
@@ -44,11 +47,7 @@ The following table presents the type of sessions that can be established.
 | session.ttl_unit<br>`string`<br>*optional* | Defines the type of unit in which session time is counted. <br><br>Allowed values: `DAYS`, `HOURS`, `MICROSECONDS`, `MILLISECONDS`, `MINUTES`, `NANOSECONDS`, `SECONDS` | <pre>"session": {<br>    "type": "LOCK",<br>    "ttl": 7,<br>    "ttl_unit": "DAYS"<br>}</pre> |
 | session.ttl<br>`number`<br>*optional* | Value for the period of time that the session is active. Units for this paremeter are defined by session.ttl_unit | <pre>"session": {<br>    "type": "LOCK",<br>    "ttl": 7,<br>    "ttl_unit": "DAYS"<br>}</pre> |  
 
-<!--
-title: "Example Request"
-lineNumbers: true
--->
-```cURL  
+```cURL Example Request
 curl -X POST \
  -H "X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5" \
  -H "X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20" \
@@ -84,11 +83,7 @@ curl -X POST \
     }
 }
 ```
-<!--
-title: "Example Response"
-lineNumbers: true
--->
-```json
+```json Example Response
 {
     "valid": true,
     "redeemables": [
@@ -181,17 +176,11 @@ lineNumbers: true
 }
 ```  
 
-<!-- theme: info -->
-
-> #### Default Session Time 
+> :blue_book: Default Session Time 
 > 
 > If you won't establish session timeframe by passing the session.ttl and session.ttl_unit, it'll be active throughout 7 days. 
 
-<!--
-title: "Default session object"
-lineNumbers: true
--->
-```json  
+```json Default session object
 "session": {
     "key": "ssn_cj1pHteWyJRbFX5sRFypZ0ricS7Xyzl0",
     "type": "LOCK",

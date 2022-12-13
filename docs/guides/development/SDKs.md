@@ -26,8 +26,7 @@ JS is **the latest** JavaScript and node.js SDK.
 npm install @voucherify/sdk
 ```
 
-EMBED
-https://github.com/voucherifyio/voucherify-js-sdk
+[Voucherify JS SDK](https://github.com/voucherifyio/voucherify-js-sdk "@embed")
 
 ---
 ## Node.js
@@ -40,8 +39,7 @@ https://github.com/voucherifyio/voucherify-js-sdk
 npm install voucherify
 ```
 
-EMBED
-https://github.com/voucherifyio/voucherify-nodejs-sdk
+[Voucherify node.js SDK](https://github.com/voucherifyio/voucherify-nodejs-sdk "@embed")
 
 ---
 ## Java
@@ -60,8 +58,7 @@ or via Gradle:
 
 `compile 'pl.rspective.voucherify.client:voucherify-java-sdk:2.4.0'`
 
-EMBED
-https://github.com/voucherifyio/voucherify-java-sdk
+[Voucherify Java SDK](https://github.com/voucherifyio/voucherify-java-sdk "@embed")
 
 ---
 ## Ruby
@@ -70,8 +67,7 @@ https://github.com/voucherifyio/voucherify-java-sdk
 gem install voucherify
 ```
 
-EMBED
-https://github.com/voucherifyio/voucherify-ruby-sdk
+[Voucherify Ruby SDK](https://github.com/voucherifyio/voucherify-ruby-sdk "@embed")
 
 ---
 ## PHP 
@@ -86,8 +82,7 @@ Include Voucherify PHP SDK (rspective/voucherify) in your PHP composer.json file
 
 You can check available versions at [Packagist](https://packagist.org/packages/rspective/voucherify).
 
-EMBED
-https://github.com/voucherifyio/voucherify-php-sdk
+[Voucherify PHP SDK](https://github.com/voucherifyio/voucherify-php-sdk "@embed")
 
 ---
 ## Python
@@ -95,7 +90,7 @@ https://github.com/voucherifyio/voucherify-php-sdk
 ```shell Shell
 pip install voucherify
 ```
-https://github.com/voucherifyio/voucherify-python-sdk
+[Voucherify Python SDK](https://github.com/voucherifyio/voucherify-python-sdk "@embed")
 
 ---
 ## .NET
@@ -114,8 +109,7 @@ Install-Package Voucherify
 
 Or simple use libraries from lib/{target-framework} folder.
 
-EMBED
-https://github.com/voucherifyio/voucherify-dotNET-sdk
+[Voucherify .NET SDK](https://github.com/voucherifyio/voucherify-dotNET-sdk "@embed")
 
 ---
 ## Voucherify.js
@@ -128,8 +122,7 @@ From CDN:
 
 [http://www.jsdelivr.com/projects/voucherify.js](http://www.jsdelivr.com/projects/voucherify.js) 
 
-EMBED
-https://github.com/rspective/voucherify.js
+[Voucherify JS SDK](https://github.com/rspective/voucherify.js "@embed")
 
 ---
 ## Android
@@ -156,8 +149,7 @@ Using Maven:
 > 
 > The SDK requires at least Java 6 or Android 2.3.3 (API 10)
 
-EMBED
-https://github.com/voucherifyio/voucherify-android-sdk
+[Voucherify Android SDK](https://github.com/voucherifyio/voucherify-android-sdk "@embed")
 
 ---
 ## iOS(Swift)
@@ -172,5 +164,4 @@ pod "VoucherifySwiftSdk"
 > 
 > The SDK requires Swift 2.2 and therefore Xcode 7.3
 
-EMBED
-https://github.com/voucherifyio/voucherify-ios-sdk
+[Voucherify iOS SDK](https://github.com/voucherifyio/voucherify-ios-sdk "@embed")

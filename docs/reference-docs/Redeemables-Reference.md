@@ -1,12 +1,11 @@
 ---
-tags: [STACKABLE DISCOUNTS API]
+title: Redeemables reference
+excerpt: Schema description
+category: 636284b7e6b02c00a136e873
+slug: redeemables-reference
 ---
 
 # Redeemables Reference
-
-<!-- theme: danger -->
-> #### Beta feature
-> Stackable discounts API is currently in Open Beta. Note that Beta features **can change during the beta period**. Feel free to test and share the feedback. For more updates, please follow our [release notes](https://support.voucherify.io/article/23-whats-new-in-voucherify).  
 
 Redeemables array can gather up to 5 objects. Each array element represents an object that will be redeemed when calling the API. In the reference below, you can learn how to pass each type of redeemable in the payload.  
 
