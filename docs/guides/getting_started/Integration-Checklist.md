@@ -39,7 +39,15 @@ One of the Voucherify principles is giving your team flexibility. You can start 
 
 The following examples are meant to give you an overview of what is possible. Keep in mind that there are more options and each workflow can be customized to fit your business logic. 
 
-TABLE
+| **Building block** | **Use cases and features** |
+|---|---|
+| **Coupon campaigns** with:<br><br>- Percentage <br>- Amount <br>- Unit (free items) <br>- Free shipping <br>- Fixed price on item/order | - 10% off if you spend at least $50. <br>- Buy product A and get product B for free. <br>- Each three-pack from category A is now $29.90. <br>- The first order is shipped for free. <br>- Automatic welcome messages with a coupon sent to every new customer. |
+| **Gift card campaigns** with prepaid credits | - Automatic email with a Happy Birthday gift card, sent a day before the customer's birthday. <br>- $10 credits on the customer's digital wallet for the first review. <br>- $50 gift card for every 1000 loyalty points. |
+| Double and single-sided **referral programs** | - Reward advocates and invited friends <br>- Advocate rewards triggered in response to referral code redemption or custom event logged in your application. <br>- Digital wallets, sign-up forms, and referral links. |
+| **Loyalty programs** | - Earning rules based on purchase history, customer's activity, and custom metadata attributes. <br>- Rewards catalog with digital and material rewards. <br>- Tiers dividing loyalty members into levels with dedicated rewarding schemas. <br>- Customer cockpits (digital wallets). |
+| **Auto-applied cart promotions** | - Buy two products from category A and get 10% off at the checkout.  <br>- Spend $100 and get $10 off, spend $200 and get $30 off. |
+| **Giveaways** | - Fill the form and join the lottery, every 100th registered user wins. |
+| **Budget rules applicable to every campaign type** | - Secure your campaign budget and prevent any misuses with redemption limits. <br>- Create discounts/rewards on specific payment methods or purchase frequency. <br>- Offer discounts/rewards applicable to items from a specific category. <br>- Exclude items above $600 from applying the discount/reward. |
 
 ## Get Started
 
@@ -51,7 +59,16 @@ Trying to build a PoC? Grasp the basics and start building:
 - Read the [Complete User Guide](https://support.voucherify.io/article/162-voucherify-complete-user-guide) to feel comfortable Voucherify workflows.
 - Start building with our pre-built libraries and developer documentation:
 
-TABLE
+|  |
+|---|
+| [SDKs](docs:sdks) — integrate faster with client- and server-side libraries |
+| [Authentication](doc:authentication) & [Security](doc:security) — learn about access management and secure data flow |
+| [Error codes](ref:errors) — find what it means when Voucherify returns an error |
+| [Fetching data](ref:listing) — understand how to retrieve Voucherify data, including helpful shortcuts and filters |
+| [Session locking](doc:locking-validation-session) —  ensure data integrity when validating and redeeming coupons |
+| [Testing](doc:testing) & [debugging](https://support.voucherify.io/article/524-project-logs) —  learn how to play around with the API before going to production |
+| [Examples](doc:examples) —  analyze the step-by-step API guides to find common promotional scenarios and get inspired with our UI-based demos |
+| [API reference](ref:introduction-1) — see all Voucherify endpoints explained |
 
 ## Get the job done
 

@@ -7,7 +7,14 @@ slug: limits
 
 To understand the basic limits of your account, check out [Pricing](https://www.voucherify.io/pricing) and [Fair Use Policy](https://www.voucherify.io/legal/fair-use-policy). Now, let's navigate through what we limit and how to monitor your usage.
 
-TABLE
+## API Limits
+
+| **Limit** | **Value** |
+|:---|:---|
+| API requests per hour | Free plan: 100,<br>Startup plan: 1000,<br>Growth plan: 2000,<br>Professional plan: 5000 |
+| Bulk API requests per hour | Free plan: 1,<br>Startup plan: 10,<br>Growth plan: 20,<br>Professional plan: 50 |
+| Billing cycle API requests<br><br>Bulk API requests are not added to the billing cycle limit. | Free plan: 500,<br>Startup plan: 10000,<br>Growth plan: 30000,<br>Professional plan: 100000 |
+| Client-side requests (e.g., validate) from a single IP address | 5 requests per 5 seconds |
 
 > :blue_book: What happens if you exceed your limits?
 >
