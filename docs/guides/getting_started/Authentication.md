@@ -30,7 +30,7 @@ X-App-Token: 7ccb680d-107e-XXXX-8466-1f15048e34f4
 
 Most likely you do not need to send your keys manually. We provide a growing number of [SDKs](doc:sdks) that know how to handle it, so no extra code is needed.
 
-> :heavy_exclamation_mark: Security threat
+> :exclamation: Security threat
 > 
 > It is essential that you keep your keys secure and not share them with others. Treat it as your *application's password* for Voucherify.
 

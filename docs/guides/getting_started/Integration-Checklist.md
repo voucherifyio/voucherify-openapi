@@ -40,7 +40,7 @@ One of the Voucherify principles is giving your team flexibility. You can start 
 The following examples are meant to give you an overview of what is possible. Keep in mind that there are more options and each workflow can be customized to fit your business logic. 
 
 | **Building block** | **Use cases and features** |
-|---|---|
+|:---|:---|
 | **Coupon campaigns** with:<br><br>- Percentage <br>- Amount <br>- Unit (free items) <br>- Free shipping <br>- Fixed price on item/order | - 10% off if you spend at least $50. <br>- Buy product A and get product B for free. <br>- Each three-pack from category A is now $29.90. <br>- The first order is shipped for free. <br>- Automatic welcome messages with a coupon sent to every new customer. |
 | **Gift card campaigns** with prepaid credits | - Automatic email with a Happy Birthday gift card, sent a day before the customer's birthday. <br>- $10 credits on the customer's digital wallet for the first review. <br>- $50 gift card for every 1000 loyalty points. |
 | Double and single-sided **referral programs** | - Reward advocates and invited friends <br>- Advocate rewards triggered in response to referral code redemption or custom event logged in your application. <br>- Digital wallets, sign-up forms, and referral links. |
