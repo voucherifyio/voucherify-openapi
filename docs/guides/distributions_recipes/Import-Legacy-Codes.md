@@ -3,6 +3,9 @@ title: Import legacy codes
 excerpt: null
 category: 636284b7e6b02c00a136e884
 slug: import-codes
+type: basic
+hidden: false
+order: 3
 ---
 
 Voucherify makes it easy to import legacy coupon codes. After a successful import operation, the uploaded codes will be recognized as valid and will inherit the discount definition from a given campaign.

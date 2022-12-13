@@ -3,6 +3,9 @@ title: Metadata (custom fields)
 excerpt: 
 category: 636284b7e6b02c00a136e86e
 slug: metadata-custom-fields
+type: basic
+hidden: false
+order: 13
 ---
 
 Metadata enables you to extend Voucherify objects with custom attributes. You can use them for customer segment filters, validation rules, and reporting purposes. Metadata works with `campaigns`, `vouchers`, `customers`, `SKUs`, `products`, `redemptions`, `publications`, `loyalty tier`, `promotion tier`, `orders`.

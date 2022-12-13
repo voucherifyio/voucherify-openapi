@@ -3,6 +3,9 @@ title: Discount Effects
 excerpt: The discount effect defines how the discount will be applied to the customer's cart. In this article, we're going to show you how different effects work with discounts.
 category: 636284b7e6b02c00a136e885
 slug: discount-effects
+type: basic
+hidden: false
+order: 2
 ---
 
 The effect is an optional discount property that is applied to coupon, in-cart, and referral discounts. 

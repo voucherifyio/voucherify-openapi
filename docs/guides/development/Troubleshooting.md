@@ -3,6 +3,9 @@ title: Troubleshooting
 excerpt: 
 category: 636284b7e6b02c00a136e86e
 slug: troubleshooting
+type: basic
+hidden: false
+order: 11
 ---
 
 ### Why does the API return prices multiplied by 100?

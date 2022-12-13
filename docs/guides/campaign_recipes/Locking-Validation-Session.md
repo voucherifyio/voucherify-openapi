@@ -3,7 +3,9 @@ title: Locking Validation Session
 excerpt: Temporary lock the voucher's usage until redemption is successful.
 category: 636284b7e6b02c00a136e883
 slug: locking-validation-session
-stoplight-id: 53a9652ab5cc3
+type: basic
+hidden: false
+order: 2
 ---
 
 The validation and redemption mechanism always works in a transactional way, therefore the voucher's usage is registered permanently once redemption is successful. By using the session feature, you can temporarily record (lock) the voucher usage after the voucher has been validated.

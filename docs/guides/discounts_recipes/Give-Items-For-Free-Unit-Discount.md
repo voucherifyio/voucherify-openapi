@@ -3,6 +3,9 @@ title: Give item(s) for free - unit discount
 excerpt: How to add free items to customers' orders?
 category: 636284b7e6b02c00a136e885
 slug: give-item-for-free-unit-discount
+type: basic
+hidden: false
+order: 5
 ---
 
 Voucherify enables you to offer products or shipping for free with a unit discount type. While creating a unique codes campaign, you can choose a unit discount type where the unit represents an item(s) that you want to offer for free. 

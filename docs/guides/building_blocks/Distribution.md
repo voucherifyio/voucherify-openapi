@@ -3,6 +3,9 @@ title: Distribution
 excerpt: 
 category: 636284b7e6b02c00a136e87b
 slug: distribution
+type: basic
+hidden: false
+order: 9
 ---
 
 Before you read this tutorial, learn the `distribution` and `publication` concepts [here](https://docs.voucherify.io/docs/key-concepts#section-distributions).

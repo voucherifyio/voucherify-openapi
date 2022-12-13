@@ -3,6 +3,9 @@ title: Free shipping disount
 excerpt: How to use free shipping discounts?
 category: 636284b7e6b02c00a136e885
 slug: free-shipping-discount
+type: basic
+hidden: false
+order: 4
 ---
 
 Voucherify supports free shipping discount which is a specific use case of a [unit discount](doc:give-item-for-free-unit-discount). In this tutorial, we're going to show you how to specify the shipping charge and use it in your promotional campaigns.

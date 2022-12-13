@@ -3,6 +3,9 @@ title: Rewards
 excerpt: 
 category: 636284b7e6b02c00a136e87b
 slug: rewards
+type: basic
+hidden: false
+order: 11
 ---
 
 Voucherify enables you to add multiple rewards that you can later use in loyalty, referral, and giveaway campaigns. Each reward is defined in a separate [Reward object](https://docs.voucherify.io/reference#the-reward-object) and can be mapped to a specific amount of loyalty points with the [Reward Assignment object](https://docs.voucherify.io/reference#list-reward-assignments-1).

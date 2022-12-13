@@ -3,7 +3,9 @@ title: Qualification - Checking eligibility for promo codes
 excerpt: null
 category: 636284b7e6b02c00a136e883
 slug: checking-eligibility-for-coupons
-stoplight-id: 5346aa988db7e
+type: basic
+hidden: false
+order: 1
 ---
 
 Sometimes you want to show a customer all the coupons they’re eligible for — taking into account their **attributes** as well as the **current content of their cart** (check the examples below).

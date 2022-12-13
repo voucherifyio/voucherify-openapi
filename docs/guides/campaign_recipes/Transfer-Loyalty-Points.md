@@ -3,7 +3,9 @@ title: Transfer Loyalty Points
 excerpt: See how to transfer points between loyalty cards.
 category: 636284b7e6b02c00a136e883
 slug: transfer-loyalty-points
-stoplight-id: 2f244d06d9e21
+type: basic
+hidden: false
+order: 6
 ---
 
 This guide shows a workflow for combining loyalty points from multiple cards. A common use case is to allow a customer to redeem a reward if the number of points on a single card is not enough.

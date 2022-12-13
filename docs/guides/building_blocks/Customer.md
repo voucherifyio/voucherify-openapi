@@ -3,6 +3,9 @@ title: Customers
 excerpt: 
 category: 636284b7e6b02c00a136e87b
 slug: customers
+type: basic
+hidden: false
+order: 2
 ---
 
 > :thumbsup: GDPR-ready

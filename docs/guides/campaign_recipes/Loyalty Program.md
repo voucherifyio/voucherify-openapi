@@ -3,7 +3,9 @@ title: Loyalty Program
 excerpt: null
 category: 636284b7e6b02c00a136e883
 slug: loyalty-program
-stoplight-id: 56d1f465ecb11
+type: basic
+hidden: false
+order: 5
 ---
 
 In this tutorial, you’ll learn how to use Voucherify API to build a loyalty program.

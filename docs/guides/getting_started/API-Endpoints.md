@@ -3,6 +3,9 @@ title: API Endpoints
 excerpt: 
 category: 636284b7e6b02c00a136e866
 slug: api-endpoints
+type: basic
+hidden: false
+order: 6
 ---
 
 Voucherify is shipped from shared clusters located on three continents, as well as from dedicated clusters for enterprise customers.

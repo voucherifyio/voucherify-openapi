@@ -3,6 +3,9 @@ title: Examples
 excerpt: Here are some exemplary integrations and third-party guides for you to learn more about Voucherify.
 category: 636284b7e6b02c00a136e86e
 slug: examples
+type: basic
+hidden: false
+order: 2
 ---
 
 ## Sample workflows

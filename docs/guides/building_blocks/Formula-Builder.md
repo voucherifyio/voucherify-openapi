@@ -3,6 +3,9 @@ title: Formula Builder
 excerpt: 
 category: 636284b7e6b02c00a136e87b
 slug: formula-builder
+type: basic
+hidden: false
+order: 14
 ---
 
 Instead of using a static value for a given discount, you can also create formulas with mathematical and logical operators and assign a dynamic discount value. Discounts will be calculated during redemption based on the provided formula and metadata values. 

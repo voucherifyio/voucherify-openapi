@@ -3,6 +3,9 @@ title: Campaigns
 excerpt: 
 category: 636284b7e6b02c00a136e87b
 slug: campaigns-1
+type: basic
+hidden: false
+order: 6
 ---
 
 To have full control and overview of `promo codes` and `promotion tiers` you should use campaigns. Because this is one of the must-use components, Voucherify offers several endpoints and attributes to help you integrate promo campaigns with your infrastructure.
