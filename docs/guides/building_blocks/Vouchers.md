@@ -3,6 +3,9 @@ title: Vouchers
 excerpt: 
 category: 636284b7e6b02c00a136e87b
 slug: vouchers-1
+type: basic
+hidden: false
+order: 7
 ---
 
 The voucher is an essential resource in Voucherify. Every voucher has a unique code that an end-customer needs to know to make a redemption. Voucherify uses the notion of a voucher to support three types of promotions:

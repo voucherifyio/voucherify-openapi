@@ -3,6 +3,9 @@ title: Orders
 excerpt: 
 category: 636284b7e6b02c00a136e87b
 slug: orders-1
+type: basic
+hidden: false
+order: 4
 ---
 
 Some promotions might depend on the purchase history of customers. To model these scenarios in Voucherify, you can use the Order object. An order stores the cart structure (products and SKUs), the total amount of a transaction, and status: `CREATED`, `PAID`, `CANCELED`, `FULFILLED`. You can track orders in the dashboard and with the API.

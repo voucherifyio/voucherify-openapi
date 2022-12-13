@@ -3,6 +3,9 @@ title: Security
 excerpt: 
 category: 636284b7e6b02c00a136e86e
 slug: security
+type: basic
+hidden: false
+order: 1
 ---
 
 Security is one of the biggest concerns in every aspect of our product. So, we've taken several measures to keep your data safe. 

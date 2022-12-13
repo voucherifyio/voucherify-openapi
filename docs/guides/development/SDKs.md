@@ -3,6 +3,9 @@ title: SDKs
 excerpt: 
 category: 636284b7e6b02c00a136e86e
 slug: sdks
+type: basic
+hidden: false
+order: 5
 ---
 
 ## Get your library

@@ -3,6 +3,9 @@ title: Stackable discounts API
 excerpt: 
 category: 636284b7e6b02c00a136e885
 slug: manage-stackable-discounts
+type: basic
+hidden: false
+order: 1
 ---
 
 Voucherify API for stackable discounts lets you validate and redeem up to 5 objects using a single API request. You can combine coupons, gift cards, promotion tiers, loyalty, and referral codes. 

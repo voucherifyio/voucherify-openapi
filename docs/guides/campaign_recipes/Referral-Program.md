@@ -3,9 +3,8 @@ title: Referral Program
 excerpt: null
 category: 636284b7e6b02c00a136e883
 slug: referral-program
-stoplight-id: f32f915657527
+type: link
+hidden: false
+order: 3
+link_url: https://support.voucherify.io/article/48-referral-program-basics
 ---
-
-Link to other document
-
-https://support.voucherify.io/article/48-referral-program-basics

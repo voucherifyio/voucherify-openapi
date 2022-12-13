@@ -3,6 +3,9 @@ title: Key concepts
 excerpt: Voucherify offers several building blocks to help you implement promotional campaigns and integrate it with your stack. 
 category: 636284b7e6b02c00a136e866
 slug: key-concepts
+type: basic
+hidden: false
+order: 4
 ---
 
 Voucherify splits each campaign into 5 stages:

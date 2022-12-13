@@ -3,6 +3,9 @@ title: Promotion Tier
 excerpt: 
 category: 636284b7e6b02c00a136e87b
 slug: promotion-tier
+type: basic
+hidden: false
+order: 8
 ---
 
 A promotion tier enables auto-applied discounts. This object doesn't require a promo code. It needs, however, two fields to be provided:

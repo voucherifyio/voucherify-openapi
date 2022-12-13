@@ -3,6 +3,9 @@ title: Redemption
 excerpt: 
 category: 636284b7e6b02c00a136e87b
 slug: redemption
+type: basic
+hidden: false
+order: 1
 ---
 
 Every time you want to accept a Voucherify promotion, irrespective of the type, you need to invoke the redeem method. This will do two things. Firstly, it checks if a customer profile and its current context (order structure, attributes) are eligible for a discount. Secondly, it stores a redemption object with details about successful or failed redemption trials. There are two things you can redeem, a `voucher` and `promotion tier`.

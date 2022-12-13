@@ -3,7 +3,9 @@ title: Prepaid Gift Cards
 excerpt: null
 category: 636284b7e6b02c00a136e883
 slug: prepaid-gift-cards
-stoplight-id: c46c69e815e3a
+type: basic
+hidden: false
+order: 4
 ---
 
 Apart from discount coupons, Voucherify can process gift cards. Similarly to the discount coupon, the gift card is assigned a value. The difference, however, lies in the redemption step. A discount redemption is a one-off action, whereas gift cards enable partial redemption. As long as the customer has a positive balance, the gift card can be used.

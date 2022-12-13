@@ -3,6 +3,9 @@ title: Validation Rules
 excerpt: 
 category: 636284b7e6b02c00a136e87b
 slug: validation-rules
+type: basic
+hidden: false
+order: 5
 ---
 
 Validation rules enable you to run promo campaigns valid only for select scenarios. Voucherify offers a number of attributes you can tap into. The mechanics and details of all of them are described in the [Help Center](https://support.voucherify.io/article/529-validation-rules-campaign-limits). In this tutorial, we will guide you through defining and managing *validation* rules with the API.

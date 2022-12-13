@@ -1,8 +1,11 @@
 ---
 title: CSV export with API
-excerpt: 
+excerpt: null
 category: 636284b7e6b02c00a136e884
 slug: csv-export
+type: basic
+hidden: false
+order: 2
 ---
 
 Voucherify enables programmable export of [vouchers](ref:the-voucher-object), [redemptions](ref:the-redemption-object), publications and [customers](ref:the-customer-object) to a CSV file. Here are four simple steps to achieve it:

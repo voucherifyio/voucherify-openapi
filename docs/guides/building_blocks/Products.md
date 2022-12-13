@@ -3,6 +3,9 @@ title: Products
 excerpt: 
 category: 636284b7e6b02c00a136e87b
 slug: products
+type: basic
+hidden: false
+order: 3
 ---
 
 Voucherify allows for launching product-specific promotions. For example, you can make a coupon valid only if a customer purchases a given product or apply a 10% discount if you detect the customer has an iPhone X 64GB in their cart. To start creating product-oriented deals, you should import your product catalog to Voucherify. You can achieve it in two ways, with the Dashboard, and through the API.

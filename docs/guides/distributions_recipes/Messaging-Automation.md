@@ -3,6 +3,9 @@ title: Messagin automation
 excerpt: How to set up an automatic promotion delivery for a dynamic customer segment?
 category: 636284b7e6b02c00a136e884
 slug: automatic-delivery
+type: basic
+hidden: false
+order: 4
 ---
 
 In this tutorial, you will learn how to set up an automatic promo code distribution. Imagine the following scenario – your marketing team wants to have the ability to define `who`, `when`, and by `which channel` gets a specific promo code. 

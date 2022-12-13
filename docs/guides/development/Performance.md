@@ -3,6 +3,9 @@ title: Performance
 excerpt: Average response rates
 category: 636284b7e6b02c00a136e86e
 slug: performance
+type: basic
+hidden: false
+order: 9
 ---
 
 As developers, we understand how important it is to have performant 3rd party APIs. Especially when it comes to the sales funnel process. That's why we put effort to make sure that Voucherify responds fast. Here are average response rates from our recent tests.

@@ -3,6 +3,9 @@ title: Product-specific discounts
 excerpt: A recipe for using *applicable_to* validation rule
 category: 636284b7e6b02c00a136e885
 slug: discount-for-particular-product
+type: basic
+hidden: false
+order: 3
 ---
 
 Some validation rules are based on the structure of products in the cart. Sometimes you want to make a discount applicable only to particular items (products and SKUs). This can be achieved with [Discount Effects](doc:discount-effects). Product-specific discounts can be applied in two ways: to products added to your account and to new order items. 

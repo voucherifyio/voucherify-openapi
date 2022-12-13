@@ -3,6 +3,9 @@ title: Test mode (Sandbox)
 excerpt: Run integration tests of your promotions before going to production
 category: 636284b7e6b02c00a136e86e
 slug: testing
+type: basic
+hidden: false
+order: 6
 ---
 
 Each Voucherify account has a Sandbox project which is not included in your project limit. You can use it to run your use cases and try out Voucherify capabilities. 

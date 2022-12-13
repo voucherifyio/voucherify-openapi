@@ -3,7 +3,9 @@ title: Stacking Promotion Tiers
 excerpt: 'In this tutorial, you will learn how to validate, redeem, and manage promotion stacks using API.'
 category: 636284b7e6b02c00a136e883
 slug: stacking-promotion-tiers
-stoplight-id: 43bed8dc266b0
+type: basic
+hidden: false
+order: 7
 ---
 
 > :thumbsup: Before you start
