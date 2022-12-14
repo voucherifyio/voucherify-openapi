@@ -13,6 +13,20 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v3
 
+      # First we're going to perform a dry run of syncing process.
+      # We do this on every push to ensure that an actual sync will work properly
+      - name: Sync docs to ReadMe (dry run)
+        uses: readmeio/rdme@8.3.0
+        with:
+          rdme: docs --key=${{ secrets.README_API_KEY }} --version=${{ secrets.README_MAIN_VERSION }} --dryRun
+
+      # And finally, we perform an actual sync to ReadMe if we're on the main branch
+      - name: Sync docs to ReadMe
+        if: github.event_name == 'push' && github.event.ref == 'refs/heads/master'
+        uses: readmeio/rdme@8.3.0
+        with:
+          rdme: docs --key=${{ secrets.README_API_KEY }} --version=${{ secrets.README_MAIN_VERSION }}
+
       # Reduce VOUCHERS API
       - name: GitHub Action
         uses: readmeio/rdme@v8.3.0
@@ -264,17 +278,3 @@ jobs:
         uses: readmeio/rdme@v8.3.0
         with:
           rdme: openapi OpenAPI-reduced-metadata-schemas-api.json --key=${{ secrets.README_API_KEY }} --id=${{ secrets.METADATA_SCHEMAS_API_ID }}
-
-      # First we're going to perform a dry run of syncing process.
-      # We do this on every push to ensure that an actual sync will work properly
-      - name: Sync docs to ReadMe (dry run)
-        uses: readmeio/rdme@8.3.0
-        with:
-          rdme: docs --key=${{ secrets.README_API_KEY }} --version=${{ secrets.README_MAIN_VERSION }} --dryRun
-
-      # And finally, we perform an actual sync to ReadMe if we're on the main branch
-      - name: Sync docs to ReadMe
-        if: github.event_name == 'push' && github.event.ref == 'refs/heads/master'
-        uses: readmeio/rdme@8.3.0
-        with:
-          rdme: docs --key=${{ secrets.README_API_KEY }} --version=${{ secrets.README_MAIN_VERSION }}
