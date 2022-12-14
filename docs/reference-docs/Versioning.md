@@ -3,6 +3,9 @@ title: Versioning
 excerpt: What is the latest version?
 category: 636284b7e6b02c00a136e873
 slug: versioning
+type: basic
+hidden: false
+order: 3
 ---
 
 # Versioning

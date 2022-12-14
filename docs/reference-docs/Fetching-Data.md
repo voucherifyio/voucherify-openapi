@@ -3,6 +3,9 @@ title: Fetching Data
 excerpt: Learn how to specify the data you would like to fetch.
 category: 636284b7e6b02c00a136e873
 slug: listing
+type: basic
+hidden: false
+order: 4
 ---
 
 # Fetching Data
