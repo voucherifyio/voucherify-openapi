@@ -3,6 +3,9 @@ title: Introduction
 excerpt: What is Voucherify API?
 category: 636284b7e6b02c00a136e873
 slug: introduction-1
+type: basic
+hidden: false
+order: 1
 ---
 
 # Introduction

@@ -3,6 +3,7 @@ title: Voucher Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-voucher-object
+parentDoc: 63990b2ff90ceb006a5e59cc
 ---
 
 Vouchers are essential resources in Voucherify. Every voucher has a unique code that a customer needs to know in order to [redeem](ref:redeem-voucher). Voucherify provides 2 types of vouchers - **discount** vouchers and **gift** vouchers. They are also used to represent referral codes.
