@@ -14,6 +14,12 @@ You must first create an [account](http://app.voucherify.io/#/signup) — Vouche
 
 [First API Call](https://player.vimeo.com/video/685819484?h=5332d0408e "@embed")
 
+[block:html]
+{
+  "html": "<div>\n<iframe src=\"https://player.vimeo.com/video/685819484?h=5332d0408e\" width=\"640\" height=\"360\" frameborder=\"0\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen></iframe>\n</div>"
+}
+[/block]
+
 ## Join the dashboard
 
 After you create your account, you get access to the Sandbox dashboard. Sandbox comes with a set of predefined campaigns. That’s why when you browse through the views, you can see several objects already created. One of the essential objects in Voucherify is a [voucher](https://docs.voucherify.io/docs/vouchers-1). In a nutshell, it represents a code that serves as an identifier for promotions supported by Voucherify, including a coupon, referral code, or gift card.
