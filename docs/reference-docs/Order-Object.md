@@ -3,6 +3,7 @@ title: Order Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-order-object
+parentDoc: 63990c1a507af40043a09d7f
 ---
 
 The purchase transactions can be tracked in Voucherify by the creation of an order object. You can create, retrieve, and pay individual orders, as well as list and export all of them in a CSV format. Orders are identified by a unique ID.

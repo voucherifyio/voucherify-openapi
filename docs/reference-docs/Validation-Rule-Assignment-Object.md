@@ -3,6 +3,7 @@ title: Validation Rule Assignment Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-validation-rule-assignment-object
+parentDoc: 63990c5ee5294a0039184486
 ---
 
 This object stores an assignment of a [Validation Rules object](doc:validation-rules) with a [Voucher](doc:vouchers-1), [Campaign](doc:campaigns-1), or [Promotion tier](doc:promotion-tier) 

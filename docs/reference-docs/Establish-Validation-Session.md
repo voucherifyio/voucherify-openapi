@@ -3,6 +3,10 @@ title: Establish Validation Session
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: establish-validation-session
+type: basic
+hidden: false
+order: 2
+parentDoc: 63990bce815567007e6617dc
 ---
 
 # Establish Validation Session

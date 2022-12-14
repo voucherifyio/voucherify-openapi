@@ -3,6 +3,7 @@ title: Segment Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-segment-object
+parentDoc: 63990c7976b5a5009d0567a6
 ---
 
 This entity describes a [customer segment](customers#section-segments).

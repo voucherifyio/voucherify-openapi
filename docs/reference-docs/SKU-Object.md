@@ -3,6 +3,7 @@ title: SKU Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-sku-object
+parentDoc: 63990c30716fa10022a6f6c4
 ---
 
 The SKU (acronym from Stock Keeping Unit) is tightly related to [the product object](ref:the-product-object). It basically reflects its different variants. One product can have many SKUs which are characterised by the product `attributes`.

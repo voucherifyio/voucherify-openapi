@@ -3,6 +3,7 @@ title: Event Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-custom-event-object
+parentDoc: 63990c8f92a8460091a88589
 ---
 
 Voucherify distinguishes two types of events - custom and internal. Both are presented in the same Event structure. 

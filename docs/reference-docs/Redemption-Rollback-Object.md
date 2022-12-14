@@ -3,6 +3,7 @@ title: Redemption Rollback Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-redemption-rollback-object
+parentDoc: 63990bb9d1a4a400107d1e30
 ---
 
 There is a possibility to withdraw a voucher redemption. We call such operation a redemption rollback.

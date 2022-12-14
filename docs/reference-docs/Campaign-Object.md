@@ -3,6 +3,7 @@ title: Campaign Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-campaign-object
+parentDoc: 63990b46892482006870f80a
 ---
 
 A campaign is used to group vouchers or promotion tiers of a specific type. Amongst others, the campaign type describes the discount you want to offer your customers and its validity timeframe. In case of voucher campaign, once you create a new campaign, Voucherify will generate a given number of codes. We put together a [tutorial](doc:getting-started) on how to create one.
