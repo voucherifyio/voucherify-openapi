@@ -2,7 +2,7 @@
 title: Home
 excerpt: 'Welcome to [Voucherify's](https://www.voucherify.io) Developer Hub.'
 category: 636284b7e6b02c00a136e866
-slug: home
+slug: introduction
 type: basic
 hidden: false
 order: 1
