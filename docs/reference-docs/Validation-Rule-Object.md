@@ -4,6 +4,7 @@ excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-validation-rule-object
 stoplight-id: 81f9344c1b198
+parentDoc: 63990c5ee5294a0039184486
 ---
 
 > :blue_book:

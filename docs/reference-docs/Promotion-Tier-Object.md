@@ -3,6 +3,7 @@ title: Promotion Tier Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-promotion-object
+parentDoc: 63990b5dfff22900a52b8252
 ---
 
 This entity describes a [promotion tier](doc:promotion-tier) (note: promotion tiers are always assigned to a campaign, can't be used standalone)

@@ -3,6 +3,7 @@ title: Export Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-export-object
+parentDoc: 63990ccd5589bd0083468d08
 ---
 
 `/exports` endpoint allows you to retrieve Voucherify objects such as [vouchers](ref:the-voucher-object), [redemptions](ref:the-redemption-object), [publications](ref:publish-voucher), [customers](ref:the-customer-object), and points expirations as a CSV file. This functionality works **asynchronously** and comes down to 3 steps:

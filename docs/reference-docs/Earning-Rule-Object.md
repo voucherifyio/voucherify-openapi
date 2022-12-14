@@ -3,6 +3,7 @@ title: Earning Rule Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-earning-rule-object
+parenDoc: 63990be54b4742001155bfad
 ---
 
 This entity describes an earning rule object.

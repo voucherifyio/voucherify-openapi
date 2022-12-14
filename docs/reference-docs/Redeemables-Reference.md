@@ -3,6 +3,10 @@ title: Redeemables reference
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: redeemables-reference
+type: basic
+hidden: false
+order: 3
+parentDoc: 63990bce815567007e6617dc
 ---
 
 # Redeemables Reference

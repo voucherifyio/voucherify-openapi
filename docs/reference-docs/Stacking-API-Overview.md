@@ -3,6 +3,10 @@ title: API Overview
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: stacking-api-overview
+type: basic
+hidden: false
+order: 1
+parentDoc: 63990bce815567007e6617dc
 ---
 
 # Stacking API Overview

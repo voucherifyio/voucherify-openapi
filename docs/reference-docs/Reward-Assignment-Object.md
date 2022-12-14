@@ -3,6 +3,7 @@ title: Reward Assignment Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-reward-assignment-object
+parentDoc: 63990b77b32c2306631c7b53
 ---
 
 This entity describes a reward assignment object.

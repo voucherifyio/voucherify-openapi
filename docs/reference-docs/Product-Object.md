@@ -3,6 +3,7 @@ title: Product Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-product-object
+parentDoc: 63990c30716fa10022a6f6c4
 ---
 
 This entity should be used to map product items from your inventory management system. The aim of products is to build [validation rules](doc:validation-rules) which reflect product-specific campaigns.

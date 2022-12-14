@@ -3,6 +3,7 @@ title: Validation Session
 excerpt: 
 category: 636284b7e6b02c00a136e873
 slug: validation-session
+parentDoc: 63990ba4e5a407003a6ebc0b
 ---
 
 The default validation/redemption mechanism always works in a transactional way, therefore the voucher's usage is registered permanently once redemption is successful. In case, the resource usage is needed to be recorded temporary right after the voucher is being validated the session mechanism will come in handy.

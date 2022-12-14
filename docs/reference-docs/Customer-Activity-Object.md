@@ -3,6 +3,7 @@ title: Customer Activity Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-customer-activities-object
+parentDoc: 63990c032c817e00abdcf528
 ---
 
 This is a general object which presents moments from customers' activity. Those are all types of different events that customers perform during the journey once they participate in Promotions. Those events describe moments when customers redeem coupons and earn points or rewards. The list of all types of activities is listed below.

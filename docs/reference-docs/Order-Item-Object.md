@@ -3,6 +3,7 @@ title: Order Item Object
 excerpt: Schema description
 category: 636284b7e6b02c00a136e873
 slug: the-order-item-object
+parentDoc: 63990c1a507af40043a09d7f
 ---
 
 Order Items are always specified within [the order object](ref:the-order-object). They can be related either to [products](ref:the-product-object) or [SKUs](ref:the-sku-object).
