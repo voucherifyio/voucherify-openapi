@@ -7,11 +7,11 @@ stoplight-id: 81f9344c1b198
 parentDoc: 63990c5ee5294a0039184486
 ---
 
-> :blue_book:
+> 📘
 > 
 > This entity stores the [validation rules](doc:validation-rules) used to limit your promo campaigns.
 
-> :blue_book:
+> 📘
 >
 > You can configure Validation Rule to include your own custom error messages which are going to be returned from API upon validation / redemption failure. You can read more [here](https://docs.voucherify.io/reference/errors#section-custom-error-messages-with-validation-rules).
 

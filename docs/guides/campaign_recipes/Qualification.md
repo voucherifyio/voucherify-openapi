@@ -13,13 +13,13 @@ Sometimes you want to show a customer all the coupons they’re eligible for —
 Voucherify API offers two endpoints for this purpose:
 * [Vouchers qualification](https://docs.voucherify.io/reference/push-qualification-request) — returns a list of standalone coupons. The method can be used for sending a request to display all vouchers qualified to the given customer and context like order, loyalty reward, customer attributes. 
 
-> :blue_book: Limits
+> 📘 Limits
 > 
 > Note that this method isn’t guaranteed to display all vouchers qualified to the given customer and context. It will check up to 150 standalone vouchers.
 
 * [Campaigns qualification](https://docs.voucherify.io/reference/create-qualification-request) — returns a list of campaigns that store pre-generated unique bulk codes (which you can assign to the customer with [create publication](https://docs.voucherify.io/reference/create-publication) method.
 
-> :blue_book: Limits
+> 📘 Limits
 > 
 > Note that this method doesn't return campaigns with the validation rule *Only for customers who are holders of the code*
 

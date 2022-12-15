@@ -184,7 +184,7 @@ In the body parameters, you need to add the following data:
 - **code** – a unique identifier of the loyalty card **from which** you want to transfer points.
 - **points** – the number of loyalty points that you want to transfer to another loyalty card. 
 
-> :blue_book: Note
+> 📘 Note
 >
 > The number of points in the request body cannot be higher than the current balance on the loyalty card.
 

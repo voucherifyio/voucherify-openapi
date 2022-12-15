@@ -10,7 +10,7 @@ order: 4
 
 Apart from discount coupons, Voucherify can process gift cards. Similarly to the discount coupon, the gift card is assigned a value. The difference, however, lies in the redemption step. A discount redemption is a one-off action, whereas gift cards enable partial redemption. As long as the customer has a positive balance, the gift card can be used.
 
-> :blue_book: Dashboard mode
+> 📘 Dashboard mode
 > 
 > This [tutorial](https://support.voucherify.io/article/47-prepaid-gift-cards-campaign) presents how to achieve this in the UI.
 

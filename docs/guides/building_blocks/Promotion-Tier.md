@@ -13,7 +13,7 @@ A promotion tier enables auto-applied discounts. This object doesn't require a p
 - **Condition** – specifies the context under which the promotion is valid. The schema follows the [validation rule object](https://docs.voucherify.io/reference#the-validation-rule-object).
 - **Action** – specifies the discount applied when the conditions are met.
 
-> :blue_book: Object definition
+> 📘 Object definition
 > 
 > [Promotion Tier object definition](ref:the-promotion-object)
 

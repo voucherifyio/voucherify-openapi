@@ -8,7 +8,7 @@ hidden: false
 order: 7
 ---
 
-> :thumbsup: Before you start
+> 👍 Before you start
 >
 > Make sure you already know key concepts of cart promotions by following the documentation:
 - Read how to [create promotion](https://support.voucherify.io/article/519-create-cart-level-promotions) with stacks using the Dashboard.
@@ -42,7 +42,7 @@ Dedicated endpoints in [Promotions API](https://docs.voucherify.io/reference/cre
 |  PUT        | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks/{stack_id}](ref:update-promotion-stack) | Update a given stack |
 |  DELETE | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks/{stack_id}](ref:delete-promotion-stack) | Delete a stack |  
 
-> :construction: Redemption and validation
+> 🚧 Redemption and validation
 >
 > In order to use stacking feature in your cart promotions and other campaigns, you need to manage validation and redemption by using [Stackable Discounts API](https://docs.voucherify.io/reference/stacking-api-overview).
 

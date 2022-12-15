@@ -8,11 +8,11 @@ hidden: false
 order: 2
 ---
 
-> :thumbsup: GDPR-ready
+> 👍 GDPR-ready
 >
 > Voucherify is a GDPR-compliant platform. To learn more about how we protect the data of your customers, visit our [Security & Data Protection article](https://www.voucherify.io/legal/security-policy).
 
-> :blue_book: Before you start
+> 📘 Before you start
 > 
 > - Learn more about [managing Customers using the dashboard](https://support.voucherify.io/article/67-how-to-import-my-customers).    
 > - Here's the [Customer object reference](ref:the-customer-object) that helps you create and manage customers using API.
@@ -47,7 +47,7 @@ Learn more by browsing the API reference for customers:
 
 You can also add new customers while they're redeeming a voucher. You just need to pass the customer entity as in the following example.
 
-> :blue_book: Upsert
+> 📘 Upsert
 >
 > A customer is created (upserted) automatically with every redeem call.
 
@@ -146,11 +146,11 @@ GET https://api.voucherify.io/client/v1/validate?code=uWaf3gVG&amount=1000&item[
 - A [customer object](https://docs.voucherify.io/reference#the-customer-object) object is created and it stores all previously tracked data. You'll get `customer id` as part of the redemption response.
 - You can use the `customer_id` to [fetch](https://docs.voucherify.io/reference#read-customer) or [modify](https://docs.voucherify.io/reference#update-customer) the customer details.
 
-> :blue_book: Custom tracking ID
+> 📘 Custom tracking ID
 > 
 > You can use your own client-side tracking identifier. If you call Voucherify.setIdentity("alice.morgan@domain.com"), you'll get a hashed value of your customer tracking token in the validate response. Using Voucherify tracking ids is recommended though.
 
-> :blue_book: Secure redemption request
+> 📘 Secure redemption request
 >
 > For security reasons, we can link a customer who validates a voucher with a customer who consumes it. Therefore, if you want to have a more secure integration with Voucherify API, please use customer `tracking id` in the redemption request.
 
@@ -167,7 +167,7 @@ There are two types of segments in Voucherify:
 
 This is how you can create a static segment programmatically. Add [customer ids](https://docs.voucherify.io/reference#the-customer-object) in `customers`. 
 
-> :exclamation: Limit
+> ❗ Limit
 >
 > There is a cap on the number of customers that you can assign to a static segment: **20,000**. If you would like to create a bigger segment, then you can use the unlimited auto-update segment instead and use some customer metadata to build this segment.
 

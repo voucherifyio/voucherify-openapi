@@ -19,7 +19,7 @@ To understand the basic limits of your account, check out [Pricing](https://www.
 | Billing cycle API requests<br><br>Bulk API requests are not added to the billing cycle limit. | Free plan: 500,<br>Startup plan: 10000,<br>Growth plan: 30000,<br>Professional plan: 100000 |
 | Client-side requests (e.g., validate) from a single IP address | 5 requests per 5 seconds |
 
-> :blue_book: What happens if you exceed your limits?
+> 📘 What happens if you exceed your limits?
 >
 > You can't exceed the number of API calls/h defined in your pricing plan. Exceeding this limit will block your access to the API immediately.
 >

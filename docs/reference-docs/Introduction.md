@@ -23,6 +23,6 @@ In general the API consists of 2 sets:
 * **application API** - full capability, designed to be accessed from your server application
 * **client API** - limited capability, designed to be accessed from your website or mobile application
 
-> :blue_book: #### Your API keys
+> 📘 #### Your API keys
 >
 > Find out more about how to authenticate your application to access the API. 

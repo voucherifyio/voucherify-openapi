@@ -10,7 +10,7 @@ order: 5
 
 In this tutorial, you’ll learn how to use Voucherify API to build a loyalty program.
 
-> :thumbsup: Recommended
+> 👍 Recommended
 >
 > Read the [loyalty program user guide](https://support.voucherify.io/article/177-how-to-create-loyalty-program-step-by-step) to get an overview of this campaign type.
 
@@ -45,7 +45,7 @@ Trigger the third option with [Track Custom Event](https://docs.voucherify.io/re
 }
 ```
 
-> :blue_book: Event schema
+> 📘 Event schema
 > 
 > To use a custom event in a loyalty program, you need to define it in the [Schema](https://support.voucherify.io/article/163-how-to-track-custom-events-and-use-them-in-referral-campaigns-events-schema) beforehand.
 
@@ -72,7 +72,7 @@ With the API, you can create a reward object with a dedicated [endpoint](https:/
 ## Campaign container
 The first step is to define the loyalty program in terms of size and timeframe. To do so, you can use [Create Loyalty Program](https://docs.voucherify.io/reference#create-loyalty-program) endpoint. 
 
-> :thumbsup: Time limits
+> 👍 Time limits
 >
 > A campaign is only active between the start and end dates. You can also use [validity timeframes](https://support.voucherify.io/article/132-time-limits-for-vouchers) to define the time when points are collected.
 

@@ -14,11 +14,11 @@ The voucher is an essential resource in Voucherify. Every voucher has a unique c
 - [Gift cards](https://docs.voucherify.io/docs/prepaid-gift-cards).
 - Referral codes.
 
-> :thumbsup: Standalone code
+> 👍 Standalone code
 >
 > Vouchers can be created as standalone objects.
 
-> :blue_book: Object definition
+> 📘 Object definition
 >
 > [Voucher object reference](ref:the-voucher-object)
 
@@ -35,8 +35,7 @@ You can define a code pattern using several parameters:
 On top of that, Voucherify offers an easy way of generating QR and barcodes. This is achieved by placing QR and barcode image links to [get voucher](ref:vouchers-get) response.
 
 ```json
-{  
-  // ...
+{
   "assets":{  
     "qr":{  
       "id":"U2FsdGVkX1+VwsADlREDxcAsQVY7l9Byt6cEX2AKBqJmBZvW0pvxGg1UZlsYikCo9nSxUxNXKQ928Ra0el20OJhqi9XyYo3Rv1KTUabg3fgkCBrrPfQVZsYomE6/Yz/KCxK90Ro3o1Cs4fKDmtnnog==",
@@ -50,7 +49,7 @@ On top of that, Voucherify offers an easy way of generating QR and barcodes. Thi
 }
 ```
 
-> :thumbsup: Configure size and format of QR and barcodes
+> 👍 Configure size and format of QR and barcodes
 > 
 > You can change the size or/and format of the QR code by using these query string params:
 >
@@ -82,7 +81,7 @@ A discount coupon represents one of five discount types:
 - Fixed price
 - Free shipping
 
-> :thumbsup: Upper limit
+> 👍 Upper limit
 >
 > For the percentage type, you can also set the upper dollar value of a discount. You can run a "10% off campaign" and set the upper value of a discount equal to $100. It means that every customer with a code gets the max. $100 discount even if their order is worth more than $1000 (orders above $1000 get less than 10% discount).
 
@@ -90,7 +89,7 @@ A discount coupon represents one of five discount types:
 
 Apart from discount coupons, Voucherify can process gift cards. Similarly to the discount coupon, the gift card is assigned a value e.g., $100. The difference, however, lies in the redemption step. A discount redemption is a one-off action, whereas gift cards enable partial redemption. As long as the customer has a positive balance, the gift card can still be used. 
 
-> :blue_book: Dashboard mode
+> 📘 Dashboard mode
 >
 > This [tutorial](https://support.voucherify.io/article/47-prepaid-gift-cards-campaign) presents how to achieve this in the UI.
 

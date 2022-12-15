@@ -12,7 +12,7 @@ Some validation rules are based on the structure of products in the cart. Someti
 
 Once you create an incentive with a discount applied to specific items (defined by validation rules), the API will validate order items and discount only products listed in discounted products.
 
-> :blue_book: Creating product-specific discounts
+> 📘 Creating product-specific discounts
 >
 > Our API lets you create campaigns and assign validation rules, however, it is highly recommended to create all your incentives and validation rules through the Dashboard.
 

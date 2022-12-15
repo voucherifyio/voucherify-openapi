@@ -10,7 +10,7 @@ order: 3
 
 Voucherify allows for launching product-specific promotions. For example, you can make a coupon valid only if a customer purchases a given product or apply a 10% discount if you detect the customer has an iPhone X 64GB in their cart. To start creating product-oriented deals, you should import your product catalog to Voucherify. You can achieve it in two ways, with the Dashboard, and through the API.
 
-> :blue_book: Object reference
+> 📘 Object reference
 > 
 > [Product object reference](ref:the-product-object)
 > 
@@ -57,7 +57,7 @@ Voucherify supports product → variants relationship by default. This means you
     }
 ```
 
-> :thumbsup: Source_id
+> 👍 Source_id
 >
 > You can map your internal product id to a product `source_id` in Voucherify.
 
@@ -220,7 +220,7 @@ POST  https://api.voucherify.io/v1/vouchers/SALE25/validate
 }
 ```
 
-> :construction: Important notes
+> 🚧 Important notes
 >
 > If SKU and product have a different value for the same metadata definition, the **SKU overwrites the product metadata value.**
 
@@ -237,7 +237,7 @@ Product collections can be managed using your dashboard or dedicated [product co
 
 **You can create up to 100 product collections in each project. ** 
 
-> :blue_book: Useful links
+> 📘 Useful links
 > 
 > - Learn how to [create Product Collections](https://support.voucherify.io/article/515-products) in your dashboard
 > - Learn more about [Product Collections API](https://docs.voucherify.io/reference/the-product-collections-object)

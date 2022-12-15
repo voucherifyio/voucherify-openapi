@@ -57,7 +57,7 @@ We're going to create a unique codes campaign and a cart-level promotion, both w
 
 ### Free shipping discount created in UI
 
-> :blue_book: Prerequisite
+> 📘 Prerequisite
 >
 > If you're not familiar with Vocherify Campaign Manager, please follow [this short guide](https://support.voucherify.io/article/17-how-do-i-create-my-first-campaign) to learn the basics.
 

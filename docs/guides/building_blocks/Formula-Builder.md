@@ -10,7 +10,7 @@ order: 14
 
 Instead of using a static value for a given discount, you can also create formulas with mathematical and logical operators and assign a dynamic discount value. Discounts will be calculated during redemption based on the provided formula and metadata values. 
 
-> :blue_book: Visit our detailed guide
+> 📘 Visit our detailed guide
 >
 > Read more about our Dynamic Discount Value Builder [here](https://support.voucherify.io/article/568-how-to-create-dynamic-discount-value).
 

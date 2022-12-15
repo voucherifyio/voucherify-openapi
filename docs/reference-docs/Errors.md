@@ -20,7 +20,7 @@ The Voucherify API uses conventional HTTP status codes to indicate success or fa
 }
 ```
 
-> :blue_book: #### Developer-friendly API
+> 📘 #### Developer-friendly API
 >
 > Voucherify attempts to provide a developer-friendly API, hence sometimes you can find a hint on how to fix an error right in its details (like in the example above).
 
@@ -51,7 +51,7 @@ The Voucherify API uses conventional HTTP status codes to indicate success or fa
 
 The table below shows a list of errors that may be returned along with a brief description of the reason why it occurs.
 
-> :construction: #### Customize Error Messages
+> 🚧 #### Customize Error Messages
 > A subset of the messages returned for the errors listed below can be customized in the UI.
 >  
 > Go to **Project Settings** > Error Messages to customize an error message. Then click on *Create new translations group* to create specific error messages. [Read more here](https://support.voucherify.io/article/264-how-can-i-create-custom-errors).

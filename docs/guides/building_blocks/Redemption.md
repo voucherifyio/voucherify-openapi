@@ -14,7 +14,7 @@ Every time you want to accept a Voucherify promotion, irrespective of the type, 
 
 Redemption is the key operation in the voucher lifecycle. A customer can redeem a voucher once or multiple times depending on the selected limit (quantity). Each redemption is recorded in the voucher history (redemption_entries). There is also an option to cancel a redemption (rollback).
 
-> :blue_book: Object definition
+> 📘 Object definition
 >
 > [Redemption object reference](ref:the-redemption-object)
 

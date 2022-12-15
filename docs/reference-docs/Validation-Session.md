@@ -17,13 +17,13 @@ The session can be released in one of the following ways:
   * manual release using a dedicated API endpoint (for vouchers only: [Release Validation Session](ref:release-validation-session) )
   * manual release using the Validations Manager in the Dashboard to unlock sessions. [Read more](https://support.voucherify.io/article/16-dashboard-sections#validations)
 
-> :construction: Session Key
+> 🚧 Session Key
 > 
 > To link request with the given session always use the same session key for session-related validation and redemption requests. You can use your own session key or system will generate one for you once session option is enabled with the request.
 
 Please note that if you want to use the established session during all validations/redemptions of the code, you need to pass the same session key in each validation and redemption request. 
 
-> :construction: Validation and Redemption with Session
+> 🚧 Validation and Redemption with Session
 > 
 > Registering a session will record a temporary usage for the specified timeframe. It means it will influence other incoming validation and redemption requests until the session is released.
 >
@@ -39,7 +39,7 @@ TABLE
 
 TABLE
 
-> :blue_book: Default session time
+> 📘 Default session time
 > 
 > If you won't establish session timeframe by passing the session.ttl and session.ttl_unit, it'll be active throughout 7 days.
 

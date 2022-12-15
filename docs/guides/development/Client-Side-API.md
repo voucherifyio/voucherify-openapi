@@ -25,13 +25,13 @@ Voucherify JS SDK offers many client-side features:
 
 Visit :fa-github-alt: [Github repository](https://github.com/voucherifyio/voucherify-js-sdk) to get the up-to-date documentation.
 
-> :construction: Domain white list
+> 🚧 Domain white list
 > 
 > To use Voucherify client-side features you have to white-list your domain in the [Client-side Settings](https://app.voucherify.io/#/app/configuration/proj_f1r5Tpr0J3Ct).
 
 ![Domain Settings](../../assets/img/guides_development_client_side_api_domain_settings_2.png "Domain Settings")
 
-> :construction: Enable client-side features
+> 🚧 Enable client-side features
 > 
 > You have to activate particular client-side options in the [Project Settings](https://app.voucherify.io/#/app/configuration/proj_f1r5Tpr0J3Ct).
 

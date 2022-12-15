@@ -305,7 +305,7 @@ As a result, the discount is applied to predefined products, and each of them is
 }
 ```
 
-> :construction: Creating campaign and validation rules
+> 🚧 Creating campaign and validation rules
 >
 > We highly recommend creating campaigns and validation rules (steps 1-3) using the dashboard. In comparison to the same workflow done via the API, the Campaign Manager in your dashboard reduces the number of steps you need to follow to create a campaign with rules.
 
@@ -315,7 +315,7 @@ Create Validation Rules to define discounted items. There are two ways validatio
 
   * If items are not added to the Products, you can use dynamic product collections and define filters that qualified items need to match. [Read more.](https://support.voucherify.io/article/529-validation-rules-campaign-limits)
 
-> :blue_book: Product collections
+> 📘 Product collections
 >
 > To choose products that qualify for a discount/ gift card, you can select items from your existing products list or build a product collection. Product collections define what criteria items in a customer's cart need to match to qualify for a discount. Likewise, you can use collections to define criteria for excluded items. [Read how to build and use collections](https://support.voucherify.io/article/515-products).
 
@@ -611,7 +611,7 @@ As a result, the discount is applied to chosen products only, and each of them i
 }
 ```
 
->  :construction: Creating campaigns and validation rules
+> 🚧 Creating campaigns and validation rules
 >
 > We highly recommend creating campaigns and validation rules (steps 1-3) using the dashboard. In comparison to the same workflow done via the API, the Campaign Manager in your dashboard reduces the number of API calls (made to create a campaign with rules).
 
@@ -984,7 +984,7 @@ Choosing this effect results in adding items to the cart in the number defined b
 
 The discount gives multiple types of free item(s) to customers. Free item units are always added to the customer's cart based on either the **Add missing items** or **Add new order items** effects. [Read more](https://docs.voucherify.io/docs/give-item-for-free-unit-discount#redemption-of-the-code-with-discount-effect-add_many_items).
 
-> :blue_book: Unit Discount Effects
+> 📘 Unit Discount Effects
 >
 > Go [here](https://support.voucherify.io/article/511-discount-effects-cheat-sheet) to learn more about unit discounts and their effects.
 

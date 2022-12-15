@@ -34,7 +34,7 @@ npm install @voucherify/sdk
 ---
 ## Node.js
 
-> :construction: Deprecated SDK
+> 🚧 Deprecated SDK
 > 
 > Node.js is a deprecated version. Go to [JS](https://docs.voucherify.io/docs/sdks#js) to use the latest Node.js SDK.
 
@@ -117,7 +117,7 @@ Or simple use libraries from lib/{target-framework} folder.
 ---
 ## Voucherify.js
 
-> :construction: Deprecated SDK
+> 🚧 Deprecated SDK
 > 
 > Voucherify.js is a deprecated version. Go to [JS](https://docs.voucherify.io/docs/sdks#js) to use the latest SDK.
 
@@ -148,7 +148,7 @@ Using Maven:
 </dependency>
 ```
 
-> :blue_book: Prerequisite
+> 📘 Prerequisite
 > 
 > The SDK requires at least Java 6 or Android 2.3.3 (API 10)
 
@@ -163,7 +163,7 @@ Using CocoaPods simply add the following line to your Podfile:
 pod "VoucherifySwiftSdk"
 ```
 
-> :blue_book: Prerequisite
+> 📘 Prerequisite
 > 
 > The SDK requires Swift 2.2 and therefore Xcode 7.3
 

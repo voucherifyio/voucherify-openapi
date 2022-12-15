@@ -180,7 +180,7 @@ curl -X POST \
 }
 ```  
 
-> :blue_book: Default Session Time 
+> 📘 Default Session Time 
 > 
 > If you won't establish session timeframe by passing the session.ttl and session.ttl_unit, it'll be active throughout 7 days. 
 
