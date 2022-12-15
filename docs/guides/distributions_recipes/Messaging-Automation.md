@@ -10,7 +10,7 @@ order: 4
 
 In this tutorial, you will learn how to set up an automatic promo code distribution. Imagine the following scenario – your marketing team wants to have the ability to define `who`, `when`, and by `which channel` gets a specific promo code. 
 
-> :construction: Dashboard-only feature
+> 🚧 Dashboard-only feature
 >
 > Distributions are available only through the Dashboard and cannot be configured using API.
 

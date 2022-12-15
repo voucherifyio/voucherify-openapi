@@ -21,7 +21,7 @@ The default API endpoint for the shared cluster in Europe is [https://api.vouche
 ## Shared Clusters
 
 | **Shared Cluster** | **Endpoint** |
-|---|---|
+|:---|:---|
 | Europe (default) | https://api.voucherify.io |
 | United States | https://us1.api.voucherify.io |
 | Asia (Singapore) | https://as1.api.voucherify.io |
