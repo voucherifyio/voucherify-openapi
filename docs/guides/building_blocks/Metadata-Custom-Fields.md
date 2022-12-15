@@ -27,7 +27,7 @@ Additionally, each field can be marked as `optional`. Also, `text` and `number` 
 - Text – min/max/exact length, is equal to.
 - Number – less than, less than or equal to, greater than, greater or equal to, equal to, not equal to.
 
-> :blue_book: Take note
+> 📘 Take note
 >
 > Each project can have a separate metadata schema. You can also clone Metadata Schema between different projects.
 
@@ -67,12 +67,12 @@ If you would like to pass more metadata properties per single metadata object, c
     "name": "Julia Stane",
     "email": "email@example.com",
     "address": {
-      "city": "Warsaw",
+      "city": "Warsaw"
     },
     "metadata": {
-      "favorite_products": "chococlate_box","red baloons", "dog t-shirt"
+      "favorite_products": [ "chococlate_box","red baloons", "dog t-shirt" ]
     }
-  }
+}
 ```
 
 ## Bulk updates

@@ -10,13 +10,13 @@ order: 5
 
 Validation rules enable you to run promo campaigns valid only for select scenarios. Voucherify offers a number of attributes you can tap into. The mechanics and details of all of them are described in the [Help Center](https://support.voucherify.io/article/529-validation-rules-campaign-limits). In this tutorial, we will guide you through defining and managing *validation* rules with the API.
 
-> :blue_book: Object definition
+> 📘 Object definition
 >
 > [Validation rule object reference](ref:the-validation-rule-object)
 
 ## Creating validation rules
 
-> :exclamation: Important note
+> ❗ Important note
 > 
 > We highly recommend creating validation rules using the dashboard. The Rules Builder in the dashboard helps you configure desired limits in a convenient way. The API should not be used as a preferable way to create and manage validation rules.
 
@@ -264,7 +264,8 @@ Now let's see how to implement a corresponding redemption request, let's assume 
 The redemption response will store `items` section which has new, discounted amounts per product.
 
 ```json
-"items":[  
+"items":
+[  
   {  
     "source_id":null,
     "object":"order_item",
@@ -288,7 +289,7 @@ The redemption response will store `items` section which has new, discounted amo
 
 For more details visit the [endpoint reference](ref:the-validation-rule-object). 
 
-> :blue_book: Postman
+> 📘 Postman
 > 
 > You can play around with this endpoint with our [Postman examples](https://docs.voucherify.io/docs/examples#section-postman-test-cases) – catalog `TC6 - Campaign with Validation Rules`.
 
@@ -298,7 +299,7 @@ You don't have to import your inventory to use product-specific rules. There is 
 
 Voucherify enables you to assign custom attributes as metadata to products/SKUs from the order in the moment of invoking a redemption. 
 
-> :blue_book: Note
+> 📘 Note
 >
 > The same mechanism works for both Products and SKUs. Therefore, an application needs a clear definition of the order item type at the moment of invoking a request.
 

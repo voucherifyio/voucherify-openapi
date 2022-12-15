@@ -12,7 +12,7 @@ Voucherify API for stackable discounts lets you validate and redeem up to 5 obje
 
 In the redemption request, you need to provide a list of redeemables that define what discounts or codes will be redeemed/validated. 
 
-> :blue_book: API reference
+> 📘 API reference
 > 
 > Go to [here](https://docs.voucherify.io/reference/stacking-api-overview) to see all endpoints for stackable discounts API.
 
@@ -601,7 +601,7 @@ If you want to apply another promotion tier or code to the order that was alread
 
 The same bahaviour is noted for the [Redeem Voucher](ref:redeem-voucher), [Redeem Promotion](ref:redeem-promotion) and [Redeem stackable discounts API](ref:redeem-stacked-discounts). 
 
-> :construction: Order ID
+> 🚧 Order ID
 >
 > Note that you should pass only the order.id in the order object. Passing order details is useful if you want to overwrite the data saved under the given order id.
 

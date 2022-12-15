@@ -10,7 +10,7 @@ order: 6
 
 To have full control and overview of `promo codes` and `promotion tiers` you should use campaigns. Because this is one of the must-use components, Voucherify offers several endpoints and attributes to help you integrate promo campaigns with your infrastructure.
 
-> :blue_book: Object definition
+> 📘 Object definition
 > 
 > [Campaign object reference](ref:the-campaign-object)
 

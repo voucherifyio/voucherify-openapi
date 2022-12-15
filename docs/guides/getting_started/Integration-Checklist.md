@@ -31,7 +31,7 @@ The easiest way to create campaigns is to use the [Campaign Manager](https://sup
 This is why the crucial part is to align your implementation priorities with your business goals.
 [This guide](https://success.voucherify.io/article/373-overview) will help you plan this process with your developers and estimate the expected delivery time.
 
-> :blue_book: Help and Support
+> 📘 Help and Support
 > We offer a team of dedicated developers who have experience with both Voucherify and popular ecommerce platforms to integrate Voucherify with your existing technology stack.[Learn more](https://www.voucherify.io/professional-services).
 > 
 > Our team is always ready to support you on your journey with Voucherify. [Reach out to us](https://docs.voucherify.io/docs/support) if you have any questions and [join our Community on Slack](https://www.voucherify.io/community). We're happy to help!

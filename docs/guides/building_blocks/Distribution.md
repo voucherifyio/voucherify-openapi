@@ -99,7 +99,7 @@ So, now imagine you want to publish code from a predefined pool (campaign). You 
 
 The first thing is to create a respective campaign with 1000 codes. Once you do it, you can start to use the publish method. This time you pass the campaign name and provide a customer profile.
 
-> :blue_book: Auto_update option
+> 📘 Auto_update option
 > 
 > If you don't know the number of codes to be published, the AUTO-UPDATE campaign might be helpful. Such a campaign will be auto-extended with new, unique codes after the original pool of codes has been used.
 

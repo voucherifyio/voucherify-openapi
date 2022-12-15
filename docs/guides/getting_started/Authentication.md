@@ -33,7 +33,7 @@ X-App-Token: 7ccb680d-107e-XXXX-8466-1f15048e34f4
 
 Most likely you do not need to send your keys manually. We provide a growing number of [SDKs](doc:sdks) that know how to handle it, so no extra code is needed.
 
-> :exclamation: Security threat
+> ❗ Security threat
 > 
 > It is essential that you keep your keys secure and not share them with others. Treat it as your *application's password* for Voucherify.
 
@@ -45,7 +45,7 @@ See [voucherify.js](https://docs.voucherify.io/docs/client-side-api) as an examp
 
 ![Client-Side Keys](../../assets/img/guides_getting_started_authentication_client_side_keys_3.png "Client-Side Keys")
 
-> :construction: Domain whitelist
+> 🚧 Domain whitelist
 > 
 > Remember to whitelist your domain/mobile app origin in the Project settings > Client-side Settings to allow client-side connections.
 

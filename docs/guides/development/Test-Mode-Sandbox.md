@@ -22,7 +22,7 @@ If you upgrade to a paid plan, the Sandbox project will be visible in your proje
 
 In **Project settings > Application keys** you can see API keys necessary to [authorize](doc:authentication) API requests. 
 
-> :blue_book: API calls limit
+> 📘 API calls limit
 > 
 > Note that while using the Sandbox project, you can call Voucherify API 100 times per hour.
 
@@ -67,9 +67,9 @@ To use the Sandbox API you need to obtain Application Keys for the Sandbox Envir
 #### Sandbox vs. Production
 
 The sandbox API includes the same endpoints as the production API, keep in mind these differences:
-:exclamation:  Vouchers created through the sandbox API are **not visible** in the [web application](https://app.voucherify.io).
-:exclamation:  Codes of vouchers created through the sandbox API are prefixed with `voucherify.io-`.
-:exclamation:  Redemptions performed on sandbox vouchers don't count to the monthly [limits](doc:limits).
+❗  Vouchers created through the sandbox API are **not visible** in the [web application](https://app.voucherify.io).
+❗  Codes of vouchers created through the sandbox API are prefixed with `voucherify.io-`.
+❗  Redemptions performed on sandbox vouchers don't count to the monthly [limits](doc:limits).
 
 #### Test data
 

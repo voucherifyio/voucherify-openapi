@@ -12,7 +12,7 @@ Voucherify makes it easy to import legacy coupon codes. After a successful impor
 
 There are two ways of importing codes into Voucherify –programmable and with the import tool. 
 
-> :blue_book: Dashboard mode
+> 📘 Dashboard mode
 > 
 > See how to use the import tool [here] (https://support.voucherify.io/article/45-import-codes-and-share-them-digitally).
 
@@ -23,7 +23,7 @@ The programmable mode handles both on JSON and CSV payload. There're 4 endpoints
 * Standalone vouchers: [JSON](ref:import-vouchers-1) | [CSV](ref:import-vouchers-by-csv-1). 
 * Vouchers assigned to a given campaign: [JSON](ref:import-vouchers) | [CSV](ref:import-vouchers-by-csv).
 
-> :blue_book: Postman Collection
+> 📘 Postman Collection
 >
 > You can play around with this endpoint with our [Postman examples](http://docs.voucherify.io/docs/examples) – catalog `Import`.
 

@@ -41,7 +41,7 @@ TABLE
 }
 ```
 
-> :construction: order.id and order session
+> 🚧 order.id and order session
 >
 > If you use the same order.id in more than one redemption request, all valid discounts provided in the redemption payload will be applied to the given order. 
 > 

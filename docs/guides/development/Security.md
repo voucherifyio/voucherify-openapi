@@ -10,7 +10,7 @@ order: 1
 
 Security is one of the biggest concerns in every aspect of our product. So, we've taken several measures to keep your data safe. 
 
-> :blue_book: Security Policy
+> 📘 Security Policy
 > 
 > To understand how we protect your data, visit our [Security](https://www.voucherify.io/legal/security-policy) and [Privacy](https://www.voucherify.io/legal/privacy-policy/v1-1) Policy
 

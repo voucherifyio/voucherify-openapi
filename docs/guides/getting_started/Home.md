@@ -13,13 +13,10 @@ order: 1
 :computer: **[SDKs](doc:sdks)** — Connect Voucherify with client libraries in JavaScript, PHP, Ruby, Java, Python, .NET, Android and iOS.    
 :rocket: **[Examples](doc:examples)** — Get inspired with sample projects and 3rd party integrations built on top of Voucherify API.
 
-[block:callout]
-> :blue_book: Help and support
+> 📘 Help and support
 >
 > We’re always happy to help with integration or any questions you have. Get in touch with us through [contact form](https://www.voucherify.io/contact-support).
-[/block]
 
-[block:html]
 <div>
   <hr>
 <table style="border: none;">
@@ -35,7 +32,6 @@ order: 1
   </tr>
 </table>
 </div>
-[/block]
 
 [![Voucherify PHP SDK](../../svg/php.svg)](https://github.com/rspective/voucherify-php-sdk)&nbsp;&nbsp;&nbsp;&nbsp;
 [![Voucherify JavaScript SDK](../../svg/javascript.svg)](https://github.com/rspective/voucherify.js)&nbsp;&nbsp;&nbsp;&nbsp;

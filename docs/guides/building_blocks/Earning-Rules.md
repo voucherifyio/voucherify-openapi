@@ -30,7 +30,7 @@ Note that for the attribute `every` in the context of an amount, the value is mu
 
 To trigger the 3rd option, you need specifically tell it so. You can achieve it with the [Track Custom Event](https://docs.voucherify.io/reference#create-custom-event) endpoint. 
 
-> :blue_book: Event schema
+> 📘 Event schema
 >
 > To use a custom event in a loyalty program, we need to define it in the [Schema](https://support.voucherify.io/article/163-how-to-track-custom-events-and-use-them-in-referral-campaigns-events-schema) beforehand.
 
@@ -151,7 +151,7 @@ curl -X POST \
   }
 ```
 
-> :blue_book: Order amounts
+> 📘 Order amounts
 > 
 > Note that all amounts in API requests are multiplied by 100 to reflect decimal places. The value defined in every parameter is also multiplied by 100:
 
@@ -181,7 +181,7 @@ curl -X POST \
     <li><a href="https://docs.voucherify.io/reference/enable-earning-rule">Enable Earning Rule</a></li>
     <li><a href="https://docs.voucherify.io/reference/disable-earning-rule">Disable Earning Rule</a></li>
   </ul>
-  </p>
+</p>
 <p>
 <strong>Creating an earning rule is a three-step process:</strong>
 </p>

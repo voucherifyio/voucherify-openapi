@@ -22,7 +22,7 @@ To set up a unit discount via the dashboard, you need to provide the following i
 **Unit value** defines the number of free items attached to the code.
 **Unit type **is a product offered for free chosen from your Product Inventory.
 
-> :blue_book: Message Title
+> 📘 Message Title
 >
 > Please note that this type of discount is based on the Product inventory added to the Products section in your dashboard. If you haven't synced your products yet, please follow [this guide first](https://support.voucherify.io/article/52-product-manager).
 
@@ -47,7 +47,7 @@ Let's see how it works using the following example:
 
 Firstly, we need to create campaigns of unique codes, each code will have the value of one t-shirt.
 
-> :blue_book: Note
+> 📘 Note
 >
 > There are many attributes and details you can customize while creating a campaign (start and expiration date, validation rules, and many more). If you're not familiar with all the options, please visit [this guide](https://support.voucherify.io/article/46-bulk-unique-codes-campaign) first.
 

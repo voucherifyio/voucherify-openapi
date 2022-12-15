@@ -131,7 +131,7 @@ To link a request with the given session, always use the same session key for se
 }
 ```
 
-> :blue_book: Default session time
+> 📘 Default session time
 > 
 > If you won't establish a session timeframe by passing the session.ttl and session.ttl_unit, it'll be active throughout 7 days.
 
@@ -250,7 +250,7 @@ If the redemption request includes a proper session.key value, the request is va
 
 In case you'd like to remove an established session manually, use [Release Validation Session](ref:release-validation-session) endpoint.
 
-> :construction: Locking session in short
+> 🚧 Locking session in short
 > 
 > Registering a session will record a temporary usage for the specified timeframe. This means it will influence other incoming validation and redemption requests until the session is released.
 > 

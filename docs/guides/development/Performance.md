@@ -18,7 +18,7 @@ As developers, we understand how important it is to have performant 3rd party AP
 
 *Test environment: 200 000 vouchers in DB, 1000 requests per minute*
 
-> :thumbsup: Enterprise plan
+> 👍 Enterprise plan
 >
 >[Contact us](https://www.voucherify.io/contact-sales) to discuss how Voucherify can meet your requirements, including:
 > * SLA

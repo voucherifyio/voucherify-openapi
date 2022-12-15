@@ -16,7 +16,7 @@ With Custom Event metadata field, Voucherify allows you to set properties on cus
 
 The Custom Events are directly linked to the customers' resources from Voucherify. It means that each event gets a connection to a customer.
 
-> :blue_book: An example
+> 📘 An example
 >
 > If an e-commerce application wanted to send a message to a user when he/she abandons their cart, the custom event could additionally improve its target audience and allow for increased distribution personalization by adding a Custom Event of the `value` of customers’ order.
 
