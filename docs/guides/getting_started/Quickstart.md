@@ -1,7 +1,7 @@
 ---
 title: Quickstart
 excerpt: Get started with Voucherify API and dashboard by redeeming your first coupon code.
-category: 636284b7e6b02c00a136e866
+category: 639ba16d677235008f80043f
 slug: quickstart
 type: basic
 hidden: false
@@ -11,8 +11,6 @@ order: 2
 Welcome to Voucherify! We’re excited to be your partner in building a future-proof Promotion Engine. Let’s start with a simple use case — applying a $10 off BLCKFRDY coupon to the cart — to learn how Voucherify works.
 
 You must first create an [account](http://app.voucherify.io/#/signup) — Voucherify offers a **free tier** (“Sandbox project”) you can use to build a proof of concept and, further, test it in production. 
-
-[First API Call](https://player.vimeo.com/video/685819484?h=5332d0408e "@embed")
 
 [block:html]
 {
@@ -26,13 +24,15 @@ After you create your account, you get access to the Sandbox dashboard. Sandbox 
 
 Type **BLCKFRDY** in the search bar and Voucherify will **redirect** you to the voucher page, which displays the basic information about the discount it carries. Let’s redeem the code with the API.
 
-![Voucher Dashboard](../../assets/img/guides_getting_started_quickstart_voucher_dashboard_1.png "Voucher Dashboard")
+<!-- ![Voucherify Dashboard](../../assets/img/guides_getting_started_quickstart_voucher_dashboard_1.png "Voucher Dashboard") -->
+![Voucherify Dashboard](https://files.readme.io/fcb7572-voucher_dashboard.png "Voucher Dashboard")
 
 ## Get your API keys
 
 The Sandbox Project Dashboard is already showing your default API keys for the Sandbox project. You can also navigate to Project Settings to find the Authentication section. 
 
-![Application Keys](../../assets/img/guides_getting_started_quickstart_application_keys_2.png "Application Keys")
+<!-- ![Application Keys](../../assets/img/guides_getting_started_quickstart_application_keys_2.png "Application Keys") -->
+![Application Keys](https://files.readme.io/9003954-application-keys.png "Application Keys")
 
 ## Make a test API request
 
@@ -183,7 +183,22 @@ Because BLCKFRDY doesn’t have any redemption limits, you can use it multiple t
 
 Every redemption can be [listed](https://docs.voucherify.io/reference/list-redemptions) with the API or in the dashboard. When you go to the voucher view, in “Recent changes”, you’ll see operations performed on the object. You can switch to the REDEMPTIONS HISTORY tab to track all redemptions.  
 
-![Recent Changes](../../assets/img/guides_getting_started_quickstart_recent_changes_4.png "Recent Changes")
+<!-- ![Recent Changes](../../assets/img/guides_getting_started_quickstart_recent_changes_4.png "Recent Changes") -->
+
+[block:image]
+{
+  "images": [
+    {
+      "image": [
+        "https://files.readme.io/8bc30bc-recent_changes.png",
+        "recent_changes.png",
+        1004
+      ],
+      "sizing": "80"
+    }
+  ]
+}
+[/block]
 
 To monitor and filter the list of all API calls for your project, you can go to the [Audit log](https://app.voucherify.io/#/app/core/logs):
 

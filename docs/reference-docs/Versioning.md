@@ -1,7 +1,7 @@
 ---
 title: Versioning
 excerpt: What is the latest version?
-category: 636284b7e6b02c00a136e873
+category: ${{ secrets.API_CATEGORY_INTRODUCTION }}
 slug: versioning
 type: basic
 hidden: false

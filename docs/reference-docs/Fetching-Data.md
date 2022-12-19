@@ -1,7 +1,7 @@
 ---
 title: Fetching Data
 excerpt: Learn how to specify the data you would like to fetch.
-category: 636284b7e6b02c00a136e873
+category: ${{ secrets.API_CATEGORY_INTRODUCTION }}
 slug: listing
 type: basic
 hidden: false

@@ -1,7 +1,7 @@
 ---
 title: Integration checklist
 excerpt: Get the documentation, sample code, and developer tools — everything you need to build digital promotions faster
-category: 636284b7e6b02c00a136e866
+category: 639ba16d677235008f80043f
 slug: welcome
 type: basic
 hidden: false
