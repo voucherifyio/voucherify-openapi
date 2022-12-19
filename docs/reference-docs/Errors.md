@@ -1,7 +1,7 @@
 ---
 title: Errors
 excerpt: Learn about the errors returned to responses and how you can customize them to improve your customer experience.
-category: 636284b7e6b02c00a136e873
+category: ${{ secrets.API_CATEGORY_INTRODUCTION }}
 slug: errors
 type: basic
 hidden: false

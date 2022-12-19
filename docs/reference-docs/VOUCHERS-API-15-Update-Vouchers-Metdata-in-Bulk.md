@@ -1,6 +1,6 @@
 ---
 title: Update Vouchers' metadata in bulk
-category: 636284b7e6b02c00a136e873
+category: ${{ secrets.API_CATEGORY_VOUCHERS }}
 slug: aaupdate-vouchers-metadata-in-bulk
 parentDoc: 63990b2ff90ceb006a5e59cc
 hidden: false

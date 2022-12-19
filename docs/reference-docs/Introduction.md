@@ -1,7 +1,7 @@
 ---
 title: Introduction
 excerpt: What is Voucherify API?
-category: 636284b7e6b02c00a136e873
+category: ${{ secrets.API_CATEGORY_INTRODUCTION }}
 slug: introduction-1
 type: basic
 hidden: false
