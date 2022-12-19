@@ -1,7 +1,7 @@
 ---
 title: Authentication
 excerpt: Authorization methods and principles used to access the Voucherify platform HTTP APIs.
-category: 639ba16d677235008f80043f
+category: 636284b7e6b02c00a136e866
 slug: authentication
 type: basic
 hidden: false
