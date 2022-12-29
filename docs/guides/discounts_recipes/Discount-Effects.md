@@ -292,10 +292,15 @@ Using this effect, the discount is applied to the total order amount.
 ---
 
 ### Apply to Items
-*Discount type: percentage, amount* 
-Using this effect, the discount is applied only to particular items defined by validation rules. While creating a discount, you need to add the effect to the discount object and define the list of discounted products using validation rules. 
+_Discount type: percentage, amount_
 
-As a result, the discount is applied to predefined products, and each of them is discounted equally. The discount applied to each included item is equal to a discount value defined by *discount.amount_off*  or *discount.percent_off*.
+Using this effect, the discount is applied only to particular items defined by _validation rules_. 
+
+While creating a discount, you need to add the effect to the _discount object_ and define the list of discounted products using _validation rules_. 
+
+You also need to define the _maximum units_ that are allowed to have the discount applied in the validation rule. There are two limits. One defines the maximum units of a particular product that are allowed to be discounted per order line. The other defines the maximum number of units that are allowed to be discounted combined for all order lines matching the constrained item.
+
+As a result, the discount is applied to predefined products, and each of them is discounted equally at most up to the maximum limit allowed. The discount applied to each included item is equal to a discount value defined by _discount.amount_off_ or _discount.percent_off_.
 
 ```json $10 discount object
 {

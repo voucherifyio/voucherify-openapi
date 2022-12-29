@@ -13,6 +13,13 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v3
 
+      # Find and replace categories with those stored in GitHub
+      - name: Find and replace Categories for Reference Introduction Guides
+      - uses: jacobtomlinson/gha-find-replace@v2
+        with:
+          find: "${{ secrets.API_CATEGORY_INTRODUCTION }}"
+          replace: secrets.API_CATEGORY_INTRODUCTION
+
       # First we're going to perform a dry run of syncing process.
       # We do this on every push to ensure that an actual sync will work properly
       #- name: Sync docs to ReadMe (dry run)
@@ -26,28 +33,3 @@ jobs:
       #  uses: readmeio/rdme@8.3.0
       #  with:
       #    rdme: docs ./docs --key=${{ secrets.README_API_KEY }} --version=${{ secrets.README_MAIN_VERSION }}
-
-      # Reduce VOUCHERS API
-      - name: Reduce Vouchers API
-        uses: readmeio/rdme@v8.3.0
-        with:
-          rdme: openapi:reduce ./reference/OpenAPI.json --path /vouchers --method get --path /vouchers/{code} --method get --method post --method put --method delete --path /vouchers/ --method post --path /vouchers/{code}/enable --method post --path /vouchers/{code}/disable --method post --path /vouchers/{code}/balance --method post --path /vouchers/import --method post --path /vouchers/importCSV --method post --path /vouchers/qualification --method post --path /vouchers/bulk/async --method post --path /vouchers/metadata/async --method post --path /vouchers/{code}/sessions/{sessionKey} --method delete --out OpenAPI-reduced-vouchers-api.json
-
-      # List files
-      - name: List files
-        run: |
-          ls -l
-
-      # Update VOUCHERS API title --> category name
-      - name: Update Vouchers API category name
-        uses: rhysd/action-setup-vim@v1
-        with: |
-          vim:e OpenAPI-reduced-vouchers-api.json
-          vim:4j
-          vim:cc "title": "Vouchers API"
-          vim:wq
-
-      # Display contents of file
-      - name: Display contents of file
-        run: |
-          cat OpenAPI-reduced-vouchers-api.json
