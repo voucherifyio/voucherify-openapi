@@ -1,7 +1,7 @@
 ---
 title: Promotion Tier
 excerpt: 
-category: 636284b7e6b02c00a136e87b
+category: 639ba16d677235008f800454
 slug: promotion-tier
 type: basic
 hidden: false
@@ -10,12 +10,12 @@ order: 8
 
 A promotion tier enables auto-applied discounts. This object doesn't require a promo code. It needs, however, two fields to be provided:
 
-- **Condition** – specifies the context under which the promotion is valid. The schema follows the [validation rule object](https://docs.voucherify.io/reference#the-validation-rule-object).
+- **Condition** – specifies the context under which the promotion is valid. The schema follows the [validation rule object](ref:get-validation-rule).
 - **Action** – specifies the discount applied when the conditions are met.
 
 > 📘 Object definition
 > 
-> [Promotion Tier object definition](ref:the-promotion-object)
+> [Promotion Tier object definition](ref:list-promotion-tiers)
 
 ## Auto-applied promotions workflow
 
@@ -77,7 +77,7 @@ curl -X POST \
 "https://api.voucherify.io/v1/validation-rules/val_269dXe4PYfqO/asisgnments"
 ```
 
-Now, when shoppers are visiting your store, you can load all available promotion tiers with [List Promotion Tiers](https://docs.voucherify.io/reference/list-promotion-tiers) endpoint.
+Now, when shoppers are visiting your store, you can load all available promotion tiers with [List Promotion Tiers](ref:list-promotion-tiers) endpoint.
 
 ```curl
    curl -X GET \
@@ -119,7 +119,7 @@ Parse the `tier` objects from the response and display possible promo scenarios 
     }
 ```
 
-Every time the customer adds or removes something from the cart, run [validate](https://docs.voucherify.io/reference#validate-promotions-1) providing a customer id and the current cart structure.
+Every time the customer adds or removes something from the cart, run [validate](ref:validate-promotions) providing a customer id and the current cart structure.
 
 ```curl
 curl -X POST \
@@ -181,7 +181,7 @@ As a response, you'll get the promotion tiers which match the context.
     }
 ```
 
-The last step is to call the [redemption](https://docs.voucherify.io/reference/redeem-promotion) endpoint, passing an `id` of the promotion you (or the customer) selected.
+The last step is to call the [redemption](ref:redeem-promotion) endpoint, passing an `id` of the promotion you (or the customer) selected.
 
 ```curl
  curl -X POST \

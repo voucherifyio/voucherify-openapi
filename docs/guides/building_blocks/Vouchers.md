@@ -1,8 +1,8 @@
 ---
 title: Vouchers
 excerpt: 
-category: 636284b7e6b02c00a136e87b
-slug: vouchers-1
+category: 639ba16d677235008f800454
+slug: vouchers
 type: basic
 hidden: false
 order: 7
@@ -11,7 +11,7 @@ order: 7
 The voucher is an essential resource in Voucherify. Every voucher has a unique code that an end-customer needs to know to make a redemption. Voucherify uses the notion of a voucher to support three types of promotions:
 
 - Discount coupons.
-- [Gift cards](https://docs.voucherify.io/docs/prepaid-gift-cards).
+- [Gift cards](doc:prepaid-gift-cards).
 - Referral codes.
 
 > 👍 Standalone code
@@ -20,7 +20,7 @@ The voucher is an essential resource in Voucherify. Every voucher has a unique c
 
 > 📘 Object definition
 >
-> [Voucher object reference](ref:the-voucher-object)
+> [Voucher object reference](ref:get-voucher)
 
 ## Format
 
@@ -32,7 +32,7 @@ You can define a code pattern using several parameters:
 - Postfix
 - Pattern
 
-On top of that, Voucherify offers an easy way of generating QR and barcodes. This is achieved by placing QR and barcode image links to [get voucher](ref:vouchers-get) response.
+On top of that, Voucherify offers an easy way of generating QR and barcodes. This is achieved by placing QR and barcode image links to [get voucher](ref:get-voucher) response.
 
 ```json
 {
@@ -64,12 +64,12 @@ On top of that, Voucherify offers an easy way of generating QR and barcodes. Thi
 
 The Voucherify Dashboard gives marketers control over every single voucher code. They can modify the parameters and state of any code at any time. But if you need to run bulk operations on several vouchers, these API endpoints might be useful:
 
-- [Update](https://docs.voucherify.io/reference#update-voucher)
-- [Enable](https://docs.voucherify.io/reference#enable-voucher) / [disable](https://docs.voucherify.io/reference#disable-voucher)
-- [Import  by JSON](https://docs.voucherify.io/reference#import-vouchers-1)
-- [Import  by CSV](https://docs.voucherify.io/reference#import-vouchers-by-csv-1)
+- [Update](ref:update-voucher)
+- [Enable](ref:enable-voucher) / [disable](ref:disable-voucher)
+- [Import  by JSON](ref:import-vouchers)
+- [Import  by CSV](ref:import-vouchers-using-csv)
 
-Read more about [importing codes](https://docs.voucherify.io/docs/import-codes).
+Read more about [importing codes](doc:import-codes).
 
 ## Discount coupons
 
@@ -114,7 +114,6 @@ curl -X POST \
     }
 }' "https://api.voucherify.io/v1/campaigns"
 ```
-
 ```json 200 OK Response
 {  
   "name":"Gift cards October",
@@ -161,7 +160,6 @@ curl -X POST -H \
 }
 ' "https://api.voucherify.io/v1/vouchers/h73YQbhR/redemption"
 ```
-
 ```json 200 OK Response
 {  
   "id":"r_J24B5tnDyUbfwEEO5T0Dbhf7",
@@ -229,7 +227,8 @@ If we try spending more than the current balance, Voucherify returns an error me
 
 The voucher can be redeemed using the Dashboard as well. Just go to the voucher details view, press `REDEEM` and provide the amount in the popup. 
 
-![Manual Redemption](../../assets/img/guides_building_blocks_vouchers_manual_redemption_1.png "Manual redemption")
+<!-- ![Manual Redemption](../../assets/img/guides_building_blocks_vouchers_manual_redemption_1.png "Manual redemption") -->
+![Manual Redemption](https://files.readme.io/571f5e0-Screenshot_2020-09-16_at_13.03.51.png "Manual redemption")
 
 ## Recharge
 
@@ -237,6 +236,6 @@ You can recharge cards you've sent out to your customers. With our API, you can 
 
 ## Export
 
-Vouchers (along with redemptions, publications, and customers) can be downloaded asynchronously with the export mechanism, see the [docs](https://docs.voucherify.io/reference/the-export-object).
+Vouchers (along with redemptions, publications, and customers) can be downloaded asynchronously with the export mechanism, see the [API reference](ref:create-export).
 
 Voucher attributes you can export: `code`, `voucher_type`, `value`, `discount_type`, `campaign`, `category`, `start_date`, `expiration_date`, `gift_balance`, `redemption_quantity`, `active`, `qr_code`.

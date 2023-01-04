@@ -1,7 +1,7 @@
 ---
 title: Test mode (Sandbox)
 excerpt: Run integration tests of your promotions before going to production
-category: 636284b7e6b02c00a136e86e
+category: 639ba16d677235008f800447
 slug: testing
 type: basic
 hidden: false
@@ -18,7 +18,8 @@ Sandbox is the default project when you create a new Voucherify account.
 
 If you upgrade to a paid plan, the Sandbox project will be visible in your projects list and it won't be counted to your limit.
 
-![Sandbox](../../assets/img/guides_development_test_mode_sandbox_sandbox_1.png "Sandbox")
+<!-- ![Sandbox](../../assets/img/guides_development_test_mode_sandbox_sandbox_1.png "Sandbox") -->
+![Sandbox](https://files.readme.io/fba7745-Screenshot_2021-08-09_at_12.39.32_1.png "Sandbox")
 
 In **Project settings > Application keys** you can see API keys necessary to [authorize](doc:authentication) API requests. 
 
@@ -28,15 +29,18 @@ In **Project settings > Application keys** you can see API keys necessary to [au
 
 
 ### Showcase - test e-store
+
 Each Sandbox project is connected to the showcase store ("Hot Beans"). The showcase presents how the integration between Voucherify and customer touchpoints might look in practice. 
 
 With this setup, you can create campaigns and immediately see how they work at the checkout. For example, you can validate and redeem codes from created campaigns to test different promo scenarios and validation rules. Each redemption will be tracked in the dashboard.
 
 To access test store, go to your Sandbox project and click on the Showcase button in the top bar.
 
-![Sandbox](../../assets/img/guides_development_test_mode_sandbox_sandbox_2.png "Sandbox")
+<!-- ![Sandbox](../../assets/img/guides_development_test_mode_sandbox_sandbox_2.png "Sandbox") -->
+![Sandbox](https://files.readme.io/daa4c20-showcase.png "Sandbox")
 
 ### Test data
+
 The Sandbox project is populated with test campaigns, **standalone** codes, customers and products, for example:
 
 | **Campaigns:** |  |
@@ -62,7 +66,8 @@ If your account was created before Voucherify [version v20210726](https://suppor
 
 To use the Sandbox API you need to obtain Application Keys for the Sandbox Environment. Go to [configuration section](https://app.voucherify.io/#/app/configuration/proj_f1r5Tpr0J3Ct), then in the Application Keys section switch the Environment to Sandbox:
 
-![Sandbox](../../assets/img/guides_development_test_mode_sandbox_sandbox_keys_3.png "Sandbox Keys")
+<!-- ![Sandbox](../../assets/img/guides_development_test_mode_sandbox_sandbox_keys_3.png "Sandbox Keys") -->
+![Sandbox](https://files.readme.io/6086c81-Screenshot_2020-09-16_at_08.58.39.png "Sandbox Keys")
 
 #### Sandbox vs. Production
 

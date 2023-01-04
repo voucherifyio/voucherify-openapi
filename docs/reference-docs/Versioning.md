@@ -1,14 +1,12 @@
 ---
 title: Versioning
 excerpt: What is the latest version?
-category: ${{ secrets.API_CATEGORY_INTRODUCTION }}
+category: 639ba44d204cb60020b4b7ec
 slug: versioning
 type: basic
 hidden: false
 order: 3
 ---
-
-# Versioning
 
 When we make **backwards-incompatible** changes to the API, we release new, dated versions. The current version is `v2018-08-01`. Read our API [changelog](doc:api-version-upgrades) to learn more about Voucherify API versions. The changelog lists every available version. 
 

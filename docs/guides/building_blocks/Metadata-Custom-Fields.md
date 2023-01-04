@@ -1,7 +1,7 @@
 ---
 title: Metadata (custom fields)
 excerpt: 
-category: 636284b7e6b02c00a136e87b
+category: 639ba16d677235008f800454
 slug: metadata-custom-fields
 type: basic
 hidden: false
@@ -27,7 +27,7 @@ Additionally, each field can be marked as `optional`. Also, `text` and `number` 
 - Text – min/max/exact length, is equal to.
 - Number – less than, less than or equal to, greater than, greater or equal to, equal to, not equal to.
 
-> 📘 Take note
+> 📘 
 >
 > Each project can have a separate metadata schema. You can also clone Metadata Schema between different projects.
 
@@ -78,6 +78,7 @@ If you would like to pass more metadata properties per single metadata object, c
 ## Bulk updates
 
 Modify up to 100 objects with a single request:
+
 - [Update Vouchers' metadata in bulk](ref:update-vouchers-metadata-in-bulk). 
 - [Update Products' metadata in bulk](ref:update-products-metadata-in-bulk).
 - [Update Customers' metadata in bulk](ref:update-customers-metadata-in-bulk). 

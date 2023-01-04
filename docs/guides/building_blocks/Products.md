@@ -1,7 +1,7 @@
 ---
 title: Products
 excerpt: 
-category: 636284b7e6b02c00a136e87b
+category: 639ba16d677235008f800454
 slug: products
 type: basic
 hidden: false
@@ -12,15 +12,15 @@ Voucherify allows for launching product-specific promotions. For example, you ca
 
 > 📘 Object reference
 > 
-> [Product object reference](ref:the-product-object)
+> [Product object reference](ref:get-product)
 > 
-> [SKU object reference](ref:the-sku-object)
+> [SKU object reference](ref:get-sku)
 
 ## Catalog structure
 
 **One product – many variants**
 
-Voucherify supports product → variants relationship by default. This means you can create a parent object (`product`) and attach several variants (`SKUs`). In the [product](https://docs.voucherify.io/reference#the-product-object) object, you can define `attributes` to distinguish several [SKU](https://docs.voucherify.io/reference#the-sku-object)[s](https://docs.voucherify.io/reference#the-sku-object). For example:
+Voucherify supports product → variants relationship by default. This means you can create a parent object (`product`) and attach several variants (`SKUs`). In the [product](ref:get-product) object, you can define `attributes` to distinguish several [SKUs](ref:get-sku). For example:
 
 ```json Products
   {
@@ -138,6 +138,7 @@ If you want to map more advanced relationships like series, families, brands, et
 ```
 
 ### Validation of Product and SKU Metadata
+
 When validating code or promotion, Voucherify treats SKUs as products. It means, that SKU inherits the metadata assigned to the product and combines product and SKU attributes. As a result, the SKUs will be considered in the validation of product-specific rules:
 - validation process executes rules built with product metadata against all product SKUs;
 - if you define a rule `discount applicable to` **a specific product id**, the discount will be applied to the product and all product SKUs;
@@ -145,7 +146,8 @@ When validating code or promotion, Voucherify treats SKUs as products. It means,
 
 If you use [product metadata](https://support.voucherify.io/article/515-products) in validation rules and pass product SKU in [Validate Voucher](ref:validate-voucher) or [Redeem Voucher](ref:redeem-voucher) request, the app checks if SKU metadata match validation rules. If SKU metadata matches validation rules, validation is succeeded.
 
-![Validation Rules Product Metadata](../../assets/img/guides_building_blocks_products_validation_rules_product_metadata_1.png "Product metadata in validation rules")
+<!-- ![Validation Rules Product Metadata](../../assets/img/guides_building_blocks_products_validation_rules_product_metadata_1.png "Product metadata in validation rules") -->
+![Validation Rules Product Metadata](https://files.readme.io/25b859a-Validation_rules.png "Product metadata in validation rules")
 
 ```curl Validate Voucher
 POST  https://api.voucherify.io/v1/vouchers/SALE25/validate
@@ -233,11 +235,11 @@ Collections group products that share the same attributes (standard and custom o
 
 Both static and dynamic collections are built on top of applied filters. You can find the list of available product filters [here](https://support.voucherify.io/article/515-products). Additionally, static collection can be created by manually picking items from the main products' list. 
 
-Product collections can be managed using your dashboard or dedicated [product collections](ref:the-product-collections-object) API.
+Product collections can be managed using your dashboard or dedicated [product collections](ref:get-product-collection) API.
 
 **You can create up to 100 product collections in each project. ** 
 
 > 📘 Useful links
 > 
 > - Learn how to [create Product Collections](https://support.voucherify.io/article/515-products) in your dashboard
-> - Learn more about [Product Collections API](https://docs.voucherify.io/reference/the-product-collections-object)
+> - Learn more about [Product Collections API](ref:list-products-in-collection)

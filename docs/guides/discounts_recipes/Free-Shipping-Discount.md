@@ -1,7 +1,7 @@
 ---
 title: Free shipping disount
 excerpt: How to use free shipping discounts?
-category: 636284b7e6b02c00a136e885
+category: 639ba16d677235008f80045e
 slug: free-shipping-discount
 type: basic
 hidden: false
@@ -14,13 +14,15 @@ Voucherify supports free shipping discount which is a specific use case of a [un
 
 Initially, the price of the shipping is set to 0. 
 
-![Product catalog](../../assets/img/guides_discount_recipes_free_shipping_discount_product_catalog_1.png "Product catalog")
+<!-- ![Product catalog](../../assets/img/guides_discount_recipes_free_shipping_discount_product_catalog_1.png "Product catalog") -->
+![Product catalog](https://files.readme.io/348e81a-free-shipping1.png "Product catalog")
 
 To add a new shipping charge, open the product details, and choose edit (the pencil icon). Then, set up a new price and confirm with Save. 
 
-![New Price](../../assets/img/guides_discount_recipes_free_shipping_discount_new_price_2.png "New price")
+<!-- ![New Price](../../assets/img/guides_discount_recipes_free_shipping_discount_new_price_2.png "New price") -->
+![New price](https://files.readme.io/7dc6d2f-shipping_free.png "New price")
 
-To add a new shipping charge, open the product details, and choose edit (the pencil icon). Then, set up a new price and confirm with Save. 
+If you want to set up a shipping charge via API, you need to [Update the Product](ref:update-product). To do that, copy the shipping id from the dashboard and specify the new product (shipping) price in the request (remember to multiply the value by 100):
 
 ```json Update shipping price
 {
@@ -63,13 +65,15 @@ We're going to create a unique codes campaign and a cart-level promotion, both w
 
 Open the Campaign Manager with the Plus.
 
-![Create campaign](../../assets/img/guides_discount_recipes_free_shipping_discount_create_campaign_3.png "Create campaign")
+<!-- ![Create campaign](../../assets/img/guides_discount_recipes_free_shipping_discount_create_campaign_3.png "Create campaign") -->
+![Create campaign](https://files.readme.io/601d775-shipping_free2.png "Create campaign")
 
 In the next step, you need to choose between discount coupons (codes with free shipping) or promotion (free shipping automatically applied). Let's go with discount coupons first.
 
 - Discount codes
 
-![Create campaign](../../assets/img/guides_discount_recipes_free_shipping_discount_choose_campaign_type_4.png "Create campaign")
+<!-- ![Create campaign](../../assets/img/guides_discount_recipes_free_shipping_discount_choose_campaign_type_4.png "Create campaign") -->
+![Create campaign](https://files.readme.io/cf3ab21-shipping_free3.png "Create campaign")
 
 In the first section, add Campaign details:
 
@@ -77,23 +81,28 @@ In the first section, add Campaign details:
 - Add the campaign name.
 - Define code redemption limit and code count.
 
-![Campaign details](../../assets/img/guides_discount_recipes_free_shipping_discount_campaign_details_5.png "Campaign details")
+<!-- ![Campaign details](../../assets/img/guides_discount_recipes_free_shipping_discount_campaign_details_5.png "Campaign details") -->
+![Campaign details](https://files.readme.io/fbd9d7a-shipping_free4.png "Campaign details")
 
 When campaign details are ready, go to the next step and add time limits (optional).
 
-![Campaign timeframe](../../assets/img/guides_discount_recipes_free_shipping_discount_timeframe_6.png "Campaign timeframe")
+<!-- ![Campaign timeframe](../../assets/img/guides_discount_recipes_free_shipping_discount_timeframe_6.png "Campaign timeframe") -->
+![Campaign timeframe](https://files.readme.io/ef1fe1d-shipping_free6.png "Campaign timeframe")
 
 The third step is crucial for setting up a free shipping discount. In this section, you can define a discount type. To offer shipping for free, choose Free Shipping.
 
-![Free shipping discount](../../assets/img/guides_discount_recipes_free_shipping_discount_type_7.png "Free shipping discount")
+<!-- ![Free shipping discount](../../assets/img/guides_discount_recipes_free_shipping_discount_type_7.png "Free shipping discount") -->
+![Free shipping discount](https://files.readme.io/f9cc92a-shipping_free7.png "Free shipping discount")
 
 You can attach additional limits and rules to free shipping discounts by adding [validation rules](https://support.voucherify.io/article/53-validation-rules).
 
-![Validation rule](../../assets/img/guides_discount_recipes_free_shipping_discount_validation_rule_8.png "Validation rule")
+<!-- ![Validation rule](../../assets/img/guides_discount_recipes_free_shipping_discount_validation_rule_8.png "Validation rule") -->
+![Validation rule](https://files.readme.io/de9d0a5-shipping_free8.png "Validation rule")
 
 When ready, go to the next step. In the fourth section, you can add [metadata attributes](https://support.voucherify.io/article/99-schema-validation-metadata).
 
-![Campaign metadata](../../assets/img/guides_discount_recipes_free_shipping_discount_metadata_9.png "Campaign metadata")
+<!-- ![Campaign metadata](../../assets/img/guides_discount_recipes_free_shipping_discount_metadata_9.png "Campaign metadata") -->
+![Campaign metadata](https://files.readme.io/c07da7b-shipping_free9.png "Campaign metadata")
 
 The last section shows a summary of the created campaign, if everything is fine, click Save and it's ready.
 
@@ -101,7 +110,9 @@ The last section shows a summary of the created campaign, if everything is fine,
 
 In the case of [cart-level promotion](https://support.voucherify.io/article/519-create-cart-level-promotions), the free shipping discount is defined in the second section of the Campaign Manager, as a part of the level settings. If you want to offer only free shipping in this promotion, then you need only one promotion level.
 
-![Free shipping promotion](../../assets/img/guides_discount_recipes_free_shipping_discount_promotion_10.png "Free shipping promotion")
+<!-- >
+![Free shipping promotion](../../assets/img/guides_discount_recipes_free_shipping_discount_promotion_10.png "Free shipping promotion") -->
+![Free shipping promotion](https://files.readme.io/32c2c7d-shipping_free_promotion.png "Free shipping promotion")
 
 ### Free shipping discount created via API
 
@@ -272,7 +283,6 @@ You can achieve the same effect via API and create a unique codes [campaign](htt
 ```
 
 Now, let's use one of the unique codes while making an order.
-
 
 ## Validation of a free shipping code
 
@@ -538,4 +548,5 @@ In the response body, you can see that the shipping was added to the order items
 
 The discount amount is equal to the previously added shipping fee.
 
-![API Response](../../assets/img/guides_discount_recipes_free_shipping_discount_api_response_11.png "API Response")
+<!-- ![API Response](../../assets/img/guides_discount_recipes_free_shipping_discount_api_response_11.png "API Response") -->
+![API Response](https://files.readme.io/060288a-shipping02.png "API Response")

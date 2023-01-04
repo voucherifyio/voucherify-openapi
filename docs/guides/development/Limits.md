@@ -1,7 +1,7 @@
 ---
 title: Limits
 excerpt: API calls limits and optimization
-category: 636284b7e6b02c00a136e86e
+category: 639ba16d677235008f800447
 slug: limits
 type: basic
 hidden: false
@@ -70,17 +70,17 @@ Voucherify API for stackable discounts lets you validate and redeem up to 5 obje
 
 In the redemption request, you need to provide a list of redeemables that define what discounts or codes will be redeemed/validated. By integrating stackable discount API into your app, you can make a single call with up to 5 redeemables, instead of 5 separate redemption calls.
 
-[For more information, go here. ](https://docs.voucherify.io/docs/manage-stackable-discounts)
+[For more information, go here. ](doc:manage-stackable-discounts)
 
 ### Data import
 
 When you are getting started with Voucherify and decide to import customer data or legacy vouchers into our platform, you can do so in two ways -- using API or a CSV import. To limit the number of API calls consumed, it is best to use CSV import which you can initiate via API or manually with the Dashboard.
 
--   [Import customer data via CSV](https://docs.voucherify.io/reference/import-customers-using-csv)
+-   [Import customer data via CSV](ref:import-customers-using-csv)
 
--   [Import legacy vouchers via CSV](https://docs.voucherify.io/reference/import-vouchers-by-csv-1)
+-   [Import legacy vouchers via CSV](ref:import-vouchers-using-csv)
 
--   [Import vouchers into an existing campaign via a CSV](https://docs.voucherify.io/reference/import-vouchers-by-csv)
+-   [Import vouchers into an existing campaign via a CSV](ref:import-vouchers-to-campaign-using-csv)
 
 For more information on preparing a CSV file for data import, [go here](https://support.voucherify.io/article/67-how-to-import-my-customers).
 
@@ -88,19 +88,19 @@ For more information on preparing a CSV file for data import, [go here](https://
 
 As developers ourselves, we know which tasks are the most time-consuming and repetitive. That's why we have automated them for you. With the use of API, you can update the following properties in bulk:
 
--   [Update customer data in bulk](https://docs.voucherify.io/reference/post-customers-in-bulk)
+-   [Update customer data in bulk](ref:update-customers-in-bulk)
 
--   [Update customers' metadata in bulk ](https://docs.voucherify.io/reference/post-customers-metadata-in-bulk)
+-   [Update customers' metadata in bulk ](ref:update-customers-metadata-in-bulk)
 
--   [Update vouchers in bulk](https://docs.voucherify.io/reference/aa-update-vouchers-in-bulk)
+-   [Update vouchers in bulk](ref:update-vouchers-in-bulk)
 
--   [Update vouchers' metadata in bulk](https://docs.voucherify.io/reference/aaupdate-vouchers-metadata-in-bulk)
+-   [Update vouchers' metadata in bulk](ref:update-vouchers-metadata-in-bulk)
 
--   [Update products in bulk](https://docs.voucherify.io/reference/post-products-in-bulk)
+-   [Update products in bulk](ref:update-products-in-bulk)
 
--   [Update products' metadata in bulk](https://docs.voucherify.io/reference/async-update-products-metadata-in-bulk)
+-   [Update products' metadata in bulk](ref:update-products-metadata-in-bulk)
 
-By using these endpoints, you can update multiple entities (customers, vouchers, products) in a single asynchronous operation. It is possible to update a maximum of 100 records in a single request. In the response body, you get a unique async action identifier. To check the status of the operation, you can use the [GET Async Actions API](https://docs.voucherify.io/reference/get-async-actions-1).
+By using these endpoints, you can update multiple entities (customers, vouchers, products) in a single asynchronous operation. It is possible to update a maximum of 100 records in a single request. In the response body, you get a unique async action identifier. To check the status of the operation, you can use the [GET Async Actions API](ref:get-async-action).
 
 The biggest benefit of using asynchronous actions for big updates is that you can maintain platform stability (as the action is spread over time) and consume fewer API calls in the long run.
 

@@ -1,20 +1,20 @@
 ---
 title: Distribution
 excerpt: 
-category: 636284b7e6b02c00a136e87b
+category: 639ba16d677235008f800454
 slug: distribution
 type: basic
 hidden: false
 order: 9
 ---
 
-Before you read this tutorial, learn the `distribution` and `publication` concepts [here](https://docs.voucherify.io/docs/key-concepts#section-distributions).
+Before you read this tutorial, learn the `distribution` and `publication` concepts [here](doc:key-concepts#distributions--publication).
 
-Voucherify gives you several ways of delivering promotions to customers. The key concept of Voucherify delivery is not to send the same incentive twice. To achieve this, you have to mark the code as `published` each time you send something out. While Voucherify takes care of this when you run [distributions in the dashboard](https://docs.voucherify.io/docs/automatic-delivery), you should remember to ensure this with the API when you implement delivery with your custom channels.
+Voucherify gives you several ways of delivering promotions to customers. The key concept of Voucherify delivery is not to send the same incentive twice. To achieve this, you have to mark the code as `published` each time you send something out. While Voucherify takes care of this when you run [distributions in the dashboard](doc:automatic-delivery), you should remember to ensure this with the API when you implement delivery with your custom channels.
 
 ## Publish with the API
 
-Voucherify provides the endpoint to help you distribute codes to your customers. [Create Publication](https://docs.voucherify.io/reference/create-publication) does two things:
+Voucherify provides the endpoint to help you distribute codes to your customers. [Create Publication](ref:create-publication) does two things:
 - Randomly selects a non-published code from a campaign (if you choose to publish from a campaign).
 - Marks this code as `published`.
 
@@ -28,13 +28,13 @@ A few things are essential here:
 Let's imagine two scenarios:
 
 - You want to publish a specific code to a specific customer.
-- You want to publish any code from a given [campaign](https://docs.voucherify.io/reference#the-campaign-object) and then make sure that **the same** code won't be published **ever** again.
+- You want to publish any code from a given [campaign](ref:list-campaigns) and then make sure that **the same** code won't be published **ever** again.
 
 Handling both of these scenarios comes down to calling the endpoint in a slightly different way.
 
 ## Specific voucher code
 
-In the following example, we publish `BmkocdXu` code to the specific [customer](ref:the-customer-object)  (`cust_hOA02xicf72GZYsYko4y1CMc`). As you can see, we defined a channel which is an optional parameter but can be used for reporting in the future.  
+In the following example, we publish `BmkocdXu` code to the specific [customer](ref:get-customer)  (`cust_hOA02xicf72GZYsYko4y1CMc`). As you can see, we defined a channel which is an optional parameter but can be used for reporting in the future.  
 
 ```curl
 curl -X POST \
@@ -101,7 +101,7 @@ The first thing is to create a respective campaign with 1000 codes. Once you do 
 
 > 📘 Auto_update option
 > 
-> If you don't know the number of codes to be published, the AUTO-UPDATE campaign might be helpful. Such a campaign will be auto-extended with new, unique codes after the original pool of codes has been used.
+> If you don't know the number of codes to be published, the `AUTO-UPDATE` campaign might be helpful. Such a campaign will be auto-extended with new, unique codes after the original pool of codes has been used.
 
 ```curl
 curl -X POST \
@@ -125,7 +125,7 @@ curl -X POST \
   https://api.voucherify.io/v1/publications
 ```
 
-In the previous example, we assigned the publication to an existing customer (identified with the `cust_id`), in this case, we're using the `customer` section to create a new [customer](ref:the-customer-object) entity.
+In the previous example, we assigned the publication to an existing customer (identified with the `cust_id`), in this case, we're using the `customer` section to create a new [customer](ref:get-customer) entity.
 
 ```curl 200 OK Response
 {
@@ -147,7 +147,7 @@ In the previous example, we assigned the publication to an existing customer (id
 
 ## List Publications
 
-Every time coupon code is published either from the distribution or a referral campaign, Voucherify stores a corresponding `publication` entry. When you [get](ref:vouchers-get) the voucher, its `publish` section of the response body will show the publication details.
+Every time coupon code is published either from the distribution or a referral campaign, Voucherify stores a corresponding `publication` entry. When you [get](ref:get-voucher) the voucher, its `publish` section of the response body will show the publication details.
 
 ```json Get Voucher response part
 publish":{  
@@ -201,12 +201,15 @@ Operators:
 
 *Example 1 – list publications of a given customer*
 
-    GET /v1/publications?filters[customer_id][conditions][$is][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL
+```markdown
+GET /v1/publications?filters[customer_id][conditions][$is][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL
+```
 
 *Example 2 – list publications of two customers*
 
+    ```markdown one listing method
     GET /v1/publications?filters[customer_id][conditions][$in][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL&filters[customer_id][conditions][$in][1]=cust_aR7NfHusxT7PdTMAKMfWDXnc
-
-or with the `junction` operator
-
+    ```
+    ```markdown or with the `junction` operator
     GET /v1/publications?filters[customer_id][conditions][$is][0]=cust_lUET6gRpO5Wxlg5p2j2gRCgL&filters[customer_id][conditions][$is][1]=cust_aR7NfHusxT7PdTMAKMfWDXnc&filters[junction]=OR
+    ```

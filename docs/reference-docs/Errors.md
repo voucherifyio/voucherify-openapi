@@ -1,14 +1,12 @@
 ---
 title: Errors
 excerpt: Learn about the errors returned to responses and how you can customize them to improve your customer experience.
-category: ${{ secrets.API_CATEGORY_INTRODUCTION }}
+category: 639ba44d204cb60020b4b7ec
 slug: errors
 type: basic
 hidden: false
 order: 2
 ---
-
-# Errors
 
 The Voucherify API uses conventional HTTP status codes to indicate success or failure. Responses with a status code starting with 4xx or 5xx can be considered as failed. The API returns errors in a JSON format in the following structure:
 
@@ -20,7 +18,7 @@ The Voucherify API uses conventional HTTP status codes to indicate success or fa
 }
 ```
 
-> 📘 #### Developer-friendly API
+> 📘 Developer-friendly API
 >
 > Voucherify attempts to provide a developer-friendly API, hence sometimes you can find a hint on how to fix an error right in its details (like in the example above).
 
@@ -32,7 +30,7 @@ The Voucherify API uses conventional HTTP status codes to indicate success or fa
 | `message` | A human-readable message providing a short description about the error. |
 | `details` | A human-readable message providing more details about the error. |
 
-### HTTP status code summary
+## HTTP status code summary
 
 | HTTP Status Code | Text | Description |
 |:---|:---|:---|
@@ -41,17 +39,17 @@ The Voucherify API uses conventional HTTP status codes to indicate success or fa
 | 402 | Payment Required | The request exceeded your current pricing plan (we send friendly reminders first). |
 | 404 | Not Found | The requested resource could not be found. |
 | 405 | Method Not Allowed | The request used a method (GET, POST, etc.) that is not available for a given resource. Error details include a hint on which methods are allowed. |
-| 406 | Not Acceptable | The API is unable to produce a response in a format specified by the Accept header. In most cases the only available response format is application/json. |
-| 415 | Unsupported Media Type | The API is unable to consume a request in a format specified by the Content-Type header. |
+| 406 | Not Acceptable | The API is unable to produce a response in a format specified by the `Accept` header. In most cases the only available response format is `application/json`. |
+| 415 | Unsupported Media Type | The API is unable to consume a request in a format specified by the `Content-Type` header. |
 | 429 | Hourly API limit reached | Error occurs when you exceed your hourly limit of API calls or when your subscription plan has ended. |
 | 500 | Internal Server Error | An internal API error occurred. Don't worry, we track and verify all such errors and try to react as asap as possible. |
 
-### Error Messages
+## Error Messages
 
 
 The table below shows a list of errors that may be returned along with a brief description of the reason why it occurs.
 
-> 🚧 #### Customize Error Messages
+> 🚧 Customize Error Messages
 > A subset of the messages returned for the errors listed below can be customized in the UI.
 >  
 > Go to **Project Settings** > Error Messages to customize an error message. Then click on *Create new translations group* to create specific error messages. [Read more here](https://support.voucherify.io/article/264-how-can-i-create-custom-errors).
@@ -77,7 +75,7 @@ The table below shows a list of errors that may be returned along with a brief d
 | `invalid_rollback_params` | redemption rollback object was specified incorrectly |
 | `invalid_sku` | SKU object was specified incorrectly |
 | `invalid_validation_rules` | validation rules object was specified incorrectly |
-| `invalid_voucher` | voucher object was specified incorrectly (e.g., gift or discount is missing) |
+| `invalid_voucher` | voucher object was specified incorrectly (e.g., `gift` or `discount` is missing) |
 | `loyalty_card_points_exceeded` | loyalty card points were exceeded |
 | `missing_amount` | order amount was not specified |
 | `missing_customer` | customer was not specified |
@@ -92,6 +90,7 @@ The table below shows a list of errors that may be returned along with a brief d
 | `promotion_inactive` | promotion is inactive |
 | `promotion_not_active_now` | promotion is not active in the given timeframe |
 | `quantity_exceeded` | voucher's redemptions limit has been exceeded |
+| `query_too_large` | request body payload too large or query string too large |
 | `referrer_not_permitted_to_redeem` | the referral code is being redeemed by the referrer |
 | `resource_not_found` | voucher with given code does not exist |
 | `voucher_disabled` | voucher has been disabled (active: false) |
@@ -99,7 +98,7 @@ The table below shows a list of errors that may be returned along with a brief d
 | `voucher_not_active` | voucher is not active yet (before start date) |
 | `voucher_not_active_now` | voucher is not active in the given timeframe |
 
-### Custom error messages with Validation Rules
+## Custom error messages with Validation Rules
 
 Voucherify allows you to define your custom error message per Validation Rule; such message is going to be returned in API Response when validation or redemption of your promotion campaign or code fails due to not meeting requirements of that rule.
 Additionally, you can specify a fallback error message that should be used when there is no error message defined for the rule.
@@ -115,7 +114,7 @@ The second condition says that your customer who is validating a voucher is not 
 Additionally, you wish that the customer cart must contain an iPhone (`prod_f1r5Tpr0DuC7` is our iPhone), and if not, then a fallback error message should be used: "You must buy iPhone and be our new customer to get a discount."
 Let's examine how a request for creating such Validation Rule would look like, later we are also going to explore in details how API response is going to look:
 
-```json JSON
+```json
 {
   "name": "My validation rule",
   "error": {
@@ -152,7 +151,7 @@ Let's see below how the API Response is going to look in different scenarios wit
 
 **Provided required iPhone in order but the customer does not belong to required segment:**
 
-```json JSON
+```json
 {
     "code": "MY-TEST-CODE",
     "valid": false,
@@ -167,7 +166,7 @@ Let's see below how the API Response is going to look in different scenarios wit
 
 **Provided customer belongs to required segment, but the iPhone was not specified in the order:**
 
-```json JSON
+```json
 {
     "code": "MY-TEST-CODE",
     "valid": false,
@@ -182,7 +181,7 @@ Let's see below how the API Response is going to look in different scenarios wit
 
 **Passing both checks - providing customer who belongs to the required segment and items list with iPhone:**
 
-```json JSON
+```json
 {
     "code": "MY-TEST-CODE",
     "valid": true,

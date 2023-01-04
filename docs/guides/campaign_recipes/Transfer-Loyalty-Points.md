@@ -1,7 +1,7 @@
 ---
 title: Transfer Loyalty Points
 excerpt: See how to transfer points between loyalty cards.
-category: 636284b7e6b02c00a136e883
+category: 639ba16d677235008f80045c
 slug: transfer-loyalty-points
 type: basic
 hidden: false
@@ -9,12 +9,13 @@ order: 6
 ---
 
 This guide shows a workflow for combining loyalty points from multiple cards. A common use case is to allow a customer to redeem a reward if the number of points on a single card is not enough.
+
 - Points can be transferred between cards in the same and different loyalty campaigns.
 - Points can be transferred to the same and different customers.
 
 ## Reward qualification
 
-First, we need to call the [qualification endpoint](https://docs.voucherify.io/reference#push-qualification-request). It returns a list of loyalty cards that can be used for redeeming a reward specified in the request. 
+First, we need to call the [qualification endpoint](ref:examine-vouchers-qualification). It returns a list of loyalty cards that can be used for redeeming a reward specified in the request. 
 
 ```json Request body
 {
@@ -170,17 +171,20 @@ In the response, you can see that the customer doesn't have enough points to get
 
 This entity describes loyalty points transfer between Campaigns and Customers. If the customer has two or more assigned loyalty cards, Voucherify gives the opportunity to transfer points from one card to another - e.g., when the customer does not have enough points on the loyalty card to receive the reward. Points can be transferred between cards in the same and different loyalty campaigns and for the same and different customers.
 
-![Transfer points](../../assets/img/guides_campaigns_recipes_transfer_loyalty_points_transfer_1.png "Transfer points")
+<!-- ![Transfer points](../../assets/img/guides_campaigns_recipes_transfer_loyalty_points_transfer_1.png "Transfer points") -->
+![Transfer points](https://files.readme.io/876f3f0-loyaltycards.png "Transfer points")
 
 To transfer points from one card to another ({id}), we need to call the transfer endpoint with the following request body:
 
 POST: https://api.voucherify.io/v1//loyalties/campaignId/members/memberId/transfers
 
 In the path parameters, you need to include:
+
 - **campaignId** - a unique identifier of the loyalty campaign containing the voucher **to which** the loyalty points are to be sent.
 - **memberId** – a unique code identifying the loyalty card **to which** the user wants to transfer loyalty points.
 
 In the body parameters, you need to add the following data:
+
 - **code** – a unique identifier of the loyalty card **from which** you want to transfer points.
 - **points** – the number of loyalty points that you want to transfer to another loyalty card. 
 
@@ -251,7 +255,8 @@ In the body parameters, you need to add the following data:
 
 As a result, the balance on both cards has changed.
 
-![Wallet](../../assets/img/guides_campaigns_recipes_transfer_loyalty_points_wallet_2.png "Wallet")
+<!-- ![Wallet](../../assets/img/guides_campaigns_recipes_transfer_loyalty_points_wallet_2.png "Wallet") -->
+![Wallet](https://files.readme.io/44f206a-Dashboard-Voucherify-io_2.png "Wallet")
 
 ## Points redemption
 
@@ -412,4 +417,5 @@ Where campaignId is a unique id of a loyalty campaign and the memberId is a loya
 
 In the dashboard, you can see that the points from the loyalty card were spent on the reward and the balance was updated.
 
-![Loyalty Card Balance](../../assets/img/guides_campaigns_recipes_transfer_loyalty_points_balance_3.png "Loyalty card balance")
+<!-- ![Loyalty Card Balance](../../assets/img/guides_campaigns_recipes_transfer_loyalty_points_balance_3.png "Loyalty card balance") -->
+![Loyalty Card Balance](https://files.readme.io/900ce9a-Dashboard-Voucherify-io_3.png "Loyalty card balance")

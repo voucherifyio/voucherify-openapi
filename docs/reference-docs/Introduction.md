@@ -1,14 +1,12 @@
 ---
 title: Introduction
 excerpt: What is Voucherify API?
-category: ${{ secrets.API_CATEGORY_INTRODUCTION }}
+category: 639ba44d204cb60020b4b7ec
 slug: introduction-1
 type: basic
 hidden: false
 order: 1
 ---
-
-# Introduction
 
 The Voucherify API is organized around REST.  Our API has predictable, resource-oriented URLs, and uses HTTP response codes to indicate API errors. We use built-in HTTP features, such as HTTP authentication and HTTP verbs, which are understood by off-the-shelf HTTP clients.  
 
@@ -23,6 +21,6 @@ In general the API consists of 2 sets:
 * **application API** - full capability, designed to be accessed from your server application
 * **client API** - limited capability, designed to be accessed from your website or mobile application
 
-> 📘 #### Your API keys
+> 📘 Your API keys
 >
-> Find out more about how to authenticate your application to access the API. 
+> Find out more about how to [authenticate your application](doc:authentication) to access the API. 

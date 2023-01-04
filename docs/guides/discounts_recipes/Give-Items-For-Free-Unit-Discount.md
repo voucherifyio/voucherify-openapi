@@ -1,7 +1,7 @@
 ---
 title: Give item(s) for free - unit discount
 excerpt: How to add free items to customers' orders?
-category: 636284b7e6b02c00a136e885
+category: 639ba16d677235008f80045e
 slug: give-item-for-free-unit-discount
 type: basic
 hidden: false
@@ -17,12 +17,13 @@ As a result, when a customer is eligible for a promotion and redeems a code, the
 
 To set up a unit discount via the dashboard, you need to provide the following information:
 
-![Unit type discount](../../assets/img/guides_discount_recipes_free_items_unit_discount_1.png "Unit type discount")
+<!-- ![Unit type discount](../../assets/img/guides_discount_recipes_free_items_unit_discount_1.png "Unit type discount") -->
+![Unit type discount](https://files.readme.io/2cf64fc-unit_discount.png "Unit type discount")
 
 **Unit value** defines the number of free items attached to the code.
 **Unit type **is a product offered for free chosen from your Product Inventory.
 
-> 📘 Message Title
+> 📘
 >
 > Please note that this type of discount is based on the Product inventory added to the Products section in your dashboard. If you haven't synced your products yet, please follow [this guide first](https://support.voucherify.io/article/52-product-manager).
 
@@ -597,7 +598,7 @@ In the order object, you can see that the customer already has a t-shirt in thei
 
 Let's [Redeem Vouchers](ref:redeem-voucher) from all of the campaigns and test the different discount effects.
 
-## Redemption of the code with discoutn effect ADD_NEW_ITEMS
+## Redemption of the code with discount effect ADD_NEW_ITEMS
 
 In the response body, you can see that despite that one t-shirt is already in the cart, one additional t-shirt was added to the customer order and discounted.
 
@@ -616,7 +617,7 @@ In the response body, you can see that despite that one t-shirt is already in th
     }
   }
 ```
-```json Redemption respons 200 OK
+```json Redemption response 200 OK
 {
     "id": "r_0o5hjdizrqJF1kg4eOeMT1gq",
     "object": "redemption",
@@ -753,7 +754,8 @@ In the response body, you can see that despite that one t-shirt is already in th
 
 In the order items object, you can see that a free item was added to the cart.
 
-![API Response](../../assets/img/guides_discount_recipes_free_items_api_response_2.png "API response")
+<!-- ![API Response](../../assets/img/guides_discount_recipes_free_items_api_response_2.png "API response") -->
+![API response](https://files.readme.io/d565fe2-discount_effect1.png "API response")
 
 ## Redemption of the code with discount effect ADD_MISSING_ITEMS
 
@@ -902,7 +904,8 @@ Now, let's use the same order while redeeming a discount code with the same valu
 
 As you can see in the response body, the discount was applied to the product already added to the cart by a customer. The number of items in the cart matched the number of free units from the code so there were no additional items added by Voucherify.
 
-![API Response](../../assets/img/guides_discount_recipes_free_items_api_response_3.png "API response") 
+<!-- ![API Response](../../assets/img/guides_discount_recipes_free_items_api_response_3.png "API response") -->
+![API Response](https://files.readme.io/4d44f96-discount_effect2.png "API Response")
 
 ## Redemption of the code with discount effect ADD_MANY_ITEMS
 
@@ -1100,4 +1103,5 @@ Finally, let's redeem a discount code for multiple free item types.
 
 As you can see in the response body, the discount was applied to the products in the cart. Each item type was added according the discount effect defined for that particular item type.
 
-![API Response](../../assets/img/guides_discount_recipes_free_items_api_response_4.png "API response")
+<!-- ![API Response](../../assets/img/guides_discount_recipes_free_items_api_response_4.png "API response") -->
+![API Response](https://files.readme.io/f041381-multiple_items.png "API response")

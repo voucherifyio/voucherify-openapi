@@ -1,7 +1,7 @@
 ---
 title: API Version Upgrades
 excerpt: Keep track of changes and upgrades to the Voucherify API.
-category: 636284b7e6b02c00a136e86e
+category: 639ba16d677235008f800447
 slug: api-version-upgrades
 type: basic
 hidden: false
@@ -16,7 +16,8 @@ Your API version controls the API and webhook behavior you see (e.g., what prope
 
 If you’re running an older version, you’ll want to upgrade to take advantage of the latest API. For changing your API version, go to your Project Settings and click** Upgrade to the latest API version**.
 
-![Upgrade API](../../assets/img/guides_development_api_version_upgrades_upgrade_1.png "Upgrade API")
+<!-- ![Upgrade API](../../assets/img/guides_development_api_version_upgrades_upgrade_1.png "Upgrade API") -->
+![Upgrade API](https://files.readme.io/d5b3ce2-upgrade-API.png "Upgrade API")
 
 ---
 

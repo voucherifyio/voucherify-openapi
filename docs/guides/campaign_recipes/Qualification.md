@@ -1,7 +1,7 @@
 ---
 title: Qualification - Checking eligibility for promo codes
 excerpt: null
-category: 636284b7e6b02c00a136e883
+category: 639ba16d677235008f80045c
 slug: checking-eligibility-for-coupons
 type: basic
 hidden: false
@@ -11,13 +11,13 @@ order: 1
 Sometimes you want to show a customer all the coupons they’re eligible for — taking into account their **attributes** as well as the **current content of their cart** (check the examples below).
 
 Voucherify API offers two endpoints for this purpose:
-* [Vouchers qualification](https://docs.voucherify.io/reference/push-qualification-request) — returns a list of standalone coupons. The method can be used for sending a request to display all vouchers qualified to the given customer and context like order, loyalty reward, customer attributes. 
+* [Vouchers qualification](ref:examine-vouchers-qualification) — returns a list of standalone coupons. The method can be used for sending a request to display all vouchers qualified to the given customer and context like order, loyalty reward, customer attributes. 
 
 > 📘 Limits
 > 
 > Note that this method isn’t guaranteed to display all vouchers qualified to the given customer and context. It will check up to 150 standalone vouchers.
 
-* [Campaigns qualification](https://docs.voucherify.io/reference/create-qualification-request) — returns a list of campaigns that store pre-generated unique bulk codes (which you can assign to the customer with [create publication](https://docs.voucherify.io/reference/create-publication) method.
+* [Campaigns qualification](ref:examine-campaigns-qualification) — returns a list of campaigns that store pre-generated unique bulk codes (which you can assign to the customer with [create publication](ref:create-publication) method.
 
 > 📘 Limits
 > 

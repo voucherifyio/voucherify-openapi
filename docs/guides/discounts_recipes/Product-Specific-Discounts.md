@@ -1,7 +1,7 @@
 ---
 title: Product-specific discounts
 excerpt: A recipe for using *applicable_to* validation rule
-category: 636284b7e6b02c00a136e885
+category: 639ba16d677235008f80045e
 slug: discount-for-particular-product
 type: basic
 hidden: false
@@ -35,7 +35,9 @@ Here is an example redemption of a voucher with a product-specific discount.
      }
  }
  ```
+
  The redemption response will store items section which has new, discounted amount per product.
+ 
  ```json 200 OK Response
  {
     "id": "r_38dHnMEa5Yvc5mcGDKarOSml",

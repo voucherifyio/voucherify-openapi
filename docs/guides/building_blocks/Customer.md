@@ -1,7 +1,7 @@
 ---
 title: Customers
 excerpt: 
-category: 636284b7e6b02c00a136e87b
+category: 639ba16d677235008f800454
 slug: customers
 type: basic
 hidden: false
@@ -15,7 +15,7 @@ order: 2
 > 📘 Before you start
 > 
 > - Learn more about [managing Customers using the dashboard](https://support.voucherify.io/article/67-how-to-import-my-customers).    
-> - Here's the [Customer object reference](ref:the-customer-object) that helps you create and manage customers using API.
+> - Here's the [Customer object reference](ref:get-customer) that helps you create and manage customers using API.
 
 Syncing your customer base with Voucherify can lead to multiple benefits. You can:
 
@@ -30,7 +30,7 @@ Let's see how you can quickly integrate and manage customers with our building b
 There are two ways you can add customer profiles to Voucherify:
 
 - The initial import can be achieved with a [CSV file](https://support.voucherify.io/article/67-how-to-import-my-customers).
-- If you want to keep your customers database in sync with Voucherify, you should create a customer every time a new user signs up in your shop. This comes down to invoking this [create a customer](https://docs.voucherify.io/reference#create-customer).
+- If you want to keep your customers database in sync with Voucherify, you should create a customer every time a new user signs up in your shop. This comes down to invoking this [create a customer](ref:create-customer).
 
 To help you identify and update customer profiles later on, you can pass your CRM unique id in the `source_id` field.  You can also identify any customer with `id` generated for every new customer, see the customer object. To help you keep data in sync, Voucherify stores `created_at` and `updated_at` date fields.
 
@@ -38,10 +38,10 @@ If you create a customer providing an already existing `source_id`, the profile 
 
 Learn more by browsing the API reference for customers:
 
-- [Create Customer](https://docs.voucherify.io/reference#create-customer)
-- [Update Customer](https://docs.voucherify.io/reference#update-customer)
-- [Get Customer](https://docs.voucherify.io/reference#read-customer)
-- [Delete Customer](https://docs.voucherify.io/reference#delete-customer)
+- [Create Customer](ref:create-customer)
+- [Update Customer](ref:update-customer)
+- [Get Customer](ref:get-customer)
+- [Delete Customer](ref:delete-customer)
 
 ## Customer Tracking
 
@@ -81,16 +81,16 @@ You can also add new customers while they're redeeming a voucher. You just need 
       "https://api.voucherify.io/v1/vouchers/Testing7fjWdr/redemption"
 ```
 
-Voucherify can help you track anonymous customers too. Once you integrate [JS SDK] (https://docs.voucherify.io/docs/sdks#js) into your web app and call the [validate](https://docs.voucherify.io/reference#vouchers-validate) method for the first time in a web session, Voucherify will return a `tracking id` which will be stored in a cookie. Every next call to Voucherify will be attached to this id. When you have all data to fully identify the customer and complete the order, you can pass the `tracking id` to the redeem method and the anonymous data will be merged into a newly created profile. Note that tracking id and cookies are supported in both [Validate Voucher](ref:validate-voucher) and [Validate Stackable Discounts](ref:validate-stacked-discounts-1) APIs. 
+Voucherify can help you track anonymous customers too. Once you integrate [JS SDK] (doc:sdks#js) into your web app and call the [validate](ref:validate-voucher-client-side) method for the first time in a web session, Voucherify will return a `tracking id` which will be stored in a cookie. Every next call to Voucherify will be attached to this id. When you have all data to fully identify the customer and complete the order, you can pass the `tracking id` to the redeem method and the anonymous data will be merged into a newly created profile. Note that tracking id and cookies are supported in both [Validate Voucher](ref:validate-voucher) and [Validate Stackable Discounts](ref:validate-stacked-discounts) APIs. 
 
 This is how an example workflow looks like:
 
 **Client-side:**
 
 - A customer visits your website.
-- He/she validates her voucher code. This triggers [JS](https://docs.voucherify.io/docs/client-side-api) to send a [validate request](https://docs.voucherify.io/reference#vouchers-validate). As a result, it returns a `tracking_id`. Example client-side request:
+- He/she validates her voucher code. This triggers [JS](doc:client-side-api) to send a [validate request](ref:validate-voucher-client-side). As a result, it returns a `tracking_id`. Example client-side request:
 
-```
+```markdown
 GET https://api.voucherify.io/client/v1/validate?code=uWaf3gVG&amount=1000&item[0][sku_id]=sku_dSbRQfbyUMyHnt&item[0][quantity]=1&item[1][product_id]=prod_anJ03RZZq74z4v&item[1][quantity]=1
 ```
 
@@ -141,10 +141,10 @@ GET https://api.voucherify.io/client/v1/validate?code=uWaf3gVG&amount=1000&item[
 }
 ```
 
-- Once the customer finishes the checkout process, your website passes the `tracking_id` to your backend during a [redemption](https://docs.voucherify.io/reference#redeem-voucher). Tracking id is passed in the cookie so customer is identified without adding his/her data to the payload.
+- Once the customer finishes the checkout process, your website passes the `tracking_id` to your backend during a [redemption](ref:redeem-voucher). Tracking id is passed in the cookie so customer is identified without adding his/her data to the payload.
 
-- A [customer object](https://docs.voucherify.io/reference#the-customer-object) object is created and it stores all previously tracked data. You'll get `customer id` as part of the redemption response.
-- You can use the `customer_id` to [fetch](https://docs.voucherify.io/reference#read-customer) or [modify](https://docs.voucherify.io/reference#update-customer) the customer details.
+- A [customer object](ref:get-customer) object is created and it stores all previously tracked data. You'll get `customer id` as part of the redemption response.
+- You can use the `customer_id` to [fetch](ref:get-customer) or [modify](ref:update-customer) the customer details.
 
 > 📘 Custom tracking ID
 > 
@@ -161,11 +161,11 @@ Segments are the key feature of Voucherify because they allow you to define targ
 There are two types of segments in Voucherify:
 
 - **Static** – always contains the same number of customers.
-- **Auto-update** – customers dynamically join or leave if they match a given filter (e.g., if you [update a customer's property](https://docs.voucherify.io/reference#update-customer) and it matches the filter, the customer will automatically join the segment).
+- **Auto-update** – customers dynamically join or leave if they match a given filter (e.g., if you [update a customer's property](ref:update-customer) and it matches the filter, the customer will automatically join the segment).
 
 ## Static
 
-This is how you can create a static segment programmatically. Add [customer ids](https://docs.voucherify.io/reference#the-customer-object) in `customers`. 
+This is how you can create a static segment programmatically. Add [customer ids](ref:get-customer) in `customers`. 
 
 > ❗ Limit
 >
@@ -210,7 +210,7 @@ curl -X POST \
     }'
 ```
 
-To get more complex scenarios you can use multiple modifiers. If you're not sure about the syntax, try creating a segment using the Dashboard first and then [get](https://docs.voucherify.io/reference#get-segment) it using a segment id from the URL. An example of more advanced segment filters:
+To get more complex scenarios you can use multiple modifiers. If you're not sure about the syntax, try creating a segment using the Dashboard first and then [get](ref:get-segment) it using a segment id from the URL. An example of more advanced segment filters:
 
 ```curl cURL
     "filter": {
@@ -419,9 +419,9 @@ Each filter gives you a list of operators which you can use to create specific c
 
 Customers can be exported in four ways:
 
-- [List customers with the API](https://docs.voucherify.io/reference#list-customers).
-- [Get single customer with the API](https://docs.voucherify.io/reference#read-customer).
-- [Request CSV export with the API](https://docs.voucherify.io/reference#the-export-object).
+- [List customers with the API](ref:list-customers).
+- [Get single customer with the API](ref:get-customer).
+- [Request CSV export with the API](ref:create-export).
 - [With CSV export tool](https://support.voucherify.io/article/67-how-to-import-my-customers#data-export).
 
 

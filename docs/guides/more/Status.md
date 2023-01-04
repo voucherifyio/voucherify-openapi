@@ -1,8 +1,8 @@
 ---
 title: Status
 excerpt: 
-category: 636284b7e6b02c00a136e868
-slug: status-1
+category: 639ba16d677235008f800441
+slug: status
 type: link
 hidden: false
 order: 3

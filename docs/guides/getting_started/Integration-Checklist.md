@@ -1,7 +1,7 @@
 ---
 title: Integration checklist
 excerpt: Get the documentation, sample code, and developer tools — everything you need to build digital promotions faster
-category: 636284b7e6b02c00a136e866
+category: 639ba16d677235008f80043f
 slug: welcome
 type: basic
 hidden: false
@@ -16,7 +16,8 @@ Voucherify is an API-first Promotion Engine for digital teams. With our programm
 
 Voucherify offers a REST-based API and a web dashboard to create and manage promotional campaigns. Our dedicated endpoints help you deliver personalized incentives to any channel, device, and e-commerce solution while keeping your data in secure, highly available environments. This is achieved with real-time data synchronization with CRM, product inventory, distribution channels, and any customer touchpoints. 
 
-![Welcome Diagram](../../assets/img/guides_getting_started_integration_checklist_welcome_diagram_1.png "Welcome Diagram")
+<!-- ![Welcome Diagram](../../assets/img/guides_getting_started_integration_checklist_welcome_diagram_1.png "Welcome Diagram") -->
+![Welcome Diagram](https://files.readme.io/6070078-welcome-diagram.png "Welcome Diagram")
 
 The majority of development work is required at the beginning: 
 * Connecting the Promotion Engine to the checkout.
@@ -34,7 +35,7 @@ This is why the crucial part is to align your implementation priorities with you
 > 📘 Help and Support
 > We offer a team of dedicated developers who have experience with both Voucherify and popular ecommerce platforms to integrate Voucherify with your existing technology stack.[Learn more](https://www.voucherify.io/professional-services).
 > 
-> Our team is always ready to support you on your journey with Voucherify. [Reach out to us](https://docs.voucherify.io/docs/support) if you have any questions and [join our Community on Slack](https://www.voucherify.io/community). We're happy to help!
+> Our team is always ready to support you on your journey with Voucherify. [Reach out to us](doc:support) if you have any questions and [join our Community on Slack](https://www.voucherify.io/community). We're happy to help!
 
 ## What can I do in Voucherify?
 
@@ -64,7 +65,7 @@ Trying to build a PoC? Grasp the basics and start building:
 
 |  |
 |---|
-| [SDKs](docs:sdks) — integrate faster with client- and server-side libraries |
+| [SDKs](doc:sdks) — integrate faster with client- and server-side libraries |
 | [Authentication](doc:authentication) & [Security](doc:security) — learn about access management and secure data flow |
 | [Error codes](ref:errors) — find what it means when Voucherify returns an error |
 | [Fetching data](ref:listing) — understand how to retrieve Voucherify data, including helpful shortcuts and filters |
@@ -79,13 +80,13 @@ Assuming your integration allows for a [basic coupon redemption](doc:quickstart)
 
   * Check out Voucherify [data import](doc:import-codes) capabilities.
   * Learn how to use validation rules based on the data you want to import/sync:
-      - [Customer segments](doc:customers) 
+      - [Customer segments](doc:customers#segments) 
       - [Products](doc:products) 
-      - [Order structure](doc:orders-1) 
+      - [Order structure](doc:orders) 
   * Get familiar with [metadata](doc:metadata-custom-fields). Every object in Voucherify can be extended with custom fields. You can use them for customer segment filters, validation rules, and reporting purposes.  
   * Once you have validation rules configured, learn how to define a discount or incentive with the [Campaign Manager](https://support.voucherify.io/article/511-discount-effects-cheat-sheet).
   * [Deliver](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work) your promotions to customers. Learn how you can share the promotion and what channels are available.
-  * Decide what redemption endpoint you prefer to use. Voucherify API supports the [Redeem Voucher](ref:redeem-voucher) of a single promo code and [Stacking discounts](doc:stacking-discounts-new) for up to 5 incentives per API call.
+  * Decide what redemption endpoint you prefer to use. Voucherify API supports the [Redeem Voucher](ref:redeem-voucher) of a single promo code and [Stacking discounts](doc:manage-stackable-discounts) for up to 5 incentives per API call.
  
 
 For advanced customization, you should read about how Voucherify: 
