@@ -1,6 +1,6 @@
 # Changelog
 
-## v20220101
+## 20230101 - Transition to Interactive documentation
 
 - Definitions of object schemas that were previously availalbe in a separate document are now viewable by navigating to the specified endpoints described in the API reference document titled Object schemas.
 

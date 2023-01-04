@@ -11,7 +11,7 @@ order: 5
 You can find the object definitions for the given schemas by navigating to the respective endpoint and viewing the response schema definition and examples.
 
 | **API** | **Object** |
-|:---:|:---:|
+|:---|:---|
 | Vouchers | [Voucher object](ref:get-voucher) |
 | Campaigns | [Campaign object](ref:get-campaign) |
 | Promotions | [Promotion tier object](ref:list-promotion-tiers) |
