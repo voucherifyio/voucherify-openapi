@@ -90,7 +90,7 @@ This is how an example workflow looks like:
 - A customer visits your website.
 - He/she validates her voucher code. This triggers [JS](doc:client-side-api) to send a [validate request](ref:validate-voucher-client-side). As a result, it returns a `tracking_id`. Example client-side request:
 
-```markdown
+```markdown Example
 GET https://api.voucherify.io/client/v1/validate?code=uWaf3gVG&amount=1000&item[0][sku_id]=sku_dSbRQfbyUMyHnt&item[0][quantity]=1&item[1][product_id]=prod_anJ03RZZq74z4v&item[1][quantity]=1
 ```
 

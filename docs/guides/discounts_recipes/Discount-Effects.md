@@ -355,7 +355,20 @@ Create a voucher, campaign, or cart-level promotion with the *apply to items* di
 [Create Validation Rules Assignment](ref:create-validation-rule-assignment) to attach validation rules with discounted products to the created discount. If you create a campaign in the dashboard, you can create new rules on the spot or select existing rules from the list. Choosing the rules in the Manager automatically assigns them to the campaign. [Read more about validation rules](https://support.voucherify.io/article/529-validation-rules-campaign-limits)
 
 <!-- ![Validation Rules](../../assets/img/guides_discount_recipes_discount_effects_create_validation_rule_1.png "Validation rules") -->
-![Validation Rules](https://files.readme.io/d8c53cc-Screenshot_2022-12-29_at_11.20.52.png "Validation rules")
+[block:image]
+{
+  "images": [
+    {
+      "image": [
+        "https://files.readme.io/d8c53cc-Screenshot_2022-12-29_at_11.20.52.png",
+        null,
+        ""
+      ],
+      "sizing": "400px"
+    }
+  ]
+}
+[/block]
 
 **Redemption**
 While redeeming the code, each item defined in the validation rules will be discounted. 
@@ -607,7 +620,9 @@ While redeeming the code, each item defined in the validation rules will be disc
 ---
 
 ### Apply to Items Proportionally
+
 *Discount type: amount* 
+
 Using this effect, the discount is divided and applied only to particular items defined by validation rules. While creating a discount, you need to add effect to the discount object and define the list of discounted products using validation rules. 
 
 As a result, the discount is applied to chosen products only, and each of them is discounted **proportionally to its share in the total amount of discounted items**. The total discount amount applied to all items equals the discount value defined by *discount.amount_off*.
@@ -899,7 +914,9 @@ While redeeming the code, each item defined in validation rules will be discount
 ---
 
 ### Apply to Items Proportionally by Quantity
+
 *Discount type: amount* 
+
 Likewise, the discount is divided and applied only to particular items defined by validation rules. While creating a discount, you need to add effect to the discount object and define the list of discounted products using validation rules. 
 
 As a result, the discount is applied to chosen products only, and each of them is discounted **proportionally to its share in the total quantity of discounted items.** The total discount amount applied to all items equals the discount value defined by *discount.amount_off*.
@@ -916,7 +933,9 @@ As a result, the discount is applied to chosen products only, and each of them i
 ---
 
 ### Apply to Items to each unit of matched product
+
 *Discount type: amount* 
+
 Likewise, the discount is divided and applied only to particular items defined by validation rules. While creating a discount, you need to add the effect to the discount object and define the list of discounted products using validation rules. You also need to define the maximum units that are allowed to have the discount applied in the validation rule. 
 
 As a result, the discount is applied to chosen products only, and each unit of the product is discounted at most up to the maximum limit allowed. The total discount amount applied to all items equals the number of discounted units multiplied by the discount amount. The discount value defined by *discount.amount_off* is the discount amount that will be applied to each unit.
@@ -972,6 +991,7 @@ Here is an example of a validation rule that limits the quantity of each product
 ---
 
 ### Add Missing Items
+
 *Discount type: unit* 
 
 This effect adds items to the cart only if a customer has fewer free items than offered by the code. For example, let's assume that the code gives one free t-shirt:  
@@ -982,6 +1002,7 @@ This effect adds items to the cart only if a customer has fewer free items than 
 ---
 
 ### Add New Items
+
 *Discount type: unit* 
 
 Choosing this effect results in adding items to the cart in the number defined by unit value. For example, if the code gives one free t-shirt, then no matter if a customer has the t-shirt already in the cart or not, a free t-shirt will always be added to the order and discounted. [Read more](doc:give-item-for-free-unit-discount#redemption-of-the-code-with-discount-effect-add_new_items).
@@ -989,6 +1010,7 @@ Choosing this effect results in adding items to the cart in the number defined b
 ---
 
 ### Add Many Items
+
 *Discount type: unit* 
 
 The discount gives multiple types of free item(s) to customers. Free item units are always added to the customer's cart based on either the **Add missing items** or **Add new order items** effects. [Read more](doc:give-item-for-free-unit-discount#redemption-of-the-code-with-discount-effect-add_many_items).
@@ -1000,6 +1022,7 @@ The discount gives multiple types of free item(s) to customers. Free item units 
 ---
 
 ### Default Effect
+
 Here are the default effects that API adds in the case you won't define it in your discounts.
 
 | **Discount Type** | **Default Effect** |
@@ -1009,5 +1032,6 @@ Here are the default effects that API adds in the case you won't define it in yo
 | UNIT | "ADD_MISSING_ITEMS"<br>"ADD_NEW_ITEMS" |
 
 ### Effects and Validation Rules
+
 Discount effects work in parallel with the remaining [Validation rules](doc:validation-rules) that specify included and excluded items, required cart structure and other redemption circumstances.
 

@@ -37,7 +37,7 @@ Voucherify API for [stacking discounts](ref:stackable-discounts-api) lets you va
 
 To speed up client-side redeem integration, you can use the voucherify.js library. It allows for either invoking the method directly or using the web [widget](https://github.com/rspective/voucherify.js#redeem-widget)
 
-```markdown 
+```markdown Example
 `Voucherify.redeem("gfct5ZWI1nL", { order: { amount: 5000 } }, **function** callback (response) { })`
 ```
 

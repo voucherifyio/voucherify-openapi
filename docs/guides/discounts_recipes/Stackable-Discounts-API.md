@@ -420,7 +420,7 @@ You can always roll back any unwanted redemption. Note that if you call this end
 POST https://URL/v1/redemptions/{parent_redemption_id}/rollbacks
 
 ```markdown Example 
-// POST https://URL/v1/redemptions/r_5J38i6KjSnkHYw3bwLB4v72j/rollbacks
+POST https://URL/v1/redemptions/r_5J38i6KjSnkHYw3bwLB4v72j/rollbacks
 ```
 ```json 200 OK Response
 {
