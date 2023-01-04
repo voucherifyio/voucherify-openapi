@@ -1,16 +1,16 @@
 ---
 title: CSV export with API
 excerpt: null
-category: 636284b7e6b02c00a136e884
+category: 639ba16d677235008f80045d
 slug: csv-export
 type: basic
 hidden: false
 order: 2
 ---
 
-Voucherify enables programmable export of [vouchers](ref:the-voucher-object), [redemptions](ref:the-redemption-object), publications and [customers](ref:the-customer-object) to a CSV file. Here are four simple steps to achieve it:
+Voucherify enables programmable export of [vouchers](ref:get-voucher), [redemptions](ref:get-redemption), [publications](ref:list-publications), [customers](ref:get-customer), [order](ref:get-order) and point expirations to a CSV file. Here are four simple steps to achieve it:
 
-1. Trigger the export with [Create Export](ref:create-export) and store the `id` of [the export object](ref:the-export-object) you'll get in the response from Voucherify.
+1. Trigger the export with [Create Export](ref:create-export) and store the `id` of [the export object](ref:get-export) you'll get in the response from Voucherify.
 
 2. [Get](ref:get-export) the export's status providing the `id` and take a look at the `status` field from the response. If it's still `SCHEDULED`, this means that the export is still in progress and you should ask later.
 

@@ -1,34 +1,28 @@
 ---
 title: Earning Rules
 excerpt: 
-category: 636284b7e6b02c00a136e87b
+category: 639ba16d677235008f800454
 slug: earning-rules
 type: basic
 hidden: false
 order: 10
 ---
 
-<p>
-	 Earning rules define actions that customers must take to receive loyalty points and, as a result, redeem points for loyalty rewards. You can create three types of earning rules in Voucherify:&nbsp;
-</p>
-<ul>
-	<li>customer segments,&nbsp;</li>
-	<li>paid orders,&nbsp;</li>
-	<li>and custom events that customers perform in your application/website.&nbsp;</li>
-</ul>
-<p>
-	 Moreover, you can extend each earning rule with additional constraints using validation rules.
-</p>
-<p>
-  The 	<a href="https://docs.voucherify.io/reference#create-earning-rule">Earning Rule object </a>
- defines an action (event) that assigns a particular number of loyalty points to a customer's account.
-  </p>
+Earning rules define actions that customers must take to receive loyalty points and, as a result, redeem points for loyalty rewards. You can create three types of earning rules in Voucherify:
+
+- customer segments,
+- paid orders,
+- and custom events that customers perform in your application/website.
+
+Moreover, you can extend each earning rule with additional constraints using validation rules.
+
+The [Earning Rule object](ref:create-earning-rule) defines an action (event) that assigns a particular number of loyalty points to a customer's account.
 
 The loyalty campaign will detect the first two events automatically when a customer enters a segment or when any of customer’s orders will be changed to PAID.
 
 Note that for the attribute `every` in the context of an amount, the value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 order amount is written as 1000. On the other hand, point values are written as-is, i.e. 100 points are 100 points.
 
-To trigger the 3rd option, you need specifically tell it so. You can achieve it with the [Track Custom Event](https://docs.voucherify.io/reference#create-custom-event) endpoint. 
+To trigger the 3rd option, you need specifically tell it so. You can achieve it with the [Track Custom Event](ref:track-custom-event) endpoint. 
 
 > 📘 Event schema
 >
@@ -36,7 +30,7 @@ To trigger the 3rd option, you need specifically tell it so. You can achieve it 
 
 ## Create earning rule
 
-To [create earning rule](https://docs.voucherify.io/reference#create-earning-rule), you have the option of awarding the customer with a fixed amount of points or points calculated proportional to a value of an attribute. First, define a required event, then define the fixed or proportional calculation method for adding points and (optionally) a banner (name) of the rule.
+To [create earning rule](ref:create-earning-rule), you have the option of awarding the customer with a fixed amount of points or points calculated proportional to a value of an attribute. First, define a required event, then define the fixed or proportional calculation method for adding points and (optionally) a banner (name) of the rule.
 
 ```curl cURL
 curl -X POST \
@@ -159,34 +153,26 @@ curl -X POST \
 "amount": {
            "every": 100, // represents 1 in your currency (eg. $1)
            "points": 100 // means 100 loyalty points
-   }
+}
 ```
 
-<p>
-	 Each earning rule can have its own time frame that defines when the rule is active. If you don't define the start and expiration date for an earning rule, it'll inherit the campaign time frame (start and expiration date).&nbsp;All time-related limits are optional and described precisely in 
-	<a href="https://support.voucherify.io/article/132-time-limits-for-vouchers">this guide.</a>
-</p>
-<p>
-	 Timeframe options include:
-</p>
-<ul>
-	<li>Start date &amp; time</li>
-	<li>End date &amp; time (expiration)</li>
-	<li>Valid in this timeframe only (recurring)</li>
-	<li>Valid on particular days only</li>
-</ul>
-<p>
-	 You can disable and enable earning rules in the campaign dashboard &gt; earning rule or via API using the following endpoints:
-  <ul>
-    <li><a href="https://docs.voucherify.io/reference/enable-earning-rule">Enable Earning Rule</a></li>
-    <li><a href="https://docs.voucherify.io/reference/disable-earning-rule">Disable Earning Rule</a></li>
-  </ul>
-</p>
-<p>
-<strong>Creating an earning rule is a three-step process:</strong>
-</p>
-<ul>
-	<li>[Required] Define the earning rule details such as the trigger event, name and the timeframe when it will be valid. <br>
+Each earning rule can have its own time frame that defines when the rule is active. If you don't define the start and expiration date for an earning rule, it'll inherit the campaign time frame (start and expiration date). All time-related limits are optional and described precisely in [this guide](https://support.voucherify.io/article/132-time-limits-for-vouchers).
+
+Timeframe options include:
+
+- Start date & time
+-	End date & time (expiration)
+-	Valid in this timeframe only (recurring)
+-	Valid on particular days only
+
+You can disable and enable earning rules in the campaign dashboard > earning rule or via API using the following endpoints:
+
+- [Enable Earning Rule](ref:enable-earning-rule)
+- [Disable Earning Rule](ref:disable-earning-rule)
+
+### Creating an earning rule is a three-step process:
+
+- [Required] Define the earning rule details such as the trigger event, name and the timeframe when it will be valid.
 
 ```json Define details
 {
@@ -204,9 +190,7 @@ curl -X POST \
 }
 ```
 
-<ul>
-	<li>[Required] Assign a points value. <br>
-</ul>
+- [Required] Assign a points value.
 
 ```json Assign points
 {
@@ -222,9 +206,7 @@ curl -X POST \
   }
 }
 ```
-<ul>
-	<li>[Optional] Add <a href="https://support.voucherify.io/article/529-validation-rules-campaign-limits" target="_blank">validation rules</a> that limit earning rule usage to the predefined circumstances. Read more <a href="https://docs.voucherify.io/docs/validation-rules">here</a>. <br>
-</ul>
+- [Optional] Add [validation rules](https://support.voucherify.io/article/529-validation-rules-campaign-limits) that limit earning rule usage to the predefined circumstances. Read more [here](doc:validation-rules).
 
 ```json Assign validation rule
 {
@@ -238,10 +220,7 @@ Let's see how each of the earning rule types are defined. We'll start with the _
 
 ## Order has been paid
 
-<p>
-	 Points are added to the loyalty card when a new order changes its status to PAID.&nbsp;You can assign a fixed number of points or reward customers proportionally to a metadata attribute. If you choose to calculate the points proportionally, then for every value in the selected attribute, the customer will get a defined number of points. There are five standard options to choose from such as amount spent and quantity of items in cart. Additionally, you have the option of choosing two types of metadata properties. The metadata must be defined in the Project Settings. Please read our guide on how to start with 
-	<a href="https://support.voucherify.io/article/99-schema-validation-metadata">metadata</a>.
-</p>
+Points are added to the loyalty card when a new order changes its status to PAID.&nbsp;You can assign a fixed number of points or reward customers proportionally to a metadata attribute. If you choose to calculate the points proportionally, then for every value in the selected attribute, the customer will get a defined number of points. There are five standard options to choose from such as amount spent and quantity of items in cart. Additionally, you have the option of choosing two types of metadata properties. The metadata must be defined in the Project Settings. Please read our guide on how to start with [metadata](https://support.voucherify.io/article/99-schema-validation-metadata).
 
 ### Fixed
 -  **Fixed** - Awards a fixed number of points for paying an order.
@@ -391,20 +370,16 @@ Let's see how each of the earning rule types are defined. We'll start with the _
 }
 ```
 
-<p>
-	 Using validation rules, you can attach additional requirements that customers need to meet to earn points. Rules can define cart structure and volume, customer attributes, or specify qualified customer segments. Go 
-	<a href="https://support.voucherify.io/article/529-validation-rules-campaign-limits" target="_blank">here</a> to learn more about validation rules.
-</p>
-<p>
-	<strong>Earning rules examples:</strong>
-</p>
-<ul>
-	<li>1 point for each $0.01 spent if the total order amount is less than $50.</li>
-	<li>1 point for each $0.1 spent if the total order amount is more than $50.</li>
-	<li>2 points for each $1 spent if a customer is in the Premium Customers segment.</li>
-	<li>20 points if the order is paid and the payment method is Visa.</li>
-	<li>50 points if a customer had MacBook in their cart.</li>
-</ul>
+Using validation rules, you can attach additional requirements that customers need to meet to earn points. Rules can define cart structure and volume, customer attributes, or specify qualified customer segments. Go [here](https://support.voucherify.io/article/529-validation-rules-campaign-limits) to learn more about validation rules.
+
+### Earning rules examples:
+
+
+- 1 point for each $0.01 spent if the total order amount is less than $50.
+-	1 point for each $0.1 spent if the total order amount is more than $50.
+-	2 points for each $1 spent if a customer is in the Premium Customers segment.
+-	20 points if the order is paid and the payment method is Visa.
+-	50 points if a customer had MacBook in their cart.
 
 Below you can see example request and response schemas for [creating earning rules](ref:create-earning-rule) that count points proportionally. The first one gives a point to the customer for a store visit and the second one gives a point for each dollar spent.
 
@@ -565,27 +540,19 @@ Below you can see example request and response schemas for [creating earning rul
 
 ## Custom Events
 
-<p>
-	 Custom events are actions taken by your customers that you track in your application or website and pass to Voucherify using our API. Using events in earning rules enables you to reward customers for custom activities of your choice, e.g., leaving a review, tagging your brand on social media, attending an event, and more.&nbsp;
-</p>
-<p>
-	 First, define your events in the Event Schema in the Project Settings.&nbsp;
-</p>
+Custom events are actions taken by your customers that you track in your application or website and pass to Voucherify using our API. Using events in earning rules enables you to reward customers for custom activities of your choice, e.g., leaving a review, tagging your brand on social media, attending an event, and more.
 
-![Custom Events Metadata](../../assets/img/guides_building_blocks_earning_rules_add_new_schema_1.png "Custom events metadata")
+First, define your events in the Event Schema in the Project Settings.
 
-<p>
-	 The Schema gathers definitions of all events that you can later pass to Voucherify and use in your loyalty campaigns.&nbsp;
-</p>
-<p>
-	 The customer gets points every time he/she performs the required action (custom event is sent to and received by Voucherify). You can assign a fixed number of points or reward customers proportionally to a metadata attribute. If you choose to calculate the points proportionally, then for every value in the selected metadata attribute, the customer will get a defined number of points. The metadata must be defined in the Project Settings. You have the option to use two types of metadata properties:
-</p>
-<ul>
-	<li><strong>Customer Metadata</strong> - Awards customers for every Y in metadata attribute. The metadata must be defined in the <strong>Customer</strong> schema and must be a <strong>Number</strong>. Please read our guide on how to start with <a href="https://support.voucherify.io/article/99-schema-validation-metadata">metadata</a>. <br>
-	</li>
-	<li><strong>Custom Event Metadata</strong> - Awards customers for every Y in metadata attribute. The metadata must be defined as a property of the event chosen in the first step (Details). This is defined in the <strong>Event Schema</strong> and must be a <strong>Number</strong>. Please read our guide on how to start with <a href="https://support.voucherify.io/article/111-custom-events">event schemas</a>. <br>
-	</li>
-</ul>
+<!-- ![Custom Events Metadata](../../assets/img/guides_building_blocks_earning_rules_add_new_schema_1.png "Custom events metadata") -->
+![Custom Events Metadata](https://lh6.googleusercontent.com/ipKs7aeELt3Ir7EHEnHjkEK-qY5okRQOdRB_qVi3TwEt8-6qEt0Dz_m7ojaejegYy9RqxwOmFCs2ZIBd2OvN1DALLkcKxwrRlsm5HiCWjFzdX8yEQUE3_pwLG87YfzdnF9BPbAHz "Custom events metadata")
+
+The Schema gathers definitions of all events that you can later pass to Voucherify and use in your loyalty campaigns.
+
+The customer gets points every time he/she performs the required action (custom event is sent to and received by Voucherify). You can assign a fixed number of points or reward customers proportionally to a metadata attribute. If you choose to calculate the points proportionally, then for every value in the selected metadata attribute, the customer will get a defined number of points. The metadata must be defined in the Project Settings. You have the option to use two types of metadata properties:
+
+- **Customer Metadata** - Awards customers for every Y in metadata attribute. The metadata must be defined in the **Customer** schema and must be a **Number**. Please read our guide on how to start with [metadata](https://support.voucherify.io/article/99-schema-validation-metadata).    
+- **Custom Event Metadata** - Awards customers for every Y in metadata attribute. The metadata must be defined as a property of the event chosen in the first step (Details). This is defined in the **Event Schema** and must be a **Number**. Please read our guide on how to start with [event schemas](https://support.voucherify.io/article/111-custom-events).
 
 A custom `event` must be sent together with the `custom_event` object in the payload. 
 
@@ -639,35 +606,27 @@ A custom `event` must be sent together with the `custom_event` object in the pay
 }
 ```
 
-<p>
-	 Validation rules enable you to limit the event-based earning rules to specific customer segments and customers with specific metadata. Therefore, when a custom event defined in the earning rule is sent to and received by Voucherify, the application checks if a customer linked to the event matches the segment and metadata rules.&nbsp;
-</p>
-<p>
-	<strong>Earning rules examples:</strong>
-</p>
-<ul>
-	<li>100 points if a customer subscribes to a newsletter.</li>
-	<li>50 points if a customer leaves a review.</li>
-	<li>200 points if a customer registers to a paying plan.</li>
-	<li>Points equal to the volume number of the newsletter that the customer subscribed to</li>
-	<li>Points equal to the customer metadata attribute customer_life_time_value</li>
-</ul>
-<section class="callout-blue" <p="">
-Please note that using custom events requires help from your developers. Go to our 
-<a href="https://docs.voucherify.io/reference#the-custom-event-object" target="_blank">Events API</a> to learn more details. 
-</section>
+Validation rules enable you to limit the event-based earning rules to specific customer segments and customers with specific metadata. Therefore, when a custom event defined in the earning rule is sent to and received by Voucherify, the application checks if a customer linked to the event matches the segment and metadata rules.
+
+### Earning rules examples:
+
+- 100 points if a customer subscribes to a newsletter.
+- 50 points if a customer leaves a review.
+- 200 points if a customer registers to a paying plan.
+- Points equal to the volume number of the newsletter that the customer subscribed to
+- Points equal to the customer metadata attribute customer_life_time_value
+
+> 📘
+>
+> Please note that using custom events requires help from your developers. Go to our [Events API](ref:track-custom-event) to learn more.
+
+---
 
 ## Entered Segment
 
-<div>
-  <p>
-  Segments group your customers using predefined criteria. When a customer matches segment rules, he/she enters the segment and earns loyalty points. While building segments, you can mix different criteria based on customer attributes (standard and custom ones) and their order history. Segment-based earning rules ensure that points are assigned only if all segment conditions are met. To build a rule, you need to select one of your existing segments created beforehand. 
-  </p>
-  <p>
-    The event type <code>customer.segment.entered</code> must be sent together with the <code>segment</code> object in the payload.
-  <a href="https://docs.voucherify.io/docs/customers#segments">Read more.</a>
-  </p>
-</div>
+Segments group your customers using predefined criteria. When a customer matches segment rules, he/she enters the segment and earns loyalty points. While building segments, you can mix different criteria based on customer attributes (standard and custom ones) and their order history. Segment-based earning rules ensure that points are assigned only if all segment conditions are met. To build a rule, you need to select one of your existing segments created beforehand. 
+
+The event type `customer.segment.entered` must be sent together with the `segment` object in the payload. [Read more](doc:customers#segments).
 
 ```json event
 "event": "customer.segment.entered",
@@ -676,10 +635,8 @@ Please note that using custom events requires help from your developers. Go to o
 }
 ```
 
-<p>
-	 Points are added to the loyalty card when a customer enters the segment. You can assign a fixed number of points or reward customers proportionally to a metadata attribute. The metadata must be defined in the 
-	<strong>Customer</strong> schema and must be a <strong>Number</strong>. <a href="https://support.voucherify.io/article/99-schema-validation-metadata">Please read our guide on how to start with metadata</a>.&nbsp;
-</p>
+Points are added to the loyalty card when a customer enters the segment. You can assign a fixed number of points or reward customers proportionally to a metadata attribute. The metadata must be defined in the 
+**Customer** schema and must be a **Number**. Please read our guide on how to start with [metadata](https://support.voucherify.io/article/99-schema-validation-metadata).
 
 ```json Loyalty Object - Fixed Points 
   "loyalty": {
@@ -701,28 +658,21 @@ Please note that using custom events requires help from your developers. Go to o
   }
 ```
 
-<p>
-	 Validation rules define additional segments that a customer needs to belong to and segments excluded from getting the points. You can also extend the criteria for customers and define required customer's metadata. Use the advanced rule builder to define customer’s metadata rules. <a href="https://docs.voucherify.io/docs/validation-rules" target="_blank">Read more here</a>.
-</p>
-<p>
-	<strong>Earning rules examples:</strong>
-</p>
-<ul>
-	<li>10 points if a customer enters the New Customer segment (criteria: Profile created less than 1 day ago).&nbsp;</li>
-	<li>250 points if a customer enters a segment Premium (criteria: Total order count more than 5 or spent more than $500).</li>
-	<li>50 points if a customer enters the Active Mobile App Users segment (criteria: metadata attribute <em>mobile_app</em> is true and last purchase less than 30 days ago)</li>
-</ul>
-<hr>
+Validation rules define additional segments that a customer needs to belong to and segments excluded from getting the points. You can also extend the criteria for customers and define required customer's metadata. Use the advanced rule builder to define customer’s metadata rules. Read more [here](doc:validation-rules).
+
+### Earning rules examples:
+
+- 10 points if a customer enters the New Customer segment (criteria: Profile created less than 1 day ago).
+- 250 points if a customer enters a segment Premium (criteria: Total order count more than 5 or spent more than $500).
+- 50 points if a customer enters the Active Mobile App Users segment (criteria: metadata attribute *mobile_app* is true and last purchase less than 30 days ago)
+
 
 ## List Earning Rules
 
-<p>
-	 Once you create the earning rules, you can access the added earning rules and assigned numbers of loyalty points using the following two endpoints:
-  <ul>
-    <li><a href="https://docs.voucherify.io/reference/get-earning-rule">List a specific Earning Rule</a></li>
-    <li><a href="https://docs.voucherify.io/reference/list-earning-rules">List all Earning Rules</a></li>
-  </ul>
-</p>
+Once you create the earning rules, you can access the added earning rules and assigned numbers of loyalty points using the following two endpoints:
+
+- [List a specific Earning Rule](ref:get-earning-rule)
+- [List all Earning Rules](ref:list-earning-rules)
 
 ```json Get Earning Rule
 {

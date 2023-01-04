@@ -1,7 +1,7 @@
 ---
 title: Discount Effects
 excerpt: The discount effect defines how the discount will be applied to the customer's cart. In this article, we're going to show you how different effects work with discounts.
-category: 636284b7e6b02c00a136e885
+category: 639ba16d677235008f80045e
 slug: discount-effects
 type: basic
 hidden: false
@@ -62,7 +62,9 @@ Here's a list of all effects that you can add to different discount types.
 ---
 
 ### Apply to Order
+
 *Discount type: percentage, amount* 
+
 Using this effect, the discount is applied to the total order amount. 
 
 ```json Create voucher request
@@ -292,6 +294,7 @@ Using this effect, the discount is applied to the total order amount.
 ---
 
 ### Apply to Items
+
 _Discount type: percentage, amount_
 
 Using this effect, the discount is applied only to particular items defined by _validation rules_. 
@@ -349,9 +352,10 @@ Create a voucher, campaign, or cart-level promotion with the *apply to items* di
 ```
 
 **Step 3: Assign validation rules**
-[Create Validation Rules Assignment](ref:create-validation-rules-assignment) to attach validation rules with discounted products to the created discount. If you create a campaign in the dashboard, you can create new rules on the spot or select existing rules from the list. Choosing the rules in the Manager automatically assigns them to the campaign. [Read more about validation rules](https://support.voucherify.io/article/529-validation-rules-campaign-limits)
+[Create Validation Rules Assignment](ref:create-validation-rule-assignment) to attach validation rules with discounted products to the created discount. If you create a campaign in the dashboard, you can create new rules on the spot or select existing rules from the list. Choosing the rules in the Manager automatically assigns them to the campaign. [Read more about validation rules](https://support.voucherify.io/article/529-validation-rules-campaign-limits)
 
-![Validation Rules](../../assets/img/guides_discount_recipes_discount_effects_create_validation_rule_1.png "Validation rules")
+<!-- ![Validation Rules](../../assets/img/guides_discount_recipes_discount_effects_create_validation_rule_1.png "Validation rules") -->
+![Validation Rules](https://files.readme.io/d8c53cc-Screenshot_2022-12-29_at_11.20.52.png "Validation rules")
 
 **Redemption**
 While redeeming the code, each item defined in the validation rules will be discounted. 
@@ -621,7 +625,7 @@ As a result, the discount is applied to chosen products only, and each of them i
 > We highly recommend creating campaigns and validation rules (steps 1-3) using the dashboard. In comparison to the same workflow done via the API, the Campaign Manager in your dashboard reduces the number of API calls (made to create a campaign with rules).
 
 **Step 1: Create validation rules**
-[Create Validation Rules](ref:create-validation-rules) to define discounted items as [described here](https://docs.voucherify.io/docs/discount-effects#step-1-create-validation-rules).
+[Create Validation Rules](ref:create-validation-rules) to define discounted items as [described here](doc:discount-effects#step-1-create-validation-rules).
 
 **Step 2: Create discount voucher/campaign**
 Create a voucher, campaign, or cart-level promotion with the *apply to items proportionally* effect.
@@ -648,7 +652,7 @@ Create a voucher, campaign, or cart-level promotion with the *apply to items pro
 ```
 
 **Step 3: Assign validation rules**
-[Create Validation Rules Assignment](ref:create-validation-rules-assignment) to attach validation rule with discounted products to the created discount. 
+[Create Validation Rules Assignment](ref:create-validation-rule-assignment) to attach validation rule with discounted products to the created discount. 
 
 **Redemption**
 While redeeming the code, each item defined in validation rules will be discounted proportionally to its share in the total amount and the sum of item discounts matches the total discount value (discount.amount_off). In the response body, you can also see the applicable_to object that lists all items that qualify for a discount.
@@ -973,21 +977,21 @@ Here is an example of a validation rule that limits the quantity of each product
 This effect adds items to the cart only if a customer has fewer free items than offered by the code. For example, let's assume that the code gives one free t-shirt:  
 
 – If a customer doesn't have the t-shirt already in the cart, then a free t-shirt will be added to the order.  
-– If a customer already has this item in the cart, then the number of t-shirts already matches the units count. As a result, after applying the code, a discount will be applied to the item which is already in the cart and no extra items will be added. [Read more](https://docs.voucherify.io/docs/give-item-for-free-unit-discount#redemption-of-the-code-with-discount-effect-add_missing_items).
+– If a customer already has this item in the cart, then the number of t-shirts already matches the units count. As a result, after applying the code, a discount will be applied to the item which is already in the cart and no extra items will be added. [Read more](doc:give-item-for-free-unit-discount#redemption-of-the-code-with-discount-effect-add_missing_items).
 
 ---
 
 ### Add New Items
 *Discount type: unit* 
 
-Choosing this effect results in adding items to the cart in the number defined by unit value. For example, if the code gives one free t-shirt, then no matter if a customer has the t-shirt already in the cart or not, a free t-shirt will always be added to the order and discounted. [Read more](https://docs.voucherify.io/docs/give-item-for-free-unit-discount#redemption-of-the-code-with-discount-effect-add_new_items).
+Choosing this effect results in adding items to the cart in the number defined by unit value. For example, if the code gives one free t-shirt, then no matter if a customer has the t-shirt already in the cart or not, a free t-shirt will always be added to the order and discounted. [Read more](doc:give-item-for-free-unit-discount#redemption-of-the-code-with-discount-effect-add_new_items).
 
 ---
 
 ### Add Many Items
 *Discount type: unit* 
 
-The discount gives multiple types of free item(s) to customers. Free item units are always added to the customer's cart based on either the **Add missing items** or **Add new order items** effects. [Read more](https://docs.voucherify.io/docs/give-item-for-free-unit-discount#redemption-of-the-code-with-discount-effect-add_many_items).
+The discount gives multiple types of free item(s) to customers. Free item units are always added to the customer's cart based on either the **Add missing items** or **Add new order items** effects. [Read more](doc:give-item-for-free-unit-discount#redemption-of-the-code-with-discount-effect-add_many_items).
 
 > 📘 Unit Discount Effects
 >

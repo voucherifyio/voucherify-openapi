@@ -1,7 +1,7 @@
 ---
 title: Stacking Promotion Tiers
 excerpt: 'In this tutorial, you will learn how to validate, redeem, and manage promotion stacks using API.'
-category: 636284b7e6b02c00a136e883
+category: 639ba16d677235008f80045c
 slug: stacking-promotion-tiers
 type: basic
 hidden: false
@@ -11,8 +11,8 @@ order: 7
 > 👍 Before you start
 >
 > Make sure you already know key concepts of cart promotions by following the documentation:
-- Read how to [create promotion](https://support.voucherify.io/article/519-create-cart-level-promotions) with stacks using the Dashboard.
-- Read how to [create promotion](ref:create-promotion-campaign) with stacks using the Voucherify API.
+> - Read how to [create promotion](https://support.voucherify.io/article/519-create-cart-level-promotions) with stacks using the Dashboard.    
+> - Read how to [create promotion campaign](ref:create-campaign) with stacks using the Voucherify API.
 
 ## Promotion stacks overview
 
@@ -42,13 +42,16 @@ Dedicated endpoints in [Promotions API](https://docs.voucherify.io/reference/cre
 |  PUT        | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks/{stack_id}](ref:update-promotion-stack) | Update a given stack |
 |  DELETE | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks/{stack_id}](ref:delete-promotion-stack) | Delete a stack |  
 
+## Validation and redemption of promotion stack
+
 > 🚧 Redemption and validation
 >
 > In order to use stacking feature in your cart promotions and other campaigns, you need to manage validation and redemption by using [Stackable Discounts API](https://docs.voucherify.io/reference/stacking-api-overview).
 
 To redeem or validate the stack, you need to pass its id in API request. Please note that only **one stack** at the time is accepted for these methods. To retrieve the stack id, the first step is to use the GET method on the `/stacks` endpoint; see documentation on [List Promotion Stacks](ref:list-promotion-stacks).
 
-![Stacking API](../../assets/img/guides_campaigns_recipes_stacking_promotion_tiers_diagram_1.png "Stacking API")
+<!-- ![Stacking API](../../assets/img/guides_campaigns_recipes_stacking_promotion_tiers_diagram_1.png "Stacking API") -->
+![Stacking API](https://files.readme.io/54b4cbd-promotion-stacking-diagram.png "Stacking API")
 
 Here is an example of a promotion stack validation. 
 

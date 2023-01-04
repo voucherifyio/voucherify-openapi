@@ -1,7 +1,7 @@
 ---
 title: Validation Rules
 excerpt: 
-category: 636284b7e6b02c00a136e87b
+category: 639ba16d677235008f800454
 slug: validation-rules
 type: basic
 hidden: false
@@ -12,7 +12,7 @@ Validation rules enable you to run promo campaigns valid only for select scenari
 
 > 📘 Object definition
 >
-> [Validation rule object reference](ref:the-validation-rule-object)
+> [Validation rule object reference](ref:get-validation-rule)
 
 ## Creating validation rules
 
@@ -214,7 +214,7 @@ Validation rules are flexible – you can mix different limits taking into accou
 
 ## Discount per product
 
-Some validation rules are based on the structure of products in the cart. Sometimes you want to make a discount applicable only to particular items ([products](ref:the-product-object) and [skus](ref:the-sku-object)). This can be achieved with `discount_applicable` property. Once you define `applicable only to` rule by following [this guide](https://support.voucherify.io/article/53-validation-rules#applicable), the validation rule entity will look like this:
+Some validation rules are based on the structure of products in the cart. Sometimes you want to make a discount applicable only to particular items ([products](ref:get-product) and [skus](ref:get-sku)). This can be achieved with `discount_applicable` property. Once you define `applicable only to` rule by following [this guide](https://support.voucherify.io/article/53-validation-rules#applicable), the validation rule entity will look like this:
 
 ```json discount_applicable
 {
@@ -287,11 +287,11 @@ The redemption response will store `items` section which has new, discounted amo
 ]
 ```
 
-For more details visit the [endpoint reference](ref:the-validation-rule-object). 
+For more details visit the [endpoint reference](ref:get-validation-rule). 
 
 > 📘 Postman
 > 
-> You can play around with this endpoint with our [Postman examples](https://docs.voucherify.io/docs/examples#section-postman-test-cases) – catalog `TC6 - Campaign with Validation Rules`.
+> You can play around with this endpoint with our [Postman examples](doc:examples) – catalog `TC6 - Campaign with Validation Rules`.
 
 ## Product-specific rules without importing your catalog
 

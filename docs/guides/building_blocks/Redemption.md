@@ -1,7 +1,7 @@
 ---
 title: Redemption
 excerpt: 
-category: 636284b7e6b02c00a136e87b
+category: 639ba16d677235008f800454
 slug: redemption
 type: basic
 hidden: false
@@ -16,22 +16,22 @@ Redemption is the key operation in the voucher lifecycle. A customer can redeem 
 
 > 📘 Object definition
 >
-> [Redemption object reference](ref:the-redemption-object)
+> [Redemption object reference](ref:get-redemption)
 
 ## Endpoints
 
-- Voucher redemption – [https://docs.voucherify.io/reference#redeem-voucher](https://docs.voucherify.io/reference#redeem-voucher)
-- Voucher client-side redemption – [https://docs.voucherify.io/reference#redeem-voucher-client-side](https://docs.voucherify.io/reference#redeem-voucher-client-side)
-- Promotion tier redemption – [https://docs.voucherify.io/reference#redeem-promotion](https://docs.voucherify.io/reference#redeem-promotion)
+- [Voucher redemption](ref:redeem-voucher)
+- [Voucher client-side redemption](ref:redeem-voucher-client-side)
+- [Promotion tier redemption](ref:redeem-promotion)
 
 Utilities:
 - [List Redemptions](ref:list-redemptions) 
-- [Get Voucher's Redemptions](ref:vouchers-redemptions) 
+- [Get Voucher's Redemptions](ref:get-voucher-redemptions) 
 - [Get Redemption](ref:get-redemption) 
 
 ## Stackable discounts
 
-Voucherify API for [stacking discounts](https://docs.voucherify.io/reference/stacking-api-overview) lets you validate and redeem up to 5 objects using a single API request. You can combine coupons, gift cards, promotion tiers, loyalty, and referral codes.
+Voucherify API for [stacking discounts](ref:stackable-discounts-api) lets you validate and redeem up to 5 objects using a single API request. You can combine coupons, gift cards, promotion tiers, loyalty, and referral codes.
 
 ## Client-side Library & UI widget
 
@@ -41,7 +41,8 @@ To speed up client-side redeem integration, you can use the voucherify.js librar
 `Voucherify.redeem("gfct5ZWI1nL", { order: { amount: 5000 } }, **function** callback (response) { })`
 ```
 
-![UI Widget](../../assets/img/guides_building_blocks_redemption_redeem_widget_1.gif "Web widget")
+<!-- ![Web Widget](../../assets/img/guides_building_blocks_redemption_redeem_widget_1.gif "Web widget") -->
+![Web Widget](https://files.readme.io/36df7e7-6885356-voucherify_widget.gif "Web widget")
 
 **Client-side caution**
 

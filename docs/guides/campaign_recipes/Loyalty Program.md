@@ -1,7 +1,7 @@
 ---
 title: Loyalty Program
 excerpt: null
-category: 636284b7e6b02c00a136e883
+category: 639ba16d677235008f80045c
 slug: loyalty-program
 type: basic
 hidden: false
@@ -28,9 +28,9 @@ Voucherify accepts three event types of earning rules:
 * Order paid event.
 * Custom event.
 
-The loyalty campaign will detect the first two events automatically when a customer enters a segment or when **any** of customer’s [orders](https://docs.voucherify.io/docs/orders-1) will be changed to `PAID`. 
+The loyalty campaign will detect the first two events automatically when a customer enters a segment or when **any** of customer’s [orders](doc:orders) will be changed to `PAID`. 
 
-Trigger the third option with [Track Custom Event](https://docs.voucherify.io/reference#create-custom-event) endpoint.
+Trigger the third option with [Track Custom Event](ref:track-custom-event) endpoint.
 
 ```json
 {
@@ -53,7 +53,7 @@ Trigger the third option with [Track Custom Event](https://docs.voucherify.io/re
 
 While creating a new loyalty campaign with the dashboard, you can tap into existing discount coupons and gift cards or you can create a new one on the fly. 
 
-With the API, you can create a reward object with a dedicated [endpoint](https://docs.voucherify.io/reference#the-reward-object). This is how you define a reward by matching a specific campaign.
+With the API, you can first create a reward object with a dedicated [endpoint](ref:create-reward) and then you can assign it to a specific campaign using another dedicated [endpoint](ref:create-reward-assignment).
 
 
 ```json
@@ -70,9 +70,10 @@ With the API, you can create a reward object with a dedicated [endpoint](https:/
 # Creating a loyalty campaign
 
 ## Campaign container
-The first step is to define the loyalty program in terms of size and timeframe. To do so, you can use [Create Loyalty Program](https://docs.voucherify.io/reference#create-loyalty-program) endpoint. 
 
-> 👍 Time limits
+The first step is to define the loyalty program in terms of size and timeframe. To do so, you can use [Create Loyalty Program](ref:create-loyalty-program) endpoint. 
+
+> 🚧 Time limits
 >
 > A campaign is only active between the start and end dates. You can also use [validity timeframes](https://support.voucherify.io/article/132-time-limits-for-vouchers) to define the time when points are collected.
 
@@ -99,9 +100,10 @@ The first step is to define the loyalty program in terms of size and timeframe. 
 
 The `LOYALTY_CARD` voucher type is responsible for creating loyalty cards of the initial number defined with `vouchers_count`. If `type` is `AUTO-UPDATE`, the number will be incremented automatically even if you ran out of the initial pool. 
 
-See [vouchers](https://docs.voucherify.io/docs/vouchers-1) to learn more about features a loyalty card can carry.
+See [vouchers](doc:vouchers) to learn more about features a loyalty card can carry.
 
 ## Rewards and their cost in points
+
 Assuming you’ve created at least one coupon/gift card campaign, let’s see how we can use it as a loyalty reward.
 
 This is a simple process and comes down to creating a `Reward Assignment`. You need three parameters to create one: a campaign id, a reward id, and the number of points that will be deducted from a customer’s account when he or she decides to exchange points for the reward.
@@ -127,9 +129,10 @@ https://api.voucherify.io/v1/loyalties/camp_MgpTUyabvEVaGvbUKAOiSVwL/rewards
 * You can add as many rewards as you want. 
 
 ## Adding program participants
+
 Customers can join a program if you invite them or automatically if they perform any of the earning rules. To do so, you can issue a loyalty card via the dashboard, or use a specific API endpoint. 
 
-In this case, you should call [Create Member](https://docs.voucherify.io/reference#create-member) by providing a campaign id and a customer joining the program.
+In this case, you should call [Create Member](ref:add-member) by providing a campaign id and a customer joining the program.
 
 https://api.voucherify.io/v1/loyalties/:campaignId/members
 
@@ -191,12 +194,13 @@ In response, you'll get a unique loyalty card from the campaign.
 
 Alternatively, you can assign a loyalty card to a customer and invite them to the projects with [Create Publication](ref:create-publication) endpoint.
 
-You can [List Members](https://docs.voucherify.io/reference#list-members) to check who’s enrolled at the moment.
+You can [List Members](ref:list-members) to check who’s enrolled at the moment.
 
 ## Earning points
-Let’s see how you can use the Loyalties API to manage points earning. Having your events set up, as shown above, you can start creating [earning rules.](https://docs.voucherify.io/reference#the-earning-rule-object) A typical rule ties an event with a number of points to be earned by a customer. 
 
-Sometimes, you might want to impose extra limitations on customers who perform a given event. You can do this by attaching [validation rules object](https://docs.voucherify.io/docs/validation-rules) to your earning rules.
+Let’s see how you can use the Loyalties API to manage points earning. Having your events set up, as shown above, you can start creating [earning rules](ref:create-earning-rule). A typical rule ties an event with a number of points to be earned by a customer. 
+
+Sometimes, you might want to impose extra limitations on customers who perform a given event. You can do this by attaching [validation rules object](doc:validation-rules) to your earning rules.
 
 https://api.voucherify.io/v1/loyalties/camp_Zgj5HFIPcb70SWJ4IjBNta2F/earning-rules
 
@@ -216,8 +220,9 @@ https://api.voucherify.io/v1/loyalties/camp_Zgj5HFIPcb70SWJ4IjBNta2F/earning-rul
 ```
 
 ## Redeeming points for rewards
-Now, that we’ve put together all necessary elements of a loyalty campaign, we can see how to handle points redemption. To do so, just call the [Redeem Reward](https://docs.voucherify.io/reference#redeem-loyalty-card) by providing a campaign, participant, and reward id.
-	https://api.voucherify.io/v1/loyalties/camp_yGEDLqgb9Es1ldwqU3K9PYv0/members/HVqWlozp/redemption
+
+Now, that we’ve put together all necessary elements of a loyalty campaign, we can see how to handle points redemption. To do so, just call the [Redeem Reward](ref:redeem-reward-1) by providing a campaign, participant, and reward id.
+	https://api.voucherify.io/v1/loyalties/camp_yGEDLqgb9Es1ldwqU3K9PYv0/members/HVqWlozp/redemption or a similar [Redeem Reward](ref:redeem-reward) endpoint that does not require the campaign ID in the path.
 
 ```json
 {
@@ -295,7 +300,8 @@ When a customer gains the required number of points, the reward is automatically
 If the customer chooses to transfer points for the reward, Voucherify updates their points balance.
 
 # Maintenance
-If you need to set a customer’s balance manually, you can do it with [this endpoint](https://docs.voucherify.io/reference#add-loyalty-card-balance).
+
+If you need to set a customer’s balance manually, you can do it with [this endpoint](ref:add-remove-loyalty-card-balance-1) or this [endpoint](ref:add-remove-loyalty-card-balance).
 
 https://api.voucherify.io/v1/loyalties/camp_Zgj5HFIPcb70SWJ4IjBNta2F/members/L-CARD-3ug8G2E/balance
 
@@ -310,5 +316,4 @@ Note that any `reward`, `reward assignment`, `loyalty campaigns`, and its `membe
 
 | **Rewards API** | **Loyalties API** |
 |---|---|
-| [The reward object](ref:the-reward-object) <br>[List Rewards](ref:list-rewards) <br>[Create Reward](ref:create-reward) <br>[Get Reward](ref:get-reward) <br>[Update Reward](ref:update-reward) <br>[Delete Reward](ref:delete-reward) <br>-<br>[The reward assignment object](ref:the-reward-assignment-object) <br>[List Reward Assignments](ref:list-reward-assignments)<br>[Create Reward Assignment](ref:create-reward-assignment)<br>[Update Reward Assignment](ref:update-reward-assignment)<br>[Delete Reward Assignment](ref:delete-reward-assignment) | [List Campgin](ref:list-loyalty-programs)<br>[Create Campaign](ref:create-loyalty-program)<br>[Get Campaign](ref:get-loyalty-program)<br>[Update Campaign](ref:update-loyalty-program)<br>[Delete Campaign](ref:delete-loyalty-program)<br>-<br><br>[List Reward Assignments](ref:list-reward-assignments-1)<br>[Create Reward Assignment](ref:create-reward-assignment-1)<br>[Update Reward Assignment](ref:update-reward-assignment-1)<br>[Delete Reward Assignment](ref:delete-reward-assignment-1)<br>-<br><br>[The earning rule object](ref:the-earning-rule-object)<br>[List Earning Rules](ref:list-earning-rules)<br>[Create Earning Rule](ref:create-earning-rule)<br>[Update Earning Rule](ref:update-earning-rule)<br>[Delete Earning Rule](ref:delete-earning-rule)<br>-<br><br>[List Members](ref:list-members) <br>[Add Member](ref:create-member) <br>[Get Member](ref:get-member) <br>[Add Loyalty Card Balance](ref:add-loyalty-card-balance) <br>[Redeem Reward](ref:redeem-loyalty-card) |
-
+| [The reward object](ref:get-reward) <br>[List Rewards](ref:list-rewards) <br>[Create Reward](ref:create-reward) <br>[Get Reward](ref:get-reward) <br>[Update Reward](ref:update-reward) <br>[Delete Reward](ref:delete-reward) <br>-<br>[The reward assignment object](ref:get-reward-assignment) <br>[List Reward Assignments](ref:list-reward-assignments)<br>[Create Reward Assignment](ref:create-reward-assignment)<br>[Update Reward Assignment](ref:update-reward-assignment)<br>[Delete Reward Assignment](ref:delete-reward-assignment) | [List Loyalty Programs](ref:list-loyalty-programs)<br>[Create Loyalty Program](ref:create-loyalty-program)<br>[Get Loyalty Program](ref:get-loyalty-program)<br>[Update Loyalty Program](ref:update-loyalty-program)<br>[Delete Loyalty Campaign](ref:delete-loyalty-program)<br>-<br><br>[List Reward Assignments](ref:list-reward-assignments-1)<br>[Create Reward Assignment](ref:create-reward-assignment-1)<br>[Update Reward Assignment](ref:update-reward-assignment-1)<br>[Delete Reward Assignment](ref:delete-reward-assignment-1)<br>-<br><br>[The earning rule object](ref:get-earning-rule)<br>[List Earning Rules](ref:list-earning-rules)<br>[Create Earning Rule](ref:create-earning-rule)<br>[Update Earning Rule](ref:update-earning-rule)<br>[Delete Earning Rule](ref:delete-earning-rule)<br>-<br><br>[List Members](ref:list-members) <br>[Add Member](ref:add-member) <br>[Get Member](ref:get-member) <br>[Add or Remove Loyalty Card Balance](ref:add-remove-loyalty-card-balance-1) <br>[Redeem Reward](ref:redeem-reward) |

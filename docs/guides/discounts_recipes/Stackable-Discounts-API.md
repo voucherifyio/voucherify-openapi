@@ -1,7 +1,7 @@
 ---
 title: Stackable discounts API
 excerpt: 
-category: 636284b7e6b02c00a136e885
+category: 639ba16d677235008f80045e
 slug: manage-stackable-discounts
 type: basic
 hidden: false
@@ -14,7 +14,7 @@ In the redemption request, you need to provide a list of redeemables that define
 
 > 📘 API reference
 > 
-> Go to [here](https://docs.voucherify.io/reference/stacking-api-overview) to see all endpoints for stackable discounts API.
+> Go to [here](ref:stackable-discounts-api) to see all endpoints for stackable discounts API.
 
 ## Redeemables reference
 
@@ -593,7 +593,8 @@ POST https://URL/v1/redemptions/{parent_redemption_id}/rollbacks
 
 Redemption of more than one redeemable can be only called via API. In your dashboard, you have an overview of all redemptions including stacked discounts. You can see child redemptions of single redeemables and parent redemptions that gather details of all child redemptions executed within the same API request. 
 
-![Parent and child redemptions](../../assets/img/guides_discount_recipes_stackable_discounts_api_child_redemptions_1.png "Parent and child redemptions")
+<!-- ![Parent and child redemptions](../../assets/img/guides_discount_recipes_stackable_discounts_api_child_redemptions_1.png "Parent and child redemptions") -->
+![Parent and child redemptions](https://files.readme.io/300a301-stacking-redemption-UI.png "Parent and child redemptions")
 
 ## Apply discount to the already created order
 

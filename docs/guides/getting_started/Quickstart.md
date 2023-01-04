@@ -1,7 +1,7 @@
 ---
 title: Quickstart
 excerpt: Get started with Voucherify API and dashboard by redeeming your first coupon code.
-category: 636284b7e6b02c00a136e866
+category: 639ba16d677235008f80043f
 slug: quickstart
 type: basic
 hidden: false
@@ -20,7 +20,7 @@ You must first create an [account](http://app.voucherify.io/#/signup) — Vouche
 
 ## Join the dashboard
 
-After you create your account, you get access to the Sandbox dashboard. Sandbox comes with a set of predefined campaigns. That’s why when you browse through the views, you can see several objects already created. One of the essential objects in Voucherify is a [voucher](https://docs.voucherify.io/docs/vouchers-1). In a nutshell, it represents a code that serves as an identifier for promotions supported by Voucherify, including a coupon, referral code, or gift card.
+After you create your account, you get access to the Sandbox dashboard. Sandbox comes with a set of predefined campaigns. That’s why when you browse through the views, you can see several objects already created. One of the essential objects in Voucherify is a [voucher](doc:vouchers). In a nutshell, it represents a code that serves as an identifier for promotions supported by Voucherify, including a coupon, referral code, or gift card.
 
 Type **BLCKFRDY** in the search bar and Voucherify will **redirect** you to the voucher page, which displays the basic information about the discount it carries. Let’s redeem the code with the API.
 
@@ -36,7 +36,7 @@ The Sandbox Project Dashboard is already showing your default API keys for the S
 
 ## Make a test API request
 
-Within the Sandbox, you get 100 API calls per hour. Visit [Limits](https://docs.voucherify.io/docs/limits) to learn how to monitor your usage. With the first API request, we’ll [redeem](https://docs.voucherify.io/reference/redeem-voucher) our coupon. This function is essential to Voucherify workflow as it takes care of:
+Within the Sandbox, you get 100 API calls per hour. Visit [Limits](doc:limits) to learn how to monitor your usage. With the first API request, we’ll [redeem](doc:redeem-voucher) our coupon. This function is essential to Voucherify workflow as it takes care of:
 
 1. Checking if the code is recognizable with your account.
 2. Validating if it satisfies the business rules.
@@ -46,11 +46,12 @@ Within the Sandbox, you get 100 API calls per hour. Visit [Limits](https://docs.
 **Note:** while calling the [redemption endpoint](ref:redeem-voucher) is enough to satisfy a basic promo code flow, it's useful to add [validation](ref:validate-voucher) to the flow every time the promo code or cart changes. Validation performs 1-3 points, but it doesn't mark the code as used.
 **Note:** Voucherify API supports the redemption of a single promo code and [Stackable discounts API](doc:manage-stackable-discounts), which lets you redeem up to 5 incentives per call. Before integrating Voucherify, choose which redemption endpoint you prefer to use. 
 
-![First Call Flow](../../assets/img/guides_getting_started_quickstart_first_call_flow_3.jpeg "First Call Flow")
+<!-- ![First Call Flow](../../assets/img/guides_getting_started_quickstart_first_call_flow_3.jpeg "First Call Flow") -->
+![First Call Flow](https://files.readme.io/030a879-first-call-flow.jpeg "First Call Flow")
 
-Let’s call a test redemption. Use the following snippet with the keys copied from the Project Settings. Make sure you choose the correct [API endpoint](https://docs.voucherify.io/docs/api-endpoints) for the region you selected when creating your account.
+Let’s call a test redemption. Use the following snippet with the keys copied from the Project Settings. Make sure you choose the correct [API endpoint](doc:api-endpoints) for the region you selected when creating your account.
 
-You can also check out our [SDKs](https://docs.voucherify.io/docs/sdks) and call our API right from your development environment.
+You can also check out our [SDKs](doc:sdks) and call our API right from your development environment.
 
 ```curl cURL
 curl -X POST \
@@ -71,7 +72,7 @@ const client = VoucherifyServerSide({
 client.redemptions.redeem("BLCKFRDY", {"order" : {"amount": 20000}}).then(console.log)
 ```
 
-Voucherify should reply with the [redemption](https://docs.voucherify.io/reference/the-redemption-object) details as in the screenshot below. If Voucherify doesn’t reply with a 20x status, check the [error code](https://docs.voucherify.io/reference/errors) to find the reason.
+Voucherify should reply with the [redemption](ref:get-redemption) details as in the screenshot below. If Voucherify doesn’t reply with a 20x status, check the [error code](ref:errors) to find the reason.
 
 ```json 200 OK
 {
@@ -181,7 +182,7 @@ Because BLCKFRDY doesn’t have any redemption limits, you can use it multiple t
 
 ## Review logs in the dashboard
 
-Every redemption can be [listed](https://docs.voucherify.io/reference/list-redemptions) with the API or in the dashboard. When you go to the voucher view, in “Recent changes”, you’ll see operations performed on the object. You can switch to the REDEMPTIONS HISTORY tab to track all redemptions.  
+Every redemption can be [listed](ref:list-redemptions) with the API or in the dashboard. When you go to the voucher view, in “Recent changes”, you’ll see operations performed on the object. You can switch to the REDEMPTIONS HISTORY tab to track all redemptions.  
 
 <!-- ![Recent Changes](../../assets/img/guides_getting_started_quickstart_recent_changes_4.png "Recent Changes") -->
 
@@ -202,18 +203,20 @@ Every redemption can be [listed](https://docs.voucherify.io/reference/list-redem
 
 To monitor and filter the list of all API calls for your project, you can go to the [Audit log](https://app.voucherify.io/#/app/core/logs):
 
-![Audit Log](../../assets/img/guides_getting_started_quickstart_audit_log_5.png "Audit Log")
+<!-- ![Audit Log](../../assets/img/guides_getting_started_quickstart_audit_log_5.png "Audit Log") -->
+![Audit Log](https://files.readme.io/1a4682c-audit_log.png "Audit Log")
 
 ## Test promo scenarios with "Hot Beans" demo store
 
-Hot Beans simulates an ecommerce engine allowing your team to verify the look and feel of the promotion customer journey. It supports coupons (including “BLCKFRDY”) and cart-level promotions; the full list of supported scenarios can be found in the [Testing](https://docs.voucherify.io/docs/testing#test-data) section.
+Hot Beans simulates an ecommerce engine allowing your team to verify the look and feel of the promotion customer journey. It supports coupons (including “BLCKFRDY”) and cart-level promotions; the full list of supported scenarios can be found in the [Testing](doc:testing#test-data) section.
 
 You can access Hot Beans directly from your Voucherify dashboard. Checkout is automatically connected to your Voucherify account, and the side panel shows all the requests sent to Voucherify API. 
 
 Try redeeming BLCKFRDY to go through the coupon flow end-to-end (make sure “cart discounts” is disabled to unlock the coupon input).
 
-![Hot Beans Demo](../../assets/img/guides_getting_started_quickstart_hot_beans_demo_6.png "Hot Beans Demo")
+<!-- ![Hot Beans Demo](../../assets/img/guides_getting_started_quickstart_hot_beans_demo_6.png "Hot Beans Demo") -->
+![Hot Beans Demo](https://files.readme.io/16e5bf6-hot_beans.png "Hot Beans Demo")
 
 ## What's next?
 
-The BLCKFRDY coupon redemption uses only the minimum business context (order amount). To enable advanced promotional rules, go to the [integration checklist](http://docs.voucherify.io/docs/welcome) and explore the Voucherify building blocks to learn what data you can share with Voucherify.
+The BLCKFRDY coupon redemption uses only the minimum business context (order amount). To enable advanced promotional rules, go to the [integration checklist](doc:welcome) and explore the Voucherify building blocks to learn what data you can share with Voucherify.

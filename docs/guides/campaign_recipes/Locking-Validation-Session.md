@@ -1,7 +1,7 @@
 ---
 title: Locking Validation Session
 excerpt: Temporary lock the voucher's usage until redemption is successful.
-category: 636284b7e6b02c00a136e883
+category: 639ba16d677235008f80045c
 slug: locking-validation-session
 type: basic
 hidden: false
@@ -246,7 +246,8 @@ When redeeming the code, the session object needs to define session.type and ses
 
 If the redemption request includes a proper session.key value, the request is validated and the redemption is executed. When Voucherify registers a new redemption for the locked resource, the session is automatically released. 
 
-![Redemption success](../../assets/img/guides_campaigns_recipes_locking_validation_session_redemption_successful_1.png "Successful redemption")
+<!-- ![Redemption success](../../assets/img/guides_campaigns_recipes_locking_validation_session_redemption_successful_1.png "Successful redemption") -->
+![Redemption success](https://files.readme.io/949dd30-redemption.png "Successful redemption")
 
 In case you'd like to remove an established session manually, use [Release Validation Session](ref:release-validation-session) endpoint.
 

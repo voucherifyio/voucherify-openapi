@@ -1,22 +1,22 @@
 ---
 title: Rewards
 excerpt: 
-category: 636284b7e6b02c00a136e87b
+category: 639ba16d677235008f800454
 slug: rewards
 type: basic
 hidden: false
 order: 11
 ---
 
-Voucherify enables you to add multiple rewards that you can later use in loyalty, referral, and giveaway campaigns. Each reward is defined in a separate [Reward object](https://docs.voucherify.io/reference#the-reward-object) and can be mapped to a specific amount of loyalty points with the [Reward Assignment object](https://docs.voucherify.io/reference#list-reward-assignments-1).
+Voucherify enables you to add multiple rewards that you can later use in loyalty, referral, and giveaway campaigns. Each reward is defined in a separate [Reward object](ref:get-reward) and can be mapped to a specific amount of loyalty points with the [Reward Assignment object](ref:get-reward-assignment).
 
 ## Create Reward Object
 
-A reward can be a discount code or gift card from a previously created [campaign](https://docs.voucherify.io/reference#create-campaign) or a physical [product](https://docs.voucherify.io/reference#create-product). To create a reward, you need to:
+A reward can be a discount code or gift card from a previously created [campaign](ref:create-campaign) or a physical [product](ref:create-product). To create a reward, you need to:
 1. Create a reward: 
-  * A [campaign](https://docs.voucherify.io/reference#create-campaign) of codes which will be used as rewards, for example, 5$ discount codes.
+  * A [campaign](ref:create-campaign) of codes which will be used as rewards, for example, 5$ discount codes.
   * A physical product from your inventory that will be offered as a reward. 
-2. Create a [reward object](https://docs.voucherify.io/reference#the-reward-object) which assigns a campaign to the reward.
+2. Create a [reward object](ref:get-reward) which assigns a campaign to the reward.
 
 ```curl Rewards from coupon campaigns
 curl -X POST \
@@ -56,7 +56,7 @@ curl -X POST \
 
 You can make as many rewards as you need. Each Reward object will map reward to a particular campaign of codes or chosen products. 
 
-Once you have the rewards, you can define how many points they are worth in your loyalty program. For example, to get a $5 discount as a reward, your customer needs to spend X loyalty points. To manage that via API, you need a [Reward Assignment object](https://docs.voucherify.io/reference#create-reward-assignment-1). 
+Once you have the rewards, you can define how many points they are worth in your loyalty program. For example, to get a $5 discount as a reward, your customer needs to spend X loyalty points. To manage that via API, you need a [Reward Assignment object](ref:create-reward-assignment-1). 
 
 ## Reward Assignment Object
 
@@ -78,6 +78,6 @@ curl -X POST \
 "https://api.voucherify.io/v1/loyalties/camp_MgpTUyabvEVaGvbUKAOiSVwL/rewards"
 ```
 
-Reward and Reward Assignment objects allow for rewarding customers who already collected points in your loyalty program. If you want to learn how to enable your customers to earn points in the first place, follow [here](https://docs.voucherify.io/docs/earning-rules).
+Reward and Reward Assignment objects allow for rewarding customers who already collected points in your loyalty program. If you want to learn how to enable your customers to earn points in the first place, follow [here](doc:earning-rules).
 
-If you already have both earning rules and rewards ready, you can create a [loyalty program](https://docs.voucherify.io/docs/loyalty-program).
+If you already have both earning rules and rewards ready, you can create a [loyalty program](doc:loyalty-program).

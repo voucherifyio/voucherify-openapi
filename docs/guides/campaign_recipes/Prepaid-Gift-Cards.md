@@ -1,7 +1,7 @@
 ---
 title: Prepaid Gift Cards
 excerpt: null
-category: 636284b7e6b02c00a136e883
+category: 639ba16d677235008f80045c
 slug: prepaid-gift-cards
 type: basic
 hidden: false
@@ -148,7 +148,8 @@ And if we try spending more than the current balance allows for, Voucherify retu
 
 The voucher can be redeemed using the Dashboard as well. Go to the voucher details view, press `REDEEM` and provide the amount in the popup. 
 
-![Manual redemption](../../assets/img/guides_campaign_recipes_prepaid_gift_cards_manual_redemption_1.png "Manual redemption")
+<!-- ![Manual redemption](../../assets/img/guides_campaign_recipes_prepaid_gift_cards_manual_redemption_1.png "Manual redemption") -->
+![Manual redemption](https://files.readme.io/e891d3c-Screenshot_2020-09-16_at_13.03.51.png "Manual redemption")
 
 ## Recharge
 

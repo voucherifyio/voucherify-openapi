@@ -1,7 +1,7 @@
 ---
 title: Import legacy codes
 excerpt: null
-category: 636284b7e6b02c00a136e884
+category: 639ba16d677235008f80045d
 slug: import-codes
 type: basic
 hidden: false
@@ -20,11 +20,11 @@ There are two ways of importing codes into Voucherify –programmable and with t
 
 The programmable mode handles both on JSON and CSV payload. There're 4 endpoints that handle the import of:
 
-* Standalone vouchers: [JSON](ref:import-vouchers-1) | [CSV](ref:import-vouchers-by-csv-1). 
-* Vouchers assigned to a given campaign: [JSON](ref:import-vouchers) | [CSV](ref:import-vouchers-by-csv).
+* Standalone vouchers: [JSON](ref:import-vouchers) | [CSV](ref:import-vouchers-using-csv). 
+* Vouchers assigned to a given campaign: [JSON](ref:import-vouchers-to-campaign) | [CSV](ref:import-vouchers-to-campaign-using-csv).
 
 > 📘 Postman Collection
 >
-> You can play around with this endpoint with our [Postman examples](http://docs.voucherify.io/docs/examples) – catalog `Import`.
+> You can play around with this endpoint with our [Postman examples](doc:examples) – catalog `Import`.
 
 
