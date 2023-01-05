@@ -214,7 +214,7 @@ Validation rules are flexible – you can mix different limits taking into accou
 
 ## Discount per product
 
-Some validation rules are based on the structure of products in the cart. Sometimes you want to make a discount applicable only to particular items ([products](ref:get-product) and [skus](ref:get-sku)). This can be achieved with `discount_applicable` property. Once you define `applicable only to` rule by following [this guide](https://support.voucherify.io/article/53-validation-rules#applicable), the validation rule entity will look like this:
+Some validation rules are based on the structure of products in the cart. Sometimes you want to make a discount applicable only to particular items ([products](ref:get-product) and [skus](ref:get-sku)). This can be achieved with `discount_applicable` property. Once you define `applicable only to` rule by following [this guide](https://support.voucherify.io/article/148-how-to-build-a-rule#discount-specific-rule), the validation rule entity will look like this:
 
 ```json discount_applicable
 {
@@ -307,7 +307,7 @@ Voucherify enables you to assign custom attributes as metadata to products/SKUs 
 
 1. Firstly, define **custom attributes for your products** (using UI or API request) which then, can be used while creating validation rules. In the Schema, you don't attach these attributes to specific products, you just define their names, types, and values (optional). The detailed guide on how to add custom product attributes with Metadata Schema is [here](https://support.voucherify.io/article/515-products).
 
-2. When you have product metadata defined, you can **create a promo campaign with validation rules based on product metadata**. As a result, all the products in the order will be validated accordingly to the rules with product metadata. You can see how to add validation rules with product metadata in [this section](https://support.voucherify.io/article/53-validation-rules#product-metadata).
+2. When you have product metadata defined, you can **create a promo campaign with validation rules based on product metadata**. As a result, all the products in the order will be validated accordingly to the rules with product metadata. You can see how to add validation rules with product metadata in [this section](https://support.voucherify.io/article/148-how-to-build-a-rule#product-metadata).
 
 3. When the campaign is live, your customers can start redeeming codes. When creating a redemption request via API, you can **add products with metadata from scratch**. When a redemption request gets to Voucherify, metadata assigned to ordered products will be compared to the validation rules with product metadata assigned to the code. 
 
