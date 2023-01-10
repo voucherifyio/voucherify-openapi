@@ -130,6 +130,7 @@
 ### API Reference Guides that were turned into redirects
 
 | **API** | **Title** | **Slug** | **Now links to** |
+|:---|:---|:---|:---|
 | Validations | Validation Session | validation-session | locking-validation-session |
 | Stackable Discounts | Establish Validation Session | establish-validation-session | locking-validation-session |
 | Stackable Discounts | API Overview | stacking-api-overview | manage-stackable-discounts |
@@ -137,4 +138,5 @@
 ### API Reference Guides removed
 
 | **API** | **Title** | **Slug** | **Reason** |
+|:---|:---|:---|:---|
 | Stackable Discounts | Redeemables Reference | redeemables-reference | same content in Guide with slug manage-stackable-discounts |
