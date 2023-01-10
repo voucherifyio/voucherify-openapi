@@ -30,8 +30,14 @@
 |  | Rollback Stackable Redemptions | rollback-stackable-redemptions | rollback-stacked-redemptions |
 | **Loyalties** | Get Reward Assignment | get-reward-assignment | get-reward-assignment-1 |
 |  | Get Reward Assignment | get-reward-assignment-1 | get-reward-assignment-2 |
+|  | List Reward Assignments | list-reward-assignments-1 | list-reward-assignments-2 |
+|  | List Reward Assignments | list-reward-assignments-2 | list-reward-assignments-1 |
 |  | Redeem Reward | redeem-loyalty-card | redeem-reward-1 |
 |  | Add Member | create-member | add-member |
+|  | Get Member | get-member | get-member-1 |
+|  | Get Member | get-member-1 | get-member |
+|  | Get Member Activities | get-member-activities-1 | get-member-activities |
+|  | Get Member Activities | get-member-activities | get-member-activities-1 |
 |  | Add or Remove Loyalty Card Balance | add-loyalty-card-balance | add-remove-loyalty-card-balance-1 |
 |  | Transfer Loyalty Points | transfer-points2 | transfer-points |
 | **Customers** | Get Customer | read-customer | get-customer |
