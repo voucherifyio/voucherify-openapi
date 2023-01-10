@@ -95,3 +95,46 @@
 | **API** | **Endpoint Name** | **Endpoint** | **Slug** |
 |---|---|---|---|
 | Rewards | Get Reward Assignment | **GET** `/rewards/{rewardId}/assignments/{assignmentId}` | get-reward-assignment |
+
+### Object schema definitions removed
+
+| **API** | **Object Definition** | **Slug** |
+|---|---|---|
+| Vouchers | The Voucher Object | the-voucher-object |
+| Campaigns | The Campaign Object | the-campaign-object |
+| Promotions | The Promotion Tier Object | the-promotion-object |
+| Rewards | The Reward Object | the-reward-object |
+|  | The Reward Assignment Object | the-reward-assignment-object |
+| Validations | The Validation Object | the-validation-object |
+| Redemptions | The Redemption Object | the-redemption-object |
+|  | The Redemption Rollback Object | the-redemption-rollback-object |
+| Loyalties | The Loyalty Campaign Object | the-loyalty-campaign-object |
+|  | The Loyalty Card Object | loyalty-card-object |
+|  | The Earning Rule Object | the-earning-rule-object |
+|  | The Loyalty Tiers Object | the-loyalty-tiers-object |
+|  | The Customer Object | the-customer-object |
+|  | The Customer Activity Object | the-customer-activities-object |
+| Orders | The Order Object | the-order-object |
+|  | The Order Item Object | the-order-item-object |
+| Products | The Product Object | the-product-object |
+|  | The SKU Object | the-sku-object |
+| Product Collections | The Product Collections Object | the-product-collections-object |
+| Validation Rules | The Validation Rule Object | the-validation-rule-object |
+|  | The Validation Rule Assignment Object | the-validation-rule-assignment-object |
+| Segments | The Segment Object | the-segment-object |
+| Events | The Custom Event Object | the-custom-event-object |
+| Exports | The Export Object | the-export-object |
+| Categories | The Category Object | category-object |
+| Metadata Schemas | The Metadata Schema Object | the-metadata-schema-object |
+
+### API Reference Guides that were turned into redirects
+
+| **API** | **Title** | **Slug** | **Now links to** |
+| Validations | Validation Session | validation-session | locking-validation-session |
+| Stackable Discounts | Establish Validation Session | establish-validation-session | locking-validation-session |
+| Stackable Discounts | API Overview | stacking-api-overview | manage-stackable-discounts |
+
+### API Reference Guides removed
+
+| **API** | **Title** | **Slug** | **Reason** |
+| Stackable Discounts | Redeemables Reference | redeemables-reference | same content in Guide with slug manage-stackable-discounts |
