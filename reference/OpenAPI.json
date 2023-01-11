@@ -1916,10 +1916,14 @@
         "properties": {
           "category": {
             "type": "string",
-            "description": "Tag defining the category that this voucher belongs to. Useful when listing vouchers using the List Vouchers endpoint."
+            "description": "The name of the tag defining the category that this voucher belongs to. Useful when listing vouchers using the [List Vouchers](ref:list-vouchers) endpoint."
+          },
+          "category_id": {
+            "type": "string",
+            "description": "The unique ID assigned by Voucherify of the tag defining the category that this voucher belongs to. Useful when listing vouchers using the [List Vouchers](ref:list-vouchers) endpoint.",
+            "example": "cat_0bb81a481615a37b5e"
           },
           "discount": {
-            "default": null,
             "oneOf": [
               {
                 "$ref": "#/components/schemas/1_obj_voucher_object_discount_amount_PUT"
@@ -1936,8 +1940,7 @@
               {
                 "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_multiple_PUT"
               }
-            ],
-            "description": "Defines discount voucher; **required** when`type` is `DISCOUNT_VOUCHER`. Defaults to `null`. Type of discount:\n- `AMOUNT`\n- `PERCENT`\n- `UNIT`\n- `FIXED`\n\nA Free Shipping discount is a special instance of the  `UNIT` type discount."
+            ]
           },
           "gift": {
             "type": "object",
@@ -1946,7 +1949,7 @@
               "amount": {
                 "type": "integer",
                 "example": 10000,
-                "description": "Total voucher income. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+                "description": "Update the total voucher income incurred over the lifespan of the gift card. If you set a value higher than the stored value for the `amount` parameter of this gift voucher, then the `balance` parameter of the gift card will increase by the difference. If you set a value lower than the stored value for the `amount` parameter, then the `balance` parameter of the gift gard will decrease by the difference. Remember that the  value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.    \nExpect this result:    \n\n&Delta; `balance` parameter: credits(amount)<sub>in request body</sub> - credits(amount)<sub>stored in Voucherify system</sub>"
               },
               "effect": {
                 "type": "string",
@@ -1960,12 +1963,12 @@
           },
           "loyalty_card": {
             "type": "object",
-            "description": "Defines loyalty card; **required** when type parameter is `LOYALTY_CARD`.",
+            "description": "Defines loyalty card; **required** when the voucher type parameter is `LOYALTY_CARD`.",
             "properties": {
               "points": {
                 "type": "integer",
                 "example": 7000,
-                "description": "Update the total points incurred over lifespan of loyalty card. If you set a value higher than the stored value for this parameter, then the `balance` parameter of the loyalty card will increase by the difference. If you set a value lower than the stored value for this parameter, then the `balance` parameter of the loyalty cards will decrease by the difference.    \nExpect this result:    \n\n&Delta; `balance` parameter: points<sub>in request body</sub> - points<sub>stored in Voucherify system</sub>"
+                "description": "Update the total points incurred over lifespan of loyalty card. If you set a value higher than the stored value for this parameter, then the `balance` parameter of the loyalty card will increase by the difference. If you set a value lower than the stored value for this parameter, then the `balance` parameter of the loyalty card will decrease by the difference.    \nExpect this result:    \n\n&Delta; `balance` parameter: points<sub>in request body</sub> - points<sub>stored in Voucherify system</sub>"
               }
             }
           },
@@ -2157,7 +2160,7 @@
           },
           "fixed_amount": {
             "type": "integer",
-            "description": "Set a fixed valued for an order total or price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the fixed amount being calculated by the formula, i.e. the `fixed_amount_formula` parameter is present in the fixed amount definition, this value becomes the **fallback value**. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.    \n| **Effect** | **Definition** |\n|---|---|\n| **APPLY_TO_ORDER** | Sets the order total amount to the value of the fixed amount. The discount value is calculated during the redemption as it's a difference between the total amount of the customer's order and the fixed amount. |\n| **APPLY_TO_ITEMS** | Sets a new price on items. The total discount amount is calculated during the redemption and it's a difference between the initial item price and the fixed amount. |",
+            "description": "Set a fixed valued for an order total or price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the fixed amount being calculated by the formula, i.e. the `fixed_amount_formula` parameter is present in the fixed amount definition, this value becomes the **fallback value**. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.",
             "example": 1000
           },
           "fixed_amount_formula": {
@@ -2170,7 +2173,7 @@
               "APPLY_TO_ORDER",
               "APPLY_TO_ITEMS"
             ],
-            "description": "- **APPLY\\_TO\\_ORDER**: Set fixed total on the whole cart. Discount will be calculated dynamically, based on fixed amount value. For example, if the fixed amount is set to equal $10 and order amount equals $25, then the calculated discount will be $15.  \n- **APPLY\\_TO\\_ITEMS**: This type of deal applies a new price for line items. \n  Default rules:\n   - During redemption, prices will change only if the new one is lower than the old one.\n    - If a product price in the collection and the new product price you have set up differs, then the new product price will be passed during the redemption.\n    - When a product is in two collections, we always change the price to the lowest price.\n    - The new price for products with several SKUs will force the price change for SKUs if their price is higher than the new price."
+            "description": "\n| **Effect** | **Definition** |\n|:---|:---|\n| **APPLY_TO_ORDER** | Sets the order total amount to the value of the fixed amount. The discount value is calculated dynamically during the redemption as it's a difference between the total amount of the customer's order and the fixed amount. For example, if the fixed amount is set to equal $10 and the order amount equals $25, then the calculated discount will be $15. |\n| **APPLY_TO_ITEMS** | Sets a new price on items. The total discount amount is dynamically calculated during the redemption and it's a difference between the initial item price and the fixed amount. During the redemption, prices for items will change only if the new price is lower than the original price. If the new product price you set is different from the product price in a collection, then the new product price will be passed during the redemption. If a prodct is in more than one collection, the price is always changed to the lowest price. The new price for products with several SKUs will force the price change for SKUs if their original price is higher than the new price. |"
           }
         }
       },
@@ -2516,7 +2519,7 @@
           },
           "amount_off_formula": {
             "type": "string",
-            "description": "Formula used to calculated the discount."
+            "description": "Formula used to calculate the discount."
           },
           "effect": {
             "type": "string",
@@ -2545,7 +2548,7 @@
           },
           "percent_off_formula": {
             "type": "string",
-            "description": "Formula used to calculated the discount."
+            "description": "Formula used to calculate the discount."
           },
           "amount_limit": {
             "type": "integer",
@@ -2578,7 +2581,7 @@
           },
           "fixed_amount_formula": {
             "type": "string",
-            "description": "Formula used to calculated the discount."
+            "description": "Formula used to calculate the discount."
           },
           "effect": {
             "type": "string",
@@ -2593,7 +2596,7 @@
       "1_obj_voucher_object_discount_unit_one_PUT": {
         "title": "Unit, single item",
         "type": "object",
-        "description": "Define single item type.",
+        "description": "Update single item type.",
         "properties": {
           "type": {
             "type": "string",
@@ -2608,12 +2611,12 @@
           },
           "unit_off_formula": {
             "type": "string",
-            "description": "Formula used to calculated the discount."
+            "description": "Formula used to calculate the discount."
           },
           "unit_type": {
             "type": "string",
-            "description": "The product deemed as free, chosen from product  inventory (e.g. time, items).",
-            "example": "prod_0a9f9aeddb019a42db"
+            "description": "The product deemed as free, chosen from the product inventory (e.g. time, items).",
+            "example": "prod_f1r5Tpr0DuC7"
           },
           "effect": {
             "type": "string",
@@ -2629,7 +2632,7 @@
       "1_obj_voucher_object_discount_unit_multiple_PUT": {
         "title": "Unit, multiple items",
         "type": "object",
-        "description": "Define multiple item types.",
+        "description": "Update multiple item types.",
         "properties": {
           "type": {
             "type": "string",
@@ -2655,12 +2658,12 @@
                 },
                 "unit_off_formula": {
                   "type": "string",
-                  "description": "Formula used to calculated the discount."
+                  "description": "Formula used to calculate the discount."
                 },
                 "unit_type": {
                   "type": "string",
-                  "description": "The product deemed as free, chosen from product  inventory (e.g. time, items).",
-                  "example": "prod_0a9f9aeddb019a42db"
+                  "description": "The product deemed as free, chosen from the product  inventory (e.g. time, items).",
+                  "example": "prod_f1r5Tpr0DuC7"
                 },
                 "effect": {
                   "type": "string",
@@ -2723,7 +2726,7 @@
           },
           "amount_off_formula": {
             "type": "string",
-            "description": "Formula used to calculated the discount."
+            "description": "Formula used to calculate the discount."
           },
           "effect": {
             "type": "string",
@@ -2739,7 +2742,8 @@
         },
         "required": [
           "type",
-          "amount_off"
+          "amount_off",
+          "effect"
         ]
       },
       "1_obj_vouchers_import_discount_percentage": {
@@ -2761,7 +2765,7 @@
           },
           "percent_off_formula": {
             "type": "string",
-            "description": "Formula used to calculated the discount."
+            "description": "Formula used to calculate the discount."
           },
           "effect": {
             "type": "string",
@@ -2774,7 +2778,8 @@
         },
         "required": [
           "type",
-          "percent_off"
+          "percent_off",
+          "effect"
         ]
       },
       "1_obj_vouchers_import_discount_fixed": {
@@ -2785,16 +2790,16 @@
           "type": {
             "type": "string",
             "default": "FIXED",
-            "description": "Applies a fixed type discount. **Requires** child attribute\n `type`=`FIXED` when updating this discount."
+            "description": "Sets a fixed total on cart or item(s) and then calculates the discount to apply. **Requires** child attribute\n `type`=`FIXED` when updating this discount."
           },
           "fixed_amount": {
-            "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the fixed amount being calculated by the formula, i.e. the `fixed_amount_formula` parameter is present in the fixed amount definition, this value becomes the **fallback value**. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.",
+            "description": "Set a fixed valued for an order total or price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the fixed amount being calculated by the formula, i.e. the `fixed_amount_formula` parameter is present in the fixed amount definition, this value becomes the **fallback value**. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.",
             "example": 1000,
             "type": "integer"
           },
           "fixed_amount_formula": {
             "type": "string",
-            "description": "Formula used to calculated the discount."
+            "description": "Formula used to calculate the discounted price of an item or a new order total."
           },
           "effect": {
             "type": "string",
@@ -2802,12 +2807,13 @@
               "APPLY_TO_ORDER",
               "APPLY_TO_ITEMS"
             ],
-            "description": "- **APPLY\\_TO\\_ORDER**: Set fixed total on the whole cart. Discount will be calculated dynamically, based on fixed amount value. For example, if fixed amount is set to equal $10 and order amount equals $25, then the calculated discount will be $15.  \n- **APPLY\\_TO\\_ITEMS**: This type of deal applies a new price for line items. \n  Default rules:\n   - During redemption, prices will change only if the new one is lower than the old one.\n    - If a product price in the collection and the new product price you have set up differs, then the new product price will be passed during the redemption.\n    - When a product is in two collections, we always change the price to the lowest.\n    - The new price for products with several SKUs will force the price change for SKUs if their price is higher than the new price."
+            "description": "\n| **Effect** | **Definition** |\n|---|---|\n| **APPLY_TO_ORDER** | Sets the order total amount to the value of the fixed amount. The discount value is calculated dynamically during the redemption as it's a difference between the total amount of the customer's order and the fixed amount. For example, if the fixed amount is set to equal $10 and the order amount equals $25, then the calculated discount will be $15. |\n| **APPLY_TO_ITEMS** | Sets a new price on items. The total discount amount is dynamically calculated during the redemption and it's a difference between the initial item price and the fixed amount. During the redemption, prices for items will change only if the new price is lower than the original price. If the new product price you set is different from the product price in a collection, then the new product price will be passed during the redemption. If a prodct is in more than one collection, the price is always changed to the lowest price. The new price for products with several SKUs will force the price change for SKUs if their original price is higher than the new price. |"
           }
         },
         "required": [
           "type",
-          "fixed_amount"
+          "fixed_amount",
+          "effect"
         ]
       },
       "1_obj_vouchers_import_discount_unit_one": {
@@ -2828,12 +2834,12 @@
           },
           "unit_off_formula": {
             "type": "string",
-            "description": "Formula used to calculated the discount."
+            "description": "Formula used to calculate the discount."
           },
           "unit_type": {
             "type": "string",
-            "description": "The product deemed as free, chosen from product  inventory (e.g. time, items).",
-            "example": "prod_0a9f9aeddb019a42db"
+            "description": "The product deemed as free, chosen from the product  inventory (e.g. time, items).",
+            "example": "prod_f1r5Tpr0DuC7"
           },
           "effect": {
             "type": "string",
@@ -2847,7 +2853,9 @@
         },
         "required": [
           "type",
-          "unit_off"
+          "unit_off",
+          "unit_type",
+          "effect"
         ]
       },
       "1_obj_vouchers_import_discount_unit_multiple": {
@@ -2879,12 +2887,12 @@
                 },
                 "unit_off_formula": {
                   "type": "string",
-                  "description": "Formula used to calculated the discount."
+                  "description": "Formula used to calculate the discount."
                 },
                 "unit_type": {
                   "type": "string",
-                  "description": "The product deemed as free, chosen from product  inventory (e.g. time, items).",
-                  "example": "prod_0a9f9aeddb019a42db"
+                  "description": "The product deemed as free, chosen from the product  inventory (e.g. time, items).",
+                  "example": "prod_f1r5Tpr0DuC7"
                 },
                 "effect": {
                   "type": "string",
@@ -2894,7 +2902,12 @@
                   ],
                   "description": "Defines how the unit is added to the customer's order."
                 }
-              }
+              },
+              "required": [
+                "unit_off",
+                "unit_type",
+                "effect"
+              ]
             }
           }
         },
@@ -2937,17 +2950,18 @@
         "required": [
           "type",
           "unit_off",
-          "unit_type"
+          "unit_type",
+          "effect"
         ]
       },
       "1_req_vouchers_code_balance": {
-        "title": "Add Gift Voucher Balance Request Body",
+        "title": "Add or Remove Gift Voucher Balance Request Body",
         "type": "object",
         "description": "Request body schema for `vouchers/{code}/balance`.",
         "properties": {
           "amount": {
             "type": "integer",
-            "description": "The incremental amount to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+            "description": "The incremental amount to be added to or removed from the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000. To remove balance, simply add a minus sign before the value, i.e. to remove $20, use -2000."
           }
         },
         "required": [
@@ -2971,7 +2985,7 @@
           }
         },
         "examples": [],
-        "title": "Add Gift Voucher Balance Response Body",
+        "title": "Add or Remove Gift Voucher Balance Response Body",
         "properties": {
           "amount": {
             "type": "integer",
@@ -2979,20 +2993,20 @@
           },
           "total": {
             "type": "integer",
-            "description": "Total income incurred over the lifespan of the gift card."
+            "description": "Total income incurred over the lifespan of the gift card.  \n\n Expect this result:    \n\n&Delta; `total` parameter: total<sub>stored in Voucherify system</sub> + amount<sub>in request body</sub>"
           },
           "balance": {
             "type": "integer",
-            "description": "The balance after adding an additional amount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+            "description": "The balance after adding an additional amount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000. \n\n Expect this result:    \n\n&Delta; `balance` parameter: balance<sub>stored in Voucherify system</sub> + amount<sub>in request body</sub>"
           },
           "type": {
             "type": "string",
             "description": "The type of voucher being modified.",
-            "default": "gift_voucher"
+            "default": "GIFT_VOUCHER"
           },
           "object": {
             "type": "string",
-            "description": "The type of object represented by JSON.",
+            "description": "The type of object represented by JSON. Default is `balance`.",
             "default": "balance"
           },
           "related_object": {
@@ -3001,7 +3015,7 @@
             "properties": {
               "type": {
                 "type": "string",
-                "description": "The object being modified.",
+                "description": "The object being modified, i.e. `voucher`.",
                 "default": "voucher"
               },
               "id": {
@@ -3039,7 +3053,7 @@
           },
           "category": {
             "type": "string",
-            "description": "Tag defining the category that this voucher belongs to. Useful when listing vouchers using the List Vouchers endpoint."
+            "description": "Tag defining the category that this voucher belongs to. Useful when listing vouchers using the [List Vouchers](ref:list-vouchers) endpoint."
           },
           "active": {
             "type": "boolean",
@@ -3048,7 +3062,7 @@
           "type": {
             "type": "string",
             "description": "Represents the voucher type.  ",
-            "default": "gift_voucher"
+            "default": "GIFT_VOUCHER"
           },
           "gift": {
             "type": "object",
@@ -3064,29 +3078,15 @@
           },
           "start_date": {
             "type": "string",
-            "description": "Activation timestamp in ISO 8601 format. Voucher is *inactive before* this date. Start date defines when the code starts to be active.",
-            "enum": [
-              "YYYY-MM-DD",
-              "YYYY-MM-DDTHH",
-              "YYYY-MM-DDTHH:mm",
-              "YYYY-MM-DDTHH:mm:ss",
-              "YYYY-MM-DDTHH:mm:ssZ",
-              "YYYY-MM-DDTHH:mm:ssZ",
-              "YYYY-MM-DDTHH:mm:ss.SSSZ"
-            ]
+            "description": "Activation timestamp in ISO 8601 format. Voucher is *inactive before* this date. Start date defines when the code starts to be active.\nAllowed date formats are:\n- YYYY-MM-DD\n- YYYY-MM-DDTHH\n- YYYY-MM-DDTHH:mm\n- YYYY-MM-DDTHH:mm:ss\n- YYYY-MM-DDTHH:mm:ssZ\n- YYYY-MM-DDTHH:mm:ss.SSSZ",
+            "format": "date-time",
+            "example": "2020-12-28T12:49:16.272Z"
           },
           "expiration_date": {
             "type": "string",
-            "enum": [
-              "YYYY-MM-DD",
-              "YYYY-MM-DDTHH",
-              "YYYY-MM-DDTHH:mm",
-              "YYYY-MM-DDTHH:mm:ss",
-              "YYYY-MM-DDTHH:mm:ssZ",
-              "YYYY-MM-DDTHH:mm:ssZ",
-              "YYYY-MM-DDTHH:mm:ss.SSSZ"
-            ],
-            "description": "Expiration date defines when the code expires. Expiration timestamp in ISO 8601 format.  Voucher is *inactive after* this date."
+            "description": "Expiration date defines when the code expires. Expiration timestamp in ISO 8601 format.  Voucher is *inactive after* this date.\nAllowed date formats are:\n- YYYY-MM-DD\n- YYYY-MM-DDTHH\n- YYYY-MM-DDTHH:mm\n- YYYY-MM-DDTHH:mm:ss\n- YYYY-MM-DDTHH:mm:ssZ\n- YYYY-MM-DDTHH:mm:ss.SSSZ",
+            "format": "date-time",
+            "example": "2053-12-28T12:49:16.272Z"
           },
           "redemption": {
             "type": "object",
@@ -3123,7 +3123,7 @@
           },
           "category": {
             "type": "string",
-            "description": "Tag defining the category that this voucher belongs to. Useful when listing vouchers using the List Vouchers endpoint."
+            "description": "Tag defining the category that this voucher belongs to. Useful when listing vouchers using the [List Vouchers](ref:list-vouchers) endpoint."
           },
           "active": {
             "type": "boolean",
@@ -3132,7 +3132,7 @@
           "type": {
             "type": "string",
             "description": "Represents the voucher type.",
-            "default": "discount_voucher"
+            "default": "DISCOUNT_VOUCHER"
           },
           "discount": {
             "anyOf": [
@@ -3158,29 +3158,15 @@
           },
           "start_date": {
             "type": "string",
-            "description": "Activation timestamp in ISO 8601 format. Voucher is *inactive before* this date. Start date defines when the code starts to be active.",
-            "enum": [
-              "YYYY-MM-DD",
-              "YYYY-MM-DDTHH",
-              "YYYY-MM-DDTHH:mm",
-              "YYYY-MM-DDTHH:mm:ss",
-              "YYYY-MM-DDTHH:mm:ssZ",
-              "YYYY-MM-DDTHH:mm:ssZ",
-              "YYYY-MM-DDTHH:mm:ss.SSSZ"
-            ]
+            "description": "Activation timestamp in ISO 8601 format. Voucher is *inactive before* this date. Start date defines when the code starts to be active.\nAllowed formats of dates are:\n- YYYY-MM-DD\n- YYYY-MM-DDTHH\n- YYYY-MM-DDTHH:mm\n- YYYY-MM-DDTHH:mm:ss\n- YYYY-MM-DDTHH:mm:ssZ\n- YYYY-MM-DDTHH:mm:ss.SSSZ",
+            "format": "date-time",
+            "example": "2020-12-28T12:49:16.272Z"
           },
           "expiration_date": {
             "type": "string",
-            "enum": [
-              "YYYY-MM-DD",
-              "YYYY-MM-DDTHH",
-              "YYYY-MM-DDTHH:mm",
-              "YYYY-MM-DDTHH:mm:ss",
-              "YYYY-MM-DDTHH:mm:ssZ",
-              "YYYY-MM-DDTHH:mm:ssZ",
-              "YYYY-MM-DDTHH:mm:ss.SSSZ"
-            ],
-            "description": "Expiration date defines when the code expires. Expiration timestamp in ISO 8601 format.  Voucher is *inactive after* this date."
+            "description": "Expiration date defines when the code expires. Expiration timestamp in ISO 8601 format.  Voucher is *inactive after* this date.\nAllowed formats of dates are:\n- YYYY-MM-DD\n- YYYY-MM-DDTHH\n- YYYY-MM-DDTHH:mm\n- YYYY-MM-DDTHH:mm:ss\n- YYYY-MM-DDTHH:mm:ssZ\n- YYYY-MM-DDTHH:mm:ss.SSSZ",
+            "format": "date-time",
+            "example": "2053-12-28T12:49:16.272Z"
           },
           "redemption": {
             "type": "object",
@@ -36214,7 +36200,7 @@
           "file": {
             "type": "string",
             "format": "binary",
-            "description": "The property name 'file' will be used for the file path."
+            "description": "File path."
           }
         },
         "required": [
@@ -38052,7 +38038,7 @@
         },
         "responses": {
           "200": {
-            "description": "Returns the voucher object if the update succeeded. Returns an error if update parameters are invalid (e.g. specifying an invalid gift amount).",
+            "description": "Returns the voucher object if the update succeeded.",
             "content": {
               "application/json": {
                 "schema": {
@@ -38473,7 +38459,7 @@
           "VOUCHERS API"
         ],
         "operationId": "delete-vouchers-code",
-        "description": "Deletes a voucher. This operation cannot be undone. Additionally, this operation immediately removes any redemptions on the voucher.",
+        "description": "Deletes a voucher. This operation cannot be undone. Additionally, this operation removes any redemptions on the voucher.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -39551,7 +39537,7 @@
           "VOUCHERS API"
         ],
         "operationId": "post-vouchers-code-enable",
-        "description": "There are various times when you'll want to manage a voucher's accessibility. This can be done by two API methods for managing the voucher state - *enable* and *disable*.  \n___\nSets voucher state to **active**. The voucher can be redeemed - only if the redemption occurs after the start date and the voucher is not expired.",
+        "description": "There are various times when you'll want to manage a voucher's accessibility. This can be done by two API methods for managing the voucher state - *enable* and *disable*.  \n___\nThe method sets the voucher state to **active**. The voucher can be redeemed - only if the redemption occurs after the start date and the voucher is not expired.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -39683,7 +39669,7 @@
           "VOUCHERS API"
         ],
         "operationId": "post-vouchers-code-disable",
-        "description": "There are various times when you'll want to manage a voucher's accessibility. This can be done by two API methods for managing the voucher state - *enable* and *disable*.  \n___\nSets voucher state to **inactive**. The voucher cannot be redeemed.",
+        "description": "There are various times when you'll want to manage a voucher's accessibility. This can be done by two API methods for managing the voucher state - *enable* and *disable*.  \n___\nThis method sets the voucher state to **inactive**. The voucher cannot be redeemed.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -39800,7 +39786,8 @@
       "parameters": [
         {
           "schema": {
-            "type": "string"
+            "type": "string",
+            "example": "GIFT-CARD-1"
           },
           "name": "code",
           "in": "path",
@@ -39809,7 +39796,7 @@
         }
       ],
       "post": {
-        "summary": "Add Gift Card Balance",
+        "summary": "Add or Remove Gift Card Balance",
         "tags": [
           "VOUCHERS API"
         ],
@@ -39900,7 +39887,7 @@
           "VOUCHERS API"
         ],
         "operationId": "post-vouchers-import",
-        "description": "Import standalone vouchers and gift cards into the repository.\n\n<!-- theme: info -->\n\n> 📘 Important notes\n>\n> - **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify Project.\n\nAny parameters not provided in the payload will be left blank or null.\n\nFor both standalone discount vouchers and gift cards, you can import the following fields:  \n\n- `code`\n- `category`\n- `active`\n- `type`\n- `start_date`\n- `expiration_date`\n- `redemption` &rarr; `quantity`\n- `additional_info`\n- `metadata`\n\nFor gift cards, you can import the following field:\n\n- `gift` &rarr; `amount`\n\nFor discount vouchers, you can import the `discount` field; the object will slightly vary depending on the type of discount. Each discount type **requires** the `type` to be defined in the import.\n\n- `discount` &darr;\n  - Amount type &rarr; `amount_off`, `effect`\n  - Percent type &rarr; `percent_off`, `effect`\n  - Fixed type &rarr; `fixed_amount`, `effect`\n  - Unit type &darr; \n    - One item &rarr; `unit_off`, `unit_type`, `effect`\n    - Multiple item types &rarr; `unit_off`, `unit_type`, `effect`\n  - Shipping type &rarr; `unit_off`, `unit_type`, `effect`\n\nFields other than the ones listed above won't be imported. Even if provided, they will be silently skipped.",
+        "description": "Import standalone vouchers and gift cards into the repository.\n\n<!-- theme: info -->\n\n> 📘 Important notes\n>\n> - **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify Project.\n\nAny parameters not provided in the payload will be left blank or null.\n\nFor both **standalone discount vouchers and gift cards**, you can import the following fields:  \n\n- code\n- category\n- active\n- type\n- start_date\n- expiration_date\n- redemption.quantity\n- additional_info\n- metadata\n\nFor **gift cards**, you can also import the following field:\n\n- gift.amount\n\nFor **discount vouchers**, you can import the `discount` object. The object will slightly vary depending on the type of discount. Each discount type **requires** the `type` to be defined in the import.\n\n| **Discount Type** | **Required fields** |\n|:---|:---|\n| Amount | amount_off, effect |\n| Percent | percent_off, effect |\n| Fixed | fixed_amount, effect |\n| Unit - One item | unit_off, unit_type, effect |\n| Unit - Multiple items | unit_off, unit_type, effect |\n| Shipping | unit_off, unit_type, effect |\n\nFields other than the ones listed above won't be imported. Even if provided, they will be silently skipped.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -40174,7 +40161,7 @@
           "VOUCHERS API"
         ],
         "operationId": "post-vouchers-importCSV",
-        "description": "Import standalone vouchers into the repository using a CSV file.\n\nThe CSV file has to include headers in the first line. All properties listed in the file headers that cannot be mapped to standard voucher fields will be added to the metadata object.  \n\nYou can find an example CSV file [here](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally#coupons).\n___\n<!--\ntitle: \"cURL Example Request\"\nlineNumbers: true\n-->\n```cURL cURL example\ncurl -X POST \\\n  https://api.voucherify.io/v1/vouchers/importCSV \\\n  -F file=@/path/to/vouchers.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\n<!-- theme: info -->\n\n> 📘 Standard voucher fields mapping\n>\n> Go to the <!-- [import vouchers](OpenAPI.json/paths/~1vouchers~1import) -->[import vouchers](ref:import-vouchers) to see all standard CSV fields description(section body params).\n> - Supported CSV file headers: Code,Voucher Type,Value,Discount Type,Category,Start Date,Expiration Date,Redemption Limit,Active,Additional Info,Custom Metadata Property Name\n>- Start and expiration dates need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.  \n>    - `YYYY-MM-DD`\n>    - `YYYY-MM-DDTHH`\n>    - `YYYY-MM-DDTHH:mm`\n>    - `YYYY-MM-DDTHH:mm:ss`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ss.SSSZ`\n> - Custom code attributes (not supported by-default) need to be added as code metadata.\n> - You cannot import the same codes to a single Voucherify Project.\n\n<!-- theme: info -->\n\n> 📘 Categories\n>\n> In the structure representing your data, you can define a category that the voucher belongs to. You can later use the category of a voucher to group and search by specific criteria.\n",
+        "description": "Import standalone vouchers into the repository using a CSV file.\n\nThe CSV file has to include headers in the first line. All properties listed in the file headers that cannot be mapped to standard voucher fields will be added to the metadata object.  \n\nYou can find an example CSV file [here](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally#coupons).\n___\n<!--\ntitle: \"cURL Example Request\"\nlineNumbers: true\n-->\n```cURL cURL example\ncurl -X POST \\\n  https://api.voucherify.io/v1/vouchers/importCSV \\\n  -F file=@/path/to/vouchers.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\n<!-- theme: info -->\n\n> 📘 Standard voucher fields mapping\n>\n> - Go to the <!-- [import vouchers](OpenAPI.json/paths/~1vouchers~1import) -->[import vouchers](ref:import-vouchers) endpoint to see all standard CSV fields description (body params section).\n> - Supported CSV file headers: Code,Voucher Type,Value,Discount Type,Category,Start Date,Expiration Date,Redemption Limit,Active,Additional Info,Custom Metadata Property Name\n>- **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.  \n>    - `YYYY-MM-DD`\n>    - `YYYY-MM-DDTHH`\n>    - `YYYY-MM-DDTHH:mm`\n>    - `YYYY-MM-DDTHH:mm:ss`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ss.SSSZ`\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify Project.\n\n<!-- theme: info -->\n\n> 📘 Categories\n>\n> In the structure representing your data, you can define a category that the voucher belongs to. You can later use the category of a voucher to group and search by specific criteria in the Dashboard and using the [List Vouchers](ref:list-vouchers) endpoint.\n",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -40194,8 +40181,8 @@
           "description": "The file path is stored in the form `file` header."
         },
         "responses": {
-          "200": {
-            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and vouchers will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint.",
+          "202": {
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and vouchers will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the **response** and pass it using the <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint.",
             "content": {
               "application/json": {
                 "schema": {
@@ -40205,6 +40192,27 @@
                   "Example": {
                     "value": {
                       "async_action_id": "aa_0a875d56c805df6601"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload. You may receive this error if you have incorrectly or have not specified the content type as `multipart/form-data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_error_no_translation"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload should have required property 'file'",
+                      "request_id": "74e4bb71-5b6d-49b9-98eb-239691c9d67a"
                     }
                   }
                 }
@@ -40853,7 +40861,7 @@
           "VOUCHERS API"
         ],
         "operationId": "delete-vouchers-code-sessions-sessionKey",
-        "description": "Manually release a validation session that has been set up for the voucher.\n\n> 📘 Release Session using Dashboard\n>\n> You can also use the Validations Manager in the Dashboard to unlock sessions. [Read more](https://support.voucherify.io/article/16-dashboard-sections#validations).",
+        "description": "Manually release a validation session that has been set up for the voucher. This method undos the actions that are explained our guide on how a validation session was established, you can read more [here](doc:locking-validation-session). \n\n> 📘 Release Session using Dashboard\n>\n> You can also use the Validations Manager in the Dashboard to unlock sessions. [Read more](https://support.voucherify.io/article/16-dashboard-sections#validations).",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
