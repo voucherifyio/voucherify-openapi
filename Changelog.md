@@ -9,6 +9,7 @@
 | **API** | **Endpoint** | **Previous Slug** | **New Slug** |
 |---|---|---|---|
 | **Vouchers** | Get Voucher | vouchers-get | get-voucher |
+|  | Add Gift Card Balance | add-gift-voucher-balance | add-remove-gift-voucher-balance |
 |  | Import Vouchers | import-vouchers-1 | import-vouchers |
 |  | Import Vouchers using CSV | import-vouchers-by-csv-1 | import-vouchers-using-csv |
 |  | Examine Qualification | push-qualification-request | examine-vouchers-qualification |
