@@ -21,9 +21,7 @@ To understand the basic limits of your account, check out [Pricing](https://www.
 
 > 📘 What happens if you exceed your limits?
 >
-> You can't exceed the number of API calls/h defined in your pricing plan. Exceeding this limit will block your access to the API immediately.
->
->If you exceed your monthly limits defined by a particular pricing plan, we'll let your requests in and send you a friendly reminder about the upgrade. However, if you exceed the limits for several weeks, we may take corrective action, including throttling the API, temporarily suspending or terminating your account.
+> You can't exceed the number of API calls (both hourly and monthly) defined in your pricing plan. Exceeding this limit will block your access to the API immediately.
 
 ## Enterprise plan
 
