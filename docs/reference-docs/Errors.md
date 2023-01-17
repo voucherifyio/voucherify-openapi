@@ -41,7 +41,7 @@ The Voucherify API uses conventional HTTP status codes to indicate success or fa
 | 405 | Method Not Allowed | The request used a method (GET, POST, etc.) that is not available for a given resource. Error details include a hint on which methods are allowed. |
 | 406 | Not Acceptable | The API is unable to produce a response in a format specified by the `Accept` header. In most cases the only available response format is `application/json`. |
 | 415 | Unsupported Media Type | The API is unable to consume a request in a format specified by the `Content-Type` header. |
-| 429 | Hourly API limit reached | Error occurs when you exceed your hourly limit of API calls or when your subscription plan has ended. |
+| 429 | API limit reached | Error occurs when you exceed your limit of API calls or when your subscription plan has ended. |
 | 500 | Internal Server Error | An internal API error occurred. Don't worry, we track and verify all such errors and try to react as asap as possible. |
 
 ## Error Messages
