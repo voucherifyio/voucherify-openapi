@@ -5,6 +5,6 @@ parentDoc: 639ba2658407100061f5fab5
 slug: establish-validation-session
 type: link
 hidden: false
-order: 3
+order: 2
 link_url: https://docs.voucherify.io/docs/locking-validation-session
 ---
