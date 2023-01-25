@@ -15403,7 +15403,7 @@
           }
         },
         "title": "Redemption Object",
-        "description": "This is an object representing a redemption.  \n\nRedemption is the key operation in the voucher and promotion tier lifecycle. A customer can redeem a voucher or promotion tier once or multiple times depending on selected limit (`quantity`). Each redemption is recorded in voucher/promotion's history (`redemption_entries`). There is also an option to cancel a redemption. We call such operation a <!-- [redemption rollback](OpenAPI.json/paths/~1redemptions~1{redemptionId}~1rollback/post) -->[redemption rollback](ref:rollback-redemption).",
+        "description": "This is an object representing a redemption.  \n\nRedemption is the key operation in the voucher and promotion tier lifecycle. A customer can redeem a voucher or promotion tier once or multiple times depending on selected limit (`quantity`). Each redemption is recorded in voucher/promotion's history (`redemption_entries`). There is also an option to cancel a redemption. We call such an operation a <!-- [redemption rollback](OpenAPI.json/paths/~1redemptions~1{redemptionId}~1rollback/post) -->[redemption rollback](ref:rollback-redemption).",
         "anyOf": [
           {
             "$ref": "#/components/schemas/7_obj_redemption_object_discount_voucher"
@@ -15415,10 +15415,19 @@
             "$ref": "#/components/schemas/7_obj_redemption_object_gift_card"
           },
           {
+            "$ref": "#/components/schemas/7_obj_redemption_object_voucher_fail"
+          },
+          {
             "$ref": "#/components/schemas/7_obj_redemption_object_promotion_tier"
           },
           {
+            "$ref": "#/components/schemas/7_obj_redemption_object_promotion_tier_fail"
+          },
+          {
             "$ref": "#/components/schemas/7_obj_redemption_object_stackable_discounts"
+          },
+          {
+            "$ref": "#/components/schemas/7_obj_redemption_object_fail"
           }
         ]
       },
@@ -15498,7 +15507,7 @@
             }
           }
         },
-        "title": "Redemption Object for Discount Voucher",
+        "title": "Discount Voucher",
         "description": "This is an object representing a redemption.  \n\nRedemption is the key operation in the voucher and promotion tier lifecycle. A customer can redeem a voucher or promotion tier once or multiple times depending on selected limit (`quantity`). Each redemption is recorded in voucher/promotion's history (`redemption_entries`). There is also an option to cancel a redemption. We call such operation a <!-- [redemption rollback](OpenAPI.json/paths/~1redemptions~1{redemptionId}~1rollback/post) -->[redemption rollback](rollback-redemption).",
         "properties": {
           "id": {
@@ -15508,14 +15517,14 @@
           },
           "object": {
             "type": "string",
-            "description": "The type of object represented by the JSON. This object stores information about the customer.",
+            "description": "The type of object represented by the JSON. This object stores information about the redemption.",
             "default": "redemption"
           },
           "date": {
             "type": "string",
             "format": "date-time",
             "example": "2022-10-03T12:24:58.008Z",
-            "description": "Timestamp indicating when the redemption occured."
+            "description": "Timestamp in ISO 8601 format indicating when the redemption occured."
           },
           "customer_id": {
             "type": "string",
@@ -15524,7 +15533,8 @@
           },
           "tracking_id": {
             "type": "string",
-            "example": "track_fxEMFiLowFHg=="
+            "example": "track_fxEMFiLowFHg==",
+            "description": "Hashed customer source ID."
           },
           "metadata": {
             "type": "object",
@@ -15537,15 +15547,6 @@
               "FAILURE"
             ],
             "description": "Redemption result."
-          },
-          "failure_code": {
-            "type": "string",
-            "example": "customer_rules_violated",
-            "description": "If the result is `FAILURE`, this parameter will provide a generic reason as to why the redemption failed."
-          },
-          "failure_message": {
-            "type": "string",
-            "description": "If the result is `FAILURE`, this parameter will provide a more expanded reason as to why the redemption failed."
           },
           "order": {
             "type": "object",
@@ -15675,10 +15676,12 @@
             "properties": {
               "channel_id": {
                 "type": "string",
-                "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH"
+                "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
+                "description": "Unique channel ID of the user performing the redemption. This is either a user ID from a user using the Voucherify Dashboard or an X-APP-Id of a user using the API."
               },
               "channel_type": {
                 "type": "string",
+                "description": "The source of the channel for the redemption. A `USER` corresponds to the Voucherify Dashboard and an `API` corresponds to the API.",
                 "enum": [
                   "USER",
                   "API"
@@ -15690,133 +15693,74 @@
             "type": "object",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "The unique ID of a customer that is assigned by Voucherify.",
+                "example": "cust_eWgXlBBiY6THFRJwX45Iakv4"
               },
               "name": {
-                "type": "null"
+                "type": "string",
+                "description": "Customer's first and last name."
               },
               "email": {
-                "type": "null"
+                "type": "string",
+                "description": "Customer's email address."
               },
               "source_id": {
-                "type": "string"
+                "type": "string",
+                "description": "The merchant’s customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service."
               },
               "metadata": {
-                "type": "object"
+                "type": "object",
+                "description": "The metadata object stores all custom attributes assigned to the customer. A set of key/value pairs that you can attach to a customer object. It can be useful for storing additional information about the customer in a structured format."
               },
               "object": {
-                "type": "string"
+                "type": "string",
+                "description": "Type of object represented is `customer`.",
+                "default": "customer"
               }
             }
           },
           "related_object_type": {
             "type": "string",
+            "description": "Defines the related object.\n\n| **Related Object** | **Definition** |\n| :--- | :--- |\n| voucher | Either a discount voucher, gift card, or loyalty card. |",
             "enum": [
-              "voucher"
+              "voucher",
+              "redemption",
+              "promotion_tier"
             ]
           },
           "related_object_id": {
             "type": "string",
-            "example": "v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno"
+            "description": "Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher."
           },
           "voucher": {
             "type": "object",
             "properties": {
               "id": {
                 "type": "string",
+                "description": "Unique voucher ID assigned by Voucherify.",
                 "example": "v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno"
               },
               "code": {
-                "type": "string"
+                "type": "string",
+                "description": "Unique voucher code."
               },
               "campaign": {
-                "type": "string"
+                "type": "string",
+                "description": "Voucher's parent campaign name."
               },
               "campaign_id": {
                 "type": "string",
+                "description": "Unique campaign ID assigned by Voucherify.",
                 "example": "camp_pqZjuhG6Mgtp4GD0zD7b8hA3"
               }
             }
           }
         }
       },
-      "7_obj_redemption_object_loyalty_card": {
+      "7_obj_redemption_object_discount_loyalty_card": {
         "type": "object",
-        "x-examples": {
-          "example-1": {
-            "id": "r_0bc92f81a6801f9bca",
-            "object": "redemption",
-            "date": "2022-10-03T12:24:58.008Z",
-            "customer_id": "cust_i8t5Tt6eiKG5K79KQlJ0Vs64",
-            "tracking_id": "track_fxEMFisanb6bqeHALcTMxy9fmc+1Azdq951CZwGFCweQF8eGLowFHg==",
-            "metadata": {},
-            "result": "SUCCESS",
-            "order": {
-              "id": "ord_bhp1EH2SDz7UwkkurPFPLPhi",
-              "source_id": null,
-              "created_at": "2022-10-03T12:24:56.179Z",
-              "updated_at": null,
-              "status": "PAID",
-              "amount": 230000,
-              "discount_amount": 100,
-              "total_discount_amount": 100,
-              "total_amount": 229900,
-              "applied_discount_amount": 100,
-              "total_applied_discount_amount": 100,
-              "items": [
-                {
-                  "object": "order_item",
-                  "product_id": "prod_0bae45ffc7003ffc52",
-                  "quantity": 1,
-                  "amount": 230000,
-                  "price": 230000,
-                  "subtotal_amount": 230000,
-                  "product": {
-                    "id": "prod_0bae45ffc7003ffc52",
-                    "source_id": "second_product",
-                    "name": "Samsung Phone 2",
-                    "price": 230000
-                  }
-                }
-              ],
-              "metadata": {},
-              "customer": {
-                "id": "cust_i8t5Tt6eiKG5K79KQlJ0Vs64",
-                "object": "customer"
-              },
-              "customer_id": "cust_i8t5Tt6eiKG5K79KQlJ0Vs64",
-              "referrer_id": null,
-              "object": "order",
-              "redemptions": {
-                "r_0bc92f81a6801f9bca": {
-                  "date": "2022-10-03T12:24:56.219Z",
-                  "related_object_type": "voucher",
-                  "related_object_id": "v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno"
-                }
-              }
-            },
-            "channel": {
-              "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
-              "channel_type": "USER"
-            },
-            "customer": {
-              "id": "cust_i8t5Tt6eiKG5K79KQlJ0Vs64",
-              "name": null,
-              "email": null,
-              "source_id": "bob.smith v20220131-4@email.com",
-              "metadata": {},
-              "object": "customer"
-            },
-            "related_object_type": "voucher",
-            "related_object_id": "v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno",
-            "voucher": {
-              "id": "v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno",
-              "code": "Test - FB - Vouchers - 9",
-              "campaign_id": null
-            }
-          }
-        },
-        "title": "Redemption Object for Loyalty Card",
+        "title": "Loyalty Card Voucher",
         "description": "This is an object representing a redemption.  \n\nRedemption is the key operation in the voucher and promotion tier lifecycle. A customer can redeem a voucher or promotion tier once or multiple times depending on selected limit (`quantity`). Each redemption is recorded in voucher/promotion's history (`redemption_entries`). There is also an option to cancel a redemption. We call such operation a <!-- [redemption rollback](OpenAPI.json/paths/~1redemptions~1{redemptionId}~1rollback/post) -->[redemption rollback](rollback-redemption).",
         "properties": {
           "id": {
@@ -15826,14 +15770,14 @@
           },
           "object": {
             "type": "string",
-            "description": "The type of object represented by the JSON. This object stores information about the customer.",
+            "description": "The type of object represented by the JSON. This object stores information about the redemption.",
             "default": "redemption"
           },
           "date": {
             "type": "string",
             "format": "date-time",
             "example": "2022-10-03T12:24:58.008Z",
-            "description": "Timestamp indicating when the redemption occured."
+            "description": "Timestamp in ISO 8601 format indicating when the redemption occured."
           },
           "customer_id": {
             "type": "string",
@@ -15842,11 +15786,16 @@
           },
           "tracking_id": {
             "type": "string",
-            "example": "track_fxEMFiLowFHg=="
+            "example": "track_fxEMFiLowFHg==",
+            "description": "Hashed customer source ID."
           },
           "metadata": {
             "type": "object",
             "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redemption."
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Number of points being redeemed for a reward."
           },
           "result": {
             "type": "string",
@@ -15855,15 +15804,6 @@
               "FAILURE"
             ],
             "description": "Redemption result."
-          },
-          "failure_code": {
-            "type": "string",
-            "example": "customer_rules_violated",
-            "description": "If the result is `FAILURE`, this parameter will provide a generic reason as to why the redemption failed."
-          },
-          "failure_message": {
-            "type": "string",
-            "description": "If the result is `FAILURE`, this parameter will provide a more expanded reason as to why the redemption failed."
           },
           "order": {
             "type": "object",
@@ -15993,10 +15933,12 @@
             "properties": {
               "channel_id": {
                 "type": "string",
-                "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH"
+                "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
+                "description": "Unique channel ID of the user performing the redemption. This is either a user ID from a user using the Voucherify Dashboard or an X-APP-Id of a user using the API."
               },
               "channel_type": {
                 "type": "string",
+                "description": "The source of the channel for the redemption. A `USER` corresponds to the Voucherify Dashboard and an `API` corresponds to the API.",
                 "enum": [
                   "USER",
                   "API"
@@ -16008,33 +15950,262 @@
             "type": "object",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "The unique ID of a customer that is assigned by Voucherify.",
+                "example": "cust_eWgXlBBiY6THFRJwX45Iakv4"
               },
               "name": {
-                "type": "null"
+                "type": "string",
+                "description": "Customer's first and last name."
               },
               "email": {
-                "type": "null"
+                "type": "string",
+                "description": "Customer's email address."
               },
               "source_id": {
-                "type": "string"
+                "type": "string",
+                "description": "The merchant’s customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service."
               },
               "metadata": {
-                "type": "object"
+                "type": "object",
+                "description": "The metadata object stores all custom attributes assigned to the customer. A set of key/value pairs that you can attach to a customer object. It can be useful for storing additional information about the customer in a structured format."
               },
               "object": {
-                "type": "string"
+                "type": "string",
+                "description": "Type of object represented is `customer`.",
+                "default": "customer"
               }
             }
           },
           "related_object_type": {
             "type": "string",
+            "description": "Defines the related object. i.e. `voucher`.",
             "enum": [
               "voucher"
             ]
           },
           "related_object_id": {
             "type": "string",
+            "description": "Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher."
+          },
+          "voucher": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique voucher ID assigned by Voucherify.",
+                "example": "v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno"
+              },
+              "code": {
+                "type": "string",
+                "description": "Unique voucher code."
+              },
+              "campaign": {
+                "type": "string",
+                "description": "Voucher's parent campaign name."
+              },
+              "campaign_id": {
+                "type": "string",
+                "description": "Unique campaign ID assigned by Voucherify.",
+                "example": "camp_pqZjuhG6Mgtp4GD0zD7b8hA3"
+              }
+            }
+          },
+          "reward": {
+            "type": "object",
+            "description": "Defines the reward being redeemed for the particular loyalty card.",
+            "properties": {
+              "customer": {
+                "type": "object",
+                "description": "Defines the customer redeeming the reward.",
+                "properties": {
+              "id": {
+                "type": "string",
+                "description": "The unique ID of a customer that is assigned by Voucherify.",
+                "example": "cust_eWgXlBBiY6THFRJwX45Iakv4"
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's first and last name."
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email address."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant’s customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service."
+              },
+              "metadata": {
+                "type": "object",
+                "description": "The metadata object stores all custom attributes assigned to the customer. A set of key/value pairs that you can attach to a customer object. It can be useful for storing additional information about the customer in a structured format."
+              },
+              "object": {
+                "type": "string",
+                "description": "Type of object represented is `customer`.",
+                "default": "customer"
+              }
+            }
+              },
+              "assignment_id": {
+                "type": "string",
+                "example": "rewa_YAIuU7AY6LNJVlUbRxSbNgiD",
+                "description": "Unique reward assginment ID assigned by Voucherify."
+              },
+              "id": {
+                "type": "string",
+                "example": "rew_INt3fGH3n7xIr3ZQcq4kkUZ1",
+                "description": "Unique reward ID assigned by Voucherify."
+              },
+              "object": {
+                "type": "string",
+                "default": "reward",
+                "description": "Type of object represented is `reward`."
+              },
+              "name": {
+                "type": "string",
+                "description": "Reward name."
+              },
+              "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-03T12:24:58.008Z",
+            "description": "Timestamp in ISO 8601 format indicating when the reward was created."
+          },
+            "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-03T12:24:58.008Z",
+            "description": "Timestamp in ISO 8601 format indicating when the reward was updated."
+          }
+          },
+          "loyalty_card": {
+            "type": "object",
+            "description": "Stores the number of points being subtracted from the loyalty card for the reward redemption.",
+            "properties": {
+              "points": {
+                "type": "integer",
+                "description": "Number of points being subtracted from the loyalty card for the reward redemption."
+              }
+            }
+          }
+        }
+        }
+      },
+      "7_obj_redemption_object_voucher_fail": {
+        "type": "object",
+        "title": "Failed Voucher Redemption",
+        "description": "This is an object representing a failed redemption for a voucher.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "rf_0bbaccc96e0830ff9e",
+            "description": "Unique failed faileeredemption ID."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by the JSON. This object stores information about the redemption.",
+            "default": "redemption"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-03T12:24:58.008Z",
+            "description": "Timestamp in ISO 8601 format indicating when the redemption occured."
+          },
+          "customer_id": {
+            "type": "string",
+            "example": "cust_i8t5Tt6eiKG5K79KQlJ0Vs64",
+            "description": "Unique customer ID of the redeeming customer."
+          },
+          "tracking_id": {
+            "type": "string",
+            "example": "track_fxEMFiLowFHg==",
+            "description": "Hashed customer source ID."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redemption."
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "FAILURE"
+            ],
+            "description": "Redemption result."
+          },
+          "failure_code": {
+            "type": "string",
+            "example": "customer_rules_violated",
+            "description": "If the result is `FAILURE`, this parameter will provide a generic reason as to why the redemption failed."
+          },
+          "failure_message": {
+            "type": "string",
+            "description": "If the result is `FAILURE`, this parameter will provide a more expanded reason as to why the redemption failed."
+          },
+          "order": {
+            "type": "null"
+          },
+          "channel": {
+            "type": "object",
+            "properties": {
+              "channel_id": {
+                "type": "string",
+                "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
+                "description": "Unique channel ID of the user performing the redemption. This is either a user ID from a user using the Voucherify Dashboard or an X-APP-Id of a user using the API."
+              },
+              "channel_type": {
+                "type": "string",
+                "description": "The source of the channel for the redemption. A `USER` corresponds to the Voucherify Dashboard and an `API` corresponds to the API.",
+                "enum": [
+                  "USER",
+                  "API"
+                ]
+              }
+            }
+          },
+          "customer": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The unique ID of a customer that is assigned by Voucherify.",
+                "example": "cust_eWgXlBBiY6THFRJwX45Iakv4"
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's first and last name."
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email address."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant’s customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service."
+              },
+              "metadata": {
+                "type": "object",
+                "description": "The metadata object stores all custom attributes assigned to the customer. A set of key/value pairs that you can attach to a customer object. It can be useful for storing additional information about the customer in a structured format."
+              },
+              "object": {
+                "type": "string",
+                "description": "Type of object represented is `customer`.",
+                "default": "customer"
+              }
+            }
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "Defines the related object.\n\n| **Related Object** | **Definition** |\n| :--- | :--- |\n| voucher | Either a discount voucher, gift card, or loyalty card. |\n",
+            "enum": [
+              "voucher"
+            ]
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "Unique related object ID assigned by Voucherify.",
             "example": "v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno"
           },
           "voucher": {
@@ -16042,19 +16213,253 @@
             "properties": {
               "id": {
                 "type": "string",
+                "description": "Unique voucher ID assigned by Voucherify.",
                 "example": "v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno"
               },
               "code": {
-                "type": "string"
+                "type": "string",
+                "description": "Unique voucher code."
               },
               "campaign": {
-                "type": "string"
+                "type": "string",
+                "description": "Voucher's parent campaign name."
               },
               "campaign_id": {
                 "type": "string",
+                "description": "Unique campaign ID assigned by Voucherify.",
                 "example": "camp_pqZjuhG6Mgtp4GD0zD7b8hA3"
               }
             }
+          }
+        }
+      },
+      "7_obj_redemption_object_promotion_tier_fail": {
+        "type": "object",
+        "title": "Failed Promotion Tier Redemption",
+        "description": "This is an object representing a failed redemption for a promotion tier.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "rf_0bbaccc96e0830ff9e",
+            "description": "Unique failed redemption ID."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by the JSON. This object stores information about the redemption.",
+            "default": "redemption"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-03T12:24:58.008Z",
+            "description": "Timestamp in ISO 8601 format indicating when the redemption occured."
+          },
+          "customer_id": {
+            "type": "string",
+            "example": "cust_i8t5Tt6eiKG5K79KQlJ0Vs64",
+            "description": "Unique customer ID of the redeeming customer."
+          },
+          "tracking_id": {
+            "type": "string",
+            "example": "track_fxEMFiLowFHg==",
+            "description": "Hashed customer source ID."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redemption."
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "FAILURE"
+            ],
+            "description": "Redemption result."
+          },
+          "failure_code": {
+            "type": "string",
+            "example": "customer_rules_violated",
+            "description": "If the result is `FAILURE`, this parameter will provide a generic reason as to why the redemption failed."
+          },
+          "failure_message": {
+            "type": "string",
+            "description": "If the result is `FAILURE`, this parameter will provide a more expanded reason as to why the redemption failed."
+          },
+          "order": {
+            "type": "null"
+          },
+          "channel": {
+            "type": "object",
+            "properties": {
+              "channel_id": {
+                "type": "string",
+                "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
+                "description": "Unique channel ID of the user performing the redemption. This is either a user ID from a user using the Voucherify Dashboard or an X-APP-Id of a user using the API."
+              },
+              "channel_type": {
+                "type": "string",
+                "description": "The source of the channel for the redemption. A `USER` corresponds to the Voucherify Dashboard and an `API` corresponds to the API.",
+                "enum": [
+                  "USER",
+                  "API"
+                ]
+              }
+            }
+          },
+          "customer": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The unique ID of a customer that is assigned by Voucherify.",
+                "example": "cust_eWgXlBBiY6THFRJwX45Iakv4"
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's first and last name."
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email address."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant’s customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service."
+              },
+              "metadata": {
+                "type": "object",
+                "description": "The metadata object stores all custom attributes assigned to the customer. A set of key/value pairs that you can attach to a customer object. It can be useful for storing additional information about the customer in a structured format."
+              },
+              "object": {
+                "type": "string",
+                "description": "Type of object represented is `customer`.",
+                "default": "customer"
+              }
+            }
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "Defines the related object.\n\n| **Related Object** | **Definition** |\n| :--- | :--- |\n| promotion_tier | Promotion tier. |\n",
+            "enum": [
+              "promotion_tier"
+            ]
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "Unique related object ID assigned by Voucherify.",
+            "example": "promo_NzjTc3ZXTe7md5SziK3uYtei"
+          },
+          "promotion_tier": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique promotion tier ID assigned by Voucherify.",
+                "example": "promo_NzjTc3ZXTe7md5SziK3uYtei"
+              },
+              "campaign": {
+                "type": "object",
+                "description": "Promotion tier's parent campaign name.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "camp_VEL7UX0jZjrvLx3hfNZBVzpq",
+                    "description": "Unique ID of the promotion tier's parent campaign assigned by Voucherify."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "7_obj_redemption_object_fail": {
+        "type": "object",
+        "title": "Failed Redemption",
+        "description": "This is an object representing a failed redemption when a resource to be redeemed cannot be found.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "rf_0c4c7baf58c243af6b",
+            "description": "Unique failed redemption ID."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by the JSON. This object stores information about the redemption.",
+            "default": "redemption"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-03T12:24:58.008Z",
+            "description": "Timestamp in ISO 8601 format indicating when the redemption occured."
+          },
+          "customer_id": {
+            "type": "null",
+            "description": "Unique customer ID of the redeeming customer."
+          },
+          "tracking_id": {
+            "type": "null",
+            "description": "Hashed customer source ID."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redemption."
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "FAILURE"
+            ],
+            "description": "Redemption result."
+          },
+          "failure_code": {
+            "type": "string",
+            "example": "not_found",
+            "description": "If the result is `FAILURE`, this parameter will provide a generic reason as to why the redemption failed."
+          },
+          "failure_message": {
+            "type": "string",
+            "description": "If the result is `FAILURE`, this parameter will provide a more expanded reason as to why the redemption failed."
+          },
+          "order": {
+            "type": "null"
+          },
+          "channel": {
+            "type": "object",
+            "properties": {
+              "channel_id": {
+                "type": "string",
+                "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
+                "description": "Unique channel ID of the user performing the redemption. This is either a user ID from a user using the Voucherify Dashboard or an X-APP-Id of a user using the API."
+              },
+              "channel_type": {
+                "type": "string",
+                "description": "The source of the channel for the redemption. A `USER` corresponds to the Voucherify Dashboard and an `API` corresponds to the API.",
+                "enum": [
+                  "USER",
+                  "API"
+                ]
+              }
+            }
+          },
+          "customer": {
+            "type": "null"
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "Defines the related object.\n\n| **Related Object** | **Definition** |\n| :--- | :--- |\n| redemption | Related redemption. |\n",
+            "enum": [
+              "redemption"
+            ]
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "Unique related object ID assigned by Voucherify.",
+            "example": "rf_0c5bde8dfc0156f0e3"
+          },
+          "voucher": {
+            "type": "null"
           }
         }
       },
@@ -16134,7 +16539,7 @@
             }
           }
         },
-        "title": "Redemption Object for Gift Card",
+        "title": "Gift Card",
         "description": "This is an object representing a redemption.  \n\nRedemption is the key operation in the voucher and promotion tier lifecycle. A customer can redeem a voucher or promotion tier once or multiple times depending on selected limit (`quantity`). Each redemption is recorded in voucher/promotion's history (`redemption_entries`). There is also an option to cancel a redemption. We call such operation a <!-- [redemption rollback](OpenAPI.json/paths/~1redemptions~1{redemptionId}~1rollback/post) -->[redemption rollback](ref:rollback-redemption).",
         "properties": {
           "id": {
@@ -16452,7 +16857,7 @@
             }
           }
         },
-        "title": "Redemption Object for Promotion Tier",
+        "title": "Promotion Tier",
         "description": "This is an object representing a redemption.  \n\nRedemption is the key operation in the voucher and promotion tier lifecycle. A customer can redeem a voucher or promotion tier once or multiple times depending on selected limit (`quantity`). Each redemption is recorded in voucher/promotion's history (`redemption_entries`). There is also an option to cancel a redemption. We call such operation a <!-- [redemption rollback](OpenAPI.json/paths/~1redemptions~1{redemptionId}~1rollback/post) -->[redemption rollback](ref:rollback-redemption).",
         "properties": {
           "id": {
@@ -16770,7 +17175,7 @@
             }
           }
         },
-        "title": "Redemption Object for Stackable Discounts",
+        "title": "Stackable Discounts",
         "description": "This is an object representing a redemption.  \n\nRedemption is the key operation in the voucher and promotion tier lifecycle. A customer can redeem a voucher or promotion tier once or multiple times depending on selected limit (`quantity`). Each redemption is recorded in voucher/promotion's history (`redemption_entries`). There is also an option to cancel a redemption. We call such operation a <!-- [redemption rollback](OpenAPI.json/paths/~1redemptions~1{redemptionId}~1rollback/post) -->[redemption rollback](ref:rollback-redemption).",
         "properties": {
           "id": {
@@ -51825,158 +52230,158 @@
           {
             "$ref": "#/components/parameters/created_at"
           },
-      {
-        "name": "filters",
-        "in": "query",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "voucher_code": {
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
               "type": "object",
-              "description": "Unique voucher code.",
-              "style": "deepObject",
-              "explode": true,
               "properties": {
-              "conditions": {
-                "$ref": "#/components/schemas/7_filter_conditions_string"
-              },
-              "junction": {
-                "$ref": "#/components/schemas/16_filter_junction"
+                "voucher_code": {
+                  "type": "object",
+                  "description": "Unique voucher code.",
+                  "style": "deepObject",
+                  "explode": true,
+                  "properties": {
+                    "conditions": {
+                      "$ref": "#/components/schemas/7_filter_conditions_string"
+                    },
+                    "junction": {
+                      "$ref": "#/components/schemas/16_filter_junction"
+                    }
+                  }
+                },
+                "related_object_id": {
+                  "type": "object",
+                  "description": "Unique related object ID, i.e. v_hS8JFl8S6lNcd1L69wLIoXgTio7eWEgk.",
+                  "style": "deepObject",
+                  "explode": true,
+                  "properties": {
+                    "conditions": {
+                      "$ref": "#/components/schemas/7_filter_conditions_string"
+                    },
+                    "junction": {
+                      "$ref": "#/components/schemas/16_filter_junction"
+                    }
+                  }
+                },
+                "related_object_parent_id": {
+                  "type": "object",
+                  "description": "Unique related object parent ID, i.e. camp_22noMlhTADb7Fq2UL3vWu3d1.",
+                  "style": "deepObject",
+                  "explode": true,
+                  "properties": {
+                    "conditions": {
+                      "$ref": "#/components/schemas/7_filter_conditions_string"
+                    },
+                    "junction": {
+                      "$ref": "#/components/schemas/16_filter_junction"
+                    }
+                  }
+                },
+                "parent_redemption_id": {
+                  "type": "object",
+                  "description": "Unique parent redemption ID, i.e. r_0c5952900bcbfd54b6.",
+                  "style": "deepObject",
+                  "explode": true,
+                  "properties": {
+                    "conditions": {
+                      "$ref": "#/components/schemas/7_filter_conditions_string"
+                    },
+                    "junction": {
+                      "$ref": "#/components/schemas/16_filter_junction"
+                    }
+                  }
+                },
+                "failure_code": {
+                  "type": "object",
+                  "description": "Failure code, i.e. quantity_exceeded.",
+                  "style": "deepObject",
+                  "explode": true,
+                  "properties": {
+                    "conditions": {
+                      "$ref": "#/components/schemas/7_filter_conditions_string"
+                    },
+                    "junction": {
+                      "$ref": "#/components/schemas/16_filter_junction"
+                    }
+                  }
+                },
+                "result": {
+                  "type": "object",
+                  "description": "Result, i.e. `SUCCESS` or `FAILURE`.",
+                  "style": "deepObject",
+                  "explode": true,
+                  "properties": {
+                    "conditions": {
+                      "$ref": "#/components/schemas/7_filter_conditions_string"
+                    },
+                    "junction": {
+                      "$ref": "#/components/schemas/16_filter_junction"
+                    }
+                  }
+                },
+                "object": {
+                  "type": "object",
+                  "description": "Specify which type of object to return, i.e. `redemption` or `redemption_rollback`.",
+                  "style": "deepObject",
+                  "explode": true,
+                  "properties": {
+                    "conditions": {
+                      "$ref": "#/components/schemas/7_filter_conditions_string"
+                    },
+                    "junction": {
+                      "$ref": "#/components/schemas/16_filter_junction"
+                    }
+                  }
+                },
+                "customer_id": {
+                  "type": "object",
+                  "description": "Unique customer ID, i.e. cust_sehkNIi8Uq2qQuRqSr7xn4Zi.",
+                  "style": "deepObject",
+                  "explode": true,
+                  "properties": {
+                    "conditions": {
+                      "$ref": "#/components/schemas/7_filter_conditions_string"
+                    },
+                    "junction": {
+                      "$ref": "#/components/schemas/16_filter_junction"
+                    }
+                  }
+                },
+                "campaign_name": {
+                  "type": "object",
+                  "description": "Campaign name.",
+                  "style": "deepObject",
+                  "explode": true,
+                  "properties": {
+                    "conditions": {
+                      "$ref": "#/components/schemas/7_filter_conditions_string"
+                    },
+                    "junction": {
+                      "$ref": "#/components/schemas/16_filter_junction"
+                    }
+                  }
+                },
+                "user_login": {
+                  "type": "object",
+                  "description": "User login used to login to Voucherify, i.e. name.lastname@email.com",
+                  "style": "deepObject",
+                  "explode": true,
+                  "properties": {
+                    "conditions": {
+                      "$ref": "#/components/schemas/7_filter_conditions_string"
+                    },
+                    "junction": {
+                      "$ref": "#/components/schemas/16_filter_junction"
+                    }
+                  }
+                }
               }
-            }
             },
-            "related_object_id": {
-              "type": "object",
-              "description": "Unique related object ID, i.e. v_hS8JFl8S6lNcd1L69wLIoXgTio7eWEgk.",
-              "style": "deepObject",
-              "explode": true,
-              "properties": {
-              "conditions": {
-                "$ref": "#/components/schemas/7_filter_conditions_string"
-              },
-              "junction": {
-                "$ref": "#/components/schemas/16_filter_junction"
-              }
-            }            
-              },
-            "related_object_parent_id": {
-              "type": "object",
-              "description": "Unique related object parent ID, i.e. camp_22noMlhTADb7Fq2UL3vWu3d1.",
-              "style": "deepObject",
-              "explode": true,
-              "properties": {
-              "conditions": {
-                "$ref": "#/components/schemas/7_filter_conditions_string"
-              },
-              "junction": {
-                "$ref": "#/components/schemas/16_filter_junction"
-              }
-            }            
-              },
-            "parent_redemption_id": {
-              "type": "object",
-              "description": "Unique parent redemption ID, i.e. r_0c5952900bcbfd54b6.",
-              "style": "deepObject",
-              "explode": true,
-              "properties": {
-              "conditions": {
-                "$ref": "#/components/schemas/7_filter_conditions_string"
-              },
-              "junction": {
-                "$ref": "#/components/schemas/16_filter_junction"
-              }
-            }            
-              },
-            "failure_code": {
-              "type": "object",
-              "description": "Failure code, i.e. quantity_exceeded.",
-              "style": "deepObject",
-              "explode": true,
-              "properties": {
-              "conditions": {
-                "$ref": "#/components/schemas/7_filter_conditions_string"
-              },
-              "junction": {
-                "$ref": "#/components/schemas/16_filter_junction"
-              }
-            }            
-              },
-            "result": {
-              "type": "object",
-              "description": "Result, i.e. `SUCCESS` or `FAILURE`.",
-              "style": "deepObject",
-              "explode": true,
-              "properties": {
-              "conditions": {
-                "$ref": "#/components/schemas/7_filter_conditions_string"
-              },
-              "junction": {
-                "$ref": "#/components/schemas/16_filter_junction"
-              }
-            }         
-              },
-            "object": {
-              "type": "object",
-              "description": "Object.",
-              "style": "deepObject",
-              "explode": true,
-              "properties": {
-              "conditions": {
-                "$ref": "#/components/schemas/7_filter_conditions_string"
-              },
-              "junction": {
-                "$ref": "#/components/schemas/16_filter_junction"
-              }
-            }            
-              },
-            "customer_id": {
-              "type": "object",
-              "description": "Unique customer ID, i.e. cust_sehkNIi8Uq2qQuRqSr7xn4Zi.",
-              "style": "deepObject",
-              "explode": true,
-              "properties": {
-              "conditions": {
-                "$ref": "#/components/schemas/7_filter_conditions_string"
-              },
-              "junction": {
-                "$ref": "#/components/schemas/16_filter_junction"
-              }
-            }            
-              },
-            "campaign_name": {
-              "type": "object",
-              "description": "Campaign name.",
-              "style": "deepObject",
-              "explode": true,
-              "properties": {
-              "conditions": {
-                "$ref": "#/components/schemas/7_filter_conditions_string"
-              },
-              "junction": {
-                "$ref": "#/components/schemas/16_filter_junction"
-              }
-            }          
-              },
-            "user_login": {
-              "type": "object",
-              "description": "User login used to login to Voucherify, i.e. name.lastname@email.com",
-              "style": "deepObject",
-              "explode": true,
-              "properties": {
-              "conditions": {
-                "$ref": "#/components/schemas/7_filter_conditions_string"
-              },
-              "junction": {
-                "$ref": "#/components/schemas/16_filter_junction"
-              }
-            }            
-              }       
-              }
-        },
-        "description": "Filters for listing responses.",
-        "style": "deepObject",
-        "explode": true
-      }
+            "description": "Filters for listing responses.",
+            "style": "deepObject",
+            "explode": true
+          }
         ],
         "tags": [
           "REDEMPTIONS API"
@@ -68773,4 +69178,9 @@
       }
     }
   }
-} 
+}   }
+        ]
+      }
+    }
+  }
+}
