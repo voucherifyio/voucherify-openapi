@@ -19800,6 +19800,128 @@
           }
         }
       },
+      "7_obj_redemption_object_promotion_tier_extended": {
+        "type": "object",
+        "title": "Promotion Tier",
+        "description": "This is an object representing a promotion tier redemption.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "r_0bc92f81a6801f9bca",
+            "description": "Unique redemption ID."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by the JSON. This object stores information about the `redemption`.",
+            "default": "redemption"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-03T12:24:58.008Z",
+            "description": "Timestamp in ISO 8601 format indicating when the redemption occured."
+          },
+          "customer_id": {
+            "type": "string",
+            "example": "cust_i8t5Tt6eiKG5K79KQlJ0Vs64",
+            "description": "Unique customer ID of the redeeming customer."
+          },
+          "tracking_id": {
+            "type": "string",
+            "example": "track_fxEMFiLowFHg==",
+            "description": "Hashed customer source ID."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redemption."
+          },
+          "redemption": {
+            "type": "string",
+            "description": "Unique redemption ID of the parent redemption if this particular redemption was issued through a stacked redemption."
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "FAILURE"
+            ],
+            "description": "Redemption result."
+          },
+          "order": {
+            "description": "Defines the details of the order that is related to the redemption.",
+            "$ref": "#/components/schemas/7_obj_order_object"
+          },
+          "channel": {
+            "type": "object",
+            "description": "Defines the details of the channel through which the redemption was issued.",
+            "properties": {
+              "channel_id": {
+                "type": "string",
+                "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
+                "description": "Unique channel ID of the user performing the redemption. This is either a user ID from a user using the Voucherify Dashboard or an X-APP-Id of a user using the API."
+              },
+              "channel_type": {
+                "type": "string",
+                "description": "The source of the channel for the redemption. A `USER` corresponds to the Voucherify Dashboard and an `API` corresponds to the API.",
+                "enum": [
+                  "USER",
+                  "API"
+                ]
+              }
+            }
+          },
+          "customer": {
+            "type": "object",
+            "description": "Defines the customer that is related to the redemption.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The unique ID of a customer that is assigned by Voucherify.",
+                "example": "cust_eWgXlBBiY6THFRJwX45Iakv4"
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's first and last name."
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email address."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant’s customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service."
+              },
+              "metadata": {
+                "type": "object",
+                "description": "The metadata object stores all custom attributes assigned to the customer. A set of key/value pairs that you can attach to a customer object. It can be useful for storing additional information about the customer in a structured format."
+              },
+              "object": {
+                "type": "string",
+                "description": "Type of object represented is `customer`.",
+                "default": "customer"
+              }
+            }
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "Defines the related object.",
+            "enum": [
+              "promotion_tier"
+            ]
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "Unique related object ID assigned by Voucherify, i.e. promo_NzjTc3ZXTe7md5SziK3uYtei for a promotion tier."
+          },
+          "voucher": {
+            "type": "null"
+          },
+          "promotion_tier": {
+            "description": "Contains details of the promotion tier and the parent campaign.",
+            "$ref": "#/components/schemas/3_obj_promotion_tier_object"
+          }
+        }
+      },
       "7_obj_redemption_object_stackable_discounts": {
         "type": "object",
         "title": "Stacked Redemption",
@@ -20097,6 +20219,45 @@
         "x-tags": [
           "REDEMPTIONS API"
         ]
+      },
+      "7_req_redeem_promotion_tier": {
+        "title": "Redeem Promotion Tier",
+        "type": "object",
+        "description": "Redeem a promotion tier.",
+        "properties": {
+          "customer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_req_validate_voucher_customer_id"
+              },
+              {
+                "$ref": "#/components/schemas/6_req_validate_voucher_customer_source_id"
+              },
+              {
+                "$ref": "#/components/schemas/9_req_create_customer"
+              }
+            ],
+            "description": "Customer's information."
+          },
+          "order": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_req_validate_voucher_order_id"
+              },
+              {
+                "$ref": "#/components/schemas/6_req_validate_voucher_order_source_id"
+              },
+              {
+                "$ref": "#/components/schemas/10_req_create_order"
+              }
+            ],
+            "description": "Order information."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of key/value pairs that you can send in the request body to check against promotion tiers requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Advanced_ &rarr; _Redemption metadata satisfy_ or _Basic Builder_ &rarr; _Attributes match_ &rarr; _REDEMPTION METADATA_. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule)."
+          }
+        }
       },
       "7_req_redeem_voucher_discount_code": {
         "title": "Discount Code",
@@ -30899,7 +31060,7 @@
               },
               "related_object_parent_id": {
                 "type": "string",
-                "description": "Represent's the campaign ID of the voucher if the redemption was based on a voucher that was part of bulk codes generated within a campaign."
+                "description": "Represent's the campaign ID of the voucher if the redemption was based on a voucher that was part of bulk codes generated within a campaign. In case of a promotion tier, this represents the campaign ID of the promotion tier's parent campaign."
               }
             }
           }
@@ -58473,7 +58634,185 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/7_res_redeem_promotion"
+                  "$ref": "#/components/schemas/7_obj_redemption_object_promotion_tier_extended"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "r_0c64c10b8ece60bd91",
+                      "object": "redemption",
+                      "date": "2023-02-01T08:25:22.235Z",
+                      "customer_id": "cust_SolpIN5N4oZbCnrxZ5NHrbVB",
+                      "tracking_id": "track_VAVW6qltuo1/z+G2GI2LPw==",
+                      "metadata": null,
+                      "result": "SUCCESS",
+                      "order": {
+                          "id": "ord_7n58dbLV2jMG4C14XjEYEbjh",
+                          "source_id": null,
+                          "created_at": "2023-02-01T08:25:22.192Z",
+                          "updated_at": null,
+                          "status": "PAID",
+                          "amount": 200000,
+                          "discount_amount": 80000,
+                          "total_discount_amount": 80000,
+                          "total_amount": 120000,
+                          "applied_discount_amount": 80000,
+                          "total_applied_discount_amount": 80000,
+                          "items": [
+                              {
+                                  "object": "order_item",
+                                  "source_id": "apple534",
+                                  "related_object": "product",
+                                  "product_id": "prod_anJ03RZZq74z4v",
+                                  "quantity": 2,
+                                  "amount": 100000,
+                                  "price": 50000,
+                                  "subtotal_amount": 100000,
+                                  "product": {
+                                      "id": "prod_0c5d6689b39320059b",
+                                      "source_id": "prod_anJ03RZZq74z4v",
+                                      "name": "Apple iPhone 8",
+                                      "metadata": {
+                                          "shop": "citycenter",
+                                          "category": "electronics"
+                                      }
+                                  },
+                                  "metadata": {
+                                      "series": "2022-783CV"
+                                  }
+                              },
+                              {
+                                  "object": "order_item",
+                                  "source_id": "apple534-ihd5",
+                                  "related_object": "sku",
+                                  "sku_id": "sku_0KtP4rvwEECQ2U",
+                                  "quantity": 1,
+                                  "amount": 100000,
+                                  "price": 100000,
+                                  "subtotal_amount": 100000,
+                                  "sku": {
+                                      "sku": "Apple iPad 10 Silver 64GB",
+                                      "metadata": {
+                                          "category": "electronics"
+                                      }
+                                  }
+                              }
+                          ],
+                          "metadata": {},
+                          "customer": {
+                              "id": "cust_SolpIN5N4oZbCnrxZ5NHrbVB",
+                              "object": "customer"
+                          },
+                          "customer_id": "cust_SolpIN5N4oZbCnrxZ5NHrbVB",
+                          "referrer_id": null,
+                          "object": "order",
+                          "redemptions": {
+                              "r_0c64c10b8ece60bd91": {
+                                  "date": "2023-02-01T08:25:22.235Z",
+                                  "related_object_type": "promotion_tier",
+                                  "related_object_id": "promo_DE1N30D731Tg2F6NoMwNas2W",
+                                  "related_object_parent_id": "camp_w7BUstntAm8jbIDjfM49volj"
+                              }
+                          }
+                      },
+                      "customer": {
+                          "id": "cust_SolpIN5N4oZbCnrxZ5NHrbVB",
+                          "name": "Annie Lemon",
+                          "email": "annie@lemon.com",
+                          "source_id": "annie@lemon.com",
+                          "metadata": {
+                              "age": 2
+                          },
+                          "object": "customer"
+                      },
+                      "related_object_type": "promotion_tier",
+                      "related_object_id": "promo_DE1N30D731Tg2F6NoMwNas2W",
+                      "voucher": null,
+                      "promotion_tier": {
+                          "id": "promo_DE1N30D731Tg2F6NoMwNas2W",
+                          "created_at": "2022-09-23T08:31:23.022Z",
+                          "updated_at": "2023-02-01T07:47:57.324Z",
+                          "name": "Percent Discount",
+                          "banner": "Get 40% off",
+                          "action": {
+                              "discount": {
+                                  "type": "PERCENT",
+                                  "percent_off": 40,
+                                  "effect": "APPLY_TO_ORDER"
+                              }
+                          },
+                          "metadata": {},
+                          "hierarchy": 2,
+                          "campaign": {
+                              "id": "camp_w7BUstntAm8jbIDjfM49volj",
+                              "start_date": "2019-08-16T00:00:00.000Z",
+                              "expiration_date": null,
+                              "active": true,
+                              "object": "campaign"
+                          },
+                          "campaign_id": null,
+                          "active": true,
+                          "start_date": "2022-09-21T00:00:00.000Z",
+                          "validity_day_of_week": [
+                              1,
+                              2,
+                              3,
+                              4,
+                              5
+                          ],
+                          "summary": {
+                              "redemptions": {
+                                  "total_redeemed": 3
+                              },
+                              "orders": {
+                                  "total_amount": 408000,
+                                  "total_discount_amount": 163200
+                              }
+                          },
+                          "object": "promotion_tier",
+                          "validation_rule_assignments": {
+                              "object": "list",
+                              "data_ref": "data",
+                              "data": [
+                                  {
+                                      "id": "asgm_z6MvMg2Zf2UABNWN",
+                                      "rule_id": "val_q8qUBMOh5qIQ",
+                                      "related_object_id": "promo_DE1N30D731Tg2F6NoMwNas2W",
+                                      "related_object_type": "promotion_tier",
+                                      "object": "validation_rules_assignment"
+                                  }
+                              ],
+                              "total": 1
+                          }
+                      }
+                  }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the promotion tier is inactive.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_error_expanded"
+                },
+                "examples": {
+                  "Inactive Promotion": {
+                    "value": {
+                      "code": 400,
+                      "key": "promotion_inactive",
+                      "message": "Inactive Promotion",
+                      "details": "Promotion Tier with id: promo_DE1N30D731Tg2F6NoMwNas2W is disabled.",
+                      "request_id": "v-0c64b722160294496b",
+                      "resource_id": "rf_0c64b7223cce60eec6",
+                      "resource_type": "redemption",
+                      "error": {
+                          "message": "The promotion is inactive."
+                      }
+                  }
+                  }
                 }
               }
             }
@@ -58495,7 +58834,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/7_req_redeem_promotion"
+                "$ref": "#/components/schemas/7_req_redeem_promotion_tier"
               }
             }
           }
