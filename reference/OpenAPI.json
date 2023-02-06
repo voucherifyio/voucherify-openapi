@@ -13776,24 +13776,116 @@
           }
         }
       },
+      "19_req_redeemables_gift_card": {
+        "title": "Gift Card",
+        "type": "object",
+        "description": "Redeem a gift card.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique gift card code."
+          },
+          "object": {
+            "type": "string",
+            "description": "Type of object, i.e. `voucher`.",
+            "default": "voucher"
+          },
+          "gift": {
+            "type": "object",
+            "description": "Contains information on the number of gift card credits that the customer wants to apply to the order.",
+            "properties": {
+              "credits": {
+                "type": "integer",
+                "description": "The number of credits that the user wants to use from the gift card to fulfill the order. The value of credits cannot be higher than the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+              }
+            }
+          }
+        },
+        "required": [
+          "object",
+          "id"
+        ]
+      },
+      "19_req_redeemables_loyalty_card": {
+        "title": "Loyalty Card",
+        "type": "object",
+        "description": "Redeem a loyalty card.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique loyalty card code."
+          },
+          "object": {
+            "type": "string",
+            "description": "Type of object, i.e. `voucher`.",
+            "default": "voucher"
+          },
+          "reward": {
+            "type": "object",
+            "description": "Contains information about the reward that the customer wants to redeem and the number of points the customer is choosing to use for the reward.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique reward ID assigned by Voucherify. The reward must be assigned to the campaign in order for the user to be able to use the reward.",
+                "example": "rew_EPx1hCTpqzF0HW1z9NKckZH4"
+              },
+              "points": {
+                "type": "integer",
+                "description": "The number of loyalty points that the user wants to spend in order to fulfill the order using a **pay with points** reward. The number of points cannot be higher than the current balance on the loyalty card."
+              }
+            }
+          }
+        },
+        "required": [
+          "object",
+          "id",
+          "reward"
+        ]
+      },
+      "19_req_redeemables_discount_referral_promotion_tier_promotion_stack": {
+        "title": "Discount code, referral code, promotion tier, promotion stack",
+        "type": "object",
+        "description": "Redeem a discount code, referral code, promotion tier, or promotion stack.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "Redeemable object type.",
+            "enum": [
+              "voucher",
+              "promotion_tier",
+              "promotion_stack"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "description": "Redeemable code or unique ID such as:  \n- discount code, referral code: `DiscountCode100`, `v_6ZPI2BLMtpc6zz8pQVjQgxJH3D4ac3ZT`  \n- promotion tier: `promo_Mwy9XpA0TLctSGriM5kum0qp` \n- promotion stack: `stack_KxSD0GahLUg9ULB6TseGfUHJ` "
+          }
+        },
+        "required": [
+          "object",
+          "id"
+        ]
+      },
       "19_req_validations": {
         "title": "Validate Stackable Discounts Request Body",
         "type": "object",
         "description": "This data model represents the request body for the `/validations` endpoint.",
         "properties": {
           "options": {
-            "type": [
-              "object",
-              "null"
-            ],
+            "type": "object",
             "description": "Configure parameters returned in the response.",
             "properties": {
               "expand": {
                 "type": "array",
-                "description": "Expand array lets you configure params included in the response. Depending on the strings included in the array, the response will contain different details.  \n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"order\"] | - Same response as fallback response (without an options object).<br>- Order data with calculated discounts are listed in each child redeemable object.<br>- Metadata not included for each discount type. |\n| [\"redeemable\"] | Expands redeemable objects by including `metadata` for each discount type. |\n| [\"order\", \"redeemable\"] | - Order data with calculated discounts are listed in each child redeemable object.<br>- Includes `metadata` for each discount type. |\n",
+                "description": "Expand array lets you configure params included in the response. Depending on the strings included in the array, the response will contain different details.  \n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"order\"] | - Same response as fallback response (without an options object).<br>- Order data with calculated discounts are listed in each child redeemable object.<br>- Metadata not included for each discount type. |\n| [\"redeemable\"] | Expands redeemable objects by including `metadata` for each discount type. |\n| [\"order\", \"redeemable\"] | - Order data with calculated discounts are listed in each child redeemable object.<br>- Includes `metadata` for each discount type. |\n| [\"category\"] | - Returns an expanded `categories` object, showing details about the category. |",
                 "items": {
                   "type": "string",
-                  "example": "order"
+                  "enum": [
+                    "order",
+                    "redemption",
+                    "redeemable",
+                    "category"
+                  ]
                 }
               }
             }
@@ -13804,25 +13896,16 @@
             "maxItems": 5,
             "description": "An array of redeemables. You can combine `voucher`(s) and `promotion_tier`(s). Alternatively, send one unique`promotion_stack` in the array.",
             "items": {
-              "type": "object",
-              "properties": {
-                "object": {
-                  "type": "string",
-                  "description": "Redeemable object type.",
-                  "enum": [
-                    "voucher",
-                    "promotion_tier",
-                    "promotion_stack"
-                  ]
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/19_req_redeemables_discount_referral_promotion_tier_promotion_stack"
                 },
-                "id": {
-                  "type": "string",
-                  "description": "Redeemable code or unique ID such as:  \n- discount code, loyalty card, gift card, referral code: `DiscountCode100`, `v_6ZPI2BLMtpc6zz8pQVjQgxJH3D4ac3ZT`  \n- promotion tier: `promo_Mwy9XpA0TLctSGriM5kum0qp` \n- promotion stack: `stack_KxSD0GahLUg9ULB6TseGfUHJ` "
+                {
+                  "$ref": "#/components/schemas/19_req_redeemables_gift_card"
+                },
+                {
+                  "$ref": "#/components/schemas/19_req_redeemables_loyalty_card"
                 }
-              },
-              "required": [
-                "object",
-                "id"
               ]
             }
           },
@@ -13858,9 +13941,7 @@
             "description": "Order information. This object enables you to pass purchase transaction data. Read what properties you can use in the <!-- [Order object reference](OpenAPI.json/components/schemas/10_obj_order_object) -->[Order object](ref:get-order)."
           },
           "metadata": {
-            "type": [
-              "object"
-            ],
+            "type": "object",
             "description": "A set of key/value pairs that you can attach to a redemption object. It can be useful for storing additional information about the redemption in a structured format."
           }
         },
@@ -59942,7 +60023,7 @@
             "$ref": "#/components/parameters/origin"
           }
         ],
-        "description": "Use this method to redeem up to 5 redeemables in a single API request.\n\n## How API returns calculated discounts and order amounts in the response\n\nIn the table below, you can see the logic the API follows to calculate discounts and amounts:\n\n| **Field** | **Calculation** | **Description** |\n|:---|:---|:---|\n| amount | N/A | This field shows the order amount before applying any discount |\n| total_amount | `total_amount` = `amount` - `total_discount_amount` | This field shows the order amount after applying all the discounts |\n| discount_amount | `discount_amount` = `previous_discount_amount` + `applied_discount_amount` | This field sums up all order-level discounts up to and including the specific discount being calculated for the stacked redemption. |\n| items_discount_amount | sum(items, i => i.discount_amount) | This field sums up all product-specific discounts |\n| total_discount_amount | `total_discount_amount` = `discount_amount` + `items_discount_amount` | This field sums up all order-level and all product-specific discounts |\n| applied_discount_amount | N/A | This field shows the order-level discount applied in a particular request |\n| items_applied_discount_amount | sum(items, i => i.applied_discount_amount) | This field sums up all product-specific discounts applied in a particular request |\n| total_applied_discount_amount | `total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount` | This field sums up all order-level and all product-specific discounts applied in a particular request |\n\n<!-- theme: info -->\n> 📘 Rollbacks\n>\n> You can't roll back a child redemption. When you call rollback on a stacked redemption, all child redemptions will be rolled back. You need to refer to a parent redemption ID in your <!-- [rollback request](OpenAPI.json/paths/~1redemptions~1{parentRedemptionId}~1rollbacks/post) -->[rollback request](ref:rollback-stacked-redemptions).",
+        "description": "Use this method to redeem up to 5 redeemables in a single API request. This method is accessible through public keys which you can use in client side requests coming from mobile and web browser applications.\n\n## How API returns calculated discounts and order amounts in the response\n\nIn the table below, you can see the logic the API follows to calculate discounts and amounts:\n\n| **Field** | **Calculation** | **Description** |\n|:---|:---|:---|\n| amount | N/A | This field shows the order amount before applying any discount |\n| total_amount | `total_amount` = `amount` - `total_discount_amount` | This field shows the order amount after applying all the discounts |\n| discount_amount | `discount_amount` = `previous_discount_amount` + `applied_discount_amount` | This field sums up all order-level discounts up to and including the specific discount being calculated for the stacked redemption. |\n| items_discount_amount | sum(items, i => i.discount_amount) | This field sums up all product-specific discounts |\n| total_discount_amount | `total_discount_amount` = `discount_amount` + `items_discount_amount` | This field sums up all order-level and all product-specific discounts |\n| applied_discount_amount | N/A | This field shows the order-level discount applied in a particular request |\n| items_applied_discount_amount | sum(items, i => i.applied_discount_amount) | This field sums up all product-specific discounts applied in a particular request |\n| total_applied_discount_amount | `total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount` | This field sums up all order-level and all product-specific discounts applied in a particular request |\n\n<!-- theme: info -->\n> 📘 Rollbacks\n>\n> You can't roll back a child redemption. When you call rollback on a stacked redemption, all child redemptions will be rolled back. You need to refer to a parent redemption ID in your <!-- [rollback request](OpenAPI.json/paths/~1redemptions~1{parentRedemptionId}~1rollbacks/post) -->[rollback request](ref:rollback-stacked-redemptions).",
         "requestBody": {
           "content": {
             "application/json": {
@@ -60093,7 +60174,7 @@
         "tags": [
           "STACKABLE DISCOUNTS API"
         ],
-        "description": "Verify redeemables provided in the request. This method is designed for client-side validation which means that is accessible through public keys.",
+        "description": "Verify redeemables provided in the request. This method is accessible through public keys which you can use in client side requests coming from mobile and web browser applications.",
         "requestBody": {
           "content": {
             "application/json": {
