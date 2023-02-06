@@ -28132,16 +28132,182 @@
               }
             }
           },
+          "order": {
+            "$ref": "#/components/schemas/8_req_order_object_redeem_reward",
+            "description": "Order object that is **required** when redeeming a pay with points reward."
+          },
           "metadata": {
             "type": "object",
             "description": "A set of key/value pairs that you can send in the request body to check against vouchers requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Advanced_ &rarr; _Redemption metadata satisfy_ or _Basic Builder_ &rarr; _Attributes match_ &rarr; _REDEMPTION METADATA_. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule)."
           }
         }
       },
+      "8_req_order_object_redeem_reward": {
+        "type": "object",
+        "title": "Order object",
+        "description": "Request body schema for creating an order, **required** when redeeming a pay with points reward.",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s order ID if it is different from the Voucherify order ID. It is really useful in case of an integration between multiple systems. It can be an order ID from a CRM system, database or 3rd-party service."
+          },
+          "status": {
+            "type": "string",
+            "description": "The order status.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "CANCELED",
+              "FULLFILLED"
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
+          },
+          "referrer": {
+            "$ref": "#/components/schemas/10_req_orders_referrer_object"
+          },
+          "items": {
+            "$ref": "#/components/schemas/10_req_orders_items_array"
+          }
+        }
+      },
       "8_res_redeem_reward": {
         "description": "Response body schema for redeeming a reward.",
+        "title": "Redeem Reward Response Body",
+        "$ref": "#/components/schemas/8_obj_redemption_object_loyalty_card_extended"
+      },
+      "8_obj_redemption_object_loyalty_card_extended": {
         "type": "object",
-        "title": "Redeem Reward Response Body"
+        "title": "Loyalty Card Voucher",
+        "description": "This is an object representing a redemption.  \n\nRedemption is the key operation in the voucher lifecycle. A customer can redeem a voucher once or multiple times depending on selected limit (`quantity`). Each redemption is recorded in voucher/promotion's history (`redemption_entries`). There is also an option to cancel a redemption. We call such operation a <!-- [redemption rollback](OpenAPI.json/paths/~1redemptions~1{redemptionId}~1rollback/post) -->[redemption rollback](rollback-redemption).",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "r_0bc92f81a6801f9bca",
+            "description": "Unique redemption ID."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by the JSON. This object stores information about the redemption.",
+            "default": "redemption"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-03T12:24:58.008Z",
+            "description": "Timestamp in ISO 8601 format indicating when the redemption occured."
+          },
+          "customer_id": {
+            "type": "string",
+            "example": "cust_i8t5Tt6eiKG5K79KQlJ0Vs64",
+            "description": "Unique customer ID of the redeeming customer."
+          },
+          "tracking_id": {
+            "type": "string",
+            "example": "track_fxEMFiLowFHg==",
+            "description": "Hashed customer source ID."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redemption."
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Number of points being redeemed for a reward."
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "FAILURE"
+            ],
+            "description": "Redemption result."
+          },
+          "order": {
+            "description": "Defines the details of the order that is related to the redemption.",
+            "$ref": "#/components/schemas/7_obj_order_object"
+          },
+          "customer": {
+            "type": "object",
+            "description": "Defines the customer redeeming the reward.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The unique ID of a customer that is assigned by Voucherify.",
+                "example": "cust_eWgXlBBiY6THFRJwX45Iakv4"
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's first and last name."
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email address."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant's customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service."
+              },
+              "metadata": {
+                "type": "object",
+                "description": "The metadata object stores all custom attributes assigned to the customer. A set of key/value pairs that you can attach to a customer object. It can be useful for storing additional information about the customer in a structured format."
+              },
+              "object": {
+                "type": "string",
+                "description": "Type of object represented is `customer`.",
+                "default": "customer"
+              }
+            }
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "Defines the related object. i.e. `voucher`.",
+            "enum": [
+              "voucher"
+            ]
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher."
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/1_obj_voucher_object",
+            "description": "Defines the details of the voucher being redeemed."
+          },
+          "reward": {
+            "description": "Defines the reward being redeemed.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_redemption_object_loyalty_card_pay_with_points"
+              },
+              {
+                "$ref": "#/components/schemas/7_obj_redemption_object_loyalty_card_material_product"
+              },
+              {
+                "$ref": "#/components/schemas/7_obj_redemption_object_loyalty_card_material_sku"
+              },
+              {
+                "$ref": "#/components/schemas/7_obj_redemption_object_loyalty_card_digital"
+              }
+            ]
+          },
+          "loyalty_card": {
+            "type": "object",
+            "description": "Stores the number of points being subtracted from the loyalty card for the reward redemption.",
+            "properties": {
+              "points": {
+                "type": "integer",
+                "description": "Number of points being subtracted from the loyalty card for the reward redemption."
+              }
+            }
+          }
+        }
       },
       "8_res_loyalties_campaign_id_tiers_tier_id_earning_rules": {
         "type": "object",
@@ -66049,11 +66215,1401 @@
         "operationId": "post-loyalties-campaignId-members-memberId-redemption",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Returns a redemption object.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/8_res_redeem_reward"
+                },
+                "examples": {
+                  "Redeem Reward that adds points to a loyalty card": {
+                    "value": {
+                      "id": "r_0c6b3abbfe8e60a9dd",
+                      "object": "redemption",
+                      "date": "2023-02-06T09:07:55.514Z",
+                      "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                      "tracking_id": "track_9B0kB92+bJa8a+PegaWREw==",
+                      "metadata": null,
+                      "amount": 1,
+                      "result": "SUCCESS",
+                      "order": null,
+                      "customer": {
+                        "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "name": "Bob Jones",
+                        "email": "bob.jones@email.com",
+                        "source_id": "36_bob",
+                        "metadata": {
+                          "age": 26,
+                          "favorite_brands": [
+                            "Nike",
+                            "Adidas",
+                            "Reebok"
+                          ],
+                          "accepts_marketing": false,
+                          "acquisition_channel": "Facebook"
+                        },
+                        "object": "customer"
+                      },
+                      "related_object_type": "voucher",
+                      "related_object_id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                      "voucher": {
+                        "id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                        "code": "AnsvocvP",
+                        "campaign": "Loyalty Campaign - Test Points",
+                        "campaign_id": "camp_22noMlhTADb7Fq2UL3vWu3d1",
+                        "category": null,
+                        "category_id": "cat_0bb81a481615a37b5e",
+                        "categories": [],
+                        "type": "LOYALTY_CARD",
+                        "discount": null,
+                        "gift": null,
+                        "loyalty_card": {
+                          "points": 8000,
+                          "balance": 6887
+                        },
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX1/Au841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm+d2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO+qL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2FAu841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm%2Bd2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO%2BqL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w%3D%3D"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX1+xG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA/8H4gu04dxO/hrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY+8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BxG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA%2F8H4gu04dxO%2FhrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY%2B8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw%3D%3D"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-11-10T06:28:59.970Z",
+                        "updated_at": "2023-02-06T09:07:55.515Z",
+                        "holder_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "holder": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "validation_rules_assignments": {
+                          "object": "list",
+                          "data_ref": "data",
+                          "data": [],
+                          "total": 0
+                        },
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 9,
+                          "redeemed_points": 1113,
+                          "object": "list",
+                          "url": "/v1/vouchers/AnsvocvP/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/AnsvocvP/publications?page=1&limit=10"
+                        },
+                        "object": "voucher",
+                        "applicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        },
+                        "inapplicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        }
+                      },
+                      "reward": {
+                        "customer": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "name": "Bob Jones",
+                          "email": "bob.jones@email.com",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "assignment_id": "rewa_BpytIepuSekuXXwb9qkLJfCU",
+                        "voucher": {
+                          "id": "v_pQZDYaH8LzoOvgh3234DqZQjGJgbPov6",
+                          "code": "LOYALTY-CARD-zOR2sV9Q",
+                          "campaign": "Loyalty Program",
+                          "campaign_id": "camp_Hpt5hPTA8kSKRWGxBGw8Y0So",
+                          "category": null,
+                          "category_id": null,
+                          "categories": [],
+                          "type": "LOYALTY_CARD",
+                          "discount": null,
+                          "gift": null,
+                          "loyalty_card": {
+                            "points": 1020,
+                            "balance": 890
+                          },
+                          "start_date": null,
+                          "expiration_date": null,
+                          "validity_timeframe": null,
+                          "validity_day_of_week": null,
+                          "active": true,
+                          "additional_info": null,
+                          "metadata": {},
+                          "assets": {
+                            "qr": {
+                              "id": "U2FsdGVkX1/THRRj1QegAan0r5U+wRoHuFEA6FR7TrvZm8N+8cK7niF/8uAqFdVYTU1JD0/CdoSXlYqiGgz3PAFOGWFSJt8vkM50fcMtMNLsaudU+YrPDeT2HCB7o0Ts7h1FnbD85+0F7lwrbKmkGW6kub0mjCaRdJYS/axIAq4=",
+                              "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2FTHRRj1QegAan0r5U%2BwRoHuFEA6FR7TrvZm8N%2B8cK7niF%2F8uAqFdVYTU1JD0%2FCdoSXlYqiGgz3PAFOGWFSJt8vkM50fcMtMNLsaudU%2BYrPDeT2HCB7o0Ts7h1FnbD85%2B0F7lwrbKmkGW6kub0mjCaRdJYS%2FaxIAq4%3D"
+                            },
+                            "barcode": {
+                              "id": "U2FsdGVkX1+yREd0zRAfZY9uwtMZsl4eDd8+LeiKGVI5OzOQRpjhtV91IuEe7/SXEW8m4F2Llg2//yieX2zsP3UtWasWxw8ZkHMRSIdxfxzSdSj8ap0dI5xwKW4OE1Q6Sgsb+kZVfCKUHbwXCcd8y5a6xTpVIg97y74Ng1Vg2PY=",
+                              "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2ByREd0zRAfZY9uwtMZsl4eDd8%2BLeiKGVI5OzOQRpjhtV91IuEe7%2FSXEW8m4F2Llg2%2F%2FyieX2zsP3UtWasWxw8ZkHMRSIdxfxzSdSj8ap0dI5xwKW4OE1Q6Sgsb%2BkZVfCKUHbwXCcd8y5a6xTpVIg97y74Ng1Vg2PY%3D"
+                            }
+                          },
+                          "is_referral_code": false,
+                          "created_at": "2022-07-11T08:19:28.780Z",
+                          "updated_at": "2023-01-25T15:44:33.500Z",
+                          "holder_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "redemption": {
+                            "quantity": null,
+                            "redeemed_quantity": 26,
+                            "redeemed_points": 130,
+                            "object": "list",
+                            "url": "/v1/vouchers/LOYALTY-CARD-zOR2sV9Q/redemptions?page=1&limit=10"
+                          },
+                          "publish": {
+                            "object": "list",
+                            "count": 1,
+                            "url": "/v1/vouchers/LOYALTY-CARD-zOR2sV9Q/publications?page=1&limit=10"
+                          },
+                          "object": "voucher"
+                        },
+                        "id": "rew_7ZM476Q77dH5KvHk4KzoRNvF",
+                        "object": "reward",
+                        "name": "Present on Loyalty Card",
+                        "created_at": "2023-01-25T15:43:40.716Z",
+                        "updated_at": null,
+                        "parameters": {
+                          "campaign": {
+                            "id": "camp_Hpt5hPTA8kSKRWGxBGw8Y0So",
+                            "balance": 20,
+                            "type": "LOYALTY_PROGRAM"
+                          }
+                        },
+                        "type": "CAMPAIGN"
+                      },
+                      "loyalty_card": {
+                        "points": 1
+                      }
+                    }
+                  },
+                  "Redeem Reward that adds credits to a gift card": {
+                    "value": {
+                      "id": "r_0c6b3bedf3478a0167",
+                      "object": "redemption",
+                      "date": "2023-02-06T09:13:08.813Z",
+                      "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                      "tracking_id": "track_9B0kB92+bJa8a+PegaWREw==",
+                      "metadata": null,
+                      "amount": 1,
+                      "result": "SUCCESS",
+                      "order": null,
+                      "customer": {
+                        "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "name": "Bob Jones",
+                        "email": "bob.jones@email.com",
+                        "source_id": "36_bob",
+                        "metadata": {
+                          "age": 26,
+                          "favorite_brands": [
+                            "Nike",
+                            "Adidas",
+                            "Reebok"
+                          ],
+                          "accepts_marketing": false,
+                          "acquisition_channel": "Facebook"
+                        },
+                        "object": "customer"
+                      },
+                      "related_object_type": "voucher",
+                      "related_object_id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                      "voucher": {
+                        "id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                        "code": "AnsvocvP",
+                        "campaign": "Loyalty Campaign - Test Points",
+                        "campaign_id": "camp_22noMlhTADb7Fq2UL3vWu3d1",
+                        "category": null,
+                        "category_id": "cat_0bb81a481615a37b5e",
+                        "categories": [],
+                        "type": "LOYALTY_CARD",
+                        "discount": null,
+                        "gift": null,
+                        "loyalty_card": {
+                          "points": 8000,
+                          "balance": 6886
+                        },
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX1/Au841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm+d2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO+qL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2FAu841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm%2Bd2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO%2BqL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w%3D%3D"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX1+xG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA/8H4gu04dxO/hrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY+8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BxG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA%2F8H4gu04dxO%2FhrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY%2B8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw%3D%3D"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-11-10T06:28:59.970Z",
+                        "updated_at": "2023-02-06T09:13:08.814Z",
+                        "holder_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "holder": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "validation_rules_assignments": {
+                          "object": "list",
+                          "data_ref": "data",
+                          "data": [],
+                          "total": 0
+                        },
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 10,
+                          "redeemed_points": 1114,
+                          "object": "list",
+                          "url": "/v1/vouchers/AnsvocvP/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/AnsvocvP/publications?page=1&limit=10"
+                        },
+                        "object": "voucher",
+                        "applicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        },
+                        "inapplicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        }
+                      },
+                      "reward": {
+                        "customer": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "name": "Bob Jones",
+                          "email": "bob.jones@email.com",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "assignment_id": "rewa_U554pL2BhDIDZOvZ8y9YQ9hA",
+                        "voucher": {
+                          "id": "v_hS8JFl8S6lNcd1L69wLIoXgTio7eWEgk",
+                          "code": "GIFT-CARD-xwc6X7Tk",
+                          "campaign": "Gift Cards",
+                          "campaign_id": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
+                          "category": null,
+                          "category_id": "cat_0bb81a481615a37b5e",
+                          "categories": [],
+                          "type": "GIFT_VOUCHER",
+                          "discount": null,
+                          "gift": {
+                            "amount": 59080,
+                            "balance": 48780
+                          },
+                          "loyalty_card": null,
+                          "start_date": null,
+                          "expiration_date": null,
+                          "validity_timeframe": null,
+                          "validity_day_of_week": null,
+                          "active": true,
+                          "additional_info": null,
+                          "metadata": {},
+                          "assets": {
+                            "qr": {
+                              "id": "U2FsdGVkX19SdT2kQZokSFsMRa5NmGvsHunHReeb4gF9b5LtLA4rCTM/aTyHCYfr7kRWb2vv08WIgY/Tv53SJGW+k2keqfsTq/Ohb5shkCN3FTFsaI8gulTp616sEGn/JJoIInIoNkO9Vd1+AfrKiAjmirCmekE6cz2SVCyNAXs=",
+                              "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX19SdT2kQZokSFsMRa5NmGvsHunHReeb4gF9b5LtLA4rCTM%2FaTyHCYfr7kRWb2vv08WIgY%2FTv53SJGW%2Bk2keqfsTq%2FOhb5shkCN3FTFsaI8gulTp616sEGn%2FJJoIInIoNkO9Vd1%2BAfrKiAjmirCmekE6cz2SVCyNAXs%3D"
+                            },
+                            "barcode": {
+                              "id": "U2FsdGVkX18vWc/qplwajJz4RIIy2wDUcAXVo1KEmyXx2IJy44xxHg608po3RizU9OYOzKelOAEjXFf7E4BS5Q01s4dds8Du70LGAp3idYMKAaXIjMTcFjMNczNO6ULK7r4eDx2Np8jvO/199U+zicnFNWqg/jF5ZCQW+6jO1q8=",
+                              "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX18vWc%2FqplwajJz4RIIy2wDUcAXVo1KEmyXx2IJy44xxHg608po3RizU9OYOzKelOAEjXFf7E4BS5Q01s4dds8Du70LGAp3idYMKAaXIjMTcFjMNczNO6ULK7r4eDx2Np8jvO%2F199U%2BzicnFNWqg%2FjF5ZCQW%2B6jO1q8%3D"
+                            }
+                          },
+                          "is_referral_code": false,
+                          "created_at": "2022-07-08T09:44:33.179Z",
+                          "updated_at": "2023-01-25T14:42:25.214Z",
+                          "holder_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "redemption": {
+                            "quantity": null,
+                            "redeemed_quantity": 7,
+                            "redeemed_amount": 10300,
+                            "object": "list",
+                            "url": "/v1/vouchers/GIFT-CARD-xwc6X7Tk/redemptions?page=1&limit=10"
+                          },
+                          "publish": {
+                            "object": "list",
+                            "count": 1,
+                            "url": "/v1/vouchers/GIFT-CARD-xwc6X7Tk/publications?page=1&limit=10"
+                          },
+                          "object": "voucher"
+                        },
+                        "id": "rew_6bvM4vnaVdbPVQxYpuN37rhH",
+                        "object": "reward",
+                        "name": "Present Credits on Gift Card",
+                        "created_at": "2023-01-25T14:41:31.858Z",
+                        "updated_at": null,
+                        "parameters": {
+                          "campaign": {
+                            "id": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
+                            "balance": 4000,
+                            "type": "GIFT_VOUCHERS"
+                          }
+                        },
+                        "type": "CAMPAIGN"
+                      },
+                      "loyalty_card": {
+                        "points": 1
+                      }
+                    }
+                  },
+                  "Redeem Reward that gives a discount coupon": {
+                    "value": {
+                      "id": "r_0c6b3ca77e0e60b534",
+                      "object": "redemption",
+                      "date": "2023-02-06T09:16:18.808Z",
+                      "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                      "tracking_id": "track_9B0kB92+bJa8a+PegaWREw==",
+                      "metadata": null,
+                      "amount": 2,
+                      "result": "SUCCESS",
+                      "order": null,
+                      "customer": {
+                        "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "name": "Bob Jones",
+                        "email": "bob.jones@email.com",
+                        "source_id": "36_bob",
+                        "metadata": {
+                          "age": 26,
+                          "favorite_brands": [
+                            "Nike",
+                            "Adidas",
+                            "Reebok"
+                          ],
+                          "accepts_marketing": false,
+                          "acquisition_channel": "Facebook"
+                        },
+                        "object": "customer"
+                      },
+                      "related_object_type": "voucher",
+                      "related_object_id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                      "voucher": {
+                        "id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                        "code": "AnsvocvP",
+                        "campaign": "Loyalty Campaign - Test Points",
+                        "campaign_id": "camp_22noMlhTADb7Fq2UL3vWu3d1",
+                        "category": null,
+                        "category_id": "cat_0bb81a481615a37b5e",
+                        "categories": [],
+                        "type": "LOYALTY_CARD",
+                        "discount": null,
+                        "gift": null,
+                        "loyalty_card": {
+                          "points": 8000,
+                          "balance": 6884
+                        },
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX1/Au841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm+d2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO+qL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2FAu841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm%2Bd2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO%2BqL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w%3D%3D"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX1+xG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA/8H4gu04dxO/hrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY+8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BxG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA%2F8H4gu04dxO%2FhrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY%2B8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw%3D%3D"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-11-10T06:28:59.970Z",
+                        "updated_at": "2023-02-06T09:16:18.809Z",
+                        "holder_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "holder": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "validation_rules_assignments": {
+                          "object": "list",
+                          "data_ref": "data",
+                          "data": [],
+                          "total": 0
+                        },
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 11,
+                          "redeemed_points": 1116,
+                          "object": "list",
+                          "url": "/v1/vouchers/AnsvocvP/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/AnsvocvP/publications?page=1&limit=10"
+                        },
+                        "object": "voucher",
+                        "applicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        },
+                        "inapplicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        }
+                      },
+                      "reward": {
+                        "customer": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "name": "Bob Jones",
+                          "email": "bob.jones@email.com",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "assignment_id": "rewa_0ZwLAHgeU9IrI2V1ofYRmW7g",
+                        "voucher": {
+                          "id": "v_a3Ba1neDwPa3rBE0HkDd0C7CbiehBulo",
+                          "code": "HAPPY-ORDERctb",
+                          "campaign": "$20 off the entire order",
+                          "campaign_id": "camp_5h0wc453_4",
+                          "category": null,
+                          "category_id": "cat_0b688929a2476386a6",
+                          "categories": [],
+                          "type": "DISCOUNT_VOUCHER",
+                          "discount": {
+                            "type": "AMOUNT",
+                            "amount_off": 2000,
+                            "effect": "APPLY_TO_ORDER"
+                          },
+                          "gift": null,
+                          "loyalty_card": null,
+                          "start_date": "2022-09-20T00:00:00.000Z",
+                          "expiration_date": "2022-09-30T00:00:00.000Z",
+                          "validity_timeframe": null,
+                          "validity_day_of_week": null,
+                          "active": true,
+                          "additional_info": null,
+                          "metadata": {},
+                          "assets": {
+                            "qr": {
+                              "id": "7d646e7d-9b5a-40b6-a44e-6bae848e108e",
+                              "url": "https://dl.voucherify.io/api/v1/assets/qr/7d646e7d-9b5a-40b6-a44e-6bae848e108e"
+                            },
+                            "barcode": {
+                              "id": "dfb3e48d-ce4f-4187-a114-483feb4ca88d",
+                              "url": "https://dl.voucherify.io/api/v1/assets/barcode/dfb3e48d-ce4f-4187-a114-483feb4ca88d"
+                            }
+                          },
+                          "is_referral_code": false,
+                          "created_at": "2023-02-06T09:16:18.845Z",
+                          "updated_at": null,
+                          "holder_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "redemption": {
+                            "quantity": null,
+                            "redeemed_quantity": 0,
+                            "object": "list",
+                            "url": "/v1/vouchers/HAPPY-ORDERctb/redemptions?page=1&limit=10"
+                          },
+                          "publish": {
+                            "object": "list",
+                            "count": 1,
+                            "url": "/v1/vouchers/HAPPY-ORDERctb/publications?page=1&limit=10"
+                          },
+                          "object": "voucher"
+                        },
+                        "id": "rew_MF4hKh1IKYgJkPjbcFbH94Ho",
+                        "object": "reward",
+                        "name": "Digital Present",
+                        "created_at": "2023-01-25T12:16:44.557Z",
+                        "updated_at": null,
+                        "parameters": {
+                          "campaign": {
+                            "id": "camp_5h0wc453_4",
+                            "type": "DISCOUNT_COUPONS"
+                          }
+                        },
+                        "type": "CAMPAIGN"
+                      },
+                      "loyalty_card": {
+                        "points": 2
+                      }
+                    }
+                  },
+                  "Redeem a Material reward of a SKU type": {
+                    "value": {
+                      "id": "r_0c6b3d1357878a0813",
+                      "object": "redemption",
+                      "date": "2023-02-06T09:18:09.246Z",
+                      "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                      "tracking_id": "track_9B0kB92+bJa8a+PegaWREw==",
+                      "metadata": null,
+                      "amount": 6,
+                      "result": "SUCCESS",
+                      "order": null,
+                      "customer": {
+                        "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "name": "Bob Jones",
+                        "email": "bob.jones@email.com",
+                        "source_id": "36_bob",
+                        "metadata": {
+                          "age": 26,
+                          "favorite_brands": [
+                            "Nike",
+                            "Adidas",
+                            "Reebok"
+                          ],
+                          "accepts_marketing": false,
+                          "acquisition_channel": "Facebook"
+                        },
+                        "object": "customer"
+                      },
+                      "related_object_type": "voucher",
+                      "related_object_id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                      "voucher": {
+                        "id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                        "code": "AnsvocvP",
+                        "campaign": "Loyalty Campaign - Test Points",
+                        "campaign_id": "camp_22noMlhTADb7Fq2UL3vWu3d1",
+                        "category": null,
+                        "category_id": "cat_0bb81a481615a37b5e",
+                        "categories": [],
+                        "type": "LOYALTY_CARD",
+                        "discount": null,
+                        "gift": null,
+                        "loyalty_card": {
+                          "points": 8000,
+                          "balance": 6878
+                        },
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX1/Au841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm+d2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO+qL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2FAu841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm%2Bd2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO%2BqL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w%3D%3D"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX1+xG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA/8H4gu04dxO/hrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY+8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BxG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA%2F8H4gu04dxO%2FhrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY%2B8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw%3D%3D"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-11-10T06:28:59.970Z",
+                        "updated_at": "2023-02-06T09:18:09.247Z",
+                        "holder_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "holder": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "validation_rules_assignments": {
+                          "object": "list",
+                          "data_ref": "data",
+                          "data": [],
+                          "total": 0
+                        },
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 12,
+                          "redeemed_points": 1122,
+                          "object": "list",
+                          "url": "/v1/vouchers/AnsvocvP/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/AnsvocvP/publications?page=1&limit=10"
+                        },
+                        "object": "voucher",
+                        "applicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        },
+                        "inapplicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        }
+                      },
+                      "reward": {
+                        "customer": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "name": "Bob Jones",
+                          "email": "bob.jones@email.com",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "assignment_id": "rewa_gfpRNkOT0pwzF7P5tXWXOs4H",
+                        "product": {
+                          "id": "prod_5h0wc453_2",
+                          "source_id": "jonah-nystrom-bourbon",
+                          "name": "Johan & Nyström - Bourbon",
+                          "price": null,
+                          "attributes": [
+                            "categories",
+                            "description",
+                            "weight"
+                          ],
+                          "metadata": {
+                            "company": "Johan & Nyström",
+                            "showcase": true
+                          },
+                          "image_url": null,
+                          "created_at": "2021-12-01T08:00:49.418Z",
+                          "updated_at": null,
+                          "object": "product"
+                        },
+                        "sku": {
+                          "id": "sku_0a3efc9044dd121803",
+                          "source_id": "jonah-nystrom-bourbon-250g",
+                          "product_id": "prod_5h0wc453_2",
+                          "sku": "250g",
+                          "price": 1750,
+                          "currency": null,
+                          "attributes": {
+                            "categories": "Coffee, Whole Bean",
+                            "description": "Background for this blend comes from the longing for a real dark roasting of high-quality coffee beans. Although the beans are dark roasted, they keep their clear and intense aroma. This coffee has a smoky flavour with a slight hint of sweetness and loads of fruit notes. Thanks to the experience in the dark roasting of coffee, the beans still retain most of their aromas. Its aftertaste is clear and remains for a long time. This coffee is perfect for a Dripper, French Press, Moka coffee maker and the traditional espresso brewing method.",
+                            "weight": 250
+                          },
+                          "image_url": null,
+                          "metadata": {},
+                          "created_at": "2021-12-01T08:00:49.427Z",
+                          "updated_at": null,
+                          "object": "sku"
+                        },
+                        "id": "rew_SfQCsap5R8UBTVbdMTRx10x8",
+                        "object": "reward",
+                        "name": "Present - SKU",
+                        "created_at": "2023-01-25T12:10:16.060Z",
+                        "updated_at": "2023-01-25T12:10:59.662Z",
+                        "parameters": {
+                          "product": {
+                            "id": "prod_5h0wc453_2",
+                            "sku_id": "sku_0a3efc9044dd121803"
+                          }
+                        },
+                        "type": "MATERIAL"
+                      },
+                      "loyalty_card": {
+                        "points": 6
+                      }
+                    }
+                  },
+                  "Redeem a Material Reward of a Product Type": {
+                    "value": {
+                      "id": "r_0c6b3d8c35546f8673",
+                      "object": "redemption",
+                      "date": "2023-02-06T09:20:13.013Z",
+                      "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                      "tracking_id": "track_9B0kB92+bJa8a+PegaWREw==",
+                      "metadata": null,
+                      "amount": 4,
+                      "result": "SUCCESS",
+                      "order": null,
+                      "customer": {
+                        "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "name": "Bob Jones",
+                        "email": "bob.jones@voucherify.io",
+                        "source_id": "36_bob",
+                        "metadata": {
+                          "age": 26,
+                          "favorite_brands": [
+                            "Nike",
+                            "Adidas",
+                            "Reebok"
+                          ],
+                          "accepts_marketing": false,
+                          "acquisition_channel": "Facebook"
+                        },
+                        "object": "customer"
+                      },
+                      "related_object_type": "voucher",
+                      "related_object_id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                      "voucher": {
+                        "id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                        "code": "AnsvocvP",
+                        "campaign": "Loyalty Campaign - Test Points",
+                        "campaign_id": "camp_22noMlhTADb7Fq2UL3vWu3d1",
+                        "category": null,
+                        "category_id": "cat_0bb81a481615a37b5e",
+                        "categories": [],
+                        "type": "LOYALTY_CARD",
+                        "discount": null,
+                        "gift": null,
+                        "loyalty_card": {
+                          "points": 8000,
+                          "balance": 6874
+                        },
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX1/Au841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm+d2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO+qL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2FAu841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm%2Bd2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO%2BqL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w%3D%3D"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX1+xG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA/8H4gu04dxO/hrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY+8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BxG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA%2F8H4gu04dxO%2FhrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY%2B8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw%3D%3D"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-11-10T06:28:59.970Z",
+                        "updated_at": "2023-02-06T09:20:13.014Z",
+                        "holder_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "holder": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "validation_rules_assignments": {
+                          "object": "list",
+                          "data_ref": "data",
+                          "data": [],
+                          "total": 0
+                        },
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 13,
+                          "redeemed_points": 1126,
+                          "object": "list",
+                          "url": "/v1/vouchers/AnsvocvP/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/AnsvocvP/publications?page=1&limit=10"
+                        },
+                        "object": "voucher",
+                        "applicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        },
+                        "inapplicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        }
+                      },
+                      "reward": {
+                        "customer": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "name": "Bob Jones",
+                          "email": "bob.jones@voucherify.io",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "assignment_id": "rewa_LRx3Y1iHFWTt217NVrknkpi5",
+                        "product": {
+                          "id": "prod_0b2c2ddf35150b83bb",
+                          "source_id": "97",
+                          "name": "[Sample] Tiered Wire Basket",
+                          "price": 11995,
+                          "attributes": [],
+                          "metadata": {
+                            "source": "bigcommerce",
+                            "bigcommerce_product_categories": [
+                              21,
+                              23
+                            ]
+                          },
+                          "image_url": null,
+                          "created_at": "2022-06-03T13:36:16.084Z",
+                          "updated_at": "2022-06-07T09:10:44.644Z",
+                          "object": "product"
+                        },
+                        "id": "rew_EPx1hCTpqzF0HW1z9NKckZH4",
+                        "object": "reward",
+                        "name": "Present",
+                        "created_at": "2022-06-13T06:59:01.694Z",
+                        "updated_at": "2023-02-03T15:04:14.102Z",
+                        "parameters": {
+                          "product": {
+                            "id": "prod_0b2c2ddf35150b83bb",
+                            "sku_id": null
+                          }
+                        },
+                        "type": "MATERIAL"
+                      },
+                      "loyalty_card": {
+                        "points": 4
+                      }
+                    }
+                  },
+                  "Redeem Pay with Points Reward": {
+                    "value": {
+                      "id": "r_0c6b4142ecc78a21d0",
+                      "object": "redemption",
+                      "date": "2023-02-06T09:36:26.547Z",
+                      "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                      "tracking_id": "track_9B0kB92+bJa8a+PegaWREw==",
+                      "metadata": null,
+                      "amount": 2300,
+                      "result": "SUCCESS",
+                      "order": {
+                        "id": "ord_QBnrJlVWA2EEiZoKOptFROnp",
+                        "source_id": null,
+                        "created_at": "2023-02-06T09:36:26.503Z",
+                        "updated_at": null,
+                        "status": "PAID",
+                        "amount": 45000,
+                        "discount_amount": 45000,
+                        "total_discount_amount": 45000,
+                        "total_amount": 0,
+                        "applied_discount_amount": 45000,
+                        "total_applied_discount_amount": 45000,
+                        "items": [
+                          {
+                            "object": "order_item",
+                            "product_id": "prod_0c5d6689b39320059b",
+                            "quantity": 1,
+                            "product": {
+                              "id": "prod_0c5d6689b39320059b",
+                              "source_id": "prod_anJ03RZZq74z4v",
+                              "name": "Apple iPhone 8"
+                            }
+                          },
+                          {
+                            "object": "order_item",
+                            "product_id": "prod_0b2c36568000039138",
+                            "quantity": 2,
+                            "amount": 45000,
+                            "price": 22500,
+                            "subtotal_amount": 45000,
+                            "product": {
+                              "id": "prod_0b2c36568000039138",
+                              "source_id": "86",
+                              "name": "[Sample] Able Brewing System",
+                              "price": 22500
+                            }
+                          }
+                        ],
+                        "metadata": {},
+                        "customer": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "object": "customer"
+                        },
+                        "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "referrer_id": null,
+                        "object": "order",
+                        "redemptions": {
+                          "r_0c6b4142ecc78a21d0": {
+                            "date": "2023-02-06T09:36:26.547Z",
+                            "related_object_type": "voucher",
+                            "related_object_id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                            "related_object_parent_id": "camp_22noMlhTADb7Fq2UL3vWu3d1"
+                          }
+                        }
+                      },
+                      "customer": {
+                        "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "name": "Bob Jones",
+                        "email": "bob.jones@email.com",
+                        "source_id": "36_bob",
+                        "metadata": {
+                          "age": 26,
+                          "favorite_brands": [
+                            "Nike",
+                            "Adidas",
+                            "Reebok"
+                          ],
+                          "accepts_marketing": false,
+                          "acquisition_channel": "Facebook"
+                        },
+                        "object": "customer"
+                      },
+                      "related_object_type": "voucher",
+                      "related_object_id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                      "voucher": {
+                        "id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                        "code": "AnsvocvP",
+                        "campaign": "Loyalty Campaign - Test Points",
+                        "campaign_id": "camp_22noMlhTADb7Fq2UL3vWu3d1",
+                        "category": null,
+                        "category_id": "cat_0bb81a481615a37b5e",
+                        "categories": [],
+                        "type": "LOYALTY_CARD",
+                        "discount": null,
+                        "gift": null,
+                        "loyalty_card": {
+                          "points": 8000,
+                          "balance": 4574
+                        },
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX1/Au841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm+d2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO+qL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2FAu841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm%2Bd2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO%2BqL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w%3D%3D"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX1+xG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA/8H4gu04dxO/hrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY+8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BxG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA%2F8H4gu04dxO%2FhrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY%2B8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw%3D%3D"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-11-10T06:28:59.970Z",
+                        "updated_at": "2023-02-06T09:36:26.548Z",
+                        "holder_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "holder": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "validation_rules_assignments": {
+                          "object": "list",
+                          "data_ref": "data",
+                          "data": [],
+                          "total": 0
+                        },
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 14,
+                          "redeemed_points": 3426,
+                          "object": "list",
+                          "url": "/v1/vouchers/AnsvocvP/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/AnsvocvP/publications?page=1&limit=10"
+                        },
+                        "object": "voucher",
+                        "applicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        },
+                        "inapplicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        }
+                      },
+                      "reward": {
+                        "customer": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "name": "Bob Jones",
+                          "email": "bob.jones@email.com",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "assignment_id": "rewa_YAIuU7AY6LNJVlUbRxSbNgiD",
+                        "id": "rew_INt3fGH3n7xIr3ZQcq4kkUZ1",
+                        "object": "reward",
+                        "name": "100 = $20",
+                        "created_at": "2022-11-10T06:28:39.582Z",
+                        "updated_at": null,
+                        "parameters": {
+                          "coin": {
+                            "exchange_ratio": 20,
+                            "points_ratio": 100
+                          }
+                        },
+                        "type": "COIN"
+                      },
+                      "loyalty_card": {
+                        "points": 2300
+                      }
+                    }
+                  },
+                  "Redeem Pay with Points Reward with a specific amount of points": {
+                    "value": {
+                      "id": "r_0c6b423368146fa4bb",
+                      "object": "redemption",
+                      "date": "2023-02-06T09:40:32.800Z",
+                      "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                      "tracking_id": "track_9B0kB92+bJa8a+PegaWREw==",
+                      "metadata": null,
+                      "amount": 100,
+                      "result": "SUCCESS",
+                      "order": {
+                        "id": "ord_1L67XS8EYDDp5A4B3k62G2tr",
+                        "source_id": null,
+                        "created_at": "2023-02-06T09:40:32.784Z",
+                        "updated_at": null,
+                        "status": "PAID",
+                        "amount": 45000,
+                        "discount_amount": 2000,
+                        "total_discount_amount": 2000,
+                        "total_amount": 43000,
+                        "applied_discount_amount": 2000,
+                        "total_applied_discount_amount": 2000,
+                        "items": [
+                          {
+                            "object": "order_item",
+                            "product_id": "prod_0c5d6689b39320059b",
+                            "quantity": 1,
+                            "product": {
+                              "id": "prod_0c5d6689b39320059b",
+                              "source_id": "prod_anJ03RZZq74z4v",
+                              "name": "Apple iPhone 8"
+                            }
+                          },
+                          {
+                            "object": "order_item",
+                            "product_id": "prod_0b2c36568000039138",
+                            "quantity": 2,
+                            "amount": 45000,
+                            "price": 22500,
+                            "subtotal_amount": 45000,
+                            "product": {
+                              "id": "prod_0b2c36568000039138",
+                              "source_id": "86",
+                              "name": "[Sample] Able Brewing System",
+                              "price": 22500
+                            }
+                          }
+                        ],
+                        "metadata": {},
+                        "customer": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "object": "customer"
+                        },
+                        "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "referrer_id": null,
+                        "object": "order",
+                        "redemptions": {
+                          "r_0c6b423368146fa4bb": {
+                            "date": "2023-02-06T09:40:32.800Z",
+                            "related_object_type": "voucher",
+                            "related_object_id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                            "related_object_parent_id": "camp_22noMlhTADb7Fq2UL3vWu3d1"
+                          }
+                        }
+                      },
+                      "customer": {
+                        "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "name": "Bob Jones",
+                        "email": "bob.jones@email.com",
+                        "source_id": "36_bob",
+                        "metadata": {
+                          "age": 26,
+                          "favorite_brands": [
+                            "Nike",
+                            "Adidas",
+                            "Reebok"
+                          ],
+                          "accepts_marketing": false,
+                          "acquisition_channel": "Facebook"
+                        },
+                        "object": "customer"
+                      },
+                      "related_object_type": "voucher",
+                      "related_object_id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                      "voucher": {
+                        "id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                        "code": "AnsvocvP",
+                        "campaign": "Loyalty Campaign - Test Points",
+                        "campaign_id": "camp_22noMlhTADb7Fq2UL3vWu3d1",
+                        "category": null,
+                        "category_id": "cat_0bb81a481615a37b5e",
+                        "categories": [],
+                        "type": "LOYALTY_CARD",
+                        "discount": null,
+                        "gift": null,
+                        "loyalty_card": {
+                          "points": 8500,
+                          "balance": 4974
+                        },
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX1/Au841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm+d2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO+qL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2FAu841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm%2Bd2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO%2BqL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w%3D%3D"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX1+xG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA/8H4gu04dxO/hrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY+8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BxG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA%2F8H4gu04dxO%2FhrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY%2B8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw%3D%3D"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-11-10T06:28:59.970Z",
+                        "updated_at": "2023-02-06T09:40:32.801Z",
+                        "holder_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "holder": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "validation_rules_assignments": {
+                          "object": "list",
+                          "data_ref": "data",
+                          "data": [],
+                          "total": 0
+                        },
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 15,
+                          "redeemed_points": 3526,
+                          "object": "list",
+                          "url": "/v1/vouchers/AnsvocvP/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/AnsvocvP/publications?page=1&limit=10"
+                        },
+                        "object": "voucher",
+                        "applicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        },
+                        "inapplicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        }
+                      },
+                      "reward": {
+                        "customer": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "name": "Bob Jones",
+                          "email": "bob.jones@email.com",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "assignment_id": "rewa_YAIuU7AY6LNJVlUbRxSbNgiD",
+                        "id": "rew_INt3fGH3n7xIr3ZQcq4kkUZ1",
+                        "object": "reward",
+                        "name": "100 = $20",
+                        "created_at": "2022-11-10T06:28:39.582Z",
+                        "updated_at": null,
+                        "parameters": {
+                          "coin": {
+                            "exchange_ratio": 20,
+                            "points_ratio": 100
+                          }
+                        },
+                        "type": "COIN"
+                      },
+                      "loyalty_card": {
+                        "points": 100
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the campaign was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Campaign Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id :campaignId",
+                      "request_id": "v-0c6b39288084e3435a",
+                      "resource_id": ":campaignId",
+                      "resource_type": "campaign"
+                    }
+                  }
                 }
               }
             }
@@ -66073,6 +67629,28 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/8_req_redeem_reward"
+              },
+              "examples": {
+                "Pay with Points": {
+                  "value": {
+                    "reward": {
+                      "id": "rew_INt3fGH3n7xIr3ZQcq4kkUZ1",
+                      "points": 100
+                    },
+                    "order": {
+                      "items": [
+                        {
+                          "product_id": "prod_0c5d6689b39320059b",
+                          "quantity": "1"
+                        },
+                        {
+                          "product_id": "prod_0b2c36568000039138",
+                          "quantity": "2"
+                        }
+                      ]
+                    }
+                  }
+                }
               }
             }
           },
@@ -66106,6 +67684,212 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/8_res_redeem_reward"
+                },
+                "examples": {
+                  "Redeem Pay with Points Reward with a specific number of Points": {
+                    "value": {
+                      "id": "r_0c6b4bf721439bf02b",
+                      "object": "redemption",
+                      "date": "2023-02-06T10:23:12.517Z",
+                      "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                      "tracking_id": "track_9B0kB92+bJa8a+PegaWREw==",
+                      "metadata": null,
+                      "amount": 100,
+                      "result": "SUCCESS",
+                      "order": {
+                        "id": "ord_71Ayjxq2gFV80v3OP3qrxh37",
+                        "source_id": null,
+                        "created_at": "2023-02-06T10:23:12.485Z",
+                        "updated_at": null,
+                        "status": "PAID",
+                        "amount": 45000,
+                        "discount_amount": 2000,
+                        "total_discount_amount": 2000,
+                        "total_amount": 43000,
+                        "applied_discount_amount": 2000,
+                        "total_applied_discount_amount": 2000,
+                        "items": [
+                          {
+                            "object": "order_item",
+                            "product_id": "prod_0c5d6689b39320059b",
+                            "quantity": 1,
+                            "product": {
+                              "id": "prod_0c5d6689b39320059b",
+                              "source_id": "prod_anJ03RZZq74z4v",
+                              "name": "Apple iPhone 8"
+                            }
+                          },
+                          {
+                            "object": "order_item",
+                            "product_id": "prod_0b2c36568000039138",
+                            "quantity": 2,
+                            "amount": 45000,
+                            "price": 22500,
+                            "subtotal_amount": 45000,
+                            "product": {
+                              "id": "prod_0b2c36568000039138",
+                              "source_id": "86",
+                              "name": "[Sample] Able Brewing System",
+                              "price": 22500
+                            }
+                          }
+                        ],
+                        "metadata": {},
+                        "customer": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "object": "customer"
+                        },
+                        "customer_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "referrer_id": null,
+                        "object": "order",
+                        "redemptions": {
+                          "r_0c6b4bf721439bf02b": {
+                            "date": "2023-02-06T10:23:12.517Z",
+                            "related_object_type": "voucher",
+                            "related_object_id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                            "related_object_parent_id": "camp_22noMlhTADb7Fq2UL3vWu3d1"
+                          }
+                        }
+                      },
+                      "customer": {
+                        "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "name": "Bob Jones",
+                        "email": "bob.jones@email.com",
+                        "source_id": "36_bob",
+                        "metadata": {
+                          "age": 26,
+                          "favorite_brands": [
+                            "Nike",
+                            "Adidas",
+                            "Reebok"
+                          ],
+                          "accepts_marketing": false,
+                          "acquisition_channel": "Facebook"
+                        },
+                        "object": "customer"
+                      },
+                      "related_object_type": "voucher",
+                      "related_object_id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                      "voucher": {
+                        "id": "v_u3dRiZ0XHqX5Euhy5ezB5UQ5Sf85VXFP",
+                        "code": "AnsvocvP",
+                        "campaign": "Loyalty Campaign - Test Points",
+                        "campaign_id": "camp_22noMlhTADb7Fq2UL3vWu3d1",
+                        "category": null,
+                        "category_id": "cat_0bb81a481615a37b5e",
+                        "categories": [],
+                        "type": "LOYALTY_CARD",
+                        "discount": null,
+                        "gift": null,
+                        "loyalty_card": {
+                          "points": 9000,
+                          "balance": 5374
+                        },
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX1/Au841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm+d2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO+qL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2FAu841M0T7UjYYRxYTzCRbNdZW6jW5YRNcV9PgblvN2MD5hdRuZfBRHEAm%2Bd2pvzc2FOVHFkuh9BQoaIq4KVyvy0FvkWtKkMLe4zO%2BqL4ocNUIbaRMSLeY6Xiz4hjxKNq918oLyGrp9w%3D%3D"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX1+xG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA/8H4gu04dxO/hrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY+8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw==",
+                            "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BxG42zWo9nivfp6tg5jNuFCYOIFtw7iwas8kcA%2F8H4gu04dxO%2FhrbD41gFvxDhCuTSnIKwIPg9dEXzOvh8qy9VWN0UwDc6PL7lfNQuY%2B8Os7dqVsyNhoRned9pBo1uO6V4pjNu1gRTrw%3D%3D"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-11-10T06:28:59.970Z",
+                        "updated_at": "2023-02-06T10:23:12.517Z",
+                        "holder_id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                        "holder": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "validation_rules_assignments": {
+                          "object": "list",
+                          "data_ref": "data",
+                          "data": [],
+                          "total": 0
+                        },
+                        "redemption": {
+                          "quantity": null,
+                          "redeemed_quantity": 16,
+                          "redeemed_points": 3626,
+                          "object": "list",
+                          "url": "/v1/vouchers/AnsvocvP/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/AnsvocvP/publications?page=1&limit=10"
+                        },
+                        "object": "voucher",
+                        "applicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        },
+                        "inapplicable_to": {
+                          "data": [],
+                          "total": 0,
+                          "data_ref": "data",
+                          "object": "list"
+                        }
+                      },
+                      "reward": {
+                        "customer": {
+                          "id": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+                          "name": "Bob Jones",
+                          "email": "bob.jones@email.com",
+                          "source_id": "36_bob",
+                          "metadata": {
+                            "age": 26,
+                            "favorite_brands": [
+                              "Nike",
+                              "Adidas",
+                              "Reebok"
+                            ],
+                            "accepts_marketing": false,
+                            "acquisition_channel": "Facebook"
+                          },
+                          "object": "customer"
+                        },
+                        "assignment_id": "rewa_YAIuU7AY6LNJVlUbRxSbNgiD",
+                        "id": "rew_INt3fGH3n7xIr3ZQcq4kkUZ1",
+                        "object": "reward",
+                        "name": "100 = $20",
+                        "created_at": "2022-11-10T06:28:39.582Z",
+                        "updated_at": null,
+                        "parameters": {
+                          "coin": {
+                            "exchange_ratio": 20,
+                            "points_ratio": 100
+                          }
+                        },
+                        "type": "COIN"
+                      },
+                      "loyalty_card": {
+                        "points": 100
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -66129,6 +67913,29 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Returns an error indicating a resource was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Member Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find voucher with id :memberId",
+                      "request_id": "v-0c6b4b525d8e40cf3e",
+                      "resource_id": ":memberId",
+                      "resource_type": "voucher"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -66147,6 +67954,28 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/8_req_redeem_reward"
+              },
+              "examples": {
+                "Pay with Points": {
+                  "value": {
+                    "reward": {
+                      "id": "rew_INt3fGH3n7xIr3ZQcq4kkUZ1",
+                      "points": 100
+                    },
+                    "order": {
+                      "items": [
+                        {
+                          "product_id": "prod_0c5d6689b39320059b",
+                          "quantity": "1"
+                        },
+                        {
+                          "product_id": "prod_0b2c36568000039138",
+                          "quantity": "2"
+                        }
+                      ]
+                    }
+                  }
+                }
               }
             }
           },
