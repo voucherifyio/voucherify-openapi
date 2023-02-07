@@ -13410,6 +13410,40 @@
           }
         }
       },
+      "19_res_session_lock": {
+        "title": "Session Lock",
+        "type": "object",
+        "description": "Schema model for `session` lock object. The session object contains information about the session key that was used to establish a session between multiple parallel validation and redemption requests.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "This session locks the redemption **quantity** by 1.",
+            "default": "LOCK"
+          },
+          "key": {
+            "type": "string",
+            "description": "The session unique ID assigned by Voucherify or your own unique session ID.",
+            "example": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts"
+          },
+          "ttl_unit": {
+            "type": "string",
+            "description": "Defines the type of unit in which the session time is counted.",
+            "enum": [
+              "HOURS",
+              "DAYS",
+              "MINUTES",
+              "SECONDS",
+              "MILLISECONDS",
+              "MICROSECONDS",
+              "NANOSECONDS"
+            ]
+          },
+          "ttl": {
+            "type": "integer",
+            "description": "Value for the period of time that the session is active. Units for this parameter are defined by the `session.ttl_unit` parameter."
+          }
+        }
+      },
       "19_obj_order_object_rollback_stacked": {
         "title": "Order object",
         "description": "This is an object representing an order that was rolled back for a stacked redemption.",
@@ -14145,7 +14179,7 @@
                 },
                 "id": {
                   "type": "string",
-                  "description": "Redeemable ID."
+                  "description": "Redeemable ID, i.e. the voucher code."
                 },
                 "object": {
                   "type": "string",
@@ -14168,6 +14202,9 @@
                 "metadata": {
                   "type": "object",
                   "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable."
+                },
+                "categories": {
+                  "$ref": "#/components/schemas/20_obj_category_object"
                 }
               }
             }
@@ -14176,6 +14213,201 @@
             "type": "string",
             "example": "track_VAVo1/z+G2GI2LPw==",
             "description": "Hashed customer source ID."
+          }
+        }
+      },
+      "19_res_validations_redeemables_discount_voucher": {
+        "type": "object",
+        "description": "Response schema model for validating a discount code.",
+        "title": "Discount Voucher",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "APPLICABLE"
+            ],
+            "description": "Indicates whether the redeemable can be applied or not applied based on the validation rules."
+          },
+          "id": {
+            "type": "string",
+            "description": "Redeemable ID, i.e. the voucher code."
+          },
+          "object": {
+            "type": "string",
+            "description": "Redeemable's object type.",
+            "enum": [
+              "voucher"
+            ]
+          },
+          "order": {
+            "$ref": "#/components/schemas/19_obj_order_object_validation_res_per_redeemable"
+          },
+          "applicable_to": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {}
+              },
+              "total": {
+                "type": "integer"
+              },
+              "data_ref": {
+                "type": "string",
+                "default": "data"
+              },
+              "object": {
+                "type": "string",
+                "default": "list"
+              }
+            }
+          },
+          "inapplicable_to": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "array",
+                "items": {}
+              },
+              "total": {
+                "type": "integer"
+              },
+              "data_ref": {
+                "type": "string",
+                "default": "data"
+              },
+              "object": {
+                "type": "string",
+                "default": "list"
+              }
+            }
+          },
+          "result": {
+            "description": "Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.",
+            "$ref": "#/components/schemas/19_obj_validations-true_result_voucher_code"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable."
+          },
+          "categories": {
+            "$ref": "#/components/schemas/20_obj_category_object"
+          }
+        }
+      },
+      "19_res_validations_redeemables_gift_card": {
+        "type": "object",
+        "description": "Response schema model for validating a gift card.",
+        "title": "Gift Card",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "APPLICABLE"
+            ],
+            "description": "Indicates whether the redeemable can be applied or not applied based on the validation rules."
+          },
+          "id": {
+            "type": "string",
+            "description": "Redeemable ID, i.e. the gift card code."
+          },
+          "object": {
+            "type": "string",
+            "description": "Redeemable's object type.",
+            "enum": [
+              "voucher"
+            ]
+          },
+          "result": {
+            "description": "Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.",
+            "$ref": "#/components/schemas/19_obj_validations-true_result_gift_card"
+          }
+        }
+      },
+      "19_res_validations_redeemables_loyalty_card": {
+        "type": "object",
+        "description": "Response schema model for validating a loyalty card.",
+        "title": "Loyalty Card",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "APPLICABLE"
+            ],
+            "description": "Indicates whether the redeemable can be applied or not applied based on the validation rules."
+          },
+          "id": {
+            "type": "string",
+            "description": "Redeemable ID, i.e. the loyalty card code."
+          },
+          "object": {
+            "type": "string",
+            "description": "Redeemable's object type.",
+            "enum": [
+              "voucher"
+            ]
+          },
+          "result": {
+            "description": "Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.",
+            "$ref": "#/components/schemas/19_obj_validations-true_result_loyalty_card"
+          }
+        }
+      },
+      "19_res_validations_redeemables_promotion_tier": {
+        "type": "object",
+        "description": "Response schema model for validating a promotion tier.",
+        "title": "Promotion Tier",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "APPLICABLE"
+            ],
+            "description": "Indicates whether the redeemable can be applied or not applied based on the validation rules."
+          },
+          "id": {
+            "type": "string",
+            "description": "Redeemable ID, i.e. the promotion tier ID."
+          },
+          "object": {
+            "type": "string",
+            "description": "Redeemable's object type.",
+            "enum": [
+              "promotion_tier"
+            ]
+          },
+          "result": {
+            "description": "Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.",
+            "$ref": "#/components/schemas/19_obj_validations-true_result_promotion_tier"
+          }
+        }
+      },
+      "19_res_validations_redeemables_promotion_stack": {
+        "type": "object",
+        "description": "Response schema model for validating a promotion stack.",
+        "title": "Promotion Stack",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "APPLICABLE"
+            ],
+            "description": "Indicates whether the redeemable can be applied or not applied based on the validation rules."
+          },
+          "id": {
+            "type": "string",
+            "description": "Redeemable ID, i.e. the promotion stack ID."
+          },
+          "object": {
+            "type": "string",
+            "description": "Redeemable's object type.",
+            "enum": [
+              "promotion_stack"
+            ]
+          },
+          "result": {
+            "description": "Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.",
+            "$ref": "#/components/schemas/19_obj_validations-true_result_promotion_stack"
           }
         }
       },
@@ -14230,90 +14462,23 @@
             "type": "array",
             "description": "Lists validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"`.",
             "items": {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "type": "string",
-                  "enum": [
-                    "APPLICABLE"
-                  ],
-                  "description": "Indicates whether the redeemable can be applied or not applied based on the validation rules."
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/19_res_validations_redeemables_discount_voucher"
                 },
-                "id": {
-                  "type": "string",
-                  "description": "Redeemable ID."
+                {
+                  "$ref": "#/components/schemas/19_res_validations_redeemables_gift_card"
                 },
-                "object": {
-                  "type": "string",
-                  "description": "Redeemable's object type.",
-                  "enum": [
-                    "voucher",
-                    "promotion_tier",
-                    "promotion_stack"
-                  ]
+                {
+                  "$ref": "#/components/schemas/19_res_validations_redeemables_loyalty_card"
                 },
-                "order": {
-                  "$ref": "#/components/schemas/19_obj_order_object_validation_res_per_redeemable"
+                {
+                  "$ref": "#/components/schemas/19_res_validations_redeemables_promotion_tier"
                 },
-                "applicable_to": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {}
-                    },
-                    "total": {
-                      "type": "integer"
-                    },
-                    "data_ref": {
-                      "type": "string",
-                      "default": "data"
-                    },
-                    "object": {
-                      "type": "string",
-                      "default": "list"
-                    }
-                  }
-                },
-                "inapplicable_to": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "type": "array",
-                      "items": {}
-                    },
-                    "total": {
-                      "type": "integer"
-                    },
-                    "data_ref": {
-                      "type": "string",
-                      "default": "data"
-                    },
-                    "object": {
-                      "type": "string",
-                      "default": "list"
-                    }
-                  }
-                },
-                "result": {
-                  "description": "Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/19_obj_validations-true_result_voucher_code"
-                    },
-                    {
-                      "$ref": "#/components/schemas/19_obj_validations-true_result_gift_gard"
-                    },
-                    {
-                      "$ref": "#/components/schemas/19_obj_validations-true_result_loyalty_card"
-                    }
-                  ]
-                },
-                "metadata": {
-                  "type": "object",
-                  "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable."
+                {
+                  "$ref": "#/components/schemas/19_res_validations_redeemables_promotion_stack"
                 }
-              }
+              ]
             }
           },
           "order": {
@@ -14323,6 +14488,9 @@
             "type": "string",
             "example": "track_VAVo1/z+G2GI2LPw==",
             "description": "Hashed customer source ID."
+          },
+          "session": {
+            "$ref": "#/components/schemas/19_res_session_lock"
           }
         }
       },
@@ -14357,7 +14525,7 @@
           }
         }
       },
-      "19_obj_validations-true_result_gift_gard": {
+      "19_obj_validations-true_result_gift_card": {
         "type": "object",
         "title": "Gift Card",
         "description": "This is a `result` object representing the results for a gift card in POST `/validations` response body.",
@@ -47406,7 +47574,7 @@
         "tags": [
           "CAMPAIGNS API"
         ],
-        "description": "The method can be used for sending a request to display all campaigns qualified to the given customer and context (e.g., order). The maximum number of returned campaigns is 50. A checking logic will be run only among campaigns and will ignore standalone vouchers. As a recommended subsequent step after selecting qualified campaign is to publish voucher code from that campaign. The API method for publishing will return a unique code which will belong to a given customer.\n\nAs a sample use case, you can imagine a requirement of displaying below cart the coupons (grouped in campaigns) eligible to a customer. The customer should get assigned to the particular voucher from the campaign and then might redeem that code when he places an order.\n\n<!-- [Read](https://docs.voucherify.io/docs/checking-eligibility-for-coupons) -->[Read](doc:checking-eligibility-for-coupons) about Qualification API limits before you start.",
+        "description": "The method can be used for sending a request to display all campaigns qualified to the given customer and context (e.g., order). The maximum number of returned campaigns is 50. A checking logic will be run only among campaigns and will ignore standalone vouchers. As a recommended subsequent step after selecting a qualified campaign is to publish voucher code from that campaign. The [API method for publishing](ref:create-publication) will return a unique code which will belong to a given customer.\n\nAs a sample use case, you can imagine a requirement of displaying coupons (grouped in campaigns) eligible to a customer. The customer should get assigned to the particular voucher from the campaign and then might redeem that code when he places an order.\n\n<!-- [Read](https://docs.voucherify.io/docs/checking-eligibility-for-coupons) -->[Read](doc:checking-eligibility-for-coupons) about Qualification API limits before you start.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -60294,11 +60462,43 @@
         "operationId": "post-validations",
         "responses": {
           "200": {
-            "description": "All codes and tiers provided in redeemables are validated during the request and the result of their validation is returned in the API response. \n\n| **Response** | **Description** |\n|:---|:---|\n| valid `boolean` | If **all** redeemables can be applied in the given context, the API returns `true`. Otherwise, if at least one redeemable can't be applied, the API returns `false`. |\n| redeemables `array of objects` | The `redeemables` array lists the validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"` |\n| order `object` | The `order` object presents details of the order provided in the request after all discounts are applied. |\n",
+            "description": "All codes and tiers provided in redeemables are validated during the request and the result of their validation is returned in the API response. \n\n| **Response** | **Description** |\n|:---|:---|\n| valid<br>`boolean` | If **all** redeemables can be applied in the given context, the API returns `true`. Otherwise, if at least one redeemable can't be applied, the API returns `false`. |\n| redeemables<br>`array of objects` | The `redeemables` array lists the validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"` |\n| order<br>`object` | The `order` object presents details of the order provided in the request after all discounts are applied. |\n",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/19_res_validations"
+                },
+                "examples": {
+                  "False": {
+                    "value": {
+                      "valid": false,
+                      "redeemables": [
+                        {
+                          "status": "INAPPLICABLE",
+                          "id": "eee33463",
+                          "object": "voucher",
+                          "result": {
+                            "error": {
+                              "code": 404,
+                              "key": "not_found",
+                              "message": "Resource not found",
+                              "details": "Cannot find voucher with id eee33463",
+                              "request_id": "v-0c6c6e20dc42940f0b",
+                              "resource_id": "eee33463",
+                              "resource_type": "voucher"
+                            }
+                          }
+                        },
+                        {
+                          "status": "SKIPPED",
+                          "id": "promo_Mwy9XpA0TLctSGriM5kum0qp",
+                          "object": "promotion_tier",
+                          "result": {}
+                        }
+                      ],
+                      "tracking_id": "track_VAVW6qltuo1/z+G2GI2LPw=="
+                    }
+                  }
                 }
               }
             }
@@ -60346,7 +60546,7 @@
         "tags": [
           "STACKABLE DISCOUNTS API"
         ],
-        "description": "Verify redeemables provided in the request. This method is designed for server side integration which means that is accessible only through private keys.",
+        "description": "Verify redeemables provided in the request. This method is designed for server side integration which means that it is accessible only through private keys.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -60373,7 +60573,7 @@
         "operationId": "post-validations-client_side",
         "responses": {
           "200": {
-            "description": "All codes and tiers provided in redeemables are validated during the request and the result of their validation is returned in the API response. \n\n| **Response** | **Description** |\n|:---|:---|\n| valid `boolean` | If **all** redeemables can be applied in the given context, the API returns `true`. Otherwise, if at least one redeemable can't be applied, the API returns `false`. |\n| redeemables `array of objects` | The `redeemables` array lists the validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"` |\n| order `object` | The `order` object presents details of the order provided in the request after all discounts are applied. |\n",
+            "description": "All codes and tiers provided in redeemables are validated during the request and the result of their validation is returned in the API response. \n\n| **Response** | **Description** |\n|:---|:---|\n| valid<br>`boolean` | If **all** redeemables can be applied in the given context, the API returns `true`. Otherwise, if at least one redeemable can't be applied, the API returns `false`. |\n| redeemables<br>`array of objects` | The `redeemables` array lists the validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"` |\n| order<br>`object` | The `order` object presents details of the order provided in the request after all discounts are applied. |\n",
             "content": {
               "application/json": {
                 "schema": {
@@ -61958,7 +62158,7 @@
         "operationId": "get-loyalties-campaignId-members-memberId-activities",
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "Returns a list of event objects related to the loyalty card.",
             "content": {
               "application/json": {
                 "schema": {
