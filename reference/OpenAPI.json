@@ -5671,72 +5671,165 @@
           },
           "loyalty_tiers_expiration": {
             "type": "object",
-            "description": "Defines the expiration mechanism for loyal tiers.",
+            "description": "Defines the expiration mechanism for loyalty tiers.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/2_loyalty_tiers_expiration_balance"
+              },
+              {
+                "$ref": "#/components/schemas/2_loyalty_tiers_expiration_points_in_period"
+              }
+            ]
+          }
+        }
+      },
+      "2_loyalty_tiers_expiration_balance": {
+        "type": "object",
+        "description": "Defines the Balance expiration mechanism for loyalty tiers.",
+        "properties": {
+          "qualification_type": {
+            "type": "string",
+            "enum": [
+              "BALANCE"
+            ],
+            "description": "Tier qualification.   \n\n`BALANCE`: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier."
+          },
+          "start_date": {
+            "type": "object",
+            "description": "Defines the conditions for the start date of the tier.",
             "properties": {
-              "qualification_type": {
+              "type": {
                 "type": "string",
                 "enum": [
-                  "BALANCE",
-                  "POINTS_IN_PERIOD"
+                  "IMMEDIATE"
                 ],
-                "description": "Tier qualification.   \n\n`BALANCE`: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier."
+                "description": "What triggers the tier to be valid for a customer.    \n`IMMEDIATE`: After reaching the minimum required points."
+              }
+            }
+          },
+          "expiration_date": {
+            "description": "Defines the conditions for the expiration date of a tier.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/2_loyalty_tiers_expiration_balance_expiration_date_balance_drop"
               },
-              "start_date": {
-                "type": "object",
-                "description": "Defines the conditions for the start date of the tier.",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "enum": [
-                      "IMMEDIATE",
-                      "NEXT_PERIOD"
-                    ],
-                    "description": "What triggers the tier to be valid for a customer.    \n`IMMEDIATE`: After reaching minimum required points"
-                  }
-                }
+              {
+                "$ref": "#/components/schemas/2_loyalty_tiers_expiration_balance_expiration_date_custom"
+              }
+            ]
+          }
+        }
+      },
+      "2_loyalty_tiers_expiration_balance_expiration_date_balance_drop": {
+        "type": "object",
+        "description": "Defines the conditions for the expiration date of a tier.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "BALANCE_DROP"
+            ],
+            "description": "What triggers the tier to expire for a customer.    \n`BALANCE_DROP`: Tier expires when the points balance drops below the required range of the tier."
+          }
+        }
+      },
+      "2_loyalty_tiers_expiration_balance_expiration_date_custom": {
+        "type": "object",
+        "description": "Defines the custom conditions for the expiration date of a tier.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CUSTOM"
+            ],
+            "description": "What triggers the tier to expire for a customer.    \n`CUSTOM`: Tier expires after a certain time period passes following the instance the points balance drops below the required range of the tier."
+          },
+          "extend": {
+            "type": "string",
+            "description": "Defines the amount of time the tier will remain active in ISO 8601 format. For example, a tier with a duration of P3M will be valid for a duration of 3 months."
+          },
+          "rounding": {
+            "type": "object",
+            "description": "Defines the rounding mechanism for tier expiration.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "CUSTOM",
+                  "MONTH",
+                  "QUARTER",
+                  "HALF_YEAR",
+                  "YEAR"
+                ],
+                "description": "Period to which the expiration will be rounded to."
+              }
+            }
+          }
+        }
+      },  
+      "2_loyalty_tiers_expiration_points_in_period": {
+        "type": "object",
+        "description": "Defines the Points in Period expiration mechanism for loyalty tiers.",
+        "properties": {
+          "qualification_type": {
+            "type": "string",
+            "enum": [
+              "POINTS_IN_PERIOD"
+            ],
+            "description": "Tier qualification.   \n\n`POINTS_IN_PERIOD`: A customer qualifies for the tier only if the sum of the accumulated points in a **defined time interval** reaches the tier threshold."
+          },
+          "start_date": {
+            "type": "object",
+            "description": "Defines the conditions for the start date of the tier.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "IMMEDIATE",
+                  "NEXT_PERIOD"
+                ],
+                "description": "What triggers the tier to be valid for a customer.    \n`IMMEDIATE`: After reaching the minimum required points.    \n`NEXT_PERIOD`: When the next qualification period starts."
+              }
+            }
+          },
+          "expiration_date": {
+            "type": "object",
+            "description": "Defines the conditions for the expiration date of a tier.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "END_OF_NEXT_PERIOD",
+                  "END_OF_PERIOD"
+                ],
+                "description": "What triggers the tier to expire for a customer.    \n`END_OF_NEXT_PERIOD`:  Expire tier at the end of the next period.    \n`END_OF_PERIOD`: Expire tier at the end of the period."
               },
-              "expiration_date": {
+              "extend": {
+                "type": "string",
+                "description": "Defines the amount of time the tier will be active in ISO 8601 format. For example, a tier with a duration of P3M will be valid for a duration of 3 months."
+              },
+              "rounding": {
                 "type": "object",
-                "description": "Defines the conditions for the expiration date of a tier.",
+                "description": "Defines the rounding mechanism for tier expiration.",
                 "properties": {
                   "type": {
                     "type": "string",
                     "enum": [
                       "CUSTOM",
-                      "BALANCE_DROP",
-                      "END_OF_NEXT_PERIOD",
-                      "END_OF_PERIOD"
+                      "MONTH",
+                      "QUARTER",
+                      "HALF_YEAR",
+                      "YEAR"
                     ],
-                    "description": "What triggers the tier to expire for a customer."
+                    "description": "Period to which the expiration will be rounded to."
                   },
-                  "extend": {
+                  "strategy": {
                     "type": "string",
-                    "description": "Defines the amount of time the tier will be active in ISO 8601 format. For example, a tier with a duration of P3M will be valid for a duration of 3 months."
-                  },
-                  "rounding": {
-                    "type": "object",
-                    "description": "Defines the rounding mechanism for tier expiration.",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "CUSTOM",
-                          "MONTH",
-                          "QUARTER",
-                          "HALF_YEAR",
-                          "YEAR"
-                        ],
-                        "description": "Period to which the expiration will be rounded to."
-                      },
-                      "strategy": {
-                        "type": "string",
-                        "enum": [
-                          "END",
-                          "START"
-                        ],
-                        "description": "Which portion of the period should the rounding be applied to."
-                      }
-                    }
+                    "enum": [
+                      "END",
+                      "START"
+                    ],
+                    "description": "Which portion of the period should the rounding be applied to."
                   }
                 }
               }
@@ -27964,8 +28057,8 @@
       },
       "8_req_create_loyalty_cards": {
         "type": "object",
-        "title": "Create  Loyalty Campaign Request Body",
-        "description": "Request body schema for creating a loyalty campaign using **POSTloyaltiesaigns`.",
+        "title": "Create Loyalty Campaign Request Body",
+        "description": "Request body schema for creating a loyalty campaign.",
         "examples": [],
         "properties": {
           "name": {
