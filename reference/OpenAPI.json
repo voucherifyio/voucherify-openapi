@@ -1,5 +1,5 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.0",
   "info": {
     "title": "Voucherify API",
     "version": "v2018-08-01-Interactive",
@@ -14572,7 +14572,7 @@
           },
           "is_dynamic": {
             "type": "boolean",
-            "description": "Flag indicating whether the discount amount is based on a formula that dynamically calculates the discount.",
+            "description": "Flag indicating whether the discount percentage is based on a formula that dynamically calculates the discount.",
             "enum": [
               false,
               true
@@ -14604,7 +14604,7 @@
           },
           "is_dynamic": {
             "type": "boolean",
-            "description": "Flag indicating whether the discount amount is based on a formula that dynamically calculates the discount.",
+            "description": "Flag indicating whether the discount percentage is based on a formula that dynamically calculates the discount.",
             "enum": [
               true
             ]
@@ -14635,7 +14635,7 @@
           },
           "is_dynamic": {
             "type": "boolean",
-            "description": "Flag indicating whether the discount amount is based on a formula that dynamically calculates the discount.",
+            "description": "Flag indicating whether the fixed amount is based on a formula that dynamically calculates the fixed amount.",
             "enum": [
               false,
               true
@@ -14769,20 +14769,6 @@
               "type": "object",
               "description": "Object defining a unit discount.",
               "properties": {
-                "unit_off": {
-                  "type": "integer",
-                  "description": "Number of units to be granted a full value discount. In case of the unit being calculated by the formula, i.e. the `unit_off_formula` parameter is present in the unit definition, this value becomes the **fallback value**. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the unit value.",
-                  "example": 1
-                },
-                "unit_off_formula": {
-                  "type": "string",
-                  "description": "Formula used to calculate the number of units."
-                },
-                "unit_type": {
-                  "type": "string",
-                  "description": "The product deemed as free, chosen from the product  inventory (e.g. time, items).",
-                  "example": "prod_f1r5Tpr0DuC7"
-                },
                 "effect": {
                   "type": "string",
                   "enum": [
@@ -14791,12 +14777,60 @@
                   ],
                   "description": "Defines how the unit is added to the customer's order."
                 },
-                "is_dynamic": {
-                  "type": "boolean",
-                  "description": "Flag indicating whether the discount amount is based on a formula that dynamically calculates the discount."
+                "unit_off": {
+                  "type": "integer",
+                  "description": "Number of units to be granted a full value discount. In case of the unit being calculated by a formula, this value is the result of the dynamic calculation.",
+                  "example": 1
+                },
+                "unit_type": {
+                  "type": "string",
+                  "description": "The product or SKU deemed as free, chosen from the product  inventory (e.g. time, items), i.e. `prod_0bc3bd76a61082e6b3` or `sku_0a3efc90701d121820`.",
+                  "example": "prod_f1r5Tpr0DuC7"
+                },
+                "sku": {
+                  "type": "object",
+                  "description": "Defines the product details of the product or the parent product in case of an SKU.",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "sku_0a3efc90375d1217e2",
+                      "description": "Unique SKU ID assigned by Voucherify."
+                    },
+                    "source_id": {
+                      "type": "string",
+                      "description": "SKU source ID."
+                    },
+                    "sku": {
+                      "type": "string",
+                      "description": "SKU name."
+                    }
+                  }
+                },
+                "product": {
+                  "type": "object",
+                  "description": "Defines the product details of the product or the parent product in case of an SKU.",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "prod_0bc3bd76a61082e6b3",
+                      "description": "Unique (parent) product ID assigned by Voucherify."
+                    },
+                    "source_id": {
+                      "type": "string",
+                      "description": "Product source ID."
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Product name."
+                    }
+                  }
                 }
               }
             }
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the number of items is based on a formula."
           }
         }
       },
@@ -14810,6 +14844,11 @@
             "default": "UNIT",
             "description": "Applies a full value discount to item(s)."
           },
+          "effect": {
+            "type": "string",
+            "description": "Defines how the unit is added to the customer's order.",
+            "default": "ADD_MISSING_ITEMS"
+          },
           "unit_off": {
             "type": "number",
             "format": "float",
@@ -14821,10 +14860,37 @@
             "description": "The shipping product deemed as free.",
             "default": "prod_5h1pp1ng"
           },
-          "effect": {
-            "type": "string",
-            "description": "Defines how the unit is added to the customer's order.",
-            "default": "ADD_MISSING_ITEMS"
+          "product": {
+            "type": "object",
+            "description": "Defines the product details of the shipping product.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "prod_5h1pp1ng",
+                "description": "Unique product ID assigned by Voucherify, i.e. `prod_5h1pp1ng`.",
+                "default": "prod_5h1pp1ng"
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Product source ID.",
+                "default": "5h1pp1ng",
+                "example": "5h1pp1ng"
+              },
+              "name": {
+                "type": "string",
+                "description": "Product name.",
+                "example": "Shipping",
+                "default": "Shipping"
+              }
+            }
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the number of shipping items is based on a formula.",
+            "default": false,
+            "enum": [
+              false
+            ]
           }
         }
       },
