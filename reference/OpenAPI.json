@@ -28054,10 +28054,10 @@
             "description": "Defines the expiration mechanism for loyalty tiers.",
             "anyOf": [
               {
-                "$ref": "#/components/schemas/2_loyalty_tiers_expiration_balance"
+                "$ref": "#/components/schemas/8_loyalty_tiers_expiration_balance"
               },
               {
-                "$ref": "#/components/schemas/2_loyalty_tiers_expiration_points_in_period"
+                "$ref": "#/components/schemas/8_loyalty_tiers_expiration_points_in_period"
               }
             ]
           },
@@ -28082,15 +28082,186 @@
           }
         }
       },
-      "8_res_create_loyalty_cards": {
-        "title": "Create Loyalty Cards Response Body",
+      "8_loyalty_tiers_expiration_balance": {
+        "title": "Balance",
         "type": "object",
+        "description": "Defines the Balance expiration mechanism for loyalty tiers.",
         "properties": {
-          "id": {
-            "type": "string"
+          "qualification_type": {
+            "type": "string",
+            "enum": [
+              "BALANCE"
+            ],
+            "description": "Tier qualification.   \n\n`BALANCE`: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier."
+          },
+          "start_date": {
+            "type": "object",
+            "description": "Defines the conditions for the start date of the tier.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "IMMEDIATE"
+                ],
+                "description": "What triggers the tier to be valid for a customer.    \n`IMMEDIATE`: After reaching the minimum required points."
+              }
+            }
+          },
+          "expiration_date": {
+            "description": "Defines the conditions for the expiration date of a tier.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/8_loyalty_tiers_expiration_balance_expiration_date_balance_drop"
+              },
+              {
+                "$ref": "#/components/schemas/8_loyalty_tiers_expiration_balance_expiration_date_custom"
+              }
+            ]
           }
-        },
-        "description": "Response body schema for creating a loyalty campaign using **POST** `/loyalties`."
+        }
+      },
+      "8_loyalty_tiers_expiration_balance_expiration_date_balance_drop": {
+        "title": "Balance Drop",
+        "type": "object",
+        "description": "Defines the conditions for the expiration date of a tier based on a pure balance drop.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "BALANCE_DROP"
+            ],
+            "description": "What triggers the tier to expire for a customer.    \n`BALANCE_DROP`: Tier expires when the points balance drops below the required range of the tier."
+          }
+        }
+      },
+      "8_loyalty_tiers_expiration_balance_expiration_date_custom": {
+        "title": "Custom",
+        "type": "object",
+        "description": "Defines the custom conditions for the expiration date of a tier.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CUSTOM"
+            ],
+            "description": "What triggers the tier to expire for a customer.    \n`CUSTOM`: Tier expires after a certain time period passes following the instance the points balance drops below the required range of the tier."
+          },
+          "extend": {
+            "type": "string",
+            "description": "Defines the amount of time the tier will remain active in ISO 8601 format. The expiration date counter starts at the moment when the customer reaches the minimum required points that are required to be in the tier. For example, a tier with a duration of P3M will be valid for a duration of 3 months."
+          },
+          "rounding": {
+            "description": "Defines the rounding mechanism for tier expiration.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/8_loyalty_tiers_expiration_expiration_date_rounding_default_options"
+              },
+              {
+                "$ref": "#/components/schemas/8_loyalty_tiers_expiration_expiration_date_rounding_custom"
+              }
+            ]
+          }
+        }
+      },
+      "8_loyalty_tiers_expiration_expiration_date_rounding_default_options": {
+        "title": "Calendar Periods",
+        "type": "object",
+        "description": "Defines the rounding mechanism for tier expiration based on a list of available time periods.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "MONTH",
+              "QUARTER",
+              "HALF_YEAR",
+              "YEAR"
+            ],
+            "description": "Period to which the expiration will be rounded to.    \n- `MONTH`: The expiration date will be rounded to the end of the month. \n- `QUARTER`: The expiration date will be rounded to the end of the quarter. \n- `HALF_YEAR`: The expiration date will be rounded to the half year. \n- `YEAR`: The expiration date will be rounded to the end of the year."
+          }
+        }
+
+      },
+      "8_loyalty_tiers_expiration_expiration_date_rounding_custom": {
+        "title": "Specific Month",
+        "type": "object",
+        "description": "Defines the custom rounding mechanism for tier expiration.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CUSTOM"
+            ],
+            "description": "This mechanism describes a custom rounding for the expiration date."
+          },
+          "unit": {
+            "type": "string",
+            "description": "Defines the type of unit of time in which the rounding period is counted.",
+            "enum": [
+              "MONTH"
+            ]
+          },
+          "value": {
+            "type": "integer",
+            "description": "Value for the unit of time that the rounding applies to. Units for this parameter are defined by the `rounding.unit` parameter.    \n- `0`: January\n- `1`: February\n- `2`: March\n- `3`: April\n- `4`: May\n- `5`: June\n- `6`: July\n- `7`: August\n- `8`: September\n- `9`: October\n- `10`: November\n- `11`: December"
+          } 
+        }
+
+      },  
+      "8_loyalty_tiers_expiration_points_in_period": {
+        "title": "Points in Period",
+        "type": "object",
+        "description": "Defines the Points in Period expiration mechanism for loyalty tiers.",
+        "properties": {
+          "qualification_type": {
+            "type": "string",
+            "enum": [
+              "POINTS_IN_PERIOD"
+            ],
+            "description": "Tier qualification.   \n\n`POINTS_IN_PERIOD`: A customer qualifies for the tier only if the sum of the accumulated points in a **defined time interval** reaches the tier threshold."
+          },
+          "qualification_period": {
+            "type": "string",
+            "description": "Customers can qualify for the tier if they collected enough points in a given time period. So, in addition to the customer having to reach a points range, they also need to have collected the points within a set time period.    \n\n| **Period** | **Definition** |\n|:---|:---|\n| **Calendar Month** | Points collected in one calendar month<br>January, February, March, etc. |\n| **Calendar Quarter** | Points collected in the quarter<br>- January - March<br>- April - June<br>- July - September<br>- October - December |\n| **Calendar Half-year** | Points collected in the half-year<br>- January - June<br>- July - December |\n| **Calendar Year** | Points collected in one calendar year<br>January - December |",
+            "enum": [
+              "MONTH",
+              "QUARTER",
+              "HALF_YEAR",
+              "YEAR"
+            ]
+          },
+          "start_date": {
+            "type": "object",
+            "description": "Defines the conditions for the start date of the tier.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "IMMEDIATE",
+                  "NEXT_PERIOD"
+                ],
+                "description": "What triggers the tier to be valid for a customer.    \n`IMMEDIATE`: After reaching the minimum required points.    \n`NEXT_PERIOD`: When the next qualification period starts."
+              }
+            }
+          },
+          "expiration_date": {
+            "type": "object",
+            "description": "Defines the conditions for the expiration date of a tier.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "END_OF_PERIOD",
+                  "END_OF_NEXT_PERIOD"
+                ],
+                "description": "What triggers the tier to expire for a customer.    \n`END_OF_PERIOD`: Expire tier at the end of the period.    \n`END_OF_NEXT_PERIOD`:  Expire tier at the end of the next period."
+              },
+              "extend": {
+                "type": "string",
+                "description": "Extend the expiration by adding extra months or days in ISO 8601 format. The tier will remain active even though it reaches its expiration time period. For example, a tier with a duration of `P3M` will be valid for an additional duration of 3 months and a tier with a duration of `P1D` will be valid for an additional duration of 1 day."
+              }
+            }
+          }
+        }
       },
       "8_req_update_loyalty_campaign": {
         "type": "object",
@@ -28160,10 +28331,10 @@
             "description": "Defines the expiration mechanism for loyalty tiers.",
             "anyOf": [
               {
-                "$ref": "#/components/schemas/2_loyalty_tiers_expiration_balance"
+                "$ref": "#/components/schemas/8_loyalty_tiers_expiration_balance"
               },
               {
-                "$ref": "#/components/schemas/2_loyalty_tiers_expiration_points_in_period"
+                "$ref": "#/components/schemas/8_loyalty_tiers_expiration_points_in_period"
               }
             ]
           },
