@@ -72656,9 +72656,19 @@
         }
       ],
       "get": {
-        "summary": "Get SKU",
+        "operationId": "get-skus-sku_id",
         "tags": [
           "PRODUCTS API"
+        ],
+        "summary": "Get SKU",
+        "description": "Retrieve details of a SKU.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
         ],
         "responses": {
           "200": {
@@ -72716,17 +72726,7 @@
               }
             }
           }
-        },
-        "operationId": "get-skus-sku_id",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/X-App-Id"
-          },
-          {
-            "$ref": "#/components/parameters/X-App-Token"
-          }
-        ],
-        "description": "Retrieve details of a SKU."
+        }
       }
     },
     "/v1/products/{productId}/skus": {
@@ -72742,9 +72742,39 @@
         }
       ],
       "get": {
-        "summary": "List SKUs in Product",
+        "operationId": "get-products-productId-skus",
         "tags": [
           "PRODUCTS API"
+        ],
+        "summary": "List SKUs in Product",
+        "description": "Retrieve all SKUs for a given product.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created_at",
+                "-created_at",
+                "updated_at",
+                "-updated_at"
+              ]
+            },
+            "in": "query",
+            "name": "order",
+            "description": "This is a property that controls the sorting direction of the results. Sort the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          }
         ],
         "responses": {
           "200": {
@@ -72863,41 +72893,52 @@
               }
             }
           }
-        },
-        "operationId": "get-products-productId-skus",
+        }
+      },
+      "post": {
+        "operationId": "post-products-productId-skus",
+        "tags": [
+          "PRODUCTS API"
+        ],
+        "summary": "Create SKU",
+        "description": "This method adds product varients to a <!-- [created product](OpenAPI.json/paths/~1products/post) -->[created product](ref:create-product).",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
           },
           {
             "$ref": "#/components/parameters/X-App-Token"
-          },
-          {
-            "schema": {
-              "type": "string",
-              "enum": [
-                "created_at",
-                "-created_at",
-                "updated_at",
-                "-updated_at"
-              ]
-            },
-            "in": "query",
-            "name": "order",
-            "description": "This is a property that controls the sorting direction of the results. Sort the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
-          },
-          {
-            "$ref": "#/components/parameters/limit"
-          },
-          {
-            "$ref": "#/components/parameters/page"
           }
         ],
-        "description": "Retrieve all SKUs for a given product."
-      },
-      "post": {
-        "summary": "Create SKU",
-        "operationId": "post-products-productId-skus",
+        "requestBody": {
+          "description": "Specify the SKU parameters to be created.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/11_req_create_sku"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "source_id": "first_product_sku_1",
+                    "sku": "Samsung phone 256GB",
+                    "price": 1300,
+                    "currency": "USD",
+                    "attributes": {
+                      "color": "vintage-black",
+                      "memory": "256",
+                      "processor": "Intel"
+                    },
+                    "image_url": "https://www.website.com/image.png",
+                    "metadata": {
+                      "imported": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Returns the created SKU object.",
@@ -72933,48 +72974,7 @@
               }
             }
           }
-        },
-        "tags": [
-          "PRODUCTS API"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/X-App-Id"
-          },
-          {
-            "$ref": "#/components/parameters/X-App-Token"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/11_req_create_sku"
-              },
-              "examples": {
-                "Example": {
-                  "value": {
-                    "source_id": "first_product_sku_1",
-                    "sku": "Samsung phone 256GB",
-                    "price": 1300,
-                    "currency": "USD",
-                    "attributes": {
-                      "color": "vintage-black",
-                      "memory": "256",
-                      "processor": "Intel"
-                    },
-                    "image_url": "https://www.website.com/image.png",
-                    "metadata": {
-                      "imported": true
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "description": "Specify the SKU parameters to be created."
-        },
-        "description": "This method adds product varients to a <!-- [created product](OpenAPI.json/paths/~1products/post) -->[created product](ref:create-product)."
+        }
       }
     },
     "/v1/products/{productId}/skus/{skuId}": {
@@ -72999,10 +72999,41 @@
         }
       ],
       "put": {
-        "summary": "Update SKU",
         "operationId": "put-products-productId-skus-skuId",
+        "tags": [
+          "PRODUCTS API"
+        ],
+        "summary": "Update SKU",
+        "description": "Updates the specified SKU by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged.\n\nFields other than the ones listed in the request body schema won't be modified. Even if provided, they will be silently skipped.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the parameters to be updated.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/11_req_update_sku"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "price": 210000,
+                    "currency": "PLN"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
+            "description": "Returns the SKU object with the updated parameters.",
             "content": {
               "application/json": {
                 "schema": {
@@ -73033,44 +73064,33 @@
                   }
                 }
               }
-            },
-            "description": "Returns the SKU object with the updated parameters."
+            }
           }
-        },
+        }
+      },
+      "delete": {
+        "operationId": "delete-products-productId-skus-skuId",
         "tags": [
           "PRODUCTS API"
         ],
+        "summary": "Delete SKU",
+        "description": "This method deletes a product SKU.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
           },
           {
             "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "force",
+            "description": "If this flag is set to `true`, the SKU will be removed permanently. Going forward, the user will be able to create another SKU with exactly the same `source_id`."
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/11_req_update_sku"
-              },
-              "examples": {
-                "Example": {
-                  "value": {
-                    "price": 210000,
-                    "currency": "PLN"
-                  }
-                }
-              }
-            }
-          },
-          "description": "Specify the parameters to be updated."
-        },
-        "description": "Updates the specified SKU by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged.\n\nFields other than the ones listed in the request body schema won't be modified. Even if provided, they will be silently skipped."
-      },
-      "delete": {
-        "summary": "Delete SKU",
-        "operationId": "delete-products-productId-skus-skuId",
         "responses": {
           "204": {
             "description": "Returns no content if deletion is successful."
@@ -73109,33 +73129,16 @@
               }
             }
           }
-        },
-        "tags": [
-          "PRODUCTS API"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/X-App-Id"
-          },
-          {
-            "$ref": "#/components/parameters/X-App-Token"
-          },
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "force",
-            "description": "If this flag is set to `true`, the SKU will be removed permanently. Going forward, the user will be able to create another SKU with exactly the same `source_id`."
-          }
-        ],
-        "description": "This method deletes a product SKU."
+        }
       }
     },
     "/v1/products/importCSV": {
       "post": {
-        "summary": "Import Products using CSV",
         "operationId": "post-products-importCSV",
+        "tags": [
+          "PRODUCTS API"
+        ],
+        "summary": "Import Products using CSV",
         "description": "Import products into the repository using a CSV file.  \n\nCurl Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/products/importCSV \\\n  -F file=@/path/to/products.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\nThe CSV file has to include headers in the first line.\n\n<!-- theme: info -->\n\n> 📘 Standard product fields mapping\n>\n> - Create a **comma separated value (CSV) file** or download our CSV import template. You can find an example template [here](https://s3.amazonaws.com/helpscout.net/docs/assets/5902f1c12c7d3a057f88a36d/attachments/627b82ed68d51e779443f550/Import_products_template.csv).\n> - Supported CSV file headers: `name,source_id,price,attributes,image_url,Metadata_property_name`\n> - **Name** is a **required** field. The remaining fields in the CSV template are optional.\n> - Override/Update products' **names** in Voucherify using this method. Data will be updated for each product included in the CSV file whose **source_id** matches a source ID in Voucherify. No other data can be updated other than the product name.\n> - Note that dates and date-time attributes need to be provided in compliance with the **ISO 8601 norms**. For example, 2022-03-11T09:00:00.000Z or 2022-03-11\n>    - `YYYY-MM-DD`\n>    - `YYYY-MM-DDTHH`\n>    - `YYYY-MM-DDTHH:mm`\n>    - `YYYY-MM-DDTHH:mm:ss`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ss.SSSZ`\n> - Columns that can't be mapped to standard fields, will be mapped to **Custom attributes** and added as **products' metadata**. There is no limit on the number of custom attributes that you can import as metadata. \n> - To provide the proper data type, you need to add all custom attributes to the metadata schema **before importing the file**. Read more [here](https://support.voucherify.io/article/99-schema-validation-metadata#add-metadata).\n> - **Product attributes** (not custom attributes) need to be separated by a comma and enclosed in double quotes, i.e \"attribute1,attribute2\".\n> - Headers with metadata names **can't contain white-space characters**.\n> - If you import metadata defined in the schema as **arrays (multiple)**, you need to separate each value using a comma, for example:  \n>    - array of strings: \"subscribed,premium\"  \n>    - array of numbers: \"123,234\". \n>    - array of dates: \"2000-01-01,2000-01-02\"\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fasion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
         "parameters": [
           {
@@ -73146,14 +73149,14 @@
           }
         ],
         "requestBody": {
+          "description": "The file path is stored in the form `file` header.",
           "content": {
             "multipart/form-data": {
               "schema": {
                 "$ref": "#/components/schemas/a_req_importCSV"
               }
             }
-          },
-          "description": "The file path is stored in the form `file` header."
+          }
         },
         "responses": {
           "200": {
@@ -73194,17 +73197,16 @@
               }
             }
           }
-        },
-        "tags": [
-          "PRODUCTS API"
-        ]
-      },
-      "parameters": []
+        }
+      }
     },
     "/v1/skus/importCSV": {
       "post": {
-        "summary": "Import SKUs using CSV",
         "operationId": "post-skus-importCSV",
+        "tags": [
+          "PRODUCTS API"
+        ],
+        "summary": "Import SKUs using CSV",
         "description": "Import SKUs into the repository using a CSV file.\n\nThe CSV file has to include headers in the first line. All properties which cannot be mapped to standard SKU fields will be added to the metadata object. You can find an example template [here](https://s3.amazonaws.com/helpscout.net/docs/assets/5902f1c12c7d3a057f88a36d/attachments/627b98d08c9b585083488a4c/Import_SKUS_template.csv). \n\nCurl Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/skus/importCSV \\\n  -F file=@/path/to/skus.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n> 🚧 Import sequence\n>\n> First import products using the [dedicated endpoint](ref:import-products-using-csv), then import SKUs using this endpoint to properly match SKUs to products.\n\n<!-- theme: info -->\n\n> 📘 Standard SKU fields mapping\n>\n> - **Required** fields are source_id and product_id.\n> - Supported CSV file headers: `product_id,sku,source_id,price,image_url,attributes`\n> - SKU **source_id**'s must be unique in the entire product catalog, no duplicates allowed.\n> - SKU attributes need to be in the form of a stringy-fied json, i.e.`\"{'color':'blue'}\"`. These attributes must be defined in the **product** beforehand in order for you to be able to import them to the SKU.\n> - You can use this method to update the following parameters in bulk: **sku** and the sku **price**.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fasion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
         "parameters": [
           {
@@ -73215,14 +73217,14 @@
           }
         ],
         "requestBody": {
+          "description": "The file path is stored in the form `file` header.",
           "content": {
             "multipart/form-data": {
               "schema": {
                 "$ref": "#/components/schemas/a_req_importCSV"
               }
             }
-          },
-          "description": "The file path is stored in the form `file` header."
+          }
         },
         "responses": {
           "200": {
@@ -73242,18 +73244,44 @@
               }
             }
           }
-        },
-        "tags": [
-          "PRODUCTS API"
-        ]
-      },
-      "parameters": []
+        }
+      }
     },
     "/v1/product-collections": {
       "get": {
-        "summary": "List Product Collections",
+        "operationId": "get-product-collections",
         "tags": [
           "PRODUCT COLLECTIONS API"
+        ],
+        "summary": "List Product Collections",
+        "description": "This method returns a list of product collections.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created_at",
+                "-created_at",
+                "updated_at",
+                "-updated_at"
+              ]
+            },
+            "in": "query",
+            "name": "order",
+            "description": "This is a property that controls the sorting direction of the results. Sort the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          }
         ],
         "responses": {
           "200": {
@@ -73430,37 +73458,7 @@
               }
             }
           }
-        },
-        "operationId": "get-product-collections",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/X-App-Id"
-          },
-          {
-            "$ref": "#/components/parameters/X-App-Token"
-          },
-          {
-            "$ref": "#/components/parameters/limit"
-          },
-          {
-            "$ref": "#/components/parameters/page"
-          },
-          {
-            "schema": {
-              "type": "string",
-              "enum": [
-                "created_at",
-                "-created_at",
-                "updated_at",
-                "-updated_at"
-              ]
-            },
-            "in": "query",
-            "name": "order",
-            "description": "This is a property that controls the sorting direction of the results. Sort the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
-          }
-        ],
-        "description": "This method returns a list of product collections."
+        }
       }
     },
     "/v1/product-collections/{productCollectionId}": {
@@ -73477,9 +73475,19 @@
         }
       ],
       "get": {
-        "summary": "Get Product Collection",
+        "operationId": "get-product-collections-productCollectionId",
         "tags": [
           "PRODUCT COLLECTIONS API"
+        ],
+        "summary": "Get Product Collection",
+        "description": "Retrieves the product collection.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
         ],
         "responses": {
           "200": {
@@ -73555,9 +73563,15 @@
               }
             }
           }
-        },
-        "operationId": "get-product-collections-productCollectionId",
-        "description": "Retrieves the product collection.",
+        }
+      },
+      "delete": {
+        "operationId": "delete-product-collections-productCollectionId",
+        "tags": [
+          "PRODUCT COLLECTIONS API"
+        ],
+        "summary": "Delete Product Collection",
+        "description": "This method deletes a product collection.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -73565,11 +73579,7 @@
           {
             "$ref": "#/components/parameters/X-App-Token"
           }
-        ]
-      },
-      "delete": {
-        "summary": "Delete Product Collection",
-        "operationId": "delete-product-collections-productCollectionId",
+        ],
         "responses": {
           "204": {
             "description": "Returns no content if deletion is successful."
@@ -73622,19 +73632,7 @@
               }
             }
           }
-        },
-        "tags": [
-          "PRODUCT COLLECTIONS API"
-        ],
-        "description": "This method deletes a product collection.",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/X-App-Id"
-          },
-          {
-            "$ref": "#/components/parameters/X-App-Token"
-          }
-        ]
+        }
       }
     },
     "/v1/product-collections/{productCollectionId}/products": {
@@ -73650,9 +73648,25 @@
         }
       ],
       "get": {
-        "summary": "List Products in Collection",
+        "operationId": "get-product-collections-productCollection_id-products",
         "tags": [
           "PRODUCT COLLECTIONS API"
+        ],
+        "summary": "List Products in Collection",
+        "description": "Retrieves list of products from a products collection; works for both dynamic and static product collections.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          }
         ],
         "responses": {
           "200": {
@@ -73828,23 +73842,7 @@
               }
             }
           }
-        },
-        "operationId": "get-product-collections-productCollection_id-products",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/X-App-Id"
-          },
-          {
-            "$ref": "#/components/parameters/X-App-Token"
-          },
-          {
-            "$ref": "#/components/parameters/limit"
-          },
-          {
-            "$ref": "#/components/parameters/page"
-          }
-        ],
-        "description": "Retrieves list of products from a products collection; works for both dynamic and static product collections."
+        }
       }
     },
     "/v1/validation-rules": {
