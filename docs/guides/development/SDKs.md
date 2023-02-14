@@ -26,6 +26,12 @@ order: 5
 [/block]
 
 ---
+
+> 📘 Contribute
+> 
+> We constantly develop Voucherify's RESTful API, which you can use to integrate with your systems. The SDKs are open source and are mostly developed with the help of the community of our clients and partners. Please feel free to contribute and provide feedback by submitting a pull request on our [GitHub repository](https://github.com/voucherifyio/).
+
+---
 ## JS
 
 JS is **the latest** JavaScript and node.js SDK.
