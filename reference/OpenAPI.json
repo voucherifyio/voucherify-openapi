@@ -9579,7 +9579,7 @@
       },
       "5_req_create_publication": {
         "title": "Create Publication Request Body",
-        "description": "Request body schema for creating a publication using **POST** `/publications`.",
+        "description": "Request body schema for publishing a voucher.",
         "oneOf": [
           {
             "$ref": "#/components/schemas/5_req_create_publication_standalone_voucher"
@@ -9592,7 +9592,7 @@
       "5_res_create_publication": {
         "title": "Create Publication Response Body",
         "type": "object",
-        "description": "Response schema model for **POST** `/publications`.",
+        "description": "Response schema model for publishing a voucher to a specific customer.",
         "properties": {
           "id": {
             "type": "string",
@@ -9602,7 +9602,7 @@
           "object": {
             "type": "string",
             "default": "publication",
-            "description": "The type of object represented by the JSON. This object stores information about the publication."
+            "description": "The type of object represented by the JSON. This object stores information about the `publication`."
           },
           "created_at": {
             "type": "string",
@@ -9655,7 +9655,7 @@
             "description": "Status of the publication attempt."
           },
           "customer": {
-            "description": "Contains information about the customer to whom the publication was directed. For an existing customer you can either use the customer's unique ID that is assigned by Voucherify or the `source_id`.",
+            "description": "Contains information about the customer to whom the publication was directed.",
             "type": "object",
             "properties": {
               "id": {
@@ -9682,7 +9682,7 @@
               "object": {
                 "type": "string",
                 "default": "customer",
-                "description": "The type of object represented by the JSON. This object stores information about the customer."
+                "description": "The type of object represented by the JSON. This object stores information about the `customer`."
               }
             }
           },
@@ -9696,6 +9696,30 @@
               "type": "string",
               "example": "[ v_Bw3qWZWv47yb1Onra8F2LlFI1enLakfA ]"
             }
+          }
+        }
+      },
+      "5_req_create_publication_campaign_id": {
+        "title": "Campaign ID",
+        "type": "object",
+        "description": "Campaign's unique ID assigned by Voucherify.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "camp_7AZCZeF1VvD6EHC5anAMtvcK",
+            "description": "Unique campaign ID, assigned by Voucherify."
+          }
+        }
+      },
+      "5_req_create_publication_campaign_name": {
+        "title": "Campaign's name",
+        "type": "object",
+        "description": "Campaign's name.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Summer Campaign",
+            "description": "Campaign's name."
           }
         }
       },
@@ -49523,6 +49547,298 @@
         }
       }
     },
+    "/v1/publications/create": {
+      "get": {
+        "operationId": "get-publications-create",
+        "tags": [
+          "PUBLICATIONS API"
+        ],
+        "summary": "Create Publication",
+        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet. ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for integrations with MoEngage and Iterable.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple voucher from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use the [dedicated endpoint](ref:create-publication).  \n<!-- theme: info -->\n\n> 📘 Specifying the voucher to be published\n>\n> - In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign and in the query parameters specify the campaign without specifying the voucher.    - If you would like to publish a specific code from a specific campaign, then you need to provide the campaign and the voucher parameters.    - If you would like to publish a standalone voucher, then omit the campaign paramter and simply provide the voucher parameter.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "custom_publication_source_id"
+            },
+            "in": "query",
+            "name": "source_id",
+            "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "PROMO-1LwwzYI"
+            },
+            "in": "query",
+            "name": "voucher",
+            "description": "Code of voucher being published. If there is a particular code that you would like to publish, then you can use this parameter to specify the code. You can omit this parameter if you would like to publish a random code from a campaign, where the campaign is in `AUTO_UPDATE` mode."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "New Campaign"
+            },
+            "in": "query",
+            "name": "campaign",
+            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`. You can use this parameter without having to specify a particular `voucher` code if the campaign is in `AUTO_UPDATE` mode. This string not required for a standalone code, however, if you intend to use a code from a campaign, then either this string or the campaign object is required."
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "cust_tI9NWsWNb3DYsjyJqcxLW7Ro"
+            },
+            "in": "query",
+            "name": "customer",
+            "description": "Customer's unique ID assigned by Voucherify, i.e. `cust_eWgXlBBiY6THFRJwX45Iakv4`, or the merchant’s customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service. Either this string or the customer object is required."
+          },
+          {
+            "name": "metadata",
+            "in": "query",
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "type": "object"
+            }
+          },
+          {
+            "name": "customer",
+            "in": "query",
+            "required": true,
+            "description": "Specify the customer who is to receive a code. Either this object of the customer string is required.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/5_res_create_publication_customer_id"
+                },
+                {
+                  "$ref": "#/components/schemas/5_res_create_publication_customer_source_id"
+                },
+                {
+                  "$ref": "#/components/schemas/9_req_create_customer"
+                }
+              ]
+            }
+          },
+          {
+            "name": "campaign",
+            "in": "query",
+            "required": true,
+            "description": "Specify the campaign to be the source of the code. This object is not required for a standalone code, however, if you intend to use a code from a campaign, then either this object or the campaign string is required",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/5_req_create_publication_campaign_id"
+                },
+                {
+                  "$ref": "#/components/schemas/5_req_create_publication_campaign_name"
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a publication object if a valid identifier was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/5_res_create_publication"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "pub_ocaXCa023ayJ3WL1ARxUeKgIvg3JcEGh",
+                      "object": "publication",
+                      "created_at": "2022-09-30T16:30:32.924Z",
+                      "customer_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                      "tracking_id": "pub_source_customer_5",
+                      "metadata": {
+                        "year": 2022
+                      },
+                      "channel": "myown",
+                      "source_id": "publication_source_ID_10",
+                      "result": "SUCCESS",
+                      "customer": {
+                        "id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                        "name": "Bob Jones",
+                        "email": "bob.smith@email.com",
+                        "source_id": "pub_source_customer_5",
+                        "metadata": {
+                          "lang": "en",
+                          "test": true
+                        },
+                        "object": "customer"
+                      },
+                      "voucher": {
+                        "id": "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf",
+                        "code": "cEsMn0uA",
+                        "campaign": "Test - Discount Effect - Amount - Items",
+                        "campaign_id": "camp_dphuwqH7BOVkgh4JmpDtS32l",
+                        "category": null,
+                        "category_id": null,
+                        "type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "amount_off": 300,
+                          "effect": "APPLY_TO_ITEMS"
+                        },
+                        "gift": null,
+                        "loyalty_card": null,
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX188XVmOotyCyR2j3G8sJR8HzS3DQ+6J1OElPWSmjlEnthuJc7rkc7WIVxjT4pTl1JVVkHEuGXNXdzRik11H8S18HQeQFJFiuwLZ2mzEC2zZitEinyUxtZwhnEHoi0eGAgYCG7iVMNuOQA==",
+                            "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX188XVmOotyCyR2j3G8sJR8HzS3DQ%2B6J1OElPWSmjlEnthuJc7rkc7WIVxjT4pTl1JVVkHEuGXNXdzRik11H8S18HQeQFJFiuwLZ2mzEC2zZitEinyUxtZwhnEHoi0eGAgYCG7iVMNuOQA%3D%3D"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX18wDd9CcLM0Ef7aBfUSXZUoCQpuNpk4CHGOipbn+wFkfzcIZGBtUlxrI2KsXciCqF+c93AKzsymq5Yw8eEAFF/FK5f94z4/sgzaLDvyBmPCXHuS11Ew9S4ZEMjdTkUJftER2IlxWaCARA==",
+                            "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX18wDd9CcLM0Ef7aBfUSXZUoCQpuNpk4CHGOipbn%2BwFkfzcIZGBtUlxrI2KsXciCqF%2Bc93AKzsymq5Yw8eEAFF%2FFK5f94z4%2FsgzaLDvyBmPCXHuS11Ew9S4ZEMjdTkUJftER2IlxWaCARA%3D%3D"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-09-30T16:30:32.956Z",
+                        "updated_at": null,
+                        "holder_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                        "redemption": {
+                          "quantity": 1,
+                          "redeemed_quantity": 0,
+                          "object": "list",
+                          "url": "/v1/vouchers/cEsMn0uA/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/cEsMn0uA/publications?page=1&limit=10"
+                        },
+                        "object": "voucher"
+                      },
+                      "vouchers_id": [
+                        "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the query parameters are incomplete.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_error_no_translation"
+                },
+                "examples": {
+                  "Missing customer": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query should have required property 'customer'",
+                      "request_id": "v-0c8b6423f3c80ed3e4"
+                    }
+                  },
+                  "Missing vouchers": {
+                    "value": {
+                      "code": 400,
+                      "key": "missing_vouchers",
+                      "message": "Missing vouchers",
+                      "details": "Either Campaign or Voucher is required"
+                    }
+                  },
+                  "Voucher cannot be published": {
+                    "value": {
+                      "code": 400,
+                      "key": "voucher_cannot_be_published",
+                      "message": "Voucher cannot be published",
+                      "details": "Voucher cannot be published. Customer already joined program.",
+                      "request_id": "v-0c8b763544080efed2"
+                    }
+                  },
+                  "Voucher already published": {
+                    "value": {
+                      "code": 400,
+                      "key": "voucher_already_published",
+                      "message": "Voucher already published",
+                      "details": "Voucher 'v_vM7vQZmgV86k0wuz05cFAOfarj4s8BQE' has already been published",
+                      "request_id": "v-0c8baebc67c80e97a0"
+                    }
+                  },
+                  "Duplicate source ID": {
+                    "value": {
+                      "code": 400,
+                      "key": "duplicate_source_id",
+                      "message": "Duplicate source_id",
+                      "details": "Publication with source_id: 'test_publication_source_id_test_voucher' already exists",
+                      "request_id": "v-0c8b7e8f78c80e94a2"
+                    }
+                  },
+                  "Too many vouchers requested": {
+                    "value": {
+                      "code": 400,
+                      "key": "too_many_vouchers_requested",
+                      "message": "Too many vouchers requested",
+                      "details": "Only up to 1 can be published",
+                      "request_id": "v-0c8bac9a25c80e912d"
+                    }
+                  },
+                  "Metadata validation failed": {
+                    "value": {
+                      "code": 400,
+                      "key": "metadata_validation_failed",
+                      "message": "Metadata validation failed",
+                      "details": "ImageURL: must be a URL pointing to JPG/JPEG or PNG resource (actual value is 'http.com')",
+                      "request_id": "v-0c8bcbd742080ee807"
+                  }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a customer is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "example": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id cust_xqA7DGj5eYPHg6PHVKwYRWiA",
+                      "request_id": "v-0c8b6b35294af6f192",
+                      "resource_id": "cust_xqA7DGj5eYPHg6PHVKwYRWiA",
+                      "resource_type": "customer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/publications": {
       "get": {
         "operationId": "get-publications",
@@ -49795,11 +50111,73 @@
         }
       },
       "post": {
-        "summary": "Create Publication",
         "operationId": "post-publications",
+        "tags": [
+          "PUBLICATIONS API"
+        ],
+        "summary": "Create Publication",
+        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> In case you want to publish multiple vouchers within a single publication, you need to specify the campaign name and number of vouchers you want to publish.  \n<!-- theme: info -->\n\n> 📘 Auto-update campaign\n>\n> In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          },
+          {
+            "schema": {
+              "type": "boolean"
+            },
+            "in": "query",
+            "name": "join_once",
+            "description": "Through this flag, you can control if a particular person gets only one and always the same code even if the app sends multiple publication requests. It means that if you have a referral program, a referrer is assigned only to one code if an integration sends publication requests more than once for the same customer."
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the publication parameters.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/5_req_create_publication"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "source_id": "publication_source_ID_10",
+                    "campaign": "Test - Discount Effect - Amount - Items",
+                    "channel": "myown",
+                    "customer": {
+                      "source_id": "pub_source_customer_5",
+                      "name": "Bob Jones",
+                      "description": "A frequent customer",
+                      "email": "bob.smith@email.com",
+                      "phone": "+1 933 222 3333",
+                      "address": {
+                        "city": "New York",
+                        "country": "United States",
+                        "line_1": "123 Main St.",
+                        "line_2": "APT 3 BLG 5",
+                        "postal_code": "10001",
+                        "state": "NY"
+                      },
+                      "metadata": {
+                        "lang": "en",
+                        "test": true
+                      },
+                      "birthday": "1901-12-01"
+                    },
+                    "metadata": {
+                      "year": 2022
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Returns a publication object if a valid identifier was provided. ",
+            "description": "Returns a publication object if a valid identifier was provided.",
             "content": {
               "application/json": {
                 "schema": {
@@ -49949,69 +50327,7 @@
               }
             }
           }
-        },
-        "tags": [
-          "PUBLICATIONS API"
-        ],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/X-App-Id"
-          },
-          {
-            "$ref": "#/components/parameters/X-App-Token"
-          },
-          {
-            "schema": {
-              "type": "boolean"
-            },
-            "in": "query",
-            "name": "join_once",
-            "description": "Through this flag, you can control if a particular person gets only one and always the same code even if the app sends multiple publication requests. It means that if you have a referral program, a referrer is assigned only to one code if an integration sends publication requests more than once for the same customer."
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/5_req_create_publication"
-              },
-              "examples": {
-                "Example": {
-                  "value": {
-                    "source_id": "publication_source_ID_10",
-                    "campaign": "Test - Discount Effect - Amount - Items",
-                    "channel": "myown",
-                    "customer": {
-                      "source_id": "pub_source_customer_5",
-                      "name": "Bob Jones",
-                      "description": "A frequent customer",
-                      "email": "bob.smith@email.com",
-                      "phone": "+1 933 222 3333",
-                      "address": {
-                        "city": "New York",
-                        "country": "United States",
-                        "line_1": "123 Main St.",
-                        "line_2": "APT 3 BLG 5",
-                        "postal_code": "10001",
-                        "state": "NY"
-                      },
-                      "metadata": {
-                        "lang": "en",
-                        "test": true
-                      },
-                      "birthday": "1901-12-01"
-                    },
-                    "metadata": {
-                      "year": 2022
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "description": "Specify the publication parameters."
-        },
-        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can be either a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> In case you want to publish multiple vouchers within a single publication, you need to specify the campaign name and number of vouchers you want to publish.  \n<!-- theme: info -->\n\n> 📘 Auto-update campaign\n>\n> In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign."
+        }
       }
     },
     "/v1/vouchers/{code}/validate": {
