@@ -9723,6 +9723,11 @@
           }
         }
       },
+      "5_req_create_publication_campaign": {
+        "title": "Campaign's name or ID",
+        "type": "string",
+        "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`. "
+      },
       "5_res_create_publication_customer_id": {
         "title": "Customer ID",
         "type": "object",
@@ -9745,6 +9750,11 @@
             "description": "The merchant’s customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service."
           }
         }
+      },
+      "5_req_create_publication_customer": {
+        "title": "Source ID or Unique Customer ID",
+        "type": "string",
+        "description": "Customer's unique ID assigned by Voucherify, i.e. `cust_eWgXlBBiY6THFRJwX45Iakv4`, or the merchant’s customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service."
       },
       "5_obj_publication_object_discount": {
         "title": "Discount Voucher",
@@ -49554,7 +49564,7 @@
           "PUBLICATIONS API"
         ],
         "summary": "Create Publication",
-        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet. ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for integrations with MoEngage and Iterable.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple voucher from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use the [dedicated endpoint](ref:create-publication).  \n<!-- theme: info -->\n\n> 📘 Specifying the voucher to be published\n>\n> - In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign and in the query parameters specify the campaign without specifying the voucher.    - If you would like to publish a specific code from a specific campaign, then you need to provide the campaign and the voucher parameters.    - If you would like to publish a standalone voucher, then omit the campaign paramter and simply provide the voucher parameter.",
+        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.\n> ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for integrations with MoEngage and Iterable.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple vouchers from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use a [dedicated endpoint](ref:create-publication).  \n<!-- theme: info -->\n\n> 📘 Specifying the voucher to be published\n>\n> - In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign and in the query parameters specify the campaign without specifying the voucher.\n> - If you would like to publish a specific code from a specific campaign, then you need to provide the campaign and the voucher parameters.\n> - If you would like to publish a standalone voucher, then omit the campaign parameter and simply provide the voucher parameter.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -49581,15 +49591,6 @@
             "description": "Code of voucher being published. If there is a particular code that you would like to publish, then you can use this parameter to specify the code. You can omit this parameter if you would like to publish a random code from a campaign, where the campaign is in `AUTO_UPDATE` mode."
           },
           {
-            "schema": {
-              "type": "string",
-              "example": "New Campaign"
-            },
-            "in": "query",
-            "name": "campaign",
-            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`. You can use this parameter without having to specify a particular `voucher` code if the campaign is in `AUTO_UPDATE` mode. This string not required for a standalone code, however, if you intend to use a code from a campaign, then either this string or the campaign object is required."
-          },
-          {
             "name": "metadata",
             "in": "query",
             "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.",
@@ -49603,11 +49604,14 @@
             "name": "customer",
             "in": "query",
             "required": true,
-            "description": "Specify the customer who is to receive a code. Either this object of the customer string is required.",
+            "description": "Specify the customer who is to receive a code. You can either directly provide the respective ID's as strings or provide them in the form of an object.",
             "style": "deepObject",
             "explode": true,
             "schema": {
               "anyOf": [
+                {
+                  "$ref": "#/components/schemas/5_req_create_publication_customer"
+                },
                 {
                   "$ref": "#/components/schemas/5_res_create_publication_customer_id"
                 },
@@ -49616,11 +49620,27 @@
                 },
                 {
                   "$ref": "#/components/schemas/9_req_create_customer"
+                }
+              ]
+            }
+          },
+          {
+            "name": "campaign",
+            "in": "query",
+            "required": true,
+            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`. You can use this parameter without having to specify a particular `voucher` code if the campaign is in `AUTO_UPDATE` mode. This parameter not required for a standalone code, however, if you intend to use a code from a campaign, then this parameter is required.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/5_req_create_publication_campaign"
                 },
                 {
-                  "type": "string",
-                  "example": "cust_tI9NWsWNb3DYsjyJqcxLW7Ro",
-                  "description": "Customer's unique ID assigned by Voucherify, i.e. `cust_eWgXlBBiY6THFRJwX45Iakv4`, or the merchant’s customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service. Either this string or the customer object is required."
+                  "$ref": "#/components/schemas/5_req_create_publication_campaign_id"
+                },
+                {
+                  "$ref": "#/components/schemas/5_req_create_publication_campaign_name"
                 }
               ]
             }
@@ -49628,7 +49648,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns a publication object if a valid identifier was provided.",
+            "description": "Returns a publication object.",
             "content": {
               "application/json": {
                 "schema": {
@@ -49798,7 +49818,7 @@
                 "schema": {
                   "$ref": "#/components/schemas/e_404_not_found"
                 },
-                "example": {
+                "examples": {
                   "Resource not found": {
                     "value": {
                       "code": 404,
