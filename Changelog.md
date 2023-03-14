@@ -28,6 +28,8 @@
 |  | Validate Promotions | validate-promotions-1 | validate-promotions |
 | **Redemptions** | Get Voucher's Redemptions | vouchers-redemptions | get-voucher-redemptions |
 | **Stackable Discounts** | Validate Stackable Discounts | validate-stacked-discounts-1 | validate-stacked-discounts |
+|  | Validate Stackable Discounts (client-side) | validate-stackable-discounts-client-side | validate-stacked-discounts-client-side |
+|  | Redeem Stackable Discounts | redeem-stackable-discounts-client-side | redeem-stacked-discounts-client-side |
 |  | Rollback Stackable Redemptions | rollback-stackable-redemptions | rollback-stacked-redemptions |
 | **Loyalties** | Get Reward Assignment | get-reward-assignment | get-reward-assignment-1 |
 |  | Get Reward Assignment | get-reward-assignment-1 | get-reward-assignment-2 |
@@ -79,17 +81,13 @@
 |---|---|---|---|---|
 | **Vouchers** | [deprecated] Update Vouchers' metadata in bulk | **POST** `/vouchers/metdata` | update-vouchers-metadata-in-bulk | deprecated |
 |  | [deprecated] Update Vouchers in bulk | **POST** `/vouchers/bulk` | update-vouchers-in-bulk | deprecated |
-| **Promotions** | List Promotion Tiers (client-side) | **POST** `promotions/tiers` | list-promotion-tiers-client-side | same as server-side |
-|  | Create Promotion Campaign | **POST** `/campaigns` | create-promotion-campaign | path exists under Campaigns API |
-| **Stackable Discounts** | Validate Stackable Discounts (client-side) | **POST** `/validations` | validate-stackable-discounts-client-side | same as server-side |
-|  | Redeem Stackable Discounts (client-side) | **POST** `/redemptions` | redeem-stackable-discounts-client-side | same as server-side |
+| **Promotions** | Create Promotion Campaign | **POST** `/campaigns` | create-promotion-campaign | path exists under Campaigns API |
 | **Customers** | [deprecated] Update Customers' metadata in bulk | **POST** `customers/metadata` | update-customers-metadata-in-bulk | deprecated |
 |  | [deprecated] Update Customers in bulk | **POST** `customers/bulk` | update-customers-in-bulk | deprecated |
 | **Orders** | Download Export | **GET** `/exports/{id}` | download-export-1 | same in Exports API |
 | **Products** | [deprecated] Update Products metadata in bulk | **POST** `/products/metadata` | update-products-metadata-in-bulk | deprecated |
 |  | [deprecated] Update Products in bulk | **POST** `/products/bulk` | update-products-in-bulk | deprecated |
 |  | Get SKU [deprecated] | **GET** `/products/{productId}/skus/{skuId}` | get-sku | deprecated |
-| **Events** | Track Custom Event (client-side) | **POST** `/events` | track-custom-event-client-side | same as server-side |
 
 ### Endpoints that were added
 
@@ -101,32 +99,32 @@
 
 | **API** | **Object Definition** | **Slug** |
 |---|---|---|
-| Vouchers | The Voucher Object | the-voucher-object |
-| Campaigns | The Campaign Object | the-campaign-object |
-| Promotions | The Promotion Tier Object | the-promotion-object |
-| Rewards | The Reward Object | the-reward-object |
+| **Vouchers** | The Voucher Object | the-voucher-object |
+| **Campaigns** | The Campaign Object | the-campaign-object |
+| **Promotions** | The Promotion Tier Object | the-promotion-object |
+| **Rewards** | The Reward Object | the-reward-object |
 |  | The Reward Assignment Object | the-reward-assignment-object |
-| Validations | The Validation Object | the-validation-object |
-| Redemptions | The Redemption Object | the-redemption-object |
+| **Validations** | The Validation Object | the-validation-object |
+| **Redemptions** | The Redemption Object | the-redemption-object |
 |  | The Redemption Rollback Object | the-redemption-rollback-object |
-| Loyalties | The Loyalty Campaign Object | the-loyalty-campaign-object |
+| **Loyalties** | The Loyalty Campaign Object | the-loyalty-campaign-object |
 |  | The Loyalty Card Object | loyalty-card-object |
 |  | The Earning Rule Object | the-earning-rule-object |
 |  | The Loyalty Tiers Object | the-loyalty-tiers-object |
 |  | The Customer Object | the-customer-object |
 |  | The Customer Activity Object | the-customer-activities-object |
-| Orders | The Order Object | the-order-object |
+| **Orders** | The Order Object | the-order-object |
 |  | The Order Item Object | the-order-item-object |
-| Products | The Product Object | the-product-object |
+| **Products** | The Product Object | the-product-object |
 |  | The SKU Object | the-sku-object |
-| Product Collections | The Product Collections Object | the-product-collections-object |
-| Validation Rules | The Validation Rule Object | the-validation-rule-object |
+| **Product Collections** | The Product Collections Object | the-product-collections-object |
+| **Validation Rules** | The Validation Rule Object | the-validation-rule-object |
 |  | The Validation Rule Assignment Object | the-validation-rule-assignment-object |
-| Segments | The Segment Object | the-segment-object |
-| Events | The Custom Event Object | the-custom-event-object |
-| Exports | The Export Object | the-export-object |
-| Categories | The Category Object | category-object |
-| Metadata Schemas | The Metadata Schema Object | the-metadata-schema-object |
+| **Segments** | The Segment Object | the-segment-object |
+| **Events** | The Custom Event Object | the-custom-event-object |
+| **Exports** | The Export Object | the-export-object |
+| **Categories** | The Category Object | category-object |
+| **Metadata Schemas** | The Metadata Schema Object | the-metadata-schema-object |
 
 ### API Reference Guides that were turned into redirects
 
