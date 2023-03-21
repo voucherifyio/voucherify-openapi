@@ -7,7 +7,7 @@
     "contact": {
       "name": "Voucherify Team",
       "url": "https://www.voucherify.io/contact-support",
-      "email": "support@email.com"
+      "email": "support@voucherify.io"
     },
     "termsOfService": "https://www.voucherify.io/legal/subscription-agreement",
     "license": {
@@ -5486,6 +5486,10 @@
             "example": "2022-09-20T09:18:19.623Z",
             "description": "Timestamp representing the date and time when the voucher was updated in ISO 8601 format."
           },
+          "category": {
+            "type": "string",
+            "description": "Unique category name."
+          },
           "creation_status": {
             "type": "string",
             "enum": [
@@ -10351,6 +10355,18 @@
           }
         }
       },
+      "6_req_rollback_redemption_customer_id": {
+        "title": "Customer ID",
+        "description": "You can pass the unique customer ID that was assigned by Voucherify.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of an existing customer that will be linked to redemption rollback in this request.",
+            "example": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv"
+          }
+        }
+      },
       "6_req_validate_voucher_customer_id_string": {
         "type": "string",
         "title": "Customer ID",
@@ -10365,6 +10381,17 @@
           "source_id": {
             "type": "string",
             "description": "A unique identifier of a customer that validates a voucher. It can be a customer ID or email from a CRM system, database or 3rd-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
+          }
+        }
+      },
+      "6_req_rollback_redemption_customer_source_id": {
+        "title": "Customer Source ID",
+        "description": "You can send the source ID that you used to create the customer in Voucherify.",
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "A unique identifier of a customer that redeemed a resource. It can be a customer ID or email from a CRM system, database or 3rd-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
           }
         }
       },
@@ -10387,6 +10414,46 @@
           "source_id": {
             "type": "string",
             "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+          }
+        }
+      },
+      "6_req_rollback_redemption_order_id": {
+        "title": "Order ID",
+        "description": "You can pass the unique order ID that was assigned by Voucherify.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption rollback of this request."
+          },
+          "status": {
+            "type": "string",
+            "description": "After a redemption rollback, Voucherify will default the order status to `CANCELED`. You can set the order status to one of the other options: `CREATED`, `PAID`, `FULFILLED`.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "FULFILLED"
+            ]
+          }
+        }
+      },
+      "6_req_rollback_redemption_order_source_id": {
+        "title": "Order Source ID",
+        "description": "You can send the source ID that you used to create the order in Voucherify.",
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "Unique source ID of an existing order that will be linked to the redemption rollback of this request."
+          },
+          "status": {
+            "type": "string",
+            "description": "After a redemption rollback, Voucherify will default the order status to `CANCELED`. You can set the order status to one of the other options: `CREATED`, `PAID`, `FULFILLED`.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "FULFILLED"
+            ]
           }
         }
       },
@@ -22293,7 +22360,37 @@
       "7_req_rollback_redemption": {
         "title": "Rollback Redemption Request Body",
         "type": "object",
-        "properties": {},
+        "properties": {
+          "customer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_req_rollback_redemption_customer_id"
+              },
+              {
+                "$ref": "#/components/schemas/6_req_rollback_redemption_customer_source_id"
+              },
+              {
+                "$ref": "#/components/schemas/9_req_create_customer"
+              }
+            ],
+            "description": "Customer's information."
+          },
+          "order": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/6_req_rollback_redemption_order_id"
+              },
+              {
+                "$ref": "#/components/schemas/6_req_rollback_redemption_order_source_id"
+              }
+            ],
+            "description": "Send order information to ensure the correct order is being undone."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of key/value pairs that you can send in the request body to update **redemption** metadata."
+          }
+        },
         "description": "Request body schema for **POST** `/redemptions/{redemptionId}/rollback`.",
         "x-tags": [
           "REDEMPTIONS API"
@@ -43360,6 +43457,448 @@
         }
       }
     },
+    "/v1/vouchers/{code}/transactions": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "GIFT-CARD-1"
+          },
+          "name": "code",
+          "in": "path",
+          "required": true,
+          "description": "A **code** that identifies the voucher or a unique voucher ID assigned by Voucherify, i.e. `v_TzD19aeNiqGc9LWciMWknyEZT8IW7u4u`."
+        }
+      ],
+      "get": {
+        "operationId": "get-vouchers-code-transactions",
+        "tags": [
+          "VOUCHERS API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "summary": "Get Gift Card Transactions",
+        "description": "List transactions that are associated with credit movements on a gift card.",
+        "responses": {
+          "200": {
+            "description": "Returns a dictionary of transaction objects",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "vtx_0c9dccc4d5813e71bd",
+                          "source_id": "20230317_subtract_1",
+                          "voucher_id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                          "campaign_id": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
+                          "source": "API",
+                          "reason": "Subtracting creditsfrom card",
+                          "type": "CREDITS_REMOVAL",
+                          "details": {
+                            "balance": {
+                              "type": "gift_voucher",
+                              "total": 128020,
+                              "amount": -2000,
+                              "object": "balance",
+                              "balance": 121020,
+                              "related_object": {
+                                "id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-17T15:50:00.786Z"
+                        },
+                        {
+                          "id": "vtx_0c9dcc920ac0e9ef82",
+                          "source_id": "20230317_add_1",
+                          "voucher_id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                          "campaign_id": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
+                          "source": "API",
+                          "reason": "Adding more points to card",
+                          "type": "CREDITS_ADDITION",
+                          "details": {
+                            "balance": {
+                              "type": "gift_voucher",
+                              "total": 130020,
+                              "amount": 20,
+                              "object": "balance",
+                              "balance": 123020,
+                              "related_object": {
+                                "id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-17T15:49:08.768Z"
+                        },
+                        {
+                          "id": "vtx_0c94f018d30bef6689",
+                          "source_id": "HRwc0oHz_reward",
+                          "voucher_id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                          "campaign_id": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
+                          "source": "voucherify-web-ui",
+                          "reason": "cash reward",
+                          "type": "CREDITS_ADDITION",
+                          "details": {
+                            "balance": {
+                              "type": "gift_voucher",
+                              "total": 130000,
+                              "amount": 2000,
+                              "object": "balance",
+                              "balance": 123000,
+                              "related_object": {
+                                "id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-10T18:38:02.055Z"
+                        },
+                        {
+                          "id": "vtx_0c94edbbaccbef5db6",
+                          "source_id": null,
+                          "voucher_id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                          "campaign_id": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
+                          "source": null,
+                          "reason": null,
+                          "type": "CREDITS_REFUND",
+                          "details": {
+                            "balance": {
+                              "type": "gift_voucher",
+                              "total": 128000,
+                              "amount": 44,
+                              "object": "balance",
+                              "balance": 121000,
+                              "related_object": {
+                                "id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                                "type": "voucher"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_jj5EzDxDOd2xFPsAJJ18IaZK",
+                              "source_id": null
+                            },
+                            "redemption": {
+                              "id": "r_0c94ed583fcafc31c1"
+                            },
+                            "rollback": {
+                              "id": "rr_0c94edbb8d0bef5d9e"
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-10T18:27:42.389Z"
+                        },
+                        {
+                          "id": "vtx_0c94ed584f4afc31da",
+                          "source_id": null,
+                          "voucher_id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                          "campaign_id": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
+                          "source": null,
+                          "reason": null,
+                          "type": "CREDITS_REDEMPTION",
+                          "details": {
+                            "balance": {
+                              "type": "gift_voucher",
+                              "total": 128000,
+                              "amount": -44,
+                              "object": "balance",
+                              "balance": 120956,
+                              "related_object": {
+                                "id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                                "type": "voucher"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_jj5EzDxDOd2xFPsAJJ18IaZK",
+                              "source_id": null
+                            },
+                            "redemption": {
+                              "id": "r_0c94ed583fcafc31c1"
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-10T18:26:00.640Z"
+                        },
+                        {
+                          "id": "vtx_0c94e9432c4afc2134",
+                          "source_id": "HRwc0oHz_removal",
+                          "voucher_id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                          "campaign_id": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
+                          "source": "voucherify-web-ui",
+                          "reason": "removal",
+                          "type": "CREDITS_REMOVAL",
+                          "details": {
+                            "balance": {
+                              "type": "gift_voucher",
+                              "total": 128000,
+                              "amount": -2000,
+                              "object": "balance",
+                              "balance": 121000,
+                              "related_object": {
+                                "id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-10T18:08:10.413Z"
+                        },
+                        {
+                          "id": "vtx_0c94e8100f8afc1c6c",
+                          "source_id": null,
+                          "voucher_id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                          "campaign_id": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
+                          "source": null,
+                          "reason": null,
+                          "type": "CREDITS_REDEMPTION",
+                          "details": {
+                            "balance": {
+                              "type": "gift_voucher",
+                              "total": 130000,
+                              "amount": -7000,
+                              "object": "balance",
+                              "balance": 123000,
+                              "related_object": {
+                                "id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                                "type": "voucher"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_qZX3pEt5rFf5W23qRMDQcVt9",
+                              "source_id": null
+                            },
+                            "redemption": {
+                              "id": "r_0c94e80fda4afc1c59"
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-10T18:02:55.935Z"
+                        },
+                        {
+                          "id": "vtx_0c94e6b82a4bef406c",
+                          "source_id": "walmart",
+                          "voucher_id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                          "campaign_id": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
+                          "source": "voucherify-web-ui",
+                          "reason": "return",
+                          "type": "CREDITS_ADDITION",
+                          "details": {
+                            "balance": {
+                              "type": "gift_voucher",
+                              "total": 130000,
+                              "amount": 5000,
+                              "object": "balance",
+                              "balance": 130000,
+                              "related_object": {
+                                "id": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-10T17:57:03.758Z"
+                        }
+                      ],
+                      "has_more": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the voucher code does not exist or has been deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find voucher with id IrKORhS",
+                      "request_id": "v-0a96cd820301c0483a",
+                      "resource_id": "IrKORhS",
+                      "resource_type": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/vouchers/{code}/transactions/export": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "GIFT-CARD-1"
+          },
+          "name": "code",
+          "in": "path",
+          "required": true,
+          "description": "A **code** that identifies the voucher or a unique voucher ID assigned by Voucherify, i.e. `v_TzD19aeNiqGc9LWciMWknyEZT8IW7u4u`."
+        }
+      ],
+      "post": {
+        "operationId": "post-vouchers-code-transactions-export",
+        "tags": [
+          "VOUCHERS API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "summary": "Export Gift Card Transactions",
+        "description": "Export transactions that are associated with credit movements on a gift card.",
+        "requestBody": {
+          "description": "Specify the parameters and filters for the transaction export.",
+          "content": {
+            "application/json": {
+              "examples": {
+                "Example": {
+                  "value": {
+                    "parameters": {
+                      "order": "-created_at",
+                      "fields": [
+                        "id",
+                        "type",
+                        "source_id",
+                        "reason",
+                        "balance",
+                        "amount",
+                        "created_at",
+                        "voucher_id",
+                        "campaign_id",
+                        "details",
+                        "related_transaction_id"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns an export object.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "exp_5gYD1kTWjTY94d78k0jVQ5N5",
+                      "object": "export",
+                      "created_at": "2023-03-21T13:30:42.881Z",
+                      "status": "SCHEDULED",
+                      "channel": "API",
+                      "exported_object": "voucher_transactions",
+                      "parameters": {
+                        "order": "-created_at",
+                        "fields": [
+                          "id",
+                          "type",
+                          "source_id",
+                          "reason",
+                          "balance",
+                          "amount",
+                          "created_at",
+                          "voucher_id",
+                          "campaign_id",
+                          "details",
+                          "related_transaction_id"
+                        ],
+                        "filters": {
+                          "voucher_id": {
+                            "conditions": {
+                              "$in": [
+                                "HRwc0oHz"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "result": null,
+                      "user_id": null
+                    }
+                  },
+                  "No request body": {
+                    "value": {
+                      "id": "exp_ExEE5A6OIK4tssuNswr5O6SU",
+                      "object": "export",
+                      "created_at": "2023-03-21T13:34:57.034Z",
+                      "status": "SCHEDULED",
+                      "channel": "API",
+                      "exported_object": "voucher_transactions",
+                      "parameters": {
+                        "filters": {
+                          "voucher_id": {
+                            "conditions": {
+                              "$in": [
+                                "HRwc0oHz"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "result": null,
+                      "user_id": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the voucher code does not exist or has been deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find voucher with id IrKORhS",
+                      "request_id": "v-0a96cd820301c0483a",
+                      "resource_id": "IrKORhS",
+                      "resource_type": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/vouchers/import": {
       "post": {
         "operationId": "post-vouchers-import",
@@ -49564,7 +50103,7 @@
           "PUBLICATIONS API"
         ],
         "summary": "Create Publication",
-        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.\n> ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for integrations with MoEngage and Iterable.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple vouchers from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use a [dedicated endpoint](ref:create-publication).  \n<!-- theme: info -->\n\n> 📘 Specifying the voucher to be published\n>\n> - In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign and in the query parameters specify the `campaign` without specifying the voucher.\n> - If you would like to publish a specific code from a specific campaign, then you need to provide the `campaign` and the `voucher` parameters.\n> - If you would like to publish a standalone voucher, then omit the campaign parameter and simply provide the `voucher` parameter.",
+        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.\n> ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for specific integrations and the API keys need to be configured to access this endpoint.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple vouchers from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use a [dedicated endpoint](ref:create-publication).  \n<!-- theme: info -->\n\n> 📘 Specifying the voucher to be published\n>\n> - In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign and in the query parameters specify the `campaign` without specifying the voucher.\n> - If you would like to publish a specific code from a specific campaign, then you need to provide the `campaign` and the `voucher` parameters.\n> - If you would like to publish a standalone voucher, then omit the campaign parameter and simply provide the `voucher` parameter.",
         "parameters": [
           {
             "$ref": "#/components/parameters/X-App-Id"
@@ -58679,10 +59218,44 @@
           }
         ],
         "requestBody": {
+          "description": "Add information about the original customer and order. Customer data and Redemption metadata can be updated in Voucherify when passing the customer data in the request body.",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/7_req_rollback_redemption"
+              },
+              "examples": {
+                "Promotion": {
+                  "value": {
+                    "customer": {
+                      "id": "cust_SolpIN5N4oZbCnrxZ5NHrbVB",
+                      "name": "Annie Lemons",
+                      "email": "annie@lemon.com",
+                      "phone": "+1 933 222 3334",
+                      "birthday": "1900-12-02",
+                      "birthdate": "1900-12-01",
+                      "address": {
+                        "city": "New York",
+                        "state": "NY",
+                        "line_1": "123 Main St.",
+                        "line_2": "APT 3 BLG 5",
+                        "country": "United States",
+                        "postal_code": "100012"
+                      },
+                      "metadata": {
+                        "age": 23
+                      }
+                    },
+                    "order": {
+                      "source_id": "test_rollback_8"
+                    },
+                    "metadata": {
+                      "location_id": [
+                        "L2"
+                      ]
+                    }
+                  }
+                }
               }
             }
           }
@@ -59136,19 +59709,24 @@
                   },
                   "Promotion Tier": {
                     "value": {
-                      "id": "rr_0c5eb34430cee0ab02",
+                      "id": "rr_0ca286e96cc03f3e76",
                       "object": "redemption_rollback",
-                      "date": "2023-01-27T15:34:17.027Z",
+                      "date": "2023-03-21T07:57:12.526Z",
                       "customer_id": "cust_SolpIN5N4oZbCnrxZ5NHrbVB",
                       "tracking_id": "track_VAVW6qltuo1/z+G2GI2LPw==",
-                      "metadata": null,
-                      "redemption": "r_0c5d6689b35320059a",
+                      "metadata": {
+                        "location_id": [
+                          "L2"
+                        ]
+                      },
+                      "redemption": "r_0ca286d222d2f7dc1f",
+                      "reason": "To undo a redemption.",
                       "result": "SUCCESS",
                       "order": {
-                        "id": "ord_4kVJ1PiXP3TNfik3pM79KZsn",
-                        "source_id": null,
-                        "created_at": "2023-01-26T15:20:34.216Z",
-                        "updated_at": "2023-01-27T15:34:17.108Z",
+                        "id": "ord_0FR01SqYIxV4ITzgs1yZjkK6",
+                        "source_id": "test_rollback_8",
+                        "created_at": "2023-03-21T07:56:48.634Z",
+                        "updated_at": "2023-03-21T07:57:12.546Z",
                         "status": "CANCELED",
                         "amount": 200000,
                         "total_amount": 200000,
@@ -59163,6 +59741,8 @@
                             "price": 50000,
                             "subtotal_amount": 100000,
                             "product": {
+                              "id": "prod_0c5d6689b39320059b",
+                              "source_id": "prod_anJ03RZZq74z4v",
                               "name": "Apple iPhone 8",
                               "metadata": {
                                 "shop": "citycenter",
@@ -59199,21 +59779,27 @@
                         "referrer_id": null,
                         "object": "order",
                         "redemptions": {
-                          "r_0c5d6689b35320059a": {
-                            "date": "2023-01-26T15:20:34.253Z",
-                            "rollback_id": "rr_0c5eb34430cee0ab02",
-                            "rollback_date": "2023-01-27T15:34:17.027Z",
+                          "r_0ca286d222d2f7dc1f": {
+                            "date": "2023-03-21T07:56:48.651Z",
+                            "rollback_id": "rr_0ca286e96cc03f3e76",
+                            "rollback_date": "2023-03-21T07:57:12.526Z",
                             "related_object_type": "promotion_tier",
                             "related_object_id": "promo_DE1N30D731Tg2F6NoMwNas2W",
                             "related_object_parent_id": "camp_w7BUstntAm8jbIDjfM49volj"
                           }
                         }
                       },
+                      "channel": {
+                        "channel_id": "e55f3aaa-b303-421a-b562-ca8529ed341d",
+                        "channel_type": "API"
+                      },
                       "customer": {
                         "id": "cust_SolpIN5N4oZbCnrxZ5NHrbVB",
+                        "name": "Annie Lemons",
+                        "email": "annie@lemon.com",
                         "source_id": "annie@lemon.com",
                         "metadata": {
-                          "age": 2
+                          "age": 23
                         },
                         "object": "customer"
                       },
@@ -59223,7 +59809,7 @@
                       "promotion_tier": {
                         "id": "promo_DE1N30D731Tg2F6NoMwNas2W",
                         "created_at": "2022-09-23T08:31:23.022Z",
-                        "updated_at": "2023-01-26T15:20:59.954Z",
+                        "updated_at": "2023-02-01T07:47:57.324Z",
                         "name": "Percent Discount",
                         "banner": "Get 40% off",
                         "action": {
@@ -59242,8 +59828,8 @@
                           "active": true,
                           "object": "campaign"
                         },
-                        "campaign_id": null,
-                        "active": false,
+                        "campaign_id": "camp_w7BUstntAm8jbIDjfM49volj",
+                        "active": true,
                         "start_date": "2022-09-21T00:00:00.000Z",
                         "validity_day_of_week": [
                           1,
@@ -59254,15 +59840,17 @@
                         ],
                         "summary": {
                           "redemptions": {
-                            "total_redeemed": 1
+                            "total_redeemed": 5
                           },
                           "orders": {
-                            "total_amount": 8000,
-                            "total_discount_amount": 3200
+                            "total_amount": 616000,
+                            "total_discount_amount": 246400
                           }
                         },
                         "object": "promotion_tier",
-                        "validation_rule_assignments": null
+                        "validation_rule_assignments": null,
+                        "category_id": null,
+                        "categories": []
                       }
                     }
                   }
@@ -59305,6 +59893,24 @@
                       "message": "Invalid redemption",
                       "details": "You can rollback only a single redemption. Use different endpoint for stacked redemption.",
                       "request_id": "v-0c675e5e2e04e31bb3"
+                    }
+                  },
+                  "Invalid Order": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_order",
+                      "message": "Invalid order",
+                      "details": "Order is not related with redemption.",
+                      "request_id": "v-0ca2770e3fc4047e25"
+                    }
+                  },
+                  "Invalidate Customer": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_customer",
+                      "message": "Invalid customer",
+                      "details": "Customer is not related with redemption.",
+                      "request_id": "v-0ca284851b0404513f"
                     }
                   }
                 }
@@ -59365,10 +59971,59 @@
           }
         ],
         "requestBody": {
+          "description": "Provide the redemption context in the request body.",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/7_req_redeem_promotion_tier"
+              },
+              "examples": {
+                "One product one sku": {
+                  "value": {
+                    "customer": {
+                      "source_id": "annie@lemon.com",
+                      "name": "Annie Lemon",
+                      "email": "annie@lemon.com"
+                    },
+                    "order": {
+                      "amount": 200000,
+                      "items": [
+                        {
+                          "source_id": "apple534",
+                          "product_id": "prod_anJ03RZZq74z4v",
+                          "related_object": "product",
+                          "quantity": 2,
+                          "price": 50000,
+                          "product": {
+                            "override": true,
+                            "name": "Apple iPhone 8",
+                            "metadata": {
+                              "shop": "citycenter",
+                              "category": "electronics"
+                            }
+                          },
+                          "metadata": {
+                            "series": "2022-783CV"
+                          }
+                        },
+                        {
+                          "sku_id": "sku_0KtP4rvwEECQ2U",
+                          "source_id": "apple534-ihd5",
+                          "related_object": "sku",
+                          "quantity": 1,
+                          "price": 100000,
+                          "sku": {
+                            "override": true,
+                            "sku": "Apple iPad 10 Silver 64GB",
+                            "metadata": {
+                              "category": "electronics"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
               }
             }
           }
@@ -59382,6 +60037,162 @@
                   "$ref": "#/components/schemas/7_obj_redemption_object_promotion_tier_extended"
                 },
                 "examples": {
+                  "One product one sku": {
+                    "value": {
+                      "id": "r_0ca2699201c03f121b",
+                      "object": "redemption",
+                      "date": "2023-03-21T05:49:00.807Z",
+                      "customer_id": "cust_SolpIN5N4oZbCnrxZ5NHrbVB",
+                      "tracking_id": "track_VAVW6qltuo1/z+G2GI2LPw==",
+                      "metadata": null,
+                      "result": "SUCCESS",
+                      "order": {
+                        "id": "ord_IVEF85NZCXmP4S1fGmImSTwH",
+                        "source_id": null,
+                        "created_at": "2023-03-21T05:49:00.772Z",
+                        "updated_at": null,
+                        "status": "PAID",
+                        "amount": 200000,
+                        "discount_amount": 80000,
+                        "total_discount_amount": 80000,
+                        "total_amount": 120000,
+                        "applied_discount_amount": 80000,
+                        "total_applied_discount_amount": 80000,
+                        "items": [
+                          {
+                            "object": "order_item",
+                            "source_id": "apple534",
+                            "related_object": "product",
+                            "product_id": "prod_anJ03RZZq74z4v",
+                            "quantity": 2,
+                            "amount": 100000,
+                            "price": 50000,
+                            "subtotal_amount": 100000,
+                            "product": {
+                              "id": "prod_0c5d6689b39320059b",
+                              "source_id": "prod_anJ03RZZq74z4v",
+                              "name": "Apple iPhone 8",
+                              "metadata": {
+                                "shop": "citycenter",
+                                "category": "electronics"
+                              }
+                            },
+                            "metadata": {
+                              "series": "2022-783CV"
+                            }
+                          },
+                          {
+                            "object": "order_item",
+                            "source_id": "apple534-ihd5",
+                            "related_object": "sku",
+                            "sku_id": "sku_0KtP4rvwEECQ2U",
+                            "quantity": 1,
+                            "amount": 100000,
+                            "price": 100000,
+                            "subtotal_amount": 100000,
+                            "sku": {
+                              "sku": "Apple iPad 10 Silver 64GB",
+                              "metadata": {
+                                "category": "electronics"
+                              }
+                            }
+                          }
+                        ],
+                        "metadata": {},
+                        "customer": {
+                          "id": "cust_SolpIN5N4oZbCnrxZ5NHrbVB",
+                          "object": "customer"
+                        },
+                        "customer_id": "cust_SolpIN5N4oZbCnrxZ5NHrbVB",
+                        "referrer_id": null,
+                        "object": "order",
+                        "redemptions": {
+                          "r_0ca2699201c03f121b": {
+                            "date": "2023-03-21T05:49:00.807Z",
+                            "related_object_type": "promotion_tier",
+                            "related_object_id": "promo_DE1N30D731Tg2F6NoMwNas2W",
+                            "related_object_parent_id": "camp_w7BUstntAm8jbIDjfM49volj"
+                          }
+                        }
+                      },
+                      "channel": {
+                        "channel_id": "e55f3aaa-b303-421a-b562-ca8529ed341d",
+                        "channel_type": "API"
+                      },
+                      "customer": {
+                        "id": "cust_SolpIN5N4oZbCnrxZ5NHrbVB",
+                        "name": "Annie Lemon",
+                        "email": "annie@lemon.com",
+                        "source_id": "annie@lemon.com",
+                        "metadata": {
+                          "age": 2
+                        },
+                        "object": "customer"
+                      },
+                      "related_object_type": "promotion_tier",
+                      "related_object_id": "promo_DE1N30D731Tg2F6NoMwNas2W",
+                      "voucher": null,
+                      "promotion_tier": {
+                        "id": "promo_DE1N30D731Tg2F6NoMwNas2W",
+                        "created_at": "2022-09-23T08:31:23.022Z",
+                        "updated_at": "2023-02-01T07:47:57.324Z",
+                        "name": "Percent Discount",
+                        "banner": "Get 40% off",
+                        "action": {
+                          "discount": {
+                            "type": "PERCENT",
+                            "percent_off": 40,
+                            "effect": "APPLY_TO_ORDER"
+                          }
+                        },
+                        "metadata": {},
+                        "hierarchy": 2,
+                        "campaign": {
+                          "id": "camp_w7BUstntAm8jbIDjfM49volj",
+                          "start_date": "2019-08-16T00:00:00.000Z",
+                          "expiration_date": null,
+                          "active": true,
+                          "object": "campaign"
+                        },
+                        "campaign_id": "camp_w7BUstntAm8jbIDjfM49volj",
+                        "active": true,
+                        "start_date": "2022-09-21T00:00:00.000Z",
+                        "validity_day_of_week": [
+                          1,
+                          2,
+                          3,
+                          4,
+                          5
+                        ],
+                        "summary": {
+                          "redemptions": {
+                            "total_redeemed": 5
+                          },
+                          "orders": {
+                            "total_amount": 616000,
+                            "total_discount_amount": 246400
+                          }
+                        },
+                        "object": "promotion_tier",
+                        "validation_rule_assignments": {
+                          "object": "list",
+                          "data_ref": "data",
+                          "data": [
+                            {
+                              "id": "asgm_z6MvMg2Zf2UABNWN",
+                              "rule_id": "val_q8qUBMOh5qIQ",
+                              "related_object_id": "promo_DE1N30D731Tg2F6NoMwNas2W",
+                              "related_object_type": "promotion_tier",
+                              "object": "validation_rules_assignment"
+                            }
+                          ],
+                          "total": 1
+                        },
+                        "category_id": null,
+                        "categories": []
+                      }
+                    }
+                  },
                   "Example": {
                     "value": {
                       "id": "r_0c64c10b8ece60bd91",
@@ -62306,6 +63117,992 @@
                         "url": "/v1/vouchers/MmFAzfDe/publications?page=1&limit=10"
                       },
                       "object": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/{campaignId}/members/{memberId}/transactions": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "description": "A unique identifier of the loyalty campaign containing the voucher whose transactions you would like to return."
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "A unique code identifying the loyalty card that you are looking to retrieve transaction data for."
+        }
+      ],
+      "get": {
+        "operationId": "get-loyalties-campaignId-members-memberId-transactions",
+        "tags": [
+          "LOYALTIES API"
+        ],
+        "summary": "Get Loyalty Card Transactions",
+        "description": "Retrieve transaction data related to point movements for a specific loyalty card.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a dictionary of loyalty card transaction objects.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "vtx_0c9dd3c2e392f78613",
+                          "source_id": "20230317_transfer_1",
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": "API",
+                          "reason": "Transferring points to card",
+                          "type": "POINTS_TRANSFER_OUT",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1396,
+                              "object": "balance",
+                              "points": -1,
+                              "balance": 1396,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            },
+                            "destination_voucher": {
+                              "id": "v_Wak6xlf5WdR4rIcvJxC2olOopk0boK6t",
+                              "code": "LOYALTY-CARD-A8XVurg",
+                              "type": "LOYALTY_CARD",
+                              "campaign": "Loyalty Campaign - Test Initial Points",
+                              "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                              "loyalty_card": {
+                                "points": 1102,
+                                "balance": 1102,
+                                "next_expiration_date": "2023-12-31",
+                                "next_expiration_points": 102
+                              },
+                              "is_referral_code": false
+                            }
+                          },
+                          "related_transaction_id": "vtx_0c9dd3c2e392f78614",
+                          "created_at": "2023-03-17T16:20:33.807Z"
+                        },
+                        {
+                          "id": "vtx_0c9dd2527696ba081b",
+                          "source_id": "20230317_add_1",
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": null,
+                          "reason": "Adding points to card",
+                          "type": "POINTS_ADDITION",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1397,
+                              "object": "balance",
+                              "points": 100,
+                              "balance": 1397,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-17T16:14:16.524Z"
+                        },
+                        {
+                          "id": "vtx_0c9dd1ce1d403f4204",
+                          "source_id": "20230317_subtract_1",
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": null,
+                          "reason": "Subtracting points from card",
+                          "type": "POINTS_REMOVAL",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1297,
+                              "object": "balance",
+                              "points": -1,
+                              "balance": 1297,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-17T16:12:00.981Z"
+                        },
+                        {
+                          "id": "vtx_0c9c21df658d03ce3f",
+                          "source_id": null,
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": "Automation",
+                          "reason": null,
+                          "type": "POINTS_ACCRUAL",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1298,
+                              "object": "balance",
+                              "points": 200,
+                              "balance": 1298,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_QZEKPzYATFjGoos4DonMg0fd",
+                              "source_id": "s"
+                            },
+                            "event": {
+                              "id": "evcus_0c9c21def34e3c05bf",
+                              "type": "customer.order.paid"
+                            },
+                            "earning_rule": {
+                              "id": "ern_2WsCIBEx6Lzf5IAV5IOR7a23",
+                              "source": {
+                                "banner": "Order paid"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-16T08:44:52.333Z"
+                        },
+                        {
+                          "id": "vtx_0c9b09673f8a862a51",
+                          "source_id": null,
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": null,
+                          "reason": null,
+                          "type": "POINTS_REFUND",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1098,
+                              "object": "balance",
+                              "points": 1000,
+                              "balance": 1098,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_DH2gGDlDWB1hRImf1VVB4EIH",
+                              "source_id": null
+                            },
+                            "redemption": {
+                              "id": "r_0c9b08fe4b80897849"
+                            },
+                            "rollback": {
+                              "id": "rr_0c9b0967244a862a33"
+                            },
+                            "reward": {
+                              "id": "rew_INt3fGH3n7xIr3ZQcq4kkUZ1",
+                              "name": "100 = $20"
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-15T12:19:29.149Z"
+                        },
+                        {
+                          "id": "vtx_0c9b08fe530089785c",
+                          "source_id": null,
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": null,
+                          "reason": null,
+                          "type": "POINTS_REDEMPTION",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1098,
+                              "object": "balance",
+                              "points": -1000,
+                              "balance": 98,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_DH2gGDlDWB1hRImf1VVB4EIH",
+                              "source_id": null
+                            },
+                            "redemption": {
+                              "id": "r_0c9b08fe4b80897849"
+                            },
+                            "reward": {
+                              "id": "rew_INt3fGH3n7xIr3ZQcq4kkUZ1",
+                              "name": "100 = $20"
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-15T12:17:41.708Z"
+                        },
+                        {
+                          "id": "vtx_0c9b074afed3b30e4b",
+                          "source_id": "20230309_add_points_1",
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": "voucherify-web-ui",
+                          "reason": "Customer purchased points at kiosk.",
+                          "type": "POINTS_ADDITION",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1098,
+                              "object": "balance",
+                              "points": 100,
+                              "balance": 1098,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-15T12:10:15.917Z"
+                        },
+                        {
+                          "id": "vtx_0c9b073072408969d1",
+                          "source_id": "20230309_subtract_points_1",
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": "voucherify-web-ui",
+                          "reason": "Customer used points to obtain tickets.",
+                          "type": "POINTS_REMOVAL",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 998,
+                              "object": "balance",
+                              "points": -1,
+                              "balance": 998,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-15T12:09:48.735Z"
+                        },
+                        {
+                          "id": "vtx_0c9afe802593b34b80",
+                          "source_id": null,
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": "API",
+                          "reason": null,
+                          "type": "POINTS_TRANSFER_OUT",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 999,
+                              "object": "balance",
+                              "points": -1,
+                              "balance": 999,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            },
+                            "destination_voucher": {
+                              "id": "v_Wak6xlf5WdR4rIcvJxC2olOopk0boK6t",
+                              "code": "LOYALTY-CARD-A8XVurg",
+                              "type": "LOYALTY_CARD",
+                              "campaign": "Loyalty Campaign - Test Initial Points",
+                              "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                              "loyalty_card": {
+                                "points": 1001,
+                                "balance": 1001,
+                                "next_expiration_date": "2023-12-31",
+                                "next_expiration_points": 1
+                              },
+                              "is_referral_code": false
+                            }
+                          },
+                          "related_transaction_id": "vtx_0c9afe802593b34b81",
+                          "created_at": "2023-03-15T11:31:51.062Z"
+                        }
+                      ],
+                      "has_more": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/members/{memberId}/transactions": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "A unique code identifying the loyalty card that you are looking to retrieve transaction data for."
+        }
+      ],
+      "get": {
+        "operationId": "get-loyalties-members-memberId-transactions",
+        "tags": [
+          "LOYALTIES API"
+        ],
+        "summary": "Get Loyalty Card Transactions",
+        "description": "Retrieve transaction data related to point movements for a specific loyalty card.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a dictionary of loyalty card transaction objects.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "vtx_0c9dd3c2e392f78613",
+                          "source_id": "20230317_transfer_1",
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": "API",
+                          "reason": "Transferring points to card",
+                          "type": "POINTS_TRANSFER_OUT",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1396,
+                              "object": "balance",
+                              "points": -1,
+                              "balance": 1396,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            },
+                            "destination_voucher": {
+                              "id": "v_Wak6xlf5WdR4rIcvJxC2olOopk0boK6t",
+                              "code": "LOYALTY-CARD-A8XVurg",
+                              "type": "LOYALTY_CARD",
+                              "campaign": "Loyalty Campaign - Test Initial Points",
+                              "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                              "loyalty_card": {
+                                "points": 1102,
+                                "balance": 1102,
+                                "next_expiration_date": "2023-12-31",
+                                "next_expiration_points": 102
+                              },
+                              "is_referral_code": false
+                            }
+                          },
+                          "related_transaction_id": "vtx_0c9dd3c2e392f78614",
+                          "created_at": "2023-03-17T16:20:33.807Z"
+                        },
+                        {
+                          "id": "vtx_0c9dd2527696ba081b",
+                          "source_id": "20230317_add_1",
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": null,
+                          "reason": "Adding points to card",
+                          "type": "POINTS_ADDITION",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1397,
+                              "object": "balance",
+                              "points": 100,
+                              "balance": 1397,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-17T16:14:16.524Z"
+                        },
+                        {
+                          "id": "vtx_0c9dd1ce1d403f4204",
+                          "source_id": "20230317_subtract_1",
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": null,
+                          "reason": "Subtracting points from card",
+                          "type": "POINTS_REMOVAL",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1297,
+                              "object": "balance",
+                              "points": -1,
+                              "balance": 1297,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-17T16:12:00.981Z"
+                        },
+                        {
+                          "id": "vtx_0c9c21df658d03ce3f",
+                          "source_id": null,
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": "Automation",
+                          "reason": null,
+                          "type": "POINTS_ACCRUAL",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1298,
+                              "object": "balance",
+                              "points": 200,
+                              "balance": 1298,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_QZEKPzYATFjGoos4DonMg0fd",
+                              "source_id": "s"
+                            },
+                            "event": {
+                              "id": "evcus_0c9c21def34e3c05bf",
+                              "type": "customer.order.paid"
+                            },
+                            "earning_rule": {
+                              "id": "ern_2WsCIBEx6Lzf5IAV5IOR7a23",
+                              "source": {
+                                "banner": "Order paid"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-16T08:44:52.333Z"
+                        },
+                        {
+                          "id": "vtx_0c9b09673f8a862a51",
+                          "source_id": null,
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": null,
+                          "reason": null,
+                          "type": "POINTS_REFUND",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1098,
+                              "object": "balance",
+                              "points": 1000,
+                              "balance": 1098,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_DH2gGDlDWB1hRImf1VVB4EIH",
+                              "source_id": null
+                            },
+                            "redemption": {
+                              "id": "r_0c9b08fe4b80897849"
+                            },
+                            "rollback": {
+                              "id": "rr_0c9b0967244a862a33"
+                            },
+                            "reward": {
+                              "id": "rew_INt3fGH3n7xIr3ZQcq4kkUZ1",
+                              "name": "100 = $20"
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-15T12:19:29.149Z"
+                        },
+                        {
+                          "id": "vtx_0c9b08fe530089785c",
+                          "source_id": null,
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": null,
+                          "reason": null,
+                          "type": "POINTS_REDEMPTION",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1098,
+                              "object": "balance",
+                              "points": -1000,
+                              "balance": 98,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_DH2gGDlDWB1hRImf1VVB4EIH",
+                              "source_id": null
+                            },
+                            "redemption": {
+                              "id": "r_0c9b08fe4b80897849"
+                            },
+                            "reward": {
+                              "id": "rew_INt3fGH3n7xIr3ZQcq4kkUZ1",
+                              "name": "100 = $20"
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-15T12:17:41.708Z"
+                        },
+                        {
+                          "id": "vtx_0c9b074afed3b30e4b",
+                          "source_id": "20230309_add_points_1",
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": "voucherify-web-ui",
+                          "reason": "Customer purchased points at kiosk.",
+                          "type": "POINTS_ADDITION",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 1098,
+                              "object": "balance",
+                              "points": 100,
+                              "balance": 1098,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-15T12:10:15.917Z"
+                        },
+                        {
+                          "id": "vtx_0c9b073072408969d1",
+                          "source_id": "20230309_subtract_points_1",
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": "voucherify-web-ui",
+                          "reason": "Customer used points to obtain tickets.",
+                          "type": "POINTS_REMOVAL",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 998,
+                              "object": "balance",
+                              "points": -1,
+                              "balance": 998,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2023-03-15T12:09:48.735Z"
+                        },
+                        {
+                          "id": "vtx_0c9afe802593b34b80",
+                          "source_id": null,
+                          "voucher_id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                          "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                          "source": "API",
+                          "reason": null,
+                          "type": "POINTS_TRANSFER_OUT",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 999,
+                              "object": "balance",
+                              "points": -1,
+                              "balance": 999,
+                              "related_object": {
+                                "id": "v_lWRrcwNm0vqxBaU5nsSMzRRHusCsS4Vl",
+                                "type": "voucher"
+                              }
+                            },
+                            "destination_voucher": {
+                              "id": "v_Wak6xlf5WdR4rIcvJxC2olOopk0boK6t",
+                              "code": "LOYALTY-CARD-A8XVurg",
+                              "type": "LOYALTY_CARD",
+                              "campaign": "Loyalty Campaign - Test Initial Points",
+                              "campaign_id": "camp_LyAZf94hbZaUbSdKIeAJpjRp",
+                              "loyalty_card": {
+                                "points": 1001,
+                                "balance": 1001,
+                                "next_expiration_date": "2023-12-31",
+                                "next_expiration_points": 1
+                              },
+                              "is_referral_code": false
+                            }
+                          },
+                          "related_transaction_id": "vtx_0c9afe802593b34b81",
+                          "created_at": "2023-03-15T11:31:51.062Z"
+                        }
+                      ],
+                      "has_more": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/members/{memberId}/transactions/export": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "A unique code identifying the loyalty card that you are looking to export transaction data for."
+        }
+      ],
+      "post": {
+        "operationId": "post-loyalties-members-memberId-transactions-export",
+        "tags": [
+          "LOYALTIES API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "summary": "Export Loyalty Card Transactions",
+        "description": "Export transactions that are associated with point movements on a loyalty card.",
+        "requestBody": {
+          "description": "Specify the parameters and filters for the transaction export.",
+          "content": {
+            "application/json": {
+              "examples": {
+                "Example": {
+                  "value": {
+                    "parameters": {
+                      "order": "-created_at",
+                      "fields": [
+                        "id",
+                        "type",
+                        "source_id",
+                        "reason",
+                        "balance",
+                        "amount",
+                        "created_at",
+                        "voucher_id",
+                        "campaign_id",
+                        "details",
+                        "related_transaction_id"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns an export object.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "exp_8Fwd6Z8NS67ZH314KRtm5xXE",
+                      "object": "export",
+                      "created_at": "2023-03-21T13:50:43.286Z",
+                      "status": "SCHEDULED",
+                      "channel": "API",
+                      "exported_object": "voucher_transactions",
+                      "parameters": {
+                        "order": "-created_at",
+                        "fields": [
+                          "id",
+                          "type",
+                          "source_id",
+                          "reason",
+                          "balance",
+                          "amount",
+                          "created_at",
+                          "voucher_id",
+                          "campaign_id",
+                          "details",
+                          "related_transaction_id"
+                        ],
+                        "filters": {
+                          "voucher_id": {
+                            "conditions": {
+                              "$in": [
+                                "LOYALTY-CARD-2IAoDNF"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "result": null,
+                      "user_id": null
+                    }
+                  },
+                  "No request body": {
+                    "value": {
+                      "id": "exp_ExEE5A6OIK4tssuNswr5O6SU",
+                      "object": "export",
+                      "created_at": "2023-03-21T13:34:57.034Z",
+                      "status": "SCHEDULED",
+                      "channel": "API",
+                      "exported_object": "voucher_transactions",
+                      "parameters": {
+                        "filters": {
+                          "voucher_id": {
+                            "conditions": {
+                              "$in": [
+                                "HRwc0oHz"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "result": null,
+                      "user_id": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the voucher code does not exist or has been deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find voucher with id IrKORhS",
+                      "request_id": "v-0a96cd820301c0483a",
+                      "resource_id": "IrKORhS",
+                      "resource_type": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/{campaignId}/members/{memberId}/transactions/export": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "description": "A unique identifier of the loyalty campaign containing the voucher whose transactions you would like to export."
+        },
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "A unique code identifying the loyalty card that you are looking to export transaction data for."
+        }
+      ],
+      "post": {
+        "operationId": "post-loyalties-campaignId-members-memberId-transactions-export",
+        "tags": [
+          "LOYALTIES API"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/X-App-Id"
+          },
+          {
+            "$ref": "#/components/parameters/X-App-Token"
+          }
+        ],
+        "summary": "Export Loyalty Card Transactions",
+        "description": "Export transactions that are associated with point movements on a loyalty card.",
+        "requestBody": {
+          "description": "Specify the parameters and filters for the transaction export.",
+          "content": {
+            "application/json": {
+              "examples": {
+                "Example": {
+                  "value": {
+                    "parameters": {
+                      "order": "-created_at",
+                      "fields": [
+                        "id",
+                        "type",
+                        "source_id",
+                        "reason",
+                        "balance",
+                        "amount",
+                        "created_at",
+                        "voucher_id",
+                        "campaign_id",
+                        "details",
+                        "related_transaction_id"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns an export object.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "exp_8Fwd6Z8NS67ZH314KRtm5xXE",
+                      "object": "export",
+                      "created_at": "2023-03-21T13:50:43.286Z",
+                      "status": "SCHEDULED",
+                      "channel": "API",
+                      "exported_object": "voucher_transactions",
+                      "parameters": {
+                        "order": "-created_at",
+                        "fields": [
+                          "id",
+                          "type",
+                          "source_id",
+                          "reason",
+                          "balance",
+                          "amount",
+                          "created_at",
+                          "voucher_id",
+                          "campaign_id",
+                          "details",
+                          "related_transaction_id"
+                        ],
+                        "filters": {
+                          "voucher_id": {
+                            "conditions": {
+                              "$in": [
+                                "LOYALTY-CARD-2IAoDNF"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "result": null,
+                      "user_id": null
+                    }
+                  },
+                  "No request body": {
+                    "value": {
+                      "id": "exp_ExEE5A6OIK4tssuNswr5O6SU",
+                      "object": "export",
+                      "created_at": "2023-03-21T13:34:57.034Z",
+                      "status": "SCHEDULED",
+                      "channel": "API",
+                      "exported_object": "voucher_transactions",
+                      "parameters": {
+                        "filters": {
+                          "voucher_id": {
+                            "conditions": {
+                              "$in": [
+                                "HRwc0oHz"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "result": null,
+                      "user_id": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the voucher code does not exist or has been deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_404_not_found"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find voucher with id IrKORhS",
+                      "request_id": "v-0a96cd820301c0483a",
+                      "resource_id": "IrKORhS",
+                      "resource_type": "voucher"
                     }
                   }
                 }
