@@ -94,6 +94,13 @@
 | **API** | **Endpoint Name** | **Endpoint** | **Slug** |
 |---|---|---|---|
 | Rewards | Get Reward Assignment | **GET** `/rewards/{rewardId}/assignments/{assignmentId}` | get-reward-assignment |
+| Vouchers | List Gift Card Transactions | **GET** `/vouchers/{code}/transactions` | list-gift-card-transactions |
+| Vouchers | Export Gift Card Transactions | **POST** `/vouchers/{code}/transactions/export` | export-gift-card-transactions |
+| Loyalties | List Loyalty Card Transactions | **GET** `/loyalties/{campaignId}/members/{memberId}/transactions` |  list-loyalty-card-transactions-1 |
+| Loyalties | List Loyalty Card Transactions | **GET** `/loyalties/members/{memberId}/transactions` | list-loyalty-card-transactions |
+| Loyalties | Export Loyalty Card Transactions | **POST** `/loyalties/{campaignId}/members/{memberId}/transactions/export` | export-loyalty-card-transactions-1 |
+| Loyalties | Export Loyalty Card Transactions | **POST** `/loyalties/members/{memberId}/transactions/export` | export-loyalty-card-transactions |
+
 
 ### Object schema definitions removed
 

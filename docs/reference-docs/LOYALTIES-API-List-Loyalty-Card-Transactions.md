@@ -1,9 +1,9 @@
 ---
-title: Create Earning Rule
+title: List Loyalty Card Transactions
 type: endpoint
 category: 639ba2628407100061f5faac
-slug: create-earning-rule
+slug: list-loyalty-card-transactions
 parentDoc: 639ba2658407100061f5fab6
 hidden: false
-order: 26
+order: 19
 ---
