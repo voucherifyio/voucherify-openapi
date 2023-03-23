@@ -27,15 +27,13 @@ If applicable, add screenshots to help explain your problem.
 Add any other context about the problem here.
 
 ---
-```[tasklist]
 ### Standard Work
-- [ ] Provide a title
-- [ ] Provide a comment, following the template guidelines
-- [ ] Add a label
+- [ ] :one: Provide a title
+- [ ] :two: Provide a comment, following the template guidelines
+- [ ] :three: Add a label
     - `documentation` for Guides
     - `api` for API Reference (OpenAPI)
-- [ ] Choose a milestone
+- [ ] :four: Choose a milestone
     - If it's documentation related, then choose the Guides category (Getting Started, etc)
     - If it's API related, then choose the API Reference category (Introduction, Campaigns API, etc)
-- [ ] Submit new issue
-```
+- [ ] :five: Submit new issue
