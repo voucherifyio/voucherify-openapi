@@ -5,6 +5,6 @@ parentDoc: 639ba2658407100061f5fab5
 slug: stacking-api-overview
 type: link
 hidden: false
-order: 0
+order: 1
 link_url: https://docs.voucherify.io/docs/manage-stackable-discounts
 ---
