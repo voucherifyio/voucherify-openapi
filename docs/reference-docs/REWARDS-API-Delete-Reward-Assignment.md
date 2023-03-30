@@ -5,5 +5,5 @@ category: 639ba2628407100061f5faac
 slug: delete-reward-assignment
 parentDoc: 639ba2658407100061f5fab1
 hidden: false
-order: 11
+order: 10
 ---

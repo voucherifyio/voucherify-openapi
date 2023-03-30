@@ -5,5 +5,5 @@ category: 639ba2628407100061f5faac
 slug: delete-customer
 parentDoc: 639ba2658407100061f5fab7
 hidden: false
-order: 8
+order: 9
 ---
