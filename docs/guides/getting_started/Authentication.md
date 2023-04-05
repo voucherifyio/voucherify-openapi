@@ -12,8 +12,6 @@ order: 5
 
 We use two pairs of keys — one for server applications (*back-end*) and one for publicly available client applications (*mobile apps* and *web applications*).
 
-Voucherify uses *OAuth 2.0* to authorize requests to the platform. It is published under the [RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749).
-
 ## Application authentication
 
 To get access to the Voucherify API, the client application needs to pass `Application ID` and `Application Secret Key`. You can get (and reset) these tokens in the *Project settings*.
