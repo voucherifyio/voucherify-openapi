@@ -7,3 +7,8 @@ parentDoc: 639ba2658407100061f5fac0
 hidden: false
 order: 4
 ---
+[block:html]
+{
+  "html": "<style>\n.LanguagePicker-divider { \n  display: none; }\n</style>"
+}
+[/block]
