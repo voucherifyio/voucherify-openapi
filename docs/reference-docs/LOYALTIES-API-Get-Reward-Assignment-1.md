@@ -9,6 +9,6 @@ order: 34
 ---
 [block:html]
 {
-  "html": "<style>\n.LanguagePicker-divider { \n  display: none; }\n</style>"
+  "html": "<style>\n.LanguagePicker-divider { \n  display: none; }\n  \n[title=\"Toggle library\"] { \n  display: none; }\n</style>"
 }
 [/block]
