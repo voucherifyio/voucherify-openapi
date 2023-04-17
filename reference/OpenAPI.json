@@ -24861,7 +24861,10 @@
             "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_expiration"
           },
           {
-            "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_transfer"
+            "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_transfer_out"
+          },
+          {
+            "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_transfer_in"
           }
         ]
       },
@@ -24891,11 +24894,7 @@
           },
           "source": {
             "type": "string",
-            "description": "The channel through which the transaction took place, whether through the API or the the Dashboard. In case of a redemption, this value is `null`.",
-            "enum": [
-              "voucherify-web-ui",
-              "API"
-            ]
+            "description": "The channel through which the transaction took place, whether through the API or the the Dashboard. In case of a redemption, this value is `null`."
           },
           "reason": {
             "type": "string",
@@ -24924,7 +24923,7 @@
                   },
                   "total": {
                     "type": "integer",
-                    "description": ""
+                    "description": "The available points prior to the transaction."
                   },
                   "object": {
                     "type": "string",
@@ -24933,11 +24932,11 @@
                   },
                   "points": {
                     "type": "integer",
-                    "description": ""
+                    "description": "The amount of points being used up in the transaction."
                   },
                   "balance": {
                     "type": "integer",
-                    "description": ""
+                    "description": "The points balance on the loyalty card after the points in the transaction are subtracted from the loyalty card."
                   },
                   "related_object": {
                     "type": "object",
@@ -25016,32 +25015,862 @@
       "1_obj_loyalty_card_transaction_object_accrual": {
         "title": "Accrual",
         "description": "When points are earned on the card through an earning rule.",
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique transaction ID.",
+            "example": "vtx_0c9dccc4d5813e71bd"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service. In case of a points accrual, this value is `null`."
+          },
+          "voucher_id": {
+            "type": "string",
+            "description": "Unique voucher ID.",
+            "example": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaign that generates bulk codes.",
+            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
+          },
+          "source": {
+            "type": "string",
+            "description": "The channel through which the transaction took place, whether through the API or the the Dashboard.",
+            "enum": [
+              "Automation"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason why the transaction occurred. In case of a points accrual, this value is `null`."
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of transaction.",
+            "default": "POINTS_ACCRUAL",
+            "enum": [
+              "POINTS_ACCRUAL"
+            ]
+          },
+          "details": {
+            "type": "object",
+            "description": "Contains the detailed information about the transaction.",
+            "properties": {
+              "balance": {
+                "type": "object",
+                "description": "Contains information on how the balance was affected by the transaction.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type of voucher whose balance is being adjusted due to the transaction.",
+                    "default": "loyalty_card"
+                  },
+                  "total": {
+                    "type": "integer",
+                    "description": "The available points after the transaction."
+                  },
+                  "object": {
+                    "type": "string",
+                    "description": "The type of object represented by the JSON.",
+                    "default": "balance"
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "The amount of points being added in the transaction."
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "The points balance on the loyalty card after the points in the transaction are added to the loyalty card."
+                  },
+                  "related_object": {
+                    "type": "object",
+                    "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
+                        "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "The object being modified, i.e. `voucher`.",
+                        "default": "voucher"
+                      }
+                    }
+                  }
+                }
+              },
+              "order": {
+                "type": "object",
+                "description": "Contains information about the original order.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Unique order ID.",
+                    "example": "ord_jj5EzDxDOd2xFPsAJJ18IaZK"
+                  },
+                  "source_id": {
+                    "type": "string",
+                    "description": "The merchant’s order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
+                  }
+                }
+              },
+              "event": {
+                "type": "object",
+                "description": "Contains information about the event that triggers the point accrual.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Unique event ID.",
+                    "example": "evcus_0c9c21def34e3c05bf"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Type of event.",
+                    "example": "customer.order.paid"
+                  }
+                }
+              },
+              "earning_rule": {
+                "type": "object",
+                "description": "Contains information about the earning rule.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Unique earning rule ID.",
+                    "example": "ern_2WsCIBEx6Lzf5IAV5IOR7a23"
+                  },
+                  "source": {
+                    "type": "object",
+                    "description": "Contains the custom earning rule name.",
+                    "properties": {
+                      "banner": {
+                        "type": "string",
+                        "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "related_transaction_id": {
+            "type": "string",
+            "description": "This field is `null` in the case of this type of transaction."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-02-25T13:32:08.734Z",
+            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
+          }
+        }
       },
       "1_obj_loyalty_card_transaction_object_refund": {
         "title": "Refund",
         "description": "When points are credited back to a card through a redemption rollback.",
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique transaction ID.",
+            "example": "vtx_0c9dccc4d5813e71bd"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service. In case of a points refund, this value is `null`."
+          },
+          "voucher_id": {
+            "type": "string",
+            "description": "Unique voucher ID.",
+            "example": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaign that generates bulk codes.",
+            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
+          },
+          "source": {
+            "type": "string",
+            "description": "The channel through which the transaction took place, whether through the API or the the Dashboard. In case of a points refund, this value is `null`."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason why the transaction occurred. In case of a points refund, this value is `null`."
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of transaction.",
+            "default": "POINTS_REFUND",
+            "enum": [
+              "POINTS_REFUND"
+            ]
+          },
+          "details": {
+            "type": "object",
+            "description": "Contains the detailed information about the transaction.",
+            "properties": {
+              "balance": {
+                "type": "object",
+                "description": "Contains information on how the balance was affected by the transaction.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type of voucher whose balance is being adjusted due to the transaction.",
+                    "default": "loyalty_card"
+                  },
+                  "total": {
+                    "type": "integer",
+                    "description": "The available points after the transaction."
+                  },
+                  "object": {
+                    "type": "string",
+                    "description": "The type of object represented by the JSON.",
+                    "default": "balance"
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "The amount of points being added in the transaction."
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "The points balance on the loyalty card after the points in the transaction are added to the loyalty card."
+                  },
+                  "related_object": {
+                    "type": "object",
+                    "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
+                        "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "The object being modified, i.e. `voucher`.",
+                        "default": "voucher"
+                      }
+                    }
+                  }
+                }
+              },
+              "order": {
+                "type": "object",
+                "description": "Contains information about the original order.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Unique order ID.",
+                    "example": "ord_jj5EzDxDOd2xFPsAJJ18IaZK"
+                  },
+                  "source_id": {
+                    "type": "string",
+                    "description": "The merchant’s order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
+                  }
+                }
+              },
+              "redemption": {
+                "type": "object",
+                "description": "Contains information about the original redemption.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Unique redemption ID.",
+                    "example": "r_0c94ed583fcafc31c1"
+                  }
+                }
+              },
+              "rollback": {
+                "type": "object",
+                "description": "Contains information about the redemption rollback.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Unique redemption rollback ID.",
+                    "example": "rr_0c9b0967244a862a33"
+                  }
+                }
+              },
+              "reward": {
+                "type": "object",
+                "description": "Contains information about the pay with points reward.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Unique reward ID.",
+                    "example": "rew_INt3fGH3n7xIr3ZQcq4kkUZ1"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Reward name.",
+                    "example": "100 = $20"
+                  }
+                }
+              }
+            }
+          },
+          "related_transaction_id": {
+            "type": "string",
+            "description": "This field is `null` in the case of this type of transaction."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-02-25T13:32:08.734Z",
+            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
+          }
+        }
       },
       "1_obj_loyalty_card_transaction_object_addition": {
         "title": "Addition",
         "description": "When points are added to a card.",
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique transaction ID.",
+            "example": "vtx_0c9dccc4d5813e71bd"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service."
+          },
+          "voucher_id": {
+            "type": "string",
+            "description": "Unique voucher ID.",
+            "example": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaign that generates bulk codes.",
+            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
+          },
+          "source": {
+            "type": "string",
+            "description": "The channel through which the transaction took place, whether through the API or the the Dashboard.",
+            "enum": [
+              "voucherify-web-ui",
+              "API"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason why the transaction occurred."
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of transaction.",
+            "default": "POINTS_ADDITION",
+            "enum": [
+              "POINTS_ADDITION"
+            ]
+          },
+          "details": {
+            "type": "object",
+            "description": "Contains the detailed information about the transaction.",
+            "properties": {
+              "balance": {
+                "type": "object",
+                "description": "Contains information on how the balance was affected by the transaction.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type of voucher whose balance is being adjusted due to the transaction.",
+                    "default": "loyalty_card"
+                  },
+                  "total": {
+                    "type": "integer",
+                    "description": "The available points after the transaction."
+                  },
+                  "object": {
+                    "type": "string",
+                    "description": "The type of object represented by the JSON.",
+                    "default": "balance"
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "The amount of points being added in the transaction."
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "The points balance on the loyalty card after the points in the transaction are added to the loyalty card."
+                  },
+                  "related_object": {
+                    "type": "object",
+                    "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
+                        "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "The object being modified, i.e. `voucher`.",
+                        "default": "voucher"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "related_transaction_id": {
+            "type": "string",
+            "description": "This field is `null` in the case of this type of transaction."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-02-25T13:32:08.734Z",
+            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
+          }
+        }
       },
       "1_obj_loyalty_card_transaction_object_removal": {
         "title": "Removal",
         "description": "When points are removed from a card.",
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique transaction ID.",
+            "example": "vtx_0c9dccc4d5813e71bd"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service."
+          },
+          "voucher_id": {
+            "type": "string",
+            "description": "Unique voucher ID.",
+            "example": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaign that generates bulk codes.",
+            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
+          },
+          "source": {
+            "type": "string",
+            "description": "The channel through which the transaction took place, whether through the API or the the Dashboard.",
+            "enum": [
+              "voucherify-web-ui",
+              "API"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason why the transaction occurred."
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of transaction.",
+            "default": "POINTS_REMOVAL",
+            "enum": [
+              "POINTS_REMOVAL"
+            ]
+          },
+          "details": {
+            "type": "object",
+            "description": "Contains the detailed information about the transaction.",
+            "properties": {
+              "balance": {
+                "type": "object",
+                "description": "Contains information on how the balance was affected by the transaction.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type of voucher whose balance is being adjusted due to the transaction.",
+                    "default": "loyalty_card"
+                  },
+                  "total": {
+                    "type": "integer",
+                    "description": "The available points after the transaction."
+                  },
+                  "object": {
+                    "type": "string",
+                    "description": "The type of object represented by the JSON.",
+                    "default": "balance"
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "The amount of points being subtracted in the transaction."
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "The points balance on the loyalty card after the points in the transaction are subtracted from the loyalty card."
+                  },
+                  "related_object": {
+                    "type": "object",
+                    "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
+                        "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "The object being modified, i.e. `voucher`.",
+                        "default": "voucher"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "related_transaction_id": {
+            "type": "string",
+            "description": "This field is `null` in the case of this type of transaction."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-02-25T13:32:08.734Z",
+            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
+          }
+        }
       },
       "1_obj_loyalty_card_transaction_object_expiration": {
         "title": "Expiration",
         "description": "When points expire.",
         "type": "object"
       },
-      "1_obj_loyalty_card_transaction_object_transfer": {
-        "title": "Transfer",
+      "1_obj_loyalty_card_transaction_object_transfer_out": {
+        "title": "Transfer Out",
         "description": "When points are transferred from one loyalty card to another.",
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique transaction ID.",
+            "example": "vtx_0c9dccc4d5813e71bd"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service."
+          },
+          "voucher_id": {
+            "type": "string",
+            "description": "Unique voucher ID.",
+            "example": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaign that generates bulk codes.",
+            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
+          },
+          "source": {
+            "type": "string",
+            "description": "The channel through which the transaction took place.",
+            "enum": [
+              "API"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason why the transaction occurred."
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of transaction.",
+            "default": "POINTS_TRANSFER_OUT",
+            "enum": [
+              "POINTS_TRANSFER_OUT"
+            ]
+          },
+          "details": {
+            "type": "object",
+            "description": "Contains the detailed information about the transaction.",
+            "properties": {
+              "balance": {
+                "type": "object",
+                "description": "Contains information on how the balance was affected by the transaction.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type of voucher whose balance is being adjusted due to the transaction.",
+                    "default": "loyalty_card"
+                  },
+                  "total": {
+                    "type": "integer",
+                    "description": "The available points after the transaction."
+                  },
+                  "object": {
+                    "type": "string",
+                    "description": "The type of object represented by the JSON.",
+                    "default": "balance"
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "The amount of points being subtracted in the transaction."
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "The points balance on the loyalty card after the points in the transaction are subtracted from the loyalty card."
+                  },
+                  "related_object": {
+                    "type": "object",
+                    "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
+                        "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "The object being modified, i.e. `voucher`.",
+                        "default": "voucher"
+                      }
+                    }
+                  }
+                }
+              },
+              "destination_voucher": {
+                "type": "object",
+                "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Identifies the destination voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
+                    "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "Unique code of the destination voucher.",
+                    "example": "LOYALTY-CARD-A8XVurg"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "The type of voucher whose balance is being adjusted due to the transaction.",
+                    "default": "LOYALTY_CARD"
+                  },
+                  "campaign": {
+                    "type": "string",
+                    "description": "Unqiue campaign name of the voucher's parent campaign."
+                  },
+                  "campaign_id": {
+                    "type": "string",
+                    "description": "Unqiue campaign ID of the voucher's parent campaign.",
+                    "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
+                  },
+                  "loyalty_card": {
+                    "type": "object",
+                    "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction.",
+                    "properties": {
+                      "points": {
+                        "type": "integer",
+                        "description": "The total amount of points after the transaction."
+                      },
+                      "balance": {
+                        "type": "integer",
+                        "description": "The points balance on the loyalty card after the points in the transaction are added to the loyalty card."
+                      },
+                      "next_expiration_date": {
+                        "type": "string",
+                        "description": "The date when the next set of points are due to expire, i.e. `YYYY-MM-DD`. This does not mean that the transferred points were added to this bucket. It only shows the next set of points due to expire. The transferred points are added to the last expiring bucket, i.e. to the bucket of points that are to expire the furthest in the future.",
+                        "example": "2023-12-31"
+                      },
+                      "next_expiration_points": {
+                        "type": "integer",
+                        "description": "The number of points due to expire on the next expiration date."
+                      }
+                    }
+                  },
+                  "is_referral_code": {
+                    "type": "integer",
+                    "description": "Flag indicating whether this voucher is a referral code."
+                  }
+                }
+              }
+            }
+          },
+          "related_transaction_id": {
+            "type": "string",
+            "description": "The related transaction ID on the receiving card.",
+            "example": "vtx_0c9afe802593b34b81"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-02-25T13:32:08.734Z",
+            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
+          }
+        }
+      },
+      "1_obj_loyalty_card_transaction_object_transfer_in": {
+        "title": "Transfer In",
+        "description": "When points are transferred in from another loyalty card.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique transaction ID.",
+            "example": "vtx_0c9dccc4d5813e71bd"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service. In case of a ponits transfer, this value is `null`."
+          },
+          "voucher_id": {
+            "type": "string",
+            "description": "Unique voucher ID.",
+            "example": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaign that generates bulk codes.",
+            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
+          },
+          "source": {
+            "type": "string",
+            "description": "The channel through which the transaction took place.",
+            "enum": [
+              "API"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason why the transaction occurred."
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of transaction.",
+            "default": "POINTS_TRANSFER_IN",
+            "enum": [
+              "POINTS_TRANSFER_IN"
+            ]
+          },
+          "details": {
+            "type": "object",
+            "description": "Contains the detailed information about the transaction.",
+            "properties": {
+              "balance": {
+                "type": "object",
+                "description": "Contains information on how the balance was affected by the transaction.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "The type of voucher whose balance is being adjusted due to the transaction.",
+                    "default": "loyalty_card"
+                  },
+                  "total": {
+                    "type": "integer",
+                    "description": "The available points after the transaction."
+                  },
+                  "object": {
+                    "type": "string",
+                    "description": "The type of object represented by the JSON.",
+                    "default": "balance"
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "The amount of points being added in the transaction."
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "The points balance on the loyalty card after the points in the transaction are added to the loyalty card."
+                  },
+                  "related_object": {
+                    "type": "object",
+                    "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
+                        "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "The object being modified, i.e. `voucher`.",
+                        "default": "voucher"
+                      }
+                    }
+                  }
+                }
+              },
+              "source_voucher": {
+                "type": "object",
+                "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Identifies the source voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
+                    "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
+                  },
+                  "code": {
+                    "type": "string",
+                    "description": "Unique code of the source voucher.",
+                    "example": "LOYALTY-CARD-A8XVurg"
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "The type of voucher whose balance is being adjusted due to the transaction.",
+                    "default": "LOYALTY_CARD"
+                  },
+                  "campaign": {
+                    "type": "string",
+                    "description": "Unqiue campaign name of the voucher's parent campaign."
+                  },
+                  "holder_id": {
+                    "type": "string",
+                    "description": "Unqiue customer ID of the loyalty card holder, this is the ID that was assigned by the Voucherify API.",
+                    "example": "cust_xqA7DGj5eYPHg6PHVKwYRWiA"
+                  },
+                  "campaign_id": {
+                    "type": "string",
+                    "description": "Unqiue campaign ID of the voucher's parent campaign.",
+                    "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
+                  },
+                  "loyalty_card": {
+                    "type": "object",
+                    "description": "Contains information on how the balance on the source loyalty card was affected by the transaction.",
+                    "properties": {
+                      "points": {
+                        "type": "integer",
+                        "description": "The total amount of points after the transaction."
+                      },
+                      "balance": {
+                        "type": "integer",
+                        "description": "The points balance on the loyalty card after the points in the transaction are subtracted from the loyalty card."
+                      },
+                      "next_expiration_date": {
+                        "type": "string",
+                        "description": "The date when the next set of points are due to expire, i.e. `YYYY-MM-DD`. The points from the source loyalty card are taken from the expiration bucket(s) that are the first coming up to expire, starting from the first expiration bucket to expire in time. This parameter shows the next expiration date after the points were taken out of the loyalty card.",
+                        "example": "2023-12-31"
+                      },
+                      "next_expiration_points": {
+                        "type": "integer",
+                        "description": "The number of points due to expire on the expiration date."
+                      }
+                    }
+                  },
+                  "is_referral_code": {
+                    "type": "integer",
+                    "description": "Flag indicating whether this voucher is a referral code."
+                  }
+                }
+              }
+            }
+          },
+          "related_transaction_id": {
+            "type": "string",
+            "description": "The related transaction ID on the source card.",
+            "example": "vtx_0c9afe802593b34b81"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-02-25T13:32:08.734Z",
+            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
+          }
+        }
       },
       "8_obj_loyalty_tier_object": {
         "type": "object",
@@ -29537,6 +30366,14 @@
             "type": "string",
             "description": "Set expiration date for added points, i.e. `YYYY-MM-DD`. This parameter is **required** only when `expiration_type` is set to `CUSTOM_DATE`.",
             "example": "2020-05-30"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason for the transfer."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service."
           }
         }
       },
@@ -29614,6 +30451,14 @@
               "type": "integer",
               "description": "The number of loyalty points that the user wants to transfer to another loyalty card. The number of points cannot be higher than the current balance on the loyalty card (source).",
               "example": 2
+            },
+            "reason": {
+              "type": "string",
+              "description": "Reason for the transfer."
+            },
+            "source_id": {
+              "type": "string",
+              "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service."
             }
           }
         }

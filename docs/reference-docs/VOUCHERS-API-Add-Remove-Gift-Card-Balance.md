@@ -1,5 +1,5 @@
 ---
-title: Add Gift Card Balance
+title: Add or Remove Gift Card Balance
 type: endpoint
 category: 639ba2628407100061f5faac
 slug: add-remove-gift-voucher-balance
