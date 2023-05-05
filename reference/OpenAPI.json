@@ -29,16 +29,34 @@
   },
   "servers": [
     {
-      "url": "https://{name}.voucherify.io",
+      "url": "https://{cluster}.voucherify.io",
       "description": "Base URL",
       "variables": {
-        "name": {
+        "cluster": {
+          "default": "api",
           "enum": [
             "api",
             "us1",
             "as1"
-          ],
-          "default": "api"
+          ]
+        }
+      }
+    },
+    {
+      "url": "https://download.voucherify.io",
+      "description": "EU Download Export Base URL"
+      
+    },
+    {
+      "url": "https://{downloadcluster}.download.voucherify.io",
+      "description": "US and AS Download Export Base URL",
+      "variables": {
+        "downloadcluster": {
+          "default": "us1",
+          "enum": [
+            "us1",
+            "as1"
+          ]
         }
       }
     }
@@ -150,6 +168,11 @@
         "type": "apiKey",
         "name": "X-Client-Application-Id",
         "in": "header"
+      },
+      "Download-Token-1": {
+        "type": "apiKey",
+        "name": "token",
+        "in": "query"
       }
     },
     "parameters": {
@@ -2494,7 +2517,7 @@
         "properties": {
           "type": {
             "type": "string",
-            "default": "AMOUNT",
+            "example": "AMOUNT",
             "description": "Applies an amount type discount. **Requires** child attribute\n `type`=`AMOUNT` when modifying this discount."
           },
           "amount_off": {
@@ -15996,7 +16019,7 @@
             }
           }
         },
-        "title": "Order object",
+        "title": "Order",
         "description": "Contains the combined effect of all redeemables taken into account on the order object properties.",
         "properties": {
           "amount": {
@@ -16209,7 +16232,7 @@
             }
           }
         },
-        "title": "Order object",
+        "title": "Order",
         "description": "Contains the effect of each redeemable on the order and specific cart items. The amounts are consecutively built on the previous redeemable's effects, such that for each redeemable, the amounts are further reduced by the redeemable. The sequence in the request body is important because that will be the sequence the redeemables are applied one on top of the other.",
         "properties": {
           "amount": {
@@ -18324,7 +18347,7 @@
       },
       "7_obj_order_object_stacked_redemptions": {
         "type": "object",
-        "title": "Order object",
+        "title": "Order",
         "description": "This is an object representing an order with calculated discounts applied using the voucher code.",
         "properties": {
           "id": {
@@ -31795,7 +31818,7 @@
       },
       "9_req_create_customer": {
         "type": "object",
-        "title": "Customer object",
+        "title": "Customer",
         "description": "This is an object containing information about the customer.",
         "properties": {
           "source_id": {
@@ -34637,7 +34660,7 @@
       },
       "10_req_orders_customer_object": {
         "type": "object",
-        "title": "Customer object",
+        "title": "Customer",
         "description": "This is an object containing information about the customer.",
         "properties": {
           "id": {
@@ -34712,7 +34735,7 @@
       },
       "10_req_orders_referrer_object": {
         "type": "object",
-        "title": "Referrer object",
+        "title": "Referrer",
         "description": "This is an ojbect containing information about the referrer.",
         "properties": {
           "id": {
@@ -38231,26 +38254,6 @@
         "title": "Static Customer Segment",
         "type": "object",
         "description": "Request body schema for creating a static customer segment in **POST** `/segments`.",
-        "x-examples": {
-          "example-1": {
-            "id": "seg_1wc52c5z6r1kQ81brO8j9Hk2",
-            "name": "After Dec1",
-            "created_at": "2022-03-08T09:22:33.945Z",
-            "type": "auto-update",
-            "filter": {
-              "junction": "and",
-              "created_at": {
-                "conditions": {
-                  "$after": [
-                    "2021-12-01T00:00:00.000Z"
-                  ]
-                }
-              }
-            },
-            "initial_sync_status": "DONE",
-            "object": "segment"
-          }
-        },
         "properties": {
           "name": {
             "type": "string",
@@ -38258,10 +38261,8 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "static"
-            ],
-            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers)."
+            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).",
+            "default": "static"
           },
           "customers": {
             "type": "array",
@@ -38301,14 +38302,12 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "auto-update"
-            ],
-            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers)."
+            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).",
+            "default": "auto-update"
           },
           "filter": {
             "type": "object",
-            "description": "Defines a set of criteria for an `auto-update` segment type.  "
+            "description": "Defines a set of criteria for an `auto-update` segment type."
           }
         }
       },
@@ -44223,6 +44222,27 @@
                         "url": "/v1/vouchers/MultipleUnitTypesUnitDiscount/publications?page=1&limit=10"
                       },
                       "object": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if, for example, the AMOUNT type discount doesn't have the `type` attribute defined.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_error_no_translation"
+                },
+                "examples": {
+                  "Invalid Voucher": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_voucher",
+                      "message": "Invalid Voucher",
+                      "details": "It is not possible to change Voucher discount type",
+                      "request_id": "b7f5149d-83e5-46ef-93ad-ef191a87b185"
                     }
                   }
                 }
@@ -80933,37 +80953,14 @@
           "EXPORTS API"
         ],
         "summary": "Download Export",
-        "description": "Download the contents of the exported CSV file. \n\n<!-- theme: info -->\n\n> 📘 Important notes\n>\n> **Base URL:** `https://download.voucherify.io/v1`  \n> **Token:** Can be found within the `result` parameter of the <!-- [Get Export](OpenAPI.json/paths/~1exports~1{exportId}/get) -->[Get Export](ref:get-export) method response.",
+        "description": "Download the contents of the exported CSV file. \n\n<!-- theme: info -->\n\n> 📘 Important notes\n>\n> **Base URL:** \n> - `https://download.voucherify.io` (Europe) \n> - `https://us1.download.voucherify.io` (US) \n> - `https://as1.download.voucherify.io` (Asia) \n>\n> **Token:** Can be found within the `result` parameter of the <!-- [Get Export](OpenAPI.json/paths/~1exports~1{exportId}/get) -->[Get Export](ref:get-export) method response.",
         "parameters": [
-          {
-            "schema": {
-              "type": "string",
-              "example": "eyJhXVCJ9.eyJ0ZW5hbnQiOiJz"
-            },
-            "in": "query",
-            "name": "token",
-            "description": "Token used for authorization.",
-            "required": true
-          }
         ],
         "security": [
           {
             "X-App-Id-1": [],
-            "X-App-Token-1": []
-          }
-        ],
-        "servers": [
-          {
-            "url": "https://download.voucherify.io",
-            "description": "EU"
-          },
-          {
-            "url": "https://us1.download.voucherify.io",
-            "description": "US"
-          },
-          {
-            "url": "https://as1.download.voucherify.io",
-            "description": "EU"
+            "X-App-Token-1": [],
+            "Download-Token-1": []
           }
         ],
         "responses": {
