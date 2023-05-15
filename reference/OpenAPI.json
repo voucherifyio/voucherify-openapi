@@ -6389,6 +6389,971 @@
         }
       },
       "2_req_create_campaign": {
+        "title": "Create Campaign Request Body",
+        "description": "Request body schema for **POST** `/campaigns`.",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/2_req_create_campaign_discount_voucher"
+          },
+          {
+            "$ref": "#/components/schemas/2_req_create_campaign_loyalty"
+          },
+          {
+            "$ref": "#/components/schemas/2_req_create_campaign_gift"
+          },
+          {
+            "$ref": "#/components/schemas/2_req_create_campaign_promotion"
+          },
+          {
+            "$ref": "#/components/schemas/2_req_create_campaign_referral"
+          }
+        ]
+      },
+      "2_req_create_campaign_discount_voucher": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": "camp_f7fBbQxUuTN7dI7tGOo5XMDA",
+            "name": "Loyalty Program Fall 2022",
+            "campaign_type": "LOYALTY_PROGRAM",
+            "type": "AUTO_UPDATE",
+            "voucher": {
+              "type": "LOYALTY_CARD",
+              "loyalty_card": {
+                "points": 0,
+                "expiration_rules": {
+                  "period_type": "MONTH",
+                  "period_value": 7,
+                  "rounding_type": "END_OF_YEAR"
+                }
+              },
+              "redemption": {
+                "quantity": null
+              },
+              "code_config": {
+                "length": 8,
+                "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                "pattern": "########",
+                "prefix": "LOYALTY-CARD-"
+              },
+              "is_referral_code": false
+            },
+            "auto_join": true,
+            "join_once": true,
+            "use_voucher_metadata_schema": true,
+            "vouchers_count": 1,
+            "active": true,
+            "metadata": {},
+            "created_at": "2022-09-19T07:56:22.103Z",
+            "creation_status": "DONE",
+            "vouchers_generation_status": "DONE",
+            "protected": false,
+            "category_id": "cat_0bb343dee3cdb5ec0c",
+            "object": "campaign"
+          }
+        },
+        "title": "Create  Campaign Request Body",
+        "description": "Request body schema for creating a campaign using **POST** `/campaigns`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Campaign name."
+          },
+          "description": {
+            "type": "string",
+            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
+          },
+          "campaign_type": {
+            "type": "string",
+            "enum": [
+              "LOYALTY_PROGRAM",
+              "GIFT_VOUCHERS",
+              "DISCOUNT_COUPONS",
+              "PROMOTION",
+              "REFERRAL_PROGRAM",
+              "LUCKY_DRAW"
+            ],
+            "description": "Type of campaign."
+          },
+          "type": {
+            "type": "string",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
+            "enum": [
+              "AUTO_UPDATE",
+              "STATIC"
+            ]
+          },
+          "auto_join": {
+            "type": "boolean",
+            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled. CONTEXT: `LOYALTY_PROGRAM`."
+          },
+          "join_once": {
+            "type": "boolean",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
+          },
+          "use_voucher_metadata_schema": {
+            "type": "boolean",
+            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
+          },
+          "vouchers_count": {
+            "type": "integer",
+            "description": "Total number of unique vouchers in campaign (size of campaign)."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
+            "example": "2022-09-20T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
+            "example": "2022-09-30T00:00:00.000Z"
+          },
+          "validity_timeframe": {
+            "type": "object",
+            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+            "properties": {
+              "interval": {
+                "type": "string",
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
+              },
+              "duration": {
+                "type": "string",
+                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
+              }
+            }
+          },
+          "validity_day_of_week": {
+            "type": "array",
+            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "activity_duration_after_publishing": {
+            "type": "string",
+            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
+            "example": "cat_0b688929a2476386a7"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
+          },
+          "voucher": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
+              },
+              {
+                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
+              },
+              {
+                "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
+              }
+            ]
+          },
+          "referral_program": {
+            "description": "Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.",
+            "type": "object",
+            "properties": {
+              "conversion_event_type": {
+                "type": "string",
+                "enum": [
+                  "redemption",
+                  "custom_event"
+                ],
+                "description": "Define how a referral is triggered."
+              },
+              "custom_event": {
+                "type": "object",
+                "description": "Contains details about the custom event.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "ms_Ll9enAm2BCN0M1s4VxWobLFM",
+                    "description": "Unique custom event ID."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Custom event name."
+                  }
+                }
+              },
+              "referee_reward": {
+                "type": "object",
+                "description": "Defines the referee reward.",
+                "properties": {
+                  "related_object_parent": {
+                    "type": "object",
+                    "description": "Details of the resource from which the reward originates.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
+                        "description": "Unique ID of the reward source."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Name of the reward source."
+                      },
+                      "object": {
+                        "type": "string",
+                        "enum": [
+                          "CAMPAIGN"
+                        ],
+                        "description": "Type of resource represented by the source of the reward."
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "LOYALTY_CARD",
+                      "GIFT_VOUCHER"
+                    ],
+                    "description": "Type of reward."
+                  },
+                  "amount": {
+                    "type": "string",
+                    "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+                  }
+                }
+              }
+            }
+          },
+          "promotion": {
+            "type": "object",
+            "description": "Define the promotion tiers within the campaign.",
+            "properties": {
+              "tiers": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/3_req_add_promotion_tier_to_campaign"
+                }
+              }
+            }
+          }
+        }
+      },
+      "2_req_create_campaign_loyalty": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": "camp_f7fBbQxUuTN7dI7tGOo5XMDA",
+            "name": "Loyalty Program Fall 2022",
+            "campaign_type": "LOYALTY_PROGRAM",
+            "type": "AUTO_UPDATE",
+            "voucher": {
+              "type": "LOYALTY_CARD",
+              "loyalty_card": {
+                "points": 0,
+                "expiration_rules": {
+                  "period_type": "MONTH",
+                  "period_value": 7,
+                  "rounding_type": "END_OF_YEAR"
+                }
+              },
+              "redemption": {
+                "quantity": null
+              },
+              "code_config": {
+                "length": 8,
+                "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                "pattern": "########",
+                "prefix": "LOYALTY-CARD-"
+              },
+              "is_referral_code": false
+            },
+            "auto_join": true,
+            "join_once": true,
+            "use_voucher_metadata_schema": true,
+            "vouchers_count": 1,
+            "active": true,
+            "metadata": {},
+            "created_at": "2022-09-19T07:56:22.103Z",
+            "creation_status": "DONE",
+            "vouchers_generation_status": "DONE",
+            "protected": false,
+            "category_id": "cat_0bb343dee3cdb5ec0c",
+            "object": "campaign"
+          }
+        },
+        "title": "Create  Campaign Request Body",
+        "description": "Request body schema for creating a campaign using **POST** `/campaigns`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Campaign name."
+          },
+          "description": {
+            "type": "string",
+            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
+          },
+          "campaign_type": {
+            "type": "string",
+            "enum": [
+              "LOYALTY_PROGRAM",
+              "GIFT_VOUCHERS",
+              "DISCOUNT_COUPONS",
+              "PROMOTION",
+              "REFERRAL_PROGRAM",
+              "LUCKY_DRAW"
+            ],
+            "description": "Type of campaign."
+          },
+          "type": {
+            "type": "string",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
+            "enum": [
+              "AUTO_UPDATE",
+              "STATIC"
+            ]
+          },
+          "auto_join": {
+            "type": "boolean",
+            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled. CONTEXT: `LOYALTY_PROGRAM`."
+          },
+          "join_once": {
+            "type": "boolean",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
+          },
+          "use_voucher_metadata_schema": {
+            "type": "boolean",
+            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
+          },
+          "vouchers_count": {
+            "type": "integer",
+            "description": "Total number of unique vouchers in campaign (size of campaign)."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
+            "example": "2022-09-20T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
+            "example": "2022-09-30T00:00:00.000Z"
+          },
+          "validity_timeframe": {
+            "type": "object",
+            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+            "properties": {
+              "interval": {
+                "type": "string",
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
+              },
+              "duration": {
+                "type": "string",
+                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
+              }
+            }
+          },
+          "validity_day_of_week": {
+            "type": "array",
+            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "activity_duration_after_publishing": {
+            "type": "string",
+            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
+            "example": "cat_0b688929a2476386a7"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
+          },
+          "voucher": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
+              },
+              {
+                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
+              },
+              {
+                "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
+              }
+            ]
+          },
+          "referral_program": {
+            "description": "Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.",
+            "type": "object",
+            "properties": {
+              "conversion_event_type": {
+                "type": "string",
+                "enum": [
+                  "redemption",
+                  "custom_event"
+                ],
+                "description": "Define how a referral is triggered."
+              },
+              "custom_event": {
+                "type": "object",
+                "description": "Contains details about the custom event.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "ms_Ll9enAm2BCN0M1s4VxWobLFM",
+                    "description": "Unique custom event ID."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Custom event name."
+                  }
+                }
+              },
+              "referee_reward": {
+                "type": "object",
+                "description": "Defines the referee reward.",
+                "properties": {
+                  "related_object_parent": {
+                    "type": "object",
+                    "description": "Details of the resource from which the reward originates.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
+                        "description": "Unique ID of the reward source."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Name of the reward source."
+                      },
+                      "object": {
+                        "type": "string",
+                        "enum": [
+                          "CAMPAIGN"
+                        ],
+                        "description": "Type of resource represented by the source of the reward."
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "LOYALTY_CARD",
+                      "GIFT_VOUCHER"
+                    ],
+                    "description": "Type of reward."
+                  },
+                  "amount": {
+                    "type": "string",
+                    "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+                  }
+                }
+              }
+            }
+          },
+          "promotion": {
+            "type": "object",
+            "description": "Define the promotion tiers within the campaign.",
+            "properties": {
+              "tiers": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/3_req_add_promotion_tier_to_campaign"
+                }
+              }
+            }
+          }
+        }
+      },
+      "2_req_create_campaign_gift": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": "camp_f7fBbQxUuTN7dI7tGOo5XMDA",
+            "name": "Loyalty Program Fall 2022",
+            "campaign_type": "LOYALTY_PROGRAM",
+            "type": "AUTO_UPDATE",
+            "voucher": {
+              "type": "LOYALTY_CARD",
+              "loyalty_card": {
+                "points": 0,
+                "expiration_rules": {
+                  "period_type": "MONTH",
+                  "period_value": 7,
+                  "rounding_type": "END_OF_YEAR"
+                }
+              },
+              "redemption": {
+                "quantity": null
+              },
+              "code_config": {
+                "length": 8,
+                "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                "pattern": "########",
+                "prefix": "LOYALTY-CARD-"
+              },
+              "is_referral_code": false
+            },
+            "auto_join": true,
+            "join_once": true,
+            "use_voucher_metadata_schema": true,
+            "vouchers_count": 1,
+            "active": true,
+            "metadata": {},
+            "created_at": "2022-09-19T07:56:22.103Z",
+            "creation_status": "DONE",
+            "vouchers_generation_status": "DONE",
+            "protected": false,
+            "category_id": "cat_0bb343dee3cdb5ec0c",
+            "object": "campaign"
+          }
+        },
+        "title": "Create  Campaign Request Body",
+        "description": "Request body schema for creating a campaign using **POST** `/campaigns`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Campaign name."
+          },
+          "description": {
+            "type": "string",
+            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
+          },
+          "campaign_type": {
+            "type": "string",
+            "enum": [
+              "LOYALTY_PROGRAM",
+              "GIFT_VOUCHERS",
+              "DISCOUNT_COUPONS",
+              "PROMOTION",
+              "REFERRAL_PROGRAM",
+              "LUCKY_DRAW"
+            ],
+            "description": "Type of campaign."
+          },
+          "type": {
+            "type": "string",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
+            "enum": [
+              "AUTO_UPDATE",
+              "STATIC"
+            ]
+          },
+          "auto_join": {
+            "type": "boolean",
+            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled. CONTEXT: `LOYALTY_PROGRAM`."
+          },
+          "join_once": {
+            "type": "boolean",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
+          },
+          "use_voucher_metadata_schema": {
+            "type": "boolean",
+            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
+          },
+          "vouchers_count": {
+            "type": "integer",
+            "description": "Total number of unique vouchers in campaign (size of campaign)."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
+            "example": "2022-09-20T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
+            "example": "2022-09-30T00:00:00.000Z"
+          },
+          "validity_timeframe": {
+            "type": "object",
+            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+            "properties": {
+              "interval": {
+                "type": "string",
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
+              },
+              "duration": {
+                "type": "string",
+                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
+              }
+            }
+          },
+          "validity_day_of_week": {
+            "type": "array",
+            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "activity_duration_after_publishing": {
+            "type": "string",
+            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
+            "example": "cat_0b688929a2476386a7"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
+          },
+          "voucher": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
+              },
+              {
+                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
+              },
+              {
+                "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
+              }
+            ]
+          },
+          "referral_program": {
+            "description": "Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.",
+            "type": "object",
+            "properties": {
+              "conversion_event_type": {
+                "type": "string",
+                "enum": [
+                  "redemption",
+                  "custom_event"
+                ],
+                "description": "Define how a referral is triggered."
+              },
+              "custom_event": {
+                "type": "object",
+                "description": "Contains details about the custom event.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "ms_Ll9enAm2BCN0M1s4VxWobLFM",
+                    "description": "Unique custom event ID."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Custom event name."
+                  }
+                }
+              },
+              "referee_reward": {
+                "type": "object",
+                "description": "Defines the referee reward.",
+                "properties": {
+                  "related_object_parent": {
+                    "type": "object",
+                    "description": "Details of the resource from which the reward originates.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
+                        "description": "Unique ID of the reward source."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Name of the reward source."
+                      },
+                      "object": {
+                        "type": "string",
+                        "enum": [
+                          "CAMPAIGN"
+                        ],
+                        "description": "Type of resource represented by the source of the reward."
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "LOYALTY_CARD",
+                      "GIFT_VOUCHER"
+                    ],
+                    "description": "Type of reward."
+                  },
+                  "amount": {
+                    "type": "string",
+                    "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+                  }
+                }
+              }
+            }
+          },
+          "promotion": {
+            "type": "object",
+            "description": "Define the promotion tiers within the campaign.",
+            "properties": {
+              "tiers": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/3_req_add_promotion_tier_to_campaign"
+                }
+              }
+            }
+          }
+        }
+      },
+      "2_req_create_campaign_promotion": {
+        "type": "object",
+        "x-examples": {
+          "example-1": {
+            "id": "camp_f7fBbQxUuTN7dI7tGOo5XMDA",
+            "name": "Loyalty Program Fall 2022",
+            "campaign_type": "LOYALTY_PROGRAM",
+            "type": "AUTO_UPDATE",
+            "voucher": {
+              "type": "LOYALTY_CARD",
+              "loyalty_card": {
+                "points": 0,
+                "expiration_rules": {
+                  "period_type": "MONTH",
+                  "period_value": 7,
+                  "rounding_type": "END_OF_YEAR"
+                }
+              },
+              "redemption": {
+                "quantity": null
+              },
+              "code_config": {
+                "length": 8,
+                "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                "pattern": "########",
+                "prefix": "LOYALTY-CARD-"
+              },
+              "is_referral_code": false
+            },
+            "auto_join": true,
+            "join_once": true,
+            "use_voucher_metadata_schema": true,
+            "vouchers_count": 1,
+            "active": true,
+            "metadata": {},
+            "created_at": "2022-09-19T07:56:22.103Z",
+            "creation_status": "DONE",
+            "vouchers_generation_status": "DONE",
+            "protected": false,
+            "category_id": "cat_0bb343dee3cdb5ec0c",
+            "object": "campaign"
+          }
+        },
+        "title": "Create  Campaign Request Body",
+        "description": "Request body schema for creating a campaign using **POST** `/campaigns`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Campaign name."
+          },
+          "description": {
+            "type": "string",
+            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
+          },
+          "campaign_type": {
+            "type": "string",
+            "enum": [
+              "LOYALTY_PROGRAM",
+              "GIFT_VOUCHERS",
+              "DISCOUNT_COUPONS",
+              "PROMOTION",
+              "REFERRAL_PROGRAM",
+              "LUCKY_DRAW"
+            ],
+            "description": "Type of campaign."
+          },
+          "type": {
+            "type": "string",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
+            "enum": [
+              "AUTO_UPDATE",
+              "STATIC"
+            ]
+          },
+          "auto_join": {
+            "type": "boolean",
+            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled. CONTEXT: `LOYALTY_PROGRAM`."
+          },
+          "join_once": {
+            "type": "boolean",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
+          },
+          "use_voucher_metadata_schema": {
+            "type": "boolean",
+            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
+          },
+          "vouchers_count": {
+            "type": "integer",
+            "description": "Total number of unique vouchers in campaign (size of campaign)."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
+            "example": "2022-09-20T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
+            "example": "2022-09-30T00:00:00.000Z"
+          },
+          "validity_timeframe": {
+            "type": "object",
+            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+            "properties": {
+              "interval": {
+                "type": "string",
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
+              },
+              "duration": {
+                "type": "string",
+                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
+              }
+            }
+          },
+          "validity_day_of_week": {
+            "type": "array",
+            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "activity_duration_after_publishing": {
+            "type": "string",
+            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
+            "example": "cat_0b688929a2476386a7"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
+          },
+          "voucher": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
+              },
+              {
+                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
+              },
+              {
+                "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
+              }
+            ]
+          },
+          "referral_program": {
+            "description": "Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.",
+            "type": "object",
+            "properties": {
+              "conversion_event_type": {
+                "type": "string",
+                "enum": [
+                  "redemption",
+                  "custom_event"
+                ],
+                "description": "Define how a referral is triggered."
+              },
+              "custom_event": {
+                "type": "object",
+                "description": "Contains details about the custom event.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "ms_Ll9enAm2BCN0M1s4VxWobLFM",
+                    "description": "Unique custom event ID."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Custom event name."
+                  }
+                }
+              },
+              "referee_reward": {
+                "type": "object",
+                "description": "Defines the referee reward.",
+                "properties": {
+                  "related_object_parent": {
+                    "type": "object",
+                    "description": "Details of the resource from which the reward originates.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
+                        "description": "Unique ID of the reward source."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Name of the reward source."
+                      },
+                      "object": {
+                        "type": "string",
+                        "enum": [
+                          "CAMPAIGN"
+                        ],
+                        "description": "Type of resource represented by the source of the reward."
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "LOYALTY_CARD",
+                      "GIFT_VOUCHER"
+                    ],
+                    "description": "Type of reward."
+                  },
+                  "amount": {
+                    "type": "string",
+                    "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+                  }
+                }
+              }
+            }
+          },
+          "promotion": {
+            "type": "object",
+            "description": "Define the promotion tiers within the campaign.",
+            "properties": {
+              "tiers": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/3_req_add_promotion_tier_to_campaign"
+                }
+              }
+            }
+          }
+        }
+      },
+      "2_req_create_campaign_referral": {
         "type": "object",
         "x-examples": {
           "example-1": {
@@ -6705,8 +7670,11 @@
             }
           },
           "validity_day_of_week": {
-            "type": "string",
-            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  "
+            "type": "array",
+            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
+            "items": {
+              "type": "integer"
+            }
           },
           "activity_duration_after_publishing": {
             "type": "string",
@@ -6902,50 +7870,17 @@
         }
       },
       "2_req_import_vouchers_to_campaign": {
-        "type": "object",
-        "x-examples": {
-          "example-1": {
-            "id": "camp_f7fBbQxUuTN7dI7tGOo5XMDA",
-            "name": "Loyalty Program Fall 2022",
-            "campaign_type": "LOYALTY_PROGRAM",
-            "type": "AUTO_UPDATE",
-            "voucher": {
-              "type": "LOYALTY_CARD",
-              "loyalty_card": {
-                "points": 0,
-                "expiration_rules": {
-                  "period_type": "MONTH",
-                  "period_value": 7,
-                  "rounding_type": "END_OF_YEAR"
-                }
-              },
-              "redemption": {
-                "quantity": null
-              },
-              "code_config": {
-                "length": 8,
-                "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-                "pattern": "########",
-                "prefix": "LOYALTY-CARD-"
-              },
-              "is_referral_code": false
-            },
-            "auto_join": true,
-            "join_once": true,
-            "use_voucher_metadata_schema": true,
-            "vouchers_count": 1,
-            "active": true,
-            "metadata": {},
-            "created_at": "2022-09-19T07:56:22.103Z",
-            "creation_status": "DONE",
-            "vouchers_generation_status": "DONE",
-            "protected": false,
-            "category_id": "cat_0bb343dee3cdb5ec0c",
-            "object": "campaign"
-          }
-        },
+        "type": "array",
         "title": "Import Vouchers to Campaign Request Body",
         "description": "Request body schema for **POST** `/campaigns/{campaignId}/import`.",
+        "items": {
+              "$ref": "#/components/schemas/2_obj_import_vouchers_to_campaign_object"
+            }
+      },
+      "2_obj_import_vouchers_to_campaign_object": {
+        "type": "object",
+        "title": "Import Vouchers to Campaign",
+        "description": "Import Vouchers to Campaign",
         "properties": {
           "code": {
             "type": "string",
@@ -80593,7 +81528,7 @@
           "EXPORTS API"
         ],
         "summary": "Create Export",
-        "description": "Create export object. The export can be any of the following types: `voucher`, `redemption`, `publication`, `customer`, `order`, or `points_expiration`.  \n\n## Defaults\n\nIf you only specify the object type in the request body without specifying the fields, the API will return the following fields per export object:\n\n| **Export Object** | **Default fields returned** |\n|:---|:---|\n| order | `id`, `source_id`, `status` |\n| voucher | `code`, `voucher_type`, `value`, `discount_type` |\n| publication | `code`, `customer_id`, `date`, `channel` |\n| redemption | `id`, `object`, `voucher_code`, `customer_id`, `date`, `result` |\n| customer | `name`, `source_id` |\n| points_expiration | `id`, `campaign_id`, `voucher_id`, `status`, `expires_at`, `points` |\n\n\n## Fetching particular data sets\n\nUsing the `parameters` body parameter, you can narrow down which fields to export and how to filter the results. The fields are an array of strings containing the data that you would like to export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n## Orders  \n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique order ID. | ord_A69RIxEdRsPuC6i8gFGVHUft |\n| source_id | Unique order source ID. | 8638 |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the order was created. | 2022-03-09T09:16:32.521Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the order was last updated. | 2022-03-09T09:16:33.331Z |\n| status | Order status. | `PAID`, `CREATED`, `FULFILLED`, `CANCELED` |\n| amount | Total amount of order items. | 7700 |\n| discount_amount | Represents total amount of the discount applied to whole cart. | 500 |\n| items_discount_amount | Represents total amount of the discount applied to order line items. | 100 |\n| total_discount_amount | All discounts applied to the order including discounts applied to particular order line items and discounts applied to the whole cart. | 600 |\n| total_amount | Total order amount after applying all discounts. | 7100 |\n| customer_id | Customer unique ID. | cust_2G4fUQdCXUqp35nXNleav7bO |\n| referrer_id | Referrer unique ID. | cust_IkrTR674vvQvr9a4rDMiqglY |\n| metadata | Order metadata; expressed as metadata.X, where X is the name of the custom metadata property. | 1 |\n\n## Vouchers  \n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique voucher ID. | v_HSnGD2vNIHYighTQxwcB4dtVAv8VOmZD |\n| code | Unique voucher code. | WELCOME100 |\n| voucher_type | Type of voucher. | `DISCOUNT_VOUCHER`, `GIFT_VOUCHER`, `LOYALTY_CARD` |\n| value | Value of voucher. | `DISCOUNT_VOUCHER` : amount, percent, unit<br>`GIFT_VOUCHER`: amount left to spend<br>`LOYALTY_CARD`: available usable points |\n| discount_type | The type of discount for a `DISCOUNT_VOUCHER`. | `AMOUNT`, `PERCENT`, `UNIT`, `FIXED` |\n| campaign | Unique campaign name. | Summer Discounts 20% off |\n| category | Tag defining the category that this voucher belongs to. |  |\n| start_date | Start date defines when the code starts to be active. Activation timestamp in ISO 8601 format. Voucher is _inactive_ before this date. | 2020-12-10T23:00:00.000Z |\n| expiration_date | Expiration date defines when the code expires. Expiration timestamp in ISO 8601 format. Voucher is _inactive_ after this date. | 2023-12-31T23:00:00.000Z |\n| gift_balance | Amount left to spend. | 1000 |\n| loyalty_balance | Available usable points. | 2000 |\n| redemption_quantity | Maximum number of times a voucher can be redeemed. | 2 |\n| redemption_count | Total redemptions. | 59 |\n| active | Boolean indicating whether the voucher is available for use. | `true`, `false` |\n| qr_code | URL to QR representation of encrypted code. |  |\n| bar_code | URL to barcode representation of encrypted code. |  |\n| metadata | Custom voucher metadata. |  |\n| is_referral_code | Boolean indicating whether the voucher is a referral code. | `true`, `false` |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the voucher was created. | 2022-04-14T09:55:46.814Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the voucher was last updated. | 2022-04-14T10:02:18.036Z |\n| validity_timeframe_interval | Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a voucher with an interval of `P2D` will be active every other day. | P2D |\n| validity_timeframe_duration | Defines the amount of time the voucher will be active in ISO 8601 format. For example, a voucher with a duration of `PT1H` will be valid for a duration of one hour. | PT1H |\n| validity_day_of_week | Array corresponding to the particular days of the week in which the voucher is valid. | \"1,2,3,4,5\" |\n| discount_amount_limit | For `PERCENT` discount type, this is the maximum threshold allowed to be deducted. | 50 |\n| campaign_id | Parent campaign ID. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| additional_info | An optional field to keep any extra textual information about the code such as a code description and details. |  |\n| customer_id | Unique customer ID of the assigned owner to whom the voucher was published. | cust_7iUa6ICKyU6gH40dBU25kQU1 |\n| discount_unit_type | For `UNIT` discount type, either a shipping or product ID for a `UNIT` discount with one product. | prod_5h1pp1ng, prod_0a9f9aeddb019a42db |\n| discount_unit_effect | `UNIT` discount effect. | `ADD_MANY_ITEMS`, `ADD_MISSING_ITEMS`,`ADD_NEW_ITEMS` |\n| customer_source_id | Unique customer source id of the assigned owner to whom the voucher was published. | name.lastname@email.com |\n\n\n## Publications\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| voucher_code | Unique voucher code. | WELCOME100 |\n| customer_id | Customer unique ID. | cust_7iUa6ICKyU6gH40dBU25kQU1 |\n| customer_source_id | Unique customer source id of the assigned owner to whom the voucher was published. | name.lastname@email.com |\n| date | Timestamp in ISO 8601 format representing the date and time when the voucher was published. | 2022-04-28T10:19:30.792Z |\n| channel | Publication channel. | voucherify-website |\n| campaign | Unique campaign name. | Summer Discounts 20% off |\n| is_winner |  |  |\n| metadata | Custom publication metadata. |  |\n\n## Redemptions\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique redemption ID. | r_0acf3a6dae00e679c8, rf_0acf3a495740e679b8 |\n| object | Object being exported; by default `redemption`. | redemption |\n| date | Timestamp in ISO 8601 format representing the date and time when the voucher was redeemed. | 2022-03-23T08:52:24.867Z |\n| voucher_code | Unique voucher code redeemed. | WELCOME100 |\n| campaign | Parent campaign name of voucher if applicable. | Summer Discounts 20% off |\n| promotion_tier_id |  | promo_Mwy9XpA0TLctSGriM5kum0qp |\n| customer_id | Unique customer ID of redeeming customer. | cust_nk0N1uNQ1YnupAoJGOgvsODC |\n| customer_source_id | Unique source ID of redeeming customer. | name.lastname@email.com |\n| customer_name | Customer name. | John Smith |\n| tracking_id |  | track_Pw6r3ejnml43kIwNS4Zj09KZ67xOfLUy |\n| order_amount | Total order amount before applying all discounts. | 1000 |\n| gift_amount | Gift credits used for redemption. | 10 |\n| loyalty_points |  | 12 |\n| result | Tells you whether the redemption succeeded. | `SUCCESS`, `FAILURE` |\n| failure_code | Internal Voucherify code for reason why redemption failed. | invalid_customer |\n| failure_message | A human-readable message providing a short description explaining why the redemption failed. | Customer must be a holder of a loyalty card. |\n| metadata | Custom redemption metadata. |  |\n\n## Customers\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| name | Customer name. | John Smith |\n| id | Unique customer ID. | cust_J1CDUdbqn5Exva8ASWk1Fq0j |\n| description | An arbitrary string that you can attach to a customer object. | Customer requesting to be added to VIP tier. |\n| email | Customer's email. | name.lastname@email.com |\n| source_id | Unique custom customer identifier. | name.lastname@email.com |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the customer was created. | 2022-02-03T13:10:11.928Z |\n| address_city | City | Houston |\n| address_state | State | TX |\n| address_line_1 | First line of customer's address. | 72738 Main St |\n| address_line_2 | Second line of customer's address. | Bld 2, Apt 4 |\n| address_country | Country | United States of America |\n| address_postal_code | Postal code (ZIP code) | 77042-4143 |\n| redemptions_total_redeemed | Total customer redemptions. | 5 |\n| redemptions_total_failed | Total customer failed redemptions. | 2 |\n| redemptions_total_succeeded | Total customer succeeded redemptions. | 3 |\n| redemptions_total_rolled_back | Total customer redemptions that were rolled back. | 3 |\n| redemptions_total_rollback_failed | Total customer redemptions that were unsuccessfully rolled back. | 2 |\n| redemptions_total_rollback_succeeded | Total customer redemptions that were successfully rolled back. | 1 |\n| orders_total_amount | Total sum of order amounts over customer lifetime. Value is multiplied by 100 to precisely represent 2 decimal places. | 10000 (represents $100) |\n| orders_total_count | Total number of customer orders. Value is multiplied by 100 to precisely represent 2 decimal places. | 2 |\n| orders_average_amount | Average amount spent on orders. Value is multiplied by 100 to precisely represent 2 decimal places. | 50 |\n| orders_last_order_amount | How much did the customer spend on their last order. Value is multiplied by 100 to precisely represent 2 decimal places. | 50 |\n| orders_last_order_date | When was the last customer order; timestamp in ISO 8601 format representing the date and time. | 2022-02-03T13:17:30.630Z |\n| loyalty_points | Sum of customer's loyalty points to go across all loyalty cards. | 2000 |\n| loyalty_referred_customers | How many customers were referred by this customer. | 3 |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the customer was updated. | 2022-02-14T14:10:14.305Z |\n| phone | Customer's phone number. | +1 (294) 752-1846 |\n| birthday | Customer's birthday. | 2022-01-01 |\n| metadata | Customer metadata. | All metadata fields defined in Metadata Schema for the Customer object. |\n| birthdate | Customer's birthdate. | 2022-01-01 |\n\n## Points Expirations\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Loyalty points bucket ID. | lopb_Wl1o3EjJIHSNjvO5BDLy4z1n |\n| campaign_id | Campaign ID of the parent loyalty campaign. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| voucher_id | Voucher ID of the parent loyalty card. | v_YLn0WVWXSXbUfDvxgrgUbtfJ3SQIY655 |\n| status | Status of the loyalty points bucket. | `ACTIVE` or `INACTIVE` |\n| expires_at | Timestamp in ISO 8601 format representing the date when the points expire. | 2022-06-30 |\n| points | Number of points. | 1000 |",
+        "description": "Create export object. The export can be any of the following types: `voucher`, `redemption`, `publication`, `customer`, `order`, or `points_expiration`.  \n\n## Defaults\n\nIf you only specify the object type in the request body without specifying the fields, the API will return the following fields per export object:\n\n| **Export Object** | **Default fields returned** |\n|:---|:---|\n| order | `id`, `source_id`, `status` |\n| voucher | `code`, `voucher_type`, `value`, `discount_type` |\n| publication | `code`, `customer_id`, `date`, `channel` |\n| redemption | `id`, `object`, `voucher_code`, `customer_id`, `date`, `result` |\n| customer | `name`, `source_id` |\n| points_expiration | `id`, `campaign_id`, `voucher_id`, `status`, `expires_at`, `points` |\n\n\n## Fetching particular data sets\n\nUsing the `parameters` body parameter, you can narrow down which fields to export and how to filter the results. The fields are an array of strings containing the data that you would like to export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n## Orders  \n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique order ID. | ord_A69RIxEdRsPuC6i8gFGVHUft |\n| source_id | Unique order source ID. | 8638 |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the order was created. | 2022-03-09T09:16:32.521Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the order was last updated. | 2022-03-09T09:16:33.331Z |\n| status | Order status. | `PAID`, `CREATED`, `FULFILLED`, `CANCELED` |\n| amount | Total amount of order items. | 7700 |\n| discount_amount | Represents total amount of the discount applied to whole cart. | 500 |\n| items_discount_amount | Represents total amount of the discount applied to order line items. | 100 |\n| total_discount_amount | All discounts applied to the order including discounts applied to particular order line items and discounts applied to the whole cart. | 600 |\n| total_amount | Total order amount after applying all discounts. | 7100 |\n| customer_id | Customer unique ID. | cust_2G4fUQdCXUqp35nXNleav7bO |\n| referrer_id | Referrer unique ID. | cust_IkrTR674vvQvr9a4rDMiqglY |\n| metadata | Order metadata; expressed as metadata.X, where X is the name of the custom metadata property. | 1 |\n\n## Vouchers  \n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique voucher ID. | v_HSnGD2vNIHYighTQxwcB4dtVAv8VOmZD |\n| code | Unique voucher code. | WELCOME100 |\n| voucher_type | Type of voucher. | `DISCOUNT_VOUCHER`, `GIFT_VOUCHER`, `LOYALTY_CARD` |\n| value | Value of voucher. | `DISCOUNT_VOUCHER` : amount, percent, unit<br>`GIFT_VOUCHER`: amount left to spend<br>`LOYALTY_CARD`: available usable points |\n| discount_type | The type of discount for a `DISCOUNT_VOUCHER`. | `AMOUNT`, `PERCENT`, `UNIT`, `FIXED` |\n| campaign | Unique campaign name. | Summer Discounts 20% off |\n| category | Tag defining the category that this voucher belongs to. |  |\n| start_date | Start date defines when the code starts to be active. Activation timestamp in ISO 8601 format. Voucher is _inactive_ before this date. | 2020-12-10T23:00:00.000Z |\n| expiration_date | Expiration date defines when the code expires. Expiration timestamp in ISO 8601 format. Voucher is _inactive_ after this date. | 2023-12-31T23:00:00.000Z |\n| gift_balance | Amount left to spend. | 1000 |\n| loyalty_balance | Available usable points. | 2000 |\n| redemption_quantity | Maximum number of times a voucher can be redeemed. | 2 |\n| redemption_count | Total redemptions. | 59 |\n| active | Boolean indicating whether the voucher is available for use. | `true`, `false` |\n| qr_code | URL to QR representation of encrypted code. |  |\n| bar_code | URL to barcode representation of encrypted code. |  |\n| metadata | Custom voucher metadata. |  |\n| is_referral_code | Boolean indicating whether the voucher is a referral code. | `true`, `false` |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the voucher was created. | 2022-04-14T09:55:46.814Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the voucher was last updated. | 2022-04-14T10:02:18.036Z |\n| validity_timeframe_interval | Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a voucher with an interval of `P2D` will be active every other day. | P2D |\n| validity_timeframe_duration | Defines the amount of time the voucher will be active in ISO 8601 format. For example, a voucher with a duration of `PT1H` will be valid for a duration of one hour. | PT1H |\n| validity_day_of_week | Array corresponding to the particular days of the week in which the voucher is valid. | \"1,2,3,4,5\" |\n| discount_amount_limit | For `PERCENT` discount type, this is the maximum threshold allowed to be deducted. | 50 |\n| campaign_id | Parent campaign ID. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| additional_info | An optional field to keep any extra textual information about the code such as a code description and details. |  |\n| customer_id | Unique customer ID of the assigned owner to whom the voucher was published. | cust_7iUa6ICKyU6gH40dBU25kQU1 |\n| discount_unit_type | For `UNIT` discount type, either a shipping or product ID for a `UNIT` discount with one product. | prod_5h1pp1ng, prod_0a9f9aeddb019a42db |\n| discount_unit_effect | `UNIT` discount effect. | `ADD_MANY_ITEMS`, `ADD_MISSING_ITEMS`,`ADD_NEW_ITEMS` |\n| customer_source_id | Unique customer source id of the assigned owner to whom the voucher was published. | name.lastname@email.com |\n\n\n## Publications\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| voucher_code | Unique voucher code. | WELCOME100 |\n| customer_id | Customer unique ID. | cust_7iUa6ICKyU6gH40dBU25kQU1 |\n| customer_source_id | Unique customer source id of the assigned owner to whom the voucher was published. | name.lastname@email.com |\n| date | Timestamp in ISO 8601 format representing the date and time when the voucher was published. | 2022-04-28T10:19:30.792Z |\n| channel | Publication channel. | voucherify-website |\n| campaign | Unique campaign name. | Summer Discounts 20% off |\n| is_winner |  |  |\n| metadata | Custom publication metadata. |  |\n\n## Redemptions\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique redemption ID. | r_0acf3a6dae00e679c8, rf_0acf3a495740e679b8 |\n| object | Object being exported; by default `redemption`. | redemption |\n| date | Timestamp in ISO 8601 format representing the date and time when the voucher was redeemed. | 2022-03-23T08:52:24.867Z |\n| voucher_code | Unique voucher code redeemed. | WELCOME100 |\n| campaign | Parent campaign name of voucher if applicable. | Summer Discounts 20% off |\n| promotion_tier_id |  | promo_Mwy9XpA0TLctSGriM5kum0qp |\n| customer_id | Unique customer ID of redeeming customer. | cust_nk0N1uNQ1YnupAoJGOgvsODC |\n| customer_source_id | Unique source ID of redeeming customer. | name.lastname@email.com |\n| customer_name | Customer name. | John Smith |\n| tracking_id |  | track_Pw6r3ejnml43kIwNS4Zj09KZ67xOfLUy |\n| order_amount | Total order amount before applying all discounts. | 1000 |\n| gift_amount | Gift credits used for redemption. | 10 |\n| loyalty_points |  | 12 |\n| result | Tells you whether the redemption succeeded. | `SUCCESS`, `FAILURE` |\n| failure_code | Internal Voucherify code for reason why redemption failed. | invalid_customer |\n| failure_message | A human-readable message providing a short description explaining why the redemption failed. | Customer must be a holder of a loyalty card. |\n| metadata | Custom redemption metadata. |  |\n\n## Customers\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| name | Customer name. | John Smith |\n| id | Unique customer ID. | cust_J1CDUdbqn5Exva8ASWk1Fq0j |\n| description | An arbitrary string that you can attach to a customer object. | Customer requesting to be added to VIP tier. |\n| email | Customer's email. | name.lastname@email.com |\n| source_id | Unique custom customer identifier. | name.lastname@email.com |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the customer was created. | 2022-02-03T13:10:11.928Z |\n| address_city | City | Houston |\n| address_state | State | TX |\n| address_line_1 | First line of customer's address. | 72738 Main St |\n| address_line_2 | Second line of customer's address. | Bld 2, Apt 4 |\n| address_country | Country | United States of America |\n| address_postal_code | Postal code (ZIP code) | 77042-4143 |\n| redemptions_total_redeemed | Total customer redemptions. | 5 |\n| redemptions_total_failed | Total customer failed redemptions. | 2 |\n| redemptions_total_succeeded | Total customer succeeded redemptions. | 3 |\n| redemptions_total_rolled_back | Total customer redemptions that were rolled back. | 3 |\n| redemptions_total_rollback_failed | Total customer redemptions that were unsuccessfully rolled back. | 2 |\n| redemptions_total_rollback_succeeded | Total customer redemptions that were successfully rolled back. | 1 |\n| orders_total_amount | Total sum of order amounts over customer lifetime. Value is multiplied by 100 to precisely represent 2 decimal places. | 10000 (represents $100) |\n| orders_total_count | Total number of customer orders. | 2 |\n| orders_average_amount | Average amount spent on orders. Value is multiplied by 100 to precisely represent 2 decimal places. | 5000 (represents $50) |\n| orders_last_order_amount | How much did the customer spend on their last order. Value is multiplied by 100 to precisely represent 2 decimal places. | 5000 (represents $50) |\n| orders_last_order_date | When was the last customer order; timestamp in ISO 8601 format representing the date and time. | 2022-02-03T13:17:30.630Z |\n| loyalty_points | Sum of customer's loyalty points to go across all loyalty cards. | 2000 |\n| loyalty_referred_customers | How many customers were referred by this customer. | 3 |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the customer was updated. | 2022-02-14T14:10:14.305Z |\n| phone | Customer's phone number. | +1 (294) 752-1846 |\n| birthday | Customer's birthday. | 2022-01-01 |\n| metadata | Customer metadata. | All metadata fields defined in Metadata Schema for the Customer object. |\n| birthdate | Customer's birthdate. | 2022-01-01 |\n\n## Points Expirations\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Loyalty points bucket ID. | lopb_Wl1o3EjJIHSNjvO5BDLy4z1n |\n| campaign_id | Campaign ID of the parent loyalty campaign. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| voucher_id | Voucher ID of the parent loyalty card. | v_YLn0WVWXSXbUfDvxgrgUbtfJ3SQIY655 |\n| status | Status of the loyalty points bucket. | `ACTIVE` or `INACTIVE` |\n| expires_at | Timestamp in ISO 8601 format representing the date when the points expire. | 2022-06-30 |\n| points | Number of points. | 1000 |",
         "parameters": [
         ],
         "security": [
