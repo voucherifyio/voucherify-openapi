@@ -45,7 +45,6 @@
     {
       "url": "https://download.voucherify.io",
       "description": "EU Download Export Base URL"
-      
     },
     {
       "url": "https://{downloadcluster}.download.voucherify.io",
@@ -3579,6 +3578,54 @@
           }
         }
       },
+      "1_req_create_gift_card_transactions_export": {
+        "type": "object",
+        "title": "Create Gift Card Transactions Export Request Body",
+        "description": "Request body schema for **POST** `/vouchers/transactions/export`.",
+        "properties": {
+          "parameters": {
+            "$ref": "#/components/schemas/1_obj_export_gift_card_transactions",
+            "description": "Contains the parameters that define the data to be exported."
+          }
+        }
+      },
+      "1_obj_export_gift_card_transactions": {
+        "description": "List of available fields and filters that can be exported with a gift card transactions export along with the sorting order of the returned data.",
+        "title": "Export Transactions",
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "string",
+            "description": "How the export is filtered, where the dash `-` preceding a sorting option means sorting in a descending order.",
+            "enum": [
+              "-created_at",
+              "created_at"
+            ]
+          },
+          "fields": {
+            "type": "array",
+            "enum": [
+              [
+                "id",
+                "type",
+                "source_id",
+                "reason",
+                "balance",
+                "amount",
+                "created_at",
+                "voucher_id",
+                "campaign_id",
+                "source",
+                "details"
+              ]
+            ],
+            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combination of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique transaction ID. | vtx_0cb7811f1c07765800 |\n| type | Transaction type. | - `CREDITS_REMOVAL` <br> - `CREDITS_ADDITION` <br> - `CREDITS_REFUND` <br> - `CREDITS_REDEMPTION` |\n| source_id | Unique transaction source ID. | 8638 |\n| reason | Contains the reason for the transaction if one was included originally. |  |\n| balance | The gift card balance after the transaction. |  |\n| amount | The amount of gift card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | 2022-03-09T09:16:32.521Z  |\n| voucher_id | Unique Voucher ID. | v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp |\n| campaign_id | Parent campaign ID. | camp_FNYR4jhqZBM9xTptxDGgeNBV |\n| source|  Channel through which the transaction was initiated. | API |\n| details | More detailed information stored in the form of a JSON. | Provides more details related to the transaction in the form of an object. |",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "1_req_vouchers_import": {
         "title": "Import Vouchers Request Body",
         "type": "array",
@@ -6391,7 +6438,7 @@
       "2_req_create_campaign": {
         "title": "Create Campaign Request Body",
         "description": "Request body schema for **POST** `/campaigns`.",
-        "anyOf": [
+        "oneOf": [
           {
             "$ref": "#/components/schemas/2_req_create_campaign_discount_voucher"
           },
@@ -6411,48 +6458,7 @@
       },
       "2_req_create_campaign_discount_voucher": {
         "type": "object",
-        "x-examples": {
-          "example-1": {
-            "id": "camp_f7fBbQxUuTN7dI7tGOo5XMDA",
-            "name": "Loyalty Program Fall 2022",
-            "campaign_type": "LOYALTY_PROGRAM",
-            "type": "AUTO_UPDATE",
-            "voucher": {
-              "type": "LOYALTY_CARD",
-              "loyalty_card": {
-                "points": 0,
-                "expiration_rules": {
-                  "period_type": "MONTH",
-                  "period_value": 7,
-                  "rounding_type": "END_OF_YEAR"
-                }
-              },
-              "redemption": {
-                "quantity": null
-              },
-              "code_config": {
-                "length": 8,
-                "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-                "pattern": "########",
-                "prefix": "LOYALTY-CARD-"
-              },
-              "is_referral_code": false
-            },
-            "auto_join": true,
-            "join_once": true,
-            "use_voucher_metadata_schema": true,
-            "vouchers_count": 1,
-            "active": true,
-            "metadata": {},
-            "created_at": "2022-09-19T07:56:22.103Z",
-            "creation_status": "DONE",
-            "vouchers_generation_status": "DONE",
-            "protected": false,
-            "category_id": "cat_0bb343dee3cdb5ec0c",
-            "object": "campaign"
-          }
-        },
-        "title": "Discount Voucher",
+        "title": "Discount Campaign",
         "description": "Request body schema for creating a discount voucher campaign using **POST** `/campaigns`.",
         "properties": {
           "name": {
@@ -6465,14 +6471,7 @@
           },
           "campaign_type": {
             "type": "string",
-            "enum": [
-              "LOYALTY_PROGRAM",
-              "GIFT_VOUCHERS",
-              "DISCOUNT_COUPONS",
-              "PROMOTION",
-              "REFERRAL_PROGRAM",
-              "LUCKY_DRAW"
-            ],
+            "default": "DISCOUNT_COUPONS",
             "description": "Type of campaign."
           },
           "type": {
@@ -6482,10 +6481,6 @@
               "AUTO_UPDATE",
               "STATIC"
             ]
-          },
-          "auto_join": {
-            "type": "boolean",
-            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled. CONTEXT: `LOYALTY_PROGRAM`."
           },
           "join_once": {
             "type": "boolean",
@@ -6550,144 +6545,12 @@
             "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
           },
           "voucher": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
-              },
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
-              },
-              {
-                "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
-              }
-            ]
-          },
-          "referral_program": {
-            "description": "Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.",
-            "type": "object",
-            "properties": {
-              "conversion_event_type": {
-                "type": "string",
-                "enum": [
-                  "redemption",
-                  "custom_event"
-                ],
-                "description": "Define how a referral is triggered."
-              },
-              "custom_event": {
-                "type": "object",
-                "description": "Contains details about the custom event.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "example": "ms_Ll9enAm2BCN0M1s4VxWobLFM",
-                    "description": "Unique custom event ID."
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Custom event name."
-                  }
-                }
-              },
-              "referee_reward": {
-                "type": "object",
-                "description": "Defines the referee reward.",
-                "properties": {
-                  "related_object_parent": {
-                    "type": "object",
-                    "description": "Details of the resource from which the reward originates.",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "example": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
-                        "description": "Unique ID of the reward source."
-                      },
-                      "name": {
-                        "type": "string",
-                        "description": "Name of the reward source."
-                      },
-                      "object": {
-                        "type": "string",
-                        "enum": [
-                          "CAMPAIGN"
-                        ],
-                        "description": "Type of resource represented by the source of the reward."
-                      }
-                    }
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": [
-                      "LOYALTY_CARD",
-                      "GIFT_VOUCHER"
-                    ],
-                    "description": "Type of reward."
-                  },
-                  "amount": {
-                    "type": "string",
-                    "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  }
-                }
-              }
-            }
-          },
-          "promotion": {
-            "type": "object",
-            "description": "Define the promotion tiers within the campaign.",
-            "properties": {
-              "tiers": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/3_req_add_promotion_tier_to_campaign"
-                }
-              }
-            }
+            "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
           }
         }
       },
       "2_req_create_campaign_loyalty": {
         "type": "object",
-        "x-examples": {
-          "example-1": {
-            "id": "camp_f7fBbQxUuTN7dI7tGOo5XMDA",
-            "name": "Loyalty Program Fall 2022",
-            "campaign_type": "LOYALTY_PROGRAM",
-            "type": "AUTO_UPDATE",
-            "voucher": {
-              "type": "LOYALTY_CARD",
-              "loyalty_card": {
-                "points": 0,
-                "expiration_rules": {
-                  "period_type": "MONTH",
-                  "period_value": 7,
-                  "rounding_type": "END_OF_YEAR"
-                }
-              },
-              "redemption": {
-                "quantity": null
-              },
-              "code_config": {
-                "length": 8,
-                "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-                "pattern": "########",
-                "prefix": "LOYALTY-CARD-"
-              },
-              "is_referral_code": false
-            },
-            "auto_join": true,
-            "join_once": true,
-            "use_voucher_metadata_schema": true,
-            "vouchers_count": 1,
-            "active": true,
-            "metadata": {},
-            "created_at": "2022-09-19T07:56:22.103Z",
-            "creation_status": "DONE",
-            "vouchers_generation_status": "DONE",
-            "protected": false,
-            "category_id": "cat_0bb343dee3cdb5ec0c",
-            "object": "campaign"
-          }
-        },
         "title": "Loyalty Campaign",
         "description": "Request body schema for creating a loyalty campaign using **POST** `/campaigns`.",
         "properties": {
@@ -6701,14 +6564,7 @@
           },
           "campaign_type": {
             "type": "string",
-            "enum": [
-              "LOYALTY_PROGRAM",
-              "GIFT_VOUCHERS",
-              "DISCOUNT_COUPONS",
-              "PROMOTION",
-              "REFERRAL_PROGRAM",
-              "LUCKY_DRAW"
-            ],
+            "default": "LOYALTY_PROGRAM",
             "description": "Type of campaign."
           },
           "type": {
@@ -6786,145 +6642,13 @@
             "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
           },
           "voucher": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
-              },
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
-              },
-              {
-                "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
-              }
-            ]
-          },
-          "referral_program": {
-            "description": "Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.",
-            "type": "object",
-            "properties": {
-              "conversion_event_type": {
-                "type": "string",
-                "enum": [
-                  "redemption",
-                  "custom_event"
-                ],
-                "description": "Define how a referral is triggered."
-              },
-              "custom_event": {
-                "type": "object",
-                "description": "Contains details about the custom event.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "example": "ms_Ll9enAm2BCN0M1s4VxWobLFM",
-                    "description": "Unique custom event ID."
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Custom event name."
-                  }
-                }
-              },
-              "referee_reward": {
-                "type": "object",
-                "description": "Defines the referee reward.",
-                "properties": {
-                  "related_object_parent": {
-                    "type": "object",
-                    "description": "Details of the resource from which the reward originates.",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "example": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
-                        "description": "Unique ID of the reward source."
-                      },
-                      "name": {
-                        "type": "string",
-                        "description": "Name of the reward source."
-                      },
-                      "object": {
-                        "type": "string",
-                        "enum": [
-                          "CAMPAIGN"
-                        ],
-                        "description": "Type of resource represented by the source of the reward."
-                      }
-                    }
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": [
-                      "LOYALTY_CARD",
-                      "GIFT_VOUCHER"
-                    ],
-                    "description": "Type of reward."
-                  },
-                  "amount": {
-                    "type": "string",
-                    "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  }
-                }
-              }
-            }
-          },
-          "promotion": {
-            "type": "object",
-            "description": "Define the promotion tiers within the campaign.",
-            "properties": {
-              "tiers": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/3_req_add_promotion_tier_to_campaign"
-                }
-              }
-            }
+            "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
           }
         }
       },
       "2_req_create_campaign_gift": {
         "type": "object",
-        "x-examples": {
-          "example-1": {
-            "id": "camp_f7fBbQxUuTN7dI7tGOo5XMDA",
-            "name": "Loyalty Program Fall 2022",
-            "campaign_type": "LOYALTY_PROGRAM",
-            "type": "AUTO_UPDATE",
-            "voucher": {
-              "type": "LOYALTY_CARD",
-              "loyalty_card": {
-                "points": 0,
-                "expiration_rules": {
-                  "period_type": "MONTH",
-                  "period_value": 7,
-                  "rounding_type": "END_OF_YEAR"
-                }
-              },
-              "redemption": {
-                "quantity": null
-              },
-              "code_config": {
-                "length": 8,
-                "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-                "pattern": "########",
-                "prefix": "LOYALTY-CARD-"
-              },
-              "is_referral_code": false
-            },
-            "auto_join": true,
-            "join_once": true,
-            "use_voucher_metadata_schema": true,
-            "vouchers_count": 1,
-            "active": true,
-            "metadata": {},
-            "created_at": "2022-09-19T07:56:22.103Z",
-            "creation_status": "DONE",
-            "vouchers_generation_status": "DONE",
-            "protected": false,
-            "category_id": "cat_0bb343dee3cdb5ec0c",
-            "object": "campaign"
-          }
-        },
-        "title": "Create Gift Card campaign"
+        "title": "Gift Card campaign",
         "description": "Request body schema for creating a gift card campaign using **POST** `/campaigns`.",
         "properties": {
           "name": {
@@ -6937,14 +6661,7 @@
           },
           "campaign_type": {
             "type": "string",
-            "enum": [
-              "LOYALTY_PROGRAM",
-              "GIFT_VOUCHERS",
-              "DISCOUNT_COUPONS",
-              "PROMOTION",
-              "REFERRAL_PROGRAM",
-              "LUCKY_DRAW"
-            ],
+            "default": "GIFT_VOUCHERS",
             "description": "Type of campaign."
           },
           "type": {
@@ -6955,9 +6672,98 @@
               "STATIC"
             ]
           },
-          "auto_join": {
+          "join_once": {
             "type": "boolean",
-            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled. CONTEXT: `LOYALTY_PROGRAM`."
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
+          },
+          "use_voucher_metadata_schema": {
+            "type": "boolean",
+            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
+          },
+          "vouchers_count": {
+            "type": "integer",
+            "description": "Total number of unique vouchers in campaign (size of campaign)."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
+            "example": "2022-09-20T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
+            "example": "2022-09-30T00:00:00.000Z"
+          },
+          "validity_timeframe": {
+            "type": "object",
+            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+            "properties": {
+              "interval": {
+                "type": "string",
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
+              },
+              "duration": {
+                "type": "string",
+                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
+              }
+            }
+          },
+          "validity_day_of_week": {
+            "type": "array",
+            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "activity_duration_after_publishing": {
+            "type": "string",
+            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
+            "example": "cat_0b688929a2476386a7"
+          },
+          "category": {
+            "type": "string",
+            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
+          }
+        }
+      },
+      "2_req_create_campaign_referral": {
+        "type": "object",
+        "title": "Referral Campaign",
+        "description": "Request body schema for creating a referral campaign using **POST** `/campaigns`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Campaign name."
+          },
+          "description": {
+            "type": "string",
+            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
+          },
+          "campaign_type": {
+            "type": "string",
+            "default": "REFERRAL_PROGRAM",
+            "description": "Type of campaign."
+          },
+          "type": {
+            "type": "string",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
+            "enum": [
+              "AUTO_UPDATE",
+              "STATIC"
+            ]
           },
           "join_once": {
             "type": "boolean",
@@ -7102,64 +6908,11 @@
                 }
               }
             }
-          },
-          "promotion": {
-            "type": "object",
-            "description": "Define the promotion tiers within the campaign.",
-            "properties": {
-              "tiers": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/3_req_add_promotion_tier_to_campaign"
-                }
-              }
-            }
           }
         }
       },
       "2_req_create_campaign_promotion": {
         "type": "object",
-        "x-examples": {
-          "example-1": {
-            "id": "camp_f7fBbQxUuTN7dI7tGOo5XMDA",
-            "name": "Loyalty Program Fall 2022",
-            "campaign_type": "LOYALTY_PROGRAM",
-            "type": "AUTO_UPDATE",
-            "voucher": {
-              "type": "LOYALTY_CARD",
-              "loyalty_card": {
-                "points": 0,
-                "expiration_rules": {
-                  "period_type": "MONTH",
-                  "period_value": 7,
-                  "rounding_type": "END_OF_YEAR"
-                }
-              },
-              "redemption": {
-                "quantity": null
-              },
-              "code_config": {
-                "length": 8,
-                "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-                "pattern": "########",
-                "prefix": "LOYALTY-CARD-"
-              },
-              "is_referral_code": false
-            },
-            "auto_join": true,
-            "join_once": true,
-            "use_voucher_metadata_schema": true,
-            "vouchers_count": 1,
-            "active": true,
-            "metadata": {},
-            "created_at": "2022-09-19T07:56:22.103Z",
-            "creation_status": "DONE",
-            "vouchers_generation_status": "DONE",
-            "protected": false,
-            "category_id": "cat_0bb343dee3cdb5ec0c",
-            "object": "campaign"
-          }
-        },
         "title": "Promotion",
         "description": "Request body schema for creating a promotions campaign using **POST** `/campaigns`.",
         "properties": {
@@ -7173,14 +6926,7 @@
           },
           "campaign_type": {
             "type": "string",
-            "enum": [
-              "LOYALTY_PROGRAM",
-              "GIFT_VOUCHERS",
-              "DISCOUNT_COUPONS",
-              "PROMOTION",
-              "REFERRAL_PROGRAM",
-              "LUCKY_DRAW"
-            ],
+            "default": "PROMOTION",
             "description": "Type of campaign."
           },
           "type": {
@@ -7190,10 +6936,6 @@
               "AUTO_UPDATE",
               "STATIC"
             ]
-          },
-          "auto_join": {
-            "type": "boolean",
-            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled. CONTEXT: `LOYALTY_PROGRAM`."
           },
           "join_once": {
             "type": "boolean",
@@ -7256,324 +6998,6 @@
           "metadata": {
             "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
-          },
-          "voucher": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
-              },
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
-              },
-              {
-                "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
-              }
-            ]
-          },
-          "referral_program": {
-            "description": "Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.",
-            "type": "object",
-            "properties": {
-              "conversion_event_type": {
-                "type": "string",
-                "enum": [
-                  "redemption",
-                  "custom_event"
-                ],
-                "description": "Define how a referral is triggered."
-              },
-              "custom_event": {
-                "type": "object",
-                "description": "Contains details about the custom event.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "example": "ms_Ll9enAm2BCN0M1s4VxWobLFM",
-                    "description": "Unique custom event ID."
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Custom event name."
-                  }
-                }
-              },
-              "referee_reward": {
-                "type": "object",
-                "description": "Defines the referee reward.",
-                "properties": {
-                  "related_object_parent": {
-                    "type": "object",
-                    "description": "Details of the resource from which the reward originates.",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "example": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
-                        "description": "Unique ID of the reward source."
-                      },
-                      "name": {
-                        "type": "string",
-                        "description": "Name of the reward source."
-                      },
-                      "object": {
-                        "type": "string",
-                        "enum": [
-                          "CAMPAIGN"
-                        ],
-                        "description": "Type of resource represented by the source of the reward."
-                      }
-                    }
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": [
-                      "LOYALTY_CARD",
-                      "GIFT_VOUCHER"
-                    ],
-                    "description": "Type of reward."
-                  },
-                  "amount": {
-                    "type": "string",
-                    "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  }
-                }
-              }
-            }
-          },
-          "promotion": {
-            "type": "object",
-            "description": "Define the promotion tiers within the campaign.",
-            "properties": {
-              "tiers": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/3_req_add_promotion_tier_to_campaign"
-                }
-              }
-            }
-          }
-        }
-      },
-      "2_req_create_campaign_referral": {
-        "type": "object",
-        "x-examples": {
-          "example-1": {
-            "id": "camp_f7fBbQxUuTN7dI7tGOo5XMDA",
-            "name": "Loyalty Program Fall 2022",
-            "campaign_type": "LOYALTY_PROGRAM",
-            "type": "AUTO_UPDATE",
-            "voucher": {
-              "type": "LOYALTY_CARD",
-              "loyalty_card": {
-                "points": 0,
-                "expiration_rules": {
-                  "period_type": "MONTH",
-                  "period_value": 7,
-                  "rounding_type": "END_OF_YEAR"
-                }
-              },
-              "redemption": {
-                "quantity": null
-              },
-              "code_config": {
-                "length": 8,
-                "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-                "pattern": "########",
-                "prefix": "LOYALTY-CARD-"
-              },
-              "is_referral_code": false
-            },
-            "auto_join": true,
-            "join_once": true,
-            "use_voucher_metadata_schema": true,
-            "vouchers_count": 1,
-            "active": true,
-            "metadata": {},
-            "created_at": "2022-09-19T07:56:22.103Z",
-            "creation_status": "DONE",
-            "vouchers_generation_status": "DONE",
-            "protected": false,
-            "category_id": "cat_0bb343dee3cdb5ec0c",
-            "object": "campaign"
-          }
-        },
-        "title": "Referral",
-        "description": "Request body schema for creating a referral campaign using **POST** `/campaigns`.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Campaign name."
-          },
-          "description": {
-            "type": "string",
-            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
-          },
-          "campaign_type": {
-            "type": "string",
-            "enum": [
-              "LOYALTY_PROGRAM",
-              "GIFT_VOUCHERS",
-              "DISCOUNT_COUPONS",
-              "PROMOTION",
-              "REFERRAL_PROGRAM",
-              "LUCKY_DRAW"
-            ],
-            "description": "Type of campaign."
-          },
-          "type": {
-            "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
-            "enum": [
-              "AUTO_UPDATE",
-              "STATIC"
-            ]
-          },
-          "auto_join": {
-            "type": "boolean",
-            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled. CONTEXT: `LOYALTY_PROGRAM`."
-          },
-          "join_once": {
-            "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
-          },
-          "use_voucher_metadata_schema": {
-            "type": "boolean",
-            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
-          },
-          "vouchers_count": {
-            "type": "integer",
-            "description": "Total number of unique vouchers in campaign (size of campaign)."
-          },
-          "start_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
-            "example": "2022-09-20T00:00:00.000Z"
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
-            "example": "2022-09-30T00:00:00.000Z"
-          },
-          "validity_timeframe": {
-            "type": "object",
-            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
-            "properties": {
-              "interval": {
-                "type": "string",
-                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
-              },
-              "duration": {
-                "type": "string",
-                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
-              }
-            }
-          },
-          "validity_day_of_week": {
-            "type": "array",
-            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
-            "items": {
-              "type": "integer"
-            }
-          },
-          "activity_duration_after_publishing": {
-            "type": "string",
-            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
-          },
-          "category_id": {
-            "type": "string",
-            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
-            "example": "cat_0b688929a2476386a7"
-          },
-          "category": {
-            "type": "string",
-            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
-          },
-          "voucher": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
-              },
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
-              },
-              {
-                "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
-              }
-            ]
-          },
-          "referral_program": {
-            "description": "Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.",
-            "type": "object",
-            "properties": {
-              "conversion_event_type": {
-                "type": "string",
-                "enum": [
-                  "redemption",
-                  "custom_event"
-                ],
-                "description": "Define how a referral is triggered."
-              },
-              "custom_event": {
-                "type": "object",
-                "description": "Contains details about the custom event.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "example": "ms_Ll9enAm2BCN0M1s4VxWobLFM",
-                    "description": "Unique custom event ID."
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Custom event name."
-                  }
-                }
-              },
-              "referee_reward": {
-                "type": "object",
-                "description": "Defines the referee reward.",
-                "properties": {
-                  "related_object_parent": {
-                    "type": "object",
-                    "description": "Details of the resource from which the reward originates.",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "example": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
-                        "description": "Unique ID of the reward source."
-                      },
-                      "name": {
-                        "type": "string",
-                        "description": "Name of the reward source."
-                      },
-                      "object": {
-                        "type": "string",
-                        "enum": [
-                          "CAMPAIGN"
-                        ],
-                        "description": "Type of resource represented by the source of the reward."
-                      }
-                    }
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": [
-                      "LOYALTY_CARD",
-                      "GIFT_VOUCHER"
-                    ],
-                    "description": "Type of reward."
-                  },
-                  "amount": {
-                    "type": "string",
-                    "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  }
-                }
-              }
-            }
           },
           "promotion": {
             "type": "object",
@@ -7874,8 +7298,8 @@
         "title": "Import Vouchers to Campaign Request Body",
         "description": "Request body schema for **POST** `/campaigns/{campaignId}/import`.",
         "items": {
-              "$ref": "#/components/schemas/2_obj_import_vouchers_to_campaign_object"
-            }
+          "$ref": "#/components/schemas/2_obj_import_vouchers_to_campaign_object"
+        }
       },
       "2_obj_import_vouchers_to_campaign_object": {
         "type": "object",
@@ -15795,7 +15219,8 @@
               "voucher",
               "promotion_tier",
               "promotion_stack"
-            ]
+            ],
+            "default": "voucher"
           },
           "id": {
             "type": "string",
@@ -25329,7 +24754,7 @@
           "object": {
             "type": "string",
             "default": "loyalty_reward",
-            "description": "The type of object represented by JSON. This object stores information about the loyalyt reward object."
+            "description": "The type of object represented by JSON. This object stores information about the loyalty reward object."
           }
         }
       },
@@ -27244,7 +26669,7 @@
           "object": {
             "type": "string",
             "default": "loyalty_tier",
-            "description": "The type of object represented by JSON. This object stores information about the loyalt."
+            "description": "The type of object represented by JSON. This object stores information about the loyalty."
           }
         }
       },
@@ -27430,7 +26855,7 @@
           "object": {
             "type": "string",
             "default": "loyalty_tier",
-            "description": "The type of object represented by JSON. This object stores information about the loyalt."
+            "description": "The type of object represented by JSON. This object stores information about the loyalty."
           }
         }
       },
@@ -44058,8 +43483,7 @@
         ],
         "summary": "Get Voucher",
         "description": "Retrieves the voucher with the given `code` or unique Voucherify ID. You can either pass the voucher ID which was assigned by Voucherify, e.g., `v_7HxHkf4VAkMuc8u4lZs78lyRwhRze5UE`, or the `code` of the voucher as the path parameter value, e.g., `7fjWdr`.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -44626,8 +44050,7 @@
         ],
         "summary": "Update Voucher",
         "description": "Updates the specified voucher by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged.\n\nFields other than the ones listed in the request body won't be modified. Even if provided, they will be silently skipped.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -45245,8 +44668,7 @@
         ],
         "summary": "Create Voucher",
         "description": "Create a standalone voucher. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. The code path parameter can use all letters of the English alphabet, Arabic numerals and special characters.  \n\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new stand alone voucher if no `campaign` name or `campaign_id` is provided. In case of the loyalty card, a campaign name is required.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -45765,8 +45187,7 @@
         ],
         "summary": "Generate Random Code",
         "description": "Create a standalone voucher. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. \n\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new stand alone voucher if no `campaign` name or `campaign_id` is provided. In case of the loyalty card, a campaign name is required.\n\nYou can optionally use the `code` parameter to define a specific code or the `code_config` parameter to design rules for Voucherify API to create a random code. If neither of the two parameters are passed, then a random code is generated by the Voucherify API.\n\nThis method will return an error when trying to create a voucher that already exists.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -46271,8 +45692,7 @@
         ],
         "summary": "Enable Voucher",
         "description": "There are various times when you'll want to manage a voucher's accessibility. This can be done by two API methods for managing the voucher state - *enable* and *disable*.  \n___\nThe method sets the voucher state to **active**. The voucher can be redeemed - only if the redemption occurs after the start date and the voucher is not expired.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -46403,8 +45823,7 @@
         ],
         "summary": "Disable Voucher",
         "description": "There are various times when you'll want to manage a voucher's accessibility. This can be done by two API methods for managing the voucher state - *enable* and *disable*.  \n___\nThis method sets the voucher state to **inactive**. The voucher cannot be redeemed.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -46533,8 +45952,7 @@
         "tags": [
           "VOUCHERS API"
         ],
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -46929,8 +46347,7 @@
         "tags": [
           "VOUCHERS API"
         ],
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -46938,11 +46355,14 @@
           }
         ],
         "summary": "Export Gift Card Transactions",
-        "description": "Export transactions that are associated with credit movements on a gift card.",
+        "description": "Export transactions that are associated with credit movements on a gift card.\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique transaction ID. | vtx_0cb7811f1c07765800 |\n| type | Transaction type. | - `CREDITS_REMOVAL` <br> - `CREDITS_ADDITION` <br> - `CREDITS_REFUND` <br> - `CREDITS_REDEMPTION` |\n| source_id | Unique transaction source ID. | 8638 |\n| reason | Contains the reason for the transaction if one was included originally. |  |\n| balance | The gift card balance after the transaction. |  |\n| amount | The amount of gift card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | 2022-03-09T09:16:32.521Z  |\n| voucher_id | Unique Voucher ID. | v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp |\n| campaign_id | Parent campaign ID. | camp_FNYR4jhqZBM9xTptxDGgeNBV |\n| source|  Channel through which the transaction was initiated. | API |\n| details | More detailed information stored in the form of a JSON. | Provides more details related to the transaction in the form of an object. |",
         "requestBody": {
-          "description": "Specify the parameters and filters for the transaction export.",
+          "description": "Specify the parameters for the transaction export.",
           "content": {
             "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/1_req_create_gift_card_transactions_export"
+              },
               "examples": {
                 "Example": {
                   "value": {
@@ -46959,7 +46379,7 @@
                         "voucher_id",
                         "campaign_id",
                         "details",
-                        "related_transaction_id"
+                        "source"
                       ]
                     }
                   }
@@ -46976,9 +46396,9 @@
                 "examples": {
                   "Example": {
                     "value": {
-                      "id": "exp_5gYD1kTWjTY94d78k0jVQ5N5",
+                      "id": "exp_ARi2UbRjgfrHQJoVcKFrBUgA",
                       "object": "export",
-                      "created_at": "2023-03-21T13:30:42.881Z",
+                      "created_at": "2023-05-16T08:30:21.496Z",
                       "status": "SCHEDULED",
                       "channel": "API",
                       "exported_object": "voucher_transactions",
@@ -46995,7 +46415,8 @@
                           "voucher_id",
                           "campaign_id",
                           "details",
-                          "related_transaction_id"
+                          "related_transaction_id",
+                          "source"
                         ],
                         "filters": {
                           "voucher_id": {
@@ -47072,8 +46493,7 @@
         ],
         "summary": "Import Vouchers",
         "description": "Import standalone vouchers and gift cards into the repository.\n\n<!-- theme: info -->\n\n> 📘 Important notes\n>\n> - **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify Project.\n\nAny parameters not provided in the payload will be left blank or null.\n\nFor both **standalone discount vouchers and gift cards**, you can import the following fields:  \n\n- code\n- category\n- active\n- type\n- start_date\n- expiration_date\n- redemption.quantity\n- additional_info\n- metadata\n\nFor **gift cards**, you can also import the following field:\n\n- gift.amount\n\nFor **discount vouchers**, you can import the `discount` object. The object will slightly vary depending on the type of discount. Each discount type **requires** the `type` to be defined in the import.\n\n| **Discount Type** | **Required fields** |\n|:---|:---|\n| Amount | amount_off, effect |\n| Percent | percent_off, effect |\n| Fixed | fixed_amount, effect |\n| Unit - One item | unit_off, unit_type, effect |\n| Unit - Multiple items | unit_off, unit_type, effect |\n| Shipping | unit_off, unit_type, effect |\n\nFields other than the ones listed above won't be imported. Even if provided, they will be silently skipped.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -47346,8 +46766,7 @@
         ],
         "summary": "Import Vouchers using CSV",
         "description": "Import standalone vouchers into the repository using a CSV file.\n\nThe CSV file has to include headers in the first line. All properties listed in the file headers that cannot be mapped to standard voucher fields will be added to the metadata object.  \n\nYou can find an example CSV file [here](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally#coupons).\n___\n<!--\ntitle: \"cURL Example Request\"\nlineNumbers: true\n-->\n```cURL cURL example\ncurl -X POST \\\n  https://api.voucherify.io/v1/vouchers/importCSV \\\n  -F file=@/path/to/vouchers.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\n<!-- theme: info -->\n\n> 📘 Standard voucher fields mapping\n>\n> - Go to the <!-- [import vouchers](OpenAPI.json/paths/~1vouchers~1import) -->[import vouchers](ref:import-vouchers) endpoint to see all standard CSV fields description (body params section).\n> - Supported CSV file headers: Code,Voucher Type,Value,Discount Type,Category,Start Date,Expiration Date,Redemption Limit,Active,Additional Info,Custom Metadata Property Name\n>- **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.  \n>    - `YYYY-MM-DD`\n>    - `YYYY-MM-DDTHH`\n>    - `YYYY-MM-DDTHH:mm`\n>    - `YYYY-MM-DDTHH:mm:ss`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ss.SSSZ`\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify Project.\n\n<!-- theme: info -->\n\n> 📘 Categories\n>\n> In the structure representing your data, you can define a category that the voucher belongs to. You can later use the category of a voucher to group and search by specific criteria in the Dashboard and using the [List Vouchers](ref:list-vouchers) endpoint.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -47869,8 +47288,7 @@
         ],
         "summary": "Update Vouchers in bulk",
         "description": "Use this endpoint to update specific metadata parameters for each code, respectively. You can update each code's metadata property separately.    \n\n- Update up to **100 records** in one request.\n- Upserts are not supported.  \n\n> 🚧 \n> \n> Currently only **metadata** updates are supported.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -47940,8 +47358,7 @@
         ],
         "summary": "Update Vouchers' metadata in bulk",
         "description": "Use this endpoint to update the same metadata parameters for a list of codes.   \nUpdate up to **100 records** in one request. Upserts are not supported. \n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -48056,8 +47473,7 @@
         ],
         "summary": "Release Validation Session",
         "description": "Manually release a validation session that has been set up for the voucher. This method undos the actions that are explained in our guide on how a validation session was established, you can read more [here](doc:locking-validation-session). \n\n> 📘 Release Session using Dashboard\n>\n> You can also use the Validations Manager in the Dashboard to unlock sessions. [Read more](https://support.voucherify.io/article/16-dashboard-sections#validations).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -48080,8 +47496,7 @@
         ],
         "summary": "Create Campaign",
         "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n<!-- theme: info -->\n\n> 📘 Global uniqueness\n>\n> All campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.  \n<!-- theme: warning -->\n> 🚧 Code generation status\n>\n> This is an asynchronous action; you can't read or modify a newly created campaign until the code generation is completed. See the `creation_status` field in the <!-- [campaign object](OpenAPI.json/components/schemas/2_obj_campaign_object) -->[campaign object](ref:get-campaign) description.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -49273,8 +48688,7 @@
         ],
         "summary": "Get Campaign",
         "description": "Retrieves the campaign with the given campaign ID or campaign name.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -49370,8 +48784,7 @@
         ],
         "summary": "Update Campaign",
         "description": "Updates the specified campaign by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged. \n\nFields other than the ones listed in the request body won't be modified. Even if provided, they will be silently skipped.   \n<!-- theme: warning -->\n> #### Vouchers will be affected\n>\n> This method will update vouchers aggregated in the campaign. It will affect all vouchers that are not published or redeemed yet.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -49683,8 +49096,7 @@
         ],
         "summary": "Add Voucher with Specific Code to Campaign",
         "description": "This method gives a possibility to add a new voucher to an existing campaign. The voucher definition will be inherited from the definition kept in the campaign profile. However, you are able to overwrite a few properties inherited from the campaign.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -49842,8 +49254,7 @@
         ],
         "summary": "Import Vouchers to Campaign",
         "description": "Imports vouchers to an **existing** campaign.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -50079,8 +49490,7 @@
         ],
         "summary": "Import Vouchers to Campaign by CSV",
         "description": "Imports vouchers to an **existing** campaign.  \n\n\nThe CSV file has to include headers in the first line. \n\nCurl Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/campaigns/TEST-CAMPAIGN/importCSV \\\n  -F file=@/path/to/campaigns.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\nYou can import values for the following fields: `Code` (**required**), `Category`, `Active`. In a gift cards import, you can also include the current card balance using the `Gift Amount` header. In a loyalty cards import, you can also include the current loyalty card score in points using the `Loyalty Points` header. Remaining CSV columns will be mapped to metadata properties. \n\nDiscount type, time limits, and validation rules will be taken from the <!-- [campaign object](OpenAPI.json/components/schemas/2_obj_campaign_object) -->[campaign object](ref:get-campaign) settings. \n\n\n| **Active** | **Code** | **Loyalty Points** | **Gift Amount** | **Category** | **Custom_metadata_property** |\n|---|---|---|---|---|---|\n| Use `true` or `false` to enable or disable the voucher; this flag can be used to turn off the ability to redeem a voucher even though it is within the campaign's start/end validity timeframe. | The unique voucher code. | The number of points to be added to the loyalty card. If you leave this undefined, then the initial number of points will be set according to the campaign settings.<br>Context: `LOYALTY_PROGRAM` | The initial gift card balance.<br>Context: `GIFT_VOUCHERS` | A custom tag for the voucher to help you filter codes; you can either import the category name or a unique Voucherify-assigned category ID. | Any additional data that you would like to store for the given loyalty card as a Custom attribute. Remember to define the metadata schema in the Dashboard prior to importing codes. |\n|<!-- theme: info -->\n\n> 📘 Active\n>\n> The CSV file is allowed in two versions; either with or without a column titled `Active`. It indicates whether the voucher is enabled after the import event.  \n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -50237,8 +49647,7 @@
         ],
         "summary": "Enable Campaign",
         "description": "There are various times when you'll want to manage a campaign's accessibility. This can be done by two API methods for managing the campaign state - *enable* and *disable*.  \n\nSets campaign state to **active**. The vouchers in this campaign can be redeemed - only if the redemption occurs after the start date of the campaign and voucher and the voucher and campaign are not expired.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -50307,8 +49716,7 @@
         ],
         "summary": "Disable Campaign",
         "description": "There are various times when you'll want to manage a campaign's accessibility. This can be done by two API methods for managing the campaign state - *enable* and *disable*.  \n\nSets campaign state to **inactive**. The vouchers in this campaign can no longer be redeemed.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -50372,7 +49780,7 @@
             },
             "in": "query",
             "name": "is_available",
-            "description": "This parameter allows filtering promotions that are only available in the moment. When set to `true`, it selects only non-expired and active promotions."
+            "description": "This parameter allows filtering promotions that are only available at the moment. When set to `true`, it selects only non-expired and active promotions."
           },
           {
             "schema": {
@@ -50615,7 +50023,7 @@
             },
             "in": "query",
             "name": "is_available",
-            "description": "This parameter allows filtering promotions that are only available in the moment. When set to `true`, it selects only non-expired and active promotions."
+            "description": "This parameter allows filtering promotions that are only available at the moment. When set to `true`, it selects only non-expired and active promotions."
           },
           {
             "schema": {
@@ -50865,8 +50273,7 @@
         ],
         "summary": "List Promotion Tiers from Campaign",
         "description": "This method enables you to list promotion tiers from a specified campaign.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -50981,8 +50388,7 @@
         ],
         "summary": "Add Promotion Tier to Campaign",
         "description": "This method allows you to add a new promotion tier to an existing campaign. The tier hierarchy will be set as the next consequtive integer following the lowest ranking tier.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -51137,8 +50543,7 @@
         ],
         "summary": "Get Promotion Tier",
         "description": "This method enables you to retrieve a specific promotion tier.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -51165,8 +50570,7 @@
         ],
         "summary": "Update Promotion Tier",
         "description": "This method updates a promotion tier.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -51307,8 +50711,7 @@
         ],
         "summary": "Delete Promotion Tier",
         "description": "This method deletes a promotion tier.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -51365,8 +50768,7 @@
         ],
         "summary": "Enable Promotion Tier",
         "description": "This method enables a promotion tier, i.e. makes the `active` parameter = `true`.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -51486,8 +50888,7 @@
         ],
         "summary": "Disable Promotion Tier",
         "description": "This method disables a promotion tier, i.e. makes the `active` parameter = `false`.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -51820,8 +51221,7 @@
         ],
         "summary": "List Promotion Stacks in Campaign",
         "description": "This method enables you to list promotion stacks from a specified campaign.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -51887,8 +51287,7 @@
         ],
         "summary": "Create Promotion Stack",
         "description": "This method creates one promotion stack. The sequence of promotion tier IDs will determine the promotion stacking order.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -52017,8 +51416,7 @@
         ],
         "summary": "Get Promotion Stack",
         "description": "This method returns the details of a promotion stack, including the promotion tiers grouped within the stack.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -52097,8 +51495,7 @@
         ],
         "summary": "Update Promotion Stack",
         "description": "This methods allows for editing an existing stack.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -52168,8 +51565,7 @@
         ],
         "summary": "Delete Promotion Stack",
         "description": "This method deletes a promotion stack.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -52378,8 +51774,7 @@
         ],
         "summary": "Create Reward",
         "description": "Create a new reward.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -52538,8 +51933,7 @@
         ],
         "summary": "Get Reward",
         "description": "Retrieve a reward by the reward ID.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -52589,8 +51983,7 @@
         ],
         "summary": "Update Reward",
         "description": "Update the details of a reward.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -52751,8 +52144,7 @@
         ],
         "summary": "Delete Reward",
         "description": "Delete a reward.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -52929,8 +52321,7 @@
         ],
         "summary": "Create Reward Assignment",
         "description": "Assigns a reward to a specified loyalty campaign.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -53099,8 +52490,7 @@
         ],
         "summary": "Update Reward Assignment",
         "description": "Update the number of points needed to successfully redeem the reward.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -53189,8 +52579,7 @@
         ],
         "summary": "Delete Reward Assignment",
         "description": "This method deletes a reward assignment for a particular reward.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -53244,8 +52633,7 @@
         ],
         "summary": "Get Reward Assignment",
         "description": "Retrieve a reward assignment.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -54080,8 +53468,7 @@
         ],
         "summary": "Validate Voucher",
         "description": "To verify a voucher code given by a customer, you can use this method. It is designed for a server side integration, which means that is accessible only through private keys.  \n\n<!-- theme: danger -->\n> ❗️ Important  \n>\n> This endpoint supports the validation of a single promo code. If you need to validate more than one incentive, you can use the <!-- [Stackable discounts API](OpenAPI.json/paths/~1validations/post) -->[Stackable discounts API](ref:stackable-discounts-api). The stacking discounts API lets you validate up to 5 incentives per call. Before integrating Voucherify, choose which validation endpoint you prefer to use.\n\n#### Gift Vouchers - validate Gift Card and control amount to redeem\nVoucherify also gives the possibility to create a gift card, which allows using credits to fulfill the order. A user can specify how many credits he wants to use from the gift card. The available balance of credits is counted based on policy rules attached to the Gift Voucher definition.  \n\nThis operation returns information about the validity of the code. Moreover, it returns a hashed source identifier which can be used as a tracking ID in future calls.\n\nIf a validation session is established, then the session details will be returned as well. Read more about sessions <!-- [here](..docs/guides/campaign_recipes/Locking-Validation-Session.md) -->[here](doc:locking-validation-session).\n\nVoucher validation might fail because of one of these reasons:\n* `voucher not found` - voucher doesn't exist or was <!-- [deleted](OpenAPI.json/paths/~1vouchers~1{code}/delete) -->[deleted](ref:delete-voucher)\n* `voucher expired` - voucher is out of start date - expiration date time frame\n* `voucher is disabled` - learn more about a <!-- [disabled voucher](OpenAPI.json/paths/~1vouchers~1{code}~1disable/post) -->[disabled voucher](ref:disable-voucher)\n* `customer does not match segment rules` - learn more [customer tracking](doc:customers#customer-tracking) \n* `order does not match validation rules` - learn more about [validation rules](doc:validation-rules)",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -58177,8 +57564,7 @@
         ],
         "summary": "Validate Promotion Tier",
         "description": "To verify whether the promotion tier discount can be applied to an order. This method is designed for server side integration which means that it is accessible only through private keys.\n\n<!-- theme: danger -->\n> ❗️ Important  \n>\n> This endpoint supports the validation of a single promotion tier. If you need to validate more than one incentive, you can use the <!-- [Stackable discounts API](OpenAPI.json/paths/~1validations/post) -->[Stackable discounts API](ref:validate-stacked-discounts). The stacking discounts API lets you validate up to 5 incentives per call. Before integrating Voucherify, choose which validation endpoint you prefer to use.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -59149,8 +58535,7 @@
         ],
         "summary": "Redeem Stackable Discounts",
         "description": "Use this method to redeem up to 5 redeemables in a single API request.\n\n## How API returns calculated discounts and order amounts in the response\n\nIn the table below, you can see the logic the API follows to calculate discounts and amounts:\n\n| **Field** | **Calculation** | **Description** |\n|:---|:---|:---|\n| amount | N/A | This field shows the order amount before applying any discount |\n| total_amount | `total_amount` = `amount` - `total_discount_amount` | This field shows the order amount after applying all the discounts |\n| discount_amount | `discount_amount` = `previous_discount_amount` + `applied_discount_amount` | This field sums up all order-level discounts up to and including the specific discount being calculated for the stacked redemption. |\n| items_discount_amount | sum(items, i => i.discount_amount) | This field sums up all product-specific discounts |\n| total_discount_amount | `total_discount_amount` = `discount_amount` + `items_discount_amount` | This field sums up all order-level and all product-specific discounts |\n| applied_discount_amount | N/A | This field shows the order-level discount applied in a particular request |\n| items_applied_discount_amount | sum(items, i => i.applied_discount_amount) | This field sums up all product-specific discounts applied in a particular request |\n| total_applied_discount_amount | `total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount` | This field sums up all order-level and all product-specific discounts applied in a particular request |\n\n<!-- theme: info -->\n> 📘 Rollbacks\n>\n> You can't roll back a child redemption. When you call rollback on a stacked redemption, all child redemptions will be rolled back. You need to refer to a parent redemption ID in your <!-- [rollback request](OpenAPI.json/paths/~1redemptions~1{parentRedemptionId}~1rollbacks/post) -->[rollback request](ref:rollback-stacked-redemptions).    \n\n<!-- theme: info -->\n> 📘 Also available on client-side\n>\n> This method is also accessible through public keys which you can use in client-side​ apps: mobile and web browser apps. Go to the dedicated [endpoint](ref:redeem-stacked-discounts-client-side) to learn more.\n> - Use `X-Client-Application-Id` as the application ID header.\n> - Use `X-Client-Token` as the appliction secret key header.\n> - Use client-side base URL.\n> - Use an `origin` header for your custom domain.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -59200,8 +58585,7 @@
         ],
         "summary": "Get Redemption",
         "description": "Return a redemption or redemption rollback object. This object can either be a successfull or failed redemption or redemption rollback.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -60642,8 +60026,7 @@
         ],
         "summary": "Get Voucher's Redemptions",
         "description": "Retrieve the number of times a voucher was redeemed and each of the redemption details.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -63155,8 +62538,7 @@
         ],
         "summary": "Redeem Promotion",
         "description": "To redeem a promotion, you create a redemption object passing a context.\n\nYou can retrieve a list of active promotions through the <!-- [Validate Promotions](OpenAPI.json/paths/~1promotions~1validation/post) -->[Validate Promotions](ref:validate-promotions) endpoint. That validation method will return a list of active​ promotion tiers identified by thier IDs.  \n\n<!-- theme: danger -->\n> ❗️ Important  \n>\n> This endpoint supports the redemption of a single promo code. If you need to redeem more than one incentive, you can use the Stackable discounts API. The <!-- [stacking discounts API](OpenAPI.json/paths/~1redemptions/post) -->[stacking discounts API](ref:redeem-stacked-discounts) lets you redeem up to 5 incentives per call. Before integrating with Voucherify, choose which redemption endpoint you prefer to use.\n\n> 📘 Redemption rollback\n>\n> Do you need to undo a redemption? You can do it with <!-- [redemption rollback](OpenAPI.json/paths/~1redemptions~1{redemptionId}~1rollback/post) -->[redemption rollback](ref:rollback-redemption).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -63585,7 +62967,7 @@
         "security": [
           {
             "X-Client-Application-Id-1": [],
-            "X-Client-Token-Token-1": []
+            "X-Client-Token-1": []
           }
         ],
         "requestBody": {
@@ -63620,8 +63002,7 @@
         ],
         "summary": "Validate Stackable Discounts",
         "description": "Verify redeemables provided in the request. This method is designed for server side integration which means that it is accessible only through private keys.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -64406,8 +63787,7 @@
         ],
         "summary": "Rollback Stackable Redemptions",
         "description": "Rollback a stackable redemption. When you rollback a stacked redemption, all child redemptions will be rolled back. Provide the parent redemption ID as the path parameter.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -64681,8 +64061,7 @@
         ],
         "summary": "Create Loyalty Campaign",
         "description": "Creates a batch of <!-- [loyalty cards](OpenAPI.json/components/schemas/8_obj_loyalty_card_object) -->[loyalty cards](ref:get-member) aggregated in a single loyalty campaign. It also allows you to define a custom codes pattern.  \n\n<!-- theme: info -->\n> 📘 Global uniqueness\n> All codes are unique across the whole project. Voucherify won't allow to generate the same codes in any of your campaigns.\n\n<!-- theme: warning -->\n> 🚧 Asyncronous action!\n>\n> This is an asynchronous action, you can't read or modify a newly created campaign until the code generation is completed. See `creation_status` field in the <!-- [loyalty campaign object](OpenAPI.json/components/schemas/8_obj_loyalty_campaign_object) -->[loyalty campaign object](ref:get-loyalty-program) description.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -64916,8 +64295,7 @@
         ],
         "summary": "Get Loyalty Campaign",
         "description": "Retrieve a specific loyalty campaign.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -65034,8 +64412,7 @@
         ],
         "summary": "Update Loyalty Campaign",
         "description": "Updates a loyalty program. \n\nFields other than those specified in the allowed request body payload won't be modified (even if provided they are silently skipped). Any parameters not provided will be left unchanged. \n\nThis method will update the <!-- [loyalty cards](OpenAPI.json/components/schemas/8_obj_loyalty_card_object) -->[loyalty cards](ref:get-member) which have not been published or redeemed yet.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -65471,8 +64848,7 @@
         ],
         "summary": "Add Member",
         "description": "This method assigns a loyalty card to a customer. It selects a <!-- [loyalty card](OpenAPI.json/components/schemas/1_obj_voucher_object) -->[loyalty card](ref:get-voucher) suitable for publication, adds a publish entry, and returns the published voucher.  \n\nA voucher is suitable for publication when it's active and hasn't been published yet.  \n\n<!-- theme: info -->\n> 📘 Auto-update campaign\n>\n> In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use **auto-update** campaign.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -65694,8 +65070,7 @@
         ],
         "summary": "Get Member",
         "description": "Retrieves the loyalty card with the given member ID (i.e. voucher code).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -65792,8 +65167,7 @@
         ],
         "summary": "Get Member",
         "description": "Retrieve loyalty card with the given member ID (i.e. voucher code).    \n\n<!-- theme: info -->\n> 📘 Alternative endpoint\n> This endpoint is an alternative to this <!-- [endpoint](OpenAPI.json/paths/~1loyalties~1{campaignId}~1members~1{memberId}/post) -->[endpoint](ref:get-member-1). The URL was re-designed to allow you to retrieve loyalty card details without having to provide the `campaignId` as a path parameter.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -65898,8 +65272,7 @@
         ],
         "summary": "Get Member Activities",
         "description": "Retrieves the list of activities for the given member ID related to voucher and customer who is a holder of the voucher.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -65940,8 +65313,7 @@
         ],
         "summary": "Get Member Activities",
         "description": "Retrieves a list of activities for the given loyalty card related to the loyalty and customer who is the holder of the loyalty card.\n\n<!-- theme: info -->\n> 📘 Alternative endpoint\n> This endpoint is an alternative to this <!-- [endpoint](OpenAPI.json/paths/~1loyalties~1{campaignId}~1members~1{memberId}~1activities) -->[endpoint](ref:get-member-activities-1). The URL was re-designed to allow you to get member activities without having to provide the `campaignId` as a path parameter.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -65992,8 +65364,7 @@
         ],
         "summary": "Add or Remove Loyalty Card Balance",
         "description": "This method adds or removes balance to an existing loyalty card. The removal of points will consume the points that expire the soonest.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -66107,8 +65478,7 @@
         ],
         "summary": "Add or Remove Loyalty Card Balance",
         "description": "This method gives adds or removes balance to an existing loyalty card. The removal of points will consume the points that expire the soonest. \n\n<!-- theme: info -->\n> 📘 Alternative endpoint\n> This endpoint is an alternative to this <!-- [endpoint](OpenAPI.json/paths/~1loyalties~1{campaignId}~1members~1{memberId}~1balance) -->[endpoint](ref:add-remove-loyalty-card-balance-1). The URL was re-designed to allow you to add or remove loyalty card balance without having to provide the `campaignId` as a path parameter.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -66217,8 +65587,7 @@
         ],
         "summary": "Transfer Loyalty Points",
         "description": "Transfer points between different loyalty cards. You need to provide the campaign ID and the loyalty card ID you want the points to be transferred to as path parameters in the URL. In the request body, you provide the loyalty cards you want the points to be transferred from and the number of points to transfer from each card.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -67029,8 +66398,7 @@
         ],
         "summary": "Export Loyalty Card Transactions",
         "description": "Export transactions that are associated with point movements on a loyalty card.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -67190,8 +66558,7 @@
         ],
         "summary": "Export Loyalty Card Transactions",
         "description": "Export transactions that are associated with point movements on a loyalty card.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -67459,8 +66826,7 @@
         ],
         "summary": "Create Points Expiration Export",
         "description": "Schedule the generation of a points expiration CSV file for a particular campaign.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -68201,8 +67567,7 @@
         ],
         "summary": "Create Earning Rule",
         "description": "Create earning rules for a loyalty campaign.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -69418,8 +68783,7 @@
         ],
         "summary": "Get Earning Rule",
         "description": "Retrieves an earning rule assigned to a campaign.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -69698,8 +69062,7 @@
         ],
         "summary": "Update Earning Rule",
         "description": "Update an earning rule definition.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -69808,8 +69171,7 @@
         ],
         "summary": "Delete Earning Rule",
         "description": "This method deletes an earning rule for a specific loyalty campaign.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -69887,8 +69249,7 @@
         ],
         "summary": "Enable Earning Rule",
         "description": "Enable an earning rule.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -69996,8 +69357,7 @@
         ],
         "summary": "Disable Earning Rule",
         "description": "Disable an earning rule.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -70339,8 +69699,7 @@
         ],
         "summary": "Get Reward Details",
         "description": "Get reward details in the context of a loyalty campaign and reward assignment ID.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -70733,8 +70092,7 @@
         ],
         "summary": "Create Reward Assignment",
         "description": "Add <!-- [rewards](OpenAPI.json/components/schemas/4_obj_reward_object) -->rewards to a loyalty campaign.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -70874,8 +70232,7 @@
         ],
         "summary": "Get Reward Assignment",
         "description": "Retrieve specific reward assignment.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -70944,8 +70301,7 @@
         ],
         "summary": "Get Reward Assignment",
         "description": "Retrieve specific reward assignment.\n\n> 📘 Alternative endpoint\n>\n> This endpoint is an alternative to this [endpoint](ref:get-reward-assignment-2). ",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -71013,8 +70369,7 @@
         ],
         "summary": "Update Reward Assignment",
         "description": "Updates rewards parameters, i.e. the points cost for the specific reward.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -71080,8 +70435,7 @@
         ],
         "summary": "Delete Reward Assignment",
         "description": "This method deletes a reward assignment for a particular loyalty campaign.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -71157,8 +70511,7 @@
         ],
         "summary": "Redeem Reward",
         "description": "Exchange points from a loyalty card for a specified reward. This API method returns an assigned award in the response. It means that if a requesting customer gets a coupon code with a discount for the next order, that discount code will be visible in response as part of the reward object definition.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -72621,8 +71974,7 @@
         ],
         "summary": "Redeem Reward",
         "description": "<!-- theme: info -->\n> 📘 Alternative endpoint\n>\n> This endpoint is an alternative to this <!-- [endpoint](OpenAPI.json/paths/~1loyalties~1{campaignId}~1members~1{memberId}~1redemption) -->[endpoint](ref:redeem-reward-1). The URL was re-designed to allow you to redeem a reward without having to provide the `campaignId` as a path parameter.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -73132,8 +72484,7 @@
         ],
         "summary": "Get Loyalty Tier",
         "description": "Retrieve a loyalty tier from a loyalty campaign by the loyalty tier ID.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -73223,8 +72574,7 @@
         ],
         "summary": "List Member's Loyalty Tiers",
         "description": "Retrieve member tiers using the loyalty card ID.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -73954,8 +73304,7 @@
         ],
         "summary": "List Loyalty Tier Rewards",
         "description": "Get available rewards for a given tier.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -74378,8 +73727,7 @@
         ],
         "summary": "Create Customer",
         "description": "Creates a customer object.\n\n<!-- theme: info -->\n\n> 📘 Upsert Mode\n>\n> If you pass a `source_id` that already exists in the customer database, Voucherify will return a related customer object with updated fields.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -74515,8 +73863,7 @@
         ],
         "summary": "Get Customer",
         "description": "Retrieve customer details.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -74623,8 +73970,7 @@
         ],
         "summary": "Delete Customer",
         "description": "This method deletes a customer.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -74667,8 +74013,7 @@
         ],
         "summary": "Update Customer",
         "description": "Updates the specified customer by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -74846,8 +74191,7 @@
         ],
         "summary": "Delete Customer Permanently",
         "description": "The organization user can remove consumer data permanently from the Voucherify system by using this API method. It d​eletes all customer data and connected resources. It makes the customer profile forgotten by Voucherify.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -74920,8 +74264,7 @@
         ],
         "summary": "Import and Update Customers using CSV",
         "description": "This API method lets you import or update customer data. To get a proper and valid response, please send a CSV file with data separated by commas.  \n\n## Request Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/customers/importCSV \\\n  -F file=@/path/to/customers.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n## CSV File Format\n\nThe CSV file has to include headers in the first line. All properties which cannot be mapped to standard customer fields will be added to the metadata object.\n\n<!-- theme: info -->\n> 📘 Standard customer fields mapping\n>\n> **No spaces allowed in field names**  \n> Name, Email, Phone, Birthdate, Source_id, Address_line_1, Address_line_2, Address_Postal_Code, Address_City, Address_State, Address_Country, Description, Metadata_name_1, Metadata_name_2\n\n## Update Customers using CSV\n\nIf you would like to update customer's data, you can do it using the CSV file with new data. However, remember to include a `source_id` in your CSV file to manage the update successfully.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -74968,8 +74311,7 @@
         ],
         "summary": "Update Customers in bulk",
         "description": "Update several customers in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier.  \n\nIf a requested customer object is not found, then an **upsert** occurs. This is reflected in the <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -75124,8 +74466,7 @@
         ],
         "summary": "Update Customers' Metadata in bulk",
         "description": "Update several customers metadata properties in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier.  \n\nIf a requested customer object is not found, then an **upsert** occurs. This is reflected in the <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -75226,8 +74567,7 @@
         ],
         "summary": "Update Customer's consents",
         "description": "Update marketing permissions for the specified customer.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -75304,12 +74644,11 @@
         ],
         "summary": "Update Customer's consents (client-side)",
         "description": "Update marketing permissions for the specified customer.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-Client-Application-Id-1": [],
-            "X-Client-Application-Token-1": []
+            "X-Client-Token-1": []
           }
         ],
         "requestBody": {
@@ -75463,8 +74802,7 @@
         ],
         "summary": "List Customer's Segments",
         "description": "Returns the list of segments IDs to which the customer belongs to.  \n\nIf you pass a `customerId` which is not stored and recognized by Voucherify as an existing customer in the system, the response will generate a list of segments that the customer would potentialy qualify for if they were to become a customer tracked in the system.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -76223,8 +75561,7 @@
         ],
         "summary": "Create Order",
         "description": "Creates an order object and triggers an order creation event. ",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -76470,8 +75807,7 @@
         ],
         "summary": "Get Order",
         "description": "Retrieve an order.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -76521,8 +75857,7 @@
         ],
         "summary": "Update Order",
         "description": "Updates the specified order by setting the values of the parameters passed in the request body. Any parameters not provided will be left unchanged.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -76659,8 +75994,7 @@
         ],
         "summary": "Import Orders",
         "description": "<!-- theme: info -->\n\n> 🚧 Historical orders\n>\n> This endpoint should only be used to import historical orders into Voucherify. For on-going synchronization, the <!-- [create order](OpenAPI.json/paths/~1orders/post) -->[create order](ref:create-order) and <!-- [update order](OpenAPI.json/paths/~1orders~1{orderId}/put) -->[update order](ref:update-order) endpoints should be used. This is critical because this endpoint does not store events or launch distributions.\n\n## Limitations\n\n### Import volume\n\nThere can be only a single on-going order import per tenant per project at a given time. The user can schedule more imports but those extra imports will be scheduled to run in sequence one by one.  \n\n### Maximum count of orders in single import\n\nThere is a `2000` limit but we might decide to change it to a lower / higher value at any given time depending if we find this value is too high or too low with time.\n\n## Notifications\n\nThere are no notifications on the Dashboard because this import is launched via the API.\n\n## Triggered actions\n  \nIf you import orders with customers, then a logic will be scheduled responsible for placing these customers into segments and refreshing the segment's summary. Consequently, this update will trigger \n- **customers entering into segments** \n- **distributions** based on any rules tied to customer entering segment(s)\n- **earning rules** based on the customer entering segment(s)\n\n## What is not triggered\n\n1. No webhooks are triggered during the import of orders - for both orders and upserted products / skus.  \n\n2. Distributions based on Order Update, Order Paid, Order Created and Order Cancelled. In other words if you have a distribution based on Order Paid and you import an order with a PAID status, the distribution is not going to be triggered.    \n\n3. No events are created during the import of orders - for both orders and upserted products / skus. In other words you won't see any events in the Activity tab in the Dashboard such as Order created or Order paid. If you are additionally upserting products / skus, then you won't see the Product created events listed, etc.   \n\n4. Earning rules based on Order Paid won't be triggered.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the IN_PROGRESS status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -76977,8 +76311,7 @@
         ],
         "summary": "Create Orders Export",
         "description": "Creates a downloadable CSV file containing a list of orders.\n\nThe parameters listed in the payload resembles headers in the CSV file. To include a parameter to the file, add it to the `parameters.fields` object in the request body.\n\nThe available filters are all <!-- [order object](OpenAPI.json/components/schemas/10_obj_order_object) -->[order object](ref:get-order) attributes. Additionally, any metadata defined in the metadata schema can be exported.\n\nPassing an empty JSON will generate a file containing three default fields: `id`, `source_id`, and `status`.\n\nThe fields array is an array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combination of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique order ID. | ord_A69RIxEdRsPuC6i8gFGVHUft |\n| source_id | Unique order source ID. | 8638 |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the order was created. | 2022-03-09T09:16:32.521Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the order was last updated. | 2022-03-09T09:16:33.331Z |\n| status | Order status. | `PAID`, `CREATED`, `FULFILLED`, `CANCELED` |\n| amount | Total amount of order items. | 7700 |\n| discount_amount | Represents total amount of the discount applied to whole cart. | 500 |\n| items_discount_amount | Represents total amount of the discount applied to order line items. | 100 |\n| total_discount_amount | All discounts applied to the order including discounts applied to particular order line items and discounts applied to the whole cart. | 600 |\n| total_amount | Total order amount after applying all discounts. | 7100 |\n| customer_id | Customer unique ID. | cust_2G4fUQdCXUqp35nXNleav7bO |\n| referrer_id | Referrer unique ID. | cust_IkrTR674vvQvr9a4rDMiqglY |\n| metadata | Returns all order metadata. | Response will include all order metadata. |\n| metadata.X | Where X is the name of a particular order metadata property. | The returned value will depend on the type of data defined in the Dashboard > Project Settings > Metdata Schemas > Order. |",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -77296,8 +76629,7 @@
         ],
         "summary": "Create Product",
         "description": "Creates a product object.\n\n<!-- theme: info -->\n\n> 🚧 Upsert Mode\n>\n> If you pass a `source_id` that already exists in the product database, Voucherify will return a related product object with updated fields.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -77390,8 +76722,7 @@
         ],
         "summary": "Get Product",
         "description": "Retrieve product details.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -77504,8 +76835,7 @@
         ],
         "summary": "Update Product",
         "description": "Updates the specified product by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -77626,8 +76956,7 @@
         ],
         "summary": "Update Products in bulk",
         "description": "Update several products in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier. If a requested product object is not found, then an **upsert** occurs. This is reflected in the <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -77733,8 +77062,7 @@
         ],
         "summary": "Update Products' Metadata in bulk",
         "description": "Update several product metadata properties in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier. If a requested product object is not found, then an **upsert** occurs. This is reflected in the <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -77835,8 +77163,7 @@
         ],
         "summary": "Get SKU",
         "description": "Retrieve details of a SKU.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -78075,8 +77402,7 @@
         ],
         "summary": "Create SKU",
         "description": "This method adds product varients to a <!-- [created product](OpenAPI.json/paths/~1products/post) -->[created product](ref:create-product).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -78178,8 +77504,7 @@
         ],
         "summary": "Update SKU",
         "description": "Updates the specified SKU by setting the values of the parameters passed in the request body. Any parameters not provided in the payload will be left unchanged.\n\nFields other than the ones listed in the request body schema won't be modified. Even if provided, they will be silently skipped.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -78313,8 +77638,7 @@
         ],
         "summary": "Import Products using CSV",
         "description": "Import products into the repository using a CSV file.  \n\nCurl Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/products/importCSV \\\n  -F file=@/path/to/products.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\nThe CSV file has to include headers in the first line.\n\n<!-- theme: info -->\n\n> 📘 Standard product fields mapping\n>\n> - Create a **comma separated value (CSV) file** or download our CSV import template. You can find an example template [here](https://s3.amazonaws.com/helpscout.net/docs/assets/5902f1c12c7d3a057f88a36d/attachments/627b82ed68d51e779443f550/Import_products_template.csv).\n> - Supported CSV file headers: `name,source_id,price,attributes,image_url,Metadata_property_name`\n> - **Name** is a **required** field. The remaining fields in the CSV template are optional.\n> - Override/Update products' **names** in Voucherify using this method. Data will be updated for each product included in the CSV file whose **source_id** matches a source ID in Voucherify. No other data can be updated other than the product name.\n> - Note that dates and date-time attributes need to be provided in compliance with the **ISO 8601 norms**. For example, 2022-03-11T09:00:00.000Z or 2022-03-11\n>    - `YYYY-MM-DD`\n>    - `YYYY-MM-DDTHH`\n>    - `YYYY-MM-DDTHH:mm`\n>    - `YYYY-MM-DDTHH:mm:ss`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ss.SSSZ`\n> - Columns that can't be mapped to standard fields, will be mapped to **Custom attributes** and added as **products' metadata**. There is no limit on the number of custom attributes that you can import as metadata. \n> - To provide the proper data type, you need to add all custom attributes to the metadata schema **before importing the file**. Read more [here](https://support.voucherify.io/article/99-schema-validation-metadata#add-metadata).\n> - **Product attributes** (not custom attributes) need to be separated by a comma and enclosed in double quotes, i.e \"attribute1,attribute2\".\n> - Headers with metadata names **can't contain white-space characters**.\n> - If you import metadata defined in the schema as **arrays (multiple)**, you need to separate each value using a comma, for example:  \n>    - array of strings: \"subscribed,premium\"  \n>    - array of numbers: \"123,234\". \n>    - array of dates: \"2000-01-01,2000-01-02\"\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -78381,8 +77705,7 @@
         ],
         "summary": "Import SKUs using CSV",
         "description": "Import SKUs into the repository using a CSV file.\n\nThe CSV file has to include headers in the first line. All properties which cannot be mapped to standard SKU fields will be added to the metadata object. You can find an example template [here](https://s3.amazonaws.com/helpscout.net/docs/assets/5902f1c12c7d3a057f88a36d/attachments/627b98d08c9b585083488a4c/Import_SKUS_template.csv). \n\nCurl Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/skus/importCSV \\\n  -F file=@/path/to/skus.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n> 🚧 Import sequence\n>\n> First import products using the [dedicated endpoint](ref:import-products-using-csv), then import SKUs using this endpoint to properly match SKUs to products.\n\n<!-- theme: info -->\n\n> 📘 Standard SKU fields mapping\n>\n> - **Required** fields are source_id and product_id.\n> - Supported CSV file headers: `product_id,sku,source_id,price,image_url,attributes`\n> - SKU **source_id**'s must be unique in the entire product catalog, no duplicates allowed.\n> - SKU attributes need to be in the form of a stringy-fied json, i.e.`\"{'color':'blue'}\"`. These attributes must be defined in the **product** beforehand in order for you to be able to import them to the SKU.\n> - You can use this method to update the following parameters in bulk: **sku** and the sku **price**.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -78654,8 +77977,7 @@
         ],
         "summary": "Get Product Collection",
         "description": "Retrieves the product collection.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -78745,8 +78067,7 @@
         ],
         "summary": "Delete Product Collection",
         "description": "This method deletes a product collection.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -79245,8 +78566,7 @@
         ],
         "summary": "Create Validation Rules",
         "description": "Create validation rules.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -79468,8 +78788,7 @@
         ],
         "summary": "Get Validation Rule",
         "description": "Retrieve the details of a validation rule.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -79526,8 +78845,7 @@
         ],
         "summary": "Update Validation Rule",
         "description": "Update validation rule parameters.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -79750,8 +79068,7 @@
         ],
         "summary": "Delete Validation Rule",
         "description": "This method deletes a validation rule.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -80024,8 +79341,7 @@
         ],
         "summary": "Create Validation Rules Assignments",
         "description": "Assign validation rule to either one of the following objects: voucher, campaign, promotion tier, earning rule, reward, distribution.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -80136,8 +79452,7 @@
         ],
         "summary": "Delete Validation Rule Assignment",
         "description": "This method deletes a validation rule assignment.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -80205,8 +79520,7 @@
         ],
         "summary": "Get Segment",
         "description": "Retrieves the segment with given segment ID.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -80278,8 +79592,7 @@
         ],
         "summary": "Delete Segment",
         "description": "This method deletes a customer segment.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -80324,8 +79637,7 @@
         ],
         "summary": "Create Segment",
         "description": "Create a customer segment.\n\n> 🚧 Limit on Static Segments\n>\n> There is a cap on the number of customers that you can assign to a static segment: **20,000**. If you would like to create a bigger segment, then you can use the unlimited auto-update segment instead and use some customer metadata to build this segment.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -80425,8 +79737,7 @@
         ],
         "summary": "Track Custom Event",
         "description": "To track a custom event, you create an event object.  \n\nThe event object must be linked to the customer who performs the action. If a customer doesn't exist in Voucherify, the customer will be created.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -80646,8 +79957,7 @@
         ],
         "summary": "List Consents",
         "description": "List the Marketing Permission definitions within the project along with opt-in consents.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -80944,8 +80254,7 @@
         ],
         "summary": "Get Async Action",
         "description": "Check the result of a scheduled asynchronous operation.  \n\nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action. If you would like to learn more about importing data into Voucherify, read more [here](https://support.voucherify.io/article/574-data-import).\n\n| **Types by Context** | **Endpoint** |\n|:---|:---|\n| **CAMPAIGN** |  |\n| CAMPAIGN.VOUCHERS_IMPORT | **POST**   <!-- [/campaigns/{campaignId}/import](OpenAPI.json/paths/~1campaigns~1{campaignId}~1import/post) -->[/campaigns/{campaignId}/import](ref:import-vouchers-to-campaign) |\n| CAMPAIGN.VOUCHERS_IMPORT_CSV | **POST**   <!-- [/campaigns/{campaignId}/importCSV](OpenAPI.json/paths/~1campaigns~1{campaignId}~1importCSV/post) -->[/campaigns/{campaignId}/importCSV](ref:import-vouchers-to-campaign-using-csv) |\n| CAMPAIGN.VOUCHERS_UPDATE | **PUT** [/campaigns/{campaignId}](ref:update-campaign) |\n| CAMPAIGN.VOUCHERS_DELETE | **DELETE** <!-- [/campaigns/{campaignId}](OpenAPI.json/paths/~1campaigns~1{campaignId}/delete}) -->[/campaigns/{campaignId}](ref:delete-campaign) |\n| CAMPAIGN.VOUCHERS_GENERATE | <ul><li>**POST** <!-- [/campaigns](OpenAPI.json/paths/~1campaigns/post) -->[/campaigns](ref:create-campaign): asynchronous for campaigns with more than 1 voucher, synchronous for campaign with 1 voucher</li><li>**POST**    <!-- [/campaigns/{campaignId}/vouchers](OpenAPI.json/paths/~1campaigns~1{campaignId}~1vouchers/post) -->[/campaigns/{campaignId}/vouchers](ref:add-vouchers-to-campaign)</li><ul> |\n| **CUSTOMERS** |  |\n| CUSTOMERS.IMPORT_CSV | **POST** <!-- [/customers/importCSV](OpenAPI.json/paths/~1customers~1importCSV/post) -->[/customers/importCSV](ref:import-customers-using-csv) |\n| CUSTOMERS.BULK_UPDATE | **POST** <!-- [/customers/bulk/async](OpenAPI.json/paths/~1customers~1bulk~1async/post) -->[/customers/bulk/async](ref:update-customers-in-bulk) |\n| CUSTOMERS.METADATA_UPDATE | **POST** <!-- [/customers/metadata/async](OpenAPI.json/paths/~1customers~1metadata~1async/post) -->[/customers/metadata/async](ref:update-customers-metadata-in-bulk) |\n| **PRODUCTS** |  |\n| PRODUCTS.BULK_UPDATE | **POST** <!-- [/products/bulk/async](OpenAPI.json/paths/~1products~1bulk~1async/post) -->[/products/bulk/async](ref:update-products-in-bulk)<br> |\n| PRODUCTS.METADATA_UPDATE | **POST** <!-- [/products/metadata/async](OpenAPI.json/paths/~1products~1metadata~1async/post) -->[/products/metadata/async](ref:update-products-metadata-in-bulk) |\n| PRODUCTS.IMPORT_CSV | **POST** <!-- [/products/importCSV](OpenAPI.json/paths/~1products~1importCSV/post) -->[/products/importCSV](ref:import-products-using-csv) |\n| SKUS.IMPORT_CSV | **POST** <!-- [/skus/importCSV](OpenAPI.json/paths/~1skus~1importCSV/post) -->[/skus/importCSV](ref:import-skus-using-csv) |\n| **VOUCHERS** |  |\n| VOUCHERS.IMPORT | **POST** <!-- [/vouchers/import](OpenAPI.json/paths/~1vouchers~1import/post) -->[/vouchers/import](ref:import-vouchers) |\n| VOUCHERS.IMPORT_CSV | **POST** <!-- [/vouchers/importCSV](OpenAPI.json/paths/~1vouchers~1importCSV/post) -->[/vouchers/importCSV](ref:import-vouchers-using-csv) |\n| VOUCHERS.BULK_UPDATE | **POST** <!-- [/vouchers/bulk/async](OpenAPI.json/paths/~1vouchers~1bulk~1async/post) -->[/vouchers/bulk/async](ref:update-vouchers-in-bulk)<br> |\n| VOUCHERS.METADATA_UPDATE | **POST** <!-- [/vouchers/metadata/async](OpenAPI.json/paths/~1vouchers~1metadata~1async/post) -->[/vouchers/metadata/async](ref:update-vouchers-metadata-in-bulk) | \n| **ORDERS** |  |\n| ORDERS.IMPORT | **POST** [/orders/import](ref:import-orders) |\n| **METADATA KEY PURGE** |  |\n| CAMPAIGNS.METADATA_KEY_PURGE<br>CUSTOMERS.METADATA_KEY_PURGE<br>PRODUCTS.METADATA_KEY_PURGE<br>VOUCHERS.METADATA_KEY_PURGE<br>ORDERS.METADATA_KEY_PURGE | No API endpoint equivalent. You can perform this action through the Dashboard. See Dashboard documentation: Dashboard > [Project Settings](https://support.voucherify.io/article/99-schema-validation-metadata#maintenance) |",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -81529,8 +80838,7 @@
         ],
         "summary": "Create Export",
         "description": "Create export object. The export can be any of the following types: `voucher`, `redemption`, `publication`, `customer`, `order`, or `points_expiration`.  \n\n## Defaults\n\nIf you only specify the object type in the request body without specifying the fields, the API will return the following fields per export object:\n\n| **Export Object** | **Default fields returned** |\n|:---|:---|\n| order | `id`, `source_id`, `status` |\n| voucher | `code`, `voucher_type`, `value`, `discount_type` |\n| publication | `code`, `customer_id`, `date`, `channel` |\n| redemption | `id`, `object`, `voucher_code`, `customer_id`, `date`, `result` |\n| customer | `name`, `source_id` |\n| points_expiration | `id`, `campaign_id`, `voucher_id`, `status`, `expires_at`, `points` |\n\n\n## Fetching particular data sets\n\nUsing the `parameters` body parameter, you can narrow down which fields to export and how to filter the results. The fields are an array of strings containing the data that you would like to export. These fields define the headers in the CSV file. The array can be a combintation of any of the following available fields:\n\n## Orders  \n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique order ID. | ord_A69RIxEdRsPuC6i8gFGVHUft |\n| source_id | Unique order source ID. | 8638 |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the order was created. | 2022-03-09T09:16:32.521Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the order was last updated. | 2022-03-09T09:16:33.331Z |\n| status | Order status. | `PAID`, `CREATED`, `FULFILLED`, `CANCELED` |\n| amount | Total amount of order items. | 7700 |\n| discount_amount | Represents total amount of the discount applied to whole cart. | 500 |\n| items_discount_amount | Represents total amount of the discount applied to order line items. | 100 |\n| total_discount_amount | All discounts applied to the order including discounts applied to particular order line items and discounts applied to the whole cart. | 600 |\n| total_amount | Total order amount after applying all discounts. | 7100 |\n| customer_id | Customer unique ID. | cust_2G4fUQdCXUqp35nXNleav7bO |\n| referrer_id | Referrer unique ID. | cust_IkrTR674vvQvr9a4rDMiqglY |\n| metadata | Order metadata; expressed as metadata.X, where X is the name of the custom metadata property. | 1 |\n\n## Vouchers  \n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique voucher ID. | v_HSnGD2vNIHYighTQxwcB4dtVAv8VOmZD |\n| code | Unique voucher code. | WELCOME100 |\n| voucher_type | Type of voucher. | `DISCOUNT_VOUCHER`, `GIFT_VOUCHER`, `LOYALTY_CARD` |\n| value | Value of voucher. | `DISCOUNT_VOUCHER` : amount, percent, unit<br>`GIFT_VOUCHER`: amount left to spend<br>`LOYALTY_CARD`: available usable points |\n| discount_type | The type of discount for a `DISCOUNT_VOUCHER`. | `AMOUNT`, `PERCENT`, `UNIT`, `FIXED` |\n| campaign | Unique campaign name. | Summer Discounts 20% off |\n| category | Tag defining the category that this voucher belongs to. |  |\n| start_date | Start date defines when the code starts to be active. Activation timestamp in ISO 8601 format. Voucher is _inactive_ before this date. | 2020-12-10T23:00:00.000Z |\n| expiration_date | Expiration date defines when the code expires. Expiration timestamp in ISO 8601 format. Voucher is _inactive_ after this date. | 2023-12-31T23:00:00.000Z |\n| gift_balance | Amount left to spend. | 1000 |\n| loyalty_balance | Available usable points. | 2000 |\n| redemption_quantity | Maximum number of times a voucher can be redeemed. | 2 |\n| redemption_count | Total redemptions. | 59 |\n| active | Boolean indicating whether the voucher is available for use. | `true`, `false` |\n| qr_code | URL to QR representation of encrypted code. |  |\n| bar_code | URL to barcode representation of encrypted code. |  |\n| metadata | Custom voucher metadata. |  |\n| is_referral_code | Boolean indicating whether the voucher is a referral code. | `true`, `false` |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the voucher was created. | 2022-04-14T09:55:46.814Z |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the voucher was last updated. | 2022-04-14T10:02:18.036Z |\n| validity_timeframe_interval | Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a voucher with an interval of `P2D` will be active every other day. | P2D |\n| validity_timeframe_duration | Defines the amount of time the voucher will be active in ISO 8601 format. For example, a voucher with a duration of `PT1H` will be valid for a duration of one hour. | PT1H |\n| validity_day_of_week | Array corresponding to the particular days of the week in which the voucher is valid. | \"1,2,3,4,5\" |\n| discount_amount_limit | For `PERCENT` discount type, this is the maximum threshold allowed to be deducted. | 50 |\n| campaign_id | Parent campaign ID. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| additional_info | An optional field to keep any extra textual information about the code such as a code description and details. |  |\n| customer_id | Unique customer ID of the assigned owner to whom the voucher was published. | cust_7iUa6ICKyU6gH40dBU25kQU1 |\n| discount_unit_type | For `UNIT` discount type, either a shipping or product ID for a `UNIT` discount with one product. | prod_5h1pp1ng, prod_0a9f9aeddb019a42db |\n| discount_unit_effect | `UNIT` discount effect. | `ADD_MANY_ITEMS`, `ADD_MISSING_ITEMS`,`ADD_NEW_ITEMS` |\n| customer_source_id | Unique customer source id of the assigned owner to whom the voucher was published. | name.lastname@email.com |\n\n\n## Publications\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| voucher_code | Unique voucher code. | WELCOME100 |\n| customer_id | Customer unique ID. | cust_7iUa6ICKyU6gH40dBU25kQU1 |\n| customer_source_id | Unique customer source id of the assigned owner to whom the voucher was published. | name.lastname@email.com |\n| date | Timestamp in ISO 8601 format representing the date and time when the voucher was published. | 2022-04-28T10:19:30.792Z |\n| channel | Publication channel. | voucherify-website |\n| campaign | Unique campaign name. | Summer Discounts 20% off |\n| is_winner |  |  |\n| metadata | Custom publication metadata. |  |\n\n## Redemptions\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique redemption ID. | r_0acf3a6dae00e679c8, rf_0acf3a495740e679b8 |\n| object | Object being exported; by default `redemption`. | redemption |\n| date | Timestamp in ISO 8601 format representing the date and time when the voucher was redeemed. | 2022-03-23T08:52:24.867Z |\n| voucher_code | Unique voucher code redeemed. | WELCOME100 |\n| campaign | Parent campaign name of voucher if applicable. | Summer Discounts 20% off |\n| promotion_tier_id |  | promo_Mwy9XpA0TLctSGriM5kum0qp |\n| customer_id | Unique customer ID of redeeming customer. | cust_nk0N1uNQ1YnupAoJGOgvsODC |\n| customer_source_id | Unique source ID of redeeming customer. | name.lastname@email.com |\n| customer_name | Customer name. | John Smith |\n| tracking_id |  | track_Pw6r3ejnml43kIwNS4Zj09KZ67xOfLUy |\n| order_amount | Total order amount before applying all discounts. | 1000 |\n| gift_amount | Gift credits used for redemption. | 10 |\n| loyalty_points |  | 12 |\n| result | Tells you whether the redemption succeeded. | `SUCCESS`, `FAILURE` |\n| failure_code | Internal Voucherify code for reason why redemption failed. | invalid_customer |\n| failure_message | A human-readable message providing a short description explaining why the redemption failed. | Customer must be a holder of a loyalty card. |\n| metadata | Custom redemption metadata. |  |\n\n## Customers\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| name | Customer name. | John Smith |\n| id | Unique customer ID. | cust_J1CDUdbqn5Exva8ASWk1Fq0j |\n| description | An arbitrary string that you can attach to a customer object. | Customer requesting to be added to VIP tier. |\n| email | Customer's email. | name.lastname@email.com |\n| source_id | Unique custom customer identifier. | name.lastname@email.com |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the customer was created. | 2022-02-03T13:10:11.928Z |\n| address_city | City | Houston |\n| address_state | State | TX |\n| address_line_1 | First line of customer's address. | 72738 Main St |\n| address_line_2 | Second line of customer's address. | Bld 2, Apt 4 |\n| address_country | Country | United States of America |\n| address_postal_code | Postal code (ZIP code) | 77042-4143 |\n| redemptions_total_redeemed | Total customer redemptions. | 5 |\n| redemptions_total_failed | Total customer failed redemptions. | 2 |\n| redemptions_total_succeeded | Total customer succeeded redemptions. | 3 |\n| redemptions_total_rolled_back | Total customer redemptions that were rolled back. | 3 |\n| redemptions_total_rollback_failed | Total customer redemptions that were unsuccessfully rolled back. | 2 |\n| redemptions_total_rollback_succeeded | Total customer redemptions that were successfully rolled back. | 1 |\n| orders_total_amount | Total sum of order amounts over customer lifetime. Value is multiplied by 100 to precisely represent 2 decimal places. | 10000 (represents $100) |\n| orders_total_count | Total number of customer orders. | 2 |\n| orders_average_amount | Average amount spent on orders. Value is multiplied by 100 to precisely represent 2 decimal places. | 5000 (represents $50) |\n| orders_last_order_amount | How much did the customer spend on their last order. Value is multiplied by 100 to precisely represent 2 decimal places. | 5000 (represents $50) |\n| orders_last_order_date | When was the last customer order; timestamp in ISO 8601 format representing the date and time. | 2022-02-03T13:17:30.630Z |\n| loyalty_points | Sum of customer's loyalty points to go across all loyalty cards. | 2000 |\n| loyalty_referred_customers | How many customers were referred by this customer. | 3 |\n| updated_at | Timestamp in ISO 8601 format representing the date and time when the customer was updated. | 2022-02-14T14:10:14.305Z |\n| phone | Customer's phone number. | +1 (294) 752-1846 |\n| birthday | Customer's birthday. | 2022-01-01 |\n| metadata | Customer metadata. | All metadata fields defined in Metadata Schema for the Customer object. |\n| birthdate | Customer's birthdate. | 2022-01-01 |\n\n## Points Expirations\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Loyalty points bucket ID. | lopb_Wl1o3EjJIHSNjvO5BDLy4z1n |\n| campaign_id | Campaign ID of the parent loyalty campaign. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| voucher_id | Voucher ID of the parent loyalty card. | v_YLn0WVWXSXbUfDvxgrgUbtfJ3SQIY655 |\n| status | Status of the loyalty points bucket. | `ACTIVE` or `INACTIVE` |\n| expires_at | Timestamp in ISO 8601 format representing the date when the points expire. | 2022-06-30 |\n| points | Number of points. | 1000 |",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -81750,8 +81058,7 @@
         ],
         "summary": "Get Export",
         "description": "Retrieves the URL of the downloadable file, which was generated via the <!-- [Create Export](OpenAPI.json/paths/~1exports/post) -->[Create Export](ref:create-export) method.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -81831,8 +81138,7 @@
         ],
         "summary": "Delete Export",
         "description": "This method deletes a previously created export object.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -81889,8 +81195,7 @@
         ],
         "summary": "Download Export",
         "description": "Download the contents of the exported CSV file. \n\n<!-- theme: info -->\n\n> 📘 Important notes\n>\n> **Base URL:** \n> - `https://download.voucherify.io` (Europe) \n> - `https://us1.download.voucherify.io` (US) \n> - `https://as1.download.voucherify.io` (Asia) \n>\n> **Token:** Can be found within the `result` parameter of the <!-- [Get Export](OpenAPI.json/paths/~1exports~1{exportId}/get) -->[Get Export](ref:get-export) method response.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -81961,8 +81266,7 @@
         ],
         "summary": "List Categories",
         "description": "List all categories.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -82042,8 +81346,7 @@
         ],
         "summary": "Create Category",
         "description": "Create category with a specific name and hierarchy.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -82142,8 +81445,7 @@
         ],
         "summary": "Get Category",
         "description": "Retrieve a category by the category ID.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -82181,8 +81483,7 @@
         ],
         "summary": "Delete Category",
         "description": "Delete a category by the category ID.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -82225,8 +81526,7 @@
         ],
         "summary": "Update Category",
         "description": "Update category using the category ID.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -82315,8 +81615,7 @@
         ],
         "summary": "List Metadata Schemas",
         "description": "Retrieve metadata schema definitions.",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
@@ -82821,8 +82120,7 @@
         ],
         "summary": "Get Metadata Schema",
         "description": "Retrieve metadata schema per resource type.\n\n## Resource types\n\n### Standard\n\nYou can retrieve metadata schemas for the standard metadata schema definitions listed below. Add one of these types as the resource path parameter.\n\n- `campaign`\n- `customer`\n- `earning_rule`\n- `loyalty_tier`\n- `order`\n- `order_item`\n- `product`\n- `promotion_tier`\n- `publication`\n- `redemption`\n- `reward`\n- `voucher`\n\n### Custom\n\nThere is an infinite number of possibilities for retrieving metadata schemas by the resource type because you can define custom metadata schemas. Provide one of the resource types that you have defined as a resource type. [Read more](https://support.voucherify.io/article/99-schema-validation-metadata#add-metadata).",
-        "parameters": [
-        ],
+        "parameters": [],
         "security": [
           {
             "X-App-Id-1": [],
