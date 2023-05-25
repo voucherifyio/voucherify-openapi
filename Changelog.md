@@ -1,8 +1,6 @@
 # Changelog
 
-## 20230101 - Transition to Interactive documentation
-
-- Definitions of object schemas that were previously availalbe in a separate document are now viewable by navigating to the specified endpoints described in the API reference document titled Object schemas.
+## 20230530 - Transition to Interactive documentation
 
 ### Slugs updated for Reference Docs
 
@@ -102,36 +100,48 @@
 | Loyalties | Export Loyalty Card Transactions | **POST** `/loyalties/members/{memberId}/transactions/export` | export-loyalty-card-transactions |
 
 
-### Object schema definitions removed
+### Slugs updated for Object Schemas
 
-| **API** | **Object Definition** | **Slug** |
+| **API** | **Object Definition** | **Previous Slug** | **New Slug** |
 |---|---|---|
-| **Vouchers** | The Voucher Object | the-voucher-object |
-| **Campaigns** | The Campaign Object | the-campaign-object |
-| **Promotions** | The Promotion Tier Object | the-promotion-object |
-| **Rewards** | The Reward Object | the-reward-object |
-|  | The Reward Assignment Object | the-reward-assignment-object |
-| **Validations** | The Validation Object | the-validation-object |
-| **Redemptions** | The Redemption Object | the-redemption-object |
-|  | The Redemption Rollback Object | the-redemption-rollback-object |
-| **Loyalties** | The Loyalty Campaign Object | the-loyalty-campaign-object |
-|  | The Loyalty Card Object | loyalty-card-object |
-|  | The Earning Rule Object | the-earning-rule-object |
-|  | The Loyalty Tiers Object | the-loyalty-tiers-object |
-|  | The Customer Object | the-customer-object |
-|  | The Customer Activity Object | the-customer-activities-object |
-| **Orders** | The Order Object | the-order-object |
-|  | The Order Item Object | the-order-item-object |
-| **Products** | The Product Object | the-product-object |
-|  | The SKU Object | the-sku-object |
-| **Product Collections** | The Product Collections Object | the-product-collections-object |
-| **Validation Rules** | The Validation Rule Object | the-validation-rule-object |
-|  | The Validation Rule Assignment Object | the-validation-rule-assignment-object |
-| **Segments** | The Segment Object | the-segment-object |
-| **Events** | The Custom Event Object | the-custom-event-object |
-| **Exports** | The Export Object | the-export-object |
-| **Categories** | The Category Object | category-object |
-| **Metadata Schemas** | The Metadata Schema Object | the-metadata-schema-object |
+| **Vouchers** | The Voucher Object | the-voucher-object | voucher-object |
+| **Campaigns** | The Campaign Object | the-campaign-object | campaign-object |
+| **Promotions** | The Promotion Tier Object | the-promotion-object | promotion-tier-object |
+| **Rewards** | The Reward Object | the-reward-object | reward-object |
+|  | The Reward Assignment Object | the-reward-assignment-object | reward-assignment-object |
+| **Validations** | The Validation Object | the-validation-object | validation-object |
+| **Redemptions** | The Redemption Object | the-redemption-object | redemption-object |
+|  | The Redemption Rollback Object | the-redemption-rollback-object | rollback-redemption-object |
+| **Loyalties** | The Loyalty Campaign Object | the-loyalty-campaign-object |  |
+|  | The Loyalty Card Object | loyalty-card-object | loyalty-card-object (_slug remains the same_) |
+|  | The Earning Rule Object | the-earning-rule-object | earning-rule-object |
+|  | The Loyalty Tiers Object | the-loyalty-tiers-object | loyalty-tier-object |
+|  | The Customer Object | the-customer-object | _moved to Customers API and re-named to_ customer-object |
+|  | The Customer Activity Object | the-customer-activities-object | _moved to Customers API and re-named to_ customer-activity-object |
+| **Orders** | The Order Object | the-order-object | order-object |
+|  | The Order Item Object | the-order-item-object | _removed_ |
+| **Products** | The Product Object | the-product-object | product-object |
+|  | The SKU Object | the-sku-object | sku-object |
+| **Product Collections** | The Product Collections Object | the-product-collections-object | product-collection-object |
+| **Validation Rules** | The Validation Rule Object | the-validation-rule-object | validation-rule-object |
+|  | The Validation Rule Assignment Object | the-validation-rule-assignment-object | validation-rule-assignment-object |
+| **Segments** | The Segment Object | the-segment-object | customer-segment-object |
+| **Events** | The Custom Event Object | the-custom-event-object | custom-event-object |
+| **Exports** | The Export Object | the-export-object | export-object |
+| **Categories** | The Category Object | category-object | category-object (_slug remains the same_) |
+| **Metadata Schemas** | The Metadata Schema Object | the-metadata-schema-object | metadata-schema-object |
+
+### Slugs for newly added objects
+
+| **API** | **Object Definition** | **New Slug** |
+|---|---|---|
+| **Publications** | The Voucher Object | publication-object |
+| **Stackable Discounts API** | Stackable Redemptions Object | stackable-redemptions-object |
+| **Loyalties API** | Loyalty Campaign Object | loyalty-campaign-object |
+| **Consents API** | Consents Object | consents-object |
+| **Async Actions API** | Async Action Object | async-action-object |
+
+
 
 ### API Reference Guides that were turned into redirects
 
