@@ -17,6 +17,7 @@ In the redemption request, you need to provide a list of redeemables that define
 > Go to [here](ref:stackable-discounts-api) to see all endpoints for stackable discounts API.
 
 | **The workflow** | **API Endpoint** |
+|---|---|
 | VALIDATION<br>Validation checks if all redeemables provided in the request can be applied in the given context (checks customer and order details against validation rules and other attached limits). Only if all redeemables can be applied, the validation returns `valid: true`. | **POST** `base_URL/v1/validations` _for server-side_<br>**POST** `base_URL/client/v1/validations` _for client-side_ |
 | REDEMPTION<br>You can pass up to 5 redeemables that will be redeemed during the request. Only if all redeemables can be applied (each redeemable is validated before the redemption), the redemption is successful. | **POST** `base_URL/v1/redemptions` _for server-side_<br>**POST** `base_URL/client/v1/redemptions` _for client-side_ |
 | ROLLBACK<br>In the case of unwanted redemption, you can roll it back. Note that if you call this endpoint, all applied discounts will be rolled back too. There is no way to roll back a redemption of a single redeemable. | **POST** `base_URL/redemptions/parent_redemption_id/rollbacks` |
@@ -47,10 +48,6 @@ POST https://URL/v1/validations
 {
   "customer": {
     "source_id": "testcustomeremail@voucherify.io"
-  },
-  "options": {
-    "include_orders": true,
-    "include_redemptions": false
   },
   "redeemables": [
     {
@@ -207,10 +204,6 @@ POST https://URL/v1/redemptions
 {
   "customer": {
     "source_id": "testcustomeremail@voucherify.io"
-  },
-  "options": {
-    "include_orders": true,
-    "include_redemptions": false
   },
   "redeemables": [
     {
@@ -422,7 +415,7 @@ POST https://URL/v1/redemptions
 
 You can always roll back any unwanted redemption. Note that if you call this endpoint, all discounts applied to the order during the redemption will be rolled back. There is no way to roll back a redemption of a single redeemable.
 
-POST https://URL/v1/redemptions/{parent_redemption_id}/rollbacks
+POST https://URL/v1/redemptions/{ParentRedemptionId}/rollbacks
 
 ```markdown Example 
 POST https://URL/v1/redemptions/r_5J38i6KjSnkHYw3bwLB4v72j/rollbacks
@@ -614,10 +607,6 @@ The same bahaviour is noted for the [Redeem Voucher](ref:redeem-voucher), [Redee
 ```json Example redemption request
 // POST https://URL/v1/redemptions
 {
-    "options": {
-        "include_orders": true,
-        "extended_redemeptions": true
-    },
     "redeemables": [
         {
             "object": "voucher",

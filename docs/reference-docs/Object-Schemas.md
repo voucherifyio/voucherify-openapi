@@ -24,7 +24,7 @@ You can find the object definitions for the given schemas by navigating to the r
 | Customers | [Customer object](ref:customer-object)<br>[Customer activity object](ref:customer-activity-object) |
 | Orders | [Order object](ref:order-object) |
 | Products | [Product object](ref:product-object)<br>[SKU object](ref:sku-object) |
-| Product Collections | [Product collection object](ref:product-collections-object) |
+| Product Collections | [Product collection object](ref:product-collection-object) |
 | Validation Rules | [Validation rule object](ref:validation-rule-object)<br>[Validation rule assignment object](ref:validation-rule-assignment-object) |
 | Segments | [Segment object](ref:customer-segment-object) |
 | Events | [Event object](ref:custom-event-object) |
