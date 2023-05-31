@@ -12,7 +12,7 @@ Security is one of the biggest concerns in every aspect of our product. So, we'v
 
 > 📘 Security Policy
 > 
-> To understand how we protect your data, visit our [Security](https://www.voucherify.io/legal/security-policy) and [Privacy](https://www.voucherify.io/legal/privacy-policy/v1-1) Policy
+> To understand how we protect your data, visit our [Security](https://www.voucherify.io/legal/security-policy) and [Privacy](https://www.voucherify.io/legal/privacy-policy) Policy
 
 ## Secure communication channels
 

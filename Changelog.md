@@ -103,7 +103,7 @@
 ### Slugs updated for Object Schemas
 
 | **API** | **Object Definition** | **Previous Slug** | **New Slug** |
-|---|---|---|
+|---|---|---|---|
 | **Vouchers** | The Voucher Object | the-voucher-object | voucher-object |
 | **Campaigns** | The Campaign Object | the-campaign-object | campaign-object |
 | **Promotions** | The Promotion Tier Object | the-promotion-object | promotion-tier-object |
@@ -156,3 +156,93 @@
 | **API** | **Title** | **Slug** | **Reason** |
 |:---|:---|:---|:---|
 | Stackable Discounts | Redeemables Reference | redeemables-reference | same content in Guide with slug manage-stackable-discounts |
+
+
+### Redirects
+
+/docs/status-1 -> /docs/status
+/docs/orders-1  -> /docs/orders
+/docs/vouchers-1 -> /docs/vouchers
+/docs/campaigns-1 -> /docs/campaigns
+/reference/vouchers-get -> /reference/get-voucher
+/reference/add-gift-voucher-balance -> /reference/add-remove-gift-voucher-balance
+/reference/import-vouchers-1 -> /reference/import-vouchers
+/reference/import-vouchers-by-csv-1 -> /reference/import-vouchers-using-csv
+/reference/push-qualification-request -> /reference/examine-vouchers-qualification
+/reference/aa-update-vouchers-in-bulk -> /reference/update-vouchers-in-bulk
+/reference/aaupdate-vouchers-metadata-in-bulk -> /reference/update-vouchers-metadata-in-bulk
+/reference/add-voucher-to-campaign -> /reference/add-vouchers-to-campaign
+/reference/add-voucher-with-certain-code-to-campaign -> /reference/add-voucher-with-specific-code-to-campaign
+/reference/import-vouchers -> /reference/import-vouchers-to-campaign
+/reference/import-vouchers-by-csv -> /reference/import-vouchers-to-campaign-using-csv
+/reference/create-qualification-request -> /reference/examine-campaigns-qualification
+/reference/get-promotions -> /reference/list-promotion-tiers-from-campaign
+/reference/update-promotion -> /reference/update-promotion-tier
+/reference/delete-promotion -> /reference/delete-promotion-tier
+/reference/list-promotion-stacks -> /reference/list-promotion-stacks-in-campaign
+/reference/vouchers-validate -> /reference/validate-voucher-client-side
+/reference/validate-promotions-1 -> /reference/validate-promotions
+/reference/vouchers-redemptions -> /reference/get-voucher-redemptions
+/reference/validate-stacked-discounts-1 -> /reference/validate-stacked-discounts
+/reference/validate-stackable-discounts-client-side -> /reference/validate-stacked-discounts-client-side
+/reference/redeem-stackable-discounts-client-side -> /reference/redeem-stacked-discounts-client-side
+/reference/rollback-stackable-redemptions -> /reference/rollback-stacked-redemptions
+/reference/get-reward-assignment -> /reference/get-reward-assignment-1
+/reference/get-reward-assignment-1 -> /reference/get-reward-assignment-2
+/reference/list-reward-assignments-1 -> /reference/list-reward-assignments-2
+/reference/list-reward-assignments-2 -> /reference/list-reward-assignments-1
+/reference/redeem-loyalty-card -> /reference/redeem-reward-1
+/reference/create-member -> /reference/add-member
+/reference/get-member -> /reference/get-member-1
+/reference/get-member-1 -> /reference/get-member
+/reference/get-member-activities-1 -> /reference/get-member-activities
+/reference/get-member-activities -> /reference/get-member-activities-1
+/reference/add-loyalty-card-balance -> /reference/add-remove-loyalty-card-balance-1
+/reference/transfer-points2 -> /reference/transfer-points
+/reference/read-customer -> /reference/get-customer
+/reference/post-customers-in-bulk -> /reference/update-customers-in-bulk
+/reference/post-customers-metadata-in-bulk -> /reference/update-customers-metadata-in-bulk
+/reference/update-customers-consents-client -> /reference/update-customers-consents-client-side
+/reference/get-customer-activities -> /reference/list-customer-activities
+/reference/list-segments -> /reference/list-customer-segments
+/reference/create-export-1 -> /reference/create-order-export
+/reference/post-products-in-bulk -> /reference/update-products-in-bulk
+/reference/async-update-products-metadata-in-bulk -> /reference/update-products-metadata-in-bulk
+/reference/get-sku-v20210726 -> /reference/get-sku
+/reference/list-skus -> /reference/list-skus-in-product
+/reference/import-products-by-csv -> /reference/import-products-using-csv
+/reference/import-skus-by-csv -> /reference/import-skus-using-csv
+/reference/get-products-in-collection -> /reference/list-products-in-collection
+/reference/get-validation-rules -> /reference/get-validation-rule
+/reference/update-validation-rules -> /reference/update-validation-rule
+/reference/create-validation-rules-assignment -> /reference/create-validation-rule-assignment
+/reference/delete-validation-rules-assignment -> /reference/delete-validation-rule-assignment
+/reference/create-custom-event -> /reference/track-custom-event
+/reference/get-consents -> /reference/list-consents
+/reference/get-consent-client-side -> /reference/list-consents-client-side
+/reference/get-async-actions-1 -> /reference/get-async-action
+/reference/redeemables-reference -> /docs/manage-stackable-discounts
+/reference/the-voucher-object -> /reference/voucher-object
+/reference/the-campaign-object -> /reference/campaign-object
+/reference/the-promotion-object -> /reference/promotion-tier-object
+/reference/the-reward-object -> /reference/reward-object
+/reference/the-reward-assignment-object -> /reference/reward-assignment-object
+/reference/the-validation-object -> /reference/validation-object
+/reference/the-redemption-object -> /reference/redemption-object
+/reference/the-redemption-rollback-object -> /reference/rollback-redemption-object
+/reference/the-loyalty-campaign-object -> /reference/loyalty-campaign-object
+/reference/the-earning-rule-object -> /reference/earning-rule-object
+/reference/the-loyalty-tiers-object -> /reference/loyalty-tier-object
+/reference/the-customer-object -> /reference/customer-object
+/reference/the-customer-activities-object -> /reference/customer-activity-object
+/reference/the-order-object -> /reference/order-object
+/reference/the-order-item-object -> /reference/order-object
+/reference/the-product-object -> /reference/product-object
+/reference/the-sku-object -> /reference/sku-object
+/reference/the-product-collections-object -> /reference/product-collection-object
+/reference/the-validation-rule-object -> /reference/validation-rule-object
+/reference/the-validation-rule-assignment-object -> /reference/validation-rule-assignment-object
+/reference/the-segment-object -> /reference/customer-segment-object
+/reference/the-custom-event-object -> /reference/custom-event-object
+/reference/the-export-object -> /reference/export-object
+/reference/the-metadata-schema-object -> /reference/metadata-schema-object

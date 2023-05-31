@@ -9,7 +9,7 @@ order: 1
 ---
 
 :star: **[Quickstart](doc:quickstart)** — Learn the API basics: redeem your first promo code.    
-:bookmark-tabs: **[API reference](ref:intoduction-1)** — Explore endpoints and attributes with request/response examples and error messages.    
+:bookmark-tabs: **[API reference](ref:introduction-1)** — Explore endpoints and attributes with request/response examples and error messages.    
 :computer: **[SDKs](doc:sdks)** — Connect Voucherify with client libraries in JavaScript, PHP, Ruby, Java, Python, .NET, Android and iOS.    
 :rocket: **[Examples](doc:examples)** — Get inspired with sample projects and 3rd party integrations built on top of Voucherify API.
 

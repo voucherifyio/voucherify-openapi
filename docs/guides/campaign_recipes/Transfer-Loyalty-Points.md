@@ -176,7 +176,7 @@ This entity describes loyalty points transfer between Campaigns and Customers. I
 
 To transfer points from one card to another ({id}), we need to call the transfer endpoint with the following request body:
 
-POST: https://api.voucherify.io/v1//loyalties/campaignId/members/memberId/transfers
+POST: https://api.voucherify.io/v1/loyalties/{campaignId}/members/{memberId}/transfers
 
 In the path parameters, you need to include:
 
