@@ -246,3 +246,37 @@
 /reference/the-custom-event-object -> /reference/custom-event-object
 /reference/the-export-object -> /reference/export-object
 /reference/the-metadata-schema-object -> /reference/metadata-schema-object
+
+### Dummy endpoints
+
+The following endpoints in the OpenAPI document found in the `paths` object are dummy endpoints. They help in rendering object schemas in the documentation and are by no means actual API endpoints.
+
+`/v1/voucher-object`
+`/v1/campaign-object`
+`/v1/promotion-tier-object`
+`/v1/reward-object`
+`/v1/reward-assignment-object`
+`/v1/publication-object`
+`/v1/validation-object`
+`/v1/redemption-object`
+`/v1/rollback-redemption-object`
+`/v1/stackable-redemptions-object`
+`/v1/loyalty-campaign-object`
+`/v1/loyalty-card-object`
+`/v1/loyalty-tier-object`
+`/v1/earning-object`
+`/v1/customer-object`
+`/v1/customer-activity-object`
+`/v1/order-object`
+`/v1/product-object`
+`/v1/sku-object`
+`/v1/product-collection-object`
+`v1/validation-rule-object`
+`/v1/validation-rule-assignment-object`
+`/v1/customer-segment-object`
+`/v1/custom-event-object`
+`/v1/consents-object`
+`/v1/async-action-object`
+`/v1/export-object`
+`/v1/category-object`
+`/v1/metadata-schema-object`
