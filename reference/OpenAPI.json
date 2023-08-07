@@ -38577,7 +38577,7 @@
         }
       },
       "22_obj_location_object_shape_circle": {
-        "title": "Circle shape",
+        "title": "Circle",
         "type": "object",
         "description": "This is an object representing a circular shape.",
         "properties": {
@@ -38610,7 +38610,7 @@
         }
       },
       "22_obj_location_object_shape_polygon": {
-        "title": "22_obj_location_object_shape_polygon",
+        "title": "Polygon",
         "type": "object",
         "description": "This is an object representing a polygon.",
         "properties": {
@@ -38670,24 +38670,234 @@
         ],
         "properties": {
           "redeemables": {
-            "type": "object"
+            "$ref": "#/components/schemas/23_obj_qualification_redeemables"
           },
           "tracking_id": {
-            "type": "string"
+            "type": "string",
+            "description": "This identifier is generated during voucher qualification based on your internal id (e.g., email, database ID). This is a hashed customer source ID."
           },
           "order": {
-            "type": "object"
+            "type": "object",
+            "description": "The order object sent in the request.",
+            "$ref": "#/components/schemas/10_obj_order_object"
           },
           "stacking_rules": {
-            "type": "object"
+            "$ref": "#/components/schemas/23_obj_qualification_object_stacking_rules"
+          }
+        }
+      },
+      "23_obj_qualification_object_stacking_rules": {
+        "type": "object",
+        "description": "Defines stacking rules for the redeemables.",
+        "properties": {
+          "redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables can be sent with one stacking request. We have extended the maximum value from 5 to 30 (comment: but more redeemables means more processing time!). Default limit is `30`.",
+            "default": 30
+          },
+          "applicable_redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many of sent redeemables will be actually applied to the order (e.g. user can select 30 discounts but only 5 will be applied to the order, the remaining will be marked as SKIPPED). Default limit is `5`.",
+            "default": 5
           }
         }
       },
       "23_req_create_qualification": {
-        "title": "Create Qualification Request Body",
         "type": "object",
-        "description": "Request body schema for creating a qualification.",
-        "properties": {}
+        "title": "Examine Qualification Request Body",
+        "description": "Request body schema for examining a qualification`.",
+        "properties": {
+          "customer": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/23_req_create_qualification_customer_id"
+              },
+              {
+                "$ref": "#/components/schemas/23_req_create_qualification_customer_source_id"
+              },
+              {
+                "$ref": "#/components/schemas/9_req_create_customer"
+              }
+            ],
+            "description": "Customer's information."
+          },
+          "order": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/23_req_create_qualification_order_id"
+              },
+              {
+                "$ref": "#/components/schemas/23_req_create_qualification_order_source_id"
+              },
+              {
+                "$ref": "#/components/schemas/10_req_create_order"
+              }
+            ],
+            "description": "Order information. This object enables you to pass purchase transaction data. Read what properties you can use in the <!-- [Order object reference](OpenAPI.json/components/schemas/10_obj_order_object) -->[Order object](ref:get-order)."
+          },
+          "options": {
+            "type": "object",
+            "description": "Configure parameters returned in the response.",
+            "properties": {
+              "expand": {
+                "type": "array",
+                "description": "Expand array lets you configure params included in the response. Depending on the strings included in the array, the response will contain different details. \n\n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"redeemable\"] | - Returns X<br>- Returns X. |\n| [\"redeemable\", \"category\"] | - Returns an expanded `categories` object, showing details about the category. |",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "redeemable",
+                    "category"
+                  ]
+                }
+              },
+              "limit": {
+                "type": "integer",
+                "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5, and the maximum value is 50."
+              },
+              "starting_after": {
+                "type": "string",
+                "example": "2021-09-08T13:52:18.227Z",
+                "format": "date-time",
+                "description": "Curser used for paging."
+              },
+              "filters": {
+                "description": "A set of fiters to return only a specific category or type of redeemable.",
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/23_obj_filter_resource_type"
+                  },
+                  {
+                    "$ref": "#/components/schemas/23_obj_filter_category_id"
+                  }
+                ]
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of key/value pairs that you can send in the request body to check against redeemables requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Advanced_ &rarr; _Redemption metadata satisfy_ or _Basic Builder_ &rarr; _Attributes match_ &rarr; _REDEMPTION METADATA_. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule)."
+          },
+          "mode": {
+            "type": "string",
+            "description": "Defines which resources Voucherify will use. Currently, `BASIC` is supported."
+          },
+          "scenario": {
+            "type": "string",
+            "description": "Defines the scenario Voucherify should consider during the qualification process.\n\n- `ALL` - Scenario that returns all redeemables available for the customer in one API request.\n- `CUSTOMER_WALLET` - returns vouchers applicable to the customer’s cart based on the vouchers assigned to the customer’s profile.\n- `AUDIENCE_ONLY` - returns all vouchers, promotion tiers, and campaigns available to the customer. Voucherify validates the rules based on the customer profile only.\n- `PRODUCTS` - returs all promotions available for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).\n- `PRODUCTS_DISCOUNT` - returns all promotions available for products when a discount is defined as applicable to specific item(s).\n- `PROMOTION_STACKS` - returns the applicable promotion stacks.",
+            "enum": [
+              "ALL",
+              "CUSTOMER_WALLET",
+              "AUDIENCE_ONLY",
+              "PRODUCTS",
+              "PRODUCTS_DISCOUNT",
+              "PROMOTION_STACKS"
+            ]
+          }
+        }
+      },
+      "23_req_create_qualification_customer_id": {
+        "title": "Customer ID",
+        "description": "You can pass the unique customer ID that was assigned by Voucherify.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of an existing customer that will be linked to redemption in this request.",
+            "example": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv"
+          }
+        }
+      },
+      "23_req_create_qualification_customer_source_id": {
+        "title": "Customer Source ID",
+        "description": "You can send the source ID that you used to create the customer in Voucherify.",
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "A unique identifier of a customer. It can be a customer ID or email from a CRM system, database or 3rd-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
+          }
+        }
+      },
+      "23_req_create_qualification_order_id": {
+        "title": "Order ID",
+        "description": "You can pass the unique order ID that was assigned by Voucherify.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request."
+          }
+        }
+      },
+      "23_req_create_qualification_order_source_id": {
+        "title": "Order Source ID",
+        "description": "You can send the source ID that you used to create the order in Voucherify.",
+        "type": "object",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+          }
+        }
+      },
+      "23_obj_filter_resource_type": {
+        "description": "Filter conditions set on the resource `type`. The resource types include: `voucher`, `promotion_tier`, `campaign`.",
+        "title": "Filter by type",
+        "type": "object",
+        "properties": {
+          "resource_type": {
+            "$ref": "#/components/schemas/16_filter_conditions_string"
+          },
+          "junction": {
+            "$ref": "#/components/schemas/16_filter_junction"
+          }
+        }
+      },
+      "23_obj_filter_category_id": {
+        "description": "Filter conditions set on the resource `category_id`.",
+        "title": "Filter by category ID",
+        "type": "object",
+        "properties": {
+          "category_id": {
+            "$ref": "#/components/schemas/16_filter_conditions_string"
+          },
+          "junction": {
+            "$ref": "#/components/schemas/16_filter_junction"
+          }
+        }
+      },
+      "23_obj_qualification_redeemables": {
+        "title": "Redeemables",
+        "type": "object",
+        "description": "List or redeemables for examine qualification.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. Default is `list`."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of qualified redeemables."
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of qualified redeemables.",
+            "items": {
+              "allOf": []
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 5,
+            "description": "The number of redeemables returned in the API request."
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As results are always limited, the `has_more` flag indicates whether there are more records for given parameters. This let's you know if you are able to run another request (with different options) to get more records returned in the results."
+          }
+        }
       },
       "a_req_importCSV": {
         "type": "object",
@@ -43154,8 +43364,8 @@
         "tags": [
           "VOUCHERS API"
         ],
-        "summary": "Examine Qualification",
-        "description": "Display vouchers qualified to the given customer and context (e.g., order, loyalty reward). Checks up to 50 **standalone vouchers**. \n\n> 👍 Prevailing assumption\n> You data is synced with Voucherify.\n\n ## How does this endpoint work? \n\n A property's value that does not meet a validation rule requirement will disqualify that particular voucher and it will not be listed in the results.\n\nAs a sample use case, you can imagine a requirement of displaying coupons available for the customer below the shopping cart. The customer can choose and apply the proposed voucher.\n\n ## What's excluded? \n\n The verification logic won't run against _coupons from bulk unique code campaigns_. For campaigns with multiple unique codes, you should run a <!-- [dedicated function](OpenAPI.json/paths/~1campaigns~1qualification/post) -->[dedicated function](ref:examine-campaigns-qualification) for searching and identifying qualified campaigns.\n\n ## Customizing the response<!-- theme: info -->\n\n> 📘 Query parameters let you sort and filter the returned vouchers\n>\n> Customize your response:\n> - If you only care about verifying a customer, use `audienceRulesOnly` set to `true`. \n>- If you want to limit the number of vouchers to be returned from the entire pool of eligible vouchers, set a `limit`. This will return vouchers sorted by `-created_at`, by default beginning with the most recent vouchers listed at the top.\n> - If you have a preference on the sorting order of the returned vouchers, you can use `order` to customize your response.\n\n ## Sending the request body payload\n<!--\ntype: tab\n\ntitle: Customer\n-->\n\n ## Customer\n\nYou have the option of sending customer data via the dedicated `customer` object in the request body or a nested `customer` object within the `order` object.\n ### Available options:\n\n - You can either pass a customer `id` (Voucherify system generated),\n\n - a `source_id` (your own unique internal customer identifier e.g., email, database ID, CRM id), \n\n - a combination of the remaining parameters in the customer object, \n\n - a combination of customer `id` and remaining parameters excluding `source_id`, or\n\n - a combination of `source_id` and remaining parameters excluding `id`\n\n #### Note:\n\n For the latter two options, if you pass the `source_id` or the `id` with the other parameters, the logic will run independently for parameters explicitly passed in the request body versus those not explicitly passed in the request body. For _parameters not explicitly listed in the payload_, the verification will be against the data stored for that customer in the system. On the other hand, for any _parameter values explicitly passed in the payload_, the logic will ignore those stored in the system and will use the new values provided in the qualification request body. \n\n The qualification runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule). \n\n## Order\n\n  ### Available options:\n\n - You can either pass an order `id` (Voucherify system generated),\n\n - a `source_id` (your own unique internal order identifier), \n\n - a combination of the remaining parameters in the order object, \n\n - a combination of order `id` and remaining parameters excluding `source_id`, or\n\n - a combination of `source_id` and remaining parameters excluding `id`\n\n #### Note:\n\n For the latter two options, if you pass the `source_id` or the `id` with the other parameters, the logic will run independently for parameters explicitly passed in the request body versus those not explicitly passed in the request body. For _parameters not explicitly listed in the payload_, the verification will be against the data stored for that order in the system. On the other hand, for any _parameter values explicitly passed in the payload_, the logic will ignore those stored in the system and will use the new values provided in the qualification request body. \n\n The qualification runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule).\n\n## Guidelines:\n\nTo validate against vouchers with total order `amount` requirements, make sure to include the total order `amount` in the order object or alternatively the `amount` for _every_ order item (the application will then add each amount to get the total and perform the qualification checks). If the total order `amount` is provided along with the individual items' amounts, the total order `amount` will take precedence.\n\n<!-- title: Payload configuration -->\n| **Case** | **Order-Level Parameter Included** | **Item-Level Parameter Included** | **Precedence** | **Calculation Result** | **Parameter included in payload accounts for checks against requirements in these validation rules** |\n|:---:|:---:|:---:|:---:|---|---|\n| **1** | `amount` | `amount` | Order-level | Uses order-level `amount` | - Total order amount |\n| **2** |  | `amount` | Item-level | Sums each item-level `amount` | - Total order amount  <br>- subtotal of matched items |\n| **3** |  | `price`<br>`quantity` | Item-level | Multiplies each item's (`price` x `quantity`) to get item `amount` and then adds each item's `amount` to get total order `amount`  | - Total order amount<br>- Subtotal of matched items<br>- Unit price of any matching order line<br>- Price of each item/Price of any item |\n| **4** |  | `amount`  <br>`price`    <br>`quantity` | Item-level `amount` | Uses item-level `amount` for  total order `amount` calculation, ignores (`price` x `quantity`) calculation | - Total order amount (uses item `amount` if provided or `price` x `quantity` for items without `amount` property; `amount` takes precedence in case all 3 properties are provided for an item)<br>- Subtotal of matched items (uses item `amount`, takes precedence if all 3 properties are provided)<br>- Unit price of any matching order line<br>- Price of each item/Price of any item |\n| **5** | `amount` | `amount`  <br>`price`  <br>`quantity` | Order-level  | Uses order-level `amount` for total order `amount` | - Total order amount (uses order-level `amount`). <br>- Subtotal of matched items (see case **4** for details). <br>- Unit price of any matching order line  <br>- Price of each item/Price of any item |\n  \n\n## Reward\n\n ## Gift Card",
+        "summary": "Examine Qualification [Deprecated]",
+        "description": "<!-- <!-- theme: danger -->\n> ❗️ Important  \n>\n> This endpoint represents the deprecated version of the API responsible for qualification, and we do not recommend using it. The new [Qualifications API](ref:examine-qualification) introduces additional features and improvements while maintaining backward compatibility. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint.-->\n\nDisplay vouchers qualified to the given customer and context (e.g., order, loyalty reward). Checks up to 50 **standalone vouchers**. \n\n> 👍 Prevailing assumption\n> You data is synced with Voucherify.\n\n ## How does this endpoint work? \n\n A property's value that does not meet a validation rule requirement will disqualify that particular voucher and it will not be listed in the results.\n\nAs a sample use case, you can imagine a requirement of displaying coupons available for the customer below the shopping cart. The customer can choose and apply the proposed voucher.\n\n ## What's excluded? \n\n The verification logic won't run against _coupons from bulk unique code campaigns_. For campaigns with multiple unique codes, you should run a <!-- [dedicated function](OpenAPI.json/paths/~1campaigns~1qualification/post) -->[dedicated function](ref:examine-campaigns-qualification) for searching and identifying qualified campaigns.\n\n ## Customizing the response<!-- theme: info -->\n\n> 📘 Query parameters let you sort and filter the returned vouchers\n>\n> Customize your response:\n> - If you only care about verifying a customer, use `audienceRulesOnly` set to `true`. \n>- If you want to limit the number of vouchers to be returned from the entire pool of eligible vouchers, set a `limit`. This will return vouchers sorted by `-created_at`, by default beginning with the most recent vouchers listed at the top.\n> - If you have a preference on the sorting order of the returned vouchers, you can use `order` to customize your response.\n\n ## Sending the request body payload\n<!--\ntype: tab\n\ntitle: Customer\n-->\n\n ## Customer\n\nYou have the option of sending customer data via the dedicated `customer` object in the request body or a nested `customer` object within the `order` object.\n ### Available options:\n\n - You can either pass a customer `id` (Voucherify system generated),\n\n - a `source_id` (your own unique internal customer identifier e.g., email, database ID, CRM id), \n\n - a combination of the remaining parameters in the customer object, \n\n - a combination of customer `id` and remaining parameters excluding `source_id`, or\n\n - a combination of `source_id` and remaining parameters excluding `id`\n\n #### Note:\n\n For the latter two options, if you pass the `source_id` or the `id` with the other parameters, the logic will run independently for parameters explicitly passed in the request body versus those not explicitly passed in the request body. For _parameters not explicitly listed in the payload_, the verification will be against the data stored for that customer in the system. On the other hand, for any _parameter values explicitly passed in the payload_, the logic will ignore those stored in the system and will use the new values provided in the qualification request body. \n\n The qualification runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule). \n\n## Order\n\n  ### Available options:\n\n - You can either pass an order `id` (Voucherify system generated),\n\n - a `source_id` (your own unique internal order identifier), \n\n - a combination of the remaining parameters in the order object, \n\n - a combination of order `id` and remaining parameters excluding `source_id`, or\n\n - a combination of `source_id` and remaining parameters excluding `id`\n\n #### Note:\n\n For the latter two options, if you pass the `source_id` or the `id` with the other parameters, the logic will run independently for parameters explicitly passed in the request body versus those not explicitly passed in the request body. For _parameters not explicitly listed in the payload_, the verification will be against the data stored for that order in the system. On the other hand, for any _parameter values explicitly passed in the payload_, the logic will ignore those stored in the system and will use the new values provided in the qualification request body. \n\n The qualification runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule).\n\n## Guidelines:\n\nTo validate against vouchers with total order `amount` requirements, make sure to include the total order `amount` in the order object or alternatively the `amount` for _every_ order item (the application will then add each amount to get the total and perform the qualification checks). If the total order `amount` is provided along with the individual items' amounts, the total order `amount` will take precedence.\n\n<!-- title: Payload configuration -->\n| **Case** | **Order-Level Parameter Included** | **Item-Level Parameter Included** | **Precedence** | **Calculation Result** | **Parameter included in payload accounts for checks against requirements in these validation rules** |\n|:---:|:---:|:---:|:---:|---|---|\n| **1** | `amount` | `amount` | Order-level | Uses order-level `amount` | - Total order amount |\n| **2** |  | `amount` | Item-level | Sums each item-level `amount` | - Total order amount  <br>- subtotal of matched items |\n| **3** |  | `price`<br>`quantity` | Item-level | Multiplies each item's (`price` x `quantity`) to get item `amount` and then adds each item's `amount` to get total order `amount`  | - Total order amount<br>- Subtotal of matched items<br>- Unit price of any matching order line<br>- Price of each item/Price of any item |\n| **4** |  | `amount`  <br>`price`    <br>`quantity` | Item-level `amount` | Uses item-level `amount` for  total order `amount` calculation, ignores (`price` x `quantity`) calculation | - Total order amount (uses item `amount` if provided or `price` x `quantity` for items without `amount` property; `amount` takes precedence in case all 3 properties are provided for an item)<br>- Subtotal of matched items (uses item `amount`, takes precedence if all 3 properties are provided)<br>- Unit price of any matching order line<br>- Price of each item/Price of any item |\n| **5** | `amount` | `amount`  <br>`price`  <br>`quantity` | Order-level  | Uses order-level `amount` for total order `amount` | - Total order amount (uses order-level `amount`). <br>- Subtotal of matched items (see case **4** for details). <br>- Unit price of any matching order line  <br>- Price of each item/Price of any item |\n  \n\n## Reward\n\n ## Gift Card",
         "parameters": [
           {
             "$ref": "#/components/parameters/audienceRulesOnly"
@@ -45929,8 +46139,8 @@
         "tags": [
           "CAMPAIGNS API"
         ],
-        "summary": "Examine Qualification",
-        "description": "The method can be used for sending a request to display all campaigns qualified to the given customer and context (e.g., order). \n\nThe maximum number of **returned campaigns is 50**.\n\n## What campaign types are included in the response?\n\n- `DISCOUNT_COUPONS`\n- `GIFT_VOUCHERS`\n- `REFERRAL_PROGRAM`\n\n## What's excluded?\n\nA checking logic will be run only among campaigns and will ignore _standalone vouchers_. For standalone vouchers, you should run a [dedicated endpoint](ref:examine-vouchers-qualification) for searching and identifing vouchers. \n\n## Subsequent Steps\n\nAs a recommended subsequent step after selecting a qualified campaign is to publish a voucher code from that campaign. The [API method for publishing](ref:create-publication) will return a unique code which will belong to a given customer.\n\n## Sample use case\n\nAs a sample use case, you can imagine a requirement of displaying coupons (grouped in campaigns) that a customer is eligible to use. The customer should get assigned to the particular voucher from the campaign and then may redeem that particular code when he/she places an order.<!-- [Read](https://docs.voucherify.io/docs/checking-eligibility-for-coupons)-->\n\n[Read](doc:checking-eligibility-for-coupons) about Qualification API limits before you start.",
+        "summary": "Examine Qualification [Deprecated]",
+        "description": "<!-- <!-- theme: danger -->\n> ❗️ Important  \n>\n> This endpoint represents the deprecated version of the API responsible for qualification, and we do not recommend using it. The new [Qualifications API](ref:examine-qualification) introduces additional features and improvements while maintaining backward compatibility. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint.-->\n\nThe method can be used for sending a request to display all campaigns qualified to the given customer and context (e.g., order). \n\nThe maximum number of **returned campaigns is 50**.\n\n## What campaign types are included in the response?\n\n- `DISCOUNT_COUPONS`\n- `GIFT_VOUCHERS`\n- `REFERRAL_PROGRAM`\n\n## What's excluded?\n\nA checking logic will be run only among campaigns and will ignore _standalone vouchers_. For standalone vouchers, you should run a [dedicated endpoint](ref:examine-vouchers-qualification) for searching and identifing vouchers. \n\n## Subsequent Steps\n\nAs a recommended subsequent step after selecting a qualified campaign is to publish a voucher code from that campaign. The [API method for publishing](ref:create-publication) will return a unique code which will belong to a given customer.\n\n## Sample use case\n\nAs a sample use case, you can imagine a requirement of displaying coupons (grouped in campaigns) that a customer is eligible to use. The customer should get assigned to the particular voucher from the campaign and then may redeem that particular code when he/she places an order.<!-- [Read](https://docs.voucherify.io/docs/checking-eligibility-for-coupons)-->\n\n[Read](doc:checking-eligibility-for-coupons) about Qualification API limits before you start.",
         "parameters": [
           {
             "schema": {
@@ -52113,8 +52323,8 @@
         "tags": [
           "VALIDATIONS API"
         ],
-        "summary": "Validate Promotions",
-        "description": "Use this method to get valid promotions for a given customer and order.\n\n### Advanced validation filters\n\nYou can narrow down a validation to a specific promotion ID or tier metadata. Here are the examples of filtering queries you can use:\n\n| **Filter** | **Example** |\n|:---|:---|\n| promotion_id | [filters][promotion_id][conditions][$is]={{campaign_id}} |\n| tier metadata | [filters][metadata.{{promotion tier metadata key}}][conditions][$is]={{promotion tier metadata value}} |\n\n<!--\ntitle: \"Validate promotion against customer rules\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }'/\n  'https://api.voucherify.io/v1/promotions/validation?audienceRulesOnly=true'\n```\n<!--\ntitle: \"Validate promotion for specific campaign\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    },\n    \"metadata\": {\n        \"store_names\": \"Store 1 - New York - Broadway\"\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][promotion_id][conditions][$is]=camp_nYcAyjFXmEaBU0nB7EQ4hVTr'\n```\n<!--\ntitle: \"Validate promotion based on tier metadata\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][metadata.has_budget][conditions][$is]=true'\n```",
+        "summary": "Validate Promotions [Deprecated]",
+        "description": "<!-- <!-- theme: danger -->\n> ❗️ Important  \n>\n> This endpoint represents the deprecated version of the API responsible for qualification, and we do not recommend using it. The new [Qualifications API](ref:examine-qualification) introduces additional features and improvements while maintaining backward compatibility. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint.-->Use this method to get valid promotions for a given customer and order.\n\n### Advanced validation filters\n\nYou can narrow down a validation to a specific promotion ID or tier metadata. Here are the examples of filtering queries you can use:\n\n| **Filter** | **Example** |\n|:---|:---|\n| promotion_id | [filters][promotion_id][conditions][$is]={{campaign_id}} |\n| tier metadata | [filters][metadata.{{promotion tier metadata key}}][conditions][$is]={{promotion tier metadata value}} |\n\n<!--\ntitle: \"Validate promotion against customer rules\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }'/\n  'https://api.voucherify.io/v1/promotions/validation?audienceRulesOnly=true'\n```\n<!--\ntitle: \"Validate promotion for specific campaign\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    },\n    \"metadata\": {\n        \"store_names\": \"Store 1 - New York - Broadway\"\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][promotion_id][conditions][$is]=camp_nYcAyjFXmEaBU0nB7EQ4hVTr'\n```\n<!--\ntitle: \"Validate promotion based on tier metadata\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][metadata.has_budget][conditions][$is]=true'\n```",
         "parameters": [
           {
             "schema": {
@@ -80047,19 +80257,13 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns a dictionary that contains an array of locations. Each entry in the array is a separate location object.  **If no more vouchers are available (query parameter `page` incremented over and above the voucher count), the resulting array will be empty. The result can be narrowed down according to specified (or default) filters.**",
+            "description": "Returns a dictionary that contains an array of locations. Each entry in the array is a separate location object.  If no more locations are available, the resulting array will be empty. The result can be narrowed down according to specified (or default) filters.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/22_res_list_locations"
                 },
                 "examples": {
-                  "Circle Example": {
-                    "value": {}
-                  },
-                  "Polygon Example": {
-                    "value": {}
-                  },
                   "Example": {
                     "value": {
                       "object": "list",
@@ -80227,7 +80431,17 @@
         ],
         "summary": "Get Location",
         "description": "Returns a location object.",
-        "parameters": [],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "name": "locationId",
+            "in": "path",
+            "required": true,
+            "description": "The unique location ID."
+          }
+        ],
         "security": [
           {
             "X-App-Id-1": [],
@@ -80329,7 +80543,7 @@
         "tags": [
           "QUALIFICATIONS API"
         ],
-        "summary": "Qualification Object",
+        "summary": "Qualification Object [Beta]",
         "description": "Data model description",
         "responses": {
           "200": {
@@ -80351,8 +80565,8 @@
         "tags": [
           "QUALIFICATIONS API"
         ],
-        "summary": "Generate a qualification report.",
-        "description": "Generate a list of redeemables that are applicable in the context of the customer and order.",
+        "summary": "Examine Qualification [Beta]",
+        "description": "Generate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last return redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
         "parameters": [],
         "security": [
           {
@@ -80388,34 +80602,34 @@
                 }
               }
             }
-          },
-          "responses": {
-            "200": {
-              "description": "Returns a qualifications object.",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/23_obj_qualification_object"
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a qualifications object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/23_obj_qualification_object"
+                },
+                "examples": {
+                  "ALL": {
+                    "value": {}
                   },
-                  "examples": {
-                    "ALL": {
-                      "value": {}
-                    },
-                    "CUSTOMER_WALLET": {
-                      "value": {}
-                    },
-                    "AUDIENCE_ONLY": {
-                      "value": {}
-                    },
-                    "PRODUCTS": {
-                      "value": {}
-                    },
-                    "PRODUCTS_DISCOUNT": {
-                      "value": {}
-                    },
-                    "PROMOTION_STACKS": {
-                      "value": {}
-                    }
+                  "CUSTOMER_WALLET": {
+                    "value": {}
+                  },
+                  "AUDIENCE_ONLY": {
+                    "value": {}
+                  },
+                  "PRODUCTS": {
+                    "value": {}
+                  },
+                  "PRODUCTS_DISCOUNT": {
+                    "value": {}
+                  },
+                  "PROMOTION_STACKS": {
+                    "value": {}
                   }
                 }
               }
