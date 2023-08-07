@@ -1,4 +1,13 @@
 # Changelog
+## 20230807 - New Endpoints
+- Introduced new endpoints and related object schemas
+| **API** | **Endpoint** | **New Slug** | **Hidden** |
+|---|---|---|---|
+| **Locations** | Location Object | location-object | true |
+|  | Get Location | get-location | true |
+|  | List Locations | list-locations | true |
+| **Qualifications** | Qualification Object | qualification-object | true |
+|  | Examine Qualification | examine-qualification | true |
 
 ## 20230530 - Transition to Interactive documentation
 
