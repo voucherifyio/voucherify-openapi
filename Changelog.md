@@ -1,5 +1,5 @@
 # Changelog
-## 20230807 - New Endpoints
+## 20230809 - New Endpoints
 - Introduced new endpoints and related object schemas
 | **API** | **Endpoint** | **New Slug** | **Hidden** |
 |---|---|---|---|
@@ -9,6 +9,17 @@
 | **Qualifications** | Qualification Object | qualification-object | true |
 |  | Examine Qualification | examine-qualification | true |
 
+- Marked the following endpoints as deprecated
+| **API** | **Endpoint** | **Slug** |
+|---|---|---|---|
+| **Vouchers** | Examine Qualification | examine-vouchers-qualification |
+| **Campaigns** | Examine Qualification | examine-campaigns-qualification |
+| **Validations** | Validate Voucher | validate-voucher |
+|  | Validate Voucher (client-side) | validate-voucher-client-side |
+|  | Validate Promotions | validate-promotions |
+| **Redemptions** | Redeem Voucher | redeem-voucher |
+|  | Redeem Voucher (client-side) | redeem-voucher-client-side |
+|  | Redeem Promotion | redeem-promotion |
 ## 20230530 - Transition to Interactive documentation
 
 ### Slugs updated for Reference Docs

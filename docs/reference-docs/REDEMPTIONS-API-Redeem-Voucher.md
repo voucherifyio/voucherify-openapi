@@ -1,5 +1,5 @@
 ---
-title: Redeem Voucher
+title: Redeem Voucher [Deprecated]
 type: endpoint
 category: 639ba2628407100061f5faac
 slug: redeem-voucher
