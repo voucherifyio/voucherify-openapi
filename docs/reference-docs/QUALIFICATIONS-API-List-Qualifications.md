@@ -4,7 +4,7 @@ type: endpoint
 category: 639ba2628407100061f5faac
 parentDoc: 64d0e09b5a917a1254315da8
 slug: examine-qualification
-hidden: true
+hidden: false
 order: 2
 ---
 
