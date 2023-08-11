@@ -20,6 +20,7 @@
 | **Redemptions** | Redeem Voucher | redeem-voucher |
 |  | Redeem Voucher (client-side) | redeem-voucher-client-side |
 |  | Redeem Promotion | redeem-promotion |
+|  | Validate Promotion Tier | validate-promotion-tier |
 ## 20230530 - Transition to Interactive documentation
 
 ### Slugs updated for Reference Docs
