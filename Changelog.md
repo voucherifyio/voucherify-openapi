@@ -21,10 +21,10 @@
 | **Validations** | Validate Voucher | validate-voucher |
 |  | Validate Voucher (client-side) | validate-voucher-client-side |
 |  | Validate Promotions | validate-promotions |
+|  | Validate Promotion Tier | validate-promotion-tier |
 | **Redemptions** | Redeem Voucher | redeem-voucher |
 |  | Redeem Voucher (client-side) | redeem-voucher-client-side |
 |  | Redeem Promotion | redeem-promotion |
-|  | Validate Promotion Tier | validate-promotion-tier |
 
 
 ## 20230530 - Transition to Interactive documentation
