@@ -1,17 +1,21 @@
 # Changelog
+
 ## 20230809 - New Endpoints
-- Introduced new endpoints and related object schemas
-| **API** | **Endpoint** | **New Slug** | **Hidden** |
-|---|---|---|---|
+
+### Introduced new endpoints and related object schemas
+
+| **API** | **Endpoint** | **New Slug** |
+|---|---|---|
 | **Locations** | Location Object | location-object | true |
 |  | Get Location | get-location | true |
 |  | List Locations | list-locations | true |
 | **Qualifications** | Qualification Object | qualification-object | true |
 |  | Examine Qualification | examine-qualification | true |
 
-- Marked the following endpoints as deprecated
+### Marked the following endpoints as deprecated
+
 | **API** | **Endpoint** | **Slug** |
-|---|---|---|---|
+|---|---|---|
 | **Vouchers** | Examine Qualification | examine-vouchers-qualification |
 | **Campaigns** | Examine Qualification | examine-campaigns-qualification |
 | **Validations** | Validate Voucher | validate-voucher |
@@ -21,7 +25,10 @@
 |  | Redeem Voucher (client-side) | redeem-voucher-client-side |
 |  | Redeem Promotion | redeem-promotion |
 |  | Validate Promotion Tier | validate-promotion-tier |
+
+
 ## 20230530 - Transition to Interactive documentation
+
 
 ### Slugs updated for Reference Docs
 
@@ -85,6 +92,7 @@
 |  | List Consents (client-side) | get-consent-client-side | list-consents-client-side |
 | **Async Actions** | Get Async Action | get-async-actions-1 | get-async-action |
 
+
 ### Slugs updated for Guides
 
 | **Category** | **Guide** | **Previous Slug** | **New Slug** |
@@ -93,6 +101,7 @@
 | Building Blocks | Orders | orders-1 | orders |
 | Building Blocks | Vouchers | vouchers-1 | vouchers |
 | Building Blocks | Campaigns | campaigns-1 | campaigns |
+
 
 ### Endpoints descriptions that were removed
 
@@ -107,6 +116,7 @@
 | **Products** | [deprecated] Update Products metadata in bulk | **POST** `/products/metadata` | update-products-metadata-in-bulk | deprecated |
 |  | [deprecated] Update Products in bulk | **POST** `/products/bulk` | update-products-in-bulk | deprecated |
 |  | Get SKU [deprecated] | **GET** `/products/{productId}/skus/{skuId}` | get-sku | deprecated |
+
 
 ### Endpoints that were added
 
