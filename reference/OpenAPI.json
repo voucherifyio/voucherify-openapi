@@ -1,5 +1,5 @@
 {
-  "openapi": "3.1.0",
+  "openapi": "3.0.0",
   "info": {
     "title": "Voucherify API",
     "version": "v2018-08-01",
@@ -11601,6 +11601,10 @@
           "amount_limit": {
             "type": "integer",
             "description": "Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600."
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
           }
         }
       },
@@ -12157,7 +12161,7 @@
                 "description": "Unique reward assignment ID assigned by Voucherify."
               },
               "points": {
-                "type": "string",
+                "type": "integer",
                 "description": "Number of points applied to the reward."
               }
             }
@@ -38679,10 +38683,215 @@
           "order": {
             "type": "object",
             "description": "The order object sent in the request.",
-            "$ref": "#/components/schemas/10_obj_order_object"
+            "$ref": "#/components/schemas/23_obj_order_object"
           },
           "stacking_rules": {
             "$ref": "#/components/schemas/23_obj_qualification_object_stacking_rules"
+          }
+        }
+      },
+      "23_obj_order_object": {
+        "type": "object",
+        "title": "Order object",
+        "description": "This is an object representing an order.  \n\nThe purchase transactions can be tracked in Voucherify by the creation of an order object. You can create, retrieve, and pay individual orders, as well as list and export all of them in a CSV format. Orders are identified by a unique ID.\n\nOrders are automatically created during the <!-- [redeem voucher](OpenAPI.json/paths/~1vouchers~1{code}~1redemption/post) -->[redeem voucher](ref:redeem-voucher) and <!-- [redeem promotion](OpenAPI.json/paths/~1promotions~1tiers~1{promotionTierId}~1redemption/post) -->[redeem promotion](redeem-promotion) call.\n\n<!-- theme: info -->\n> #### order.id and order session\n>\n> If you use the same order.id in more than one redemption request, all valid discounts provided in the redemption payload will be applied to the given order.\n> \n> Each time you use particular order in your requests, the API will automatically trigger a new session linked to the order.id. The session is active during the request and ends asynchronously after the request is completed. The session mechanism ensures that the particular order.id can be used in one API request at once.",
+        "x-tags": [
+          "ORDERS API"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique order ID, assigned by Voucherify.",
+            "example": "ord_GFDbbv2I0wnO0sFUBOOOXPj2"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the order was created in ISO 8601 format.",
+            "example": "2022-03-09T11:19:04.819Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2022-08-12T13:34:10.681Z",
+            "description": "Timestamp representing the date and time when the order was updated in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "description": "Order status.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "CANCELED",
+              "FULFILLED"
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Order amount before applying any discount."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level discounts applied to the order."
+          },
+          "items_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all product-specific discounts applied to the order.  \n`sum(items, i => i.discount_amount)`"
+          },
+          "total_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level AND all product-specific discounts applied to the order.  \n`total_discount_amount` = `discount_amount` + `items_discount_amount`\t"
+          },
+          "total_amount": {
+            "type": "integer",
+            "description": "Order amount after applying all the discounts.  \n`total_amount` = `amount` - `total_discount_amount`"
+          },
+          "items": {
+            "type": "array",
+            "description": "Array of order items that have been applied to the order. Each order item can show the effects of particular discounts on the item-level.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "object": {
+                  "type": "string",
+                  "default": "order_item",
+                  "description": "The type of object represented by JSON. This object stores information about the `order_item`."
+                },
+                "product_id": {
+                  "type": "string",
+                  "example": "prod_5h0wc453_1",
+                  "description": "A unique identifier that represents the product and is assigned by Voucherify."
+                },
+                "sku_id": {
+                  "type": "string",
+                  "example": "sku_prod_5h0wc453_1_1",
+                  "description": "A unique identifier that represents the SKU and is assigned by Voucherify."
+                },
+                "quantity": {
+                  "type": "integer",
+                  "description": "Quantity of the item in the cart."
+                },
+                "amount": {
+                  "type": "integer",
+                  "description": "Represents a total pre-discount amount of order item (`price` * `quantity`)."
+                },
+                "discount_amount": {
+                  "type": "integer",
+                  "description": "The item-level discount applied to the item."
+                },
+                "price": {
+                  "type": "integer",
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                },
+                "subtotal_amount": {
+                  "type": "integer",
+                  "description": "Final order item amount after the applied item-level discount.  If there are no item-level discounts applied, this item is equal to the `amount`.   \n`subtotal_amount`=`amount`-`discount_amount`"
+                },
+                "product": {
+                  "type": "object",
+                  "description": "This object stores more information about the related product.",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "prod_5h0wc453_1",
+                      "description": "A unique identifier that represents the product and is assigned by Voucherify."
+                    },
+                    "source_id": {
+                      "type": "string",
+                      "description": "A unique product identifier from your inventory system.",
+                      "example": "illy-arabica"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Brewing System",
+                      "description": "Product name."
+                    },
+                    "price": {
+                      "type": "integer",
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                    }
+                  }
+                },
+                "sku": {
+                  "type": "object",
+                  "description": "This object stores more information about the related SKU.",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "sku_prod_5h0wc453_1_1",
+                      "description": "A unique identifier that represents the SKU and is assigned by Voucherify."
+                    },
+                    "source_id": {
+                      "type": "string",
+                      "example": "illy-arabica-250g",
+                      "description": "A unique SKU identifier from your inventory system."
+                    },
+                    "sku": {
+                      "type": "string",
+                      "description": "SKU name."
+                    },
+                    "price": {
+                      "type": "integer",
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the order. A set of key/value pairs that are attached to an order object. Stores additional information about the order in a structured format."
+          },
+          "customer": {
+            "type": "object",
+            "description": "Object containing information about the customer that is making the purchase.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "cust_7iUa6ICKyU6gH40dBU25kQU1",
+                "description": "Unique customer ID of the customer making the purchase."
+              },
+              "object": {
+                "type": "string",
+                "default": "customer",
+                "description": "Type of object represented by the `customer` object."
+              }
+            }
+          },
+          "referrer": {
+            "type": "object",
+            "description": "Object containing information about the referrer.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "cust_7iUa6ICKyU6gH40dBU25kQU1",
+                "description": "Unique referrer ID, who referred the customer making the purchase."
+              },
+              "object": {
+                "type": "string",
+                "default": "customer",
+                "description": "Type of object represented by the referrer object."
+              }
+            }
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Unique customer ID of the customer making the purchase.",
+            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
+          },
+          "referrer_id": {
+            "type": "string",
+            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix",
+            "description": "Unique referrer ID."
+          },
+          "object": {
+            "type": "string",
+            "default": "order",
+            "description": "The type of object represented by JSON. This object stores information about the `order`."
           }
         }
       },
@@ -38752,7 +38961,8 @@
               },
               "limit": {
                 "type": "integer",
-                "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5, and the maximum value is 50."
+                "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5, and the maximum value is 50.",
+                "maximum": 50
               },
               "starting_after": {
                 "type": "string",
@@ -38783,14 +38993,16 @@
           },
           "scenario": {
             "type": "string",
-            "description": "Defines the scenario Voucherify should consider during the qualification process.\n\n- `ALL` - Scenario that returns all redeemables available for the customer in one API request.\n- `CUSTOMER_WALLET` - returns vouchers applicable to the customer’s cart based on the vouchers assigned to the customer’s profile.\n- `AUDIENCE_ONLY` - returns all vouchers, promotion tiers, and campaigns available to the customer. Voucherify validates the rules based on the customer profile only.\n- `PRODUCTS` - returns all promotions available for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).\n- `PRODUCTS_DISCOUNT` - returns all promotions available for products when a discount is defined as applicable to specific item(s).\n- `PROMOTION_STACKS` - returns the applicable promotion stacks.",
+            "description": "Defines the scenario Voucherify should consider during the qualification process.\n\n- `ALL` - Scenario that returns all redeemables available for the customer in one API request.\n- `CUSTOMER_WALLET` - returns vouchers applicable to the customer’s cart based on the vouchers assigned to the customer’s profile.\n- `AUDIENCE_ONLY` - returns all vouchers, promotion tiers, and campaigns available to the customer. Voucherify validates the rules based on the customer profile only.\n- `PRODUCTS` - returns all promotions available for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).\n- `PRODUCTS_DISCOUNT` - returns all promotions available for products when a discount is defined as applicable to specific item(s).\n- `PROMOTION_STACKS` - returns the applicable promotion stacks.\n- `PRODUCTS_BY_CUSTOMER` - returns all promotions available for a customer for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).\n- `PRODUCTS_DISCOUNT_BY_CUSTOMER` - returns all promotions available for a customer for products when a discount is defined as applicable to specific item(s).",
             "enum": [
               "ALL",
               "CUSTOMER_WALLET",
               "AUDIENCE_ONLY",
               "PRODUCTS",
               "PRODUCTS_DISCOUNT",
-              "PROMOTION_STACKS"
+              "PROMOTION_STACKS",
+              "PRODUCTS_BY_CUSTOMER",
+              "PRODUCTS_DISCOUNT_BY_CUSTOMER"
             ]
           }
         }
@@ -80589,26 +80801,6 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/23_req_create_qualification"
-              },
-              "examples": {
-                "ALL": {
-                  "value": {}
-                },
-                "CUSTOMER_WALLET": {
-                  "value": {}
-                },
-                "AUDIENCE_ONLY": {
-                  "value": {}
-                },
-                "PRODUCTS": {
-                  "value": {}
-                },
-                "PRODUCTS_DISCOUNT": {
-                  "value": {}
-                },
-                "PROMOTION_STACKS": {
-                  "value": {}
-                }
               }
             }
           }
@@ -80620,26 +80812,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/23_obj_qualification_object"
-                },
-                "examples": {
-                  "ALL": {
-                    "value": {}
-                  },
-                  "CUSTOMER_WALLET": {
-                    "value": {}
-                  },
-                  "AUDIENCE_ONLY": {
-                    "value": {}
-                  },
-                  "PRODUCTS": {
-                    "value": {}
-                  },
-                  "PRODUCTS_DISCOUNT": {
-                    "value": {}
-                  },
-                  "PROMOTION_STACKS": {
-                    "value": {}
-                  }
                 }
               }
             }
