@@ -1,6 +1,6 @@
 # Changelog
 
-## 20230809 - New Endpoints
+## 20230823 - New Endpoints
 
 ### Introduced new endpoints and related object schemas
 
@@ -11,6 +11,9 @@
 |  | List Locations | list-locations | true |
 | **Qualifications** | Qualification Object | qualification-object | true |
 |  | Examine Qualification | examine-qualification | true |
+
+
+## 20230809 - Deprecated Endpoints
 
 ### Marked the following endpoints as deprecated
 
@@ -311,3 +314,5 @@ The following endpoints in the OpenAPI document found in the `paths` object are 
 `/v1/export-object`
 `/v1/category-object`
 `/v1/metadata-schema-object`
+`/v1/location-object`
+`/v1/qualification-object`
