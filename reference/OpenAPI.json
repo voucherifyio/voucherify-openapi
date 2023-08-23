@@ -361,6 +361,18 @@
         "style": "deepObject",
         "explode": true
       },
+      "filters": {
+        "name": "filters",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "anyOf": [
+          ]
+        },
+        "description": "A filter.",
+        "style": "deepObject",
+        "explode": true
+      },
       "campaign_type": {
         "name": "campaign_type",
         "in": "query",
@@ -36016,11 +36028,13 @@
             "properties": {
               "$after": {
                 "type": "string",
-                "description": "Value is after this date. Value for this parameter is in ISO 8601 format."
+                "description": "Value is after this date. Value for this parameter is in ISO 8601 format.",
+                "format": "date-time"
               },
               "$before": {
                 "type": "string",
-                "description": "Value is before this date. Value for this parameter is in ISO 8601 format."
+                "description": "Value is before this date. Value for this parameter is in ISO 8601 format.",
+                "format": "date-time"
               },
               "$has_value": {
                 "type": "string",
@@ -38376,7 +38390,7 @@
           },
           "has_more": {
             "type": "boolean",
-            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates whether there are more records for given filter parameters. This let's you know if you are able to run another request (with a different page or a different start date filter) to get more records returned in the results."
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates whether there are more records for given filter parameters. This let's you know if you are able to run another request (with a different end date filter) to get more records returned in the results."
           }
         },
         "examples": [
@@ -38597,7 +38611,7 @@
           },
           "distance": {
             "type": "object",
-            "title": "Distance object.",
+            "title": "Distance",
             "description": "Defines the parameters for the circle.",
             "properties": {
               "center": {
@@ -38630,7 +38644,7 @@
           },
           "distance": {
             "type": "object",
-            "title": "Geojson object.",
+            "title": "Geojson",
             "description": "Defines the parameters for the polygon.",
             "properties": {
               "type": {
@@ -38664,6 +38678,46 @@
         "items": {
           "type": "integer"
         }
+      },
+      "22_filter_updated_at": {
+          "type": "object",
+          "title": "Updated at",
+          "properties": {
+            "updated_at": {
+              "$ref": "#/components/schemas/16_filter_conditions_date_time"
+            }
+          },
+        "description": "A filter on the list based on the object `updated_at` field. The value is a dictionary with the following options: `before`, `after`. A date value must be presented in ISO 8601 format (`2016-11-16T14:14:31Z` or `2016-11-16`). An example: `[updated_at][before]=2017-09-08T13:52:18.227Z`"
+      },
+      "22_filter_created_at": {
+          "type": "object",
+          "title": "Created at",
+          "properties": {
+            "created_at": {
+              "$ref": "#/components/schemas/16_filter_conditions_date_time"
+            }
+          },
+        "description": "A filter on the list based on the object `created_at` field. The value is a dictionary with the following options: `before`, `after`. A date value must be presented in ISO 8601 format (`2016-11-16T14:14:31Z` or `2016-11-16`). An example: `[created_at][before]=2017-09-08T13:52:18.227Z`"
+      },
+      "22_filter_name": {
+          "type": "object",
+          "title": "Name",
+          "properties": {
+            "name": {
+              "$ref": "#/components/schemas/16_filter_conditions_string"
+            }
+          },
+        "description": "A filter on the list based on the name field."
+      },
+      "22_filter_id": {
+          "type": "object",
+          "title": "ID",
+          "properties": {
+            "id": {
+              "$ref": "#/components/schemas/16_filter_conditions_string"
+            }
+          },
+        "description": "A filter on the list based on the id of the location."
       },
       "23_obj_qualification_object": {
         "title": "Qualification object",
@@ -80468,6 +80522,55 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/limit"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created_at",
+                "-created_at",
+                "updated_at",
+                "-updated_at"
+              ]
+            },
+            "description": "Sorts the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/22_filter_updated_at"
+                },
+                {
+                  "$ref": "#/components/schemas/22_filter_created_at"
+                },
+                {
+                  "$ref": "#/components/schemas/22_filter_name"
+                },
+                {
+                  "$ref": "#/components/schemas/22_filter_id"
+                }
+              ]
+            },
+            "description": "Filter the locations using one of the available filters.",
+            "style": "deepObject",
+            "explode": true
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "A filter on the list based on the end date. This will filter out all locations who's end date falls before the specified date and time. A date value must be presented in ISO 8601 format (`2016-11-16T14:14:31Z` or `2016-11-16`)."
           }
         ],
         "security": [
