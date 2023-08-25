@@ -1,5 +1,9 @@
 # Changelog
 
+## 20230825 - New Endpoints
+
+### Request parameters and response schema has changed for endpoint "/v1/vouchers/{code}/validate"
+
 ## 20230823 - New Endpoints
 
 ### Introduced new endpoints and related object schemas
