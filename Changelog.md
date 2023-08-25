@@ -25,7 +25,9 @@
 **Endpoints changes**
 - `/v1/vouchers/{code}/validate`
   - Request parameters schema was replaced with new one: `ValidationSessionParams`
-  - Response schema was replaced with `anoOf`: `ResponseValidateVoucherTrue`, `ResponseValidateVoucherFalse`
+  - Response schema was replaced with `anyOf`: `ResponseValidateVoucherTrue`, `ResponseValidateVoucherFalse`
+- `/v1/validation-object`
+  - Response schema was replaced with `anyOf`: `ResponseValidateVoucherTrue`, `ResponseValidateVoucherFalse`
 
 ## 20230823 - New Endpoints
 
