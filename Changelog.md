@@ -2,7 +2,30 @@
 
 ## 20230825 - New Endpoints
 
-### Request parameters and response schema has changed for endpoint "/v1/vouchers/{code}/validate"
+**Added new schemas**
+- ValidationSessionParams
+- ResponseValidateVoucherTrue
+- ResponseValidateVoucherFalse
+- OrderObjectRedemptions
+- SimpleProductDiscountUnit
+- SimpleSkuDiscountUnit
+- DiscountUnit
+- DiscountUnitMultiple
+- DiscountUnitMultipleOneUnit
+- DiscountAmount
+- DiscountPercent
+- DiscountFixed
+- DiscountAmountVouchersEffectTypes
+- DiscountPercentVouchersEffectTypes
+- DiscountFixedVouchersEffectTypes
+- DiscountUnitVouchersEffectTypes
+- DiscountVouchersEffectTypes
+- DiscountVouchersTypes
+
+**Endpoints changes**
+- `/v1/vouchers/{code}/validate`
+  - Request parameters schema was replaced with new one: `ValidationSessionParams`
+  - Response schema was replaced with `anoOf`: `ResponseValidateVoucherTrue`, `ResponseValidateVoucherFalse`
 
 ## 20230823 - New Endpoints
 
