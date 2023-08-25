@@ -2,7 +2,7 @@
 
 ## 20230825 - New Endpoints
 
-**Added new schemas**
+**Added schemas**
 - ValidationSessionParams
 - ResponseValidateVoucherTrue
 - ResponseValidateVoucherFalse
@@ -21,6 +21,9 @@
 - DiscountUnitVouchersEffectTypes
 - DiscountVouchersEffectTypes
 - DiscountVouchersTypes
+
+**Removed schemas**
+- 6_req_validate_voucher
 
 **Endpoints changes**
 - `/v1/vouchers/{code}/validate`
