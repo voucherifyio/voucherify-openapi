@@ -1,6 +1,6 @@
 # Changelog
 
-## 20230825 - New Endpoints
+## 20230825
 
 **Added schemas**
 - ValidationSessionParams
