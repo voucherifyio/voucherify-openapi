@@ -1,5 +1,29 @@
 # Changelog
 
+## 20230828
+
+**Added schemas**
+- CategoryObject
+- CreateCategory
+- ResponseCreateCategory
+- UpdateCategoryRequest
+- ResponseUpdateCategory
+- ListCategories
+
+**Endpoints changes**
+- `/v1/categories`
+  - GET
+    - Response schema was replaced with `ListCategories`
+  - POST
+    - Request parameters schema was replaced with `CreateCategory`
+    - Response schema was replaced with `ResponseCreateCategory`
+- `/v1/categories/{categoryId}`
+  - GET
+    - Response schema was replaced with `CategoryObject`
+  - PUT
+    - Request parameters schema was replaced with `UpdateCategoryRequest`
+    - Response schema was replaced with `ResponseUpdateCategory`
+
 ## 20230825 - New Endpoints
 
 **Added schemas**
