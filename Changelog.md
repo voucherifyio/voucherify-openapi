@@ -24,7 +24,7 @@
     - Request parameters schema was replaced with `UpdateCategoryRequest`
     - Response schema was replaced with `ResponseUpdateCategory`
 
-## 20230825 - New Endpoints
+## 20230825
 
 **Added schemas**
 - ValidationSessionParams
