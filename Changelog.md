@@ -1,5 +1,24 @@
 # Changelog
 
+## 20230829
+
+**Added schemas**
+- CustomerPermanentDeletion
+- CustomerRequestBasicData
+- UpdateCustomersInBulk
+- UpdateCustomersMetadataInBulk
+
+**Endpoints changes**
+- `/v1/customers/{customerId}/permanent-deletion`
+  - POST
+    - Response schema was replaced with `CustomerPermanentDeletion`
+- `/v1/customers/bulk/async`
+  - POST
+    - Request parameters schema was replaced with `UpdateCustomersInBulk`
+- `/v1/customers/metadata/async`
+  - POST
+    - Request parameters schema was replaced with `UpdateCustomersMetadataInBulk`
+
 ## 20230828
 
 **Added schemas**
