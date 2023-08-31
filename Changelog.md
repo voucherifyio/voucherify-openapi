@@ -1,5 +1,74 @@
 # Changelog
 
+## 20230831 - Exports API
+
+**New models**
+- CreateExportResource
+- ExportResourceResponseCommon
+- ExportResourceResponse
+- ExportsCreateResponseCommon
+- ExportsCreateResponse
+- ExportsCreateVoucher
+- ExportsCreateResponseVoucher
+- ExportsCreateVoucherParameters
+- FieldConditions
+- ExportVoucherFilters
+- ExportsCreateRedemption
+- ExportsCreateResponseRedemption
+- ExportsCreateRedemptionParameters
+- ExportRedemptionFilters
+- ExportsCreateCustomer
+- ExportsCreateResponseCustomer
+- ExportsCreateCustomerParameters
+- ExportCustomerFilters
+- ExportsCreatePublication
+- ExportsCreateResponsePublication
+- ExportsCreatePublicationParameters
+- ExportPublicationFilters
+- ExportsCreateOrder
+- ExportsCreateResponseOrder
+- ExportsCreateOrderParameters
+- ExportOrderFilters
+- ExportsCreatePointsExpiration
+- ExportsCreateResponsePointsExpiration
+- ExportsCreatePointsExpirationParameters
+- ExportPointsExpirationFilters
+- ExportsCreateVoucherTransactionsExpiration
+- ExportsCreateResponseVoucherTransactionsExpiration
+- ExportsCreateVoucherTransactionsExpirationParameters
+- ExportVoucherTransactionsFilters
+- ExportsGetResponse
+- ListExportQuery
+- ListExports
+- Junction
+- FiltersCondition
+- ExportCustomerFields
+- ExportCustomerOrder
+- ExportPublicationFields
+- ExportPublicationOrder
+- ExportRedemptionFields
+- ExportRedemptionOrder
+- ExportVoucherFields
+- ExportVoucherOrder
+- ExportOrderFields
+- ExportOrderOrder
+- ExportPointsExpirationFields
+- ExportPointsExpirationOrder
+- ExportVoucherTransactionsFields
+- ExportVoucherTransactionsOrder
+- Any
+
+**Endpoint changes**
+- v1/exports
+  - POST
+    - New request schema: `CreateExportResource`
+    - New response schema: `ExportsCreateResponse`
+  - GET
+    - New response schema: `ListExports`
+- v1/exports/{exportId}
+  - GET
+    - New response schema: `ExportsGetResponse`
+
 ## 20230823 - New Endpoints
 
 ### Introduced new endpoints and related object schemas
