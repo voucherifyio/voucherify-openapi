@@ -1,5 +1,51 @@
 # Changelog
 
+## 20230905 - Exports API
+
+**New models**
+- LoyaltiesEarningRulesResponseCommon
+- LoyaltyFixed
+- LoyaltyProportionalOrderAmount
+- LoyaltyProportionalOrderTotalAmount
+- LoyaltyProportionalOrderMetadata
+- LoyaltyProportionalOrderItemsQuantity
+- LoyaltyProportionalOrderItemsAmount
+- LoyaltyProportionalOrderItemsSubtotalAmount
+- LoyaltyProportionalOrder
+- LoyaltyProportionalOrderItems
+- LoyaltyProportionalCustomer
+- LoyaltyProportionalCustomEvent
+- LoyaltyProportional
+- LoyaltiesEarningRulesResponse
+- LoyaltiesEnableEarningRulesResponse
+- LoyaltiesDisableEarningRulesResponse
+- LoyaltiesUpdateEarningRuleResponse
+- LoyaltiesCreateEarningRuleResponse
+- LoyaltiesListEarningRulesResponse
+- LoyaltiesEarningRulesEvent
+- LoyaltiesCreateEarningRule
+- LoyaltiesUpdateEarningRule
+
+**Endpoint changes**
+- /v1/loyalties/{campaignId}/earning-rules
+  - GET
+    - New response schema: `LoyaltiesListEarningRulesResponse` (old one: `8_res_list_earning_rules`)
+    - POST
+      - New request schema: `LoyaltiesCreateEarningRule` (old one: `8_req_create_earning_rules`)
+      - New response schema: `LoyaltiesCreateEarningRuleResponse` (old one: `8_obj_earning_rule_object`)
+- /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}
+  - GET
+    - New response schema: `LoyaltiesEarningRulesResponse` (old one: `8_obj_earning_rule_object`)
+  - PUT
+    - New request schema: `LoyaltiesUpdateEarningRule` (old one: `8_req_update_earning_rule`)
+    - New response schema: `LoyaltiesUpdateEarningRuleResponse` (old one: `8_obj_earning_rule_object`)
+- /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable
+  - POST
+    - New response schema: `LoyaltiesEnableEarningRulesResponse` (old one: `8_obj_earning_rule_object_no_validation_rule`)
+- /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable
+    - POST
+        - New response schema: `LoyaltiesDisableEarningRulesResponse` (old one: `8_obj_earning_rule_object_no_validation_rule`)
+
 ## 20230823 - New Endpoints
 
 ### Introduced new endpoints and related object schemas
