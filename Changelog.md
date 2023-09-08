@@ -1,5 +1,34 @@
 # Changelog
 
+## 20230908 - New Endpoint & Schemas Changes
+
+#### Added new endpoint POST `/v1/product-collections`
+#### New schemas:
+- Junction
+- FiltersCondition
+- CreateProductCollectionStatic
+- FieldConditions
+- CreateProductCollectionAutoUpdate
+- CreateProductCollectionStaticProduct
+- ProductCollectionsObject
+- ListProductCollectionsParameters
+- ListProductCollections
+- ListProductsInCollectionParameters
+- ListProductsInCollection
+- ProductInCollectionSkuProduct
+- ProductInCollectionSku
+- ProductInCollectionProduct
+- CreateProductCollection
+#### Schemas Changes
+- GET /v1/product-collections
+  - Response schema was changed to `ListProductCollections` from `12_res_product-collections`
+  - Query parameters:
+    - order (only 2 options now)
+- GET /v1/product-collections/{productCollectionId}
+  - Response schema was changed to `ProductCollectionsObject` from `12_obj_product_collection_object`
+- GET /v1/product-collections/{productCollectionId}/products
+  - Response schema was changed to `ListProductsInCollection` from `11_res_product-collections_productCollectionID_products`
+
 ## 20230823 - New Endpoints
 
 ### Introduced new endpoints and related object schemas
