@@ -12,17 +12,17 @@
 
 **Endpoints changes**
 - `/v1/categories`
-- GET
-- Response schema was replaced with `ListCategories`
-- POST
-- Request parameters schema was replaced with `CreateCategory`
-- Response schema was replaced with `ResponseCreateCategory`
+  - GET
+    - Response schema was replaced with `ListCategories` (old 20_res_list_categories)
+  - POST
+    - Request parameters schema was replaced with `CreateCategory` (old 20_req_create_category)
+    - Response schema was replaced with `ResponseCreateCategory` (old 20_res_create_category)
 - `/v1/categories/{categoryId}`
-- GET
-- Response schema was replaced with `CategoryObject`
-- PUT
-- Request parameters schema was replaced with `UpdateCategoryRequest`
-- Response schema was replaced with `ResponseUpdateCategory`
+  - GET
+    - Response schema was replaced with `CategoryObject` (old 20_obj_category_object)
+  - PUT
+    - Request parameters schema was replaced with `UpdateCategoryRequest` (old 20_req_update_categories_categoryId)
+    - Response schema was replaced with `ResponseUpdateCategory` (old 20_obj_category_object)
 
 ## 20230823 - New Endpoints
 
