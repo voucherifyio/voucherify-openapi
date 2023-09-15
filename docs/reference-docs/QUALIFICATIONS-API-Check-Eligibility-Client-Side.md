@@ -1,11 +1,11 @@
 ---
-title: Examine Qualification [Beta]
+title: Check Eligibility (client-side) [Beta]
 type: endpoint
 category: 639ba2628407100061f5faac
 parentDoc: 64d0e09b5a917a1254315da8
-slug: examine-qualification
+slug: check-eligibility-client-side
 hidden: false
-order: 2
+order: 3
 ---
 
 [block:html]
