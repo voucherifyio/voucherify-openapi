@@ -1,4 +1,4 @@
-{
+ {
   "openapi": "3.0.0",
   "info": {
     "title": "Voucherify API",
@@ -16260,7 +16260,7 @@
       },
       "19_obj_redemption_rollback_object_promotion_tier_stacked": {
         "type": "object",
-        "title": "Promotion Tier",
+        "title": "Rollback Promotion Tier",
         "description": "This is an object representing a promotion tier redemption rollback",
         "properties": {
           "id": {
@@ -36048,6 +36048,42 @@
           }
         }
       },
+      "16_filter_conditions_string_qualification": {
+        "title": "Filter by conditions",
+        "type": "object",
+        "description": "Data filters used to narrow the data records to be returned in the result.",
+        "properties": {
+          "conditions": {
+            "type": "object",
+            "description": "Data filters used to narrow the data records to be returned in the result.",
+            "properties": {
+              "$in": {
+                "type": "array",
+                "description": "Array of resource values that should be included in the results. (multiple values)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "$is": {
+                "type": "string",
+                "description": "Value is exactly this value. (single value)"
+              },
+              "$is_not": {
+                "type": "string",
+                "description": "Results omit this value. (single value)"
+              },
+              "$has_value": {
+                "type": "string",
+                "description": "Value is NOT null. The value for this parameter is an empty string."
+              },
+              "$is_unknown": {
+                "type": "string",
+                "description": "Value is null. The value for this parameter is an empty string."
+              }
+            }
+          }
+        }
+      },
       "17_obj_async_action_object": {
         "title": "Async Action Object",
         "type": "object",
@@ -39026,12 +39062,21 @@
               },
               "filters": {
                 "description": "A set of fiters to return only a specific category or type of redeemable.",
-                "anyOf": [
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/23_obj_filter_category_id"
+                  },
+                  {
+                    "$ref": "#/components/schemas/23_obj_filter_campaign_id"
+                  },
                   {
                     "$ref": "#/components/schemas/23_obj_filter_resource_type"
                   },
                   {
-                    "$ref": "#/components/schemas/23_obj_filter_category_id"
+                    "$ref": "#/components/schemas/23_obj_filter_voucher_type"
+                  },
+                  {
+                    "$ref": "#/components/schemas/qualificationJunction"
                   }
                 ]
               }
@@ -39106,31 +39151,59 @@
           }
         }
       },
-      "23_obj_filter_resource_type": {
-        "description": "Filter conditions set on the resource `type`. The resource types include: `voucher`, `promotion_tier`, `campaign`.",
-        "title": "Filter by type",
-        "type": "object",
-        "properties": {
-          "resource_type": {
-            "$ref": "#/components/schemas/16_filter_conditions_string"
-          },
-          "junction": {
-            "$ref": "#/components/schemas/16_filter_junction"
-          }
-        }
-      },
       "23_obj_filter_category_id": {
         "description": "Filter conditions set on the resource `category_id`.",
         "title": "Filter by category ID",
         "type": "object",
         "properties": {
           "category_id": {
-            "$ref": "#/components/schemas/16_filter_conditions_string"
-          },
-          "junction": {
-            "$ref": "#/components/schemas/16_filter_junction"
+            "$ref": "#/components/schemas/16_filter_conditions_string_qualification"
           }
         }
+      },
+      "23_obj_filter_campaign_id": {
+        "description": "Filter conditions set on the resource `campaign_id`.",
+        "title": "Filter by campaign ID",
+        "type": "object",
+        "properties": {
+          "campaign_id": {
+            "$ref": "#/components/schemas/16_filter_conditions_string_qualification"
+          }
+        }
+      },
+      "23_obj_filter_resource_type": {
+        "description": "Filter conditions set on the resource `resource_type`. The resource types include: `voucher`, `promotion_tier`, `campaign`.",
+        "title": "Filter by type",
+        "type": "object",
+        "properties": {
+          "resource_type": {
+            "$ref": "#/components/schemas/16_filter_conditions_string_qualification"
+          }
+        }
+      },
+      "23_obj_filter_voucher_type": {
+        "description": "Filter conditions set on the resource `voucher_type`.",
+        "title": "Filter by type",
+        "type": "object",
+        "properties": {
+          "voucher_type": {
+            "$ref": "#/components/schemas/16_filter_conditions_string_qualification"
+          }
+        }
+      },
+      "qualificationJunction": {
+        "description": "Filter by conditions set on the `junction` parameter indicating how the `conditions` should be accounted for in the query. An `AND` is an all-inclusive logical operator, meaning the `AND` operator displays a record if **ALL** the conditions separated by AND are TRUE, while  an `OR` operator displays a record if **ANY** of the conditions separated by OR is TRUE.",
+        "title": "Logical Operator Between Filters",
+        "$ref": "#/components/schemas/Junction"
+      },
+      "Junction": {
+        "enum": [
+          "AND",
+          "OR",
+          "and",
+          "or"
+        ],
+        "type": "string"
       },
       "23_obj_qualification_redeemables": {
         "title": "Redeemables",
