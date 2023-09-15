@@ -6,11 +6,20 @@
 
 | **API** | **Endpoint** | **New Slug** |
 |---|---|---|
-| **Locations** | Location Object | location-object | true |
-|  | Get Location | get-location | true |
-|  | List Locations | list-locations | true |
-| **Qualifications** | Qualification Object | qualification-object | true |
-|  | Examine Qualification | examine-qualification | true |
+| **Locations** | Location Object | location-object |
+|  | Get Location | get-location |
+|  | List Locations | list-locations |
+| **Qualifications** | Qualification Object | qualification-object |
+|  | Examine Qualification | examine-qualification --> changed to check-eligibility |
+|  | Examine Qualification (cient-side) | examine-qualification-client-side  --> changed to check-eligibility-client-side |
+
+### Removed document explaining deprecated qualifications
+
+- Added a redirect to the new document so that we eliminate 404
+
+| **Category** | **Guide** | **Previous Slug** | **New Slug** |
+|:---|:---|:---|:---|
+| Campaigns Recipes | Qualification - Checking eligibility for promo codes | checking-eligibility-for-coupons | checking-eligibility |
 
 
 ## 20230809 - Deprecated Endpoints
@@ -198,6 +207,9 @@
 /docs/orders-1  -> /docs/orders
 /docs/vouchers-1 -> /docs/vouchers
 /docs/campaigns-1 -> /docs/campaigns
+/docs/checking-eligibility-for-coupons -> /docs/checking-eligibility
+/reference/examine-qualification -> /reference/check-eligibility
+/reference/examine-qualification-client-side -> /reference/check-eligibility-client-side
 /reference/vouchers-get -> /reference/get-voucher
 /reference/add-gift-voucher-balance -> /reference/add-remove-gift-voucher-balance
 /reference/import-vouchers-1 -> /reference/import-vouchers
