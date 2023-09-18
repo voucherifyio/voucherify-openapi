@@ -1,6 +1,46 @@
 # Changelog
 
+## 20230823 - New Endpoints
+
+### Introduced new endpoints and related object schemas
+
+| **API** | **Endpoint** | **New Slug** |
+|---|---|---|
+| **Locations** | Location Object | location-object |
+|  | Get Location | get-location |
+|  | List Locations | list-locations |
+| **Qualifications** | Qualification Object | qualification-object |
+|  | Examine Qualification | examine-qualification --> changed to check-eligibility |
+|  | Examine Qualification (cient-side) | examine-qualification-client-side  --> changed to check-eligibility-client-side |
+
+### Removed document explaining deprecated qualifications
+
+- Added a redirect to the new document so that we eliminate 404
+
+| **Category** | **Guide** | **Previous Slug** | **New Slug** |
+|:---|:---|:---|:---|
+| Campaigns Recipes | Qualification - Checking eligibility for promo codes | checking-eligibility-for-coupons | checking-eligibility |
+
+
+## 20230809 - Deprecated Endpoints
+
+### Marked the following endpoints as deprecated
+
+| **API** | **Endpoint** | **Slug** |
+|---|---|---|
+| **Vouchers** | Examine Qualification | examine-vouchers-qualification |
+| **Campaigns** | Examine Qualification | examine-campaigns-qualification |
+| **Validations** | Validate Voucher | validate-voucher |
+|  | Validate Voucher (client-side) | validate-voucher-client-side |
+|  | Validate Promotions | validate-promotions |
+|  | Validate Promotion Tier | validate-promotion-tier |
+| **Redemptions** | Redeem Voucher | redeem-voucher |
+|  | Redeem Voucher (client-side) | redeem-voucher-client-side |
+|  | Redeem Promotion | redeem-promotion |
+
+
 ## 20230530 - Transition to Interactive documentation
+
 
 ### Slugs updated for Reference Docs
 
@@ -64,6 +104,7 @@
 |  | List Consents (client-side) | get-consent-client-side | list-consents-client-side |
 | **Async Actions** | Get Async Action | get-async-actions-1 | get-async-action |
 
+
 ### Slugs updated for Guides
 
 | **Category** | **Guide** | **Previous Slug** | **New Slug** |
@@ -72,6 +113,7 @@
 | Building Blocks | Orders | orders-1 | orders |
 | Building Blocks | Vouchers | vouchers-1 | vouchers |
 | Building Blocks | Campaigns | campaigns-1 | campaigns |
+
 
 ### Endpoints descriptions that were removed
 
@@ -86,6 +128,7 @@
 | **Products** | [deprecated] Update Products metadata in bulk | **POST** `/products/metadata` | update-products-metadata-in-bulk | deprecated |
 |  | [deprecated] Update Products in bulk | **POST** `/products/bulk` | update-products-in-bulk | deprecated |
 |  | Get SKU [deprecated] | **GET** `/products/{productId}/skus/{skuId}` | get-sku | deprecated |
+
 
 ### Endpoints that were added
 
@@ -164,6 +207,9 @@
 /docs/orders-1  -> /docs/orders
 /docs/vouchers-1 -> /docs/vouchers
 /docs/campaigns-1 -> /docs/campaigns
+/docs/checking-eligibility-for-coupons -> /docs/checking-eligibility
+/reference/examine-qualification -> /reference/check-eligibility
+/reference/examine-qualification-client-side -> /reference/check-eligibility-client-side
 /reference/vouchers-get -> /reference/get-voucher
 /reference/add-gift-voucher-balance -> /reference/add-remove-gift-voucher-balance
 /reference/import-vouchers-1 -> /reference/import-vouchers
@@ -280,3 +326,5 @@ The following endpoints in the OpenAPI document found in the `paths` object are 
 `/v1/export-object`
 `/v1/category-object`
 `/v1/metadata-schema-object`
+`/v1/location-object`
+`/v1/qualification-object`
