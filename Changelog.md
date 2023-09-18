@@ -1,5 +1,17 @@
 # Changelog
 
+## 20230918 - Endpoint bugfixes and improvements
+
+- Described customer object in Track custom event endpoint
+- Fixed qualifications filters (missing and wrong properties)
+- Fixed wrong name of rollback object in Rollback Stackable Redemptions response
+
+| **API** | **Endpoint**                    | **Slug**             |
+|---|---------------------------------|----------------------|
+| **Events** | Track Custom Event              | track-custom-event | true |
+| **Qualifications** | Examine Qualification           | examine-qualification | true |
+| **Stackable Discounts** |  Rollback Stackable Redemptions | rollback-stackable-redemptions | rollback-stacked-redemptions | true |
+
 ## 20230823 - New Endpoints
 
 ### Introduced new endpoints and related object schemas
