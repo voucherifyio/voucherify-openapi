@@ -48,8 +48,8 @@ The Sandbox project is populated with test campaigns, **standalone** codes, cust
 | 15% off for Illy - Arabica (Discount coupons) | 15% off Illy Arabica (test product) |
 | Referral Reward - 15% Discount (Discount coupons) | 15% off applied to whole cart |
 | **Standalone codes:** |  |
-| 50%UPTO100 | 50% off, the maxium discount amount per order is $100 |
-| 15%VISA | 15% off if order is oaid with Visa Card (order metadata: card is Visa). |
+| 50%UPTO100 | 50% off, the maximum discount amount per order is $100 |
+| 15%VISA | 15% off if order is paid with Visa Card (order metadata: card is Visa). |
 | 50%OFF | 50% off, no validation rules |
 | BLCKFRDY | $10 off, no validation rules |
 
