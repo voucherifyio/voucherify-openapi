@@ -2,6 +2,7 @@
 title: Earning Rules
 excerpt: 
 category: 639ba16d677235008f800454
+category-slug: building-blocks
 slug: earning-rules
 type: basic
 hidden: false

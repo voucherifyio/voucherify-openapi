@@ -2,6 +2,7 @@
 title: Vouchers
 excerpt: 
 category: 639ba16d677235008f800454
+category-slug: building-blocks
 slug: vouchers
 type: basic
 hidden: false

@@ -2,6 +2,7 @@
 title: Free shipping disount
 excerpt: How to use free shipping discounts?
 category: 639ba16d677235008f80045e
+category-slug: discounts
 slug: free-shipping-discount
 type: basic
 hidden: false

@@ -2,6 +2,7 @@
 title: Customers
 excerpt: 
 category: 639ba16d677235008f800454
+category-slug: building-blocks
 slug: customers
 type: basic
 hidden: false

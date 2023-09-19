@@ -2,6 +2,7 @@
 title: Troubleshooting
 excerpt: 
 category: 639ba16d677235008f800447
+category-slug: development
 slug: troubleshooting
 type: basic
 hidden: false

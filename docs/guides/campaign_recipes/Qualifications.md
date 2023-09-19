@@ -2,6 +2,7 @@
 title: Qualification - Checking eligibility
 excerpt: null
 category: 639ba16d677235008f80045c
+category-slug: campaigns-1
 slug: checking-eligibility
 type: basic
 hidden: false
