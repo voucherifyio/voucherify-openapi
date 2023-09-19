@@ -8,6 +8,19 @@ The following sequence of actions should be taken to successfully update the Dev
 >
 > If you create a new version of documentation in readme, such as by copying an existing version and renaming the version name, readme.io will create new page IDs and new category IDs. This means that some pre-work is needed for a new version of the documentation. 
 
+## CategoriesIds **IMPORTANT**
+
+This documentation can be used in multiple readmeIo versions at the same time, but this creates a problem since each `.md` file contains categoryId information and this categoryId is strictly connected to a version. Because of that, during contribution please DO NOT check the categoryId information, simply ignore such changes in repo.
+But since the categoryId information can be inaccurate in your project, you need to do following steps:
+
+- 1st time?
+  - Go to `docs` folder
+  - Run `npm install` command
+  - Copy `.env.example` to `.env` and fill the file with your readmeIo auth token
+- Nth time?
+  - Go to `docs` folder
+  - run `npm start -- --version=xxxxxxxxxx` np. `npm start -- --version=2018-08-01` where `version` please put your readme io project version 
+
 ### Pre-work 
 
 This process involves updating all category IDs and slugs in the `.md` files.

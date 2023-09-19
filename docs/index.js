@@ -7,7 +7,7 @@ const { version } = require("minimist")(process.argv.slice(2));
 
 if (!version) {
   console.log(
-    "`version` argument was not provided :/, next time try add `--version=************` at the end of file execution command"
+    "`version` argument was not provided :/, next time try add `-- --version=************` at the end of file execution command"
   );
   return;
 }
