@@ -71,12 +71,12 @@ Since we cannot identify the customer, we can not show redeemables that are out 
     "order": {
         "items": [
             {
-                "source_id": "9919975",
+                "source_id": "bosch_product_1",
                 "quantity": "1",
                 "price": 10000,
                 "related_object": "product",
                 "product": {
-                    "name": "Bosch POF 1200 AE"
+                    "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                 }
             },
             {
@@ -99,37 +99,35 @@ Since we cannot identify the customer, we can not show redeemables that are out 
         "data_ref": "data",
         "data": [
             {
-                "id": "promo_5TgxuYWm7mQoVM562QKaLQGF",
+                "id": "promo_mIVcCKyEOu47LPDjXn3rTUC1",
                 "object": "promotion_tier",
-                "created_at": "2023-09-15T12:48:11.100Z",
+                "created_at": "2023-09-18T11:52:08.234Z",
                 "result": {
                     "discount": {
-                        "type": "AMOUNT",
+                        "type": "PERCENT",
                         "effect": "APPLY_TO_ORDER",
-                        "amount_off": 1000,
+                        "percent_off": 10,
                         "is_dynamic": false
                     }
                 },
                 "order": {
                     "amount": 11500,
-                    "discount_amount": 1000,
-                    "total_discount_amount": 1000,
-                    "total_amount": 10500,
-                    "applied_discount_amount": 1000,
-                    "total_applied_discount_amount": 1000,
+                    "discount_amount": 1150,
+                    "total_discount_amount": 1150,
+                    "total_amount": 10350,
+                    "applied_discount_amount": 1150,
+                    "total_applied_discount_amount": 1150,
                     "items": [
                         {
                             "object": "order_item",
-                            "source_id": "9919975",
+                            "source_id": "bosch_product_1",
                             "related_object": "product",
                             "quantity": 1,
                             "amount": 10000,
                             "price": 10000,
                             "subtotal_amount": 10000,
                             "product": {
-                                "id": "prod_0d8539b587c404cbea",
-                                "source_id": "9919975",
-                                "name": "Bosch POF 1200 AE"
+                                "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                             }
                         },
                         {
@@ -161,29 +159,22 @@ Since we cannot identify the customer, we can not show redeemables that are out 
                     "total": 0,
                     "data_ref": "data",
                     "object": "list"
-                },
-                "metadata": {},
-                "name": "10% off order",
-                "banner": "10% off order",
-                "campaign_id": "camp_orPbvjZ9OSmaZzRvj5gjT1kK",
-                "campaign_name": "Promotion - % off"
+                }
             }
         ],
         "total": 1,
-        "has_more": false
+        "has_more": true
     },
     "order": {
         "items": [
             {
                 "object": "order_item",
-                "source_id": "9919975",
+                "source_id": "bosch_product_1",
                 "related_object": "product",
                 "quantity": 1,
                 "price": 10000,
                 "product": {
-                    "id": "prod_0d8539b587c404cbea",
-                    "source_id": "9919975",
-                    "name": "Bosch POF 1200 AE"
+                    "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                 }
             },
             {
@@ -241,7 +232,7 @@ This would then return the following:
                 "price": 10000,
                 "related_object": "product",
                 "product": {
-                    "name": "BOSCH POF 1200 AE"
+                    "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                 }
             },
             {
@@ -289,7 +280,7 @@ This would then return the following:
                             "price": 10000,
                             "subtotal_amount": 10000,
                             "product": {
-                                "name": "BOSCH POF 1200 AE"
+                                "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                             }
                         },
                         {
@@ -354,7 +345,7 @@ This would then return the following:
                             "price": 10000,
                             "subtotal_amount": 9000,
                             "product": {
-                                "name": "BOSCH POF 1200 AE"
+                                "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                             }
                         },
                         {
@@ -439,7 +430,7 @@ This would then return the following:
                             "price": 10000,
                             "subtotal_amount": 9000,
                             "product": {
-                                "name": "BOSCH POF 1200 AE"
+                                "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                             }
                         },
                         {
@@ -522,7 +513,7 @@ This would then return the following:
                             "price": 10000,
                             "subtotal_amount": 10000,
                             "product": {
-                                "name": "BOSCH POF 1200 AE"
+                                "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                             }
                         },
                         {
@@ -577,77 +568,9 @@ This would then return the following:
                     "data_ref": "data",
                     "object": "list"
                 }
-            },
-            {
-                "id": "promo_5TgxuYWm7mQoVM562QKaLQGF",
-                "object": "promotion_tier",
-                "created_at": "2023-09-15T12:48:11.100Z",
-                "result": {
-                    "discount": {
-                        "type": "AMOUNT",
-                        "effect": "APPLY_TO_ORDER",
-                        "amount_off": 1000,
-                        "is_dynamic": false
-                    }
-                },
-                "order": {
-                    "amount": 11500,
-                    "discount_amount": 1000,
-                    "total_discount_amount": 1000,
-                    "total_amount": 10500,
-                    "applied_discount_amount": 1000,
-                    "total_applied_discount_amount": 1000,
-                    "items": [
-                        {
-                            "object": "order_item",
-                            "source_id": "bosch_product_1",
-                            "related_object": "product",
-                            "quantity": 1,
-                            "amount": 10000,
-                            "price": 10000,
-                            "subtotal_amount": 10000,
-                            "product": {
-                                "name": "BOSCH POF 1200 AE"
-                            }
-                        },
-                        {
-                            "object": "order_item",
-                            "source_id": "digital_book",
-                            "related_object": "product",
-                            "quantity": 1,
-                            "amount": 1500,
-                            "price": 1500,
-                            "subtotal_amount": 1500,
-                            "product": {
-                                "name": "Digital Book"
-                            }
-                        }
-                    ],
-                    "metadata": {},
-                    "customer_id": null,
-                    "referrer_id": null,
-                    "object": "order"
-                },
-                "applicable_to": {
-                    "data": [],
-                    "total": 0,
-                    "data_ref": "data",
-                    "object": "list"
-                },
-                "inapplicable_to": {
-                    "data": [],
-                    "total": 0,
-                    "data_ref": "data",
-                    "object": "list"
-                },
-                "metadata": {},
-                "name": "10% off order",
-                "banner": "10% off order",
-                "campaign_id": "camp_orPbvjZ9OSmaZzRvj5gjT1kK",
-                "campaign_name": "Promotion - % off"
             }
         ],
-        "total": 5,
+        "total": 4,
         "has_more": true
     },
     "tracking_id": "track_wBhrnKJfwZMTuOpQ+uItfJXOJ6STUymy",
@@ -660,7 +583,7 @@ This would then return the following:
                 "quantity": 1,
                 "price": 10000,
                 "product": {
-                    "name": "BOSCH POF 1200 AE"
+                    "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                 }
             },
             {
@@ -726,7 +649,7 @@ Only the voucher codes assigned to the customer will be returned. `"scenario": "
                 "price": 10000,
                 "related_object": "product",
                 "product": {
-                    "name": "BOSCH POF 1200 AE"
+                    "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                 }
             },
             {
@@ -774,7 +697,7 @@ Only the voucher codes assigned to the customer will be returned. `"scenario": "
                             "price": 10000,
                             "subtotal_amount": 10000,
                             "product": {
-                                "name": "BOSCH POF 1200 AE"
+                                "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                             }
                         },
                         {
@@ -839,7 +762,7 @@ Only the voucher codes assigned to the customer will be returned. `"scenario": "
                             "price": 10000,
                             "subtotal_amount": 9000,
                             "product": {
-                                "name": "BOSCH POF 1200 AE"
+                                "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                             }
                         },
                         {
@@ -907,7 +830,7 @@ Only the voucher codes assigned to the customer will be returned. `"scenario": "
                 "quantity": 1,
                 "price": 10000,
                 "product": {
-                    "name": "BOSCH POF 1200 AE"
+                    "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                 }
             },
             {
@@ -960,7 +883,7 @@ Only a promotion that is applicable to one of the items in the cart. `"scenario"
                 "price": 10000,
                 "related_object": "product",
                 "product": {
-                    "name": "BOSCH POF 1200 AE"
+                    "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                 }
             },
             {
@@ -1013,7 +936,7 @@ Only a promotion that is applicable to one of the items in the cart. `"scenario"
                             "price": 10000,
                             "subtotal_amount": 9000,
                             "product": {
-                                "name": "BOSCH POF 1200 AE"
+                                "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                             }
                         },
                         {
@@ -1098,7 +1021,7 @@ Only a promotion that is applicable to one of the items in the cart. `"scenario"
                             "price": 10000,
                             "subtotal_amount": 9000,
                             "product": {
-                                "name": "BOSCH POF 1200 AE"
+                                "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                             }
                         },
                         {
@@ -1181,7 +1104,7 @@ Only a promotion that is applicable to one of the items in the cart. `"scenario"
                             "price": 10000,
                             "subtotal_amount": 10000,
                             "product": {
-                                "name": "BOSCH POF 1200 AE"
+                                "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                             }
                         },
                         {
@@ -1251,7 +1174,7 @@ Only a promotion that is applicable to one of the items in the cart. `"scenario"
                 "quantity": 1,
                 "price": 10000,
                 "product": {
-                    "name": "BOSCH POF 1200 AE"
+                    "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
                 }
             },
             {
