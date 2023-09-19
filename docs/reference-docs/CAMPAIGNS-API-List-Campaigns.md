@@ -2,6 +2,7 @@
 title: List Campaigns
 type: endpoint
 category: 639ba2628407100061f5faac
+category-slug: voucherify-api
 slug: list-campaigns
 parentDoc: 639ba2658407100061f5faaf
 hidden: false

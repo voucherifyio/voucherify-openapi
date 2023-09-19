@@ -2,6 +2,7 @@
 title: Update Customer
 type: endpoint
 category: 639ba2628407100061f5faac
+category-slug: voucherify-api
 slug: update-customer
 parentDoc: 639ba2658407100061f5fab7
 hidden: false

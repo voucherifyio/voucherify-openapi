@@ -2,6 +2,7 @@
 title: Introduction
 excerpt: What is Voucherify API?
 category: 639ba44d204cb60020b4b7ec
+category-slug: introduction
 slug: introduction-1
 type: basic
 hidden: false

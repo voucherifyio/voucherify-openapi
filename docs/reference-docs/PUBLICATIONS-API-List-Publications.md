@@ -2,6 +2,7 @@
 title: List Publications
 type: endpoint
 category: 639ba2628407100061f5faac
+category-slug: voucherify-api
 slug: list-publications
 parentDoc: 63b58495b5ee6800ab6535dc
 hidden: false

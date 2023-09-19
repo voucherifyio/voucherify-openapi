@@ -2,6 +2,7 @@
 title: Redeem Voucher (client-side) [Deprecated]
 type: endpoint
 category: 639ba2628407100061f5faac
+category-slug: voucherify-api
 slug: redeem-voucher-client-side
 parentDoc: 639ba2658407100061f5fab4
 hidden: false

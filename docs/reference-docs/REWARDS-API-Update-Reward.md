@@ -2,6 +2,7 @@
 title: Update Reward
 type: endpoint
 category: 639ba2628407100061f5faac
+category-slug: voucherify-api
 slug: update-reward
 parentDoc: 639ba2658407100061f5fab1
 hidden: false
