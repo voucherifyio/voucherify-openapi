@@ -33,22 +33,23 @@ if (!version) {
 
   const categories = response;
   const pathsToFiles = [];
-  const basePath = path.join(__dirname, "/guides");
   const getFiles = async (path) => {
     const items = await fs.readdir(path, {
       withFileTypes: true,
     });
     for (const item of items) {
       const itemPath = path + `/${item.name}`;
-      if (item.isDirectory()) {
+      if (item.isDirectory() && !itemPath.endsWith("node_modules")) {
         await getFiles(itemPath);
         continue;
       }
-      pathsToFiles.push(itemPath);
+      if (itemPath.endsWith(".md")) {
+        pathsToFiles.push(itemPath);
+      }
     }
   };
 
-  await getFiles(basePath);
+  await getFiles(__dirname);
 
   for (const pathToFile of pathsToFiles) {
     const data = await fs.readFile(pathToFile, { encoding: "utf8" });
