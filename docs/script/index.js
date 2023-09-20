@@ -19,6 +19,7 @@ if (process.env.README_IO_AUTH?.length < 10) {
 }
 const main = async () => {
   const categories = await getCategories();
+  const docsForCategories = new Map();
 
   const basePath = path.join(__dirname, "..");
   const pathsToFiles = await getFiles(basePath);
@@ -31,22 +32,51 @@ const main = async () => {
 
   for (const pathToFile of pathsToFiles) {
     const data = await fsPromises.readFile(pathToFile, { encoding: "utf8" });
-    const categorySlug = data
+    const fileCategorySlug = data
       .match(/category\-slug: .*/)?.[0]
       ?.split?.("category-slug: ")?.[1];
-    if (!categorySlug) {
-      console.log(`error, ${categorySlug}, ${pathToFile}`);
+    if (!fileCategorySlug) {
+      console.log(`error, ${fileCategorySlug}, ${pathToFile}`);
       continue;
     }
     const category = categories
-      .filter((c) => c.slug.includes(categorySlug))
+      .filter((c) => c.slug.includes(fileCategorySlug))
       .sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )?.[0];
+    const categorySlug = category.slug;
+
+    const replaceParentDoc = { old: "", new: "" };
+    const parentDoc = data
+      .match(/parentDoc: .*/)?.[0]
+      ?.split?.("parentDoc: ")?.[1];
+    if (parentDoc) {
+      if (!docsForCategories.get(categorySlug)) {
+        docsForCategories.set(
+          categorySlug,
+          await getDocsForCategory(categorySlug)
+        );
+      }
+      const docsForCategory = docsForCategories.get(categorySlug);
+      const docSlug = data.match(/\nslug: .*/)?.[0]?.split?.("slug: ")?.[1];
+      const parentDoc = docsForCategory.find((categoryDocs) =>
+        categoryDocs.children.find((doc) => doc.slug === docSlug)
+      );
+      if (!parentDoc?._id) {
+        console.log(`error, ${parentDoc}, ${docSlug}, ${pathToFile}`);
+        console.log(JSON.stringify(docsForCategory));
+        throw new Error("Missing parentDoc or parentDoc._id");
+      }
+      replaceParentDoc.old = `parentDoc: ${parentDoc}`;
+      replaceParentDoc.new = `parentDoc: ${parentDoc._id}`;
+      console.log("ok");
+    }
 
     if (!category) {
-      console.log(`error, ${categorySlug}, ${category}, ${pathToFile}`);
+      console.log(
+        `error, ${categorySlug}, ${fileCategorySlug}, ${category}, ${pathToFile}`
+      );
       continue;
     }
 
@@ -73,10 +103,45 @@ const main = async () => {
     //saving to .bin folder
     await fsPromises.writeFile(
       pathToFile.replace(basePath, baseOutputPath),
-      data.replace(/category: .*/, `category: ${category.id}`).toString(),
+      replaceParentDoc.old && replaceParentDoc.new
+        ? data
+            .replace(/category: .*/, `category: ${category.id}`)
+            .replace(replaceParentDoc.old, replaceParentDoc.new)
+            .toString()
+        : data.replace(/category: .*/, `category: ${category.id}`).toString(),
       "utf8"
     );
   }
+};
+
+const getDocsForCategory = async (slug) => {
+  const options = {
+    method: "GET",
+    headers: {
+      "x-readme-version": version,
+      authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
+    },
+  };
+
+  const response = await fetch(
+    `https://dash.readme.com/api/v1/categories/${slug}/docs`,
+    options
+  );
+
+  const responseJSON = await response.json();
+  if (responseJSON.error) {
+    console.log(response);
+    throw new Error(responseJSON.error);
+  }
+
+  if (
+    !Array.isArray(responseJSON) ||
+    responseJSON.find((element) => !element?._id)
+  ) {
+    console.log(responseJSON);
+    throw new Error(`Unknown response :/`);
+  }
+  return responseJSON;
 };
 const getCategories = async () => {
   const options = {
