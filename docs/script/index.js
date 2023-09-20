@@ -48,32 +48,15 @@ if (process.env.README_IO_AUTH?.length < 10) {
   }
 
   const categories = responseJSON;
-  const pathsToFiles = [];
-  const getFiles = async (path) => {
-    const items = await fsPromises.readdir(path, {
-      withFileTypes: true,
-    });
-    for (const item of items) {
-      const itemPath = path + `/${item.name}`;
-      if (item.isDirectory() && !itemPath.endsWith(".bin")) {
-        await getFiles(itemPath);
-        continue;
-      }
-      if (itemPath.endsWith(".md")) {
-        pathsToFiles.push(itemPath);
-      }
-    }
-  };
 
   const basePath = path.join(__dirname, "..");
+  const pathsToFiles = await getFiles(basePath);
 
   const baseOutputPath = path.join(basePath, ".bin");
   //create .bin folder
   if (!fs.existsSync(baseOutputPath)) {
     await fsPromises.mkdir(baseOutputPath);
   }
-
-  await getFiles(basePath);
 
   for (const pathToFile of pathsToFiles) {
     const data = await fsPromises.readFile(pathToFile, { encoding: "utf8" });
@@ -90,6 +73,7 @@ if (process.env.README_IO_AUTH?.length < 10) {
       continue;
     }
 
+    //folders that output data will be present
     const folders = pathToFile
       .replace(basePath, "")
       .split("/")
@@ -102,12 +86,14 @@ if (process.env.README_IO_AUTH?.length < 10) {
         return temp;
       });
 
+    //checking if folders exists
     for (const folder of folders) {
       if (!fs.existsSync(baseOutputPath + "/" + folder)) {
         await fsPromises.mkdir(baseOutputPath + "/" + folder);
       }
     }
 
+    //saving to .bin folder
     await fsPromises.writeFile(
       pathToFile.replace(basePath, baseOutputPath),
       data.replace(/category: .*/, `category: ${category.id}`).toString(),
@@ -115,3 +101,23 @@ if (process.env.README_IO_AUTH?.length < 10) {
     );
   }
 })();
+
+const getFiles = async (path) => {
+  const pathsToFiles = [];
+  const items = await fsPromises.readdir(path, {
+    withFileTypes: true,
+  });
+  for (const item of items) {
+    const itemPath = path + `/${item.name}`;
+    if (item.isDirectory() && !itemPath.endsWith(".bin")) {
+      (await getFiles(itemPath)).forEach((value) => {
+        pathsToFiles.push(value);
+      });
+      continue;
+    }
+    if (itemPath.endsWith(".md")) {
+      pathsToFiles.push(itemPath);
+    }
+  }
+  return pathsToFiles;
+};
