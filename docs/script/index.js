@@ -63,13 +63,16 @@ const main = async () => {
       const parentDoc = docsForCategory.find((categoryDocs) =>
         categoryDocs.children.find((doc) => doc.slug === docSlug)
       );
-      if (!parentDoc?._id) {
+      const allowedMissing = ["establish-validation-session"];
+      if (allowedMissing.includes(docSlug)) {
+      } else if (!parentDoc?._id) {
         console.log(`error, ${parentDoc}, ${docSlug}, ${pathToFile}`);
         console.log(JSON.stringify(docsForCategory));
         throw new Error("Missing parentDoc or parentDoc._id");
+      } else {
+        replaceParentDoc.old = `parentDoc: ${parentDoc}`;
+        replaceParentDoc.new = `parentDoc: ${parentDoc._id}`;
       }
-      replaceParentDoc.old = `parentDoc: ${parentDoc}`;
-      replaceParentDoc.new = `parentDoc: ${parentDoc._id}`;
       console.log("ok");
     }
 
