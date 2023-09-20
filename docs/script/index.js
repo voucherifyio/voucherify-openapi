@@ -17,37 +17,8 @@ if (process.env.README_IO_AUTH?.length < 10) {
   console.log("`README_IO_AUTH` was not provided in `.env` file :/");
   return;
 }
-
-(async () => {
-  const options = {
-    method: "GET",
-    headers: {
-      "x-readme-version": version,
-      authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
-    },
-  };
-
-  const response = await fetch(
-    "https://dash.readme.com/api/v1/categories?perPage=100",
-    options
-  );
-
-  const responseJSON = await response.json();
-  if (responseJSON.error) {
-    console.log(response);
-    return;
-  }
-
-  if (
-    !Array.isArray(responseJSON) ||
-    responseJSON.find((element) => !element?.id)
-  ) {
-    console.log(`Unknown response :/`);
-    console.log(responseJSON);
-    return;
-  }
-
-  const categories = responseJSON;
+const main = async () => {
+  const categories = await getCategories();
 
   const basePath = path.join(__dirname, "..");
   const pathsToFiles = await getFiles(basePath);
@@ -67,7 +38,13 @@ if (process.env.README_IO_AUTH?.length < 10) {
       console.log(`error, ${categorySlug}, ${pathToFile}`);
       continue;
     }
-    const category = categories.find((c) => c.slug === categorySlug);
+    const category = categories
+      .filter((c) => c.slug.includes(categorySlug))
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )?.[0];
+
     if (!category) {
       console.log(`error, ${categorySlug}, ${category}, ${pathToFile}`);
       continue;
@@ -100,8 +77,36 @@ if (process.env.README_IO_AUTH?.length < 10) {
       "utf8"
     );
   }
-})();
+};
+const getCategories = async () => {
+  const options = {
+    method: "GET",
+    headers: {
+      "x-readme-version": version,
+      authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
+    },
+  };
 
+  const response = await fetch(
+    "https://dash.readme.com/api/v1/categories?perPage=100",
+    options
+  );
+
+  const responseJSON = await response.json();
+  if (responseJSON.error) {
+    console.log(response);
+    throw new Error(responseJSON.error);
+  }
+
+  if (
+    !Array.isArray(responseJSON) ||
+    responseJSON.find((element) => !element?.id)
+  ) {
+    console.log(responseJSON);
+    throw new Error(`Unknown response :/`);
+  }
+  return responseJSON;
+};
 const getFiles = async (path) => {
   const pathsToFiles = [];
   const items = await fsPromises.readdir(path, {
@@ -121,3 +126,5 @@ const getFiles = async (path) => {
   }
   return pathsToFiles;
 };
+
+main();
