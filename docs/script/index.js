@@ -66,7 +66,13 @@ if (process.env.README_IO_AUTH?.length < 10) {
   };
 
   const basePath = path.join(__dirname, "..");
-  const baseOutputPath = path.join(basePath, "..", ".bin");
+
+  const baseOutputPath = path.join(basePath, ".bin");
+  //create .bin folder
+  if (!fs.existsSync(baseOutputPath)) {
+    await fsPromises.mkdir(baseOutputPath);
+  }
+
   await getFiles(basePath);
 
   for (const pathToFile of pathsToFiles) {
