@@ -55,7 +55,7 @@ if (process.env.README_IO_AUTH?.length < 10) {
     });
     for (const item of items) {
       const itemPath = path + `/${item.name}`;
-      if (item.isDirectory() && !itemPath.endsWith("node_modules")) {
+      if (item.isDirectory() && !itemPath.endsWith(".bin")) {
         await getFiles(itemPath);
         continue;
       }
