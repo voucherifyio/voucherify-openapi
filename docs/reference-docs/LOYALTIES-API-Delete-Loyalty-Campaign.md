@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: delete-loyalty-program
 parentDocSlug: loyalties-api
 hidden: false
-order: 5
+order: 9
 ---
 [block:html]
 {

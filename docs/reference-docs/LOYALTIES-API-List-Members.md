@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: list-members
 parentDocSlug: loyalties-api
 hidden: false
-order: 6
+order: 10
 ---
 [block:html]
 {

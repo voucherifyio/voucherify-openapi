@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: delete-customer-permanently
 parentDocSlug: customers-api
 hidden: false
-order: 10
+order: 13
 ---
 [block:html]
 {
