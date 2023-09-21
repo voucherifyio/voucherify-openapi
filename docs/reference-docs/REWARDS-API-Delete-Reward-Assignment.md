@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: delete-reward-assignment
 parentDocSlug: rewards-api
 hidden: false
-order: 10
+order: 12
 ---
 [block:html]
 {
