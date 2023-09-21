@@ -2,7 +2,7 @@
 title: Limits
 excerpt: API calls limits and optimization
 category: 639ba16d677235008f800447
-category-slug: development
+categorySlug: development
 slug: limits
 type: basic
 hidden: false

@@ -2,7 +2,7 @@
 title: Security
 excerpt: 
 category: 639ba16d677235008f800447
-category-slug: development
+categorySlug: development
 slug: security
 type: basic
 hidden: false

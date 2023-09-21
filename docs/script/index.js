@@ -33,8 +33,8 @@ const main = async () => {
   for (const pathToFile of pathsToFiles) {
     const data = await fsPromises.readFile(pathToFile, { encoding: "utf8" });
     const fileCategorySlug = data
-      .match(/category\-slug: .*/)?.[0]
-      ?.split?.("category-slug: ")?.[1];
+      .match(/categorySlug: .*/)?.[0]
+      ?.split?.("categorySlug: ")?.[1];
     if (!fileCategorySlug) {
       console.log(`error, ${fileCategorySlug}, ${pathToFile}`);
       continue;
@@ -66,6 +66,7 @@ const main = async () => {
       const allowedMissing = [
         "establish-validation-session",
         "stacking-api-overview",
+        "validation-session",
       ];
       if (allowedMissing.includes(docSlug)) {
       } else if (!parentDoc?._id) {

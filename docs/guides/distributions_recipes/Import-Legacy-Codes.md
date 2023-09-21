@@ -2,7 +2,7 @@
 title: Import legacy codes
 excerpt: null
 category: 639ba16d677235008f80045d
-category-slug: distribution-1
+categorySlug: distribution-1
 slug: import-codes
 type: basic
 hidden: false

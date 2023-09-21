@@ -2,7 +2,7 @@
 title: Product-specific discounts
 excerpt: A recipe for using *applicable_to* validation rule
 category: 639ba16d677235008f80045e
-category-slug: discounts
+categorySlug: discounts
 slug: discount-for-particular-product
 type: basic
 hidden: false

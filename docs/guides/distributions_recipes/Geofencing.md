@@ -2,7 +2,7 @@
 title: Geofencing
 excerpt: 
 category: 639ba16d677235008f80045d
-category-slug: distribution-1
+categorySlug: distribution-1
 slug: geofencing
 type: link
 hidden: false

@@ -2,7 +2,7 @@
 title: Error Codes
 excerpt: 
 category: 639ba16d677235008f800447
-category-slug: development
+categorySlug: development
 slug: error-codes
 type: link
 hidden: false

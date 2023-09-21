@@ -2,7 +2,7 @@
 title: Orders
 excerpt: 
 category: 639ba16d677235008f800454
-category-slug: building-blocks
+categorySlug: building-blocks
 slug: orders
 type: basic
 hidden: false

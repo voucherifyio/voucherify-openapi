@@ -2,7 +2,7 @@
 title: Performance
 excerpt: Average response rates
 category: 639ba16d677235008f800447
-category-slug: development
+categorySlug: development
 slug: performance
 type: basic
 hidden: false

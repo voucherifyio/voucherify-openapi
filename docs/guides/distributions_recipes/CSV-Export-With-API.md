@@ -2,7 +2,7 @@
 title: CSV export with API
 excerpt: null
 category: 639ba16d677235008f80045d
-category-slug: distribution-1
+categorySlug: distribution-1
 slug: csv-export
 type: basic
 hidden: false

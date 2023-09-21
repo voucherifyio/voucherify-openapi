@@ -2,7 +2,7 @@
 title: Referral Program
 excerpt: null
 category: 639ba16d677235008f80045c
-category-slug: campaigns-1
+categorySlug: campaigns-1
 slug: referral-program
 type: link
 hidden: false
