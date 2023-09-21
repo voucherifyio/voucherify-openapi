@@ -1,7 +1,6 @@
 ---
 title: Release Validation Session
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: release-validation-session
 parentDocSlug: vouchers-api

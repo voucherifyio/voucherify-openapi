@@ -1,7 +1,6 @@
 ---
 title: List Reward Assignments
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: list-reward-assignments-2
 parentDocSlug: loyalties-api

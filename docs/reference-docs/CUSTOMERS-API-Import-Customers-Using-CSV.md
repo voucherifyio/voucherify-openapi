@@ -1,7 +1,6 @@
 ---
 title: Import and Update Customers using CSV
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: import-customers-using-csv
 parentDocSlug: customers-api

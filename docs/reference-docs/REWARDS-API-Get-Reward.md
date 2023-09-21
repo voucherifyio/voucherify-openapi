@@ -1,7 +1,6 @@
 ---
 title: Get Reward
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: get-reward
 parentDocSlug: rewards-api

@@ -1,7 +1,6 @@
 ---
 title: Delete Promotion Tier
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: delete-promotion-tier
 parentDocSlug: promotions-api

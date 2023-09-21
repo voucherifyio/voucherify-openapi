@@ -1,7 +1,6 @@
 ---
 title: Validation Object
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 parentDocSlug: validations-api
 slug: validation-object

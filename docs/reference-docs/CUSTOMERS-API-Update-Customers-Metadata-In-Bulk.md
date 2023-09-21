@@ -1,7 +1,6 @@
 ---
 title: Update Customers' Metadata in bulk
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: update-customers-metadata-in-bulk
 parentDocSlug: customers-api

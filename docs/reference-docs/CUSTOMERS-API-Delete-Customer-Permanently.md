@@ -1,7 +1,6 @@
 ---
 title: Delete Customer Permanently
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: delete-customer-permanently
 parentDocSlug: customers-api

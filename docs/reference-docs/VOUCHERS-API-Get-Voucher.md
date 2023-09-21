@@ -1,7 +1,6 @@
 ---
 title: Get Voucher
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: get-voucher
 parentDocSlug: vouchers-api

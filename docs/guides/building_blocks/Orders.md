@@ -1,7 +1,6 @@
 ---
 title: Orders
 excerpt: 
-category: 639ba16d677235008f800454
 categorySlug: building-blocks
 slug: orders
 type: basic

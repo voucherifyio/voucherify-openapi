@@ -1,7 +1,6 @@
 ---
 title: Messaging automation
 excerpt: How to set up an automatic promotion delivery for a dynamic customer segment?
-category: 639ba16d677235008f80045d
 categorySlug: distribution-1
 slug: automatic-delivery
 type: basic

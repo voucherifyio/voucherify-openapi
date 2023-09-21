@@ -1,7 +1,6 @@
 ---
 title: Geofencing
 excerpt: 
-category: 639ba16d677235008f80045d
 categorySlug: distribution-1
 slug: geofencing
 type: link

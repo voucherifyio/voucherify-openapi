@@ -1,7 +1,6 @@
 ---
 title: Prepaid Gift Cards
 excerpt: null
-category: 639ba16d677235008f80045c
 categorySlug: campaigns-1
 slug: prepaid-gift-cards
 type: basic

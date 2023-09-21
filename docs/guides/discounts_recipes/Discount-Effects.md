@@ -1,7 +1,6 @@
 ---
 title: Discount Effects
 excerpt: The discount effect defines how the discount will be applied to the customer's cart. In this article, we're going to show you how different effects work with discounts.
-category: 639ba16d677235008f80045e
 categorySlug: discounts
 slug: discount-effects
 type: basic

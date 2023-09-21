@@ -1,7 +1,6 @@
 ---
 title: Client-side API
 excerpt: 
-category: 639ba16d677235008f800447
 categorySlug: development
 slug: client-side-api
 type: basic

@@ -1,7 +1,6 @@
 ---
 title: Track Custom Event (client-side)
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: track-custom-event-client-side
 parentDocSlug: events-api

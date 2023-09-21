@@ -1,7 +1,6 @@
 ---
 title: Create Segment
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: create-segment
 parentDocSlug: segments-api

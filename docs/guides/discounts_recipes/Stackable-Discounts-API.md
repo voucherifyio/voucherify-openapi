@@ -1,7 +1,6 @@
 ---
 title: Stackable discounts API
 excerpt: 
-category: 639ba16d677235008f80045e
 categorySlug: discounts
 slug: manage-stackable-discounts
 type: basic

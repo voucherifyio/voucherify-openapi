@@ -1,7 +1,6 @@
 ---
 title: Update Customer's consents
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: update-customers-consents
 parentDocSlug: customers-api

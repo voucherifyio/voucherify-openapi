@@ -1,7 +1,6 @@
 ---
 title: List SKUs in Product
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: list-skus-in-product
 parentDocSlug: products-api

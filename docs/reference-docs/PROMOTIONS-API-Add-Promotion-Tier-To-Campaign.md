@@ -1,7 +1,6 @@
 ---
 title: Add Promotion Tier to Campaign
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: add-promotion-tier-to-campaign
 parentDocSlug: promotions-api

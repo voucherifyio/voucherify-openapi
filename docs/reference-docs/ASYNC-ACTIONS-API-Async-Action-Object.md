@@ -1,7 +1,6 @@
 ---
 title: Async Action Object
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 parentDocSlug: async-actions-api
 slug: async-action-object

@@ -1,7 +1,6 @@
 ---
 title: Create Orders Export
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: create-order-export
 parentDocSlug: orders-api

@@ -1,7 +1,6 @@
 ---
 title: Update Vouchers' metadata in bulk
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: update-vouchers-metadata-in-bulk
 parentDocSlug: vouchers-api

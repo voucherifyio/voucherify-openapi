@@ -1,7 +1,6 @@
 ---
 title: Create Order
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: create-order
 parentDocSlug: orders-api

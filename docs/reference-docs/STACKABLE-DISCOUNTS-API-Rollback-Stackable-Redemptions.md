@@ -1,7 +1,6 @@
 ---
 title: Rollback Stackable Redemptions
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: rollback-stacked-redemptions
 parentDocSlug: stackable-discounts-api

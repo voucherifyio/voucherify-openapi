@@ -1,7 +1,6 @@
 ---
 title: Enable Campaign
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: enable-campaign
 parentDocSlug: campaigns-api

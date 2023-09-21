@@ -1,7 +1,6 @@
 ---
 title: Disable Voucher
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: disable-voucher
 parentDocSlug: vouchers-api

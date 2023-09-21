@@ -1,7 +1,6 @@
 ---
 title: CSV export with API
 excerpt: null
-category: 639ba16d677235008f80045d
 categorySlug: distribution-1
 slug: csv-export
 type: basic

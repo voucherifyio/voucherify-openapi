@@ -1,7 +1,6 @@
 ---
 title: Stackable Redemptions Object
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 parentDocSlug: stackable-discounts-api
 slug: stackable-redemptions-object

@@ -1,7 +1,6 @@
 ---
 title: Status
 excerpt: 
-category: 639ba16d677235008f800441
 categorySlug: more
 slug: status
 type: link

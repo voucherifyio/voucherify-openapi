@@ -1,7 +1,6 @@
 ---
 title: Import SKUs using CSV
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: import-skus-using-csv
 parentDocSlug: products-api

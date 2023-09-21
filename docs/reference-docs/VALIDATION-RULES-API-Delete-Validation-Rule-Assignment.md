@@ -1,7 +1,6 @@
 ---
 title: Delete Validation Rule Assignment
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: delete-validation-rule-assignment
 parentDocSlug: validation-rules-api

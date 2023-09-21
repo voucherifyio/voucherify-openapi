@@ -1,7 +1,6 @@
 ---
 title: Get Redemption
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: get-redemption
 parentDocSlug: redemptions-api

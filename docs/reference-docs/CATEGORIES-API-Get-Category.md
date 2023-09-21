@@ -1,7 +1,6 @@
 ---
 title: Get Category
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: get-category
 parentDocSlug: categories-api

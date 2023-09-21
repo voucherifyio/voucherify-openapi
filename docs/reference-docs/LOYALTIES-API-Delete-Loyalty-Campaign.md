@@ -1,7 +1,6 @@
 ---
 title: Delete Loyalty Campaign
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: delete-loyalty-program
 parentDocSlug: loyalties-api

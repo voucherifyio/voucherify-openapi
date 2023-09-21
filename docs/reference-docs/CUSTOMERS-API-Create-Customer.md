@@ -1,7 +1,6 @@
 ---
 title: Create Customer
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: create-customer
 parentDocSlug: customers-api

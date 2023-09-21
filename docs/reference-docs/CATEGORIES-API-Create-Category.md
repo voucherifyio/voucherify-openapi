@@ -1,7 +1,6 @@
 ---
 title: Create Category
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: create-category
 parentDocSlug: categories-api

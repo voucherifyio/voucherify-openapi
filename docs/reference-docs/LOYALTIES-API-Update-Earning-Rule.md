@@ -1,7 +1,6 @@
 ---
 title: Update Earning Rule
 type: endpoint
-category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: update-earning-rule
 parentDocSlug: loyalties-api
