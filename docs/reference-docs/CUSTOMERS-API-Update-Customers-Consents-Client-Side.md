@@ -1,5 +1,5 @@
 ---
-title: Update Customer's consents (client-side)
+title: Update Customer's Consents (client-side)
 type: endpoint
 categorySlug: voucherify-api
 slug: update-customers-consents-client-side
