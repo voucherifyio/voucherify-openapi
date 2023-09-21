@@ -45,13 +45,19 @@ const main = async () => {
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       )?.[0];
+    if (!category) {
+      console.log(`error, ${fileCategorySlug}, ${category}, ${pathToFile}`);
+      continue;
+    }
+
     const categorySlug = category.slug;
 
+    //handling reference-docs aka. "parentDoc: id"
     const replaceParentDoc = { old: "", new: "" };
-    const parentDoc = data
+    const parentDocFile = data
       .match(/parentDoc: .*/)?.[0]
       ?.split?.("parentDoc: ")?.[1];
-    if (parentDoc) {
+    if (parentDocFile) {
       if (!docsForCategories.get(categorySlug)) {
         docsForCategories.set(
           categorySlug,
@@ -60,31 +66,41 @@ const main = async () => {
       }
       const docsForCategory = docsForCategories.get(categorySlug);
       const docSlug = data.match(/\nslug: .*/)?.[0]?.split?.("slug: ")?.[1];
-      const parentDoc = docsForCategory.find((categoryDocs) =>
-        categoryDocs.children.find((doc) => doc.slug === docSlug)
-      );
       const allowedMissing = [
         "establish-validation-session",
         "stacking-api-overview",
         "validation-session",
       ];
       if (allowedMissing.includes(docSlug)) {
-      } else if (!parentDoc?._id) {
-        console.log(`error, ${parentDoc}, ${docSlug}, ${pathToFile}`);
-        console.log(JSON.stringify(docsForCategory));
-        throw new Error("Missing parentDoc or parentDoc._id");
+        const parentDocSlug = data
+          .match(/parentDocSlug: .*/)?.[0]
+          ?.split?.("parentDocSlug: ")?.[1];
+        if (!parentDocSlug) {
+          console.log(`error! parentDocSlug was not provided in ${pathToFile}`);
+          throw new Error("Missing parentDocSlug");
+        }
+        const parentDoc = docsForCategory.find(
+          (categoryDoc) => categoryDoc.slug === parentDocSlug
+        );
+        if (!parentDoc) {
+          console.log(`error, ${parentDocSlug}, ${docSlug}, ${pathToFile}`);
+          throw new Error("parentDoc not found");
+        }
+        replaceParentDoc.old = `parentDoc: ${parentDocFile}`;
+        replaceParentDoc.new = `parentDoc: ${parentDoc._id}`;
       } else {
-        replaceParentDoc.old = `parentDoc: ${parentDoc}`;
+        const parentDoc = docsForCategory.find((categoryDocs) =>
+          categoryDocs.children.find((doc) => doc.slug === docSlug)
+        );
+        if (!parentDoc?._id) {
+          console.log(`error, ${parentDocFile}, ${docSlug}, ${pathToFile}`);
+          console.log(JSON.stringify(docsForCategory));
+          throw new Error("Missing parentDoc or parentDoc._id");
+        }
+        replaceParentDoc.old = `parentDoc: ${parentDocFile}`;
         replaceParentDoc.new = `parentDoc: ${parentDoc._id}`;
       }
       console.log("ok");
-    }
-
-    if (!category) {
-      console.log(
-        `error, ${categorySlug}, ${fileCategorySlug}, ${category}, ${pathToFile}`
-      );
-      continue;
     }
 
     //folders that output data will be present
