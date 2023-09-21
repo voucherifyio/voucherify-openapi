@@ -3,7 +3,7 @@ title: Location Object
 type: endpoint
 category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
-parentDoc: 64d0e09b5a917a1254315da7
+parentDocSlug: locations-api
 slug: location-object
 hidden: false
 order: 1

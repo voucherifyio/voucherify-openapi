@@ -92,6 +92,15 @@ const main = async () => {
         const parentDoc = docsForCategory.find((categoryDocs) =>
           categoryDocs.children.find((doc) => doc.slug === docSlug)
         );
+
+        await fsPromises.writeFile(
+          pathToFile.replace(pathToFile, pathToFile),
+          data
+            .replace(/parentDoc: .*/, `parentDocSlug: ${parentDoc.slug}`)
+            .toString(),
+          "utf8"
+        );
+
         if (!parentDoc?._id) {
           console.log(`error, ${parentDocFile}, ${docSlug}, ${pathToFile}`);
           console.log(JSON.stringify(docsForCategory));

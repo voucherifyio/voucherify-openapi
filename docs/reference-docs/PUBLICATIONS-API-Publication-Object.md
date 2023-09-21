@@ -3,7 +3,7 @@ title: Publication Object
 type: endpoint
 category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
-parentDoc: 63b58495b5ee6800ab6535dc
+parentDocSlug: publications-api
 slug: publication-object
 hidden: false
 order: 1

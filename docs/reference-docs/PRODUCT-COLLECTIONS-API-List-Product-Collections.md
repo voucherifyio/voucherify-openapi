@@ -4,7 +4,7 @@ type: endpoint
 category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: list-product-collections
-parentDoc: 639ba2658407100061f5faba
+parentDocSlug: product-collections-api
 hidden: false
 order: 1
 ---

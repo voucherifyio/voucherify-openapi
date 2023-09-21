@@ -3,7 +3,7 @@ title: Check Eligibility (client-side) [Beta]
 type: endpoint
 category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
-parentDoc: 64d0e09b5a917a1254315da8
+parentDocSlug: qualifications-api
 slug: check-eligibility-client-side
 hidden: false
 order: 3

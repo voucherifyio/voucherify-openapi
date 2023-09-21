@@ -4,7 +4,7 @@ type: endpoint
 category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: validate-promotions
-parentDoc: 639ba2658407100061f5fab3
+parentDocSlug: validations-api
 hidden: false
 order: 4
 ---

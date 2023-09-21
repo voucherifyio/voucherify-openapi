@@ -4,7 +4,7 @@ type: endpoint
 category: 639ba2628407100061f5faac
 categorySlug: voucherify-api
 slug: create-segment
-parentDoc: 639ba2658407100061f5fabc
+parentDocSlug: segments-api
 hidden: false
 order: 2
 ---
