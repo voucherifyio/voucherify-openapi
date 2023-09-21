@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: add-remove-loyalty-card-balance-1
 parentDocSlug: loyalties-api
 hidden: false
-order: 13
+order: 17
 ---
 [block:html]
 {

@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: redeem-reward-1
 parentDocSlug: loyalties-api
 hidden: false
-order: 31
+order: 35
 ---
 [block:html]
 {

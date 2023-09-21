@@ -1,11 +1,11 @@
 ---
-title: Transfer Loyalty Points
+title: Transfer Points
 type: endpoint
 categorySlug: voucherify-api
 slug: transfer-points
 parentDocSlug: loyalties-api
 hidden: false
-order: 14
+order: 18
 ---
 [block:html]
 {
