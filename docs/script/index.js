@@ -63,7 +63,10 @@ const main = async () => {
       const parentDoc = docsForCategory.find((categoryDocs) =>
         categoryDocs.children.find((doc) => doc.slug === docSlug)
       );
-      const allowedMissing = ["establish-validation-session"];
+      const allowedMissing = [
+        "establish-validation-session",
+        "stacking-api-overview",
+      ];
       if (allowedMissing.includes(docSlug)) {
       } else if (!parentDoc?._id) {
         console.log(`error, ${parentDoc}, ${docSlug}, ${pathToFile}`);
