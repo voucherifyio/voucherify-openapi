@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: create-segment
 parentDocSlug: segments-api
 hidden: false
-order: 2
+order: 3
 ---
 [block:html]
 {

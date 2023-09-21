@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: create-export
 parentDocSlug: exports-api
 hidden: false
-order: 4
+order: 5
 ---
 [block:html]
 {

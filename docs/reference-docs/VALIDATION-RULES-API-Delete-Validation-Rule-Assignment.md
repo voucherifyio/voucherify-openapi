@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: delete-validation-rule-assignment
 parentDocSlug: validation-rules-api
 hidden: false
-order: 9
+order: 10
 ---
 [block:html]
 {
