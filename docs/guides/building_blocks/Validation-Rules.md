@@ -1,7 +1,7 @@
 ---
 title: Validation Rules
 excerpt: 
-category: 639ba16d677235008f800454
+categorySlug: building-blocks
 slug: validation-rules
 type: basic
 hidden: false

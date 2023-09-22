@@ -1,11 +1,11 @@
 ---
 title: Get Member
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: get-member
-parentDoc: 639ba2658407100061f5fab6
+parentDocSlug: loyalties-api
 hidden: false
-order: 7
+order: 11
 ---
 [block:html]
 {

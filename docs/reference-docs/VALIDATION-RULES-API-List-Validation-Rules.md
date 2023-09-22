@@ -1,11 +1,11 @@
 ---
 title: List Validation Rules
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: list-validation-rules
-parentDoc: 639ba2658407100061f5fabb
+parentDocSlug: validation-rules-api
 hidden: false
-order: 1
+order: 3
 ---
 [block:html]
 {

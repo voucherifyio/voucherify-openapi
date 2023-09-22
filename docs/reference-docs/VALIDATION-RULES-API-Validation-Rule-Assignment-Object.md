@@ -1,8 +1,8 @@
 ---
 title: Validation Rule Assignment Object
 type: endpoint
-category: 639ba2628407100061f5faac
-parentDoc: 639ba2658407100061f5fabb
+categorySlug: voucherify-api
+parentDocSlug: validation-rules-api
 slug: validation-rule-assignment-object
 hidden: false
 order: 2

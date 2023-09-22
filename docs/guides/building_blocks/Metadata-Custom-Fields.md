@@ -1,7 +1,7 @@
 ---
 title: Metadata (custom fields)
 excerpt: 
-category: 639ba16d677235008f800454
+categorySlug: building-blocks
 slug: metadata-custom-fields
 type: basic
 hidden: false

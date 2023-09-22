@@ -1,8 +1,8 @@
 ---
 title: Reward Object
 type: endpoint
-category: 639ba2628407100061f5faac
-parentDoc: 639ba2658407100061f5fab1
+categorySlug: voucherify-api
+parentDocSlug: rewards-api
 slug: reward-object
 hidden: false
 order: 1

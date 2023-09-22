@@ -1,8 +1,8 @@
 ---
 title: Promotion Tier Object
 type: endpoint
-category: 639ba2628407100061f5faac
-parentDoc: 639ba2658407100061f5fab0
+categorySlug: voucherify-api
+parentDocSlug: promotions-api
 slug: promotion-tier-object
 hidden: false
 order: 1

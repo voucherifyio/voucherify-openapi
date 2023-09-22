@@ -1,7 +1,7 @@
 ---
 title: Establish Validation Session
-category: 639ba2628407100061f5faac
-parentDoc: 639ba2658407100061f5fab3
+categorySlug: voucherify-api
+parentDocSlug: validations-api
 slug: validation-session
 type: link
 hidden: false
