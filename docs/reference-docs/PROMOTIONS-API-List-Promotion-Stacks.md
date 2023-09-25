@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: list-all-promotion-stacks
 parentDocSlug: promotions-api
 hidden: false
-order: 10
+order: 11
 ---
 [block:html]
 {

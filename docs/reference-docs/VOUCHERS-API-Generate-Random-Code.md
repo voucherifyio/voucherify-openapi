@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: generate-random-code
 parentDocSlug: vouchers-api
 hidden: false
-order: 4
+order: 5
 ---
 [block:html]
 {

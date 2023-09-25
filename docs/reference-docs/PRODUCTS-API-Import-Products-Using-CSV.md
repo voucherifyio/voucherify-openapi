@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: import-products-using-csv
 parentDocSlug: products-api
 hidden: false
-order: 4
+order: 6
 ---
 [block:html]
 {
