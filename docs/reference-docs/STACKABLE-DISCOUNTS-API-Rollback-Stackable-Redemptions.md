@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: rollback-stacked-redemptions
 parentDocSlug: stackable-discounts-api
 hidden: false
-order: 7
+order: 8
 ---
 [block:html]
 {
