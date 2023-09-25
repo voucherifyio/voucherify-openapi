@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: create-publication
 parentDocSlug: publications-api
 hidden: false
-order: 2
+order: 4
 ---
 [block:html]
 {
