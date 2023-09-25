@@ -1,5 +1,7 @@
 # Changelog
 
+## 20230925 - Simplest 
+
 ## 20230823 - New Endpoints
 
 ### Introduced new endpoints and related object schemas

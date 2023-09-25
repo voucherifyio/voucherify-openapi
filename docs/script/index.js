@@ -18,7 +18,7 @@ if (process.env.README_IO_AUTH?.length < 10) {
   return;
 }
 const main = async () => {
-  const basePath = path.join(__dirname, "..", "reference-docs");
+  const basePath = path.join(__dirname, "..");
   const pathsToFiles = await getFiles(basePath);
   const dataToProcess = [];
   for (const pathToFile of pathsToFiles) {
