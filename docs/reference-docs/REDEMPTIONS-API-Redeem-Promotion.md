@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: redeem-promotion
 parentDocSlug: redemptions-api
 hidden: false
-order: 7
+order: 9
 ---
 [block:html]
 {

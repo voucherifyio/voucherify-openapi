@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 parentDocSlug: redemptions-api
 slug: rollback-redemption-object
 hidden: false
-order: 1
+order: 2
 ---
 
 [block:html]
