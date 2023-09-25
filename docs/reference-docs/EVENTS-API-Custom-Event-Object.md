@@ -1,8 +1,8 @@
 ---
 title: Custom Event Object
 type: endpoint
-category: 639ba2628407100061f5faac
-parentDoc: 639ba2658407100061f5fabd
+categorySlug: voucherify-api
+parentDocSlug: events-api
 slug: custom-event-object
 hidden: false
 order: 1

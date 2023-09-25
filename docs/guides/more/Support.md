@@ -1,7 +1,7 @@
 ---
 title: Support
 excerpt: 
-category: 639ba16d677235008f800441
+categorySlug: more
 slug: support
 type: basic
 hidden: false

@@ -1,11 +1,11 @@
 ---
 title: Get Reward Assignment
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: get-reward-assignment
-parentDoc: 639ba2658407100061f5fab1
+parentDocSlug: rewards-api
 hidden: false
-order: 7
+order: 9
 ---
 [block:html]
 {

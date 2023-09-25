@@ -6,7 +6,7 @@ The following sequence of actions should be taken to successfully update the Dev
 
 > 📘 Important
 >
-> If you create a new version of documentation in readme, such as by copying an existing version and renaming the version name, readme.io will create new page IDs and new category IDs. This means that some pre-work is needed for a new version of the documentation. 
+> If you create a new version of documentation in readme, such as by copying an existing version and renaming the version name, readme.io will create new page IDs and new category IDs. This means that some pre-work is needed for a new version of the documentation.
 
 ### Pre-work 
 

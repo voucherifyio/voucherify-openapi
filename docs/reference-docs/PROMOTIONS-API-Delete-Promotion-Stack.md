@@ -1,11 +1,11 @@
 ---
 title: Delete Promotion Stack
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: delete-promotion-stack
-parentDoc: 639ba2658407100061f5fab0
+parentDocSlug: promotions-api
 hidden: false
-order: 15
+order: 16
 ---
 [block:html]
 {

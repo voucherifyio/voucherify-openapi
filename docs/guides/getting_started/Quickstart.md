@@ -1,7 +1,7 @@
 ---
 title: Quickstart
 excerpt: Get started with Voucherify API and dashboard by redeeming your first coupon code.
-category: 639ba16d677235008f80043f
+categorySlug: getting-started
 slug: quickstart
 type: basic
 hidden: false

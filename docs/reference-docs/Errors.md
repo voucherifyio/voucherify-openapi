@@ -1,7 +1,7 @@
 ---
 title: Errors
 excerpt: Learn about the errors returned to responses and how you can customize them to improve your customer experience.
-category: 639ba44d204cb60020b4b7ec
+categorySlug: introduction
 slug: errors
 type: basic
 hidden: false
