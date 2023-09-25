@@ -20,6 +20,7 @@ if (process.env.README_IO_AUTH?.length < 10) {
 const main = async () => {
   const basePath = path.join(__dirname, "..", "reference-docs");
   const pathsToFiles = await getFiles(basePath);
+  const dataToProcess = [];
   for (const pathToFile of pathsToFiles) {
     const data = await fsPromises.readFile(pathToFile, { encoding: "utf8" });
     const slug = data.match(/slug: .*/)?.[0]?.split?.("slug: ")?.[1];
@@ -29,14 +30,14 @@ const main = async () => {
     if (!slug || isNaN(order)) {
       throw new Error("Invalid slug or order in " + pathToFile);
     }
-    await updateDoc(slug, order, pathToFile);
-    console.log(`Finished ${pathToFile}`);
+    dataToProcess.push({ slug, order, pathToFile });
+  }
+  for (const chunk of chunkArray(dataToProcess, 6)) {
+    await asyncMap(chunk, updateDoc);
   }
   console.log("Done!");
 };
-const updateDoc = async (slug, order, filePath) => {
-  console.log({ request: { slug, order } });
-
+const updateDoc = async ({ slug, order, pathToFile }) => {
   const options = {
     method: "PUT",
     headers: {
@@ -55,13 +56,15 @@ const updateDoc = async (slug, order, filePath) => {
 
   const responseJSON = await response.json();
   if (responseJSON.error) {
-    console.log({ filePath, response });
+    console.log({ filePath: pathToFile, response });
     throw new Error(responseJSON.error);
   }
 
-  console.log({
-    response: { slug: responseJSON.slug, order: responseJSON.order },
-  });
+  if (order === responseJSON.order) {
+    console.log(`Updated successfully ${pathToFile}!`);
+  } else {
+    console.log(`Not updated ${pathToFile}!`);
+  }
 
   return responseJSON;
 };
@@ -85,5 +88,14 @@ const getFiles = async (path) => {
   }
   return pathsToFiles;
 };
+
+const asyncMap = (arr, asyncFn) => {
+  return Promise.all(arr.map(asyncFn));
+};
+
+const chunkArray = (list, chunkSize) =>
+  [...Array(Math.ceil(list.length / chunkSize))].map((_) =>
+    list.splice(0, chunkSize)
+  );
 
 main();
