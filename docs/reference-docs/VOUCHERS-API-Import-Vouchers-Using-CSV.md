@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: import-vouchers-using-csv
 parentDocSlug: vouchers-api
 hidden: false
-order: 13
+order: 14
 ---
 [block:html]
 {

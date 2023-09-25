@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: export-gift-card-transactions
 parentDocSlug: vouchers-api
 hidden: false
-order: 11
+order: 12
 ---
 [block:html]
 {

@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: add-remove-gift-voucher-balance
 parentDocSlug: vouchers-api
 hidden: false
-order: 9
+order: 10
 ---
 [block:html]
 {
