@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: list-products-in-collection
 parentDocSlug: product-collections-api
 hidden: false
-order: 3
+order: 4
 ---
 [block:html]
 {
