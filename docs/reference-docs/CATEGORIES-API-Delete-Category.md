@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: delete-category
 parentDocSlug: categories-api
 hidden: false
-order: 5
+order: 6
 ---
 [block:html]
 {
