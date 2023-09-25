@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: track-custom-event-client-side
 parentDocSlug: events-api
 hidden: false
-order: 2
+order: 3
 ---
 [block:html]
 {
