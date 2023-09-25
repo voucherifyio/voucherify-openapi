@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: import-customers-using-csv
 parentDocSlug: customers-api
 hidden: false
-order: 6
+order: 8
 ---
 [block:html]
 {
