@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 parentDocSlug: products-api
 slug: sku-object
 hidden: false
-order: 1
+order: 2
 ---
 
 | Attributes |  Description  | Example |

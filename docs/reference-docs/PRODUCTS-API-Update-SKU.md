@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: update-sku
 parentDocSlug: products-api
 hidden: false
-order: 13
+order: 15
 ---
 [block:html]
 {
