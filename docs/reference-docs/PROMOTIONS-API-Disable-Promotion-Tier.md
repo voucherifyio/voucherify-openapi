@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: disable-promotion-tier
 parentDocSlug: promotions-api
 hidden: false
-order: 9
+order: 10
 ---
 [block:html]
 {
