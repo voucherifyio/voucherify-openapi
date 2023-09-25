@@ -1,5 +1,5 @@
 ---
-title: Validate Promotions
+title: Validate Promotions [Deprecated]
 type: endpoint
 category: 639ba2628407100061f5faac
 slug: validate-promotions
