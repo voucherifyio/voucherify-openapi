@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: list-vouchers
 parentDocSlug: vouchers-api
 hidden: false
-order: 1
+order: 2
 ---
 [block:html]
 {

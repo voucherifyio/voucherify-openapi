@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: create-promotion-stack
 parentDocSlug: promotions-api
 hidden: false
-order: 13
+order: 14
 ---
 [block:html]
 {
