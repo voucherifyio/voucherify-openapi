@@ -70,6 +70,13 @@ By performing these actions, you will be able to use the `rdme docs ./guides --v
 
 ## Update Order of Docs
 
+**AUTOMATIC**
+1. Go to root folder 
+2. *[if you have not already]* Install node modules. `npm install`
+3. *[if you have not already]* Copy `docs/script/.env.example` to `docs/script/.env` and fill out the file with credentials.
+4. Run `npm run re-order -- -- --version=vXXXXXXXX` from root folder (where vXXXXXXXX is project version).
+
+**MANUALLY:**
 Go To Postman and run two collections (make sure to configure authentication and headers as noted below):
 
 1. Update _Guides_: run `Readme-Voucherify-Docs-Guides.postman_collection.json`
