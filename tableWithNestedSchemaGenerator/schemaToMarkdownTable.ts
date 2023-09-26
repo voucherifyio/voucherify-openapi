@@ -13,8 +13,8 @@ yup.addMethod(yup.MixedSchema, "oneOfSchemas", function (schemas: yup.AnySchema[
 
 const nodeWithTitleAndPropertiesSchema = yup.object({
     title: yup.string().optional(),
-    type: yup.string().oneOf(['object']),
-    properties: yup.object({})
+    type: yup.string().oneOf(['object', 'string']),
+    properties: yup.object({}),
 });
 
 const oneOfSchema = yup.array().of(yup.object({
@@ -41,14 +41,16 @@ const propertySchema = yup.object({
     ])).optional(),
     oneOf: oneOfSchema,
     anyOf: anyOfSchema,
-    items: itemsSchema
+    items: itemsSchema,
+    '$ref': yup.string().optional()
 });
 
 interface Items extends yup.InferType<typeof itemsSchema> { }
 interface AnyOf extends yup.InferType<typeof anyOfSchema> { }
 interface OneOf extends yup.InferType<typeof oneOfSchema> { }
 
-export type Properties = Record<string, { description?: string, example?: string, type?: string }>
+export type Properties = Record<string, Property>
+type Property = { description?: string, example?: string, type?: string }
 
 const md = new MarkdownIt({ breaks: true, html: true })
 const renderMarkdown = markdown => md.render(`${markdown}`).replace(/\n|\r/g, "")
@@ -63,7 +65,7 @@ export enum ExamplesRenderedAs {
 }
 
 export default class SchemaToMarkdownTable {
-    constructor(private schemas: object, private redenderMode: RenderMode = RenderMode.List, private examplesRenderedAs = ExamplesRenderedAs.Column ) {
+    constructor(private schemas: object, private redenderMode: RenderMode = RenderMode.List, private examplesRenderedAs = ExamplesRenderedAs.Column) {
         if (!schemas) {
             throw new Error('Schemas must be provided')
         }
@@ -73,7 +75,7 @@ export default class SchemaToMarkdownTable {
     }
 
     private getMarkdownTableHead() {
-        if(ExamplesRenderedAs.Column){
+        if (ExamplesRenderedAs.Column) {
             return [
                 '| Attributes |  Description  | Example |',
                 '|:-----|:--------|------:|'
@@ -105,20 +107,20 @@ export default class SchemaToMarkdownTable {
 
             relatedObjectsNames.push(nestedObjectName)
             const title = (this.schemas[nestedObjectName].title || nestedObjectName) as string
-            if(this.redenderMode === RenderMode.List){
-                return `Reference to ${this.getMarkdownLinkToHeader(title)}`
-            }else{
-                const {html} = this.renderSchema(nestedObjectName, level + 1)
+            if (this.redenderMode === RenderMode.List) {
+                return this.getMarkdownLinkToHeader(title)
+            } else {
+                const { html } = this.renderSchema(nestedObjectName, level + 1)
                 return renderMarkdown(html)
             }
-            
+
         }).filter(i => !!i)
-        descriptionArr.push(...nestedObjectsHtml);
+        descriptionArr.push(nestedObjectsHtml.join(this.redenderMode === RenderMode.List ? ', ' : ''));
 
         return { descriptionArr, relatedObjectsNames }
     }
 
-    private renderAnyOfDescription(anyOf: AnyOf, level: number){
+    private renderAnyOfDescription(anyOf: AnyOf, level: number) {
         const descriptionArr = [];
         const relatedObjectsNames = [];
         descriptionArr.push(`Any of:`)
@@ -128,13 +130,12 @@ export default class SchemaToMarkdownTable {
                 if (typeof this.schemas[nestedObjectName] !== 'object') {
                     return false
                 }
-                console.log(`rendering node ${nestedObjectName}`)
                 relatedObjectsNames.push(nestedObjectName)
                 const title = (this.schemas[nestedObjectName].title || nestedObjectName) as string
-                if(this.redenderMode === RenderMode.List){
-                    return `Reference to ${this.getMarkdownLinkToHeader(title)}`
-                }else{
-                    const {html} = this.renderSchema(nestedObjectName, level + 1)
+                if (this.redenderMode === RenderMode.List) {
+                    return this.getMarkdownLinkToHeader(title)
+                } else {
+                    const { html } = this.renderSchema(nestedObjectName, level + 1)
                     return renderMarkdown(html)
                 }
             } else if ('properties' in item) {
@@ -143,22 +144,24 @@ export default class SchemaToMarkdownTable {
                 return renderMarkdown(html)
             }
         }).filter(i => !!i)
-        descriptionArr.push(...nestedObjectsHtml)
-        return {descriptionArr, relatedObjectsNames}
+        descriptionArr.push(nestedObjectsHtml.join(this.redenderMode === RenderMode.List ? ', ' : ''))
+        return { descriptionArr, relatedObjectsNames }
     }
 
-    private renderItemsDescription(items: Items, level: number){
+    private renderItemsDescription(items: Items, level: number) {
         const descriptionArr = [];
         const relatedObjectsNames = [];
+
         if ('$ref' in items && typeof items['$ref'] === 'string' && items['$ref'].startsWith('#/components/schemas/')) {
             const nestedObjectName = items['$ref'].replace('#/components/schemas/', '');
             relatedObjectsNames.push(nestedObjectName)
             const title = (this.schemas[nestedObjectName].title || nestedObjectName) as string
-            if(this.redenderMode === RenderMode.List){
-                return `Reference to ${this.getMarkdownLinkToHeader(title)}`
-            }else{
-                const {html} = this.renderSchema(nestedObjectName, level + 1)
-                return renderMarkdown(html)
+            if (this.redenderMode === RenderMode.List) {
+                descriptionArr.push(`Array of ${this.getMarkdownLinkToHeader(title)}`)
+            } else {
+                descriptionArr.push('Array of:')
+                const { html } = this.renderSchema(nestedObjectName, level + 1)
+                descriptionArr.push(renderMarkdown(html))
             }
         } else if ('type' in items && items.type === 'object') {
             descriptionArr.push('Array of:')
@@ -166,58 +169,92 @@ export default class SchemaToMarkdownTable {
             relatedObjectsNames.push(...relatedObjects)
             descriptionArr.push(renderMarkdown(html))
         }
-        return {descriptionArr, relatedObjectsNames}
+        return { descriptionArr, relatedObjectsNames }
+    }
+
+    private renderRef(ref: string, level: number) {
+        const descriptionArr = [];
+        const relatedObjectsNames = [];
+        if (ref.startsWith('#/components/schemas/')) {
+            const nestedObjectName = ref.replace('#/components/schemas/', '');
+            relatedObjectsNames.push(nestedObjectName)
+            const title = (this.schemas[nestedObjectName].title || nestedObjectName) as string
+            if (this.redenderMode === RenderMode.List) {
+                descriptionArr.push(`See: ${this.getMarkdownLinkToHeader(title)}`)
+            } else {
+                const { html } = this.renderSchema(nestedObjectName, level + 1)
+                descriptionArr.push(renderMarkdown(html))
+            }
+        }
+        return { descriptionArr, relatedObjectsNames }
+    }
+
+    private renderProperty = (property: Property, level: number) => {
+        const descriptionArr = [];
+        const relatedObjectsNames = [];
+        const example = "example" in property ? renderMarkdown(property.example) : '';
+
+        const { description, enum: EnumProp, oneOf, anyOf, items, type, $ref } = propertySchema.validateSync(property)
+
+        if (description) {
+            descriptionArr.push(renderMarkdown(description))
+        }
+
+        if (EnumProp) {
+            const availableValues = `Available values: ${EnumProp.map(value => `\`${value}\``).join(', ')}`;
+            descriptionArr.push(availableValues)
+        }
+
+        if (oneOf) {
+            const { descriptionArr: descriptionArrOneOf, relatedObjectsNames: relatedObjectsNamesOneOff } = this.renderOneOfDescription(oneOf, level);
+            descriptionArr.push(...descriptionArrOneOf);
+            relatedObjectsNames.push(...relatedObjectsNamesOneOff)
+        }
+
+        if (anyOf) {
+            const { descriptionArr: descriptionArrAnyOf, relatedObjectsNames: relatedObjectsNamesAnyOff } = this.renderAnyOfDescription(anyOf, level);
+            descriptionArr.push(...descriptionArrAnyOf);
+            relatedObjectsNames.push(...relatedObjectsNamesAnyOff)
+        }
+
+
+        if (items) {
+            const { descriptionArr: descriptionArrItems, relatedObjectsNames: relatedObjectsNamesItems } = this.renderItemsDescription(items, level);
+            descriptionArr.push(...descriptionArrItems);
+            relatedObjectsNames.push(...relatedObjectsNamesItems)
+        }
+
+        if ($ref) {
+            const { descriptionArr: descriptionArrItems, relatedObjectsNames: relatedObjectsNamesItems } = this.renderRef($ref, level);
+            descriptionArr.push(...descriptionArrItems);
+            relatedObjectsNames.push(...relatedObjectsNamesItems)
+        }
+
+        if (type === 'object') {
+            const { html, relatedObjects } = this.renderSchema(property, level + 1)
+            relatedObjectsNames.push(...relatedObjects)
+            descriptionArr.push(renderMarkdown(html))
+        }
+
+
+        return { descriptionArr, relatedObjectsNames, example }
     }
 
     private renderPropertiesAsTableRow = (properties: Properties, level: number = 0) => {
         const relatedObjectsNames: string[] = [];
 
         const tableRows = Object.entries(properties).map(([propertyId, property]) => {
-            console.log(`rendering propertyId: ${propertyId} for level ${level}`)
+            // console.log(`rendering propertyId: ${propertyId} for level ${level}`)
 
-            const { description, enum: EnumProp, oneOf, anyOf, items, type } = propertySchema.validateSync(property)
+            const { descriptionArr, relatedObjectsNames: additionalRelatedObjectsNames, example } = this.renderProperty(property, level)
 
-            const descriptionArr = []
-            if (description) {
-                descriptionArr.push(renderMarkdown(description))
-            }
+            relatedObjectsNames.push(...additionalRelatedObjectsNames);
 
-            if (EnumProp) {
-                descriptionArr.push(`Available values: ${EnumProp.map(value => `\`${value}\``).join(', ')}`)
-            }
-
-            if (oneOf) {
-                const { descriptionArr: descriptionArrOneOf, relatedObjectsNames: relatedObjectsNamesOneOff } = this.renderOneOfDescription(oneOf, level);
-                descriptionArr.push(...descriptionArrOneOf);
-                relatedObjectsNames.push(...relatedObjectsNamesOneOff)
-            }
-
-            if (anyOf) {
-                const { descriptionArr: descriptionArrAnyOf, relatedObjectsNames: relatedObjectsNamesAnyOff } = this.renderAnyOfDescription(anyOf, level);
-                descriptionArr.push(...descriptionArrAnyOf);
-                relatedObjectsNames.push(...relatedObjectsNamesAnyOff)
-            }
-
-
-            if (items) {
-                const { descriptionArr: descriptionArrItems, relatedObjectsNames: relatedObjectsNamesItems } = this.renderItemsDescription(items, level);
-                descriptionArr.push(...descriptionArrItems);
-                relatedObjectsNames.push(...relatedObjectsNamesItems)
-            }
-
-            if (type === 'object') {
-                const { html, relatedObjects } = this.renderSchema(property, level + 1)
-                relatedObjectsNames.push(...relatedObjects)
-                descriptionArr.push(renderMarkdown(html))
-            }
-
-            const example = "example" in property ? renderMarkdown(property.example) : '';
-
-            if( this.examplesRenderedAs == ExamplesRenderedAs.Column ){
+            if (this.examplesRenderedAs == ExamplesRenderedAs.Column) {
 
                 return this.getMarkdownTableRow([propertyId, descriptionArr.join(' '), example]);
-            }else{
-                if(example){
+            } else {
+                if (example) {
                     descriptionArr.push('**Example:**')
                     descriptionArr.push(example)
                 }
@@ -238,11 +275,15 @@ export default class SchemaToMarkdownTable {
         if (!schema) {
             throw new Error(`Schema "${schema}" not found`);
         }
-        const { properties, title } = nodeWithTitleAndPropertiesSchema.validateSync(schema);
+        const { properties, title, type } = nodeWithTitleAndPropertiesSchema.validateSync(schema);
         const respopnseStrArr = [];
 
         if (title) {
             respopnseStrArr.push(`${"#".repeat(level + 1)} ${title}`)
+        } else {
+            if (typeof schemaNameOrSchemaObject === 'string') {
+                throw new Error(`Missing title for ${schemaNameOrSchemaObject} object`)
+            }
         }
         const relatedObjects: string[] = [];
 
@@ -250,6 +291,11 @@ export default class SchemaToMarkdownTable {
             const { html, relatedObjectsNames } = this.renderPropertiesAsTableRow(properties, level)
             relatedObjects.push(...relatedObjectsNames)
             respopnseStrArr.push(html)
+        }else if(type === 'string'){
+            propertySchema.validateSync(schema)
+            const { descriptionArr, relatedObjectsNames } = this.renderProperty(schema, level)
+            relatedObjects.push(...relatedObjectsNames)
+            respopnseStrArr.push(descriptionArr.join(`${EOL}${EOL}`))
         }
 
         return { html: respopnseStrArr.join(EOL), relatedObjects }
@@ -262,10 +308,16 @@ export default class SchemaToMarkdownTable {
         }
 
         const schemasToRender = [schemaName];
+        const renderedSchemas = [];
         const response: string[] = []
 
         while (schemasToRender.length) {
-            const { html, relatedObjects } = this.renderSchema(schemasToRender.shift())
+            const nextSchemaToRender = schemasToRender.shift()
+            if (renderedSchemas.includes(nextSchemaToRender)) {
+                continue
+            }
+            const { html, relatedObjects } = this.renderSchema(nextSchemaToRender)
+            renderedSchemas.push(nextSchemaToRender)
             response.push(html)
             if (relatedObjects.length) {
                 schemasToRender.push(...relatedObjects)

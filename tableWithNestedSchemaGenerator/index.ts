@@ -34,6 +34,7 @@ const objectsToDescribe = [
     `16_obj_export_object`,
     `20_obj_category_object`,
     `21_obj_metadata_schema_object`,
+    '23_obj_qualification_object'
 ];
 
 
