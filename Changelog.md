@@ -16,7 +16,9 @@
     - new schema `VouchersExportGiftCardTransactionsRequestBody` (old `1_req_create_gift_card_transactions_export`)
     - new schema `GiftCardTransactionsExport` (old `1_obj_export_gift_card_transactions`)
     - new schema `VouchersExportGiftCardTransactionsResponseBody` (old `1_obj_export_transactions_object`)
-    - new schema `GiftCardTransactionsFilters`
+    - new schema `GiftCardTransactionsFilters` (old `16_obj_filter_gift_card_transactions_voucher_id` - not deleted)
+    - new schema `GiftCardTransactionsFilterConditions` (old `16_obj_filter_loyalty_card_transactions_voucher_id` - not deleted)
+    - new schema `GiftCardTransactionsFilterJunction` (old `16_filter_junction` - not deleted)
 
 ## 20230823 - New Endpoints
 
