@@ -8,14 +8,14 @@ hidden: false
 order: 1
 ---
 
-| Attributes |  Description  | Example |
-|:-----|:--------|------:|
-| id | <p>Unique category ID assigned by Voucherify.</p> |  |
-| name | <p>Category name.</p> |  |
-| hierarchy | <p>Category hierarchy.</p> |  |
-| created_at | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> | <p>2022-07-14T10:45:13.156Z</p> |
-| updated_at | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> | <p>2022-08-16T10:52:08.094Z</p> |
-| object | <p>The type of object represented by the JSON. This object stores information about the category.</p> |  |
+| Attributes |  Description |
+|:-----|:--------|
+| id | <p>Unique category ID assigned by Voucherify.</p> |
+| name | <p>Category name.</p> |
+| hierarchy | <p>Category hierarchy.</p> |
+| created_at | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
+| updated_at | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
+| object | <p>The type of object represented by the JSON. This object stores information about the category.</p> |
 
 [block:html]
 {

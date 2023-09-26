@@ -8,15 +8,15 @@ hidden: false
 order: 1
 ---
 
-| Attributes |  Description  | Example |
-|:-----|:--------|------:|
-| id | <p>Unique segment ID.</p> | <p>seg_1wc52c5z6r1kQ81brO8j9Hk2</p> |
-| name | <p>Segment name.</p> |  |
-| created_at | <p>Timestamp representing the date and time when the segment was created in ISO 8601 format.</p> | <p>2022-05-12T13:01:56.896Z</p> |
-| type | <p>Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).</p> Available values: `auto-update`, `static` |  |
-| filter | <p>Defines a set of criteria for an <code>auto-update</code> segment type.</p> |  |
-| initial_sync_status | Available values: `IN_PROGRESS`, `DONE` |  |
-| object | <p>The type of object represented by JSON. This object stores information about the customer segment.</p> |  |
+| Attributes |  Description |
+|:-----|:--------|
+| id | <p>Unique segment ID.</p> **Example:** <p>seg_1wc52c5z6r1kQ81brO8j9Hk2</p> |
+| name | <p>Segment name.</p> |
+| created_at | <p>Timestamp representing the date and time when the segment was created in ISO 8601 format.</p> **Example:** <p>2022-05-12T13:01:56.896Z</p> |
+| type | <p>Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).</p> Available values: `auto-update`, `static` |
+| filter | <p>Defines a set of criteria for an <code>auto-update</code> segment type.</p> |
+| initial_sync_status | Available values: `IN_PROGRESS`, `DONE` |
+| object | <p>The type of object represented by JSON. This object stores information about the customer segment.</p> |
 
 
 [block:html]
