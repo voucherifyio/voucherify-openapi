@@ -1,5 +1,23 @@
 # Changelog
 
+## 20230913 - New schemas, schemas changes
+
+#### New schemas:
+
+#### Schemas changes
+- /v1/vouchers/{code}/transactions
+    - new response schema `VouchersListGiftCardTransactionsResponseBody` (old `1_res_vouchers_code_transactions`)
+    - new schema `GiftCardTransaction` (old `1_obj_gift_card_transaction_object`)
+    - new schema `GiftCardTransactionRedemption` (old `1_obj_gift_card_transaction_object_redemption`)
+    - new schema `GiftCardTransactionRefund` (old `1_obj_gift_card_transaction_object_refund`)
+    - new schema `GiftCardTransactionAddition` (old `1_obj_gift_card_transaction_object_addition`)
+    - new schema `GiftCardTransactionRemoval` (old `1_obj_gift_card_transaction_object_removal`)
+- v1/vouchers/{code}/transactions/export
+    - new schema `VouchersExportGiftCardTransactionsRequestBody` (old `1_req_create_gift_card_transactions_export`)
+    - new schema `GiftCardTransactionsExport` (old `1_obj_export_gift_card_transactions`)
+    - new schema `VouchersExportGiftCardTransactionsResponseBody` (old `1_obj_export_transactions_object`)
+    - new schema `GiftCardTransactionsFilters`
+
 ## 20230823 - New Endpoints
 
 ### Introduced new endpoints and related object schemas
