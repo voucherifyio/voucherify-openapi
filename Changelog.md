@@ -1,5 +1,9 @@
 # Changelog
 
+## 20230925 - Order references/guides script
+
+Added script, located in `docs/script/` directory to quickly update order of references and guides based on `.md` files. For more information please check [Update-Order-Standard-Work.md](automation%2FUpdate-Order-Standard-Work.md) under `Update Order of Docs - AUTOMATIC` section.
+
 ## 20230823 - New Endpoints
 
 ### Introduced new endpoints and related object schemas
