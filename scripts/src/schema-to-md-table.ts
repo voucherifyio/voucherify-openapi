@@ -1,6 +1,6 @@
 import { EOL } from 'os';
 import * as yup from 'yup';
-import * as MarkdownIt from 'markdown-it';
+import MarkdownIt from 'markdown-it';
 
 yup.addMethod(yup.MixedSchema, "oneOfSchemas", function (schemas: yup.AnySchema[]) {
     return this.test(
