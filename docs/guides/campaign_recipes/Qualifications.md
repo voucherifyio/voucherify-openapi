@@ -94,6 +94,11 @@ Since we cannot identify the customer, we can not show redeemables that are out 
                 }
             }
         ]
+    },
+    "options": {
+        "expand": [
+            "redeemable"
+        ]
     }
 }
 ```
@@ -164,11 +169,16 @@ Since we cannot identify the customer, we can not show redeemables that are out 
                     "total": 0,
                     "data_ref": "data",
                     "object": "list"
-                }
+                },
+                "metadata": {},
+                "name": "10% off",
+                "banner": "10% off",
+                "campaign_id": "camp_orPbvjZ9OSmaZzRvj5gjT1kK",
+                "campaign_name": "Promotion - % off"
             }
         ],
         "total": 1,
-        "has_more": true
+        "has_more": false
     },
     "order": {
         "items": [
@@ -214,7 +224,7 @@ This would then return the following:
 | **Campaign** | **Details** |
 |:---|:---|
 | Gift card campaign | The gift voucher maIxGd5r can be used by the owner of the code only |
-| Discount campaign<br>camp_f78wOLL9cE2WCSdtliT0UIh0  | Voucher code vm3HkNF2 from a 10% discount for BOSCH products redeemable by the owners of the code |
+| Discount campaign<br>10% discount for BOSCH products  | Voucher code vm3HkNF2 from a 10% discount for BOSCH products redeemable by the owners of the code |
 | 10% for everyone on entire order | The promotion is available for anyone and gives a 10% discount |
 | 20% for Digital books for VIP customers  | The promotion is available to customers who are VIP customers and is applicable to digital books only |
 
@@ -252,6 +262,11 @@ This would then return the following:
                 }
             }
         ]
+    },
+    "options": {
+        "expand": [
+            "redeemable"
+        ]
     }
 }
 ```
@@ -261,6 +276,74 @@ This would then return the following:
         "object": "list",
         "data_ref": "data",
         "data": [
+            {
+                "id": "promo_mIVcCKyEOu47LPDjXn3rTUC1",
+                "object": "promotion_tier",
+                "created_at": "2023-09-18T11:52:08.234Z",
+                "result": {
+                    "discount": {
+                        "type": "PERCENT",
+                        "effect": "APPLY_TO_ORDER",
+                        "percent_off": 10,
+                        "is_dynamic": false
+                    }
+                },
+                "order": {
+                    "amount": 11500,
+                    "discount_amount": 1150,
+                    "total_discount_amount": 1150,
+                    "total_amount": 10350,
+                    "applied_discount_amount": 1150,
+                    "total_applied_discount_amount": 1150,
+                    "items": [
+                        {
+                            "object": "order_item",
+                            "source_id": "bosch_product_1",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 10000,
+                            "price": 10000,
+                            "subtotal_amount": 10000,
+                            "product": {
+                                "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
+                            }
+                        },
+                        {
+                            "object": "order_item",
+                            "source_id": "digital_book",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 1500,
+                            "price": 1500,
+                            "subtotal_amount": 1500,
+                            "product": {
+                                "name": "Digital Book"
+                            }
+                        }
+                    ],
+                    "metadata": {},
+                    "customer_id": null,
+                    "referrer_id": null,
+                    "object": "order"
+                },
+                "applicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "inapplicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "metadata": {},
+                "name": "10% off",
+                "banner": "10% off",
+                "campaign_id": "camp_orPbvjZ9OSmaZzRvj5gjT1kK",
+                "campaign_name": "Promotion - % off"
+            },
             {
                 "id": "maIxGd5r",
                 "object": "voucher",
@@ -319,7 +402,10 @@ This would then return the following:
                     "total": 0,
                     "data_ref": "data",
                     "object": "list"
-                }
+                },
+                "metadata": {},
+                "campaign_id": "camp_blYBZY5V5KQ3PuLfzs0DmuX0",
+                "campaign_name": "Gift Card Campaign Fall 2023"
             },
             {
                 "id": "vm3HkNF2",
@@ -404,92 +490,10 @@ This would then return the following:
                     "total": 0,
                     "data_ref": "data",
                     "object": "list"
-                }
-            },
-            {
-                "id": "camp_f78wOLL9cE2WCSdtliT0UIh0",
-                "object": "campaign",
-                "created_at": "2023-09-15T12:59:34.307Z",
-                "result": {
-                    "discount": {
-                        "type": "PERCENT",
-                        "effect": "APPLY_TO_ITEMS",
-                        "percent_off": 10,
-                        "is_dynamic": false
-                    }
                 },
-                "order": {
-                    "amount": 11500,
-                    "items_discount_amount": 1000,
-                    "total_discount_amount": 1000,
-                    "total_amount": 10500,
-                    "items_applied_discount_amount": 1000,
-                    "total_applied_discount_amount": 1000,
-                    "items": [
-                        {
-                            "object": "order_item",
-                            "source_id": "bosch_product_1",
-                            "related_object": "product",
-                            "quantity": 1,
-                            "amount": 10000,
-                            "discount_amount": 1000,
-                            "applied_discount_amount": 1000,
-                            "price": 10000,
-                            "subtotal_amount": 9000,
-                            "product": {
-                                "name": "BOSCH GDR 120-LI Cordless Impact Driver / Wrench"
-                            }
-                        },
-                        {
-                            "object": "order_item",
-                            "source_id": "digital_book",
-                            "related_object": "product",
-                            "quantity": 1,
-                            "amount": 1500,
-                            "price": 1500,
-                            "subtotal_amount": 1500,
-                            "product": {
-                                "name": "Digital Book"
-                            }
-                        }
-                    ],
-                    "metadata": {},
-                    "customer_id": null,
-                    "referrer_id": null,
-                    "object": "order"
-                },
-                "applicable_to": {
-                    "data": [
-                        {
-                            "object": "products_collection",
-                            "id": "pc_kHDQEBDVn8G04oxvgzRf5et9",
-                            "strict": false,
-                            "effect": "APPLY_TO_EVERY",
-                            "order_item_indices": [
-                                0
-                            ]
-                        },
-                        {
-                            "object": "product",
-                            "id": "bosch_product_1",
-                            "source_id": "bosch_product_1",
-                            "strict": true,
-                            "effect": "APPLY_TO_EVERY",
-                            "order_item_indices": [
-                                0
-                            ]
-                        }
-                    ],
-                    "total": 2,
-                    "data_ref": "data",
-                    "object": "list"
-                },
-                "inapplicable_to": {
-                    "data": [],
-                    "total": 0,
-                    "data_ref": "data",
-                    "object": "list"
-                }
+                "metadata": {},
+                "campaign_id": "camp_f78wOLL9cE2WCSdtliT0UIh0",
+                "campaign_name": "10% discount for BOSCH products"
             },
             {
                 "id": "promo_QwH9khhoiNAthPykdnpAcpAi",
@@ -574,11 +578,16 @@ This would then return the following:
                     "total": 0,
                     "data_ref": "data",
                     "object": "list"
-                }
+                },
+                "metadata": {},
+                "name": "20% off Digital books for VIP customers",
+                "banner": "20% off Digital books for VIP customers",
+                "campaign_id": "camp_orPbvjZ9OSmaZzRvj5gjT1kK",
+                "campaign_name": "Promotion - % off"
             }
         ],
         "total": 4,
-        "has_more": true
+        "has_more": false
     },
     "tracking_id": "track_wBhrnKJfwZMTuOpQ+uItfJXOJ6STUymy",
     "order": {
@@ -623,7 +632,7 @@ This would then return the following:
 > - Showing a different set of promotions available for a specific customer on the home page
 > - Present the list of available discounts during the customer's checkout
 
-All of these scenarios requires one API request per attempt.
+All of these scenarios require one API request per attempt.
 
 > 📘 Audience only
 >
@@ -669,6 +678,11 @@ Only the voucher codes assigned to the customer will be returned. `"scenario": "
                     "name": "Digital Book"
                 }
             }
+        ]
+    },
+    "options": {
+        "expand": [
+            "redeemable"
         ]
     }
 }
@@ -737,7 +751,10 @@ Only the voucher codes assigned to the customer will be returned. `"scenario": "
                     "total": 0,
                     "data_ref": "data",
                     "object": "list"
-                }
+                },
+                "metadata": {},
+                "campaign_id": "camp_blYBZY5V5KQ3PuLfzs0DmuX0",
+                "campaign_name": "Gift Card Campaign Fall 2023"
             },
             {
                 "id": "vm3HkNF2",
@@ -822,7 +839,10 @@ Only the voucher codes assigned to the customer will be returned. `"scenario": "
                     "total": 0,
                     "data_ref": "data",
                     "object": "list"
-                }
+                },
+                "metadata": {},
+                "campaign_id": "camp_f78wOLL9cE2WCSdtliT0UIh0",
+                "campaign_name": "10% discount for BOSCH products"
             }
         ],
         "total": 2,
@@ -907,6 +927,11 @@ Only a promotion that is applicable to items in the cart. `"scenario": "PRODUCTS
                 }
             }
         ]
+    },
+    "options": {
+        "expand": [
+            "redeemable"
+        ]
     }
 }
 ```
@@ -999,7 +1024,10 @@ Only a promotion that is applicable to items in the cart. `"scenario": "PRODUCTS
                     "total": 0,
                     "data_ref": "data",
                     "object": "list"
-                }
+                },
+                "metadata": {},
+                "campaign_id": "camp_f78wOLL9cE2WCSdtliT0UIh0",
+                "campaign_name": "10% discount for BOSCH products"
             },
             {
                 "id": "camp_f78wOLL9cE2WCSdtliT0UIh0",
@@ -1084,7 +1112,9 @@ Only a promotion that is applicable to items in the cart. `"scenario": "PRODUCTS
                     "total": 0,
                     "data_ref": "data",
                     "object": "list"
-                }
+                },
+                "metadata": {},
+                "name": "10% discount for BOSCH products"
             },
             {
                 "id": "promo_QwH9khhoiNAthPykdnpAcpAi",
@@ -1169,11 +1199,16 @@ Only a promotion that is applicable to items in the cart. `"scenario": "PRODUCTS
                     "total": 0,
                     "data_ref": "data",
                     "object": "list"
-                }
+                },
+                "metadata": {},
+                "name": "20% off Digital books for VIP customers",
+                "banner": "20% off Digital books for VIP customers",
+                "campaign_id": "camp_orPbvjZ9OSmaZzRvj5gjT1kK",
+                "campaign_name": "Promotion - % off"
             }
         ],
         "total": 3,
-        "has_more": true
+        "has_more": false
     },
     "tracking_id": "track_wBhrnKJfwZMTuOpQ+uItfJXOJ6STUymy",
     "order": {
