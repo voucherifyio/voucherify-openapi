@@ -8,6 +8,7 @@ hidden: false
 order: 1
 ---
 
+
 | Attributes |  Description |
 |:-----|:--------|
 | id | <p>Unique reward ID, assigned by Voucherify.</p> **Example:** <p>rew_nIy4gHpQHle2c3pNMwuj7G6j</p> |

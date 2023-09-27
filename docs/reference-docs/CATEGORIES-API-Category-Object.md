@@ -8,6 +8,7 @@ hidden: false
 order: 1
 ---
 
+
 | Attributes |  Description |
 |:-----|:--------|
 | id | <p>Unique category ID assigned by Voucherify.</p> |

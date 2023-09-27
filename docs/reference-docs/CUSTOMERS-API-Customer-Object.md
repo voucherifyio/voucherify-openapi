@@ -8,6 +8,7 @@ hidden: false
 order: 1
 ---
 
+
 | Attributes |  Description |
 |:-----|:--------|
 | id | <p>The unique ID of a customer that is assigned by Voucherify.</p> **Example:** <p>cust_CSnYd37MXmrbS19XCrghjBsv</p> |

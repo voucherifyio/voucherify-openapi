@@ -8,6 +8,7 @@ hidden: false
 order: 3
 ---
 
+
 | Attributes |  Description |
 |:-----|:--------|
 | id | <p>Unique loyalty tier ID.</p> **Example:** <p>ltr_30KHciA0UG8B71Fo51GZqwgN</p> |

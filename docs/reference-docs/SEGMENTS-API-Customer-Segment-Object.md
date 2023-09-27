@@ -8,6 +8,7 @@ hidden: false
 order: 1
 ---
 
+
 | Attributes |  Description |
 |:-----|:--------|
 | id | <p>Unique segment ID.</p> **Example:** <p>seg_1wc52c5z6r1kQ81brO8j9Hk2</p> |
@@ -17,7 +18,6 @@ order: 1
 | filter | <p>Defines a set of criteria for an <code>auto-update</code> segment type.</p> |
 | initial_sync_status | Available values: `IN_PROGRESS`, `DONE` |
 | object | <p>The type of object represented by JSON. This object stores information about the customer segment.</p> |
-
 
 [block:html]
 {

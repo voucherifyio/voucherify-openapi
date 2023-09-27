@@ -8,6 +8,7 @@ hidden: false
 order: 1
 ---
 
+
 | Attributes |  Description |
 |:-----|:--------|
 | id | <p>Unique promotion tier ID.</p> **Example:** <p>promo_63fYCt81Aw0h7lzyRkrGZh9p</p> |

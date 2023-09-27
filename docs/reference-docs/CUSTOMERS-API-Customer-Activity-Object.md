@@ -8,12 +8,14 @@ hidden: false
 order: 2
 ---
 
+
 | Attributes |  Description |
 |:-----|:--------|
 | id | <p>Unique event ID, assigned by Voucherify.</p> **Example:** <p>evcus_0c150c51730c6b60b1</p> |
 | type | <p>Event type.</p> Available values: `customer.confirmed`, `customer.created`, `customer.updated`, `customer.deleted`, `customer.referred`, `customer.custom_event`, `customer.segment_entered`, `customer.segment.left`, `customer.sms.sent`, `customer.sms.failed`, `customer.email.sent`, `customer.email.failed`, `customer.activecampaign.sent`, `customer.braze.sent`, `customer.mailchimp.sent`, `customer.intercom.sent`, `customer.intercom.failed`, `customer.rewarded`, `customer.rewarded.loyalty_points`, `customer.voucher.gift.balance_added`, `customer.voucher.loyalty_card.points_added`, `customer.voucher.loyalty_card.points_transferred`, `customer.publication.succeeded`, `customer.publication.failed`, `customer.redemption.succeeded`, `customer.redemption.failed`, `customer.redemption.rollback.succeeded`, `customer.redemption.rollback.failed`, `customer.consents.given`, `customer.consents.revoked` |
 | data | <p>Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.</p> Array of [Customer Activity Data Object](#customer-activity-data-object) |
 | created_at | <p>Timestamp representing the date and time when the customer activity occurred in ISO 8601 format.</p> **Example:** <p>2022-08-30T09:14:07.660Z</p> |
+# Customer Activity Data Object
 
 [block:html]
 {

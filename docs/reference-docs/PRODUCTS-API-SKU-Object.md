@@ -8,6 +8,7 @@ hidden: false
 order: 2
 ---
 
+
 | Attributes |  Description |
 |:-----|:--------|
 | id | <p>A unique identifier that represents the SKU and is assigned by Voucherify.</p> **Example:** <p>sku_0b1621b319d248b79f</p> |

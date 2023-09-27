@@ -8,7 +8,7 @@ hidden: false
 order: 1
 ---
 
-# Campaign Object
+
 | Attributes |  Description |
 |:-----|:--------|
 | id | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_f7fBbQxUuTN7dI7tGOo5XMDA</p> |

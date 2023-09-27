@@ -8,6 +8,7 @@ hidden: false
 order: 2
 ---
 
+
 | Attributes |  Description |
 |:-----|:--------|
 | id | <p>Validation rule assignment ID.</p> **Example:** <p>asgm_74F7QZoYbUoljwQO</p> |

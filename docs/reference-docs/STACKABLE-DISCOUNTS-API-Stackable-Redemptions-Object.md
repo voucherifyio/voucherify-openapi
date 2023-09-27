@@ -8,6 +8,7 @@ hidden: false
 order: 3
 ---
 
+
 | Attributes |  Description |
 |:-----|:--------|
 | redemptions |  |
