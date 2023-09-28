@@ -19,8 +19,6 @@ As developers, we understand how important it is to have performant 3rd party AP
 | [Qualifications API](ref:check-eligibility)               | 400 ms                    |
 | [Create Campaign](ref:create-campaign) (100 000 vouchers) | 60 sec                    |
 
-*Test environment: 200 000 vouchers in DB, 1000 requests per minute*
-
 > 👍 Enterprise plan
 >
 >[Contact us](https://www.voucherify.io/contact-sales) to discuss how Voucherify can meet your requirements, including:
