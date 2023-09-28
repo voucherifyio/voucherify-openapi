@@ -12,7 +12,7 @@ order: 1
 
 Sometimes you want to show a customer all the coupons they’re eligible for — taking into account their **attributes** as well as the **current content of their cart**.
 
-Voucherify's Qualifications API helps recommend applicable promotions and coupons in the given customer and order context with filtering options based on campaign category and hierarchy.
+Voucherify's [Qualifications API](ref:check-eligibility) helps recommend applicable promotions and coupons in the given customer and order context with filtering options based on campaign category and hierarchy.
 
 The qualifications API can be applied (among others) for:
 - Upsell scenarios - showing the customers the discounts available for the customer, encouraging the customer to adjust the cart to conform to the available promotions.
@@ -21,6 +21,17 @@ The qualifications API can be applied (among others) for:
 - Showing coupons available for given products in a product catalog
 
 ![Product Catalog Coupon](https://files.readme.io/c955bb2-campaign_recipes_qualification_checking_eligibility_productCatalogCoupon.png "Product Catalog Coupon")
+
+## API Endpoints
+
+There are two dedicated API Endpoints for checking eligibility:
+
+| **Endpoint**                         | **Link**                                                                               |
+|:-------------------------------------|:---------------------------------------------------------------------------------------|
+| **POST** `/v1/qualifications`        | Check eligibility using the [server-side endpoint](ref:check-eligibility).             |
+| **POST** `/client/v1/qualifications` | Check eligibility using the [client-side endpoint](ref:check-eligibility-client-side). |
+
+You can find a description of the qualification object schema in the data model description [here](ref:qualification-object).
 
 ## Scenarios
 
