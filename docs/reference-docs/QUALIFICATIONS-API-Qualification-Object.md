@@ -8,6 +8,10 @@ hidden: false
 order: 1
 ---
 
+> 👍 Scenario Guide
+>
+> Read our dedicated guide to learn about some use cases these endpoints can cover [here](doc:checking-eligibility).
+
 ## Qualification object
 | Attributes |  Description |
 |:-----|:--------|
