@@ -1,6 +1,6 @@
 ---
 title: SKU Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: products-api
 slug: sku-object

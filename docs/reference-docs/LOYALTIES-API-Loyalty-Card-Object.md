@@ -1,6 +1,6 @@
 ---
 title: Loyalty Card Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: loyalties-api
 slug: loyalty-card-object

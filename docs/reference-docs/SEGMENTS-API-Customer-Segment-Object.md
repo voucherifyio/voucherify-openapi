@@ -1,6 +1,6 @@
 ---
 title: Customer Segment Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: segments-api
 slug: customer-segment-object

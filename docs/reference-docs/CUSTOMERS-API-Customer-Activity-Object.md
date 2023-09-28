@@ -1,6 +1,6 @@
 ---
 title: Customer Activity Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: customers-api
 slug: customer-activity-object

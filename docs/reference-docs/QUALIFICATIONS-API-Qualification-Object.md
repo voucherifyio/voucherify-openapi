@@ -1,6 +1,6 @@
 ---
-title: Qualification Object [Beta]
-type: endpoint
+title: Qualification Object
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: qualifications-api
 slug: qualification-object

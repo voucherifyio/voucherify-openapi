@@ -1,6 +1,6 @@
 ---
 title: Consents Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: consents-api
 slug: consents-object

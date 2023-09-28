@@ -1,6 +1,6 @@
 ---
 title: Reward Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: rewards-api
 slug: reward-object

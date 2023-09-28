@@ -1,6 +1,6 @@
 ---
 title: Export Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: exports-api
 slug: export-object

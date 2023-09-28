@@ -1,6 +1,6 @@
 ---
 title: Metadata Schema Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: metadata-schemas-api
 slug: metadata-schema-object

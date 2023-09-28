@@ -1,6 +1,6 @@
 ---
 title: Promotion Tier Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: promotions-api
 slug: promotion-tier-object

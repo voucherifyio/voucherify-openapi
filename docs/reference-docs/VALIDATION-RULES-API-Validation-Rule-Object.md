@@ -1,6 +1,6 @@
 ---
 title: Validation Rule Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: validation-rules-api
 slug: validation-rule-object

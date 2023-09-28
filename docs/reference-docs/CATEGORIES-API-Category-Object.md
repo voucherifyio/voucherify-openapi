@@ -1,6 +1,6 @@
 ---
 title: Category Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: categories-api
 slug: category-object

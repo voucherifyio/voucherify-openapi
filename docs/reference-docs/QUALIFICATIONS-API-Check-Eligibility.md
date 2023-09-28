@@ -1,5 +1,5 @@
 ---
-title: Check Eligibility [Beta]
+title: Check Eligibility
 type: endpoint
 categorySlug: voucherify-api
 parentDocSlug: qualifications-api

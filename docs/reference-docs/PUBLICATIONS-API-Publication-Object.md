@@ -1,6 +1,6 @@
 ---
 title: Publication Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: publications-api
 slug: publication-object

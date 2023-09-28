@@ -1,6 +1,6 @@
 ---
 title: Reward Assignment Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: rewards-api
 slug: reward-assignment-object

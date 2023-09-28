@@ -1,6 +1,6 @@
 ---
 title: Voucher Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: vouchers-api
 slug: voucher-object

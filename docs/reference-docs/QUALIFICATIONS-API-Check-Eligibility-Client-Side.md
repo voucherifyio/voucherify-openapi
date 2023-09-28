@@ -1,5 +1,5 @@
 ---
-title: Check Eligibility (client-side) [Beta]
+title: Check Eligibility (client-side)
 type: endpoint
 categorySlug: voucherify-api
 parentDocSlug: qualifications-api

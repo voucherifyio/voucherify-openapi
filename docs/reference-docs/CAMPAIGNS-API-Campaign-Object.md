@@ -1,6 +1,6 @@
 ---
 title: Campaign Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: campaigns-api
 slug: campaign-object

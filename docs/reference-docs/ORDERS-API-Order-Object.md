@@ -1,6 +1,6 @@
 ---
 title: Order Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: orders-api
 slug: order-object
