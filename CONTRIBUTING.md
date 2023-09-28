@@ -114,13 +114,13 @@ Good practices:
 	- Select the current public version  in `Fork from` field, most likely `2018-08-01`
 	- Type your version name in `Create version` field  following the pattern:
 	   `2018-08-01-{your name}-{pull request number}`
-- Make changes in the repository following patterns and good practices
+- Make changes in the repository following patterns and good practices.
 - Deploy changes to test your documentation:
 	- Update tables in markdown tables:
 		- `npm run build-md-tables-from-openapi`
 		- `npm run update-md-tables-in-doc`
-	- Deploy OpenAPI file by command `rdme openapi OpenAPI.json --id=<<VERSION_ID>>`, where `<<VERSION_ID>>` should be replaced by the OpenAPI ID that can be found on the `API Reference` page (looks screenshot)
-	- Deploy guides pages: `rdme docs ./docs/reference-docs --version=2018-08-01-{your name}-{pull request number}`
+	- Deploy OpenAPI file by command `rdme openapi ./reference/OpenAPI.json --id=<<VERSION_ID>>`, where `<<VERSION_ID>>` should be replaced by the OpenAPI ID that can be found on the `API Reference` page (looks screenshot)
+	- Deploy guides pages: `rdme docs ./docs/guides --version=2018-08-01-{your name}-{pull request number}`
 	- Deploy api reference pages: `rdme docs ./docs/reference-docs --version=2018-08-01-{your name}-{pull request number}`
 	- Fix docs order: `npm run readme-fix-docs-order -- --version=v2018-08-01-{your name}-{pull request number}`
 - test changes using preview on readme.io
@@ -130,10 +130,6 @@ Good practices:
 	- `git push`
 	- publish PR
 
-
-
-
-![[Screenshot 2023-09-28 at 09.29.44.png]]
 
 
 ## How to merge PR and update public documentation
