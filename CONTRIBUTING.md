@@ -119,7 +119,8 @@ Good practices:
 	- Update tables in markdown tables:
 		- `npm run build-md-tables-from-openapi`
 		- `npm run update-md-tables-in-doc`
-	- Deploy OpenAPI file by command `rdme openapi ./reference/OpenAPI.json --id=<<VERSION_ID>>`, where `<<VERSION_ID>>` should be replaced by the OpenAPI ID that can be found on the `API Reference` page (looks screenshot)
+	- If before created, remove from API Reference the existing OpenAPI file and all specification files.	
+	- Deploy OpenAPI file by command `rdme openapi ./reference/OpenAPI.json --version=2018-08-01-{your name}-{pull request number}`, choose `Create a new spec` option. Command most likely will fail with the message: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks`, but so far, we see that this operation still works correctly. 
 	- Deploy guides pages: `rdme docs ./docs/guides --version=2018-08-01-{your name}-{pull request number}`
 	- Deploy api reference pages: `rdme docs ./docs/reference-docs --version=2018-08-01-{your name}-{pull request number}`
 	- Fix docs order: `npm run readme-fix-docs-order -- --version=v2018-08-01-{your name}-{pull request number}`
@@ -131,7 +132,10 @@ Good practices:
 	- publish PR
 
 
-
 ## How to merge PR and update public documentation
 
-> [!TODO] 
+- Test changes on readme (you can use the version prepared by the contributor).
+- Ensure the changelog was updated.
+- Merge PR to `master` branch
+- In reamde.io, change the current documentation version from `v2018-08-01` to `v2018-08-01-deprecated-mm-dd-yyyy`
+- Change the name of your new release version from `2018-08-01-{your name}-{pull request number}` to `v2018-08-01`
