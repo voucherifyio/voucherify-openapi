@@ -30,8 +30,8 @@ const updateMdTablesInDoc = async () => {
             const contentAfterTable = fileContentBlocks.slice(contentBlockIndexWithTableToReplace + 1).join('')
 
             const newTable = (await fs.readFile(path.join(...PATH_TO_GERENATED_TABLES, `${objectName}.md`)))
-                .toString()
-                .replace((/^\# .*$/m), ''); // Remove first header as in readme.io it already exists
+                .toString();
+                // .replace((/^\# .*$/m), ''); // Remove first header as in readme.io it already exists
 
             const newFileContent = [
                 contentBeforeTable,

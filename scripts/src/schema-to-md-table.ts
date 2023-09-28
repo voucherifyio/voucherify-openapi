@@ -250,15 +250,21 @@ export default class SchemaToMarkdownTable {
 
             relatedObjectsNames.push(...additionalRelatedObjectsNames);
 
+            const propertyLabel = [
+                propertyId,
+                property.type? `\`${property.type}\`` : false  
+            ].filter(e => !!e)
+            .join('</br>');
+
             if (this.examplesRenderedAs == ExamplesRenderedAs.Column) {
 
-                return this.getMarkdownTableRow([propertyId, descriptionArr.join(' '), example]);
+                return this.getMarkdownTableRow([propertyLabel, descriptionArr.join(' '), example]);
             } else {
                 if (example) {
                     descriptionArr.push('**Example:**')
                     descriptionArr.push(example)
                 }
-                return this.getMarkdownTableRow([propertyId, descriptionArr.join(' '),]);
+                return this.getMarkdownTableRow([propertyLabel, descriptionArr.join(' '),]);
 
             }
         })
@@ -279,7 +285,7 @@ export default class SchemaToMarkdownTable {
         const respopnseStrArr = [];
 
         if (title) {
-            respopnseStrArr.push(`${"#".repeat(level + 1)} ${title}`)
+            respopnseStrArr.push(`${"#".repeat(level + 2)} ${title}`)
         } else {
             if (typeof schemaNameOrSchemaObject === 'string') {
                 throw new Error(`Missing title for ${schemaNameOrSchemaObject} object`)
