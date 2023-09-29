@@ -1,11 +1,11 @@
 ---
 title: Export Gift Card Transactions
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: export-gift-card-transactions
-parentDoc: 639ba2658407100061f5faae
+parentDocSlug: vouchers-api
 hidden: false
-order: 11
+order: 12
 ---
 [block:html]
 {

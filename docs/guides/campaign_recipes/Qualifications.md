@@ -1,7 +1,7 @@
 ---
 title: Qualification - Checking eligibility
 excerpt: null
-category: 639ba16d677235008f80045c
+categorySlug: campaigns-1
 slug: checking-eligibility
 type: basic
 hidden: false
@@ -12,12 +12,15 @@ order: 1
 
 Sometimes you want to show a customer all the coupons they’re eligible for — taking into account their **attributes** as well as the **current content of their cart**.
 
-Voucherify's Qualifications API helps recommend applicable promotions and coupons in the given customer and order context with filtering options based on campaign category and hierarchy. 
+Voucherify's Qualifications API helps recommend applicable promotions and coupons in the given customer and order context with filtering options based on campaign category and hierarchy.
 
 The qualifications API can be applied (among others) for:
 - Upsell scenarios - showing the customers the discounts available for the customer, encouraging the customer to adjust the cart to conform to the available promotions.
 - Customer wallet - providing a list of vouchers the customer was assigned/received (in Voucherify's terms, a voucher was **published** to the customer) in the past that can be used for the current cart.
 - Strike through price - showing new prices for a list of products after a promotional discount is applied.
+- Showing coupons available for given products in a product catalog
+
+![Product Catalog Coupon](https://files.readme.io/c955bb2-campaign_recipes_qualification_checking_eligibility_productCatalogCoupon.png "Product Catalog Coupon")
 
 ## Scenarios
 
@@ -36,7 +39,7 @@ To specify the types of promotions and codes that you would like to reveal to yo
 
 ## Use Cases
 
-To show a couple of the use cases that are possible with the qualifications API, we'll show it using the following scenarios. Depending on the different scenario, we'll send a slightly different API call and the results will be returned in the context of the scenario. 
+To show a couple of the use cases that are possible with the qualifications API, we'll show it using the following scenarios. Depending on the different scenario, we'll send a slightly different API call and the results will be returned in the context of the scenario.
 
 ### Customer profile
 
@@ -63,6 +66,8 @@ We'll send a qualification API call with several different settings and explain 
 #### Not Logged in
 
 Since we cannot identify the customer, we can not show redeemables that are out of scope, i.e. that are not dependent on the customer profile.
+
+![Promotions Available for non-logged in customers](https://files.readme.io/3dedd4a-campaign_recipes_qualification_checking_eligibility_availableOffersNotLoggedIn.png "Promotions Available for non-logged in customers")
 
 ```json Request
 {
@@ -212,6 +217,8 @@ This would then return the following:
 | Discount campaign<br>camp_f78wOLL9cE2WCSdtliT0UIh0  | Voucher code vm3HkNF2 from a 10% discount for BOSCH products redeemable by the owners of the code |
 | 10% for everyone on entire order | The promotion is available for anyone and gives a 10% discount |
 | 20% for Digital books for VIP customers  | The promotion is available to customers who are VIP customers and is applicable to digital books only |
+
+![Offers Available for logged in customers](https://files.readme.io/fff83fa-campaign_recipes_qualification_checking_eligibility_availableOffersLoggedIn.png "Offers Available for logged in customers")
 
 ```json Request
 {
@@ -610,7 +617,7 @@ This would then return the following:
 ```
 
 > Case 1 Summary
-> 
+>
 > The qualification request returned all of the possible vouchers and redeemables the customer could use right now. You can use the qualifications API request to enhance the customer experience by:
 > - Showing the current promotions available for everyone on the home page
 > - Showing a different set of promotions available for a specific customer on the home page
@@ -627,8 +634,9 @@ All of these scenarios requires one API request per attempt.
 
 We'll send the same request, but with a different `scenario` setting.
 
-
 Only the voucher codes assigned to the customer will be returned. `"scenario": "CUSTOMER_WALLET"`
+
+![Product Catalog Coupon](https://files.readme.io/be0044a-campaign_recipes_qualification_checking_eligibility_myCoupons.png "Product Catalog Coupon")
 
 ```json Request
 {
@@ -857,12 +865,15 @@ Only the voucher codes assigned to the customer will be returned. `"scenario": "
 ```
 
 > Case 2 Summary
-> 
+>
 > The customer wallet scenario returned the list of vouchers the customer can use right now. This mechanism enables you to show the customer, at the cart level, all of his/her vouchers he/she can use, including the gift vouchers and loyalty cards that can be used as the means of payment, enabling your customers to choose a specific reward for themselves, or allowing you to apply the discounts automatically.
 
 ---
 ### Case 3 - Vouchers applicable to specific products
-Only a promotion that is applicable to one of the items in the cart. `"scenario": "PRODUCTS_DISCOUNT"`
+
+Only a promotion that is applicable to items in the cart. `"scenario": "PRODUCTS_DISCOUNT"`
+
+![Product Coupons In Cart](https://files.readme.io/dfd3e1f-campaign_recipes_qualification_checking_eligibility_productCouponsInCart.png "Product Coupons In Cart")
 
 ```json Request
 {
@@ -1201,5 +1212,5 @@ Only a promotion that is applicable to one of the items in the cart. `"scenario"
 ```
 
 > Case 3 Summary
-> 
-> Voucherify will return all the discounts that apply to the products you sent in the order. When a customer is browsing your products and is shown the product listing page, you can send, in the payload, the list of all the products the customer is presented and Voucherify will return all the discounts that apply to these products. The returned results can be visualized, for example, by a striked through price.
+>
+> Voucherify will return all the discounts that apply to the products you sent in the order. When a customer is browsing your products and is shown the product listing page, you can send, in the payload, the list of all the products the customer is presented and Voucherify will return all the discounts that apply to these products. The returned results can be visualized, for example, by a striked-through price.

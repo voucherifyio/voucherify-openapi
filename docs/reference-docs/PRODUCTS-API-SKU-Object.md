@@ -1,11 +1,11 @@
 ---
 title: SKU Object
 type: endpoint
-category: 639ba2628407100061f5faac
-parentDoc: 639ba2658407100061f5fab9
+categorySlug: voucherify-api
+parentDocSlug: products-api
 slug: sku-object
 hidden: false
-order: 1
+order: 2
 ---
 
 | Attributes |  Description  | Example |

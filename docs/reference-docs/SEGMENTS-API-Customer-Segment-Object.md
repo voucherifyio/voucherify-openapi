@@ -1,8 +1,8 @@
 ---
 title: Customer Segment Object
 type: endpoint
-category: 639ba2628407100061f5faac
-parentDoc: 639ba2658407100061f5fabc
+categorySlug: voucherify-api
+parentDocSlug: segments-api
 slug: customer-segment-object
 hidden: false
 order: 1

@@ -1,8 +1,8 @@
 ---
 title: Product Collection Object
 type: endpoint
-category: 639ba2628407100061f5faac
-parentDoc: 639ba2658407100061f5faba
+categorySlug: voucherify-api
+parentDocSlug: product-collections-api
 slug: product-collection-object
 hidden: false
 order: 1

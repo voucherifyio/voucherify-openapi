@@ -1,8 +1,8 @@
 ---
 title: Order Object
 type: endpoint
-category: 639ba2628407100061f5faac
-parentDoc: 639ba2658407100061f5fab8
+categorySlug: voucherify-api
+parentDocSlug: orders-api
 slug: order-object
 hidden: false
 order: 1
