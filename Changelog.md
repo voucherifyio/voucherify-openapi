@@ -1,9 +1,10 @@
 # Changelog
 
-## 20230928 - Qualification improvements
+## 20230929 - Order references/guides script
+- Changes on Performance and Qualification guidlines pages
 - Added links to qualification guide in endpoints and qualification object schema.
-## 20230928 - Order references/guides script
 
+## 20230928 - Order references/guides script
 - Removed `beta` label from qualification API endpoints.
 - Described contribution process.
 - Added the script to clean up OpenAPI from Stoplight tags.
