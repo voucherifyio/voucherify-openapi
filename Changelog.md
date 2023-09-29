@@ -1,5 +1,7 @@
 # Changelog
 
+## 20230928 - Qualification improvements
+- Added links to qualification guide in endpoints and qualification object schema.
 ## 20230928 - Order references/guides script
 
 - Removed `beta` label from qualification API endpoints.
