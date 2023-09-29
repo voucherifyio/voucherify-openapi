@@ -26,7 +26,7 @@ As developers, we understand how important it is to have performant 3rd party AP
 > * Premium support
 > * Dedicated infrastructure
 
-## What happens in the background?
+## What happens in the background???? [TEST]
 
 Every time you send a request to Voucherify, Voucherify reacts synchronously and asynchronously. This approach was taken to return the results as fast as possible, making the customer experience as seamless as it can be.
 
