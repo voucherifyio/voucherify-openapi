@@ -26,6 +26,8 @@ const updateMdTablesInDoc = async () => {
                 throw new Error(`Could not find table to replace in file ${docFile} (object: ${objectName}) `)
             }
 
+            const additionalBlockquotes = fileContentBlocks[contentBlockIndexWithTableToReplace].match(/^\>.*$/gm)
+            
             const contentBeforeTable = fileContentBlocks.slice(0, contentBlockIndexWithTableToReplace).join('')
             const contentAfterTable = fileContentBlocks.slice(contentBlockIndexWithTableToReplace + 1).join('')
 
@@ -35,9 +37,11 @@ const updateMdTablesInDoc = async () => {
 
             const newFileContent = [
                 contentBeforeTable,
+                additionalBlockquotes?.length? additionalBlockquotes.join(EOL) : false,  
                 newTable,
                 contentAfterTable
-            ].join(`${EOL}${EOL}`)
+            ].filter(e => !!e)
+            .join(`${EOL}${EOL}`)
 
             await fs.writeFile(docPath, newFileContent)
             console.log(`Updated table in ${docFile} `)
