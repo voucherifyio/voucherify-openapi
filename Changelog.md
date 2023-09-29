@@ -1,7 +1,31 @@
 # Changelog
 
+## 20230829
+
+**Added schemas**
+- customers_permanent_deletion_response_body
+- customers_update_customers_metadata_in_bulk_request_body
+- customers_update_customers_in_bulk_request_body
+
+
+**Endpoints changes**
+- `/v1/customers/{customerId}/permanent-deletion`
+	- POST 
+      - Response schema was replaced with `customers_permanent_deletion_response_body` (old `9_res_customers_customerId_permanent-deletion`)
+      - `status` default value was set to `DONE`
+      - `data_json.customer` default value was set to 1
+      - Added `required` to response properties
+- `v1/customers/bulk/async`
+  - POST
+    - Request schema was replaced with `customers_update_customers_in_bulk_request_body` (old `9_req_update_customers_bulk-deletion`)
+    - Set as `required`: `async_action_id` property in `a_res_async_actions` model
+- `v1/customers/metadata/async`
+	- POST
+	  - Request schema was replaced with `customers_update_customers_metadata_in_bulk_request_body` (old `9_req_customers_metadata_async`)
+      - Set as `required`: `async_action_id` property in `a_res_async_actions` model
+      
 ## 20230929 - Order references/guides script
-- Changes on Performance and Qualification guidlines pages
+- Changes on Performance and Qualification guidelines pages
 - Added links to qualification guide in endpoints and qualification object schema.
 
 ## 20230928 - Order references/guides script
