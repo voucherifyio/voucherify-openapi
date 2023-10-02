@@ -4,8 +4,8 @@
 
 **Added schemas**
 - customers_permanent_deletion_response_body
-- customers_update_customers_metadata_in_bulk_request_body
-- customers_update_customers_in_bulk_request_body
+- customers_update_metadata_in_bulk_request_body
+- customers_update_in_bulk_request_body
 
 
 **Endpoints changes**
@@ -17,11 +17,11 @@
       - Added `required` to response properties
 - `v1/customers/bulk/async`
   - POST
-    - Request schema was replaced with `customers_update_customers_in_bulk_request_body` (old `9_req_update_customers_bulk-deletion`)
+    - Request schema was replaced with `customers_update_in_bulk_request_body` (old `9_req_update_customers_bulk-deletion`)
     - Set as `required`: `async_action_id` property in `a_res_async_actions` model
 - `v1/customers/metadata/async`
 	- POST
-	  - Request schema was replaced with `customers_update_customers_metadata_in_bulk_request_body` (old `9_req_customers_metadata_async`)
+	  - Request schema was replaced with `customers_update_metadata_in_bulk_request_body` (old `9_req_customers_metadata_async`)
       - Set as `required`: `async_action_id` property in `a_res_async_actions` model
       
 ## 20230929 - Order references/guides script
