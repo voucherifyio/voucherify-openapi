@@ -98,10 +98,10 @@ Good practices:
 
 ### Prerequisites
 
-- Instal `git`, `nodejs`, and `npm`.
+- Install `git`, `nodejs`, and `npm`.
 - Clone repository locally: `git clone https://github.com/voucherifyio/voucherify-openapi`.
 - Ensure you have the readme.io account with access to the `Voucherify` project (ask your line manager for help).
-- Instal `rdme` tool (readme.io CLI): follow the installation instructions from https://github.com/readmeio/rdme#readme website.
+- Install `rdme` tool (readme.io CLI): follow the installation instructions from https://github.com/readmeio/rdme#readme website.
 - Authenticate `rdme` tool by running: `rdme login` command; you can check if it works using the command `rdme whoami`; what should result: `You are currently logged in as xxx@voucherify.io to the voucherify project.`
 - Copy `.env.example` to `.env` and add to this file your personal API Key created in readme.io: `dashboard` > `configuration` > `API Keys`
 
