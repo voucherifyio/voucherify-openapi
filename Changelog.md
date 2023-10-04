@@ -45,27 +45,27 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 - RewardsTypeResponse
 - RewardsGetResponse
 - RewardsTypeCampaignResponse
-- LoyaltiesGetMemberActivitiesResponse
-- LoyaltiesAddPointsResponse
+- LoyaltiesGetMemberActivitiesResponseBody
+- LoyaltiesAddOrRemoveCardBalanceResponseBody
 - LoyaltiesCreateMemberResponse
 - LoyaltiesVoucherResponse
-- LoyaltiesGetMemberResponse
+- LoyaltiesGetMemberResponseBody
 - LoyaltiesTransferPointsResponse
 #### Schemas changes
 - /v1/loyalties/{campaignId}/members/{memberId}
-  - new response schema `LoyaltiesGetMemberResponse` (old `8_obj_loyalty_card_object_non_expanded_categories`)
+  - new response schema `LoyaltiesGetMemberResponseBody` (old `8_obj_loyalty_card_object_non_expanded_categories`)
 - /v1/loyalties/members/{memberId}
-  - new response schema `LoyaltiesGetMemberResponse` (old `8_obj_loyalty_card_object_non_expanded_categories`)
+  - new response schema `LoyaltiesGetMemberResponseBody` (old `8_obj_loyalty_card_object_non_expanded_categories`)
 - /v1/loyalties/{campaignId}/members/{memberId}/activities
-  - new response schema `LoyaltiesGetMemberActivitiesResponse` (old `8_res_get_member_activities`)
+  - new response schema `LoyaltiesGetMemberActivitiesResponseBody` (old `8_res_get_member_activities`)
 - /v1/loyalties/members/{memberId}/activities
-  - new response schema `LoyaltiesGetMemberActivitiesResponse` (old `8_res_get_member_activities`)
+  - new response schema `LoyaltiesGetMemberActivitiesResponseBody` (old `8_res_get_member_activities`)
 - /v1/loyalties/{campaignId}/members/{memberId}/balance
-  - new request schema `LoyaltiesAddPoints` (old `8_req_add_remove_points_balance`)
-  - new response schema `LoyaltiesAddPointsResponse` (old `8_res_add_remove_points_balance`)
+  - new request schema `LoyaltiesAddOrRemoveCardBalanceRequestBody` (old `8_req_add_remove_points_balance`)
+  - new response schema `LoyaltiesAddOrRemoveCardBalanceResponseBody` (old `8_res_add_remove_points_balance`)
 - /v1/loyalties/members/{memberId}/balance
-  - new request schema `LoyaltiesAddPoints` (old `8_req_add_remove_points_balance`)
-  - new response schema `LoyaltiesAddPointsResponse` (old `8_res_add_remove_points_balance`)
+  - new request schema `LoyaltiesAddOrRemoveCardBalanceRequestBody` (old `8_req_add_remove_points_balance`)
+  - new response schema `LoyaltiesAddOrRemoveCardBalanceResponseBody` (old `8_res_add_remove_points_balance`)
 - /v1/loyalties/{campaignId}/members/{memberId}/transfers
   - new request schema **array of** `LoyaltiesTransferPoints` (old `8_req_transfer_loyalty_points`)
   - new response schema `LoyaltiesTransferPointsResponse` (old `8_obj_loyalty_card_object_non_expanded_categories`)
