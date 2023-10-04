@@ -24,31 +24,31 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 ## 20230913 - New schemas, schemas changes
 
 #### New schemas:
-- ListMemberRewardsParams
-- LoyaltiesListMemberRewardsResponse
+- LoyaltiesListMemberRewardsRequestQuery
+- LoyaltiesListMemberRewardsResponseBody
 - LoyaltiesTransferPoints
-- GetPointsExpirationParams
+- LoyaltiesGetPointsExpirationRequestQuery
 - LoyaltiesGetPointsExpirationResponseBody
-- ListLoyaltyCardTransactionsParams
+- LoyaltiesListCardTransactionsRequestQuery
 - LoyaltiesListCardTransactionsResponseBody
 - LoyaltyCardTransactionsType
 - SimpleLoyaltyVoucher
-- LoyaltyCardTransactionsResponse
+- LoyaltyCardTransactionsResponse  ??
 - LoyaltyCardTransactionsFields
 - LoyaltiesExportCardTransactionsRequestQuery
 - LoyaltiesExportCardTransactionsResponseBody
-- RewardsAssignmentObject
-- RewardsResponse
-- RequiredRewardsTypeCampaignResponse
-- RequiredRewardsTypeCoin
-- RequiredRewardsTypeMaterial
-- RewardsTypeResponse
-- RewardsGetResponse
-- RewardsTypeCampaignResponse
+- RewardAssignment
+- Reward
+- RequiredRewardTypeCampaign
+- RequiredRewardTypeCoin
+- RequiredRewardTypeMaterial
+- RewardType
+- RewardsGetResponseBody
+- RewardTypeCampaign
 - LoyaltiesGetMemberActivitiesResponseBody
 - LoyaltiesAddOrRemoveCardBalanceResponseBody
-- LoyaltiesCreateMemberResponse
-- LoyaltiesVoucherResponse
+- LoyaltiesCreateMemberResponseBody
+- SimpleLoyaltyVoucher
 - LoyaltiesGetMemberResponseBody
 - LoyaltiesTransferPointsResponseBody
 
