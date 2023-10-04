@@ -1,11 +1,11 @@
 ---
 title: Get Reward Details
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: get-reward-details
-parentDoc: 639ba2658407100061f5fab6
+parentDocSlug: loyalties-api
 hidden: false
-order: 29
+order: 33
 ---
 [block:html]
 {

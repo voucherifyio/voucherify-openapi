@@ -1,11 +1,11 @@
 ---
 title: Create Publication
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: create-publication
-parentDoc: 63b58495b5ee6800ab6535dc
+parentDocSlug: publications-api
 hidden: false
-order: 2
+order: 4
 ---
 [block:html]
 {

@@ -1,7 +1,7 @@
 ---
 title: Versioning
 excerpt: What is the latest version?
-category: 639ba44d204cb60020b4b7ec
+categorySlug: introduction
 slug: versioning
 type: basic
 hidden: false

@@ -1,8 +1,8 @@
 ---
 title: Earning Rule Object
 type: endpoint
-category: 639ba2628407100061f5faac
-parentDoc: 639ba2658407100061f5fab6
+categorySlug: voucherify-api
+parentDocSlug: loyalties-api
 slug: earning-rule-object
 hidden: false
 order: 4

@@ -1,7 +1,7 @@
 ---
 title: Object Schemas
 excerpt: Schema model definitions
-category: 639ba44d204cb60020b4b7ec
+categorySlug: introduction
 slug: object-schemas
 type: basic
 hidden: false

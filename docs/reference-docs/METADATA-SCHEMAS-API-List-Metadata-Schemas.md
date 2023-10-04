@@ -1,11 +1,11 @@
 ---
 title: List Metadata Schemas
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: list-metadata-schemas
-parentDoc: 639ba2658407100061f5fac2
+parentDocSlug: metadata-schemas-api
 hidden: false
-order: 1
+order: 2
 ---
 [block:html]
 {

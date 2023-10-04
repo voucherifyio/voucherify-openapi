@@ -1,11 +1,11 @@
 ---
 title: List Products
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: list-products
-parentDoc: 639ba2658407100061f5fab9
+parentDocSlug: products-api
 hidden: false
-order: 1
+order: 3
 ---
 [block:html]
 {

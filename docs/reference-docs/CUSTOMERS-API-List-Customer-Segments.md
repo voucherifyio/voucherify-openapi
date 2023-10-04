@@ -1,11 +1,11 @@
 ---
 title: List Customer's Segments
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: list-customer-segments
-parentDoc: 639ba2658407100061f5fab7
+parentDocSlug: customers-api
 hidden: false
-order: 4
+order: 6
 ---
 [block:html]
 {

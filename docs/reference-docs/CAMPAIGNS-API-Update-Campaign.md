@@ -1,11 +1,11 @@
 ---
 title: Update Campaign
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: update-campaign
-parentDoc: 639ba2658407100061f5faaf
+parentDocSlug: campaigns-api
 hidden: false
-order: 4
+order: 5
 ---
 [block:html]
 {

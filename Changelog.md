@@ -1,5 +1,26 @@
 # Changelog
 
+## 20230929 - Order references/guides script
+- Changes on Performance and Qualification guidlines pages
+- Added links to qualification guide in endpoints and qualification object schema.
+
+## 20230928 - Order references/guides script
+- Removed `beta` label from qualification API endpoints.
+- Described contribution process.
+- Added the script to clean up OpenAPI from Stoplight tags.
+- Reorganised maintenance scripts.
+- Automated the process of updating the data model documents based on the OpenAPI file.
+- Improve script which generates markdown tables based on the OpenAPI file.
+	- Render objects referred directly by $ref.
+	- fix rendering oneOf + ref.
+	- Render ref to simple types (e.g. enum)
+	- Do not duplicate rendering tables when there is more than one reference.
+	- add the missing title to `23_obj_qualification_object_stacking_rules object.
+
+## 20230925 - Order references/guides script
+
+Added script, located in `docs/script/` directory to quickly update order of references and guides based on `.md` files. For more information please check [Update-Order-Standard-Work.md](automation%2FUpdate-Order-Standard-Work.md) under `Update Order of Docs - AUTOMATIC` section.
+
 ## 20230913 - New schemas, schemas changes
 
 #### New schemas:

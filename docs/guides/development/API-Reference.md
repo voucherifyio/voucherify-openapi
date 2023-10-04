@@ -1,7 +1,7 @@
 ---
 title: API Reference
 excerpt: 
-category: 639ba16d677235008f800447
+categorySlug: development
 slug: api-reference
 type: link
 hidden: false
