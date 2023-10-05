@@ -119,7 +119,10 @@ Good practices:
 	- Update tables in markdown tables:
 		- `npm run build-md-tables-from-openapi`
 		- `npm run update-md-tables-in-doc`
-	- If before created, remove from API Reference the existing OpenAPI file and all specification files.	
+	- from API Reference page in readme dashboard:
+		- remove Voucherify OpenAPI Definition
+		- refresh the page and remove `VOUCHERIFY API` category from left sidebar, DO NOT REMOVE `INTRODUCTION` catregory from left sidebar
+	  the existing OpenAPI file and all specification files.	
 	- Deploy OpenAPI file by command `rdme openapi ./reference/OpenAPI.json --version=2018-08-01-{your name}-{pull request number}`, choose `Create a new spec` option. Command most likely will fail with the message: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks`, but so far, we see that this operation still works correctly. 
 	- Deploy guides pages: `rdme docs ./docs/guides --version=2018-08-01-{your name}-{pull request number}`
 	- Deploy api reference pages: `rdme docs ./docs/reference-docs --version=2018-08-01-{your name}-{pull request number}`
