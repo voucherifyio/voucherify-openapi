@@ -2,24 +2,24 @@
 
 ## 20231005 - Earning rule
 
-New models
-- LoyaltiesGetEarningRuleResponseBody
-- LoyaltiesEnableEarningRulesResponseBody
-- LoyaltiesDisableEarningRulesResponseBody
-- EarningRuleBase
-- EarningRuleEvent
-- EarningRuleFixed
-- EarningRuleProportionalOrder
-- EarningRuleProportionalOrderAmount
-- EarningRuleProportionalOrderTotalAmount
-- EarningRuleProportionalOrderMetadata
-- EarningRuleProportional
-- EarningRuleProportionalOrderItems
-- EarningRuleProportionalOrderItemsQuantity
-- EarningRuleProportionalOrderItemsAmount
-- EarningRuleProportionalOrderItemsSubtotalAmount
-- EarningRuleProportionalCustomerMetadata
-- EarningRuleProportionalCustomEvent
+- New models
+  - LoyaltiesGetEarningRuleResponseBody
+  - LoyaltiesEnableEarningRulesResponseBody
+  - LoyaltiesDisableEarningRulesResponseBody
+  - EarningRuleBase
+  - EarningRuleEvent
+  - EarningRuleFixed
+  - EarningRuleProportionalOrder
+  - EarningRuleProportionalOrderAmount
+  - EarningRuleProportionalOrderTotalAmount
+  - EarningRuleProportionalOrderMetadata
+  - EarningRuleProportional
+  - EarningRuleProportionalOrderItems
+  - EarningRuleProportionalOrderItemsQuantity
+  - EarningRuleProportionalOrderItemsAmount
+  - EarningRuleProportionalOrderItemsSubtotalAmount
+  - EarningRuleProportionalCustomerMetadata
+  - EarningRuleProportionalCustomEvent
 
 - /v1/loyalties/{campaignId}/earning-rules
   - GET
