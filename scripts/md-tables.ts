@@ -28,5 +28,6 @@ export const mdTables: [string, string?][] = [
     ['16_obj_export_object', 'EXPORTS-API-Export-Object.md'],
     ['20_obj_category_object', 'CATEGORIES-API-Category-Object.md'],
     ['21_obj_metadata_schema_object', 'METADATA-SCHEMAS-API-Metadata-Schema-Object.md'],
+    ['22_obj_location_object', 'LOCATIONS-API-Location-Object.md'],
     ['23_obj_qualification_object', 'QUALIFICATIONS-API-Qualification-Object.md']
 ];

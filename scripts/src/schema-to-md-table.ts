@@ -13,7 +13,7 @@ yup.addMethod(yup.MixedSchema, "oneOfSchemas", function (schemas: yup.AnySchema[
 
 const nodeWithTitleAndPropertiesSchema = yup.object({
     title: yup.string().optional(),
-    type: yup.string().oneOf(['object', 'string']),
+    type: yup.string().oneOf(['object', 'string', 'array']),
     properties: yup.object({}),
     anyOf: yup.array().optional(),
 });
