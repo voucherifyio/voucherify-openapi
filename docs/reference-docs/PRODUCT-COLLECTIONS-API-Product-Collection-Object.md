@@ -1,6 +1,6 @@
 ---
 title: Product Collection Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: product-collections-api
 slug: product-collection-object

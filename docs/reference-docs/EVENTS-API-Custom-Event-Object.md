@@ -1,6 +1,6 @@
 ---
 title: Custom Event Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: events-api
 slug: custom-event-object

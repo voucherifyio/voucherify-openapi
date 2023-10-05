@@ -1,6 +1,6 @@
 ---
 title: Redemption Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: redemptions-api
 slug: redemption-object

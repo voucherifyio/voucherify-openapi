@@ -1,6 +1,6 @@
 ---
 title: Earning Rule Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: loyalties-api
 slug: earning-rule-object

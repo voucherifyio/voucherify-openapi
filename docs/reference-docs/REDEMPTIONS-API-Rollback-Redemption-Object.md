@@ -1,6 +1,6 @@
 ---
 title: Rollback Redemption Object
-type: endpoint
+type: basic
 categorySlug: voucherify-api
 parentDocSlug: redemptions-api
 slug: rollback-redemption-object
