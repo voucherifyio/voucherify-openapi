@@ -27,7 +27,7 @@ order: 1
 | description</br>`string` | <p>An optional field to keep any extra textual information about the campaign such as a campaign description and details.</p> |
 | vouchers_count</br>`integer` | <p>Total number of unique vouchers in campaign.</p> |
 | active</br>`boolean` | <p>A flag to toggle the campaign on or off. You can disable a campaign even though it's within the active period defined by the <code>start_date</code> and <code>expiration_date</code>.</p><ul><li><code>true</code> indicates an <em>active</em> campaign</li><li><code>false</code> indicates an <em>inactive</em> campaign</li></ul> |
-| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format.</p>  |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the campaign was created in ISO 8601 format.</p> **Example:** <p>2021-12-01T08:00:50.038Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was updated in ISO 8601 format.</p> **Example:** <p>2022-09-20T09:18:19.623Z</p> |
 | creation_status</br>`string` | <p>Indicates the status of the campaign creation.</p> Available values: `DONE`, `IN_PROGRESS`, `FAILED`, `DRAFT`, `MODIFYING` |
@@ -35,8 +35,9 @@ order: 1
 | protected</br>`boolean` | <p>Indicates whether the resource can be deleted.</p> |
 | category_id</br>`string` | <p>Unique category ID that this campaign belongs to.</p> **Example:** <p>cat_0b688929a2476386a7</p> |
 | categories | See: [Category Object](#category-object) |
-| loyalty_tiers_expiration</br>`object` | <p>Defines the expiration mechanism for loyalty tiers.</p> Any of: [Balance](#balance), [Points in Period](#points-in-period)  |
+| loyalty_tiers_expiration</br>`object` | <p>Defines the expiration mechanism for loyalty tiers.</p> Any of: [Balance](#balance), [Points in Period](#points-in-period) |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the campaign.</p> |
+
 ## Loyalty Card
 | Attributes |  Description |
 |:-----|:--------|
@@ -45,6 +46,7 @@ order: 1
 | redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr></tbody></table> |
 | code_config</br>`object` | <p>Defines code's pattern (prefix, suffix, length, charset, etc).</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">length</br><code>string</code></td><td style="text-align:left"><p>Number of characters in a generated code (excluding prefix and postfix).</p></td></tr><tr><td style="text-align:left">charset</br><code>string</code></td><td style="text-align:left"><p>Characters that can appear in the code.</p><p>Examples:</p><ul><li>Alphanumeric: <code>0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic: <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic Lowercase: <code>abcdefghijklmnopqrstuvwxyz</code></li><li>Alphabetic Uppercase: <code>ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Numbers: <code>0123456789</code></li><li>Custom: a custom character set</li></ul></td></tr><tr><td style="text-align:left">prefix</br><code>string</code></td><td style="text-align:left"><p>A text appended before the code.</p></td></tr><tr><td style="text-align:left">postfix</br><code>string</code></td><td style="text-align:left"><p>A text appended after the code.</p></td></tr><tr><td style="text-align:left">pattern</br><code>string</code></td><td style="text-align:left"><p>A pattern for codes where hashes (#) will be replaced with random characters. Overrides <code>length</code>.</p></td></tr></tbody></table> |
 | is_referral_code</br>`boolean` | <p>Indicates whether the voucher is a referral code; this is <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
+
 ## Category Object
 | Attributes |  Description |
 |:-----|:--------|
@@ -54,12 +56,14 @@ order: 1
 | created_at</br>`string` | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
 | object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> |
+
 ## Balance
 | Attributes |  Description |
 |:-----|:--------|
 | qualification_type</br>`string` | <p>Tier qualification.</p><p><code>BALANCE</code>: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier.</p> Available values: `BALANCE` |
 | start_date</br>`object` | <p>Defines the conditions for the start date of the tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to be valid for a customer.<br><code>IMMEDIATE</code>: After reaching the minimum required points.</p> Available values: <code>IMMEDIATE</code></td></tr></tbody></table> |
 | expiration_date | <p>Defines the conditions for the expiration date of a tier.</p> Any of: [Balance Drop](#balance-drop), [Custom](#custom) |
+
 ## Points in Period
 | Attributes |  Description |
 |:-----|:--------|
@@ -67,21 +71,25 @@ order: 1
 | qualification_period</br>`string` | <p>Customers can qualify for the tier if they collected enough points in a given time period. So, in addition to the customer having to reach a points range, they also need to have collected the points within a set time period.</p><table><thead><tr><th style="text-align:left"><strong>Period</strong></th><th style="text-align:left"><strong>Definition</strong></th></tr></thead><tbody><tr><td style="text-align:left"><strong>Calendar Month</strong></td><td style="text-align:left">Points collected in one calendar month<br>January, February, March, etc.</td></tr><tr><td style="text-align:left"><strong>Calendar Quarter</strong></td><td style="text-align:left">Points collected in the quarter<br>- January - March<br>- April - June<br>- July - September<br>- October - December</td></tr><tr><td style="text-align:left"><strong>Calendar Half-year</strong></td><td style="text-align:left">Points collected in the half-year<br>- January - June<br>- July - December</td></tr><tr><td style="text-align:left"><strong>Calendar Year</strong></td><td style="text-align:left">Points collected in one calendar year<br>January - December</td></tr></tbody></table> Available values: `MONTH`, `QUARTER`, `HALF_YEAR`, `YEAR` |
 | start_date</br>`object` | <p>Defines the conditions for the start date of the tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to be valid for a customer.<br><code>IMMEDIATE</code>: After reaching the minimum required points.<br><code>NEXT_PERIOD</code>: When the next qualification period starts.</p> Available values: <code>IMMEDIATE</code>, <code>NEXT_PERIOD</code></td></tr></tbody></table> |
 | expiration_date</br>`object` | <p>Defines the conditions for the expiration date of a tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to expire for a customer.<br><code>END_OF_PERIOD</code>: Expire tier at the end of the period.<br><code>END_OF_NEXT_PERIOD</code>:  Expire tier at the end of the next period.</p> Available values: <code>END_OF_PERIOD</code>, <code>END_OF_NEXT_PERIOD</code></td></tr><tr><td style="text-align:left">extend</br><code>string</code></td><td style="text-align:left"><p>Extend the expiration by adding extra months or days in ISO 8601 format. The tier will remain active even though it reaches its expiration time period. For example, a tier with a duration of <code>P3M</code> will be valid for an additional duration of 3 months and a tier with a duration of <code>P1D</code> will be valid for an additional duration of 1 day.</p></td></tr></tbody></table> |
+
 ## Balance Drop
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>What triggers the tier to expire for a customer.<br><code>BALANCE_DROP</code>: Tier expires when the points balance drops below the required range of the tier.</p> Available values: `BALANCE_DROP` |
+
 ## Custom
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>What triggers the tier to expire for a customer.<br><code>CUSTOM</code>: Tier expires after a certain time period passes following the instance the points balance drops below the required range of the tier.</p> Available values: `CUSTOM` |
 | extend</br>`string` | <p>Defines the amount of time the tier will remain active in ISO 8601 format. The expiration date counter starts at the moment when the customer reaches the minimum required points that are required to be in the tier. For example, a tier with a duration of P3M will be valid for a duration of 3 months.</p> |
 | rounding | <p>Defines the rounding mechanism for tier expiration.</p> Any of: [Calendar Periods](#calendar-periods), [Specific Month](#specific-month) |
+
 ## Calendar Periods
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Period to which the expiration will be rounded to.</p><ul><li><code>MONTH</code>: The expiration date will be rounded to the end of the month.</li><li><code>QUARTER</code>: The expiration date will be rounded to the end of the quarter.</li><li><code>HALF_YEAR</code>: The expiration date will be rounded to the half year.</li><li><code>YEAR</code>: The expiration date will be rounded to the end of the year.</li></ul> Available values: `MONTH`, `QUARTER`, `HALF_YEAR`, `YEAR` |
 | strategy</br>`string` | <p>Which portion of the given period should the rounding be applied to.</p> Available values: `END` |
+
 ## Specific Month
 | Attributes |  Description |
 |:-----|:--------|

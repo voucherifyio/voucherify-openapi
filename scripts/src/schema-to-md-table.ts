@@ -15,6 +15,7 @@ const nodeWithTitleAndPropertiesSchema = yup.object({
     title: yup.string().optional(),
     type: yup.string().oneOf(['object', 'string']),
     properties: yup.object({}),
+    anyOf: yup.array().optional(),
 });
 
 const oneOfSchema = yup.array().of(yup.object({
@@ -33,6 +34,7 @@ const propertySchema = yup.object({
         yup.string(),
         yup.array().of(yup.string())
     ]),
+    properties: yup.object({}),
     description: yup.string().optional(),
     enum: yup.array().of(yup.mixed().oneOfSchemas([
         yup.string(),
@@ -194,7 +196,7 @@ export default class SchemaToMarkdownTable {
         const relatedObjectsNames = [];
         const example = "example" in property ? renderMarkdown(property.example) : '';
 
-        const { description, enum: EnumProp, oneOf, anyOf, items, type, $ref } = propertySchema.validateSync(property)
+        const { description, enum: EnumProp, oneOf, anyOf, items, type, $ref, properties} = propertySchema.validateSync(property)
 
         if (description) {
             descriptionArr.push(renderMarkdown(description))
@@ -230,7 +232,7 @@ export default class SchemaToMarkdownTable {
             relatedObjectsNames.push(...relatedObjectsNamesItems)
         }
 
-        if (type === 'object') {
+        if (type === 'object' && properties) {
             const { html, relatedObjects } = this.renderSchema(property, level + 1)
             relatedObjectsNames.push(...relatedObjects)
             descriptionArr.push(renderMarkdown(html))
@@ -244,7 +246,6 @@ export default class SchemaToMarkdownTable {
         const relatedObjectsNames: string[] = [];
 
         const tableRows = Object.entries(properties).map(([propertyId, property]) => {
-            // console.log(`rendering propertyId: ${propertyId} for level ${level}`)
 
             const { descriptionArr, relatedObjectsNames: additionalRelatedObjectsNames, example } = this.renderProperty(property, level)
 
@@ -276,12 +277,11 @@ export default class SchemaToMarkdownTable {
     }
 
     private renderSchema(schemaNameOrSchemaObject: string | object, level: number = 0) {
-
         const schema = typeof schemaNameOrSchemaObject === 'object' ? schemaNameOrSchemaObject : this.schemas[schemaNameOrSchemaObject]
         if (!schema) {
             throw new Error(`Schema "${schema}" not found`);
         }
-        const { properties, title, type } = nodeWithTitleAndPropertiesSchema.validateSync(schema);
+        const { properties, title } = nodeWithTitleAndPropertiesSchema.validateSync(schema);
         const respopnseStrArr = [];
 
         if (title) {
@@ -297,7 +297,7 @@ export default class SchemaToMarkdownTable {
             const { html, relatedObjectsNames } = this.renderPropertiesAsTableRow(properties, level)
             relatedObjects.push(...relatedObjectsNames)
             respopnseStrArr.push(html)
-        }else if(type === 'string'){
+        }else{
             propertySchema.validateSync(schema)
             const { descriptionArr, relatedObjectsNames } = this.renderProperty(schema, level)
             relatedObjects.push(...relatedObjectsNames)
@@ -329,7 +329,7 @@ export default class SchemaToMarkdownTable {
                 schemasToRender.push(...relatedObjects)
             }
         }
-        return response.join(EOL);
+        return response.join(`${EOL}${EOL}`);
     }
 
 }
