@@ -2,34 +2,32 @@
 
 ## 20231005 - Earning rule
 
-- New models
-  - LoyaltiesGetEarningRuleResponseBody
-  - LoyaltiesEnableEarningRulesResponseBody
-  - LoyaltiesDisableEarningRulesResponseBody
-  - EarningRuleBase
-  - EarningRuleEvent
-  - EarningRuleFixed
-  - EarningRuleProportionalOrder
-  - EarningRuleProportionalOrderAmount
-  - EarningRuleProportionalOrderTotalAmount
-  - EarningRuleProportionalOrderMetadata
-  - EarningRuleProportional
-  - EarningRuleProportionalOrderItems
-  - EarningRuleProportionalOrderItemsQuantity
-  - EarningRuleProportionalOrderItemsAmount
-  - EarningRuleProportionalOrderItemsSubtotalAmount
-  - EarningRuleProportionalCustomerMetadata
-  - EarningRuleProportionalCustomEvent
+**New models**
+- LoyaltiesGetEarningRuleResponseBody
+- LoyaltiesEnableEarningRulesResponseBody
+- LoyaltiesDisableEarningRulesResponseBody
+- EarningRuleBase
+- EarningRuleEvent
+- EarningRuleFixed
+- EarningRuleProportionalOrder
+- EarningRuleProportionalOrderAmount
+- EarningRuleProportionalOrderTotalAmount
+- EarningRuleProportionalOrderMetadata
+- EarningRuleProportional
+- EarningRuleProportionalOrderItems
+- EarningRuleProportionalOrderItemsQuantity
+- EarningRuleProportionalOrderItemsAmount
+- EarningRuleProportionalOrderItemsSubtotalAmount
+- EarningRuleProportionalCustomerMetadata
+- EarningRuleProportionalCustomEvent
 
-- /v1/loyalties/{campaignId}/earning-rules
-  - GET
-    - New response schema: LoyaltiesGetEarningRuleResponseBody (old one: `8_res_list_earning_rules`)
-- /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable
-  - POST
-    - New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
-- /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable
-  - POST
-    - New response schema: LoyaltiesDisableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+**Endpoint changes**
+- GET /v1/loyalties/{campaignId}/earning-rules
+  - New response schema: LoyaltiesGetEarningRuleResponseBody (old one: `8_res_list_earning_rules`)
+- POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable
+  - New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+- POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable
+  - New response schema: LoyaltiesDisableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
 
 ## 20230929 - Order references/guides script
 - Changes on Performance and Qualification guidlines pages
