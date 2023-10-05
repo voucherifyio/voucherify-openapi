@@ -23,7 +23,7 @@
 
 - /v1/loyalties/{campaignId}/earning-rules
   - GET
-    - New response schema: LoyaltiesGetEarningRuleResponseBody (old one: 
+    - New response schema: LoyaltiesGetEarningRuleResponseBody (old one: `8_res_list_earning_rules`)
 - /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable
   - POST
     - New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
