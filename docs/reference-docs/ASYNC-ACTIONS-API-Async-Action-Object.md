@@ -21,6 +21,7 @@ order: 1
 | processing_time</br>`integer` | <p>The length of time it took to process the request in milliseconds.</p> **Example:** <p>1217</p> |
 | progress</br>`integer` | <p>% progress to completion of the asynchronous action.</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>async_action</code>.</p> |
+
 ## CAMPAIGN.VOUCHERS_IMPORT
 | Attributes |  Description |
 |:-----|:--------|
@@ -28,6 +29,7 @@ order: 1
 | failed</br>`array` | <p>If any records failed during the process, this array shows the failure details.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Unique voucher code.</p></td></tr><tr><td style="text-align:left">reason</br><code>string</code></td><td style="text-align:left"><p>Detailed failure cause for the voucher code import.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
+
 ## CAMPAIGN.VOUCHERS_IMPORT_CSV
 | Attributes |  Description |
 |:-----|:--------|
@@ -35,26 +37,31 @@ order: 1
 | failed</br>`array` | <p>If any records failed during the process, this array shows the failure details.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Unique voucher code.</p></td></tr><tr><td style="text-align:left">row</br><code>integer</code></td><td style="text-align:left"><p>The CSV file row number where the code definition is recorded. The row counter excludes the file headers row.</p></td></tr><tr><td style="text-align:left">reason</br><code>string</code></td><td style="text-align:left"><p>Detailed failure cause for the voucher code import.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
+
 ## CAMPAIGN.VOUCHERS_UPDATE
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+
 ## CAMPAIGN.VOUCHERS_DELETE
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+
 ## CAMPAIGN.VOUCHERS_GENERATE
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+
 ## CAMPAIGNS.METADATA_KEY_PURGE
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+
 ## CUSTOMERS.IMPORT_CSV
 | Attributes |  Description |
 |:-----|:--------|
@@ -62,31 +69,37 @@ order: 1
 | failed</br>`array` | <p>If any records failed during the process, this array shows the failure details.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique customer ID from your inventory system as indicated in the CSV file.</p></td></tr><tr><td style="text-align:left">row</br><code>integer</code></td><td style="text-align:left"><p>The CSV file row number where the customer is recorded. The row counter excludes the file headers row.</p></td></tr><tr><td style="text-align:left">reason</br><code>string</code></td><td style="text-align:left"><p>Detailed failure cause for the customer import.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
+
 ## CUSTOMERS.BULK_UPDATE
 | Attributes |  Description |
 |:-----|:--------|
 | results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique customer <code>source_id</code>.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number or resources processed successfully.</p> |
+
 ## CUSTOMERS.METADATA_UPDATE
 | Attributes |  Description |
 |:-----|:--------|
 | results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique customer <code>source_id</code>.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+
 ## CUSTOMERS.METADATA_KEY_PURGE
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+
 ## PRODUCTS.BULK_UPDATE
 | Attributes |  Description |
 |:-----|:--------|
 | results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique product <code>source_id</code>.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+
 ## PRODUCTS.METADATA_UPDATE
 | Attributes |  Description |
 |:-----|:--------|
 | results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique product <code>source_id</code>.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+
 ## PRODUCTS.IMPORT_CSV
 | Attributes |  Description |
 |:-----|:--------|
@@ -94,6 +107,7 @@ order: 1
 | failed</br>`array` | <p>If any records failed during the process, this array shows the failure details.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">row</br><code>integer</code></td><td style="text-align:left"><p>The CSV file row number where the product definition is recorded. The row counter excludes the file headers row.</p></td></tr><tr><td style="text-align:left">reason</br><code>string</code></td><td style="text-align:left"><p>Detailed failure cause for the product import.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
+
 ## SKUS.IMPORT_CSV
 | Attributes |  Description |
 |:-----|:--------|
@@ -101,11 +115,13 @@ order: 1
 | failed</br>`array` | <p>If any records failed during the process, this array shows the failure details.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">row</br><code>integer</code></td><td style="text-align:left"><p>The CSV file row number where the SKU definition is recorded. The row counter excludes the file headers row.</p> <strong>Example:</strong> <p>2</p></td></tr><tr><td style="text-align:left">reason</br><code>string</code></td><td style="text-align:left"><p>Detailed failure cause for the SKU import.</p> <strong>Example:</strong> <p>Resource sku with id size-small is in use by products with ids [prod_0b0e3441c2462eff2c]</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
+
 ## PRODUCTS.METADATA_KEY_PURGE
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
 | done_count</br>`integer` | <p>Number of resources updated successfully.</p> |
+
 ## VOUCHERS.IMPORT
 | Attributes |  Description |
 |:-----|:--------|
@@ -113,6 +129,7 @@ order: 1
 | failed</br>`object` | <p>If any records failed during the process, this array shows the failure details.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Unique voucher code.</p></td></tr><tr><td style="text-align:left">reason</br><code>string</code></td><td style="text-align:left"><p>Detailed failure cause for the voucher code import.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
+
 ## VOUCHERS.IMPORT_CSV
 | Attributes |  Description |
 |:-----|:--------|
@@ -120,21 +137,25 @@ order: 1
 | failed</br>`array` | <p>If any records failed during the process, this array shows the failure details.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Unique voucher code.</p></td></tr><tr><td style="text-align:left">row</br><code>integer</code></td><td style="text-align:left"><p>The CSV file row number where the code definition is recorded. The row counter excludes the file headers row.</p></td></tr><tr><td style="text-align:left">reason</br><code>string</code></td><td style="text-align:left"><p>Detailed failure cause for the voucher code import.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
+
 ## VOUCHERS.BULK_UPDATE
 | Attributes |  Description |
 |:-----|:--------|
 | results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Unique voucher code.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+
 ## VOUCHERS.METADATA_UPDATE
 | Attributes |  Description |
 |:-----|:--------|
 | results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Unique voucher code.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+
 ## VOUCHERS.METADATA_KEY_PURGE
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+
 ## ORDERS.IMPORT
 | Attributes |  Description |
 |:-----|:--------|
@@ -142,6 +163,7 @@ order: 1
 | failed</br>`object` | <p>If any records failed during the process, this array shows the failure details.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique order source ID.</p></td></tr><tr><td style="text-align:left">reason</br><code>string</code></td><td style="text-align:left"><p>Detailed failure cause for the voucher code import.</p></td></tr></tbody></table> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
+
 ## ORDERS.METADATA_KEY_PURGE
 | Attributes |  Description |
 |:-----|:--------|

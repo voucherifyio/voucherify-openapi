@@ -51,6 +51,60 @@
 - /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
     - new response schema `LoyaltiesGetPointsExpirationResponseBody` (old `8_res_get_points_expiration`)
 
+
+## 20231005 - Earning rule
+
+**New models**
+- LoyaltiesGetEarningRuleResponseBody
+- LoyaltiesEnableEarningRulesResponseBody
+- LoyaltiesDisableEarningRulesResponseBody
+- EarningRuleBase
+- EarningRuleEvent
+- EarningRuleFixed
+- EarningRuleProportionalOrder
+- EarningRuleProportionalOrderAmount
+- EarningRuleProportionalOrderTotalAmount
+- EarningRuleProportionalOrderMetadata
+- EarningRuleProportional
+- EarningRuleProportionalOrderItems
+- EarningRuleProportionalOrderItemsQuantity
+- EarningRuleProportionalOrderItemsAmount
+- EarningRuleProportionalOrderItemsSubtotalAmount
+- EarningRuleProportionalCustomerMetadata
+- EarningRuleProportionalCustomEvent
+
+**Endpoint changes**
+- GET /v1/loyalties/{campaignId}/earning-rules
+	- New response schema: LoyaltiesGetEarningRuleResponseBody (old one: `8_res_list_earning_rules`)
+- POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable
+	- New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+- POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable
+	- New response schema: LoyaltiesDisableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+
+## 20230829
+
+**Added schemas**
+- customers_permanent_deletion_response_body
+- customers_update_metadata_in_bulk_request_body
+- customers_update_in_bulk_request_body
+
+
+**Endpoints changes**
+- `/v1/customers/{customerId}/permanent-deletion`
+	- POST
+		- Response schema was replaced with `customers_permanent_deletion_response_body` (old `9_res_customers_customerId_permanent-deletion`)
+		- `status` default value was set to `DONE`
+		- `data_json.customer` default value was set to 1
+		- Added `required` to response properties
+- `v1/customers/bulk/async`
+	- POST
+		- Request schema was replaced with `customers_update_in_bulk_request_body` (old `9_req_update_customers_bulk-deletion`)
+		- Set as `required`: `async_action_id` property in `a_res_async_actions` model
+- `v1/customers/metadata/async`
+	- POST
+		- Request schema was replaced with `customers_update_metadata_in_bulk_request_body` (old `9_req_customers_metadata_async`)
+		- Set as `required`: `async_action_id` property in `a_res_async_actions` model
+
 ## 20230929 - Order references/guides script
 - Changes on Performance and Qualification guidelines pages
 - Added links to qualification guide in endpoints and qualification object schema.
@@ -270,6 +324,9 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 /docs/orders-1  -> /docs/orders
 /docs/vouchers-1 -> /docs/vouchers
 /docs/campaigns-1 -> /docs/campaigns
+/docs/checking-eligibility-for-coupons -> /docs/checking-eligibility
+/reference/examine-qualification -> /reference/check-eligibility
+/reference/examine-qualification-client-side -> /reference/check-eligibility-client-side
 /reference/vouchers-get -> /reference/get-voucher
 /reference/add-gift-voucher-balance -> /reference/add-remove-gift-voucher-balance
 /reference/import-vouchers-1 -> /reference/import-vouchers
