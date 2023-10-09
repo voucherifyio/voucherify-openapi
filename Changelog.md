@@ -1,5 +1,34 @@
 # Changelog
 
+## 20231005 - Earning rule
+
+**New models**
+- LoyaltiesGetEarningRuleResponseBody
+- LoyaltiesEnableEarningRulesResponseBody
+- LoyaltiesDisableEarningRulesResponseBody
+- EarningRuleBase
+- EarningRuleEvent
+- EarningRuleFixed
+- EarningRuleProportionalOrder
+- EarningRuleProportionalOrderAmount
+- EarningRuleProportionalOrderTotalAmount
+- EarningRuleProportionalOrderMetadata
+- EarningRuleProportional
+- EarningRuleProportionalOrderItems
+- EarningRuleProportionalOrderItemsQuantity
+- EarningRuleProportionalOrderItemsAmount
+- EarningRuleProportionalOrderItemsSubtotalAmount
+- EarningRuleProportionalCustomerMetadata
+- EarningRuleProportionalCustomEvent
+
+**Endpoint changes**
+- GET /v1/loyalties/{campaignId}/earning-rules
+  - New response schema: LoyaltiesGetEarningRuleResponseBody (old one: `8_res_list_earning_rules`)
+- POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable
+  - New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+- POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable
+  - New response schema: LoyaltiesDisableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+
 ## 20230829
 
 **Added schemas**
@@ -24,6 +53,7 @@
 	  - Request schema was replaced with `customers_update_metadata_in_bulk_request_body` (old `9_req_customers_metadata_async`)
       - Set as `required`: `async_action_id` property in `a_res_async_actions` model
       
+
 ## 20230929 - Order references/guides script
 - Changes on Performance and Qualification guidelines pages
 - Added links to qualification guide in endpoints and qualification object schema.
