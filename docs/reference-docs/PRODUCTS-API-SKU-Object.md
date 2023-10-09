@@ -17,9 +17,9 @@ order: 2
 | sku</br>`string` | <p>Unique user-defined SKU name.</p> **Example:** <p>Large Pink Shirt</p> |
 | price</br>`integer` | <p>SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.</p> |
 | currency</br>`string` | <p>SKU price currency.</p> **Example:** <p>USD</p> |
-| attributes</br>`object` | <p>The attributes object stores values for all custom attributes inherited by the SKU from the parent product. A set of key/value pairs that are attached to a SKU object and are unique to each SKU within a product family.</p>  |
+| attributes</br>`object` | <p>The attributes object stores values for all custom attributes inherited by the SKU from the parent product. A set of key/value pairs that are attached to a SKU object and are unique to each SKU within a product family.</p> |
 | image_url</br>`string` | <p>The HTTPS URL pointing to the .png or .jpg file that will be used to render the SKU image.</p> |
-| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the SKU. A set of key/value pairs that you can attach to a SKU object. It can be useful for storing additional information about the SKU in a structured format.</p>  |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the SKU. A set of key/value pairs that you can attach to a SKU object. It can be useful for storing additional information about the SKU in a structured format.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the SKU was created in ISO 8601 format.</p> **Example:** <p>2022-05-17T10:36:30.187Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the SKU was updated in ISO 8601 format.</p> **Example:** <p>2022-05-17T10:55:09.137Z</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>SKU</code>.</p> |

@@ -98,10 +98,10 @@ Good practices:
 
 ### Prerequisites
 
-- Instal `git`, `nodejs`, and `npm`.
+- Install `git`, `nodejs`, and `npm`.
 - Clone repository locally: `git clone https://github.com/voucherifyio/voucherify-openapi`.
 - Ensure you have the readme.io account with access to the `Voucherify` project (ask your line manager for help).
-- Instal `rdme` tool (readme.io CLI): follow the installation instructions from https://github.com/readmeio/rdme#readme website.
+- Install `rdme` tool (readme.io CLI): follow the installation instructions from https://github.com/readmeio/rdme#readme website.
 - Authenticate `rdme` tool by running: `rdme login` command; you can check if it works using the command `rdme whoami`; what should result: `You are currently logged in as xxx@voucherify.io to the voucherify project.`
 - Copy `.env.example` to `.env` and add to this file your personal API Key created in readme.io: `dashboard` > `configuration` > `API Keys`
 
@@ -119,7 +119,10 @@ Good practices:
 	- Update tables in markdown tables:
 		- `npm run build-md-tables-from-openapi`
 		- `npm run update-md-tables-in-doc`
-	- If before created, remove from API Reference the existing OpenAPI file and all specification files.	
+	- from API Reference page in readme dashboard:
+		- remove Voucherify OpenAPI Definition
+		- refresh the page and remove `VOUCHERIFY API` category from left sidebar, DO NOT REMOVE `INTRODUCTION` catregory from left sidebar
+	  the existing OpenAPI file and all specification files.	
 	- Deploy OpenAPI file by command `rdme openapi ./reference/OpenAPI.json --version=2018-08-01-{your name}-{pull request number}`, choose `Create a new spec` option. Command most likely will fail with the message: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks`, but so far, we see that this operation still works correctly. 
 	- Deploy guides pages: `rdme docs ./docs/guides --version=2018-08-01-{your name}-{pull request number}`
 	- Deploy api reference pages: `rdme docs ./docs/reference-docs --version=2018-08-01-{your name}-{pull request number}`
