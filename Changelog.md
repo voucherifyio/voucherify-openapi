@@ -1,7 +1,58 @@
 # Changelog
 
+## 20231009
+
+#### New schemas:
+- LoyaltiesListMemberRewardsRequestQuery
+- LoyaltiesGetPointsExpirationRequestQuery
+- LoyaltiesGetPointsExpirationResponseBody
+- LoyaltiesListCardTransactionsRequestQuery
+- LoyaltiesListCardTransactionsResponseBody
+- LoyaltyCardTransactionsType
+- SimpleLoyaltyVoucher
+- LoyaltyCardTransaction
+- LoyaltyCardTransactionsFields
+- LoyaltiesExportCardTransactionsRequestBody
+- LoyaltiesExportCardTransactionsResponseBody
+- RewardAssignment
+- Reward
+- RewardTypeCoin
+- RewardTypeMaterial
+- RewardTypeCampaign
+- RewardType
+- LoyaltiesAddOrRemoveCardBalanceResponseBody
+- LoyaltiesTransferPointsResponseBody
+- LoyaltiesTransferPoints
+- LoyaltiesTransferPointsRequestBody
+- LoyaltiesListMemberRewardsResponseBody
+- LoyaltiesAddOrRemoveCardBalanceRequestBody
+- PointsExpirationTypes
+
+#### Schemas changes
+- /v1/loyalties/{campaignId}/members/{memberId}/balance
+    - new request schema `LoyaltiesAddOrRemoveCardBalanceRequestBody` (old `8_req_add_remove_points_balance`)
+    - new response schema `LoyaltiesAddOrRemoveCardBalanceResponseBody` (old `8_res_add_remove_points_balance`)
+- /v1/loyalties/members/{memberId}/balance
+    - new request schema `LoyaltiesAddOrRemoveCardBalanceRequestBody` (old `8_req_add_remove_points_balance`)
+    - new response schema `LoyaltiesAddOrRemoveCardBalanceResponseBody` (old `8_res_add_remove_points_balance`)
+- /v1/loyalties/{campaignId}/members/{memberId}/transfers
+    - new request schema `LoyaltiesTransferPointsRequestBody` (old `8_req_transfer_loyalty_points`)
+    - new response schema `LoyaltiesTransferPointsResponseBody` (old `8_obj_loyalty_card_object_non_expanded_categories`)
+- /v1/loyalties/{campaignId}/members/{memberId}/transactions
+    - new request schema `LoyaltiesListCardTransactionsRequestBody` (old `8_res_get_loyalty_card_transactions`)
+- /v1/loyalties/members/{memberId}/transactions
+    - new request schema `LoyaltiesListCardTransactionsResponseBody` (old `8_res_get_loyalty_card_transactions`)
+- /v1/loyalties/members/{memberId}/transactions/export
+    - new request schema `LoyaltiesExportCardTransactionsRequestBody` (old `8_req_create_loyalty_card_transactions_export`)
+    - new response schema `LoyaltiesExportCardTransactionsResponseBody` (old `8_obj_export_transactions_object`)
+- /v1/loyalties/{campaignId}/members/{memberId}/transactions/export
+    - new request schema `LoyaltiesExportCardTransactionsRequestBody` (old `8_req_create_loyalty_card_transactions_export`)
+    - new response schema `LoyaltiesExportCardTransactionsResponseBody` (old `8_obj_export_transactions_object`)
+- /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
+    - new response schema `LoyaltiesGetPointsExpirationResponseBody` (old `8_res_get_points_expiration`)
+
 ## 20230929 - Order references/guides script
-- Changes on Performance and Qualification guidlines pages
+- Changes on Performance and Qualification guidelines pages
 - Added links to qualification guide in endpoints and qualification object schema.
 
 ## 20230928 - Order references/guides script
@@ -20,68 +71,6 @@
 ## 20230925 - Order references/guides script
 
 Added script, located in `docs/script/` directory to quickly update order of references and guides based on `.md` files. For more information please check [Update-Order-Standard-Work.md](automation%2FUpdate-Order-Standard-Work.md) under `Update Order of Docs - AUTOMATIC` section.
-
-## 20230913 - New schemas, schemas changes
-
-#### New schemas:
-- LoyaltiesListMemberRewardsRequestQuery
-- LoyaltiesListMemberRewardsResponseBody
-- LoyaltiesTransferPoints
-- LoyaltiesGetPointsExpirationRequestQuery
-- LoyaltiesGetPointsExpirationResponseBody
-- LoyaltiesListCardTransactionsRequestQuery
-- LoyaltiesListCardTransactionsResponseBody
-- LoyaltyCardTransactionsType
-- SimpleLoyaltyVoucher
-- LoyaltyCardTransactionsResponse  ??
-- LoyaltyCardTransactionsFields
-- LoyaltiesExportCardTransactionsRequestQuery
-- LoyaltiesExportCardTransactionsResponseBody
-- RewardAssignment
-- Reward
-- RequiredRewardTypeCampaign
-- RequiredRewardTypeCoin
-- RequiredRewardTypeMaterial
-- RewardType
-- RewardsGetResponseBody
-- RewardTypeCampaign
-- LoyaltiesGetMemberActivitiesResponseBody
-- LoyaltiesAddOrRemoveCardBalanceResponseBody
-- LoyaltiesCreateMemberResponseBody
-- SimpleLoyaltyVoucher
-- LoyaltiesGetMemberResponseBody
-- LoyaltiesTransferPointsResponseBody
-
-#### Schemas changes
-- /v1/loyalties/{campaignId}/members/{memberId}
-  - new response schema `LoyaltiesGetMemberResponseBody` (old `8_obj_loyalty_card_object_non_expanded_categories`)
-- /v1/loyalties/members/{memberId}
-  - new response schema `LoyaltiesGetMemberResponseBody` (old `8_obj_loyalty_card_object_non_expanded_categories`)
-- /v1/loyalties/{campaignId}/members/{memberId}/activities
-  - new response schema `LoyaltiesGetMemberActivitiesResponseBody` (old `8_res_get_member_activities`)
-- /v1/loyalties/members/{memberId}/activities
-  - new response schema `LoyaltiesGetMemberActivitiesResponseBody` (old `8_res_get_member_activities`)
-- /v1/loyalties/{campaignId}/members/{memberId}/balance
-  - new request schema `LoyaltiesAddOrRemoveCardBalanceRequestBody` (old `8_req_add_remove_points_balance`)
-  - new response schema `LoyaltiesAddOrRemoveCardBalanceResponseBody` (old `8_res_add_remove_points_balance`)
-- /v1/loyalties/members/{memberId}/balance
-  - new request schema `LoyaltiesAddOrRemoveCardBalanceRequestBody` (old `8_req_add_remove_points_balance`)
-  - new response schema `LoyaltiesAddOrRemoveCardBalanceResponseBody` (old `8_res_add_remove_points_balance`)
-- /v1/loyalties/{campaignId}/members/{memberId}/transfers
-  - new request schema **array of** `LoyaltiesTransferPoints` (old `8_req_transfer_loyalty_points`)
-  - new response schema `LoyaltiesTransferPointsResponseBody` (old `8_obj_loyalty_card_object_non_expanded_categories`)
-- /v1/loyalties/{campaignId}/members/{memberId}/transactions
-  - new request schema `LoyaltiesListCardTransactionsResponseBody` (old `8_res_get_loyalty_card_transactions`)
-- /v1/loyalties/members/{memberId}/transactions
-  - new request schema `LoyaltiesListCardTransactionsResponseBody` (old `8_res_get_loyalty_card_transactions`)
-- /v1/loyalties/members/{memberId}/transactions/export
-  - new request schema `LoyaltiesExportCardTransactionsRequestQuery` (old `8_req_create_loyalty_card_transactions_export`)
-  - new response schema `LoyaltiesExportCardTransactionsResponseBody` (old `8_obj_export_transactions_object`)
-- /v1/loyalties/{campaignId}/members/{memberId}/transactions/export
-  - new request schema `LoyaltiesExportCardTransactionsRequestQuery` (old `8_req_create_loyalty_card_transactions_export`)
-  - new response schema `LoyaltiesExportCardTransactionsResponseBody` (old `8_obj_export_transactions_object`)
-- /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
-  - new response schema `LoyaltiesGetPointsExpirationResponseBody` (old `8_res_get_points_expiration`)
 
 ## 20230823 - New Endpoints
 
