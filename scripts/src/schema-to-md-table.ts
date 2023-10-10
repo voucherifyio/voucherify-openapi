@@ -13,7 +13,7 @@ yup.addMethod(yup.MixedSchema, "oneOfSchemas", function (schemas: yup.AnySchema[
 
 const nodeWithTitleAndPropertiesSchema = yup.object({
     title: yup.string().optional(),
-    type: yup.string().oneOf(['object', 'string', 'array']),
+    type: yup.string().oneOf(['object', 'string', 'array', 'number']),
     properties: yup.object({}),
     anyOf: yup.array().optional(),
 });
@@ -22,12 +22,18 @@ const oneOfSchema = yup.array().of(yup.object({
     '$ref': yup.string().required()
 })).optional();
 
-const itemsSchema = yup.mixed().oneOfSchemas([nodeWithTitleAndPropertiesSchema, yup.object({ '$ref': yup.string().optional() })]).optional();
+const itemsSchema = yup.mixed().oneOfSchemas([
+    nodeWithTitleAndPropertiesSchema,
+    yup.object({ '$ref': yup.string().optional() })
+]).optional();
 
 const anyOfSchema = yup.array().of(yup.mixed().oneOfSchemas([
     nodeWithTitleAndPropertiesSchema,
     yup.object({ '$ref': yup.string().required() })
 ])).optional()
+
+
+const allOfSchema = anyOfSchema;
 
 const propertySchema = yup.object({
     type: yup.mixed().oneOfSchemas([
@@ -43,12 +49,14 @@ const propertySchema = yup.object({
     ])).optional(),
     oneOf: oneOfSchema,
     anyOf: anyOfSchema,
+    allOf: allOfSchema,
     items: itemsSchema,
     '$ref': yup.string().optional()
 });
 
 interface Items extends yup.InferType<typeof itemsSchema> { }
 interface AnyOf extends yup.InferType<typeof anyOfSchema> { }
+interface AllOf extends yup.InferType<typeof anyOfSchema> { }
 interface OneOf extends yup.InferType<typeof oneOfSchema> { }
 
 export type Properties = Record<string, Property>
@@ -140,13 +148,49 @@ export default class SchemaToMarkdownTable {
                     const { html } = this.renderSchema(nestedObjectName, level + 1)
                     return renderMarkdown(html)
                 }
-            } else if ('properties' in item) {
+            } else if ('properties' in item || "items" in item) {
                 const { html, relatedObjects } = this.renderSchema(item, level + 1)
                 relatedObjectsNames.push(...relatedObjects)
                 return renderMarkdown(html)
             }
+             else if ('type' in item && typeof item.type === 'string' && ['string', 'number', 'object'].includes(item.type) ) {
+                return item.type
+            } 
         }).filter(i => !!i)
         descriptionArr.push(nestedObjectsHtml.join(this.redenderMode === RenderMode.List ? ', ' : ''))
+        return { descriptionArr, relatedObjectsNames }
+    }
+
+    private renderAllOfDescription(allOf: AnyOf, level: number) {
+        const descriptionArr = [];
+        const relatedObjectsNames = [];
+        descriptionArr.push(`All of:`)
+        const nestedObjectsHtml = allOf.map(item => {
+            if ('$ref' in item && typeof item['$ref'] === 'string' && item['$ref'].startsWith('#/components/schemas/')) {
+                const nestedObjectName = item['$ref'].replace('#/components/schemas/', '');
+                if (typeof this.schemas[nestedObjectName] !== 'object') {
+                    return false
+                }
+                relatedObjectsNames.push(nestedObjectName)
+                const title = (this.schemas[nestedObjectName].title || nestedObjectName) as string
+                if (this.redenderMode === RenderMode.List) {
+                    return this.getMarkdownLinkToHeader(title)
+                } else {
+                    const { html } = this.renderSchema(nestedObjectName, level + 1)
+                    return renderMarkdown(html)
+                }
+            } else if ('properties' in item) {
+                const { html, relatedObjects } = this.renderSchema(item, level + 1)
+                relatedObjectsNames.push(...relatedObjects)
+                return renderMarkdown(html)
+            }else if ('anyOf' in item){
+                const anyOf = anyOfSchema.validateSync(item['anyOf'])
+                const {descriptionArr: anyOfDescriptionArr, relatedObjectsNames: anyOfRelatedObjectsNames} = this.renderAnyOfDescription(anyOf , level+1);
+                relatedObjectsNames.push(...anyOfRelatedObjectsNames)
+                return anyOfDescriptionArr.join(' ')
+            }
+        }).filter(i => !!i)
+        descriptionArr.push(nestedObjectsHtml.map((row,index) => `${index+1}. ${row}` ).join(this.redenderMode === RenderMode.List ? `${EOL}` : ''))
         return { descriptionArr, relatedObjectsNames }
     }
 
@@ -170,6 +214,12 @@ export default class SchemaToMarkdownTable {
             const { html, relatedObjects } = this.renderSchema(items, level + 1)
             relatedObjectsNames.push(...relatedObjects)
             descriptionArr.push(renderMarkdown(html))
+        }else if("anyOf" in items){
+            const  anyOf = anyOfSchema.validateSync(items.anyOf)
+            const {descriptionArr: anyOfDescriptionArr, relatedObjectsNames: anyOfRelatedObjectsNames}  = this.renderAnyOfDescription(anyOf, level +1)
+            relatedObjectsNames.push(...anyOfRelatedObjectsNames)
+            
+            descriptionArr.push(`Array of: ${anyOfDescriptionArr.join(' ')}`)
         }
         return { descriptionArr, relatedObjectsNames }
     }
@@ -196,7 +246,7 @@ export default class SchemaToMarkdownTable {
         const relatedObjectsNames = [];
         const example = "example" in property ? renderMarkdown(property.example) : '';
 
-        const { description, enum: EnumProp, oneOf, anyOf, items, type, $ref, properties} = propertySchema.validateSync(property)
+        const { description, enum: EnumProp, oneOf, anyOf, allOf, items, type, $ref, properties} = propertySchema.validateSync(property)
 
         if (description) {
             descriptionArr.push(renderMarkdown(description))
@@ -211,6 +261,12 @@ export default class SchemaToMarkdownTable {
             const { descriptionArr: descriptionArrOneOf, relatedObjectsNames: relatedObjectsNamesOneOff } = this.renderOneOfDescription(oneOf, level);
             descriptionArr.push(...descriptionArrOneOf);
             relatedObjectsNames.push(...relatedObjectsNamesOneOff)
+        }
+ 
+        if (allOf) {
+            const { descriptionArr: descriptionArrAllOf, relatedObjectsNames: relatedObjectsNamesAllOff } = this.renderAllOfDescription(allOf, level);
+            descriptionArr.push(...descriptionArrAllOf);
+            relatedObjectsNames.push(...relatedObjectsNamesAllOff)
         }
 
         if (anyOf) {
