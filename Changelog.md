@@ -3,45 +3,36 @@
 ## 20230831 - Exports API
 
 **New models**
-- CreateExportResource
-- ExportResourceResponseCommon
-- ExportResourceResponse
+- ExportsCreateRequestBody
 - ExportBase
-- ExportsCreateResponse
-- ExportsCreateVoucher
-- ExportsCreateResponseVoucher
-- ExportsCreateVoucherParameters
+- Export
+- ExportsCreateResponseBody
+- ExportVoucher
+- ExportVoucherParameters
 - FieldConditions
-- ExportVoucherFilters
-- ExportsCreateRedemption
-- ExportsCreateResponseRedemption
-- ExportsCreateRedemptionParameters
-- ExportRedemptionFilters
-- ExportsCreateCustomer
-- ExportsCreateResponseCustomer
-- ExportsCreateCustomerParameters
-- ExportCustomerFilters
-- ExportsCreatePublication
-- ExportsCreateResponsePublication
-- ExportsCreatePublicationParameters
-- ExportPublicationFilters
-- ExportsCreateOrder
-- ExportsCreateResponseOrder
-- ExportsCreateOrderParameters
-- ExportOrderFilters
-- ExportsCreatePointsExpiration
-- ExportsCreateResponsePointsExpiration
-- ExportsCreatePointsExpirationParameters
-- ExportPointsExpirationFilters
-- ExportsCreateVoucherTransactionsExpiration
-- ExportsCreateResponseVoucherTransactionsExpiration
-- ExportsCreateVoucherTransactionsExpirationParameters
-- ExportVoucherTransactionsFilters
-- ExportsGetResponse
-- ListExportQuery
-- ListExports
-- Junction
 - FiltersCondition
+- ExportVoucherFilters
+- Junction
+- ExportRedemption
+- ExportRedemptionParameters
+- ExportRedemptionFilters
+- ExportCustomer
+- ExportCustomerParameters
+- ExportCustomerFilters
+- ExportPublication
+- ExportPublicationParameters
+- ExportPublicationFilters
+- ExportOrder
+- ExportOrderParameters
+- ExportOrderFilters
+- ExportPointsExpiration
+- ExportPointsExpirationParameters
+- ExportPointsExpirationFilters
+- ExportVoucherTransactionsExpiration
+- ExportVoucherTransactionsExpirationParameters
+- ExportVoucherTransactionsFilters
+- ExportsGetResponseBody
+- ExportsListResponseBody
 - ExportCustomerFields
 - ExportCustomerOrder
 - ExportPublicationFields
@@ -61,13 +52,13 @@
 **Endpoint changes**
 - v1/exports
     - POST
-        - New request schema: `CreateExportResource`
-        - New response schema: `ExportsCreateResponse`
+        - New request schema: `ExportsCreateRequestBody`
+        - New response schema: `ExportsCreateResponseBody`
     - GET
-        - New response schema: `ListExports`
+        - New response schema: `ExportsListResponseBody`
 - v1/exports/{exportId}
     - GET
-        - New response schema: `ExportsGetResponse`
+        - New response schema: `ExportsGetResponseBody`
 
 ## 20231005 - Earning rule
 
