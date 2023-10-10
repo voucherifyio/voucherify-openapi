@@ -349,7 +349,10 @@ Available values: `and`, `AND`, `or`, `OR`
 ## Any
 Any of:
 
-<h3>array</h3><p>Array of: Any of: string, number, object</p>, string, number, object
+ 1. Array any of: string, number, object
+ 2. string
+ 3. number
+ 4. object
 
 [block:html]
 {

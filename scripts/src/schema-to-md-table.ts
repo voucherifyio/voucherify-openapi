@@ -242,9 +242,12 @@ export default class SchemaToMarkdownTable {
 
     if (
       items.filter((item) => item.at(0) === "<" && item.at(-1) === ">")
-        .length === items.length
+        .length === items.length &&
+      !items.find(
+        (item) => item.includes("<table>") && item.includes("</table>")
+      )
     ) {
-      //all items are http tag
+      //all items are http tag, no table tag found
       return items
         .map((item, index) => {
           return ` ${index + 1}. ${removeAllHtmlNesting(item)}`;
