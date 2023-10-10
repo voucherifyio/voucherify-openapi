@@ -7,7 +7,7 @@
 - product_collections_list_products_response_body
 - product_collections_sku_in_collection
 - product_collections_product_in_collection
-- product_collections_collection
+- product_collections_collection_item
 - product_collections_static_collection
 - product_collections_dynamic_collection
 - product_collections_list_response_body
@@ -30,7 +30,7 @@
 - GET `/v1/product-collections/{productCollectionId}/products`
 	- New response schema: `product_collections_list_products_response_body` (old one: `11_res_product-collections_productCollectionID_products`)
 - /v1/product-collection-object 
-  - New response schema: `product_collections_collection` (old one: `12_obj_product_collection_object`)
+  - New response schema: `product_collections_collection_item` (old one: `12_obj_product_collection_object`)
 
 ## 20231005 - Earning rule
 
