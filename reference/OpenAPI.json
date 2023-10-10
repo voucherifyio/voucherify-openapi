@@ -33676,10 +33676,10 @@
             "items": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/11_obj_product_object_truncated"
+                  "$ref": "#/components/schemas/product_collections_product_in_collection"
                 },
                 {
-                  "$ref": "#/components/schemas/11_obj_sku_object_extended"
+                  "$ref": "#/components/schemas/product_collections_sku_in_collection"
                 }
               ]
             }
@@ -33724,21 +33724,6 @@
           }
         }
       },
-      "product_collections_product_collection": {
-        "title": "Product Collection Object",
-        "description": "This is an object representing a product collection.  \n\nThe products can be grouped into collections by the creation of a products collection object. You can retrieve a product collection and a list of products in the collection. Product collections are identified by a unique ID.",
-        "x-tags": [
-          "PRODUCT COLLECTIONS API"
-        ],
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/12_obj_product-collections_static"
-          },
-          {
-            "$ref": "#/components/schemas/12_obj_product-collections_auto_update"
-          }
-        ]
-      },
       "product_collections_static_collection": {
         "type": "object",
         "title": "Static Product Collection",
@@ -33761,36 +33746,32 @@
           },
           "products": {
             "description": "Defines a set of products for a `STATIC` product collection type.",
-            "anyOf": [
-              {
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "example": "prod_0a41bcf807c5fcaaf6",
-                      "description": "The product ID."
-                    },
-                    "object": {
-                      "description": "Denotes the type of object represented by the ID.",
-                      "enum": [
-                        "sku",
-                        "product"
-                      ]
-                    },
-                    "product_id": {
-                      "type": "string"
-                      "description": "The product_id for SKUs."
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "object"
-                  ]
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "prod_0a41bcf807c5fcaaf6",
+                  "description": "The product ID."
+                },
+                "product_id": {
+                  "type": "string",
+                  "description": "Product ID for SKUs."
+                },
+                "object": {
+                  "enum": [
+                    "sku",
+                    "product"
+                  ],
+                  "description": "Denotes the type of object represented by the ID."
                 }
-              }
-            ],
-            "type": "array"
+              },
+              "required": [
+                "id",
+                "object"
+              ]
+            }
           },
           "created_at": {
             "type": "string",
@@ -33884,7 +33865,13 @@
             "type": "integer",
             "description": "Total number of product collections."
           }
-        }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
       },
       "13_obj_validation_rule_object": {
         "title": "Validation Rule Object",
@@ -40171,76 +40158,6 @@
         "description": "\"Response body schema for **GET** `/product-collections/{collectionId}`.\",",
         "title": "Get Product Collection Response Body"
       },
-      "product_collections_get_static_response_body": {
-        "title": "product_collections_get_static_request_body",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          }
-        }
-      },
-      "product_collections_get_dynamic_response_body": {
-        "title": "product_collections_get_dynamic_response_body",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          }
-        }
-      },
-      "product_collections_get_static_request_body": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string"
-          },
-          "object": {
-            "type": "string",
-            "default": "products_collection"
-          },
-          "name": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string",
-            "default": "STATIC"
-          },
-          "products": {
-            "type": "array",
-            "items": {}
-          }
-        }
-      },
-      "products_collections_get_product_response_body": {
-        "title": "products_collections_get_product_response_body",
-        "anyOf": [
-          {
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "product_id": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "type": "object"
-      },
-      "products_collections_create_request_body": {
-        "title": "Products Collections Create Request Body",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          }
-        },
-        "description": ""
-      },
       "product_collections_collection": {
         "anyOf": [
           {
@@ -40253,53 +40170,223 @@
         "title": "Product Collection Object",
         "description": "This is an object representing a product collection. The products can be grouped into collections by the creation of a products collection object. You can retrieve a product collection and a list of products in the collection. Product collections are identified by a unique ID."
       },
-      "12_res_product-collections": {
+      "product_collections_create_junction_request_body": {
+        "anyOf": [
+          {
+            "default": "and",
+            "pattern": "and"
+          },
+          {
+            "default": "AND",
+            "pattern": "AND"
+          },
+          {
+            "default": "or",
+            "pattern": "or"
+          },
+          {
+            "default": "OR",
+            "pattern": "OR"
+          }
+        ],
+        "type": "string"
+      },
+      "product_collections_create_filters_conditions_request_body": {
+        "title": "FiltersCondition",
         "type": "object",
         "properties": {
-          "object": {
-            "type": "string",
-            "default": "list"
+          "$in": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
           },
-          "data_ref": {
-            "type": "string",
-            "default": "data"
+          "$not_in": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
           },
-          "total": {
+          "$is": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$is_days_ago": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$is_days_in_future": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$is_not": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$has_value": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$is_unknown": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$contains": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$not_contain": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$starts_with": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$ends_with": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$more_than": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$less_than": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$more_than_ago": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$less_than_ago": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$more_than_future": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$less_than_future": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$more_than_equal": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$less_than_equal": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$after": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$before": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$count": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$count_less": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          },
+          "$count_more": {
+            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          }
+        }
+      },
+      "product_collections_create_any_request_body": {
+        "anyOf": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/product_collections_create_any_request_body"
+            }
+          },
+          {
+            "type": "string"
+          },
+          {
             "type": "number"
           },
-          "data": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/product_collections_product_collection"
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "created_at": {
-                    "type": "string"
-                  },
-                  "object": {
-                    "type": "string",
-                    "default": "products_collection"
-                  }
-                },
-                "required": [
-                  "id",
-                  "created_at",
-                  "object"
-                ]
-              }
-            ]
+          {
+            "type": "object"
+          }
+        ]
+      },
+      "product_collections_create_field_conditions_request_body": {
+        "title": "FieldConditions",
+        "type": "object",
+        "properties": {
+          "conditions": {
+            "$ref": "#/components/schemas/product_collections_create_filters_conditions_request_body"
           }
         },
         "required": [
-          "object",
-          "data_ref",
-          "total",
-          "data"
+          "conditions"
+        ]
+      },
+      "product_collections_create_request_body": {
+        "title": "product_collections_create_request_body",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/product_collections_create_static_request_body"
+          },
+          {
+            "$ref": "#/components/schemas/product_collections_create_dynamic_request_body"
+          }
+        ]
+      },
+      "product_collections_create_static_request_body": {
+        "title": "Create Product Collection - Static",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "STATIC",
+            "pattern": "STATIC"
+          },
+          "name": {
+            "type": "string"
+          },
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "product_id": {
+                  "type": "string"
+                },
+                "object": {
+                  "enum": [
+                    "sku",
+                    "product"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "object"
+              ]
+            }
+          }
+        },
+        "required": [
+          "type",
+          "name"
+        ]
+      },
+      "product_collections_create_dynamic_request_body": {
+        "title": "Create Product Collection - Auto Update",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "AUTO_UPDATE",
+            "pattern": "AUTO_UPDATE"
+          },
+          "name": {
+            "type": "string"
+          },
+          "filter": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/product_collections_create_field_conditions_request_body"
+            },
+            "required": [
+              "junction"
+            ],
+            "properties": {
+              "junction": {
+                "$ref": "#/components/schemas/product_collections_create_junction_request_body"
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "filter"
         ]
       }
     },
@@ -75973,25 +76060,24 @@
         }
       },
       "post": {
-        "summary": "Create Product Collection",
         "operationId": "create-product-collection",
+        "tags": [
+          "PRODUCT COLLECTIONS API"
+        ],
+        "summary": "Create Product Collection",
+        "description": "This method creates a new product collection.",
         "responses": {
           "200": {
             "description": "Returns information about the newly created collection, as well as an array containing the products.",
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/product_collections_collection"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/product_collections_collection"
                 }
               }
             }
           }
         },
-        "description": "This method creates new product collection.",
         "security": [
           {
             "X-App-Id-1": [],
@@ -76003,88 +76089,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "anyOf": [
-                  {
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                        "default": "STATIC"
-                      },
-                      "products": {
-                        "anyOf": [
-                          {
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "product_id": {
-                                  "type": "string"
-                                },
-                                "object": {
-                                  "type": "string",
-                                  "default": "sku"
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "product_id",
-                                "object"
-                              ]
-                            }
-                          },
-                          {
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "object": {
-                                  "type": "string",
-                                  "default": "product"
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "object"
-                              ]
-                            }
-                          }
-                        ],
-                        "type": "array"
-                      }
-                    },
-                    "required": [
-                      "name",
-                      "type"
-                    ]
-                  },
-                  {
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string",
-                        "default": "AUTO_UPDATE"
-                      },
-                      "filter": {
-                        "type": "object"
-                      }
-                    },
-                    "required": [
-                      "name",
-                      "type",
-                      "filter"
-                    ]
-                  }
-                ],
-                "type": "object"
+                "$ref": "#/components/schemas/product_collections_create_request_body"
               }
             }
           }
@@ -76124,7 +76129,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/product_collections_get_response_body"
+                  "$ref": "#/components/schemas/product_collections_get_response_body",
+                  "description": "Returns a products collection object if a valid identifier was provided in the path."
                 },
                 "examples": {
                   "Dynamic": {
@@ -76302,7 +76308,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/11_res_product-collections_productCollectionID_products"
+                  "$ref": "#/components/schemas/product_collections_list_products_response_body"
                 },
                 "examples": {
                   "Example": {
