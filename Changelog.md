@@ -60,14 +60,89 @@
 
 **Endpoint changes**
 - v1/exports
-  - POST
-    - New request schema: `CreateExportResource`
-    - New response schema: `ExportsCreateResponse`
-  - GET
-    - New response schema: `ListExports`
+    - POST
+        - New request schema: `CreateExportResource`
+        - New response schema: `ExportsCreateResponse`
+    - GET
+        - New response schema: `ListExports`
 - v1/exports/{exportId}
-  - GET
-    - New response schema: `ExportsGetResponse`
+    - GET
+        - New response schema: `ExportsGetResponse`
+
+## 20231005 - Earning rule
+
+**New models**
+- LoyaltiesGetEarningRuleResponseBody
+- LoyaltiesEnableEarningRulesResponseBody
+- LoyaltiesDisableEarningRulesResponseBody
+- EarningRuleBase
+- EarningRuleEvent
+- EarningRuleFixed
+- EarningRuleProportionalOrder
+- EarningRuleProportionalOrderAmount
+- EarningRuleProportionalOrderTotalAmount
+- EarningRuleProportionalOrderMetadata
+- EarningRuleProportional
+- EarningRuleProportionalOrderItems
+- EarningRuleProportionalOrderItemsQuantity
+- EarningRuleProportionalOrderItemsAmount
+- EarningRuleProportionalOrderItemsSubtotalAmount
+- EarningRuleProportionalCustomerMetadata
+- EarningRuleProportionalCustomEvent
+
+**Endpoint changes**
+- GET /v1/loyalties/{campaignId}/earning-rules
+  - New response schema: LoyaltiesGetEarningRuleResponseBody (old one: `8_res_list_earning_rules`)
+- POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable
+  - New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+- POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable
+  - New response schema: LoyaltiesDisableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+
+## 20230829
+
+**Added schemas**
+- customers_permanent_deletion_response_body
+- customers_update_metadata_in_bulk_request_body
+- customers_update_in_bulk_request_body
+
+
+**Endpoints changes**
+- `/v1/customers/{customerId}/permanent-deletion`
+	- POST 
+      - Response schema was replaced with `customers_permanent_deletion_response_body` (old `9_res_customers_customerId_permanent-deletion`)
+      - `status` default value was set to `DONE`
+      - `data_json.customer` default value was set to 1
+      - Added `required` to response properties
+- `v1/customers/bulk/async`
+  - POST
+    - Request schema was replaced with `customers_update_in_bulk_request_body` (old `9_req_update_customers_bulk-deletion`)
+    - Set as `required`: `async_action_id` property in `a_res_async_actions` model
+- `v1/customers/metadata/async`
+	- POST
+	  - Request schema was replaced with `customers_update_metadata_in_bulk_request_body` (old `9_req_customers_metadata_async`)
+      - Set as `required`: `async_action_id` property in `a_res_async_actions` model
+      
+
+## 20230929 - Order references/guides script
+- Changes on Performance and Qualification guidelines pages
+- Added links to qualification guide in endpoints and qualification object schema.
+
+## 20230928 - Order references/guides script
+- Removed `beta` label from qualification API endpoints.
+- Described contribution process.
+- Added the script to clean up OpenAPI from Stoplight tags.
+- Reorganised maintenance scripts.
+- Automated the process of updating the data model documents based on the OpenAPI file.
+- Improve script which generates markdown tables based on the OpenAPI file.
+	- Render objects referred directly by $ref.
+	- fix rendering oneOf + ref.
+	- Render ref to simple types (e.g. enum)
+	- Do not duplicate rendering tables when there is more than one reference.
+	- add the missing title to `23_obj_qualification_object_stacking_rules object.
+
+## 20230925 - Order references/guides script
+
+Added script, located in `docs/script/` directory to quickly update order of references and guides based on `.md` files. For more information please check [Update-Order-Standard-Work.md](automation%2FUpdate-Order-Standard-Work.md) under `Update Order of Docs - AUTOMATIC` section.
 
 ## 20230823 - New Endpoints
 

@@ -1,11 +1,11 @@
 ---
 title: List Consents
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: list-consents
-parentDoc: 639ba2658407100061f5fabe
+parentDocSlug: consents-api
 hidden: false
-order: 1
+order: 2
 ---
 [block:html]
 {

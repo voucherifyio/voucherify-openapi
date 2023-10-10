@@ -1,11 +1,11 @@
 ---
 title: Create Category
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: create-category
-parentDoc: 639ba2658407100061f5fac1
+parentDocSlug: categories-api
 hidden: false
-order: 3
+order: 4
 ---
 [block:html]
 {

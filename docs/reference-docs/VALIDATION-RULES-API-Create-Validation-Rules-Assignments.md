@@ -1,11 +1,11 @@
 ---
 title: Create Validation Rules Assignments
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: create-validation-rule-assignment
-parentDoc: 639ba2658407100061f5fabb
+parentDocSlug: validation-rules-api
 hidden: false
-order: 8
+order: 9
 ---
 [block:html]
 {

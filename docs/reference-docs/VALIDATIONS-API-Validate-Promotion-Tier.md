@@ -1,11 +1,11 @@
 ---
 title: Validate Promotion Tier [Deprecated]
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: validate-promotion-tier
-parentDoc: 639ba2658407100061f5fab3
+parentDocSlug: validations-api
 hidden: false
-order: 5
+order: 7
 ---
 [block:html]
 {

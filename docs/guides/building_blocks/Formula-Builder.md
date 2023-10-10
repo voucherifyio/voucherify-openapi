@@ -1,7 +1,7 @@
 ---
 title: Formula Builder
 excerpt: 
-category: 639ba16d677235008f800454
+categorySlug: building-blocks
 slug: formula-builder
 type: basic
 hidden: false

@@ -1,7 +1,7 @@
 ---
 title: Products
 excerpt: 
-category: 639ba16d677235008f800454
+categorySlug: building-blocks
 slug: products
 type: basic
 hidden: false
