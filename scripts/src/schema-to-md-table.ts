@@ -155,7 +155,7 @@ export default class SchemaToMarkdownTable {
             }
              else if ('type' in item && typeof item.type === 'string' && ['string', 'number', 'object'].includes(item.type) ) {
                 return item.type
-            } 
+            }
         }).filter(i => !!i)
         descriptionArr.push(nestedObjectsHtml.join(this.redenderMode === RenderMode.List ? ', ' : ''))
         return { descriptionArr, relatedObjectsNames }
@@ -218,7 +218,7 @@ export default class SchemaToMarkdownTable {
             const  anyOf = anyOfSchema.validateSync(items.anyOf)
             const {descriptionArr: anyOfDescriptionArr, relatedObjectsNames: anyOfRelatedObjectsNames}  = this.renderAnyOfDescription(anyOf, level +1)
             relatedObjectsNames.push(...anyOfRelatedObjectsNames)
-            
+
             descriptionArr.push(`Array of: ${anyOfDescriptionArr.join(' ')}`)
         }
         return { descriptionArr, relatedObjectsNames }
@@ -262,7 +262,7 @@ export default class SchemaToMarkdownTable {
             descriptionArr.push(...descriptionArrOneOf);
             relatedObjectsNames.push(...relatedObjectsNamesOneOff)
         }
- 
+
         if (allOf) {
             const { descriptionArr: descriptionArrAllOf, relatedObjectsNames: relatedObjectsNamesAllOff } = this.renderAllOfDescription(allOf, level);
             descriptionArr.push(...descriptionArrAllOf);
@@ -309,7 +309,7 @@ export default class SchemaToMarkdownTable {
 
             const propertyLabel = [
                 propertyId,
-                property.type? `\`${property.type}\`` : false  
+                property.type? `\`${property.type}\`` : false
             ].filter(e => !!e)
             .join('</br>');
 
