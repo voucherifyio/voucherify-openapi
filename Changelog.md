@@ -6,7 +6,7 @@
 - CreateExportResource
 - ExportResourceResponseCommon
 - ExportResourceResponse
-- ExportsCreateResponseCommon
+- ExportBase
 - ExportsCreateResponse
 - ExportsCreateVoucher
 - ExportsCreateResponseVoucher
