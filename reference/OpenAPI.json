@@ -31701,7 +31701,7 @@
           }
         }
       },
-      "9_res_customers_customerId_permanent-deletion": {
+      "customers_permanent_deletion_response_body": {
         "type": "object",
         "title": "Customer Permanent Deletion Response Body",
         "description": "Response body schema for `/customers/{customerId}/permanent-deletion`.",
@@ -31729,11 +31729,21 @@
           },
           "status": {
             "type": "string",
-            "description": "Deletion status."
+            "description": "Deletion status.",
+            "default": "DONE"
           },
           "data_json": {
             "type": "object",
             "description": "Statistics summarizing the number of related information that was deleted.",
+            "required": [
+              "events",
+              "customer_events",
+              "daily_events",
+              "segments",
+              "orders",
+              "order_events",
+              "customer"
+            ],
             "properties": {
               "events": {
                 "type": "integer",
@@ -31761,7 +31771,8 @@
               },
               "customer": {
                 "type": "integer",
-                "description": "Number of customers deleted."
+                "description": "Number of customers deleted.",
+                "default": 1
               }
             }
           },
@@ -31770,9 +31781,18 @@
             "description": "The type of object represented by JSON.",
             "default": "pernament_deletion"
           }
-        }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "related_object_id",
+          "related_object",
+          "status",
+          "data_json",
+          "object"
+        ]
       },
-      "9_req_customers_metadata_async": {
+      "customers_update_metadata_in_bulk_request_body": {
         "type": "object",
         "title": "Update Customers' Metadata in bulk Request Body",
         "description": "Request body schema for `/customers/metadata/async`.",
@@ -31794,37 +31814,48 @@
           "metadata"
         ]
       },
-      "9_req_update_customers_bulk": {
+      "customers_update_in_bulk_request_body": {
         "type": "array",
         "title": "Update Customers in bulk Request Body",
         "description": "Request body schema for `/customers/bulk/async`.",
         "items": {
-          "$ref": "#/components/schemas/9_req_update_customers_bulk_customer_object"
+          "$ref": "#/components/schemas/customers_update_in_bulk_item_request_body"
         }
       },
-      "9_req_update_customers_bulk_customer_object": {
-        "type": "object",
-        "title": "Customer object",
-        "description": "This is an object containing information about the customer.",
+      "customers_update_in_bulk_item_request_body": {
+        "title": "Update Customers in bulk Request Body",
+        "description": "Request body schema for `/customers/bulk/async`.",
         "properties": {
           "source_id": {
             "type": "string",
             "description": "Unique customer source ID."
           },
           "name": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Customer's first and last name."
           },
           "description": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "An arbitrary string that you can attach to a customer object."
           },
           "email": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Customer's email address."
           },
           "phone": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Customer's phone number."
           },
           "address": {
@@ -31832,43 +31863,61 @@
             "description": "Customer's address.",
             "properties": {
               "city": {
-                "type": "string",
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "City"
               },
               "state": {
-                "type": "string",
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "State"
               },
               "line_1": {
-                "type": "string",
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "First line of address."
               },
               "line_2": {
-                "type": "string",
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "Second line of address."
               },
               "country": {
-                "type": "string",
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "Country."
               },
               "postal_code": {
-                "type": "string",
+                "type": [
+                  "string",
+                  "null"
+                ],
                 "description": "Postal code."
               }
             }
           },
           "birthdate": {
-            "type": "string",
-            "description": "Customer's birthdate; format `YYYY-MM-DD`.",
-            "format": "date"
-          },
-          "birthday": {
-            "type": "string",
-            "description": "Customer's birthdate; format `YYYY-MM-DD`.",
-            "format": "date"
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Customer's birthdate; format `YYYY-MM-DD`."
           },
           "metadata": {
-            "type": "object",
+            "type": [
+              "object",
+              "null"
+            ],
             "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments. "
           }
         },
@@ -39328,6 +39377,812 @@
           }
         }
       },
+      "LoyaltiesGetEarningRuleResponseBody": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "validation_rule_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance."
+              },
+              "updated_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time",
+                "description": "Timestamp representing the date and time when the earning rule was last updated in ISO 8601 format."
+              },
+              "active": {
+                "type": "boolean",
+                "description": "A flag to toggle the earning rule on or off. You can disable an earning rule even though it's within the active period defined by the start_date and expiration_date of the campaign or the earning rule's own start_date and expiration_date.\n\n- `true` indicates an active earning rule\n- `false` indicates an inactive earning rule"
+              }
+            },
+            "required": [
+              "validation_rule_id",
+              "updated_at",
+              "active"
+            ]
+          }
+        ]
+      },
+      "LoyaltiesEnableEarningRulesResponseBody": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "updated_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time",
+                "description": "Timestamp representing the date and time when the earning rule was last updated in ISO 8601 format."
+              },
+              "active": {
+                "type": "boolean",
+                "default": true,
+                "description": "A flag to toggle the earning rule on or off. You can disable an earning rule even though it's within the active period defined by the start_date and expiration_date of the campaign or the earning rule's own start_date and expiration_date."
+              }
+            },
+            "required": [
+              "updated_at",
+              "active"
+            ]
+          }
+        ]
+      },
+      "LoyaltiesDisableEarningRulesResponseBody": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "updated_at": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "date-time",
+                "description": "Timestamp representing the date and time when the earning rule was last updated in ISO 8601 format."
+              },
+              "active": {
+                "type": "boolean",
+                "default": false,
+                "description": "A flag to toggle the earning rule on or off. You can disable an earning rule even though it's within the active period defined by the start_date and expiration_date of the campaign or the earning rule's own start_date and expiration_date."
+              }
+            },
+            "required": [
+              "updated_at",
+              "active"
+            ]
+          }
+        ]
+      },
+      "EarningRuleBase": {
+        "title": "EarningRuleBase",
+        "x-stoplight": {
+          "id": "w4ci1ljqva0r1"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Assigned by the Voucherify API, identifies the earning rule object."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the earning rule was created in ISO 8601 format."
+          },
+          "loyalty": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleFixed"
+              },
+              {
+                "$ref": "#/components/schemas/EarningRuleProportional"
+              }
+            ]
+          },
+          "event": {
+            "$ref": "#/components/schemas/EarningRuleEvent",
+            "description": "Defines the event which triggers the earning rule to add points to a loyalty card."
+          },
+          "custom_event": {
+            "type": "object",
+            "properties": {
+              "schema_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "schema_id"
+            ]
+          },
+          "segment": {
+            "type": "object",
+            "description": "Contains the id of a customer segment. Required for the customer.segment.entered option in event.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Contains a unique identifier of a customer segment. Assigned by the Voucherify API."
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "source": {
+            "type": "object",
+            "required": [
+              "object_id",
+              "object_type"
+            ],
+            "description": "Contains the custom earning rule name and parent campaign.",
+            "properties": {
+              "banner": {
+                "type": "string",
+                "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+              },
+              "object_id": {
+                "type": "string",
+                "description": "A unique campaign identifier assigned by the Voucherify API."
+              },
+              "object_type": {
+                "type": "string",
+                "description": "Defines the object associated with the earning rule. Defaults to `campaign`.",
+                "enum": [
+                  "campaign"
+                ]
+              }
+            }
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "earning_rule"
+            ],
+            "description": "The type of object represented by JSON. Default is earning_rule."
+          },
+          "automation_id": {
+            "type": "string",
+            "description": "For internal use by Voucherify."
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Start date defines when the earning rule starts to be active. Activation timestamp in ISO 8601 format. Earning rule is inactive before this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default."
+          },
+          "expiration_date": {
+            "type": "string",
+            "description": "Expiration date defines when the earning rule expires. Expiration timestamp in ISO 8601 format. Earning rule is inactive after this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default."
+          },
+          "validity_timeframe": {
+            "type": "object",
+            "description": "Set recurrent time periods when the earning rule is valid. For example, valid for 1 hour every other day.start_date required when including the `validity_timeframe`.",
+            "properties": {
+              "duration": {
+                "type": "string",
+                "description": "Defines the amount of time an earning rule will be active in ISO 8601 format. For example, an earning rule with a duration of PT1H will be valid for a duration of one hour."
+              },
+              "interval": {
+                "type": "string",
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, an earning rule with an interval of P2D will be valid every other day."
+              }
+            },
+            "required": [
+              "duration",
+              "interval"
+            ]
+          },
+          "validity_day_of_week": {
+            "type": "array",
+            "description": "Integer array corresponding to the particular days of the week in which the earning rule is valid.\n\n- `0` Sunday\n- `1` Monday\n- `2` Tuesday\n- `3` Wednesday\n- `4` Thursday\n- `5` Friday\n- `6` Saturday",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format."
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "loyalty",
+          "source",
+          "object",
+          "automation_id",
+          "metadata"
+        ]
+      },
+      "EarningRuleEvent": {
+        "title": "EarningRuleEvent",
+        "x-stoplight": {
+          "id": "6vxql7fnzg2zp"
+        },
+        "type": "string",
+        "enum": [
+          "order.paid",
+          "customer.segment.entered",
+          "custom_event",
+          "customer.loyalty.tier.upgraded",
+          "customer.loyalty.tier.downgraded",
+          "customer.loyalty.tier.prolonged",
+          "customer.loyalty.tier.joined",
+          "customer.loyalty.tier.left"
+        ]
+      },
+      "EarningRuleFixed": {
+        "title": "Define fixed amount of points",
+        "x-stoplight": {
+          "id": "r5o8m0sdli7fq"
+        },
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "FIXED"
+            ],
+            "description": "The number of points to be added to the loyalty card."
+          },
+          "points": {
+            "type": "integer",
+            "description": "Defines how the points will be added to the loyalty card. FIXED adds a fixed number of points."
+          }
+        }
+      },
+      "EarningRuleProportionalOrder": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleProportionalOrderAmount"
+          },
+          {
+            "$ref": "#/components/schemas/EarningRuleProportionalOrderTotalAmount"
+          },
+          {
+            "$ref": "#/components/schemas/EarningRuleProportionalOrderMetadata"
+          }
+        ],
+        "title": "Order"
+      },
+      "EarningRuleProportionalOrderAmount": {
+        "title": "Order Amount",
+        "x-stoplight": {
+          "id": "1z7lk7z1lp5af"
+        },
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PROPORTIONAL"
+            ],
+            "description": "Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio."
+          },
+          "calculation_type": {
+            "type": "string",
+            "enum": [
+              "ORDER_AMOUNT"
+            ],
+            "description": "`ORDER_AMOUNT`: Pre-discount order amount (X points for every Y spent excluding discounts)"
+          },
+          "order": {
+            "type": "object",
+            "required": [
+              "amount"
+            ],
+            "properties": {
+              "amount": {
+                "type": "object",
+                "required": [
+                  "every",
+                  "points"
+                ],
+                "description": "Defines the ratio based on the property defined in the calculation_type parameter. For every set of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every calculation_type, give points.",
+                "properties": {
+                  "every": {
+                    "type": "integer",
+                    "description": "Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 order amount is written as 1000."
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "calculation_type",
+          "order"
+        ]
+      },
+      "EarningRuleProportionalOrderTotalAmount": {
+        "title": "Order Total Amount",
+        "x-stoplight": {
+          "id": "ekudxr430edgk"
+        },
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PROPORTIONAL"
+            ],
+            "description": "Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio."
+          },
+          "calculation_type": {
+            "type": "string",
+            "enum": [
+              "ORDER_TOTAL_AMOUNT"
+            ],
+            "description": "`ORDER_TOTAL_AMOUNT`: Total order amount (X points for every Y spent including discount)"
+          },
+          "order": {
+            "type": "object",
+            "required": [
+              "total_amount"
+            ],
+            "properties": {
+              "total_amount": {
+                "type": "object",
+                "required": [
+                  "every",
+                  "points"
+                ],
+                "description": "Defines the ratio based on the property defined in the calculation_type parameter. For every set of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every calculation_type, give points.",
+                "properties": {
+                  "every": {
+                    "type": "integer",
+                    "description": "Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 order amount is written as 1000."
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "calculation_type",
+          "order"
+        ]
+      },
+      "EarningRuleProportionalOrderMetadata": {
+        "title": "Order Metadata",
+        "x-stoplight": {
+          "id": "4ccw4gz8b47u5"
+        },
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PROPORTIONAL"
+            ],
+            "description": "Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio."
+          },
+          "calculation_type": {
+            "type": "string",
+            "enum": [
+              "ORDER_METADATA"
+            ],
+            "description": "`ORDER_METADATA`: Order Metadata (X points for every Y in metadata attribute, defined in the property key under the order.metadata object)"
+          },
+          "order": {
+            "type": "object",
+            "required": [
+              "metadata"
+            ],
+            "description": "Defines the formula for calculating points proportionally.",
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "required": [
+                  "every",
+                  "points",
+                  "property"
+                ],
+                "description": "Defines the ratio based on the property defined in the calculation_type parameter. For every given increment of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every order metadata property value, give points.",
+                "properties": {
+                  "every": {
+                    "type": "integer",
+                    "description": "For how many increments of the order metadata property to grant points for."
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card."
+                  },
+                  "property": {
+                    "type": "string",
+                    "description": "Order metadata property."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "calculation_type",
+          "order"
+        ]
+      },
+      "EarningRuleProportionalOrderItemsQuantity": {
+        "title": "Order Items Quantity",
+        "x-stoplight": {
+          "id": "pqsn9otpzyot9"
+        },
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PROPORTIONAL"
+            ],
+            "description": "Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio."
+          },
+          "calculation_type": {
+            "type": "string",
+            "enum": [
+              "ORDER_ITEMS_QUANTITY"
+            ],
+            "description": "`ORDER_ITEMS_QUANTITY`: Quantity of items defined in order_items.quantity.object & .id (X points for every Y items excluding free items)"
+          },
+          "order_items": {
+            "type": "object",
+            "required": [
+              "quantity"
+            ],
+            "properties": {
+              "quantity": {
+                "type": "object",
+                "required": [
+                  "every",
+                  "points",
+                  "object",
+                  "id"
+                ],
+                "description": "Defines the ratio based on the property defined in the calculation_type parameter. For every set of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every calculation_type, give points.",
+                "properties": {
+                  "every": {
+                    "type": "integer",
+                    "description": "Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 order amount is written as 1000."
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card."
+                  },
+                  "object": {
+                    "type": "string",
+                    "description": "Type of object taken under consideration.",
+                    "enum": [
+                      "products_collection",
+                      "product",
+                      "sku"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "calculation_type",
+          "order_items"
+        ]
+      },
+      "EarningRuleProportionalOrderItemsAmount": {
+        "title": "Order Items Amount",
+        "x-stoplight": {
+          "id": "8pg4o23daepkb"
+        },
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PROPORTIONAL"
+            ],
+            "description": "Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio."
+          },
+          "calculation_type": {
+            "type": "string",
+            "enum": [
+              "ORDER_ITEMS_AMOUNT"
+            ],
+            "description": "ORDER_ITEMS_AMOUNT; Pre-discount amount spent on items defined in the order_items.amount.object & .id (X points for every Y spent on items excluding discounts)"
+          },
+          "order_items": {
+            "type": "object",
+            "required": [
+              "amount"
+            ],
+            "properties": {
+              "amount": {
+                "type": "object",
+                "required": [
+                  "every",
+                  "points",
+                  "object",
+                  "id"
+                ],
+                "description": "Defines the ratio based on the property defined in the calculation_type parameter. For every set of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every calculation_type, give points.",
+                "properties": {
+                  "every": {
+                    "type": "integer",
+                    "description": "Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 order amount is written as 1000."
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card."
+                  },
+                  "object": {
+                    "type": "string",
+                    "description": "Type of object taken under consideration.",
+                    "enum": [
+                      "products_collection",
+                      "product",
+                      "sku"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "calculation_type",
+          "order_items"
+        ]
+      },
+      "EarningRuleProportionalOrderItemsSubtotalAmount": {
+        "title": "Order Items Subtotal Amount",
+        "x-stoplight": {
+          "id": "duxy5qw36h5ph"
+        },
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PROPORTIONAL"
+            ],
+            "description": "Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio."
+          },
+          "calculation_type": {
+            "type": "string",
+            "enum": [
+              "ORDER_ITEMS_SUBTOTAL_AMOUNT"
+            ],
+            "description": "ORDER_ITEMS_SUBTOTAL_AMOUNT; Amount spent on items defined in the order_items.subtotal_amount.object & .id (X points for every Y spent on items including discounts)"
+          },
+          "order_items": {
+            "type": "object",
+            "required": [
+              "subtotal_amount"
+            ],
+            "properties": {
+              "subtotal_amount": {
+                "type": "object",
+                "required": [
+                  "every",
+                  "points",
+                  "object",
+                  "id"
+                ],
+                "description": "Defines the ratio based on the property defined in the calculation_type parameter. For every set of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every calculation_type, give points.",
+                "properties": {
+                  "every": {
+                    "type": "integer",
+                    "description": "Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 order amount is written as 1000."
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card."
+                  },
+                  "object": {
+                    "type": "string",
+                    "description": "Type of object taken under consideration.",
+                    "enum": [
+                      "products_collection",
+                      "product",
+                      "sku"
+                    ]
+                  },
+                  "id": {
+                    "type": "string",
+                    "description": "Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "calculation_type",
+          "order_items"
+        ]
+      },
+      "EarningRuleProportionalCustomerMetadata": {
+        "title": "Customer Metadata",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PROPORTIONAL"
+            ],
+            "description": "Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio."
+          },
+          "calculation_type": {
+            "type": "string",
+            "enum": [
+              "CUSTOMER_METADATA"
+            ],
+            "description": "CUSTOMER_METADATA: Customer Metadata (X points for every Y in metadata attribute, defined in the property key under the customer.metadata object)"
+          },
+          "customer": {
+            "type": "object",
+            "required": [
+              "metadata"
+            ],
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "required": [
+                  "every",
+                  "points",
+                  "property"
+                ],
+                "description": "Defines the ratio based on the property defined in the calculation_type parameter. For every given increment of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every order metadata property value, give points.",
+                "properties": {
+                  "every": {
+                    "type": "integer",
+                    "description": "For how many increments of the customer metadata property to grant points for."
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card."
+                  },
+                  "property": {
+                    "type": "string",
+                    "description": "Customer metadata property."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "calculation_type",
+          "customer"
+        ]
+      },
+      "EarningRuleProportionalCustomEvent": {
+        "title": "Custom Event",
+        "x-stoplight": {
+          "id": "jpkgjc35zrtxj"
+        },
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PROPORTIONAL"
+            ],
+            "description": "Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio."
+          },
+          "calculation_type": {
+            "type": "string",
+            "enum": [
+              "CUSTOM_EVENT_METADATA"
+            ],
+            "description": "CUSTOM_EVENT_METADATA: Custom event metadata (X points for every Y in metadata attribute)."
+          },
+          "custom_event": {
+            "type": "object",
+            "required": [
+              "metadata"
+            ],
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "required": [
+                  "every",
+                  "points",
+                  "property"
+                ],
+                "description": "Defines the ratio based on the property defined in the calculation_type parameter. For every given increment of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every order metadata property value, give points.",
+                "properties": {
+                  "every": {
+                    "type": "integer",
+                    "description": "For how many increments of the customer metadata property to grant points for."
+                  },
+                  "points": {
+                    "type": "integer",
+                    "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card."
+                  },
+                  "property": {
+                    "type": "string",
+                    "description": "\nCustom event metadata property."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "calculation_type",
+          "custom_event"
+        ]
+      },
+      "EarningRuleProportional": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleProportionalOrder"
+          },
+          {
+            "$ref": "#/components/schemas/EarningRuleProportionalOrderItems"
+          },
+          {
+            "$ref": "#/components/schemas/EarningRuleProportionalCustomerMetadata"
+          },
+          {
+            "$ref": "#/components/schemas/EarningRuleProportionalCustomEvent"
+          }
+        ],
+        "title": "Calculate points proportionally"
+      },
+      "EarningRuleProportionalOrderItems": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleProportionalOrderItemsQuantity"
+          },
+          {
+            "$ref": "#/components/schemas/EarningRuleProportionalOrderItemsAmount"
+          },
+          {
+            "$ref": "#/components/schemas/EarningRuleProportionalOrderItemsSubtotalAmount"
+          }
+        ],
+        "title": "Order Items"
+      },
       "a_req_importCSV": {
         "type": "object",
         "title": "Import CSV file",
@@ -39360,7 +40215,10 @@
             "example": "aa_0a875d56c805df6601",
             "description": "The ID of the scheduled asynchronous action."
           }
-        }
+        },
+        "required": [
+          "async_action_id"
+        ]
       },
       "error": {
         "title": "error",
@@ -66747,7 +67605,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_obj_earning_rule_object"
+                  "$ref": "#/components/schemas/LoyaltiesGetEarningRuleResponseBody"
                 },
                 "examples": {
                   "Custom Event": {
@@ -67213,7 +68071,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_obj_earning_rule_object_no_validation_rule"
+                  "$ref": "#/components/schemas/LoyaltiesEnableEarningRulesResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -67321,7 +68179,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_obj_earning_rule_object_no_validation_rule"
+                  "$ref": "#/components/schemas/LoyaltiesDisableEarningRulesResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -72199,7 +73057,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/9_res_customers_customerId_permanent-deletion"
+                  "$ref": "#/components/schemas/customers_permanent_deletion_response_body"
                 },
                 "examples": {
                   "Example": {
@@ -72318,7 +73176,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/9_req_update_customers_bulk"
+                "$ref": "#/components/schemas/customers_update_in_bulk_request_body"
               },
               "examples": {
                 "Example": {
@@ -72473,7 +73331,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/9_req_customers_metadata_async"
+                "$ref": "#/components/schemas/customers_update_metadata_in_bulk_request_body"
               },
               "examples": {
                 "Example": {

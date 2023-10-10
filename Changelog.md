@@ -1,6 +1,5 @@
 # Changelog
 
-
 ## 20231010 - Product Collections
 
 **New models**
@@ -56,11 +55,11 @@
 
 **Endpoint changes**
 - GET /v1/loyalties/{campaignId}/earning-rules
-	- New response schema: LoyaltiesGetEarningRuleResponseBody (old one: `8_res_list_earning_rules`)
+  - New response schema: LoyaltiesGetEarningRuleResponseBody (old one: `8_res_list_earning_rules`)
 - POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable
-	- New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+  - New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
 - POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable
-	- New response schema: LoyaltiesDisableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+  - New response schema: LoyaltiesDisableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
 
 ## 20230829
 
@@ -72,20 +71,19 @@
 
 **Endpoints changes**
 - `/v1/customers/{customerId}/permanent-deletion`
-	- POST
-		- Response schema was replaced with `customers_permanent_deletion_response_body` (old `9_res_customers_customerId_permanent-deletion`)
-		- `status` default value was set to `DONE`
-		- `data_json.customer` default value was set to 1
-		- Added `required` to response properties
+	- POST 
+      - Response schema was replaced with `customers_permanent_deletion_response_body` (old `9_res_customers_customerId_permanent-deletion`)
+      - `status` default value was set to `DONE`
+      - `data_json.customer` default value was set to 1
+      - Added `required` to response properties
 - `v1/customers/bulk/async`
-	- POST
-		- Request schema was replaced with `customers_update_in_bulk_request_body` (old `9_req_update_customers_bulk-deletion`)
-		- Set as `required`: `async_action_id` property in `a_res_async_actions` model
+  - POST
+    - Request schema was replaced with `customers_update_in_bulk_request_body` (old `9_req_update_customers_bulk-deletion`)
+    - Set as `required`: `async_action_id` property in `a_res_async_actions` model
 - `v1/customers/metadata/async`
 	- POST
-		- Request schema was replaced with `customers_update_metadata_in_bulk_request_body` (old `9_req_customers_metadata_async`)
-		- Set as `required`: `async_action_id` property in `a_res_async_actions` model
-
+	  - Request schema was replaced with `customers_update_metadata_in_bulk_request_body` (old `9_req_customers_metadata_async`)
+      - Set as `required`: `async_action_id` property in `a_res_async_actions` model
 
 ## 20230929 - Order references/guides script
 - Changes on Performance and Qualification guidelines pages
