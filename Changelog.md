@@ -3,6 +3,40 @@
 ## 20231009
 
 #### New schemas:
+- LoyaltiesCreateTiersRequestBody
+- LoyaltiesCreateTiersResponseBody
+- LoyaltiesGetRewardAssignmentResponseBody
+- LoyaltiesGetRewardDetailsResponseBody
+- LoyaltiesListTiersRequestQuery
+- LoyaltiesListLoyaltyTierEarningRulesRequestQuery
+- LoyaltiesGetTierResponseBody
+- LoyaltiesListTiersResponseBody
+- LoyaltiesListMemberLoyaltyTiersResponseBody
+- LoyaltiesListLoyaltyTierEarningRulesResponseBody
+- CreateLoyaltyTier
+- LoyaltyTier
+- MappingMultiply
+- MappingFixed
+- EarningRule
+
+#### Schemas changes
+- GET /v1/loyalties/{campaignId}/tiers
+	- new response schema `LoyaltiesListTiersResponseBody` (old `8_res_list_loyalty_tiers`)
+- GET /v1/loyalties/members/{memberId}/balance
+	- new response schema `LoyaltiesGetRewardAssignmentResponseBody` (old `4_obj_reward_assignment_object`)
+- GET /v1/loyalties/{campaignId}/reward-assignments/{assignmentId}/reward
+	- new response schema `LoyaltiesGetRewardDetailsResponseBody` (old `4_obj_reward_object`)
+- GET /v1/loyalties/{campaignId}/tiers/{tierId}
+	- new response schema `LoyaltiesGetTierResponseBody` (old `8_obj_loyalty_tier_object`)
+- GET /v1/loyalties/{campaignId}/tiers/{tierId}/earning-rules
+	- new response schema `LoyaltiesListLoyaltyTierEarningRulesRequestQuery` (old `8_res_list_loyalty_tier_earning_rules`)
+- GET /v1/loyalties/members/{memberId}/tiers
+	- new response schema `LoyaltiesListMemberLoyaltyTiersResponseBody` (old `8_res_get_member_loyalty_tier`)
+
+#### New endpoint
+- POST /v1/loyalties/{campaignId}/tiers
+
+#### New schemas:
 - LoyaltiesListMemberRewardsRequestQuery
 - LoyaltiesGetPointsExpirationRequestQuery
 - LoyaltiesGetPointsExpirationResponseBody
