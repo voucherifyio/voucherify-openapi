@@ -1,6 +1,6 @@
 # Changelog
 
-## 20231009
+## 20231011
 
 #### New schemas:
 - LoyaltiesCreateTiersRequestBody
