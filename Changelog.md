@@ -36,6 +36,8 @@
 #### New endpoint
 - POST /v1/loyalties/{campaignId}/tiers
 
+## 20231009
+
 #### New schemas:
 - LoyaltiesListMemberRewardsRequestQuery
 - LoyaltiesGetPointsExpirationRequestQuery
