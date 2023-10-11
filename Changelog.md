@@ -1,5 +1,57 @@
 # Changelog
 
+## 20231009
+
+#### New schemas:
+- LoyaltiesListMemberRewardsRequestQuery
+- LoyaltiesGetPointsExpirationRequestQuery
+- LoyaltiesGetPointsExpirationResponseBody
+- LoyaltiesListCardTransactionsRequestQuery
+- LoyaltiesListCardTransactionsResponseBody
+- LoyaltyCardTransactionsType
+- SimpleLoyaltyVoucher
+- LoyaltyCardTransaction
+- LoyaltyCardTransactionsFields
+- LoyaltiesExportCardTransactionsRequestBody
+- LoyaltiesExportCardTransactionsResponseBody
+- RewardAssignment
+- Reward
+- RewardTypeCoin
+- RewardTypeMaterial
+- RewardTypeCampaign
+- RewardType
+- LoyaltiesAddOrRemoveCardBalanceResponseBody
+- LoyaltiesTransferPointsResponseBody
+- LoyaltiesTransferPoints
+- LoyaltiesTransferPointsRequestBody
+- LoyaltiesListMemberRewardsResponseBody
+- LoyaltiesAddOrRemoveCardBalanceRequestBody
+- PointsExpirationTypes
+
+#### Schemas changes
+- /v1/loyalties/{campaignId}/members/{memberId}/balance
+    - new request schema `LoyaltiesAddOrRemoveCardBalanceRequestBody` (old `8_req_add_remove_points_balance`)
+    - new response schema `LoyaltiesAddOrRemoveCardBalanceResponseBody` (old `8_res_add_remove_points_balance`)
+- /v1/loyalties/members/{memberId}/balance
+    - new request schema `LoyaltiesAddOrRemoveCardBalanceRequestBody` (old `8_req_add_remove_points_balance`)
+    - new response schema `LoyaltiesAddOrRemoveCardBalanceResponseBody` (old `8_res_add_remove_points_balance`)
+- /v1/loyalties/{campaignId}/members/{memberId}/transfers
+    - new request schema `LoyaltiesTransferPointsRequestBody` (old `8_req_transfer_loyalty_points`)
+    - new response schema `LoyaltiesTransferPointsResponseBody` (old `8_obj_loyalty_card_object_non_expanded_categories`)
+- /v1/loyalties/{campaignId}/members/{memberId}/transactions
+    - new request schema `LoyaltiesListCardTransactionsRequestBody` (old `8_res_get_loyalty_card_transactions`)
+- /v1/loyalties/members/{memberId}/transactions
+    - new request schema `LoyaltiesListCardTransactionsResponseBody` (old `8_res_get_loyalty_card_transactions`)
+- /v1/loyalties/members/{memberId}/transactions/export
+    - new request schema `LoyaltiesExportCardTransactionsRequestBody` (old `8_req_create_loyalty_card_transactions_export`)
+    - new response schema `LoyaltiesExportCardTransactionsResponseBody` (old `8_obj_export_transactions_object`)
+- /v1/loyalties/{campaignId}/members/{memberId}/transactions/export
+    - new request schema `LoyaltiesExportCardTransactionsRequestBody` (old `8_req_create_loyalty_card_transactions_export`)
+    - new response schema `LoyaltiesExportCardTransactionsResponseBody` (old `8_obj_export_transactions_object`)
+- /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
+    - new response schema `LoyaltiesGetPointsExpirationResponseBody` (old `8_res_get_points_expiration`)
+
+
 ## 20231005 - Earning rule
 
 **New models**
@@ -23,11 +75,11 @@
 
 **Endpoint changes**
 - GET /v1/loyalties/{campaignId}/earning-rules
-  - New response schema: LoyaltiesGetEarningRuleResponseBody (old one: `8_res_list_earning_rules`)
+	- New response schema: LoyaltiesGetEarningRuleResponseBody (old one: `8_res_list_earning_rules`)
 - POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable
-  - New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+	- New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
 - POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable
-  - New response schema: LoyaltiesDisableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+	- New response schema: LoyaltiesDisableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
 
 ## 20230829
 
@@ -39,20 +91,19 @@
 
 **Endpoints changes**
 - `/v1/customers/{customerId}/permanent-deletion`
-	- POST 
-      - Response schema was replaced with `customers_permanent_deletion_response_body` (old `9_res_customers_customerId_permanent-deletion`)
-      - `status` default value was set to `DONE`
-      - `data_json.customer` default value was set to 1
-      - Added `required` to response properties
+	- POST
+		- Response schema was replaced with `customers_permanent_deletion_response_body` (old `9_res_customers_customerId_permanent-deletion`)
+		- `status` default value was set to `DONE`
+		- `data_json.customer` default value was set to 1
+		- Added `required` to response properties
 - `v1/customers/bulk/async`
-  - POST
-    - Request schema was replaced with `customers_update_in_bulk_request_body` (old `9_req_update_customers_bulk-deletion`)
-    - Set as `required`: `async_action_id` property in `a_res_async_actions` model
+	- POST
+		- Request schema was replaced with `customers_update_in_bulk_request_body` (old `9_req_update_customers_bulk-deletion`)
+		- Set as `required`: `async_action_id` property in `a_res_async_actions` model
 - `v1/customers/metadata/async`
 	- POST
-	  - Request schema was replaced with `customers_update_metadata_in_bulk_request_body` (old `9_req_customers_metadata_async`)
-      - Set as `required`: `async_action_id` property in `a_res_async_actions` model
-      
+		- Request schema was replaced with `customers_update_metadata_in_bulk_request_body` (old `9_req_customers_metadata_async`)
+		- Set as `required`: `async_action_id` property in `a_res_async_actions` model
 
 ## 20230929 - Order references/guides script
 - Changes on Performance and Qualification guidelines pages
@@ -81,20 +132,11 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 
 | **API** | **Endpoint** | **New Slug** |
 |---|---|---|
-| **Locations** | Location Object | location-object |
-|  | Get Location | get-location |
-|  | List Locations | list-locations |
-| **Qualifications** | Qualification Object | qualification-object |
-|  | Examine Qualification | examine-qualification --> changed to check-eligibility |
-|  | Examine Qualification (cient-side) | examine-qualification-client-side  --> changed to check-eligibility-client-side |
-
-### Removed document explaining deprecated qualifications
-
-- Added a redirect to the new document so that we eliminate 404
-
-| **Category** | **Guide** | **Previous Slug** | **New Slug** |
-|:---|:---|:---|:---|
-| Campaigns Recipes | Qualification - Checking eligibility for promo codes | checking-eligibility-for-coupons | checking-eligibility |
+| **Locations** | Location Object | location-object | true |
+|  | Get Location | get-location | true |
+|  | List Locations | list-locations | true |
+| **Qualifications** | Qualification Object | qualification-object | true |
+|  | Examine Qualification | examine-qualification | true |
 
 
 ## 20230809 - Deprecated Endpoints
