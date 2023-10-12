@@ -21,20 +21,21 @@
 
 #### Schemas changes
 - GET /v1/loyalties/{campaignId}/tiers
-	- new response schema `LoyaltiesListTiersResponseBody` (old `8_res_list_loyalty_tiers`)
+    - new response schema `LoyaltiesListTiersResponseBody` (old `8_res_list_loyalty_tiers`)
 - GET /v1/loyalties/members/{memberId}/balance
-	- new response schema `LoyaltiesGetRewardAssignmentResponseBody` (old `4_obj_reward_assignment_object`)
+    - new response schema `LoyaltiesGetRewardAssignmentResponseBody` (old `4_obj_reward_assignment_object`)
 - GET /v1/loyalties/{campaignId}/reward-assignments/{assignmentId}/reward
-	- new response schema `LoyaltiesGetRewardDetailsResponseBody` (old `4_obj_reward_object`)
+    - new response schema `LoyaltiesGetRewardDetailsResponseBody` (old `4_obj_reward_object`)
 - GET /v1/loyalties/{campaignId}/tiers/{tierId}
-	- new response schema `LoyaltiesGetTierResponseBody` (old `8_obj_loyalty_tier_object`)
+    - new response schema `LoyaltiesGetTierResponseBody` (old `8_obj_loyalty_tier_object`)
 - GET /v1/loyalties/{campaignId}/tiers/{tierId}/earning-rules
-	- new response schema `LoyaltiesListLoyaltyTierEarningRulesRequestQuery` (old `8_res_list_loyalty_tier_earning_rules`)
+    - new response schema `LoyaltiesListLoyaltyTierEarningRulesRequestQuery` (old `8_res_list_loyalty_tier_earning_rules`)
 - GET /v1/loyalties/members/{memberId}/tiers
-	- new response schema `LoyaltiesListMemberLoyaltyTiersResponseBody` (old `8_res_get_member_loyalty_tier`)
+    - new response schema `LoyaltiesListMemberLoyaltyTiersResponseBody` (old `8_res_get_member_loyalty_tier`)
 
 #### New endpoint
 - POST /v1/loyalties/{campaignId}/tiers
+
 
 ## 20231009
 
@@ -87,6 +88,58 @@
 - /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
     - new response schema `LoyaltiesGetPointsExpirationResponseBody` (old `8_res_get_points_expiration`)
 
+## 20230831 - Exports API
+
+**New models**
+- ExportsCreateRequestBody
+- ExportBase
+- Export
+- ExportsCreateResponseBody
+- ExportVoucher
+- FieldConditions
+- FiltersCondition
+- ExportVoucherFilters
+- Junction
+- ExportRedemption
+- ExportRedemptionFilters
+- ExportCustomer
+- ExportCustomerFilters
+- ExportPublication
+- ExportPublicationFilters
+- ExportOrder
+- ExportOrderFilters
+- ExportPointsExpiration
+- ExportPointsExpirationFilters
+- ExportVoucherTransactionsExpiration
+- ExportVoucherTransactionsFilters
+- ExportsGetResponseBody
+- ExportsListResponseBody
+- ExportCustomerFields
+- ExportCustomerOrder
+- ExportPublicationFields
+- ExportPublicationOrder
+- ExportRedemptionFields
+- ExportRedemptionOrder
+- ExportVoucherFields
+- ExportVoucherOrder
+- ExportOrderFields
+- ExportOrderOrder
+- ExportPointsExpirationFields
+- ExportPointsExpirationOrder
+- ExportVoucherTransactionsFields
+- ExportVoucherTransactionsOrder
+- Any
+
+**Endpoint changes**
+- v1/exports
+    - POST
+        - New request schema: `ExportsCreateRequestBody`
+        - New response schema: `ExportsCreateResponseBody`
+    - GET
+        - New response schema: `ExportsListResponseBody`
+- v1/exports/{exportId}
+    - GET
+        - New response schema: `ExportsGetResponseBody`
 
 ## 20231005 - Earning rule
 
