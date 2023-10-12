@@ -24,15 +24,15 @@ After you create your account, you get access to the Sandbox dashboard. Sandbox 
 
 Type **BLCKFRDY** in the search bar and Voucherify will **redirect** you to the voucher page, which displays the basic information about the discount it carries. Let’s redeem the code with the API.
 
-<!-- ![Voucherify Dashboard](../../assets/img/guides_getting_started_quickstart_voucher_dashboard_1.png "Voucher Dashboard") -->
-![Voucherify Dashboard](https://files.readme.io/fcb7572-voucher_dashboard.png "Voucher Dashboard")
+<!-- ![Voucherify Dashboard](../../assets/img/guides_getting_started_Quickstart_join_the_dashboard.png "Voucher Dashboard") -->
+![Voucherify Dashboard](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/5b1f45e537c0832f2f125424d0eb13a5ea1b1e49/docs/assets/img/guides_getting_started_Quickstart_join_the_dashboard.png)
 
 ## Get your API keys
 
 The Sandbox Project Dashboard is already showing your default API keys for the Sandbox project. You can also navigate to Project Settings to find the Authentication section. 
 
-<!-- ![Application Keys](../../assets/img/guides_getting_started_quickstart_application_keys_2.png "Application Keys") -->
-![Application Keys](https://files.readme.io/9003954-application-keys.png "Application Keys")
+<!-- ![Application Keys](../../assets/img/guides_getting_started_Quickstart_API_keys.png "Application Keys") -->
+![Application Keys](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/updating-quickstart-article/docs/assets/img/guides_getting_started_Quickstart_API_keys.png)
 
 ## Make a test API request
 
@@ -184,15 +184,14 @@ Because BLCKFRDY doesn’t have any redemption limits, you can use it multiple t
 
 Every redemption can be [listed](ref:list-redemptions) with the API or in the dashboard. When you go to the voucher view, in “Recent changes”, you’ll see operations performed on the object. You can switch to the REDEMPTIONS HISTORY tab to track all redemptions.  
 
-<!-- ![Recent Changes](../../assets/img/guides_getting_started_quickstart_recent_changes_4.png "Recent Changes") -->
+<!-- ![Recent Changes](../../assets/img/guides_getting_started_Quickstart_review_logs.png "Recent Changes") -->
 
 [block:image]
 {
   "images": [
     {
       "image": [
-        "https://files.readme.io/8bc30bc-recent_changes.png",
-        "recent_changes.png",
+       ["https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/updating-quickstart-article/docs/assets/img/guides_getting_started_Quickstart_review_logs.png],
         1004
       ],
       "sizing": "80"
@@ -203,8 +202,8 @@ Every redemption can be [listed](ref:list-redemptions) with the API or in the da
 
 To monitor and filter the list of all API calls for your project, you can go to the [Audit log](https://app.voucherify.io/#/app/core/logs):
 
-<!-- ![Audit Log](../../assets/img/guides_getting_started_quickstart_audit_log_5.png "Audit Log") -->
-![Audit Log](https://files.readme.io/1a4682c-audit_log.png "Audit Log")
+<!-- ![Audit Log](../../assets/img/guides_getting_started_Quickstart_audit_log.png "Audit Log") -->
+![Audit Log](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/updating-quickstart-article/docs/assets/img/guides_getting_started_Quickstart_audit_log.png)
 
 ## Test promo scenarios with "Hot Beans" demo store
 
