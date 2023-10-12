@@ -1,11 +1,11 @@
 ---
-title: Get Product Collection
+title: Create Loyalty Tiers
 type: endpoint
 categorySlug: voucherify-api
-slug: get-product-collection
-parentDocSlug: product-collections-api
+slug: create-loyalty-tiers
+parentDocSlug: loyalties-api
 hidden: false
-order: 4
+order: 44
 ---
 [block:html]
 {
