@@ -1,5 +1,6 @@
 # Changelog
 
+
 ## 20231009
 
 #### New schemas:
@@ -51,6 +52,60 @@
 - /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
     - new response schema `LoyaltiesGetPointsExpirationResponseBody` (old `8_res_get_points_expiration`)
 
+
+
+## 20230831 - Exports API
+
+**New models**
+- ExportsCreateRequestBody
+- ExportBase
+- Export
+- ExportsCreateResponseBody
+- ExportVoucher
+- FieldConditions
+- FiltersCondition
+- ExportVoucherFilters
+- Junction
+- ExportRedemption
+- ExportRedemptionFilters
+- ExportCustomer
+- ExportCustomerFilters
+- ExportPublication
+- ExportPublicationFilters
+- ExportOrder
+- ExportOrderFilters
+- ExportPointsExpiration
+- ExportPointsExpirationFilters
+- ExportVoucherTransactionsExpiration
+- ExportVoucherTransactionsFilters
+- ExportsGetResponseBody
+- ExportsListResponseBody
+- ExportCustomerFields
+- ExportCustomerOrder
+- ExportPublicationFields
+- ExportPublicationOrder
+- ExportRedemptionFields
+- ExportRedemptionOrder
+- ExportVoucherFields
+- ExportVoucherOrder
+- ExportOrderFields
+- ExportOrderOrder
+- ExportPointsExpirationFields
+- ExportPointsExpirationOrder
+- ExportVoucherTransactionsFields
+- ExportVoucherTransactionsOrder
+- Any
+
+**Endpoint changes**
+- v1/exports
+    - POST
+        - New request schema: `ExportsCreateRequestBody`
+        - New response schema: `ExportsCreateResponseBody`
+    - GET
+        - New response schema: `ExportsListResponseBody`
+- v1/exports/{exportId}
+    - GET
+        - New response schema: `ExportsGetResponseBody`
 
 ## 20231005 - Earning rule
 
