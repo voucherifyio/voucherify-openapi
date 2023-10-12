@@ -169,6 +169,8 @@
 	- New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
 - POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable
 	- New response schema: LoyaltiesDisableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+- GET /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
+    - New response schema: LoyaltiesGetPointsExpirationResponseBody (old one: 8_res_get_points_expiration)
 
 ## 20230829
 
