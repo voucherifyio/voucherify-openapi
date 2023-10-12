@@ -11,10 +11,10 @@ order: 1
 ## Export
 All of:
 
-1. [ExportBase](#exportbase)
+1. [Export Base](#export-base)
 2. Any of: [Export Vouchers](#export-vouchers), [Export Redemptions](#export-redemptions), [Export Customers](#export-customers), [Export Publications](#export-publications), [Export Orders](#export-orders), [Export Points Expirations](#export-points-expirations), [Export Vouchers Transactions Expiration](#export-vouchers-transactions-expiration)
 
-## ExportBase
+## Export Base
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique export ID.</p> |
