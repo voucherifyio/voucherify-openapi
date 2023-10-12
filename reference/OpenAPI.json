@@ -33778,20 +33778,11 @@
         "title": "Static Product Collection",
         "description": "Schema model for a `STATIC` product collection.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Product collection ID.",
-            "example": "pc_a11pr0dUc75"
-          },
-          "name": {
-            "type": "string",
-            "example": "All Products",
-            "description": "Unique user-defined product collection name."
-          },
           "type": {
-            "type": "string",
-            "description": "Describes whether the product collection is dynamic (products come in and leave based on set criteria) or static (manually selected products). The value is `STATIC` or `AUTO_UPDATE`.",
-            "default": "STATIC"
+            "description": "Describes whether the product collection is dynamic (products come in and leave based on set criteria) or static (manually selected products).",
+            "enum": [
+              "STATIC"
+            ]
           },
           "products": {
             "description": "Defines a set of products for a `STATIC` product collection type.",
@@ -33821,26 +33812,11 @@
                 "object"
               ]
             }
-          },
-          "created_at": {
-            "type": "string",
-            "example": "2021-12-09T12:51:29.898Z",
-            "description": "Timestamp representing the date and time when the product collection was created in ISO 8601 format.",
-            "format": "date-time"
-          },
-          "object": {
-            "type": "string",
-            "default": "products_collection",
-            "description": "The type of object represented by JSON. This object stores information about the static product collection."
           }
         },
         "required": [
-          "id",
-          "name",
           "type",
-          "products",
-          "created_at",
-          "object"
+          "products"
         ]
       },
       "product_collections_dynamic_collection": {
@@ -33848,44 +33824,56 @@
         "title": "Dynamic Product Collection",
         "description": "Schema model for an `AUTO_UPDATE` product collection.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Product collection ID.",
-            "example": "pc_a11pr0dUc75"
-          },
-          "name": {
-            "type": "string",
-            "example": "All Products",
-            "description": "Unique user-defined product collection name."
-          },
           "type": {
-            "type": "string",
-            "description": "Describes whether the product collection is dynamic (products come in and leave based on set criteria) or static (manually selected products). The value is `STATIC` or `AUTO_UPDATE`.",
-            "default": "AUTO_UPDATE"
+            "description": "Describes whether the product collection is dynamic (products come in and leave based on set criteria) or static (manually selected products).",
+            "enum": [
+              "AUTO_UPDATE"
+            ]
           },
           "filter": {
             "type": "object",
-            "description": "Defines a set of criteria and boundary conditions for an `AUTO_UPDATE` product collection type."
-          },
-          "created_at": {
-            "type": "string",
-            "example": "2021-12-09T12:51:29.898Z",
-            "description": "Timestamp representing the date and time when the product collection was created in ISO 8601 format.",
-            "format": "date-time"
-          },
-          "object": {
-            "type": "string",
-            "default": "products_collection",
-            "description": "The type of object represented by JSON. This object stores information about the dynamic product collection."
+            "description": "Defines a set of criteria and boundary conditions for an `AUTO_UPDATE` product collection type.",
+            "additionalProperties": false,
+            "required": [
+              "junction"
+            ],
+            "properties": {
+              "junction": {
+                "$ref": "#/components/schemas/Junction"
+              },
+              "id": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "source_id": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "name": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "price": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "object": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "attributes": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "image_url": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "skus": {
+                "$ref": "#/components/schemas/FieldConditions"
+              }
+            }
           }
         },
         "required": [
-          "id",
-          "name",
           "type",
-          "filter",
-          "created_at",
-          "object"
+          "filter"
         ]
       },
       "product_collections_list_response_body": {
@@ -41574,9 +41562,6 @@
       },
       "Category": {
         "title": "Category",
-        "x-stoplight": {
-          "id": "4l87q60w8ta36"
-        },
         "type": "object",
         "description": "This is an object representing a category.",
         "properties": {
@@ -44183,140 +44168,57 @@
         "x-tags": [
           "PRODUCT COLLECTIONS API"
         ],
-        "oneOf": [
+        "allOf": [
           {
-            "$ref": "#/components/schemas/product_collections_static_collection"
+            "$ref": "#/components/schemas/product_collections_collection_item_base"
           },
           {
-            "$ref": "#/components/schemas/product_collections_dynamic_collection"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/product_collections_static_collection"
+              },
+              {
+                "$ref": "#/components/schemas/product_collections_dynamic_collection"
+              }
+            ]
           }
         ]
       },
-      "product_collections_create_junction_request_body": {
-        "anyOf": [
-          {
-            "default": "and",
-            "pattern": "and"
-          },
-          {
-            "default": "AND",
-            "pattern": "AND"
-          },
-          {
-            "default": "or",
-            "pattern": "or"
-          },
-          {
-            "default": "OR",
-            "pattern": "OR"
-          }
+      "product_collections_collection_item_base": {
+        "title": "Product Collection Base",
+        "description": "This is an object representing a product collection base. ",
+        "x-tags": [
+          "PRODUCT COLLECTIONS API"
         ],
-        "type": "string"
-      },
-      "product_collections_create_filters_conditions_request_body": {
-        "title": "Filters Condition",
         "type": "object",
         "properties": {
-          "$in": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          "id": {
+            "type": "string",
+            "description": "Product collection ID."
           },
-          "$not_in": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          "name": {
+            "type": "string",
+            "example": "All Products",
+            "description": "Unique user-defined product collection name."
           },
-          "$is": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-09T12:51:29.898Z",
+            "description": "Timestamp representing the date and time when the product collection was created in ISO 8601 format.",
+            "format": "date-time"
           },
-          "$is_days_ago": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$is_days_in_future": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$is_not": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$has_value": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$is_unknown": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$contains": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$not_contain": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$starts_with": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$ends_with": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$more_than": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$less_than": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$more_than_ago": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$less_than_ago": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$more_than_future": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$less_than_future": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$more_than_equal": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$less_than_equal": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$after": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$before": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$count": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$count_less": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          },
-          "$count_more": {
-            "$ref": "#/components/schemas/product_collections_create_any_request_body"
-          }
-        }
-      },
-      "product_collections_create_any_request_body": {
-        "anyOf": [
-          {
-            "type": "string"
-          },
-          {
-            "type": "number"
-          },
-          {
-            "type": "object"
-          }
-        ]
-      },
-      "product_collections_create_field_conditions_request_body": {
-        "title": "Field Conditions",
-        "type": "object",
-        "properties": {
-          "conditions": {
-            "$ref": "#/components/schemas/product_collections_create_filters_conditions_request_body"
+          "object": {
+            "description": "The type of object represented by JSON. This object stores information about the static product collection.",
+            "enum": [
+              "products_collection"
+            ]
           }
         },
         "required": [
-          "conditions"
+          "id",
+          "name",
+          "created_at",
+          "object"
         ]
       },
       "product_collections_create_request_body": {
@@ -44335,9 +44237,9 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": "string",
-            "default": "STATIC",
-            "pattern": "STATIC"
+            "enum": [
+              "STATIC"
+            ]
           },
           "name": {
             "type": "string"
@@ -44377,24 +44279,49 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": "string",
-            "default": "AUTO_UPDATE",
-            "pattern": "AUTO_UPDATE"
+            "enum": [
+              "AUTO_UPDATE"
+            ]
           },
           "name": {
             "type": "string"
           },
           "filter": {
             "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/product_collections_create_field_conditions_request_body"
-            },
+            "additionalProperties": false,
             "required": [
               "junction"
             ],
             "properties": {
               "junction": {
-                "$ref": "#/components/schemas/product_collections_create_junction_request_body"
+                "$ref": "#/components/schemas/Junction"
+              },
+              "id": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "source_id": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "name": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "price": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "object": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "attributes": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "image_url": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "skus": {
+                "$ref": "#/components/schemas/FieldConditions"
               }
             }
           }

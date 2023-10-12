@@ -1,6 +1,6 @@
 # Changelog
 
-## 20231010 - Product Collections
+## 20231012 - Product Collections
 
 **New models**
 - product_collections_get_response_body
@@ -8,16 +8,14 @@
 - product_collections_sku_in_collection
 - product_collections_product_in_collection
 - product_collections_collection_item
+- - product_collections_collection_item_base
 - product_collections_static_collection
 - product_collections_dynamic_collection
 - product_collections_list_response_body
 - product_collections_create_request_body
 - product_collections_create_static_request_body
 - product_collections_create_dynamic_request_body
-- product_collections_create_field_conditions_request_body
-- product_collections_create_any_request_body
-- product_collections_create_filters_conditions_request_body
-- product_collections_create_junction_request_body
+
 
 **Endpoint changes**
 - Added missing method for endpoint: POST `/v1/product-collections`
