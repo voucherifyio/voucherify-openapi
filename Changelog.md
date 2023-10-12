@@ -32,6 +32,8 @@
     - new response schema `LoyaltiesListLoyaltyTierEarningRulesRequestQuery` (old `8_res_list_loyalty_tier_earning_rules`)
 - GET /v1/loyalties/members/{memberId}/tiers
     - new response schema `LoyaltiesListMemberLoyaltyTiersResponseBody` (old `8_res_get_member_loyalty_tier`)
+- GET /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
+    - New response schema: `LoyaltiesGetPointsExpirationResponseBody` (old one: `8_res_get_points_expiration`)
 
 #### New endpoint
 - POST /v1/loyalties/{campaignId}/tiers
@@ -169,8 +171,6 @@
 	- New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
 - POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable
 	- New response schema: LoyaltiesDisableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
-- GET /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
-    - New response schema: LoyaltiesGetPointsExpirationResponseBody (old one: 8_res_get_points_expiration)
 
 ## 20230829
 
