@@ -4,7 +4,7 @@ import { EOL } from 'os';
 import { mdTables } from './md-tables';
 
 const PATH_TO_DOCS_REFERENCE = [__dirname, '../docs/reference-docs'];
-const PATH_TO_GERENATED_TABLES = [__dirname, './output'];
+const PATH_TO_GENERATED_TABLES = [__dirname, './output'];
 
 const updateMdTablesInDoc = async () => {
     for (const [objectName, docFile] of mdTables) {
@@ -27,17 +27,17 @@ const updateMdTablesInDoc = async () => {
             }
 
             const additionalBlockquotes = fileContentBlocks[contentBlockIndexWithTableToReplace].match(/^\>.*$/gm)
-            
+
             const contentBeforeTable = fileContentBlocks.slice(0, contentBlockIndexWithTableToReplace).join('')
             const contentAfterTable = fileContentBlocks.slice(contentBlockIndexWithTableToReplace + 1).join('')
 
-            const newTable = (await fs.readFile(path.join(...PATH_TO_GERENATED_TABLES, `${objectName}.md`)))
+            const newTable = (await fs.readFile(path.join(...PATH_TO_GENERATED_TABLES, `${objectName}.md`)))
                 .toString();
                 // .replace((/^\# .*$/m), ''); // Remove first header as in readme.io it already exists
 
             const newFileContent = [
                 contentBeforeTable,
-                additionalBlockquotes?.length? additionalBlockquotes.join(EOL) : false,  
+                additionalBlockquotes?.length? additionalBlockquotes.join(EOL) : false,
                 newTable,
                 contentAfterTable
             ].filter(e => !!e)
