@@ -1,5 +1,31 @@
 # Changelog
 
+## 20231012
+
+#### New schemas
+- PromotionsStacksListInCampaignResponseBody
+- PromotionsStacksListResponseBody
+- PromotionsStacksListRequestQuery
+- PromotionsStacksGetResponseBody
+- PromotionsStacksUpdateRequestBody
+- PromotionsStacksUpdateResponseBody
+- PromotionsStacksCreateInCampaignRequestBody
+- PromotionsStacksCreateInCampaignResponseBody
+- PromotionStackBase
+- PromotionStack
+
+- GET /v1/promotions/{campaignId}/stacks
+  - new response schema `PromotionsStacksListInCampaignResponseBody` (old `3_res_list_promotion_stacks`)
+- POST /v1/promotions/{campaignId}/stacks
+  - new request schema `PromotionsStacksCreateInCampaignRequestBody` (old `3_req_create_promotion_stack`)
+  - new response schema `PromotionsStacksCreateInCampaignResponseBody` (old `3_obj_promotion_stack_object`)
+- GET /v1/promotions/{campaignId}/stacks/{stackId}
+  - new response schema `PromotionsStacksGetResponseBody` (old `3_obj_promotion_stack_object`)
+- PUT /v1/promotions/{campaignId}/stacks/{stackId}
+  - new request schema `PromotionsStacksUpdateRequestBody` (old `3_req_create_promotion_stack`)
+  - new response schema `PromotionsStacksUpdateResponseBody` (old `3_obj_promotion_stack_object`)
+- GET /v1/promotions/stacks
+  - new response schema `PromotionsStacksListResponseBody` (old `3_res_list_promotion_stacks`)
 
 ## 20231009
 
