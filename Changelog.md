@@ -1,6 +1,6 @@
 # Changelog
 
-## 20231012
+## 20231012 - Promotions Stacks
 
 #### New schemas
 - PromotionsStacksListInCampaignResponseBody
