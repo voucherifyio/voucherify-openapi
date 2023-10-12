@@ -1,5 +1,43 @@
 # Changelog
 
+## 20231011
+
+#### New schemas:
+- LoyaltiesCreateTiersRequestBody
+- LoyaltiesCreateTiersResponseBody
+- LoyaltiesGetRewardAssignmentResponseBody
+- LoyaltiesGetRewardDetailsResponseBody
+- LoyaltiesListTiersRequestQuery
+- LoyaltiesListLoyaltyTierEarningRulesRequestQuery
+- LoyaltiesGetTierResponseBody
+- LoyaltiesListTiersResponseBody
+- LoyaltiesListMemberLoyaltyTiersResponseBody
+- LoyaltiesListLoyaltyTierEarningRulesResponseBody
+- CreateLoyaltyTier
+- LoyaltyTier
+- MappingMultiply
+- MappingFixed
+- EarningRule
+
+#### Schemas changes
+- GET /v1/loyalties/{campaignId}/tiers
+    - new response schema `LoyaltiesListTiersResponseBody` (old `8_res_list_loyalty_tiers`)
+- GET /v1/loyalties/{campaignId}/reward-assignments/{assignmentId}
+    - new response schema `LoyaltiesGetRewardAssignmentResponseBody` (old `4_obj_reward_assignment_object`)
+- GET /v1/loyalties/{campaignId}/reward-assignments/{assignmentId}/reward
+    - new response schema `LoyaltiesGetRewardDetailsResponseBody` (old `4_obj_reward_object`)
+- GET /v1/loyalties/{campaignId}/tiers/{tierId}
+    - new response schema `LoyaltiesGetTierResponseBody` (old `8_obj_loyalty_tier_object`)
+- GET /v1/loyalties/{campaignId}/tiers/{tierId}/earning-rules
+    - new response schema `LoyaltiesListLoyaltyTierEarningRulesResponseBody` (old `8_res_list_loyalty_tier_earning_rules`)
+- GET /v1/loyalties/members/{memberId}/tiers
+    - new response schema `LoyaltiesListMemberLoyaltyTiersResponseBody` (old `8_res_get_member_loyalty_tier`)
+- GET /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
+    - New response schema: `LoyaltiesGetPointsExpirationResponseBody` (old one: `8_res_get_points_expiration`)
+
+#### New endpoint
+- POST /v1/loyalties/{campaignId}/tiers
+
 
 ## 20231009
 
@@ -51,8 +89,6 @@
     - new response schema `LoyaltiesExportCardTransactionsResponseBody` (old `8_obj_export_transactions_object`)
 - /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
     - new response schema `LoyaltiesGetPointsExpirationResponseBody` (old `8_res_get_points_expiration`)
-
-
 
 ## 20230831 - Exports API
 
