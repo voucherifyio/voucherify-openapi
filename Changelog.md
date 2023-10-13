@@ -9,7 +9,7 @@
 - product_collections_sku_in_collection
 - product_collections_product_in_collection
 - product_collections_collection_item
-- - product_collections_collection_item_base
+- product_collections_collection_item_base
 - product_collections_static_collection
 - product_collections_dynamic_collection
 - product_collections_list_response_body
