@@ -9557,20 +9557,7 @@
             "default": "reward",
             "description": "The type of object represented by the JSON. This object stores information about the reward."
           }
-        },
-        "required": [
-          "id",
-          "name",
-          "type",
-          "parameters",
-          "stock",
-          "redeemed",
-          "attributes",
-          "created_at",
-          "updated_at",
-          "metadata",
-          "object"
-        ]
+        }
       },
       "4_obj_reward_object_parameters_CAMPAIGN": {
         "title": "Digital",
@@ -9608,7 +9595,11 @@
             "description": "Campaign type.",
             "default": "DISCOUNT_COUPONS"
           }
-        }
+        },
+        "required": [
+          "id",
+          "type"
+        ]
       },
       "4_obj_reward_object_parameters_CAMPAIGN_GIFT_VOUCHERS": {
         "title": "Gift Vouchers",
@@ -9629,7 +9620,12 @@
             "description": "Campaign type.",
             "default": "GIFT_VOUCHERS"
           }
-        }
+        },
+        "required": [
+          "id",
+          "balance",
+          "type"
+        ]
       },
       "4_obj_reward_object_parameters_CAMPAIGN_LOYALTY_PROGRAM": {
         "title": "Points on loyalty card",
@@ -9650,7 +9646,12 @@
             "description": "Campaign type.",
             "default": "LOYALTY_PROGRAM"
           }
-        }
+        },
+        "required": [
+          "id",
+          "balance",
+          "type"
+        ]
       },
       "4_obj_reward_object_parameters_COIN": {
         "title": "Pay with Points",
@@ -10220,17 +10221,7 @@
             "default": "reward_assignment",
             "description": "The type of object represented by the JSON. This object stores information about the reward assignment."
           }
-        },
-        "required": [
-          "id",
-          "reward_id",
-          "related_object_id",
-          "related_object_type",
-          "parameters",
-          "created_at",
-          "updated_at",
-          "object"
-        ]
+        }
       },
       "4_res_list_reward_assignments": {
         "type": "object",
@@ -22814,7 +22805,7 @@
           }
         }
       },
-      "8_obj_loyalty_tier_reward_object": {
+      "loyalties_loyalty_tier_reward": {
         "title": "Loyalty Tier Reward Object",
         "type": "object",
         "description": "This is an object representing a loyalty tier reward.",
@@ -22823,10 +22814,10 @@
         ],
         "properties": {
           "reward": {
-            "$ref": "#/components/schemas/4_obj_reward_object"
+            "$ref": "#/components/schemas/loyalties_reward_item"
           },
           "assignment": {
-            "$ref": "#/components/schemas/4_obj_reward_assignment_object"
+            "$ref": "#/components/schemas/loyalties_reward_assignment_item"
           },
           "object": {
             "type": "string",
@@ -29538,7 +29529,7 @@
           }
         }
       },
-      "8_res_list_loyalty_tier_rewards": {
+      "loyalties_list_loyalty_tier_rewards_request_body": {
         "title": "List Loyalty Tier Rewards",
         "type": "object",
         "description": "Response schema for `/loyalties/{campaignId}/tiers/{tierId}/rewards`.",
@@ -29557,7 +29548,7 @@
             "type": "array",
             "description": "Contains array of loyalty tier reward objects.",
             "items": {
-              "$ref": "#/components/schemas/8_obj_loyalty_tier_reward_object"
+              "$ref": "#/components/schemas/loyalties_loyalty_tier_reward"
             }
           },
           "total": {
@@ -40071,6 +40062,270 @@
           }
         ],
         "title": "Order Items"
+      },
+      "loyalties_reward_item": {
+        "title": "Reward Object",
+        "type": "object",
+        "description": "This is an object representing a reward.",
+        "x-tags": [
+          "REWARDS API"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "rew_nIy4gHpQHle2c3pNMwuj7G6j",
+            "description": "Unique reward ID, assigned by Voucherify."
+          },
+          "name": {
+            "type": "string",
+            "description": "Reward name."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "CAMPAIGN",
+              "COIN",
+              "MATERIAL"
+            ],
+            "description": "Reward type."
+          },
+          "parameters": {
+            "description": "Defines how the reward is generated.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/loyalties_reward_item_parameters_campaign"
+              },
+              {
+                "$ref": "#/components/schemas/loyalties_reward_item_parameters_coin"
+              },
+              {
+                "$ref": "#/components/schemas/loyalties_reward_item_parameters_material"
+              }
+            ]
+          },
+          "stock": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Configurable for **material rewards**. The number of units of the product that you want to share as reward."
+          },
+          "redeemed": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Defines the number of already invoked (successful) reward redemptions.\t"
+          },
+          "attributes": {
+            "type": "object",
+            "description": "These properties are configurable for **material rewards**.",
+            "properties": {
+              "image_url": {
+                "type": "string",
+                "description": "The HTTPS URL pointing to the .png or .jpg file."
+              },
+              "description": {
+                "type": "string",
+                "description": "An arbitrary string that you can attach to a material reward."
+              }
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the reward was created in ISO 8601 format.",
+            "example": "2022-08-11T14:49:22.586Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Timestamp representing the date and time when the reward was updated in ISO 8601 format.",
+            "example": "2022-08-11T16:01:34.885Z",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format."
+          },
+          "object": {
+            "type": "string",
+            "default": "reward",
+            "description": "The type of object represented by the JSON. This object stores information about the reward."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "type",
+          "parameters",
+          "stock",
+          "redeemed",
+          "attributes",
+          "created_at",
+          "updated_at",
+          "metadata",
+          "object"
+        ]
+      },
+      "loyalties_reward_assignment_item": {
+        "title": "Reward Assignment Object",
+        "type": "object",
+        "description": "This is an object representing a reward assignment.",
+        "x-tags": [
+          "REWARDS API"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "rewa_PbIRoMXpwe5QhobW4JKu0VjH",
+            "description": "Unique reward assignment ID, assigned by Voucherify."
+          },
+          "reward_id": {
+            "type": "string",
+            "description": "Associated reward ID.",
+            "example": "rew_C7wS9eHFDN4CIbXI5PpLSkGY"
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "Related object ID to which the reward was assigned.",
+            "example": "camp_wciTvaOfYmAa3EmIIW3QpXXZ"
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "Related object type to which the reward was assigned.",
+            "example": "campaign"
+          },
+          "parameters": {
+            "description": "Defines the cost of the reward.",
+            "type": "object",
+            "required": [
+              "loyalty"
+            ],
+            "properties": {
+              "loyalty": {
+                "type": "object",
+                "description": "Defines the equivalent points value of the reward.",
+                "required": [
+                  "points"
+                ],
+                "properties": {
+                  "points": {
+                    "type": "integer",
+                    "description": "The number of points required to redeem the reward."
+                  }
+                }
+              }
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the reward assignment was created in ISO 8601 format.",
+            "example": "2022-08-11T14:49:22.586Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Timestamp representing the date and time when the reward assignment was updated in ISO 8601 format.",
+            "example": "2022-08-11T16:01:34.885Z",
+            "format": "date-time"
+          },
+          "object": {
+            "type": "string",
+            "default": "reward_assignment",
+            "description": "The type of object represented by the JSON. This object stores information about the reward assignment."
+          }
+        },
+        "required": [
+          "id",
+          "reward_id",
+          "related_object_id",
+          "related_object_type",
+          "parameters",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "loyalties_reward_item_parameters_campaign": {
+        "title": "Digital",
+        "type": "object",
+        "description": "These are parameters representing a digital (CAMPAIGN) reward. These can be in the form of discount coupons, gift card credits, or loyalty point credits.",
+        "properties": {
+          "campaign": {
+            "description": "Objects stores information about the campaign related to the reward.",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_CAMPAIGN_DISCOUNT_COUPONS"
+              },
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_CAMPAIGN_GIFT_VOUCHERS"
+              },
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_CAMPAIGN_LOYALTY_PROGRAM"
+              }
+            ]
+          }
+        }
+      },
+      "loyalties_reward_item_parameters_coin": {
+        "title": "Pay with Points",
+        "type": "object",
+        "description": "These are parameters representing a Pay with Points (COIN) reward. ",
+        "properties": {
+          "coin": {
+            "type": "object",
+            "description": "Defines the ratio by mapping the number of loyalty points in `points_ratio` to a predefined cash amount in `exchange_ratio`.",
+            "required": [
+              "exchange_ratio",
+              "points_ratio"
+            ],
+            "properties": {
+              "exchange_ratio": {
+                "type": "integer",
+                "description": "The cash equivalent of the points defined in the `points_ratio` property."
+              },
+              "points_ratio": {
+                "type": "integer",
+                "description": "The number of loyalty points that will map to the predefined cash amount defined by the `exchange_ratio` property."
+              }
+            }
+          }
+        },
+        "required": [
+          "coin"
+        ]
+      },
+      "loyalties_reward_item_parameters_material": {
+        "title": "Material",
+        "type": "object",
+        "description": "These are parameters representing products as a (MATERIAL) reward.",
+        "properties": {
+          "product": {
+            "type": "object",
+            "description": "Contains information about the product given as a reward.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "prod_0b7d7dfb05cbe5c616",
+                "description": "Unique product ID, assigned by Voucherify. "
+              },
+              "sku_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unique SKU ID, assigned by Voucherify, of the SKU given as a reward.",
+                "example": "sku_0b7d7dfb090be5c619"
+              }
+            }
+          }
+        }
       },
       "a_req_importCSV": {
         "type": "object",
@@ -71779,7 +72034,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_res_list_loyalty_tier_rewards"
+                  "$ref": "#/components/schemas/loyalties_list_loyalty_tier_rewards_request_body"
                 },
                 "examples": {
                   "Example": {
