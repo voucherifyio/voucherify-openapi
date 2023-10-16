@@ -36,7 +36,7 @@ The Sandbox Project Dashboard is already showing your default API keys for the S
 
 ## Make a test API request
 
-Within the Sandbox, you get 100 API calls per hour. Visit [Limits](doc:limits) to learn how to monitor your usage. With the first API request, we’ll [redeem](doc:redeem-voucher) our coupon. This function is essential to Voucherify workflow as it takes care of:
+Within the Sandbox, you get 100 API calls per hour. Visit [Limits](doc:limits) to learn how to monitor your usage. With the first API request, we’ll [redeem](doc:redemption) our coupon. This function is essential to Voucherify workflow as it takes care of:
 
 1. Checking if the code is recognizable with your account.
 2. Validating if it satisfies the business rules.
