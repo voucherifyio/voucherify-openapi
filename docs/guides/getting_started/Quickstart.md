@@ -43,7 +43,7 @@ Within the Sandbox, you get 100 API calls per hour. Visit [Limits](doc:limits) t
 3. Calculating and returning the discount value.
 4. Marking the code as used.
 
-**Note:** while calling the [redemption endpoint](ref:redeem-stacked-discounts) is enough to satisfy a basic promo code flow, it's useful to add [validation](ref:validate-voucher) to the flow every time the promo code or cart changes. Validation performs 1-3 points, but it doesn't mark the code as used.
+**Note:** while calling the [redemption endpoint](ref:redeem-stacked-discounts) is enough to satisfy a basic promo code flow, it's useful to add [validation](ref:validate-stacked-discounts) to the flow every time the promo code or cart changes. Validation performs 1-3 points, but it doesn't mark the code as used.
 **Note:** Voucherify API supports the redemption of a single promo code and [Stackable discounts API](doc:manage-stackable-discounts), which lets you redeem up to 5 incentives per call. Before integrating Voucherify, choose which redemption endpoint you prefer to use. 
 
 <!-- ![First Call Flow](../../assets/img/guides_getting_started_quickstart_first_call_flow_3.jpeg "First Call Flow") -->
