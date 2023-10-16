@@ -1,7 +1,7 @@
 ---
 title: Transfer Loyalty Points
 excerpt: See how to transfer points between loyalty cards.
-categorySlug: campaigns-1
+categorySlug: campaigns-recipes
 slug: transfer-loyalty-points
 type: basic
 hidden: false

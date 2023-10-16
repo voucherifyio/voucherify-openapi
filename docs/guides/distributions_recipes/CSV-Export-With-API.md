@@ -1,7 +1,7 @@
 ---
 title: CSV export with API
 excerpt: null
-categorySlug: distribution-1
+categorySlug: distributions-recipes
 slug: csv-export
 type: basic
 hidden: false
