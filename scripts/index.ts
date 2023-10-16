@@ -51,13 +51,65 @@ https://dash.readme.com/api/v1/version`,
       }
     );
     if (response.status !== 200) {
-      throw new Error(`Response status: ${response.status}`);
+      throw new Error(
+        `Response status: ${response.status}, maybe this versionTag is already used?`
+      );
     }
+    console.log(`FORK CREATED!`);
   } catch (error) {
     console.log(`Error while creating fork from ${mainVersion}`, error);
     throw new Error(error);
   }
-  const categoriesToDelete = await (
+};
+
+const createNewVersion =
+
+const cleanProject = async (version) => {
+  const categoriesToDelete = await getAllCategories(version);
+  //delete all categories
+  await asyncMap(
+    categoriesToDelete,
+    async (category) => await deleteCategory(version, category.slug)
+  );
+  console.log(`OLD CATEGORIES DELETED`);
+  //create categories
+  await asyncMap(
+    [...listOfGuideCategories, ...listOfReferenceCategories],
+    async (title) => await createCategory(version, title)
+  );
+  console.log(`NEW CATEGORIES CREATED`);
+  const allCategories = await getAllCategories(version);
+  //update reference categories types
+  await asyncMap(
+    listOfReferenceCategories,
+    async (categoryTitle) =>
+      await updateCategory(
+        version,
+        allCategories.find((category) => category.title === categoryTitle).slug,
+        { type: "reference" }
+      )
+  );
+  console.log(`REFERENCE CATEGORIES UPDATED`);
+  const allApiSpecifications = await getAllApiSpecifications(version);
+  await asyncMap(allApiSpecifications, deleteSpecification);
+  console.log(`API SPECIFICATIONS DELETED`);
+};
+
+const updateCategory = async (version, slug, data = {}) => {
+  await fetch(`https://dash.readme.com/api/v1/categories/${slug}`, {
+    method: "PUT",
+    headers: {
+      "x-readme-version": version,
+      authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
+      "content-type": "application/json",
+      accept: "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+};
+
+const getAllCategories = async (version) =>
+  await (
     await fetch(
       `https://dash.readme.com/api/v1/categories?perPage=100&page=1`,
       {
@@ -69,13 +121,6 @@ https://dash.readme.com/api/v1/version`,
       }
     )
   ).json();
-  await asyncMap(categoriesToDelete, (category) =>
-    deleteCategory(version, category.slug)
-  );
-  // console.log(await categories.json());
-  // // categories.push(...responseJSON.categories);
-  // // asyncMap(categories, (categoryId) => deleteCategory());
-};
 
 const deleteCategory = async (version, slug) => {
   await fetch(`https://dash.readme.com/api/v1/categories/${slug}`, {
@@ -89,7 +134,7 @@ const deleteCategory = async (version, slug) => {
 };
 
 const createCategory = async (version, title) => {
-  const response = await fetch(`https://dash.readme.com/api/v1/categories`, {
+  await fetch(`https://dash.readme.com/api/v1/categories`, {
     method: "POST",
     headers: {
       "x-readme-version": version,
@@ -98,6 +143,30 @@ const createCategory = async (version, title) => {
       accept: "application/json",
     },
     body: JSON.stringify({ title }),
+  });
+};
+
+const getAllApiSpecifications = async (version) =>
+  await (
+    await fetch(
+      `https://dash.readme.com/api/v1/api-specification?perPage=100&page=1`,
+      {
+        method: "GET",
+        headers: {
+          "x-readme-version": version,
+          authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
+        },
+      }
+    )
+  ).json();
+
+const deleteSpecification = async (id) => {
+  await fetch(`https://dash.readme.com/api/v1/api-specification/${id}`, {
+    method: "DELETE",
+    headers: {
+      authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
+      accept: "application/json",
+    },
   });
 };
 
