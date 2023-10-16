@@ -58,7 +58,7 @@ curl -X POST \
 -H "X-App-Id: ID" \
 -H "X-App-Token: SECRET KEY" \
 -H "Content-Type: application/json" \
--d '{"order": {"amount": 20000} }' "https://api.voucherify.io/v1/vouchers/BLCKFRDY/redemption"
+-d '{"order": {"amount": 12000} }' "https://api.voucherify.io/v1/vouchers/BLCKFRDY/redemption"
 ```
 ```javascript JavaScript
 const { VoucherifyServerSide } = require('@voucherify/sdk')
@@ -69,7 +69,7 @@ const client = VoucherifyServerSide({
 	// apiUrl: 'https://<region>.api.voucherify.io'
 })
 
-client.redemptions.redeem("BLCKFRDY", {"order" : {"amount": 20000}}).then(console.log)
+client.redemptions.redeem("BLCKFRDY", {"order" : {"amount": 12000}}).then(console.log)
 ```
 
 Voucherify should reply with the [redemption](ref:get-redemption) details as in the screenshot below. If Voucherify doesn’t reply with a 20x status, check the [error code](ref:errors) to find the reason.
