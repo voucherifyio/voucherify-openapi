@@ -76,105 +76,169 @@ Voucherify should reply with the [redemption](ref:get-redemption) details as in 
 
 ```json 200 OK
 {
-    "id": "r_1utfsnmdnq9KMh4xEKjcZT3m",
-    "object": "redemption",
-    "date": "2022-02-16T07:39:21.575Z",
-    "customer_id": null,
-    "tracking_id": null,
-    "metadata": null,
-    "result": "SUCCESS",
+    "redemptions": [
+        {
+            "id": "r_0dafc21888c79c80bf",
+            "customer_id": "cust_ANjd4MFsUPXDoHeoCQXmqgCJ",
+            "tracking_id": "track_9xvOJH7gshn2dlEaRSUyeQ==",
+            "date": "2023-10-16T10:47:11.651Z",
+            "order": {
+                "id": "ord_OdtFaTU2aw6fNCzy6XvXYs51",
+                "source_id": null,
+                "status": "PAID",
+                "customer_id": "cust_ANjd4MFsUPXDoHeoCQXmqgCJ",
+                "referrer_id": null,
+                "amount": 12000,
+                "discount_amount": 1000,
+                "applied_discount_amount": 1000,
+                "total_discount_amount": 1000,
+                "total_applied_discount_amount": 1000,
+                "total_amount": 11000,
+                "items": [
+                    {
+                        "object": "order_item",
+                        "source_id": "t-shirt_white",
+                        "related_object": "product",
+                        "quantity": 1,
+                        "amount": 2500,
+                        "price": 2500
+                    },
+                    {
+                        "object": "order_item",
+                        "source_id": "t-shirt_red",
+                        "related_object": "product",
+                        "quantity": 2,
+                        "amount": 3000,
+                        "price": 1500
+                    },
+                    {
+                        "object": "order_item",
+                        "source_id": "jeans_blue",
+                        "related_object": "product",
+                        "quantity": 1,
+                        "amount": 6500,
+                        "price": 6500
+                    }
+                ],
+                "metadata": {},
+                "object": "order"
+            },
+            "customer": {
+                "id": "cust_ANjd4MFsUPXDoHeoCQXmqgCJ",
+                "name": "Jack Jack",
+                "email": "maciej.krzak+Jack@voucherify.io",
+                "source_id": "16102023",
+                "metadata": {
+                    "metadata_key": "metadata_value",
+                    "customer_location": "geo:37.786971,-122.399677"
+                },
+                "object": "customer"
+            },
+            "result": "SUCCESS",
+            "voucher": {
+                "id": "v_hvY4FNDjL1LYpKDvAtc4I7uXT9DouOv8",
+                "code": "BLCKFRDY",
+                "discount": {
+                    "type": "AMOUNT",
+                    "amount_off": 1000
+                },
+                "type": "DISCOUNT_VOUCHER",
+                "campaign": null,
+                "campaign_id": null,
+                "is_referral_code": false,
+                "holder_id": "cust_iXUTMbFO3QdLFHH8WLKBLyA1",
+                "created_at": "2023-03-01T10:28:04.759Z",
+                "object": "voucher"
+            },
+            "object": "redemption"
+        }
+    ],
     "order": {
-        "id": "ord_0r32g8iQNp0WA84fBK814RgG",
+        "id": "ord_OdtFaTU2aw6fNCzy6XvXYs51",
         "source_id": null,
-        "created_at": "2022-02-16T07:39:21.546Z",
+        "created_at": "2023-10-16T10:47:11.616Z",
         "updated_at": null,
         "status": "PAID",
-        "amount": 20000,
+        "amount": 12000,
         "discount_amount": 1000,
         "total_discount_amount": 1000,
-        "total_amount": 19000,
+        "total_amount": 11000,
         "applied_discount_amount": 1000,
         "total_applied_discount_amount": 1000,
-        "customer_id": null,
+        "items": [
+            {
+                "object": "order_item",
+                "source_id": "t-shirt_white",
+                "related_object": "product",
+                "quantity": 1,
+                "amount": 2500,
+                "price": 2500,
+                "subtotal_amount": 2500,
+                "product": {
+                    "metadata": {
+                        "color": "white",
+                        "any_key": "any_value",
+                        "category": "t-shirt",
+                        "condition": "NEW",
+                        "manufacturing_date_time": "2021-08-13T08:00:00.000Z"
+                    }
+                }
+            },
+            {
+                "object": "order_item",
+                "source_id": "t-shirt_red",
+                "related_object": "product",
+                "quantity": 2,
+                "amount": 3000,
+                "price": 1500,
+                "subtotal_amount": 3000,
+                "product": {
+                    "metadata": {
+                        "color": "red",
+                        "any_key": "any_value",
+                        "category": "t-shirt",
+                        "condition": "NEW",
+                        "manufacturing_date_time": "2021-08-13T08:00:00.000Z"
+                    }
+                }
+            },
+            {
+                "object": "order_item",
+                "source_id": "jeans_blue",
+                "related_object": "product",
+                "quantity": 1,
+                "amount": 6500,
+                "price": 6500,
+                "subtotal_amount": 6500,
+                "product": {
+                    "metadata": {
+                        "color": "blue",
+                        "any_key": "any_value",
+                        "category": "jeans",
+                        "condition": "NEW",
+                        "manufacturing_date_time": "2021-08-13T08:00:00.000Z"
+                    }
+                }
+            }
+        ],
+        "metadata": {},
+        "customer": {
+            "id": "cust_ANjd4MFsUPXDoHeoCQXmqgCJ",
+            "object": "customer"
+        },
+        "customer_id": "cust_ANjd4MFsUPXDoHeoCQXmqgCJ",
         "referrer_id": null,
         "object": "order",
         "redemptions": {
-            "r_1utfsnmdnq9KMh4xEKjcZT3m": {
-                "date": "2022-02-16T07:39:21.575Z",
+            "r_0dafc21888c79c80bf": {
+                "date": "2023-10-16T10:47:11.651Z",
                 "related_object_type": "voucher",
-                "related_object_id": "v_MMn7nc75rwUjdPnfl4X6NtCAK5MDNgNk"
+                "related_object_id": "v_hvY4FNDjL1LYpKDvAtc4I7uXT9DouOv8"
             }
         }
     },
-    "customer": null,
-    "related_object_type": "voucher",
-    "related_object_id": "v_MMn7nc75rwUjdPnfl4X6NtCAK5MDNgNk",
-    "voucher": {
-        "id": "v_MMn7nc75rwUjdPnfl4X6NtCAK5MDNgNk",
-        "code": "BLCKFRDY",
-        "campaign": null,
-        "campaign_id": null,
-        "category": "showcase",
-        "type": "DISCOUNT_VOUCHER",
-        "discount": {
-            "type": "AMOUNT",
-            "amount_off": 1000
-        },
-        "gift": null,
-        "loyalty_card": null,
-        "start_date": null,
-        "expiration_date": null,
-        "validity_timeframe": null,
-        "validity_day_of_week": null,
-        "active": true,
-        "additional_info": null,
-        "metadata": {
-            "name": "Black Friday Coupon"
-        },
-        "assets": {
-            "qr": {
-                "id": "U2FsdGVkX1/FEz2OO26+KPxsV7dn/EFfzLbdGNArC+25Y8CX1j+beNmaxFcbOTVHnHHvmHzc50VdE+D0Cimz+7ZMJC92PSvshoCDBEnu5T10TOKozvVTaZn5O1NfaR5q+3zDnWRoFhfCcg/TilTQng==",
-                "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2FFEz2OO26%2BKPxsV7dn%2FEFfzLbdGNArC%2B25Y8CX1j%2BbeNmaxFcbOTVHnHHvmHzc50VdE%2BD0Cimz%2B7ZMJC92PSvshoCDBEnu5T10TOKozvVTaZn5O1NfaR5q%2B3zDnWRoFhfCcg%2FTilTQng%3D%3D"
-            },
-            "barcode": {
-                "id": "U2FsdGVkX1+Pgk0VxfAp5EbUgyoJxdy9Dcnnt4YYF64Kdk4o3GXzc3NeOvi6wFL27I2/j8bbMm8xZxETc6C0xgV9DcDUarJhpYjA4k+EhSu0dvoqrkSuGo1Pk+yFAeu7dieakoIR2xv+5B2ebqXstQ==",
-                "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BPgk0VxfAp5EbUgyoJxdy9Dcnnt4YYF64Kdk4o3GXzc3NeOvi6wFL27I2%2Fj8bbMm8xZxETc6C0xgV9DcDUarJhpYjA4k%2BEhSu0dvoqrkSuGo1Pk%2ByFAeu7dieakoIR2xv%2B5B2ebqXstQ%3D%3D"
-            }
-        },
-        "is_referral_code": false,
-        "created_at": "2022-02-16T06:58:29.207Z",
-        "updated_at": "2022-02-16T07:39:21.576Z",
-        "validation_rules_assignments": {
-            "object": "list",
-            "data_ref": "data",
-            "data": [],
-            "total": 0
-        },
-        "redemption": {
-            "quantity": null,
-            "redeemed_quantity": 1,
-            "object": "list",
-            "url": "/v1/vouchers/BLCKFRDY/redemptions?page=1&limit=10"
-        },
-        "publish": {
-            "object": "list",
-            "count": 0,
-            "url": "/v1/vouchers/BLCKFRDY/publications?page=1&limit=10"
-        },
-        "object": "voucher",
-        "applicable_to": {
-            "data": [],
-            "total": 0,
-            "data_ref": "data",
-            "object": "list"
-        },
-        "inapplicable_to": {
-            "data": [],
-            "total": 0,
-            "data_ref": "data",
-            "object": "list"
-        }
-    }
+    "inapplicable_redeemables": [],
+    "skipped_redeemables": []
 }
 ```
 
