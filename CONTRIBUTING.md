@@ -110,9 +110,9 @@ Good practices:
 - Run `npm run manage-project -- --vt={your name}-{pull request number or tag number} --create` - this will create new version project with your tag number.
 - Visit url provided at the end of the script run to test changes using preview on readme.io
 - If you need to make a change:
-    - Do changes...
-    - Run `npm run manage-project -- --vt={your name}-{pull request number or tag number} --update`- this will update your version.
-    - Test changes using preview on readme.io
+	- Do changes...
+	- Run `npm run manage-project -- --vt={your name}-{pull request number or tag number} --update`- this will update your version.
+	- Test changes using preview on readme.io
 - If changes are fine, then:
 	- Add a note in the changelog.
 	- `git commit; git push`

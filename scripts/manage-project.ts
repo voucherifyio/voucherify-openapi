@@ -168,26 +168,22 @@ const updateReferenceDocs = async (version) => {
 const createNewVersion = async (version) => {
   //create fork
   try {
-    const response = await fetch(
-      `
-https://dash.readme.com/api/v1/version`,
-      {
-        method: "POST",
-        headers: {
-          authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
-          "content-type": "application/json",
-          accept: "application/json",
-        },
-        body: JSON.stringify({
-          is_beta: false,
-          is_stable: false,
-          is_hidden: true,
-          is_deprecated: false,
-          from: mainVersion,
-          version,
-        }),
-      }
-    );
+    const response = await fetch(`https://dash.readme.com/api/v1/version`, {
+      method: "POST",
+      headers: {
+        authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
+        "content-type": "application/json",
+        accept: "application/json",
+      },
+      body: JSON.stringify({
+        is_beta: false,
+        is_stable: false,
+        is_hidden: true,
+        is_deprecated: false,
+        from: mainVersion,
+        version,
+      }),
+    });
     if (response.status !== 200) {
       throw new Error(
         `Response status: ${response.status}, maybe this versionTag is already created?`
