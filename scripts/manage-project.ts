@@ -73,6 +73,31 @@ const uploadReferenceDocsWithMaxNumberOfAttempts = async (
   }
 };
 
+const runProcess = async ({
+  command,
+  stdoutIncludes,
+  stderrIncludes,
+}: {
+  command: string;
+  stdoutIncludes?: string;
+  stderrIncludes?: string;
+}) => {
+  await new Promise((resolve) => {
+    exec(command, (error, stdout, stderr) => {
+      if (
+        (stdoutIncludes && stdout?.includes(stdoutIncludes)) ||
+        (!stdoutIncludes && stdout) ||
+        (stderrIncludes && stderr.includes(stderrIncludes))
+      ) {
+        return resolve(true);
+      }
+      if (stderr) {
+        console.log(stderr);
+      }
+      throw error;
+    });
+  });
+};
 const uploadGuideFiles = async (version) => {
   console.log(colors.green("UPLOADING GUIDES DOC FILES..."));
   await new Promise((resolve) => {
