@@ -1,13 +1,16 @@
 import dotenv from "dotenv";
 import minimist from "minimist";
 import colors from "colors";
+import { exec } from "child_process";
+import { buildMdTablesFromOpenApi } from "./build-md-tables-from-openapi";
+import { updateMdTablesInDoc } from "./update-md-tables-in-doc";
 
 dotenv.config();
 const options = minimist(process.argv.slice(2));
 const versionTag = options.versionTag || options.vt;
 const versionOption = options.version || options.v;
 
-const cleanOnly = options.cleanOnly || options.co;
+const createNew = options.create || options.c;
 const help = options.help || options.h;
 
 const mainVersion = "v2018-08-01";
@@ -33,8 +36,9 @@ const main = async () => {
         `options:` +
           `\n"versionTag" or "vt" for versionTag, for example "npm run manage-project -- --vt=piotr-1234"` +
           `\n"version" or "v" for version, for example "npm run manage-project -- --v=v2018-08-01-piotr-1234"` +
-          `\n"cleanOnly" or "co" for version, for example "npm run manage-project -- --vt=piotr-1234" --co` +
-          `\n\nuse "versionTag" or "version" for version, not both!`
+          `\n"create" or "c" for version, for example "npm run manage-project -- --vt=piotr-1234" --c` +
+          `\n\nuse "versionTag" or "version" for version, not both!` +
+          `\n\nby default, cleans up version (not creates one)`
       )
     );
     return;
@@ -47,11 +51,78 @@ const main = async () => {
     );
     return;
   }
-  if (!cleanOnly) {
+  if (createNew) {
     await createNewVersion(version);
   }
   await cleanProject(version);
-  console.log(colors.green(`\nVisit: https://docs.voucherify.io/${version}/`));
+  console.log(
+    colors.green(
+      "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE"
+    )
+  );
+  await new Promise((resolve) => {
+    exec(
+      `rdme openapi ./reference/OpenAPI.json --version=${version} --create`,
+      (error, stdout, stderr) => {
+        if (
+          error
+            ?.toString?.()
+            ?.includes?.(
+              `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`
+            ) ||
+          stderr
+        ) {
+          console.log(colors.green("OPEN API FILE WAS UPLOADED"));
+          return resolve(true);
+        }
+        throw new Error(
+          error?.toString?.() || "OPEN API FILE WAS NOT UPLOADED"
+        );
+      }
+    );
+  });
+  console.log(colors.green("BUILDING MD TABLES FROM OPEN API..."));
+  await new Promise((resolve) => {
+    exec(`npm run build-md-tables-from-openapi`, (error, stdout, stderr) => {
+      if (stderr) {
+        console.log(colors.green("MD TABLES WERE BUILDED SUCCESSFULLY!"));
+        return resolve(true);
+      }
+      console.log(colors.red(error?.toString?.()));
+      throw new Error("MD TABLES WERE NOT BUILDED!");
+    });
+  });
+  console.log(colors.green("UPDATING MD TABLES IN DOCS..."));
+  await new Promise((resolve) => {
+    exec(`npm run update-md-tables-in-doc`, (error, stdout, stderr) => {
+      if (stderr) {
+        console.log(
+          colors.green("MD TABLES WERE UPDATED IN DOCS SUCCESSFULLY!")
+        );
+        return resolve(true);
+      }
+      console.log(colors.red(error?.toString?.()));
+      throw new Error("MD TABLES WERE NOT UPDATED IN DOCS!");
+    });
+  });
+  console.log(colors.green("UPLOADING GUIDES DOC FILES..."));
+  await new Promise((resolve) => {
+    exec(
+      `rdme docs ./docs/guides --version=${version} --create`,
+      (error, stdout, stderr) => {
+        if (stderr) {
+          console.log(colors.green("GUIDES FILES WERE UPLOADED!"));
+          return resolve(true);
+        }
+        console.log(colors.red(error?.toString?.()));
+        throw new Error("GUIDES WERE NOT UPLOADED!");
+      }
+    );
+  });
+
+  console.log(
+    colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`)
+  );
 };
 
 const createNewVersion = async (version) => {

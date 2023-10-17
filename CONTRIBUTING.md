@@ -110,7 +110,7 @@ Good practices:
 	- `npm run manage-project -- --vt={your name}-{pull request number}`
 - Make changes in the repository following patterns and good practices.
 - Deploy changes to test your documentation:
-	- Deploy OpenAPI file by command `rdme openapi ./reference/OpenAPI.json --version=2018-08-01-{your name}-{pull request number}`, choose `Create a new spec` option. Command most likely will fail with the message: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks`, but so far, we see that this operation still works correctly.
+	- Deploy OpenAPI file by command `rdme openapi ./reference/OpenAPI.json --version=2018-08-01-{your name}-{pull request number} --create`.
 	- Update tables in mark down tables:
 		- `npm run build-md-tables-from-openapi`
 		- `npm run update-md-tables-in-doc`
