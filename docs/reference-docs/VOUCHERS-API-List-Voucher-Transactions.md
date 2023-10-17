@@ -1,8 +1,8 @@
 ---
-title: List Gift Card Transactions
+title: List Voucher Transactions
 type: endpoint
 categorySlug: voucherify-api
-slug: list-gift-card-transactions
+slug: list-voucher-transactions
 parentDocSlug: vouchers-api
 hidden: false
 order: 11
