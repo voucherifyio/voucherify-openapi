@@ -9,8 +9,7 @@ dotenv.config();
 const options = minimist(process.argv.slice(2));
 const versionTag = options.versionTag || options.vt;
 const versionOption = options.version || options.v;
-
-const createNew = options.create || options.c;
+const { create, update } = options;
 const help = options.help || options.h;
 
 const mainVersion = "v2018-08-01";
@@ -34,11 +33,17 @@ const main = async () => {
     console.log(
       colors.green(
         `options:` +
-          `\n"versionTag" or "vt" for versionTag, for example "npm run manage-project -- --vt=piotr-1234"` +
-          `\n"version" or "v" for version, for example "npm run manage-project -- --v=v2018-08-01-piotr-1234"` +
-          `\n"create" or "c" for version, for example "npm run manage-project -- --vt=piotr-1234" --c` +
-          `\n\nuse "versionTag" or "version" for version, not both!` +
-          `\n\nby default, cleans up version (not creates one)`
+          `\n"versionTag" or "vt" for versionTag` +
+          `\n"version" or "v" for version` +
+          `\n"create" if you want to create such version` +
+          `\n"update" if you want to update such version` +
+          `\n\nversionTag or version is required!` +
+          `\ncreate or update option is required!` +
+          `\n\nexamples:` +
+          `\nnpm run manage-project -- --vt=piotr-123 --create` +
+          `\nnpm run manage-project -- --v=v2018-08-01-piotr-123 --create` +
+          `\nnpm run manage-project -- --vt=piotr-123 --update` +
+          `\nnpm run manage-project -- --v=v2018-08-01-piotr-123 --update`
       )
     );
     return;
@@ -46,12 +51,28 @@ const main = async () => {
   if (!version) {
     console.log(
       colors.red(
-        "invalid arguments, check `help` for more information\nrun 'npm run manage-project -- --help'"
+        "invalid arguments, missing `version` or `versionTag`, check `help` for more information\nrun 'npm run manage-project -- --help'"
       )
     );
     return;
   }
-  if (createNew) {
+  if (!create && !update) {
+    console.log(
+      colors.red(
+        "invalid arguments, missing `update` or `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
+      )
+    );
+    return;
+  }
+  if (create && update) {
+    console.log(
+      colors.red(
+        "invalid arguments, you provided conflicting arguments `update` and `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
+      )
+    );
+    return;
+  }
+  if (create) {
     await createNewVersion(version);
   }
   await cleanProject(version);
@@ -70,7 +91,7 @@ const main = async () => {
             ?.includes?.(
               `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`
             ) ||
-          stderr
+          stdout
         ) {
           console.log(colors.green("OPEN API FILE WAS UPLOADED"));
           return resolve(true);
@@ -84,7 +105,7 @@ const main = async () => {
   console.log(colors.green("BUILDING MD TABLES FROM OPEN API..."));
   await new Promise((resolve) => {
     exec(`npm run build-md-tables-from-openapi`, (error, stdout, stderr) => {
-      if (stderr) {
+      if (stdout) {
         console.log(colors.green("MD TABLES WERE BUILDED SUCCESSFULLY!"));
         return resolve(true);
       }
@@ -95,7 +116,7 @@ const main = async () => {
   console.log(colors.green("UPDATING MD TABLES IN DOCS..."));
   await new Promise((resolve) => {
     exec(`npm run update-md-tables-in-doc`, (error, stdout, stderr) => {
-      if (stderr) {
+      if (stdout) {
         console.log(
           colors.green("MD TABLES WERE UPDATED IN DOCS SUCCESSFULLY!")
         );
@@ -108,21 +129,78 @@ const main = async () => {
   console.log(colors.green("UPLOADING GUIDES DOC FILES..."));
   await new Promise((resolve) => {
     exec(
-      `rdme docs ./docs/guides --version=${version} --create`,
+      `rdme docs ./docs/guides --version=${version}`,
       (error, stdout, stderr) => {
-        if (stderr) {
-          console.log(colors.green("GUIDES FILES WERE UPLOADED!"));
+        if (stdout?.includes("successfully created")) {
+          console.log(colors.green("GUIDES DOC FILES WERE UPLOADED!"));
           return resolve(true);
         }
         console.log(colors.red(error?.toString?.()));
-        throw new Error("GUIDES WERE NOT UPLOADED!");
+        throw new Error("GUIDES DOC WERE NOT UPLOADED!");
       }
     );
   });
-
+  console.log(colors.green("UPLOADING REFERENCE DOC FILES..."));
+  const maxNumberOfUploadingAttempts = 3;
+  for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
+    const success = await updateReferenceDocs(version);
+    if (success) {
+      console.log(colors.green("REFERENCE DOC FILES WERE UPLOADED!"));
+      break;
+    }
+    if (i === maxNumberOfUploadingAttempts) {
+      throw new Error("REFERENCE DOC WERE NOT UPLOADED!");
+    }
+    await new Promise((r) => setTimeout(r, 10000));
+  }
+  // console.log(
+  //   colors.green(
+  //     "FIXING TYPES AND ORDER OF OPEN API REFERENCES IN README.IO..."
+  //   )
+  // );
+  // await new Promise((resolve) => {
+  //   exec(
+  //     `npm run readme-fix-reference-docs -- --version=${version}`,
+  //     (error, stdout, stderr) => {
+  //       if (stdout) {
+  //         console.log(
+  //           colors.green(
+  //             "TYPES AND ORDER OF OPEN API REFERENCES IN README.IO WERE FIXED!"
+  //           )
+  //         );
+  //         return resolve(true);
+  //       }
+  //       console.log(colors.red(error?.toString?.()));
+  //       throw new Error(
+  //         "TYPES AND ORDER OF OPEN API REFERENCES IN README.IO WERE NOT FIXED!"
+  //       );
+  //     }
+  //   );
+  // });
   console.log(
     colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`)
   );
+};
+
+const updateReferenceDocs = async (version) => {
+  return await new Promise((resolve, reject) => {
+    exec(
+      `rdme docs ./docs/reference-docs --version=${version}`,
+      (error, stdout, stderr) => {
+        if (
+          stderr?.includes(
+            `We couldn't save this doc (Unable to find a category with the slug 'voucherify-api')`
+          )
+        ) {
+          return resolve(false);
+        }
+        if (stdout?.includes("successfully created")) {
+          return resolve(true);
+        }
+        return resolve(false);
+      }
+    );
+  });
 };
 
 const createNewVersion = async (version) => {
@@ -169,11 +247,13 @@ const cleanProject = async (version) => {
     async (category) => await deleteCategory(version, category.slug)
   );
   console.log(colors.green(`OLD CATEGORIES DELETED!`));
-  //create categories
-  await asyncMap(
-    [...listOfGuideCategories, ...listOfReferenceCategories],
-    async (title) => await createCategory(version, title)
-  );
+  //create categories one by one (creation order is important)
+  for (const categoryTitle of [
+    ...listOfGuideCategories,
+    ...listOfReferenceCategories,
+  ]) {
+    await createCategory(version, categoryTitle);
+  }
   console.log(colors.green(`NEW CATEGORIES CREATED!`));
   const allCategories = await getAllCategories(version);
   //update reference categories types
@@ -191,6 +271,7 @@ const cleanProject = async (version) => {
   await asyncMap(allApiSpecifications, deleteSpecification);
   console.log(colors.green(`API SPECIFICATIONS DELETED!`));
   console.log(colors.green(`VERSION "${version}" IS CLEANED UP!`));
+  return;
 };
 
 const updateCategory = async (version, slug, data = {}) => {
