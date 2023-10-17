@@ -56,33 +56,39 @@ const main = async ({
 
 const uploadReferenceDocsWithMaxNumberOfAttempts = async (
   version,
-  maxNumberOfUploadingAttempts = 6,
-  timeoutAfterEachFail = 5000
+  maxNumberOfUploadingAttempts = 6
 ) => {
   console.log(colors.green("UPLOADING REFERENCE DOC FILES..."));
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
-    const success = await updateReferenceDocs(version);
+    await new Promise((r) => setTimeout(r, 5000));
+    const success = await runCliProcess({
+      command: `rdme docs ./docs/reference-docs --version=${version}`,
+      stdoutIncludes: "successfully created",
+      resolveErrorAsFalse: true,
+    });
     if (success) {
       console.log(colors.green("REFERENCE DOC FILES WERE UPLOADED!"));
       break;
     }
     if (i === maxNumberOfUploadingAttempts) {
-      throw new Error("REFERENCE DOC WERE NOT UPLOADED!");
+      throw new Error("REFERENCE DOC FILES WERE NOT UPLOADED!");
     }
-    await new Promise((r) => setTimeout(r, timeoutAfterEachFail));
   }
+  return;
 };
 
-const runProcess = async ({
+const runCliProcess = async ({
   command,
   stdoutIncludes,
   stderrIncludes,
+  resolveErrorAsFalse = false,
 }: {
   command: string;
   stdoutIncludes?: string;
   stderrIncludes?: string;
+  resolveErrorAsFalse?: boolean;
 }) => {
-  await new Promise((resolve) => {
+  return await new Promise((resolve) => {
     exec(command, (error, stdout, stderr) => {
       if (
         (stdoutIncludes && stdout?.includes(stdoutIncludes)) ||
@@ -90,6 +96,9 @@ const runProcess = async ({
         (stderrIncludes && stderr.includes(stderrIncludes))
       ) {
         return resolve(true);
+      }
+      if (resolveErrorAsFalse) {
+        return resolve(false);
       }
       if (stderr) {
         console.log(stderr);
@@ -100,48 +109,26 @@ const runProcess = async ({
 };
 const uploadGuideFiles = async (version) => {
   console.log(colors.green("UPLOADING GUIDES DOC FILES..."));
-  await new Promise((resolve) => {
-    exec(
-      `rdme docs ./docs/guides --version=${version}`,
-      (error, stdout, stderr) => {
-        if (stdout?.includes("successfully created")) {
-          console.log(colors.green("GUIDES DOC FILES WERE UPLOADED!"));
-          return resolve(true);
-        }
-        console.log(colors.red(error?.toString?.()));
-        throw new Error("GUIDES DOC WERE NOT UPLOADED!");
-      }
-    );
+  await runCliProcess({
+    command: `rdme docs ./docs/guides --version=${version}`,
+    stdoutIncludes: "successfully created",
   });
+  console.log(colors.green("GUIDES DOC FILES WERE UPLOADED!"));
 };
 
 const updateMdTablesInDocs = async () => {
   console.log(colors.green("UPDATING MD TABLES IN DOCS..."));
-  await new Promise((resolve) => {
-    exec(`npm run update-md-tables-in-doc`, (error, stdout, stderr) => {
-      if (stdout) {
-        console.log(
-          colors.green("MD TABLES WERE UPDATED IN DOCS SUCCESSFULLY!")
-        );
-        return resolve(true);
-      }
-      console.log(colors.red(error?.toString?.()));
-      throw new Error("MD TABLES WERE NOT UPDATED IN DOCS!");
-    });
+  await runCliProcess({
+    command: `npm run update-md-tables-in-doc`,
   });
+  console.log(colors.green("MD TABLES WERE UPDATED IN DOCS SUCCESSFULLY!"));
 };
 const buildMdTables = async () => {
   console.log(colors.green("BUILDING MD TABLES FROM OPEN API..."));
-  await new Promise((resolve) => {
-    exec(`npm run build-md-tables-from-openapi`, (error, stdout, stderr) => {
-      if (stdout) {
-        console.log(colors.green("MD TABLES WERE BUILDED SUCCESSFULLY!"));
-        return resolve(true);
-      }
-      console.log(colors.red(error?.toString?.()));
-      throw new Error("MD TABLES WERE NOT BUILDED!");
-    });
+  await runCliProcess({
+    command: `npm run build-md-tables-from-openapi`,
   });
+  console.log(colors.green("MD TABLES WERE BUILDED SUCCESSFULLY!"));
 };
 
 const uploadOpenApiFile = async (version) => {
@@ -150,69 +137,11 @@ const uploadOpenApiFile = async (version) => {
       "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE"
     )
   );
-  await new Promise((resolve) => {
-    exec(
-      `rdme openapi ./reference/OpenAPI.json --version=${version} --create`,
-      (error, stdout, stderr) => {
-        if (
-          error
-            ?.toString?.()
-            ?.includes?.(
-              `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`
-            ) ||
-          stdout
-        ) {
-          console.log(colors.green("OPEN API FILE WAS UPLOADED"));
-          return resolve(true);
-        }
-        throw new Error(
-          error?.toString?.() || "OPEN API FILE WAS NOT UPLOADED"
-        );
-      }
-    );
+  await runCliProcess({
+    command: `rdme openapi ./reference/OpenAPI.json --version=${version} --create`,
+    stderrIncludes: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`,
   });
-};
-
-const validateOptions = ({
-  help,
-  version,
-  create,
-  update,
-}: {
-  help?: boolean;
-  version?: string;
-  create?: boolean;
-  update?: boolean;
-}) => {
-  if (help || (!version && !create && !update)) {
-    printHelp();
-    return false;
-  }
-  if (!version) {
-    console.log(
-      colors.red(
-        "invalid arguments, missing `version` or `versionTag`, check `help` for more information\nrun 'npm run manage-project -- --help'"
-      )
-    );
-    return false;
-  }
-  if (!create && !update) {
-    console.log(
-      colors.red(
-        "invalid arguments, missing `update` or `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
-      )
-    );
-    return false;
-  }
-  if (create && update) {
-    console.log(
-      colors.red(
-        "invalid arguments, you provided conflicting arguments `update` and `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
-      )
-    );
-    return false;
-  }
-  return true;
+  console.log(colors.green("OPEN API FILE WAS UPLOADED"));
 };
 
 const updateReferenceDocs = async (version) => {
@@ -384,6 +313,48 @@ const deleteSpecification = async (id) => {
 
 const asyncMap = (arr, asyncFn) => {
   return Promise.all(arr.map(asyncFn));
+};
+
+const validateOptions = ({
+  help,
+  version,
+  create,
+  update,
+}: {
+  help?: boolean;
+  version?: string;
+  create?: boolean;
+  update?: boolean;
+}) => {
+  if (help || (!version && !create && !update)) {
+    printHelp();
+    return false;
+  }
+  if (!version) {
+    console.log(
+      colors.red(
+        "invalid arguments, missing `version` or `versionTag`, check `help` for more information\nrun 'npm run manage-project -- --help'"
+      )
+    );
+    return false;
+  }
+  if (!create && !update) {
+    console.log(
+      colors.red(
+        "invalid arguments, missing `update` or `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
+      )
+    );
+    return false;
+  }
+  if (create && update) {
+    console.log(
+      colors.red(
+        "invalid arguments, you provided conflicting arguments `update` and `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
+      )
+    );
+    return false;
+  }
+  return true;
 };
 
 const printHelp = () => {
