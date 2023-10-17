@@ -115,8 +115,7 @@ Good practices:
     - Test changes using preview on readme.io
 - If changes are fine, then:
 	- Add a note in the changelog.
-	- `git commit`
-	- `git push`
+	- `git commit; git push`
 	- publish PR
 
 ## How to merge PR and update public documentation
