@@ -3906,17 +3906,20 @@
             "description": "Identifies the name of the attribute that contains the array of transaction objects."
           },
           "data": {
-            "type": "array",
-            "description": "A dictionary that contains an array of transactions. Each entry in the array is a separate transaction object.",
-            "items": {
-              "$ref": "#/components/schemas/gift_card_transaction"
-            }
+            "$ref": "#/components/schemas/voucher_transaction",
+            "description": "A dictionary that contains an array of transactions. Each entry in the array is a separate transaction object."
           },
           "has_more": {
             "type": "boolean",
             "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates whether there are more records for given filter parameters. This let's you know if you are able to run another request (with a different page or a different start date filter) to get more records returned in the results."
           }
-        }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "has_more"
+        ]
       },
       "voucher_transaction": {
         "title": "Voucher Transaction Object",
@@ -3931,8 +3934,73 @@
         ]
       },
       "gift_card_transaction": {
-        "title": "Gift Card Transaction Object",
+        "title": "Gift Card Transaction",
         "description": "List of gift card transactions",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/gift_card_transaction_identity"
+          },
+          {
+            "$ref": "#/components/schemas/gift_card_transaction_base"
+          },
+          {
+            "$ref": "#/components/schemas/gift_card_transaction_response_data"
+          },
+          {
+            "$ref": "#/components/schemas/gift_card_transaction_details"
+          }
+        ]
+      },
+      "gift_card_transaction_identity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique transaction ID.",
+            "example": "vtx_0c9dccc4d5813e71bd"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service. In case of a redemption, this value is `null`."
+          }
+        }
+      },
+      "gift_card_transaction_base": {
+        "type": "object",
+        "properties": {
+          "voucher_id": {
+            "type": "string",
+            "description": "Unique voucher ID.",
+            "example": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaing that generates bulk codes.",
+            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason why the transaction occurred. In case of a redemption, this value is `null`."
+          },
+          "related_transaction_id": {
+            "type": "string",
+            "description": "This field is `null` in the case of gift voucher transactions."
+          }
+        }
+      },
+      "gift_card_transaction_response_data": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-02-25T13:32:08.734Z",
+            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
+          }
+        }
+      },
+      "gift_card_transaction_details": {
+        "type": "object",
         "anyOf": [
           {
             "$ref": "#/components/schemas/gift_card_transaction_redemption_details"
@@ -3953,25 +4021,6 @@
         "description": "When credits are used to pay for an order.",
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique transaction ID.",
-            "example": "vtx_0c9dccc4d5813e71bd"
-          },
-          "source_id": {
-            "type": "string",
-            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service. In case of a redemption, this value is `null`."
-          },
-          "voucher_id": {
-            "type": "string",
-            "description": "Unique voucher ID.",
-            "example": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp"
-          },
-          "campaign_id": {
-            "type": "string",
-            "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaing that generates bulk codes.",
-            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
-          },
           "source": {
             "type": "string",
             "description": "The channel through which the transaction took place, whether through the API or the the Dashboard. In case of a redemption, this value is `null`.",
@@ -3979,10 +4028,6 @@
               "voucherify-web-ui",
               "API"
             ]
-          },
-          "reason": {
-            "type": "string",
-            "description": "Reason why the transaction occurred. In case of a redemption, this value is `null`."
           },
           "type": {
             "type": "string",
@@ -4067,16 +4112,6 @@
                 }
               }
             }
-          },
-          "related_transaction_id": {
-            "type": "string",
-            "description": "This field is `null` in the case of gift voucher transactions."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2022-02-25T13:32:08.734Z",
-            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
           }
         }
       },
@@ -4085,25 +4120,6 @@
         "description": "When funds are credited back to a card through a redemption rollback.",
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique transaction ID.",
-            "example": "vtx_0c9dccc4d5813e71bd"
-          },
-          "source_id": {
-            "type": "string",
-            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service.  In case of a redemption rollback, this value is `null`."
-          },
-          "voucher_id": {
-            "type": "string",
-            "description": "Unique voucher ID.",
-            "example": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp"
-          },
-          "campaign_id": {
-            "type": "string",
-            "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaing that generates bulk codes.",
-            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
-          },
           "source": {
             "type": "string",
             "description": "The channel through which the transaction took place, whether through the API or the the Dashboard. In case of a redemption rollback, this value is `null`.",
@@ -4111,10 +4127,6 @@
               "voucherify-web-ui",
               "API"
             ]
-          },
-          "reason": {
-            "type": "string",
-            "description": "Reason why the transaction occurred. In case of a redemption rollback, this value is `null`."
           },
           "type": {
             "type": "string",
@@ -4210,16 +4222,6 @@
                 }
               }
             }
-          },
-          "related_transaction_id": {
-            "type": "string",
-            "description": "This field is `null` in the case of gift voucher transactions."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2022-02-25T13:32:08.734Z",
-            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
           }
         }
       },
@@ -4228,25 +4230,6 @@
         "description": "When funds are deposited to a gift card.",
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique transaction ID.",
-            "example": "vtx_0c9dccc4d5813e71bd"
-          },
-          "source_id": {
-            "type": "string",
-            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service."
-          },
-          "voucher_id": {
-            "type": "string",
-            "description": "Unique voucher ID.",
-            "example": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp"
-          },
-          "campaign_id": {
-            "type": "string",
-            "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaing that generates bulk codes.",
-            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
-          },
           "source": {
             "type": "string",
             "description": "The channel through which the transaction took place, whether through the API or the the Dashboard.",
@@ -4254,10 +4237,6 @@
               "voucherify-web-ui",
               "API"
             ]
-          },
-          "reason": {
-            "type": "string",
-            "description": "Reason why the transaction occurred."
           },
           "type": {
             "type": "string",
@@ -4316,16 +4295,6 @@
                 }
               }
             }
-          },
-          "related_transaction_id": {
-            "type": "string",
-            "description": "This field is `null` in the case of gift voucher transactions."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2022-02-25T13:32:08.734Z",
-            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
           }
         }
       },
@@ -4334,25 +4303,6 @@
         "description": "When funds are removed from a gift card.",
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique transaction ID.",
-            "example": "vtx_0c9dccc4d5813e71bd"
-          },
-          "source_id": {
-            "type": "string",
-            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service."
-          },
-          "voucher_id": {
-            "type": "string",
-            "description": "Unique voucher ID.",
-            "example": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp"
-          },
-          "campaign_id": {
-            "type": "string",
-            "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaing that generates bulk codes.",
-            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
-          },
           "source": {
             "type": "string",
             "description": "The channel through which the transaction took place, whether through the API or the the Dashboard.",
@@ -4360,10 +4310,6 @@
               "voucherify-web-ui",
               "API"
             ]
-          },
-          "reason": {
-            "type": "string",
-            "description": "Reason why the transaction occurred."
           },
           "type": {
             "type": "string",
@@ -4422,16 +4368,6 @@
                 }
               }
             }
-          },
-          "related_transaction_id": {
-            "type": "string",
-            "description": "This field is `null` in the case of gift voucher transactions."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2022-02-25T13:32:08.734Z",
-            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
           }
         }
       },
@@ -47671,7 +47607,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/1_res_vouchers_code_transactions"
+                  "$ref": "#/components/schemas/vouchers_list_vouchers_transactions_response_body"
                 },
                 "examples": {
                   "Example": {
