@@ -2,16 +2,11 @@ import dotenv from "dotenv";
 import minimist from "minimist";
 import colors from "colors";
 import { exec } from "child_process";
-import { buildMdTablesFromOpenApi } from "./build-md-tables-from-openapi";
-import { updateMdTablesInDoc } from "./update-md-tables-in-doc";
-import { boolean } from "yup";
 
 dotenv.config();
 const options = minimist(process.argv.slice(2));
 const versionTag = options.versionTag || options.vt;
 const versionOption = options.version || options.v;
-
-//globals
 const { create, update } = options;
 const help = options.help || options.h;
 const mainVersion = "v2018-08-01";
