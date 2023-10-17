@@ -42,6 +42,13 @@ const main = async ({
   }
   if (create) {
     await createNewVersion(version);
+  } else if (!(await isVersionExists(version))) {
+    console.log(
+      colors.red(
+        `Version ${version} does not exist! Create it first. Use parameter --update instead of --create`
+      )
+    );
+    return;
   }
   await cleanProject(version);
   await uploadOpenApiFile(version);
@@ -51,6 +58,23 @@ const main = async ({
   await uploadReferenceDocsWithMaxNumberOfAttempts(version);
   console.log(
     colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`)
+  );
+};
+
+const isVersionExists = async (version: string) => {
+  return (
+    (
+      await fetch(
+        `https://dash.readme.com/api/v1/api-specification?perPage=100&page=1`,
+        {
+          method: "GET",
+          headers: {
+            "x-readme-version": version,
+            authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
+          },
+        }
+      )
+    ).status === 200
   );
 };
 
