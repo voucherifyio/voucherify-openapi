@@ -107,25 +107,14 @@ Good practices:
 
 ### Development process
 - For each change / pull request, create your copy of the current documentation, where you will test changes.
-	- Create your own branch from `master`,
-	- Create a draft pull request,
-	- Go to `Manage Versions` page in readme.io
-	- Click `Add New Version` from top right corner.
-	- Select the current public version  in `Fork from` field, most likely `2018-08-01`
-	- Type your version name in `Create version` field  following the pattern:
-	   `2018-08-01-{your name}-{pull request number}`
+	- `npm run manage-project -- --vt={your name}-{pull request number}`
 - Make changes in the repository following patterns and good practices.
 - Deploy changes to test your documentation:
-	- Update tables in markdown tables:
+	- Deploy OpenAPI file by command `rdme openapi ./reference/OpenAPI.json --version=2018-08-01-{your name}-{pull request number}`, choose `Create a new spec` option. Command most likely will fail with the message: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks`, but so far, we see that this operation still works correctly.
+	- Update tables in mark down tables:
 		- `npm run build-md-tables-from-openapi`
 		- `npm run update-md-tables-in-doc`
-	- from API Reference page in readme dashboard:
-		- remove Voucherify OpenAPI Definition
-		- refresh the page and remove `VOUCHERIFY API` category from left sidebar, DO NOT REMOVE `INTRODUCTION` catregory from left sidebar
-	  the existing OpenAPI file and all specification files.	
-	- Deploy OpenAPI file by command `rdme openapi ./reference/OpenAPI.json --version=2018-08-01-{your name}-{pull request number}`, choose `Create a new spec` option. Command most likely will fail with the message: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks`, but so far, we see that this operation still works correctly. 
-	- Deploy guides pages: `rdme docs ./docs/guides --version=2018-08-01-{your name}-{pull request number}`
-	- Deploy api reference pages: `rdme docs ./docs/reference-docs --version=2018-08-01-{your name}-{pull request number}`
+	- Deploy guides and reference pages: `rdme docs ./docs --version=2018-08-01-{your name}-{pull request number}`
 	- Fix docs order: `npm run readme-fix-docs-order -- --version=v2018-08-01-{your name}-{pull request number}`
 - test changes using preview on readme.io
 - if changes are fine, then:
