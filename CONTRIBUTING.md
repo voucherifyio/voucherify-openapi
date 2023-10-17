@@ -140,7 +140,7 @@ Good practices:
 - Test changes on readme (you can use the version prepared by the contributor).
 - Ensure the changelog was updated.
 - Merge PR to `master` branch
-- In reamde.io, change the current documentation version from `v2018-08-01` to `v2018-08-01-deprecated-mm-dd-yyyy`
+- In readme.io, change the current documentation version from `v2018-08-01` to `v2018-08-01-deprecated-mm-dd-yyyy`
 - Change the name of your new release version from `2018-08-01-{your name}-{pull request number}` to `v2018-08-01`
 
 > [!NOTE] Readme.io cache pages for 15 minutes, for only logged out users. If you are logged in, then you will always receive the most recent content.

@@ -1,12 +1,18 @@
-import * as fsPromises from "fs/promises";
-import path from "path";
 import dotenv from "dotenv";
 import minimist from "minimist";
+import colors from "colors";
 
 dotenv.config();
-const { versionTag } = minimist(process.argv.slice(2));
+const options = minimist(process.argv.slice(2));
+const versionTag = options.versionTag || options.vt;
+const versionOption = options.version || options.v;
+
+const cleanOnly = options.cleanOnly || options.co;
+const help = options.help || options.h;
 
 const mainVersion = "v2018-08-01";
+const version =
+  versionOption || versionTag ? `${mainVersion}-${versionTag}` : undefined;
 
 const listOfGuideCategories = [
   "Getting started",
@@ -21,13 +27,34 @@ const listOfGuideCategories = [
 const listOfReferenceCategories = ["Introduction"];
 
 const main = async () => {
-  if (!versionTag) {
+  if (help) {
     console.log(
-      "`version` argument was not provided :/, next time try add `-- --version=************` at the end of file execution command"
+      colors.green(
+        `options:` +
+          `\n"versionTag" or "vt" for versionTag, for example "npm run manage-project -- --vt=piotr-1234"` +
+          `\n"version" or "v" for version, for example "npm run manage-project -- --v=v2018-08-01-piotr-1234"` +
+          `\n"cleanOnly" or "co" for version, for example "npm run manage-project -- --vt=piotr-1234" --co` +
+          `\n\nuse "versionTag" or "version" for version, not both!`
+      )
     );
     return;
   }
-  const version = `${mainVersion}-${versionTag}`;
+  if (!version) {
+    console.log(
+      colors.red(
+        "invalid arguments, check `help` for more information\nrun 'npm run manage-project -- --help'"
+      )
+    );
+    return;
+  }
+  if (!cleanOnly) {
+    await createNewVersion(version);
+  }
+  await cleanProject(version);
+  console.log(colors.green(`\nVisit: https://docs.voucherify.io/${version}/`));
+};
+
+const createNewVersion = async (version) => {
   //create fork
   try {
     const response = await fetch(
@@ -55,14 +82,13 @@ https://dash.readme.com/api/v1/version`,
         `Response status: ${response.status}, maybe this versionTag is already used?`
       );
     }
-    console.log(`FORK CREATED!`);
+    console.log(colors.green(`FORK CREATED! VERSION "${version}"`));
   } catch (error) {
-    console.log(`Error while creating fork from ${mainVersion}`, error);
+    console.log(colors.red(`Error while creating fork from ${mainVersion}!`)),
+      error;
     throw new Error(error);
   }
 };
-
-const createNewVersion =
 
 const cleanProject = async (version) => {
   const categoriesToDelete = await getAllCategories(version);
@@ -71,13 +97,13 @@ const cleanProject = async (version) => {
     categoriesToDelete,
     async (category) => await deleteCategory(version, category.slug)
   );
-  console.log(`OLD CATEGORIES DELETED`);
+  console.log(colors.green(`OLD CATEGORIES DELETED!`));
   //create categories
   await asyncMap(
     [...listOfGuideCategories, ...listOfReferenceCategories],
     async (title) => await createCategory(version, title)
   );
-  console.log(`NEW CATEGORIES CREATED`);
+  console.log(colors.green(`NEW CATEGORIES CREATED!`));
   const allCategories = await getAllCategories(version);
   //update reference categories types
   await asyncMap(
@@ -89,10 +115,11 @@ const cleanProject = async (version) => {
         { type: "reference" }
       )
   );
-  console.log(`REFERENCE CATEGORIES UPDATED`);
+  console.log(colors.green(`REFERENCE CATEGORIES UPDATED!`));
   const allApiSpecifications = await getAllApiSpecifications(version);
   await asyncMap(allApiSpecifications, deleteSpecification);
-  console.log(`API SPECIFICATIONS DELETED`);
+  console.log(colors.green(`API SPECIFICATIONS DELETED!`));
+  console.log(colors.green(`VERSION "${version}" IS CLEANED UP!`));
 };
 
 const updateCategory = async (version, slug, data = {}) => {
