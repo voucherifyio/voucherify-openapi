@@ -153,30 +153,6 @@ const main = async () => {
     }
     await new Promise((r) => setTimeout(r, 10000));
   }
-  // console.log(
-  //   colors.green(
-  //     "FIXING TYPES AND ORDER OF OPEN API REFERENCES IN README.IO..."
-  //   )
-  // );
-  // await new Promise((resolve) => {
-  //   exec(
-  //     `npm run readme-fix-reference-docs -- --version=${version}`,
-  //     (error, stdout, stderr) => {
-  //       if (stdout) {
-  //         console.log(
-  //           colors.green(
-  //             "TYPES AND ORDER OF OPEN API REFERENCES IN README.IO WERE FIXED!"
-  //           )
-  //         );
-  //         return resolve(true);
-  //       }
-  //       console.log(colors.red(error?.toString?.()));
-  //       throw new Error(
-  //         "TYPES AND ORDER OF OPEN API REFERENCES IN README.IO WERE NOT FIXED!"
-  //       );
-  //     }
-  //   );
-  // });
   console.log(
     colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`)
   );
@@ -228,7 +204,7 @@ https://dash.readme.com/api/v1/version`,
     );
     if (response.status !== 200) {
       throw new Error(
-        `Response status: ${response.status}, maybe this versionTag is already used?`
+        `Response status: ${response.status}, maybe this versionTag is already created?`
       );
     }
     console.log(colors.green(`FORK CREATED! VERSION "${version}"`));
