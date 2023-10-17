@@ -1,5 +1,8 @@
 # Changelog
 
+# 20231017
+
+- Vouchers - List Gift Card Transactions  (**GET** `/vouchers/{code}/transactions`) renamed to List Voucher Transactions
 
 ## 20231012 - Product Collections
 
