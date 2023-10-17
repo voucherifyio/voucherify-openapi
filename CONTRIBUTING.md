@@ -106,13 +106,17 @@ Good practices:
 - Copy `.env.example` to `.env` and add to this file your personal API Key created in readme.io: `dashboard` > `configuration` > `API Keys`
 
 ### Development process
+- For each change / pull request, create your copy of the current documentation, where you will test changes.
+	- Create your own branch from `master`,
+	- Create a draft pull request
 - Make changes in the repository following patterns and good practices.
-- Run `npm run manage-project -- --vt={your name}-{pull request number or tag number} --create` - this will create new version project with your tag number.
+- Run `npm run manage-project -- --vt={your name}-{pull request number} --create` - this will create new version project with your tag number.
 - Visit url provided at the end of the script run to test changes using preview on readme.io
 - If you need to make a change:
 	- Do changes...
-	- Run `npm run manage-project -- --vt={your name}-{pull request number or tag number} --update`- this will update your version.
+	- Run `npm run manage-project -- --vt={your name}-{pull request number} --update`- this will update your version.
 	- Test changes using preview on readme.io
+    - If needed - **REPEAT** 
 - If changes are fine, then:
 	- Add a note in the changelog.
 	- `git commit; git push`
