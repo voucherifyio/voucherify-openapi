@@ -1,8 +1,8 @@
 ---
-title: Export Gift Card Transactions
+title: Export Voucher Transactions
 type: endpoint
 categorySlug: voucherify-api
-slug: export-gift-card-transactions
+slug: export-voucher-transactions
 parentDocSlug: vouchers-api
 hidden: false
 order: 12

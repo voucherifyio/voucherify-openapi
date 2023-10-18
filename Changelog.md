@@ -3,6 +3,7 @@
 # 20231017
 
 - Vouchers - List Gift Card Transactions  (**GET** `/vouchers/{code}/transactions`) renamed to List Voucher Transactions
+- Vouchers - Export Gift Card Transactions  (**GET** `/vouchers/{code}/transactions/export`) renamed to Export Voucher Transactions
 
 ## 20231012 - Product Collections
 
