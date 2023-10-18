@@ -1,7 +1,7 @@
 ---
 title: Give item(s) for free - unit discount
 excerpt: How to add free items to customers' orders?
-categorySlug: discounts
+categorySlug: discounts-recipes
 slug: give-item-for-free-unit-discount
 type: basic
 hidden: false

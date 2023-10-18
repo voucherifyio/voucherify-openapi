@@ -1,14 +1,45 @@
-
-import * as fs from 'fs/promises'
+import * as fsPromises from 'fs/promises'
 import path from 'path';
 import dotenv from 'dotenv'
 import minimist from 'minimist';
-import { ok } from 'assert';
 
 dotenv.config();
 const { version } = minimist(process.argv.slice(2));
 
-const updateDoc = async ({ slug, order, pathToFile }) => {
+const readmeFixReferenceDocs = async () => {
+  if (!version) {
+    console.log(
+        "`version` argument was not provided :/, next time try add `-- --version=************` at the end of file execution command"
+    );
+    return;
+  }
+  if (process.env.README_IO_AUTH?.length < 10) {
+    console.log("`README_IO_AUTH` was not provided in `.env` file :/");
+    return;
+  }
+  const basePath = path.join(__dirname, "../docs");
+  const pathsToFiles = await getFiles(basePath);
+
+  const dataToProcess = [];
+  for (const pathToFile of pathsToFiles) {
+    const data = await fsPromises.readFile(pathToFile, { encoding: "utf8" });
+    const slug = data.match(/slug: .*/)?.[0]?.split?.("slug: ")?.[1];
+    const type = data.match(/type: .*/)?.[0]?.split?.("type: ")?.[1];
+    const order = parseInt(
+        data.match(/order: .*/)?.[0]?.split?.("order: ")?.[1]
+    );
+    if (!slug || isNaN(order)) {
+      throw new Error("Invalid slug or order in " + pathToFile);
+    }
+    dataToProcess.push({ slug, order, pathToFile, type });
+  }
+  for (const chunk of chunkArray(dataToProcess, 10)) {
+    await asyncMap(chunk, updateDoc);
+  }
+  console.log("Done!");
+};
+
+const updateDoc = async ({ slug, order, type, pathToFile }) => {
   const options = {
     method: "PUT",
     headers: {
@@ -17,7 +48,7 @@ const updateDoc = async ({ slug, order, pathToFile }) => {
       "content-type": "application/json",
       accept: "application/json",
     },
-    body: JSON.stringify({ order }),
+    body: JSON.stringify({ order, type }),
   };
 
   try{
@@ -27,18 +58,18 @@ const updateDoc = async ({ slug, order, pathToFile }) => {
     );
 
     const responseJSON = await response.json();
-    
+
     if (responseJSON.error) {
       console.log(`Error in json response from readme for ${slug}`, { responseJSON });
       throw new Error(responseJSON.error);
     }
-  
+
     if (order === responseJSON.order) {
       console.log(`Updated successfully ${pathToFile}!`);
     } else {
       console.log(`Not updated ${pathToFile}!`);
     }
-  
+
     return responseJSON;
   }catch(error){
     console.log(`Error when reqesting readme for ${slug}`, error);
@@ -53,7 +84,7 @@ const chunkArray = (list, chunkSize) =>
 
 const getFiles = async (path: string) => {
   const pathsToFiles: string[] = [];
-  const items = await fs.readdir(path, {
+  const items = await fsPromises.readdir(path, {
     withFileTypes: true,
   });
   for (const item of items) {
@@ -76,38 +107,5 @@ const asyncMap = (arr, asyncFn) => {
 };
 
 
-const readmeFixDocsOrder = async () => {
-  if (!version) {
-    console.log(
-      "`version` argument was not provided :/, next time try add `-- --version=************` at the end of file execution command"
-    );
-    return;
-  }
-  if (process.env.README_IO_AUTH?.length < 10) {
-    console.log("`README_IO_AUTH` was not provided in `.env` file :/");
-    return;
-  }
-  const basePath = path.join(__dirname, "../docs");
-  const pathsToFiles = await getFiles(basePath);
 
-  const dataToProcess = [];
-  for (const pathToFile of pathsToFiles) {
-    const data = await fs.readFile(pathToFile, { encoding: "utf8" });
-    const slug = data.match(/slug: .*/)?.[0]?.split?.("slug: ")?.[1];
-    const order = parseInt(
-      data.match(/order: .*/)?.[0]?.split?.("order: ")?.[1]
-    );
-    if (!slug || isNaN(order)) {
-      throw new Error("Invalid slug or order in " + pathToFile);
-    }
-    dataToProcess.push({ slug, order, pathToFile });
-  }
-  for (const chunk of chunkArray(dataToProcess, 6)) {
-    await asyncMap(chunk, updateDoc);
-  }
-  console.log("Done!");
-};
-
-
-
-readmeFixDocsOrder()
+readmeFixReferenceDocs()

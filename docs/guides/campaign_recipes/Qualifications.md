@@ -1,7 +1,7 @@
 ---
 title: Qualification - Checking eligibility
 excerpt: null
-categorySlug: campaigns-1
+categorySlug: campaigns-recipes
 slug: checking-eligibility
 type: basic
 hidden: false
