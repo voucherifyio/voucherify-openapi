@@ -21126,67 +21126,6 @@
           }
         }
       },
-      "8_res_get_loyalty_card_transactions": {
-        "title": "Get Loyalty Card Transactions Response Body",
-        "type": "object",
-        "description": "List of loyalty card transactions",
-        "properties": {
-          "object": {
-            "type": "string",
-            "default": "list",
-            "description": "The type of object represented by JSON."
-          },
-          "data_ref": {
-            "type": "string",
-            "default": "data",
-            "description": "Identifies the name of the attribute that contains the array of transaction objects."
-          },
-          "data": {
-            "type": "array",
-            "description": "A dictionary that contains an array of transactions. Each entry in the array is a separate transaction object.",
-            "items": {
-              "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object"
-            }
-          },
-          "has_more": {
-            "type": "boolean",
-            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates whether there are more records for given filter parameters. This let's you know if you are able to run another request (with a different page or a different start date filter) to get more records returned in the results."
-          }
-        }
-      },
-      "1_obj_loyalty_card_transaction_object": {
-        "title": "Loyalty Card Transaction Object",
-        "description": "Loyalty card transaction object",
-        "anyOf": [
-          {
-            "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_redemption"
-          },
-          {
-            "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_accrual"
-          },
-          {
-            "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_accrual_custom_event"
-          },
-          {
-            "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_refund"
-          },
-          {
-            "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_addition"
-          },
-          {
-            "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_removal"
-          },
-          {
-            "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_expiration"
-          },
-          {
-            "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_transfer_out"
-          },
-          {
-            "$ref": "#/components/schemas/1_obj_loyalty_card_transaction_object_transfer_in"
-          }
-        ]
-      },
       "1_obj_loyalty_card_transaction_object_redemption": {
         "title": "Redemption",
         "description": "When loyalty points are used to pay for an order.",
@@ -22462,116 +22401,6 @@
             "format": "date-time",
             "example": "2022-02-25T13:32:08.734Z",
             "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
-          }
-        }
-      },
-      "8_req_create_loyalty_card_transactions_export": {
-        "type": "object",
-        "title": "Create Loyalty Card Transactions Export Request Body",
-        "description": "Request body schema for **POST** `/loyalties/members/{memberId}/transactions/export`.",
-        "properties": {
-          "parameters": {
-            "$ref": "#/components/schemas/8_obj_export_loyalty_card_transactions",
-            "description": "Contains the parameters that define the data to be exported."
-          }
-        }
-      },
-      "8_obj_export_loyalty_card_transactions": {
-        "description": "List of available fields and filters that can be exported with a loyalty card transactions export along with the sorting order of the returned data.",
-        "title": "Export Transactions",
-        "type": "object",
-        "properties": {
-          "order": {
-            "type": "string",
-            "description": "How the export is filtered, where the dash `-` preceding a sorting option means sorting in a descending order.",
-            "enum": [
-              "-created_at",
-              "created_at"
-            ]
-          },
-          "fields": {
-            "type": "array",
-            "enum": [
-              [
-                "id",
-                "type",
-                "source_id",
-                "reason",
-                "balance",
-                "amount",
-                "created_at",
-                "voucher_id",
-                "campaign_id",
-                "source",
-                "details",
-                "related_transaction_id"
-              ]
-            ],
-            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combination of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique transaction ID assigned by Voucherify. | vtx_0cb7811f1c07765800 |\n| type | Transaction type. | - `POINTS_EXPIRATION` <br> - `POINTS_ADDITION` <br> - `POINTS_REMOVAL` <br> - `POINTS_TRANSFER_OUT` <br> - `POINTS_ACCRUAL` <br> - `POINTS_REFUND` <br> - `POINTS_REDEMPTION` |\n| source_id | Custom source ID of the transaction if one was included originally. | source_id_custom |\n| reason | Contains the reason for the transaction if one was included originally. |  |\n| balance | The loyalty card balance after the transaction. |  |\n| amount | The amount of loyalty points being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | 2022-03-09T09:16:32.521Z  |\n| voucher_id | Unique Voucher ID. | v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp |\n| campaign_id | Parent campaign ID. | camp_FNYR4jhqZBM9xTptxDGgeNBV |\n| source|  Channel through which the transaction was initiated. | - `API` <br> - `voucherify-web-ui` <br> - `Automation` |\n| details | More detailed information stored in the form of a JSON. | Provides more details related to the transaction in the form of an object. |\n| related_transaction_id | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | vtx_0c9afe802593b34b80 |",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "8_obj_export_transactions_object": {
-        "title": "Export Object",
-        "type": "object",
-        "description": "This is an object representing an export. \n\n Using this endpoint, you can export [loyalty card transactions](ref:list-loyalty-card-transactions) as a CSV file. This functionality works asynchronously and comes down to the following steps:  \n* create an export object and return its `id` so you can track its `status`\n* trigger a CSV file generation, change the status to `SCHEDULED`\n* when the generation is over, store the file in S3 and change the `status` to `DONE`\n* now you can (ref:download-export) it\n\nWith `parameters` you can select which `fields` will be exported. An export request will almost always result in a single file being generated by the system. However, when your volume of data is large, the system may split the results into multiple chunks.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique export ID.",
-            "example": "exp_FFfp9o7daWuJqJCKp5xqqli4"
-          },
-          "object": {
-            "type": "string",
-            "default": "export",
-            "description": "The type of object being represented. This object stores information about the `export`."
-          },
-          "created_at": {
-            "type": "string",
-            "example": "2022-04-28T11:23:20.922Z",
-            "description": "Timestamp representing the date and time when the export was scheduled in ISO 8601 format.",
-            "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "description": "Status of the export. Informs you whether the export has already been completed, i.e. indicates whether the file containing the exported data has been generated.",
-            "enum": [
-              "SCHEDULED",
-              "IN_PROGRESS",
-              "DONE",
-              "ERROR"
-            ]
-          },
-          "channel": {
-            "type": "string",
-            "description": "The channel through which the export was triggered.",
-            "default": "API"
-          },
-          "exported_object": {
-            "type": "string",
-            "description": "The type of exported object.",
-            "default": "voucher_transactions"
-          },
-          "parameters": {
-            "$ref": "#/components/schemas/16_obj_export_loyalty_card_transactions"
-          },
-          "result": {
-            "type": "object",
-            "description": "Contains the URL of the CSV file.",
-            "properties": {
-              "url": {
-                "type": "string",
-                "description": "URL of the CSV file location. It contains the `token` used for authorization in the <!-- [Download export](OpenAPI.json/paths/~1exports~1{export_Id}/get) -->[Download export](ref:download-export) method."
-              }
-            }
-          },
-          "user_id": {
-            "type": "string",
-            "description": "Identifies the specific user who initiated the export through the Voucherify Dashboard; returned when the `channel` value is `WEBSITE`.",
-            "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH"
           }
         }
       },
@@ -25246,113 +25075,6 @@
           "total": {
             "type": "integer",
             "description": "Total number of earning rule objects."
-          }
-        }
-      },
-      "8_req_add_remove_points_balance": {
-        "title": "Add or Remove Points Balance Request Body",
-        "type": "object",
-        "description": "Request schema for adding or removing points from a loyalty card.",
-        "properties": {
-          "points": {
-            "type": "integer",
-            "description": "Incremental balance to be added to/subtracted from the loyalty card.  \n\nTo add points: `100`  \nTo subtract points, add a minus: `-100`"
-          },
-          "expiration_type": {
-            "type": "string",
-            "default": "PROGRAM_RULES",
-            "enum": [
-              "PROGRAM_RULES",
-              "NON_EXPIRING",
-              "CUSTOM_DATE"
-            ],
-            "description": "Set the type of expiration for added points.  \n- `PROGRAM_RULES`: Inherit rules from campaign.\n- `NON_EXPIRING`: Points never expire.\n- `CUSTOM_DATE`: Points expire on a particular date. **Requires** `expiration_date` parameter."
-          },
-          "expiration_date": {
-            "type": "string",
-            "description": "Set expiration date for added points, i.e. `YYYY-MM-DD`. This parameter is **required** only when `expiration_type` is set to `CUSTOM_DATE`.",
-            "example": "2020-05-30"
-          },
-          "reason": {
-            "type": "string",
-            "description": "Reason for the transfer."
-          },
-          "source_id": {
-            "type": "string",
-            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service."
-          }
-        }
-      },
-      "8_res_add_remove_points_balance": {
-        "description": "Response schema for adding or removing points from a loyalty card.",
-        "type": "object",
-        "title": "Add or Remove Loyalty Card Balance Response Body",
-        "properties": {
-          "points": {
-            "type": "integer",
-            "description": "The incremental points removed or added to the current balance on the loyalty card."
-          },
-          "total": {
-            "type": "integer",
-            "description": "The total of points accrued over the lifetime of the loyalty card."
-          },
-          "balance": {
-            "type": "integer",
-            "description": "The balance after adding/removing points."
-          },
-          "type": {
-            "type": "string",
-            "description": "The type of voucher being modified.",
-            "default": "loyalty_card"
-          },
-          "object": {
-            "type": "string",
-            "description": "The type of object represented by JSON. Default is `balance`.",
-            "default": "balance"
-          },
-          "related_object": {
-            "type": "object",
-            "description": "Defines the object that is being modified with the values that are returned in the balance object.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "description": "The object being modified.",
-                "default": "voucher"
-              },
-              "id": {
-                "type": "string",
-                "description": "Identifies the loyalty card that is being modified, this is the ID that was assigned by the Voucherify API.",
-                "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
-              }
-            }
-          }
-        }
-      },
-      "8_req_transfer_loyalty_points": {
-        "description": "Request body schema for transferring points from a loyalty card.",
-        "type": "array",
-        "title": "Transfer Loyalty Points Request Body",
-        "items": {
-          "type": "object",
-          "properties": {
-            "code": {
-              "type": "string",
-              "description": "Unique loyalty card code from which the user wants to transfer loyalty points (source).",
-              "example": "L-CARD-02hgnq4"
-            },
-            "points": {
-              "type": "integer",
-              "description": "The number of loyalty points that the user wants to transfer to another loyalty card. The number of points cannot be higher than the current balance on the loyalty card (source).",
-              "example": 2
-            },
-            "reason": {
-              "type": "string",
-              "description": "Reason for the transfer."
-            },
-            "source_id": {
-              "type": "string",
-              "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service."
-            }
           }
         }
       },
@@ -30972,83 +30694,6 @@
           }
         }
       },
-      "16_res_list_exports": {
-        "description": "Response schema for listing exports.",
-        "type": "object",
-        "title": "List Exports Response Body",
-        "properties": {
-          "object": {
-            "type": "string",
-            "description": "The type of object represented by JSON. This object stores information about exports.",
-            "default": "list"
-          },
-          "data_ref": {
-            "type": "string",
-            "description": "Identifies the name of the attribute that contains the array of exports.",
-            "default": "exports"
-          },
-          "exports": {
-            "type": "array",
-            "uniqueItems": true,
-            "description": "An array of export objects.",
-            "items": {
-              "$ref": "#/components/schemas/16_obj_export_object"
-            }
-          },
-          "total": {
-            "type": "integer",
-            "description": "Total number of exports."
-          }
-        }
-      },
-      "16_req_create_export_POST": {
-        "description": "Request schema for creating an export.",
-        "type": "object",
-        "title": "Create Export Request Body",
-        "properties": {
-          "exported_object": {
-            "type": "string",
-            "description": "The type of object to be exported.",
-            "enum": [
-              "order",
-              "voucher",
-              "publication",
-              "redemption",
-              "customer",
-              "points_expiration",
-              "voucher_transactions"
-            ]
-          },
-          "parameters": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/16_obj_export_order"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_voucher"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_publication"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_redemption"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_customer"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_points_expiration"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_gift_card_transactions"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_loyalty_card_transactions"
-              }
-            ]
-          }
-        }
-      },
       "16_obj_export_order": {
         "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data.",
         "title": "order",
@@ -35111,6 +34756,7 @@
         ]
       },
       "LoyaltiesGetEarningRuleResponseBody": {
+        "title": "Loyalties Get Earning Rule Response Body",
         "$ref": "#/components/schemas/EarningRule"
       },
       "LoyaltiesEnableEarningRulesResponseBody": {
@@ -36637,7 +36283,7 @@
             "$ref": "#/components/schemas/RewardTypeCoin"
           },
           {
-            "$ref": "#/components/schemas/RewardTypeCoin"
+            "$ref": "#/components/schemas/RewardTypeMaterial"
           }
         ]
       },
@@ -39005,9 +38651,11 @@
         }
       },
       "LoyaltiesGetRewardAssignmentResponseBody": {
+        "title": "Loyalties Get Reward Assignment Response Body",
         "$ref": "#/components/schemas/RewardAssignment"
       },
       "LoyaltiesGetRewardDetailsResponseBody": {
+        "title": "Loyalties Get Reward Details Response Body",
         "$ref": "#/components/schemas/Reward"
       },
       "LoyaltiesListTiersRequestQuery": {
@@ -39095,6 +38743,7 @@
         }
       },
       "LoyaltiesGetTierResponseBody": {
+        "title": "Loyalties Get Tier Response Body",
         "$ref": "#/components/schemas/LoyaltyTier"
       },
       "LoyaltiesListTiersResponseBody": {
@@ -63277,7 +62926,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/8_req_add_remove_points_balance"
+                "$ref": "#/components/schemas/LoyaltiesAddOrRemoveCardBalanceRequestBody"
               },
               "examples": {
                 "Add points": {
@@ -63302,7 +62951,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_res_add_remove_points_balance"
+                  "$ref": "#/components/schemas/LoyaltiesAddOrRemoveCardBalanceResponseBody"
                 },
                 "examples": {
                   "Add balance": {
@@ -63391,7 +63040,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/8_req_add_remove_points_balance"
+                "$ref": "#/components/schemas/LoyaltiesAddOrRemoveCardBalanceRequestBody"
               },
               "examples": {
                 "Subtract points": {
@@ -63416,7 +63065,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_res_add_remove_points_balance"
+                  "$ref": "#/components/schemas/LoyaltiesAddOrRemoveCardBalanceResponseBody"
                 },
                 "examples": {
                   "Subtract Points": {
@@ -63500,7 +63149,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/8_req_transfer_loyalty_points"
+                "$ref": "#/components/schemas/LoyaltiesTransferPointsRequestBody"
               },
               "examples": {
                 "Example": {
@@ -63525,7 +63174,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_obj_loyalty_card_object_non_expanded_categories"
+                  "$ref": "#/components/schemas/LoyaltiesTransferPointsResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -63637,7 +63286,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_res_get_loyalty_card_transactions"
+                  "$ref": "#/components/schemas/LoyaltiesListCardTransactionsResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -63978,7 +63627,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_res_get_loyalty_card_transactions"
+                  "$ref": "#/components/schemas/LoyaltiesListCardTransactionsResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -64311,7 +63960,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/8_req_create_loyalty_card_transactions_export"
+                "$ref": "#/components/schemas/LoyaltiesExportCardTransactionsRequestBody"
               },
               "examples": {
                 "Example": {
@@ -64344,7 +63993,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_obj_export_transactions_object"
+                  "$ref": "#/components/schemas/LoyaltiesExportCardTransactionsResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -64477,7 +64126,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/8_req_create_loyalty_card_transactions_export"
+                "$ref": "#/components/schemas/LoyaltiesExportCardTransactionsRequestBody"
               },
               "examples": {
                 "Example": {
@@ -64510,7 +64159,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_obj_export_transactions_object"
+                  "$ref": "#/components/schemas/LoyaltiesExportCardTransactionsResponseBody"
                 },
                 "examples": {
                   "Example": {
