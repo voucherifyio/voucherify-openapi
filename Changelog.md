@@ -9,7 +9,7 @@
 - product_collections_sku_in_collection
 - product_collections_product_in_collection
 - product_collections_collection_item
-- - product_collections_collection_item_base
+- product_collections_collection_item_base
 - product_collections_static_collection
 - product_collections_dynamic_collection
 - product_collections_list_response_body
@@ -98,6 +98,8 @@
 - PointsExpirationTypes
 
 #### Schemas changes
+- /v1/loyalties/members/{memberId}/rewards
+    - new response schema `LoyaltiesListMemberRewardsResponseBody` (old `"8_res_list_member_rewards`)
 - /v1/loyalties/{campaignId}/members/{memberId}/balance
     - new request schema `LoyaltiesAddOrRemoveCardBalanceRequestBody` (old `8_req_add_remove_points_balance`)
     - new response schema `LoyaltiesAddOrRemoveCardBalanceResponseBody` (old `8_res_add_remove_points_balance`)
