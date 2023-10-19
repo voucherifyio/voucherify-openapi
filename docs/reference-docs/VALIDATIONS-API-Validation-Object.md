@@ -11,15 +11,15 @@ order: 3
 ## Vouchers Validate Response Body
 Any of:
 
-[Valid Voucher](#valid-voucher), [Validate Voucher Response - Invalid Voucher](#validate-voucher-response---invalid-voucher)
+[Valid Voucher](#valid-voucher), [Invalid Voucher](#invalid-voucher)
 
 ## Valid Voucher
 | Attributes |  Description |
 |:-----|:--------|
 | valid</br>`boolean` | <p>Indicates whether the voucher is valid within the context of the parameters provided in the request body.</p> |
 | code</br>`string` | <p>Voucher code.</p> |
-| applicable_to | <p>Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted.</p> See: [ApplicableToResultList](#applicabletoresultlist) |
-| inapplicable_to | <p>Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted.</p> See: [ApplicableToResultList](#applicabletoresultlist) |
+| applicable_to | <p>Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted.</p> See: [Applicable To Result List](#applicable-to-result-list) |
+| inapplicable_to | <p>Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted.</p> See: [Applicable To Result List](#applicable-to-result-list) |
 | campaign</br>`string` | <p>Voucher's parent campaign name.</p> |
 | campaign_id</br>`string` | <p>Voucher's parent campaign's unique ID.</p> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format.</p> |
@@ -33,7 +33,7 @@ Any of:
 | expiration_date</br>`string` |  |
 | tracking_id</br>`string` |  |
 
-## Validate Voucher Response - Invalid Voucher
+## Invalid Voucher
 | Attributes |  Description |
 |:-----|:--------|
 | valid</br>`boolean` | <p>Indicates whether the voucher is valid within the context of the parameters provided in the request body.</p> |
@@ -44,7 +44,7 @@ Any of:
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format.</p> |
 | reason</br>`string` |  |
 
-## ApplicableToResultList
+## Applicable To Result List
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | Available values: `list` |
@@ -152,7 +152,7 @@ Any of:
 | price_formula</br>`number` |  |
 | quantity_limit</br>`integer` |  |
 | aggregated_quantity_limit</br>`integer` |  |
-| effect | See: [ApplicableToEffect](#applicabletoeffect) |
+| effect | See: [Applicable To Effect](#applicable-to-effect) |
 
 ## Discount Amount Vouchers Effect Types
 Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`, `APPLY_TO_ITEMS_PROPORTIONALLY`, `APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY`
@@ -190,7 +190,7 @@ Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
 ## Discount Fixed Vouchers Effect Types
 Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
 
-## ApplicableToEffect
+## Applicable To Effect
 Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`
 
 [block:html]
