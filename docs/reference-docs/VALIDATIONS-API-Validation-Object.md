@@ -70,7 +70,7 @@ Any of:
 ## Included  Items
 | Attributes |  Description |
 |:-----|:--------|
-| data</br>`array` | <p>Contains array of items to which the discount can apply.</p> |
+| data</br>`array` | <p>Contains array of items to which the discount can apply.</p> Array any of: [Product Collection](#product-collection), [Product Collection for Unit Discount](#product-collection-for-unit-discount), [Product Collection for Fixed Amount Discount](#product-collection-for-fixed-amount-discount), [Product](#product), [Product for Unit Discount](#product-for-unit-discount), [Product for Fixed Amount Discount](#product-for-fixed-amount-discount), [SKU](#sku), [SKU for Unit Discount](#sku-for-unit-discount), [SKU for Amount Discount](#sku-for-amount-discount) |
 | total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
 | data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of included objects.</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about included products, SKUs, or product collections in a dictionary.</p> |
@@ -78,7 +78,7 @@ Any of:
 ## Excluded Items
 | Attributes |  Description |
 |:-----|:--------|
-| data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> |
+| data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> Array any of: [Product Collection](#product-collection), [Product](#product), [SKU](#sku) |
 | total</br>`integer` | <p>Total number of objects defining excluded products, SKUs, or product collections.</p> |
 | data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of excluded objects.</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about excluded products, SKUs, or product collections in a dictionary.</p> |
@@ -181,6 +181,128 @@ One of:
 | key</br>`string` | <p>The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated.</p> **Example:** <p>ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts</p> |
 | ttl_unit</br>`string` | <p>Defines the type of unit in which the session time is counted.</p> Available values: `HOURS`, `DAYS`, `MINUTES`, `SECONDS`, `MILLISECONDS`, `MICROSECONDS`, `NANOSECONDS` |
 | ttl</br>`integer` | <p>Value for the period of time that the session is active. Units for this parameter are defined by the <code>session.ttl_unit</code> parameter.</p> |
+
+## Product Collection
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the product collection.</p> |
+| id</br>`string` | <p>Unique product collection ID assigned by Voucherify.</p> **Example:** <p>pc_4ndRXAsTOzwSdHcQcxf489uU</p> |
+| strict</br>`boolean` |  |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE` |
+
+## Product Collection for Unit Discount
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the product collection.</p> |
+| id</br>`string` | <p>Unique product collection ID assigned by Voucherify.</p> **Example:** <p>pc_4ndRXAsTOzwSdHcQcxf489uU</p> |
+| strict</br>`boolean` |  |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE` |
+| quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted per order line item.</p> |
+| aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
+
+## Product Collection for Fixed Amount Discount
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the product collection.</p> |
+| id</br>`string` | <p>Unique product collection ID assigned by Voucherify.</p> **Example:** <p>pc_4ndRXAsTOzwSdHcQcxf489uU</p> |
+| strict</br>`boolean` |  |
+| price</br>`integer` | <p>New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the <code>price_formula</code> parameter is present in the fixed price definition, this value becomes the <strong>fallback value</strong>. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price.</p> |
+| price_formula</br>`string` | <p>Formula used to calculate the discounted price of an item.</p> **Example:** <p>&quot;IF(ORDER_AMOUNT &gt; 300;ORDER_ITEM_PRICE * 0.8;ORDER_ITEM_PRICE)</p> |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE` |
+
+## Product
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the product.</p> |
+| id</br>`string` | <p>Unique product ID assigned by Voucherify.</p> **Example:** <p>prod_0bae2dc5a090fd0184</p> |
+| source_id</br>`string` | <p>The product ID from your inventory system.</p> |
+| strict</br>`boolean` |  |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE` |
+
+## Product for Unit Discount
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the product.</p> |
+| id</br>`string` | <p>Unique product ID assigned by Voucherify.</p> **Example:** <p>prod_0bae2dc5a090fd0184</p> |
+| source_id</br>`string` | <p>The product ID from your inventory system.</p> |
+| strict</br>`boolean` |  |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE` |
+| quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted per order line item.</p> |
+| aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
+
+## Product for Fixed Amount Discount
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the product.</p> |
+| id</br>`string` | <p>Unique product ID assigned by Voucherify.</p> **Example:** <p>prod_0bae2dc5a090fd0184</p> |
+| source_id</br>`string` | <p>The product ID from your inventory system.</p> |
+| strict</br>`boolean` |  |
+| price</br>`integer` | <p>New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the <code>price_formula</code> parameter is present in the fixed price definition, this value becomes the <strong>fallback value</strong>. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price.</p> |
+| price_formula</br>`string` | <p>Formula used to calculate the discounted price of an item.</p> **Example:** <p>IF(ORDER_AMOUNT &gt; 300;ORDER_ITEM_PRICE * 0.8;ORDER_ITEM_PRICE)</p> |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE` |
+
+## SKU
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the product variant.</p> |
+| id</br>`string` | <p>Unique SKU ID assigned by Voucherify.</p> **Example:** <p>sku_0b7d7dfb090be5c619</p> |
+| source_id</br>`string` | <p>The source ID from your inventory system.</p> |
+| product_id</br>`string` | <p>Parent product's unique ID assigned by Voucherify.</p> |
+| product_source_id</br>`string` | <p>Parent product's source ID from your inventory system.</p> |
+| strict</br>`boolean` |  |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE` |
+
+## SKU for Unit Discount
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the product variant.</p> |
+| id</br>`string` | <p>Unique SKU ID assigned by Voucherify.</p> **Example:** <p>sku_0b7d7dfb090be5c619</p> |
+| source_id</br>`string` | <p>The source ID from your inventory system.</p> |
+| product_id</br>`string` | <p>Parent product's unique ID assigned by Voucherify.</p> |
+| product_source_id</br>`string` | <p>Parent product's source ID from your inventory system.</p> |
+| strict</br>`boolean` |  |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE` |
+| quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted per order line item.</p> |
+| aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
+
+## SKU for Amount Discount
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the product variant.</p> |
+| id</br>`string` | <p>Unique SKU ID assigned by Voucherify.</p> **Example:** <p>sku_0b7d7dfb090be5c619</p> |
+| source_id</br>`string` | <p>The source ID from your inventory system.</p> |
+| product_id</br>`string` | <p>Parent product's unique ID assigned by Voucherify.</p> |
+| product_source_id</br>`string` | <p>Parent product's source ID from your inventory system.</p> |
+| strict</br>`boolean` |  |
+| price</br>`integer` | <p>New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the <code>price_formula</code> parameter is present in the fixed price definition, this value becomes the <strong>fallback value</strong>. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price.</p> |
+| price_formula</br>`string` | <p>Formula used to calculate the discounted price of an item.</p> **Example:** <p>IF(ORDER_AMOUNT &gt; 200;ORDER_ITEM_PRICE * 0.2;6)</p> |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE` |
+
+## Product Collection
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the product collection.</p> |
+| id</br>`string` | <p>Unique product collection ID assigned by Voucherify.</p> **Example:** <p>pc_4ndRXAsTOzwSdHcQcxf489uU</p> |
+| strict</br>`boolean` |  |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_EVERY` |
+
+## Product
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This product stores information about the product.</p> |
+| id</br>`string` | <p>Unique product ID assigned by Voucherify.</p> **Example:** <p>prod_0bae2dc5a090fd0184</p> |
+| source_id</br>`string` | <p>The product ID from your inventory system.</p> |
+| strict</br>`boolean` |  |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_EVERY` |
+
+## SKU
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the product variant.</p> |
+| id</br>`string` | <p>Unique SKU ID assigned by Voucherify.</p> **Example:** <p>sku_0b7d7dfb090be5c619</p> |
+| source_id</br>`string` | <p>The source ID from your inventory system.</p> |
+| strict</br>`boolean` |  |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_EVERY` |
 
 ## Order object - Effect: Apply to items
 | Attributes |  Description |

@@ -1,7 +1,7 @@
 ---
 title: Loyalty Program
 excerpt: null
-categorySlug: campaigns-1
+categorySlug: campaigns-recipes
 slug: loyalty-program
 type: basic
 hidden: false
