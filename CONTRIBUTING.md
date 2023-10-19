@@ -124,8 +124,11 @@ Good practices:
 
 ## How to merge PR and update public documentation
 
-- Test changes on readme (you can use the version prepared by the contributor).
+
 - Ensure the changelog was updated.
+- Merge master branch to your branch by running `git merge master`
+- Run `npm run manage-project -- --vt={your name}-{pull request number} --update` to ensure the version is up-to-date.
+- Test last time changes on readme (you can use the version prepared by the contributor).
 - Merge PR to `master` branch
 - In readme.io, change the current documentation version from `v2018-08-01` to `v2018-08-01-deprecated-mm-dd-yyyy`
 - Change the name of your new release version from `2018-08-01-{your name}-{pull request number}` to `v2018-08-01`
