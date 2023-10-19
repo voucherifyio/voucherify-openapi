@@ -1,7 +1,7 @@
 ---
 title: Locking Validation Session
 excerpt: Temporary lock the voucher's usage until redemption is successful.
-categorySlug: campaigns-1
+categorySlug: campaigns-recipes
 slug: locking-validation-session
 type: basic
 hidden: false
