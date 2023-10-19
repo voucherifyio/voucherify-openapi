@@ -1,11 +1,11 @@
 ---
 title: Disable Earning Rule
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: disable-earning-rule
-parentDoc: 639ba2658407100061f5fab6
+parentDocSlug: loyalties-api
 hidden: false
-order: 27
+order: 31
 ---
 [block:html]
 {

@@ -1,6 +1,6 @@
 # Changelog
 
-## 20230825
+## 20231020
 
 **Added schemas**
 - ValidationSessionParams
@@ -31,6 +31,255 @@
   - Response schema was replaced with `anyOf`: `ResponseValidateVoucherTrue`, `ResponseValidateVoucherFalse`
 - `/v1/validation-object`
   - Response schema was replaced with `anyOf`: `ResponseValidateVoucherTrue`, `ResponseValidateVoucherFalse` (old one: `anyOf`: `6_res_validate_voucher`, `6_res_validate_voucher_false`)
+
+
+## 20231012 - Product Collections
+
+**New models**
+- product_collections_get_response_body
+- product_collections_list_products_response_body
+- product_collections_sku_in_collection
+- product_collections_product_in_collection
+- product_collections_collection_item
+- product_collections_collection_item_base
+- product_collections_static_collection
+- product_collections_dynamic_collection
+- product_collections_list_response_body
+- product_collections_create_request_body
+- product_collections_create_static_request_body
+- product_collections_create_dynamic_request_body
+
+
+**Endpoint changes**
+- Added missing method for endpoint: POST `/v1/product-collections`
+  - Request body schema: `product_collections_create_request_body`
+  - Response body schema: `product_collections_collection`
+- GET `/v1/product-collections`
+	- New response schema: `product_collections_list_response_body` (old one: `12_res_product-collections`)
+- GET `/v1/product-collections/{productCollectionId}`
+	- New response schema: `product_collections_get_response_body` (old one: `12_obj_product_collection_object`)
+- GET `/v1/product-collections/{productCollectionId}/products`
+	- New response schema: `product_collections_list_products_response_body` (old one: `11_res_product-collections_productCollectionID_products`)
+- /v1/product-collection-object 
+  - New response schema: `product_collections_collection_item` (old one: `12_obj_product_collection_object`)
+
+## 20231011
+
+#### New schemas:
+- LoyaltiesCreateTiersRequestBody
+- LoyaltiesCreateTiersResponseBody
+- LoyaltiesGetRewardAssignmentResponseBody
+- LoyaltiesGetRewardDetailsResponseBody
+- LoyaltiesListTiersRequestQuery
+- LoyaltiesListLoyaltyTierEarningRulesRequestQuery
+- LoyaltiesGetTierResponseBody
+- LoyaltiesListTiersResponseBody
+- LoyaltiesListMemberLoyaltyTiersResponseBody
+- LoyaltiesListLoyaltyTierEarningRulesResponseBody
+- CreateLoyaltyTier
+- LoyaltyTier
+- MappingMultiply
+- MappingFixed
+- EarningRule
+
+#### Schemas changes
+- GET /v1/loyalties/{campaignId}/tiers
+    - new response schema `LoyaltiesListTiersResponseBody` (old `8_res_list_loyalty_tiers`)
+- GET /v1/loyalties/{campaignId}/reward-assignments/{assignmentId}
+    - new response schema `LoyaltiesGetRewardAssignmentResponseBody` (old `4_obj_reward_assignment_object`)
+- GET /v1/loyalties/{campaignId}/reward-assignments/{assignmentId}/reward
+    - new response schema `LoyaltiesGetRewardDetailsResponseBody` (old `4_obj_reward_object`)
+- GET /v1/loyalties/{campaignId}/tiers/{tierId}
+    - new response schema `LoyaltiesGetTierResponseBody` (old `8_obj_loyalty_tier_object`)
+- GET /v1/loyalties/{campaignId}/tiers/{tierId}/earning-rules
+    - new response schema `LoyaltiesListLoyaltyTierEarningRulesResponseBody` (old `8_res_list_loyalty_tier_earning_rules`)
+- GET /v1/loyalties/members/{memberId}/tiers
+    - new response schema `LoyaltiesListMemberLoyaltyTiersResponseBody` (old `8_res_get_member_loyalty_tier`)
+- GET /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
+    - New response schema: `LoyaltiesGetPointsExpirationResponseBody` (old one: `8_res_get_points_expiration`)
+
+#### New endpoint
+- POST /v1/loyalties/{campaignId}/tiers
+
+## 20231009
+
+#### New schemas:
+- LoyaltiesListMemberRewardsRequestQuery
+- LoyaltiesGetPointsExpirationRequestQuery
+- LoyaltiesGetPointsExpirationResponseBody
+- LoyaltiesListCardTransactionsRequestQuery
+- LoyaltiesListCardTransactionsResponseBody
+- LoyaltyCardTransactionsType
+- SimpleLoyaltyVoucher
+- LoyaltyCardTransaction
+- LoyaltyCardTransactionsFields
+- LoyaltiesExportCardTransactionsRequestBody
+- LoyaltiesExportCardTransactionsResponseBody
+- RewardAssignment
+- Reward
+- RewardTypeCoin
+- RewardTypeMaterial
+- RewardTypeCampaign
+- RewardType
+- LoyaltiesAddOrRemoveCardBalanceResponseBody
+- LoyaltiesTransferPointsResponseBody
+- LoyaltiesTransferPoints
+- LoyaltiesTransferPointsRequestBody
+- LoyaltiesListMemberRewardsResponseBody
+- LoyaltiesAddOrRemoveCardBalanceRequestBody
+- PointsExpirationTypes
+
+#### Schemas changes
+- /v1/loyalties/members/{memberId}/rewards
+    - new response schema `LoyaltiesListMemberRewardsResponseBody` (old `"8_res_list_member_rewards`)
+- /v1/loyalties/{campaignId}/members/{memberId}/balance
+    - new request schema `LoyaltiesAddOrRemoveCardBalanceRequestBody` (old `8_req_add_remove_points_balance`)
+    - new response schema `LoyaltiesAddOrRemoveCardBalanceResponseBody` (old `8_res_add_remove_points_balance`)
+- /v1/loyalties/members/{memberId}/balance
+    - new request schema `LoyaltiesAddOrRemoveCardBalanceRequestBody` (old `8_req_add_remove_points_balance`)
+    - new response schema `LoyaltiesAddOrRemoveCardBalanceResponseBody` (old `8_res_add_remove_points_balance`)
+- /v1/loyalties/{campaignId}/members/{memberId}/transfers
+    - new request schema `LoyaltiesTransferPointsRequestBody` (old `8_req_transfer_loyalty_points`)
+    - new response schema `LoyaltiesTransferPointsResponseBody` (old `8_obj_loyalty_card_object_non_expanded_categories`)
+- /v1/loyalties/{campaignId}/members/{memberId}/transactions
+    - new request schema `LoyaltiesListCardTransactionsRequestBody` (old `8_res_get_loyalty_card_transactions`)
+- /v1/loyalties/members/{memberId}/transactions
+    - new request schema `LoyaltiesListCardTransactionsResponseBody` (old `8_res_get_loyalty_card_transactions`)
+- /v1/loyalties/members/{memberId}/transactions/export
+    - new request schema `LoyaltiesExportCardTransactionsRequestBody` (old `8_req_create_loyalty_card_transactions_export`)
+    - new response schema `LoyaltiesExportCardTransactionsResponseBody` (old `8_obj_export_transactions_object`)
+- /v1/loyalties/{campaignId}/members/{memberId}/transactions/export
+    - new request schema `LoyaltiesExportCardTransactionsRequestBody` (old `8_req_create_loyalty_card_transactions_export`)
+    - new response schema `LoyaltiesExportCardTransactionsResponseBody` (old `8_obj_export_transactions_object`)
+- /v1/loyalties/{campaignId}/members/{memberId}/points-expiration
+    - new response schema `LoyaltiesGetPointsExpirationResponseBody` (old `8_res_get_points_expiration`)
+
+## 20230831 - Exports API
+
+**New models**
+- ExportsCreateRequestBody
+- ExportBase
+- Export
+- ExportsCreateResponseBody
+- ExportVoucher
+- FieldConditions
+- FiltersCondition
+- ExportVoucherFilters
+- Junction
+- ExportRedemption
+- ExportRedemptionFilters
+- ExportCustomer
+- ExportCustomerFilters
+- ExportPublication
+- ExportPublicationFilters
+- ExportOrder
+- ExportOrderFilters
+- ExportPointsExpiration
+- ExportPointsExpirationFilters
+- ExportVoucherTransactionsExpiration
+- ExportVoucherTransactionsFilters
+- ExportsGetResponseBody
+- ExportsListResponseBody
+- ExportCustomerFields
+- ExportCustomerOrder
+- ExportPublicationFields
+- ExportPublicationOrder
+- ExportRedemptionFields
+- ExportRedemptionOrder
+- ExportVoucherFields
+- ExportVoucherOrder
+- ExportOrderFields
+- ExportOrderOrder
+- ExportPointsExpirationFields
+- ExportPointsExpirationOrder
+- ExportVoucherTransactionsFields
+- ExportVoucherTransactionsOrder
+- Any
+
+**Endpoint changes**
+- v1/exports
+    - POST
+        - New request schema: `ExportsCreateRequestBody`
+        - New response schema: `ExportsCreateResponseBody`
+    - GET
+        - New response schema: `ExportsListResponseBody`
+- v1/exports/{exportId}
+    - GET
+        - New response schema: `ExportsGetResponseBody`
+
+## 20231005 - Earning rule
+
+**New models**
+- LoyaltiesGetEarningRuleResponseBody
+- LoyaltiesEnableEarningRulesResponseBody
+- LoyaltiesDisableEarningRulesResponseBody
+- EarningRuleBase
+- EarningRuleEvent
+- EarningRuleFixed
+- EarningRuleProportionalOrder
+- EarningRuleProportionalOrderAmount
+- EarningRuleProportionalOrderTotalAmount
+- EarningRuleProportionalOrderMetadata
+- EarningRuleProportional
+- EarningRuleProportionalOrderItems
+- EarningRuleProportionalOrderItemsQuantity
+- EarningRuleProportionalOrderItemsAmount
+- EarningRuleProportionalOrderItemsSubtotalAmount
+- EarningRuleProportionalCustomerMetadata
+- EarningRuleProportionalCustomEvent
+
+**Endpoint changes**
+- GET /v1/loyalties/{campaignId}/earning-rules
+	- New response schema: LoyaltiesGetEarningRuleResponseBody (old one: `8_res_list_earning_rules`)
+- POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable
+	- New response schema: LoyaltiesEnableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+- POST /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable
+	- New response schema: LoyaltiesDisableEarningRulesResponseBody (old one: 8_obj_earning_rule_object_no_validation_rule)
+
+## 20230829
+
+**Added schemas**
+- customers_permanent_deletion_response_body
+- customers_update_metadata_in_bulk_request_body
+- customers_update_in_bulk_request_body
+
+
+**Endpoints changes**
+- `/v1/customers/{customerId}/permanent-deletion`
+	- POST
+		- Response schema was replaced with `customers_permanent_deletion_response_body` (old `9_res_customers_customerId_permanent-deletion`)
+		- `status` default value was set to `DONE`
+		- `data_json.customer` default value was set to 1
+		- Added `required` to response properties
+- `v1/customers/bulk/async`
+	- POST
+		- Request schema was replaced with `customers_update_in_bulk_request_body` (old `9_req_update_customers_bulk-deletion`)
+		- Set as `required`: `async_action_id` property in `a_res_async_actions` model
+- `v1/customers/metadata/async`
+	- POST
+		- Request schema was replaced with `customers_update_metadata_in_bulk_request_body` (old `9_req_customers_metadata_async`)
+		- Set as `required`: `async_action_id` property in `a_res_async_actions` model
+
+## 20230929 - Order references/guides script
+- Changes on Performance and Qualification guidelines pages
+- Added links to qualification guide in endpoints and qualification object schema.
+
+## 20230928 - Order references/guides script
+- Removed `beta` label from qualification API endpoints.
+- Described contribution process.
+- Added the script to clean up OpenAPI from Stoplight tags.
+- Reorganised maintenance scripts.
+- Automated the process of updating the data model documents based on the OpenAPI file.
+- Improve script which generates markdown tables based on the OpenAPI file.
+	- Render objects referred directly by $ref.
+	- fix rendering oneOf + ref.
+	- Render ref to simple types (e.g. enum)
+	- Do not duplicate rendering tables when there is more than one reference.
+	- add the missing title to `23_obj_qualification_object_stacking_rules object.
+
+## 20230925 - Order references/guides script
+
+Added script, located in `docs/script/` directory to quickly update order of references and guides based on `.md` files. For more information please check [Update-Order-Standard-Work.md](automation%2FUpdate-Order-Standard-Work.md) under `Update Order of Docs - AUTOMATIC` section.
 
 ## 20230823 - New Endpoints
 

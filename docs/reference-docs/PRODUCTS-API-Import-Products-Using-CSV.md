@@ -1,11 +1,11 @@
 ---
 title: Import Products using CSV
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: import-products-using-csv
-parentDoc: 639ba2658407100061f5fab9
+parentDocSlug: products-api
 hidden: false
-order: 4
+order: 6
 ---
 [block:html]
 {

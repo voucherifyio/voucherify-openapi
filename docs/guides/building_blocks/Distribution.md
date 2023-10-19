@@ -1,7 +1,7 @@
 ---
 title: Distribution
 excerpt: 
-category: 639ba16d677235008f800454
+categorySlug: building-blocks
 slug: distribution
 type: basic
 hidden: false

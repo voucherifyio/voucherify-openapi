@@ -1,11 +1,11 @@
 ---
 title: Enable Voucher
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: enable-voucher
-parentDoc: 639ba2658407100061f5faae
+parentDocSlug: vouchers-api
 hidden: false
-order: 7
+order: 8
 ---
 [block:html]
 {

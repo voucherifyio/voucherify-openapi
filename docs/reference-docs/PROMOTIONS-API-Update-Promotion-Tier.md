@@ -1,11 +1,11 @@
 ---
 title: Update Promotion Tier
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: update-promotion-tier
-parentDoc: 639ba2658407100061f5fab0
+parentDocSlug: promotions-api
 hidden: false
-order: 6
+order: 7
 ---
 [block:html]
 {
