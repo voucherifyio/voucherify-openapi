@@ -1,7 +1,7 @@
 ---
 title: Free shipping disount
 excerpt: How to use free shipping discounts?
-categorySlug: discounts
+categorySlug: discounts-recipes
 slug: free-shipping-discount
 type: basic
 hidden: false
