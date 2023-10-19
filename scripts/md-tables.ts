@@ -5,7 +5,7 @@ export const mdTables: [string, string?][] = [
     ['4_obj_reward_object', 'REWARDS-API-Reward-Object.md'],
     ['4_obj_reward_assignment_object', 'REWARDS-API-Reward-Assignment-Object.md'],
     ['5_obj_publication_object', 'PUBLICATIONS-API-Publication-Object.md'],
-    ['6_res_validate_voucher', 'VALIDATIONS-API-Validation-Object.md'],
+    ['VouchersValidateResponseBody', 'VALIDATIONS-API-Validation-Object.md'],
     ['7_obj_redemption_object', 'REDEMPTIONS-API-Redemption-Object.md'],
     ['7_obj_rollback_redemption_object_extended', 'REDEMPTIONS-API-Rollback-Redemption-Object.md'],
     ['19_res_redemptions_POST', 'STACKABLE-DISCOUNTS-API-Stackable-Redemptions-Object.md'],

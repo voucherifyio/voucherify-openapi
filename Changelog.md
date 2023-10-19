@@ -7,8 +7,8 @@
 - Customer
 - OrderItem
 - Session
-- ResponseValidateVoucherTrue
-- ResponseValidateVoucherFalse
+- VouchersValidateValidResponseBody
+- VouchersValidateInvalidResponseBody
 - OrderRedemptions
 - SimpleProductDiscountUnit
 - SimpleSkuDiscountUnit
@@ -32,9 +32,9 @@
 **Endpoints changes**
 - `/v1/vouchers/{code}/validate`
   - Request parameters schema was replaced with new one: `VouchersValidateRequestBody` (old one: `6_req_validate_voucher` *has been deleted*)
-  - Response schema was replaced with `anyOf`: `ResponseValidateVoucherTrue`, `ResponseValidateVoucherFalse`
+  - Response schema was replaced with `anyOf`: `VouchersValidateValidResponseBody`, `VouchersValidateInvalidResponseBody`
 - `/v1/validation-object`
-  - Response schema was replaced with `anyOf`: `ResponseValidateVoucherTrue`, `ResponseValidateVoucherFalse` (old one: `anyOf`: `6_res_validate_voucher`, `6_res_validate_voucher_false`)
+  - Response schema was replaced with `anyOf`: `VouchersValidateValidResponseBody`, `VouchersValidateInvalidResponseBody` (old one: `anyOf`: `6_res_validate_voucher`, `6_res_validate_voucher_false`)
 
 
 ## 20231012 - Product Collections
