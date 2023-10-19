@@ -124,7 +124,6 @@ Good practices:
 
 ## How to merge PR and update public documentation
 
-
 - Ensure the changelog was updated.
 - Merge master branch to your branch by running `git merge master`
 - Run `npm run manage-project -- --vt={your name}-{pull request number} --update` to ensure the version is up-to-date.
