@@ -32,10 +32,6 @@
 
 **Endpoint changes**
 
-GET /vouchers/{code}/transactions (client.vouchers.listTransactions(code, query))
-POST /vouchers/{code}/transactions/export (client.vouchers.exportTransactions(code, body))
-GET /validation-rules-assignments (client.client.validationRules.listRulesAssignments(validationRuleId))
-
 - Added missing method for endpoint: GET `/vouchers/{code}/transactions (client.vouchers.listTransactions(code, query))`
     - Response body schema: `vouchers_list_vouchers_transactions_response_body`
 
