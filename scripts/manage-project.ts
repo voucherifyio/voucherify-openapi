@@ -106,19 +106,18 @@ const runCliProcess = async ({
   stdoutIncludes,
   stderrIncludes,
   resolveErrorAsFalse = false,
-  ignoreStdout = false,
 }: {
   command: string;
   stdoutIncludes?: string;
   stderrIncludes?: string;
   resolveErrorAsFalse?: boolean;
-  ignoreStdout?: boolean;
 }) => {
   return await new Promise((resolve) => {
     exec(command, (error, stdout, stderr) => {
+      const stdoutClean = stdout.replace(/.*voucherify/, "").trim();
       if (
-        (stdoutIncludes && stdout?.includes(stdoutIncludes)) ||
-        (!ignoreStdout && !stdoutIncludes && stdout) ||
+        (stdoutIncludes && stdoutClean?.includes(stdoutIncludes)) ||
+        (!stdoutIncludes && stdoutClean) ||
         (stderrIncludes && stderr.includes(stderrIncludes))
       ) {
         return resolve(true);
@@ -166,7 +165,6 @@ const uploadOpenApiFile = async (version) => {
   await runCliProcess({
     command: `rdme openapi ./reference/OpenAPI.json --version=${version} --create`,
     stderrIncludes: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`,
-    ignoreStdout: true,
   });
   console.log(colors.green("OPEN API FILE WAS UPLOADED"));
 };
