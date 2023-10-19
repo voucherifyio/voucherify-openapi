@@ -108,39 +108,26 @@ Good practices:
 ### Development process
 - For each change / pull request, create your copy of the current documentation, where you will test changes.
 	- Create your own branch from `master`,
-	- Create a draft pull request,
-	- Go to `Manage Versions` page in readme.io
-	- Click `Add New Version` from top right corner.
-	- Select the current public version  in `Fork from` field, most likely `2018-08-01`
-	- Type your version name in `Create version` field  following the pattern:
-	   `2018-08-01-{your name}-{pull request number}`
+	- Create a draft pull request
 - Make changes in the repository following patterns and good practices.
-- Deploy changes to test your documentation:
-	- Update tables in markdown tables:
-		- `npm run build-md-tables-from-openapi`
-		- `npm run update-md-tables-in-doc`
-	- from API Reference page in readme dashboard:
-		- remove Voucherify OpenAPI Definition
-		- refresh the page and remove `VOUCHERIFY API` category from left sidebar, DO NOT REMOVE `INTRODUCTION` catregory from left sidebar
-	  the existing OpenAPI file and all specification files.	
-	- Deploy OpenAPI file by command `rdme openapi ./reference/OpenAPI.json --version=2018-08-01-{your name}-{pull request number}`, choose `Create a new spec` option. Command most likely will fail with the message: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks`, but so far, we see that this operation still works correctly. 
-	- Deploy guides pages: `rdme docs ./docs/guides --version=2018-08-01-{your name}-{pull request number}`
-	- Deploy api reference pages: `rdme docs ./docs/reference-docs --version=2018-08-01-{your name}-{pull request number}`
-	- Fix docs order: `npm run readme-fix-docs-order -- --version=v2018-08-01-{your name}-{pull request number}`
-- test changes using preview on readme.io
-- if changes are fine, then:
+- Run `npm run manage-project -- --vt={your name}-{pull request number} --create` - this will create new version project with your tag number.
+- Visit url provided at the end of the script run to test changes using preview on readme.io
+- If you need to make a change:
+	- Do changes...
+	- Run `npm run manage-project -- --vt={your name}-{pull request number} --update`- this will update your version.
+	- Test changes using preview on readme.io
+    - If needed - **REPEAT** 
+- If changes are fine, then:
 	- Add a note in the changelog.
-	- `git commit`
-	- `git push`
+	- `git commit; git push`
 	- publish PR
-
 
 ## How to merge PR and update public documentation
 
 - Test changes on readme (you can use the version prepared by the contributor).
 - Ensure the changelog was updated.
 - Merge PR to `master` branch
-- In reamde.io, change the current documentation version from `v2018-08-01` to `v2018-08-01-deprecated-mm-dd-yyyy`
+- In readme.io, change the current documentation version from `v2018-08-01` to `v2018-08-01-deprecated-mm-dd-yyyy`
 - Change the name of your new release version from `2018-08-01-{your name}-{pull request number}` to `v2018-08-01`
 
 > [!NOTE] Readme.io cache pages for 15 minutes, for only logged out users. If you are logged in, then you will always receive the most recent content.

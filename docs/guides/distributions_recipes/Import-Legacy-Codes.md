@@ -1,7 +1,7 @@
 ---
 title: Import legacy codes
 excerpt: null
-categorySlug: distribution-1
+categorySlug: distributions-recipes
 slug: import-codes
 type: basic
 hidden: false

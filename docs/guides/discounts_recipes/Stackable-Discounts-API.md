@@ -1,7 +1,7 @@
 ---
 title: Stackable discounts API
 excerpt: 
-categorySlug: discounts
+categorySlug: discounts-recipes
 slug: manage-stackable-discounts
 type: basic
 hidden: false
