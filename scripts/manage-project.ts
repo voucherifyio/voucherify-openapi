@@ -106,17 +106,19 @@ const runCliProcess = async ({
   stdoutIncludes,
   stderrIncludes,
   resolveErrorAsFalse = false,
+  ignoreStdout = false,
 }: {
   command: string;
   stdoutIncludes?: string;
   stderrIncludes?: string;
   resolveErrorAsFalse?: boolean;
+  ignoreStdout?: boolean;
 }) => {
   return await new Promise((resolve) => {
     exec(command, (error, stdout, stderr) => {
       if (
         (stdoutIncludes && stdout?.includes(stdoutIncludes)) ||
-        (!stdoutIncludes && stdout) ||
+        (!ignoreStdout && !stdoutIncludes && stdout) ||
         (stderrIncludes && stderr.includes(stderrIncludes))
       ) {
         return resolve(true);
@@ -164,29 +166,9 @@ const uploadOpenApiFile = async (version) => {
   await runCliProcess({
     command: `rdme openapi ./reference/OpenAPI.json --version=${version} --create`,
     stderrIncludes: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`,
+    ignoreStdout: true,
   });
   console.log(colors.green("OPEN API FILE WAS UPLOADED"));
-};
-
-const updateReferenceDocs = async (version) => {
-  return await new Promise((resolve, reject) => {
-    exec(
-      `rdme docs ./docs/reference-docs --version=${version}`,
-      (error, stdout, stderr) => {
-        if (
-          stderr?.includes(
-            `We couldn't save this doc (Unable to find a category with the slug 'voucherify-api')`
-          )
-        ) {
-          return resolve(false);
-        }
-        if (stdout?.includes("successfully created")) {
-          return resolve(true);
-        }
-        return resolve(false);
-      }
-    );
-  });
 };
 
 const createNewVersion = async (version) => {
