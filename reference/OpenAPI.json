@@ -9589,7 +9589,11 @@
             "description": "Campaign type.",
             "default": "DISCOUNT_COUPONS"
           }
-        }
+        },
+        "required": [
+          "id",
+          "type"
+        ]
       },
       "4_obj_reward_object_parameters_CAMPAIGN_GIFT_VOUCHERS": {
         "title": "Gift Vouchers",
@@ -9610,7 +9614,12 @@
             "description": "Campaign type.",
             "default": "GIFT_VOUCHERS"
           }
-        }
+        },
+        "required": [
+          "id",
+          "balance",
+          "type"
+        ]
       },
       "4_obj_reward_object_parameters_CAMPAIGN_LOYALTY_PROGRAM": {
         "title": "Points on loyalty card",
@@ -9631,7 +9640,12 @@
             "description": "Campaign type.",
             "default": "LOYALTY_PROGRAM"
           }
-        }
+        },
+        "required": [
+          "id",
+          "balance",
+          "type"
+        ]
       },
       "4_obj_reward_object_parameters_COIN": {
         "title": "Pay with Points",
@@ -10187,7 +10201,168 @@
           }
         }
       },
-      "4_res_list_reward_assignments": {
+      "reward_assignment_base": {
+        "title": "Reward Assignment Base",
+        "type": "object",
+        "x-tags": [
+          "REWARDS API"
+        ],
+        "properties": {
+          "related_object_id": {
+            "type": "string",
+            "description": "Related object ID to which the reward was assigned.",
+            "example": "camp_wciTvaOfYmAa3EmIIW3QpXXZ"
+          },
+          "related_object_type": {
+            "description": "Related object type to which the reward was assigned.",
+            "enum": [
+              "campaign"
+            ]
+          }
+        },
+        "required": [
+          "related_object_id",
+          "related_object_type"
+        ]
+      },
+      "reward_assignment_identity": {
+        "title": "Reward Assignment Identity",
+        "type": "object",
+        "x-tags": [
+          "REWARDS API"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "rewa_PbIRoMXpwe5QhobW4JKu0VjH",
+            "description": "Unique reward assignment ID, assigned by Voucherify."
+          },
+          "reward_id": {
+            "type": "string",
+            "description": "Associated reward ID.",
+            "example": "rew_C7wS9eHFDN4CIbXI5PpLSkGY"
+          }
+        },
+        "required": [
+          "id",
+          "reward_id"
+        ]
+      },
+      "reward_assignment_response_data": {
+        "title": "Reward Assignment Response Data",
+        "type": "object",
+        "x-tags": [
+          "REWARDS API"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the reward assignment was created in ISO 8601 format.",
+            "example": "2022-08-11T14:49:22.586Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Timestamp representing the date and time when the reward assignment was updated in ISO 8601 format.",
+            "example": "2022-08-11T16:01:34.885Z",
+            "format": "date-time"
+          },
+          "object": {
+            "description": "The type of object represented by the JSON. This object stores information about the reward assignment.",
+            "enum": [
+              "reward_assignment"
+            ]
+          }
+        },
+        "required": [
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "reward_assignment_campaign_and_material_reward_parameters": {
+        "title": "Reward Assignment Campaign or Material Reward Parameters",
+        "type": "object",
+        "x-tags": [
+          "REWARDS API"
+        ],
+        "properties": {
+          "parameters": {
+            "description": "Defines the cost of the reward.",
+            "type": "object",
+            "properties": {
+              "loyalty": {
+                "type": "object",
+                "description": "Defines the equivalent points value of the reward.",
+                "required": [
+                  "points"
+                ],
+                "properties": {
+                  "points": {
+                    "type": "integer",
+                    "description": "The number of points required to redeem the reward."
+                  }
+                }
+              }
+            },
+            "required": [
+              "loyalty"
+            ]
+          }
+        },
+        "required": [
+          "parameters"
+        ]
+      },
+      "reward_assignment": {
+        "title": "Reward Assignment",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/reward_assignment_coin_reward"
+          },
+          {
+            "$ref": "#/components/schemas/reward_assignment_campaign_and_material_reward"
+          }
+        ],
+        "type": "object"
+      },
+      "reward_assignment_coin_reward": {
+        "title": "Reward Assignment - Coin Reward",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/reward_assignment_identity"
+          },
+          {
+            "$ref": "#/components/schemas/reward_assignment_base"
+          },
+          {
+            "$ref": "#/components/schemas/reward_assignment_response_data"
+          }
+        ],
+        "type": "object"
+      },
+      "reward_assignment_campaign_and_material_reward": {
+        "title": "Reward Assignment - Campaign or Material Reward",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/reward_assignment_identity"
+          },
+          {
+            "$ref": "#/components/schemas/reward_assignment_base"
+          },
+          {
+            "$ref": "#/components/schemas/reward_assignment_response_data"
+          },
+          {
+            "$ref": "#/components/schemas/reward_assignment_campaign_and_material_reward_parameters"
+          }
+        ],
+        "type": "object"
+      },
+      "rewards_list_assignments_response_body": {
         "type": "object",
         "description": "Response body schema for **GET** `/rewards/{rewardID}/assignments`.",
         "title": "List Reward Assignments Response Body",
@@ -10205,42 +10380,36 @@
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/4_obj_reward_assignment_object"
+              "$ref": "#/components/schemas/reward_assignment"
             }
           },
           "total": {
             "type": "integer",
             "description": "Total number of reward assignments."
           }
-        }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
       },
-      "4_req_update_reward_assignment": {
-        "type": "object",
-        "description": "Request body schema for **PUT** `/rewards/{rewardID}/assignments/{assignmentID}`.",
-        "title": "Update Reward Assignment Request Body",
-        "properties": {
-          "parameters": {
-            "type": "object",
-            "description": "Defines the cost of the reward.",
-            "properties": {
-              "loyalty": {
-                "type": "object",
-                "description": "Defines the equivalent points value of the reward.",
-                "properties": {
-                  "points": {
-                    "type": "integer",
-                    "description": "Number of points that will be subtracted from the loyalty card points balance if the reward is redeemed."
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "4_req_create_reward_assignment": {
-        "type": "object",
+      "rewards_create_assignment_request_body": {
         "description": "Request body schema for **POST** `/rewards/{rewardID}/assignments`.",
         "title": "Create Reward Assignment Request Body",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/rewards_create_assignment_campaign_and_material_reward_request_body"
+          },
+          {
+            "$ref": "#/components/schemas/rewards_create_assignment_coin_reward_request_body"
+          }
+        ]
+      },
+      "rewards_create_assignment_campaign_and_material_reward_request_body": {
+        "description": "Request body schema for **POST** `/rewards/{rewardID}/assignments`.",
+        "title": "Reward Assignment - Campaign Or Material Reward",
         "properties": {
           "campaign": {
             "type": "string",
@@ -10269,6 +10438,26 @@
         "required": [
           "campaign",
           "parameters"
+        ]
+      },
+      "rewards_create_assignment_coin_reward_request_body": {
+        "description": "Request body schema for **POST** `/rewards/{rewardID}/assignments`.",
+        "title": "Reward Assignment - Coin Reward",
+        "type": "object",
+        "properties": {
+          "campaign": {
+            "type": "string",
+            "description": "The campaign ID of the campaign to which the reward is to be assigned."
+          },
+          "validation_rules": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "campaign"
         ]
       },
       "5_obj_publication_object": {
@@ -22769,7 +22958,7 @@
           }
         }
       },
-      "8_obj_loyalty_tier_reward_object": {
+      "loyalties_loyalty_tier_reward": {
         "title": "Loyalty Tier Reward Object",
         "type": "object",
         "description": "This is an object representing a loyalty tier reward.",
@@ -22778,17 +22967,23 @@
         ],
         "properties": {
           "reward": {
-            "$ref": "#/components/schemas/4_obj_reward_object"
+            "$ref": "#/components/schemas/reward"
           },
           "assignment": {
-            "$ref": "#/components/schemas/4_obj_reward_assignment_object"
+            "$ref": "#/components/schemas/reward_assignment"
           },
           "object": {
-            "type": "string",
-            "default": "loyalty_tier_reward",
-            "description": "The type of object represented by JSON. This object stores information about the loyalty tier reward."
+            "description": "The type of object represented by JSON. This object stores information about the loyalty tier reward.",
+            "enum": [
+              "loyalty_tier_reward"
+            ]
           }
-        }
+        },
+        "required": [
+          "reward",
+          "assignment",
+          "object"
+        ]
       },
       "8_obj_loyalty_card_object_non_expanded_categories": {
         "title": "Loyalty Card Object",
@@ -29439,7 +29634,7 @@
           "$ref": "#/components/schemas/4_obj_reward_assignment_object"
         }
       },
-      "8_req_update_reward_assignment": {
+      "rewards_update_assignment_request_body": {
         "title": "Update Reward Assignment Request Body",
         "type": "object",
         "description": "Request body schema for **PUT** `/loyalties/{campaignId}/rewards/{assignmentId}`.",
@@ -29488,7 +29683,7 @@
           }
         }
       },
-      "8_res_list_loyalty_tier_rewards": {
+      "loyalties_list_loyalty_tier_rewards_response_body": {
         "title": "List Loyalty Tier Rewards",
         "type": "object",
         "description": "Response schema for `/loyalties/{campaignId}/tiers/{tierId}/rewards`.",
@@ -29507,14 +29702,20 @@
             "type": "array",
             "description": "Contains array of loyalty tier reward objects.",
             "items": {
-              "$ref": "#/components/schemas/8_obj_loyalty_tier_reward_object"
+              "$ref": "#/components/schemas/loyalties_loyalty_tier_reward"
             }
           },
           "total": {
             "type": "integer",
             "description": "Total number of loyalty tier reward objects."
           }
-        }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
       },
       "8_res_list_members": {
         "title": "List Members",
@@ -39540,9 +39741,6 @@
       },
       "EarningRuleBase": {
         "title": "EarningRuleBase",
-        "x-stoplight": {
-          "id": "w4ci1ljqva0r1"
-        },
         "type": "object",
         "properties": {
           "id": {
@@ -39680,9 +39878,6 @@
       },
       "EarningRuleEvent": {
         "title": "EarningRuleEvent",
-        "x-stoplight": {
-          "id": "6vxql7fnzg2zp"
-        },
         "type": "string",
         "enum": [
           "order.paid",
@@ -39697,9 +39892,6 @@
       },
       "EarningRuleFixed": {
         "title": "Define fixed amount of points",
-        "x-stoplight": {
-          "id": "r5o8m0sdli7fq"
-        },
         "type": "object",
         "properties": {
           "type": {
@@ -39731,9 +39923,6 @@
       },
       "EarningRuleProportionalOrderAmount": {
         "title": "Order Amount",
-        "x-stoplight": {
-          "id": "1z7lk7z1lp5af"
-        },
         "type": "object",
         "properties": {
           "type": {
@@ -39785,9 +39974,6 @@
       },
       "EarningRuleProportionalOrderTotalAmount": {
         "title": "Order Total Amount",
-        "x-stoplight": {
-          "id": "ekudxr430edgk"
-        },
         "type": "object",
         "properties": {
           "type": {
@@ -39839,9 +40025,6 @@
       },
       "EarningRuleProportionalOrderMetadata": {
         "title": "Order Metadata",
-        "x-stoplight": {
-          "id": "4ccw4gz8b47u5"
-        },
         "type": "object",
         "properties": {
           "type": {
@@ -39899,9 +40082,6 @@
       },
       "EarningRuleProportionalOrderItemsQuantity": {
         "title": "Order Items Quantity",
-        "x-stoplight": {
-          "id": "pqsn9otpzyot9"
-        },
         "type": "object",
         "properties": {
           "type": {
@@ -39968,9 +40148,6 @@
       },
       "EarningRuleProportionalOrderItemsAmount": {
         "title": "Order Items Amount",
-        "x-stoplight": {
-          "id": "8pg4o23daepkb"
-        },
         "type": "object",
         "properties": {
           "type": {
@@ -40037,9 +40214,6 @@
       },
       "EarningRuleProportionalOrderItemsSubtotalAmount": {
         "title": "Order Items Subtotal Amount",
-        "x-stoplight": {
-          "id": "duxy5qw36h5ph"
-        },
         "type": "object",
         "properties": {
           "type": {
@@ -40897,161 +41071,141 @@
           "user_id"
         ]
       },
-      "RewardAssignment": {
-        "title": "Reward Assignment",
+      "reward": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/reward_identity"
+          },
+          {
+            "$ref": "#/components/schemas/reward_base"
+          },
+          {
+            "$ref": "#/components/schemas/reward_created"
+          }
+        ]
+      },
+      "reward_base": {
         "type": "object",
         "properties": {
-          "id": {
+          "name": {
             "type": "string",
-            "description": "Unique reward assignment ID, assigned by Voucherify."
+            "description": "Reward name."
           },
-          "reward_id": {
-            "type": "string",
-            "description": "Associated reward ID."
+          "stock": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Configurable for **material rewards**. The number of units of the product that you want to share as reward."
           },
-          "related_object_id": {
-            "type": "string",
-            "description": "Related object ID to which the reward was assigned."
+          "redeemed": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Defines the number of already invoked (successful) reward redemptions.\t"
           },
-          "related_object_type": {
-            "type": "string",
-            "description": "Related object type to which the reward was assigned."
-          },
-          "parameters": {
+          "attributes": {
             "type": "object",
-            "description": "Defines the cost of the reward.",
+            "description": "These properties are configurable for **material rewards**.",
             "properties": {
-              "loyalty": {
-                "type": "object",
-                "description": "Defines the equivalent points value of the reward.",
-                "properties": {
-                  "points": {
-                    "type": "integer",
-                    "description": "The number of points required to redeem the reward."
-                  }
-                },
-                "required": [
-                  "points"
-                ]
+              "image_url": {
+                "type": "string",
+                "description": "The HTTPS URL pointing to the .png or .jpg file."
+              },
+              "description": {
+                "type": "string",
+                "description": "An arbitrary string that you can attach to a material reward."
               }
             }
           },
-          "created_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the reward assignment was created in ISO 8601 format.",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the reward assignment was updated in ISO 8601 format.",
-            "format": "date-time"
-          },
-          "object": {
-            "type": "string",
-            "description": "The type of object represented by the JSON. This object stores information about the reward assignment."
-          }
-        },
-        "required": [
-          "id",
-          "reward_id",
-          "created_at",
-          "object"
-        ]
-      },
-      "Reward": {
-        "allOf": [
-          {
+          "metadata": {
             "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Unique reward ID, assigned by Voucherify."
-              },
-              "name": {
-                "type": "string",
-                "description": "Reward name."
-              },
-              "stock": {
-                "type": "integer",
-                "description": "Configurable for material rewards. The number of units of the product that you want to share as reward."
-              },
-              "redeemed": {
-                "type": "integer",
-                "description": "Defines the number of already invoked (successful) reward redemptions."
-              },
-              "attributes": {
-                "type": "object",
-                "description": "These properties are configurable for material rewards.",
-                "properties": {
-                  "image_url": {
-                    "type": "string",
-                    "description": "The HTTPS URL pointing to the .png or .jpg file."
-                  },
-                  "description": {
-                    "type": "string",
-                    "description": "An arbitrary string that you can attach to a material reward."
-                  }
-                }
-              },
-              "created_at": {
-                "type": "string",
-                "format": "date-time",
-                "description": "Timestamp representing the date and time when the reward was created in ISO 8601 format."
-              },
-              "updated_at": {
-                "type": "string",
-                "format": "date-time",
-                "description": "Timestamp representing the date and time when the reward was updated in ISO 8601 format."
-              },
-              "object": {
-                "type": "string",
-                "default": "reward",
-                "pattern": "reward",
-                "description": "The type of object represented by the JSON. This object stores information about the reward."
-              }
-            },
-            "required": [
-              "id",
-              "created_at",
-              "object"
-            ]
+            "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format."
           },
-          {
-            "$ref": "#/components/schemas/RewardType"
-          }
-        ]
-      },
-      "RewardType": {
-        "title": "Reward Type",
-        "anyOf": [
-          {
-            "$ref": "#/components/schemas/RewardTypeCampaign"
-          },
-          {
-            "$ref": "#/components/schemas/RewardTypeCoin"
-          },
-          {
-            "$ref": "#/components/schemas/RewardTypeCoin"
-          }
-        ]
-      },
-      "RewardTypeCoin": {
-        "title": "Reward Type Coin",
-        "type": "object",
-        "properties": {
           "type": {
             "type": "string",
             "enum": [
-              "COIN"
+              "CAMPAIGN",
+              "COIN",
+              "MATERIAL"
             ],
             "description": "Reward type."
           },
           "parameters": {
-            "type": "object",
-            "required": [
-              "coin"
+            "$ref": "#/components/schemas/reward_type",
+            "description": "Defines how the reward is generated."
+          }
+        },
+        "required": [
+          "name",
+          "type",
+          "stock",
+          "redeemed",
+          "attributes",
+          "metadata"
+        ]
+      },
+      "reward_identity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "rew_nIy4gHpQHle2c3pNMwuj7G6j",
+            "description": "Unique reward ID, assigned by Voucherify."
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "reward_created": {
+        "type": "object",
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the reward was created in ISO 8601 format.",
+            "example": "2022-08-11T14:49:22.586Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
             ],
-            "description": "Defines how the reward is generated.",
+            "description": "Timestamp representing the date and time when the reward was updated in ISO 8601 format.",
+            "example": "2022-08-11T16:01:34.885Z",
+            "format": "date-time"
+          },
+          "object": {
+            "description": "The type of object represented by the JSON. This object stores information about the reward.",
+            "enum": [
+              "reward"
+            ]
+          }
+        },
+        "required": [
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "reward_type": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/reward_type_campaign"
+          },
+          {
+            "$ref": "#/components/schemas/reward_type_coin"
+          },
+          {
+            "$ref": "#/components/schemas/reward_type_material"
+          }
+        ]
+      },
+      "reward_type_coin": {
+        "title": "Reward Type - Coin",
+        "type": "object",
             "properties": {
               "coin": {
                 "type": "object",
@@ -41070,31 +41224,11 @@
                   }
                 }
               }
-            }
-          }
-        },
-        "required": [
-          "type",
-          "parameters"
-        ]
-      },
-      "RewardTypeMaterial": {
-        "title": "Reward Type Material",
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "MATERIAL"
-            ],
-            "description": "Reward type."
+            }, "required": ["coin"]
           },
-          "parameters": {
-            "type": "object",
-            "required": [
-              "product"
-            ],
-            "description": "Defines how the reward is generated.",
+      "reward_type_material": {
+        "title": "Reward Type - Material",
+        "type": "object",
             "properties": {
               "product": {
                 "type": "object",
@@ -41117,31 +41251,14 @@
                   }
                 }
               }
-            }
-          }
         },
         "required": [
-          "type",
-          "parameters"
+          "product"
         ]
       },
-      "RewardTypeCampaign": {
-        "title": "Reward Type Campaign",
+      "reward_type_campaign": {
+        "title": "Reward Type - Campaign",
         "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "enum": [
-              "CAMPAIGN"
-            ],
-            "description": "Reward type."
-          },
-          "parameters": {
-            "type": "object",
-            "required": [
-              "campaign"
-            ],
-            "description": "Defines how the reward is generated.",
             "properties": {
               "campaign": {
                 "type": "object",
@@ -41171,12 +41288,9 @@
                   }
                 }
               }
-            }
-          }
         },
         "required": [
-          "type",
-          "parameters"
+          "campaign"
         ]
       },
       "LoyaltiesAddOrRemoveCardBalanceResponseBody": {
@@ -43373,9 +43487,6 @@
       },
       "LoyaltiesCreateTiersRequestBody": {
         "title": "Loyalties Create Tiers Request Body",
-        "x-stoplight": {
-          "id": "i1emmwlaqp7lt"
-        },
         "type": "array",
         "items": {
           "allOf": [
@@ -43396,31 +43507,19 @@
       },
       "LoyaltiesCreateTiersResponseBody": {
         "title": "Loyalties Create Tiers Response Body",
-        "x-stoplight": {
-          "id": "ix7g5mnuwqsp6"
-        },
         "type": "array",
         "items": {
           "$ref": "#/components/schemas/LoyaltyTier"
         }
       },
       "LoyaltiesGetRewardAssignmentResponseBody": {
-        "$ref": "#/components/schemas/RewardAssignment",
-        "x-stoplight": {
-          "id": "fnbbaq9l1l9it"
-        }
+        "$ref": "#/components/schemas/reward_assignment"
       },
       "LoyaltiesGetRewardDetailsResponseBody": {
-        "$ref": "#/components/schemas/Reward",
-        "x-stoplight": {
-          "id": "44hds9u0hhukf"
-        }
+        "$ref": "#/components/schemas/reward"
       },
       "LoyaltiesListTiersRequestQuery": {
         "title": "Loyalties List Tiers Request Query",
-        "x-stoplight": {
-          "id": "d5sluzqkxu8km"
-        },
         "type": "object",
         "properties": {
           "limit": {
@@ -43447,9 +43546,6 @@
       },
       "LoyaltiesListLoyaltyTierEarningRulesRequestQuery": {
         "title": "LoyaltiesListLoyaltyTierEarningRulesRequestQuery",
-        "x-stoplight": {
-          "id": "zs0z1cyyzac9u"
-        },
         "type": "object",
         "properties": {
           "limit": {
@@ -43465,16 +43561,10 @@
         }
       },
       "LoyaltiesGetTierResponseBody": {
-        "$ref": "#/components/schemas/LoyaltyTier",
-        "x-stoplight": {
-          "id": "hzcsijl2b4d5o"
-        }
+        "$ref": "#/components/schemas/LoyaltyTier"
       },
       "LoyaltiesListTiersResponseBody": {
         "title": "Loyalties List Tiers Response Body",
-        "x-stoplight": {
-          "id": "kw06g2szvv479"
-        },
         "type": "object",
         "properties": {
           "object": {
@@ -43512,9 +43602,6 @@
       },
       "LoyaltiesListMemberLoyaltyTiersResponseBody": {
         "title": "Loyalties List Member Loyalty Tiers Response Body",
-        "x-stoplight": {
-          "id": "s3zpgud510xl6"
-        },
         "type": "object",
         "properties": {
           "object": {
@@ -43587,9 +43674,6 @@
       },
       "LoyaltiesListLoyaltyTierEarningRulesResponseBody": {
         "title": "Loyalties List Loyalty Tier Earning Rules ResponseBody",
-        "x-stoplight": {
-          "id": "i180zbh3ffwaa"
-        },
         "type": "object",
         "properties": {
           "object": {
@@ -43627,9 +43711,6 @@
       },
       "LoyaltyTierBase": {
         "title": "Loyalty Tier Base",
-        "x-stoplight": {
-          "id": "3af9422223696"
-        },
         "type": "object",
         "properties": {
           "name": {
@@ -43787,9 +43868,6 @@
       },
       "MappingMultiply": {
         "title": "MappingMultiply",
-        "x-stoplight": {
-          "id": "7zrwgr2oqh4tj"
-        },
         "type": "object",
         "properties": {
           "type": {
@@ -43807,9 +43885,6 @@
       },
       "MappingFixed": {
         "title": "MappingFixed",
-        "x-stoplight": {
-          "id": "86eksegayxcxa"
-        },
         "type": "object",
         "properties": {
           "type": {
@@ -54051,7 +54126,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/4_res_list_reward_assignments"
+                  "$ref": "#/components/schemas/rewards_list_assignments_response_body"
                 },
                 "examples": {
                   "Example": {
@@ -54139,7 +54214,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/4_req_create_reward_assignment"
+                "$ref": "#/components/schemas/rewards_create_assignment_request_body"
               },
               "examples": {
                 "Example": {
@@ -54162,7 +54237,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/4_obj_reward_assignment_object"
+                  "$ref": "#/components/schemas/reward_assignment"
                 },
                 "examples": {
                   "Example": {
@@ -54308,7 +54383,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/4_req_update_reward_assignment"
+                "$ref": "#/components/schemas/rewards_update_assignment_request_body"
               },
               "examples": {
                 "Example": {
@@ -54330,7 +54405,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/4_obj_reward_assignment_object"
+                  "$ref": "#/components/schemas/reward_assignment"
                 },
                 "examples": {
                   "Example": {
@@ -54452,7 +54527,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/4_obj_reward_assignment_object"
+                  "$ref": "#/components/schemas/reward_assignment"
                 }
               }
             }
@@ -72723,7 +72798,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/4_obj_reward_assignment_object"
+                  "$ref": "#/components/schemas/reward_assignment"
                 },
                 "examples": {
                   "Example": {
@@ -72820,7 +72895,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/8_req_update_reward_assignment"
+                "$ref": "#/components/schemas/rewards_update_assignment_request_body"
               },
               "examples": {
                 "Example": {
@@ -75763,7 +75838,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_res_list_loyalty_tier_rewards"
+                  "$ref": "#/components/schemas/loyalties_list_loyalty_tier_rewards_response_body"
                 },
                 "examples": {
                   "Example": {

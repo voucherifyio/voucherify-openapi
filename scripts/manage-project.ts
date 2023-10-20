@@ -80,11 +80,11 @@ const isVersionExists = async (version: string) => {
 
 const uploadReferenceDocsWithMaxNumberOfAttempts = async (
   version,
-  maxNumberOfUploadingAttempts = 6
+  maxNumberOfUploadingAttempts = 3
 ) => {
   console.log(colors.green("UPLOADING REFERENCE DOC FILES..."));
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
-    await new Promise((r) => setTimeout(r, 5000));
+    await new Promise((r) => setTimeout(r, 10000));
     const success = await runCliProcess({
       command: `rdme docs ./docs/reference-docs --version=${version}`,
       stdoutIncludes: "successfully created",
@@ -122,11 +122,11 @@ const runCliProcess = async ({
       ) {
         return resolve(true);
       }
+      if (stderr) {
+        console.log("Error: \n", stderr)
+      }
       if (resolveErrorAsFalse) {
         return resolve(false);
-      }
-      if (stderr) {
-        console.log(stderr);
       }
       throw error;
     });
@@ -230,7 +230,7 @@ const cleanProject = async (version) => {
   );
   console.log(colors.green(`REFERENCE CATEGORIES UPDATED!`));
   const allApiSpecifications = await getAllApiSpecifications(version);
-  await asyncMap(allApiSpecifications, deleteSpecification);
+  await asyncMap(allApiSpecifications, (apiSpecification) =>  deleteSpecification(apiSpecification.id));
   console.log(colors.green(`API SPECIFICATIONS DELETED!`));
   console.log(colors.green(`VERSION "${version}" IS CLEANED UP!`));
   return;
