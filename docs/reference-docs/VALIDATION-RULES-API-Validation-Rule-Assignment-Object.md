@@ -16,7 +16,7 @@ order: 2
 | related_object_id</br>`string` | <p>The resource ID to which the validation rule was assigned.</p> **Example:** <p>v_JtWunK6jUo7X2qOFj0SyRHq4p9tgENlT</p> |
 | related_object_type</br>`string` | <p>The type of resource to which the validation rule was assigned.</p> Available values: `voucher`, `campaign`, `earning_rule`, `reward_assignment`, `promotion_tier`, `distribution` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the validation rule assignment was created in ISO 8601 format.</p> **Example:** <p>2022-02-17T08:18:15.085Z</p> |
-| object | <p>The type of object represented by the ID.</p> Available values: `validation_rules_assignment` |
+| object</br>`string` | <p>The type of object represented by the ID.</p> Available values: `validation_rules_assignment` |
 
 [block:html]
 {
