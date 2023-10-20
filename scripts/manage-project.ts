@@ -36,29 +36,41 @@ const main = async ({
   create?: boolean;
   update?: boolean;
 }) => {
-  const valid = validateOptions({ help, version, create, update });
+  if (process.env.README_IO_AUTH?.length < 10) {
+    console.log(
+      colors.red("`README_IO_AUTH` was not provided in `.env` file :/")
+    );
+    return;
+  }
+  const valid = await validateOptions({ help, version, create, update });
   if (!valid) {
     return;
   }
   if (create) {
     await createNewVersion(version);
-  } else if (!(await isVersionExists(version))) {
-    console.log(
-      colors.red(
-        `Version ${version} does not exist! Create it first. Use parameter --update instead of --create`
-      )
-    );
-    return;
   }
   await cleanProject(version);
   await uploadOpenApiFile(version);
   await buildMdTables();
   await updateMdTablesInDocs();
+  await uploadImagesUsedInMdFiles();
   await uploadGuideFiles(version);
   await uploadReferenceDocsWithMaxNumberOfAttempts(version);
   console.log(
     colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`)
   );
+};
+
+const uploadImagesUsedInMdFiles = async () => {
+  console.log(
+    colors.green(
+      "LOOKING FOR NOT UPLOADED IMAGES IN MD FILES, UPLOADING IF NEEDED..."
+    )
+  );
+  await runCliProcess({
+    command: `npm run readme-upload-missing-images`,
+  });
+  console.log(colors.green("OPERATION WAS COMPLETED SUCCESSFULLY!"));
 };
 
 const isVersionExists = async (version: string) => {
@@ -171,7 +183,7 @@ const uploadOpenApiFile = async (version) => {
 };
 
 const createNewVersion = async (version) => {
-  //create fork
+  console.log(colors.green("CREATING NEW VERSION"));
   try {
     const response = await fetch(`https://dash.readme.com/api/v1/version`, {
       method: "POST",
@@ -189,7 +201,7 @@ const createNewVersion = async (version) => {
         version,
       }),
     });
-    if (response.status !== 200) {
+    if (response.status !== 200 && !(await isVersionExists(version))) {
       throw new Error(
         `Response status: ${response.status}, maybe this versionTag is already created?`
       );
@@ -318,7 +330,7 @@ const asyncMap = (arr, asyncFn) => {
   return Promise.all(arr.map(asyncFn));
 };
 
-const validateOptions = ({
+const validateOptions = async ({
   help,
   version,
   create,
@@ -353,6 +365,22 @@ const validateOptions = ({
     console.log(
       colors.red(
         "invalid arguments, you provided conflicting arguments `update` and `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
+      )
+    );
+    return false;
+  }
+  if (update && !(await isVersionExists(version))) {
+    console.log(
+      colors.red(
+        `Version ${version} does not exist! Create it first. Use parameter --create instead of --update`
+      )
+    );
+    return false;
+  }
+  if (create && (await isVersionExists(version))) {
+    console.log(
+      colors.red(
+        `Version ${version} already exist! Update it instead. Use parameter --update instead of --create`
       )
     );
     return false;
