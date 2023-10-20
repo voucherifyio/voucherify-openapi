@@ -36,14 +36,7 @@ const main = async ({
   create?: boolean;
   update?: boolean;
 }) => {
-  if (process.env.README_IO_AUTH?.length < 10) {
-    console.log(
-      colors.red("`README_IO_AUTH` was not provided in `.env` file :/")
-    );
-    return;
-  }
-  const valid = await validateOptions({ help, version, create, update });
-  if (!valid) {
+  if (!(await validate({ help, version, create, update }))) {
     return;
   }
   if (create) {
@@ -330,7 +323,7 @@ const asyncMap = (arr, asyncFn) => {
   return Promise.all(arr.map(asyncFn));
 };
 
-const validateOptions = async ({
+const validate = async ({
   help,
   version,
   create,
@@ -341,6 +334,12 @@ const validateOptions = async ({
   create?: boolean;
   update?: boolean;
 }) => {
+  if (process.env.README_IO_AUTH?.length < 10) {
+    console.log(
+      colors.red("`README_IO_AUTH` was not provided in `.env` file :/")
+    );
+    return;
+  }
   if (help || (!version && !create && !update)) {
     printHelp();
     return false;
