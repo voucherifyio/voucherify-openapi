@@ -1,6 +1,6 @@
 # Changelog
 
-# 20231019
+# 20231019 - Vouchers
 
 - Vouchers - List Gift Card Transactions  (**GET** `/vouchers/{code}/transactions`) renamed to List Voucher Transactions
 - Vouchers - Export Gift Card Transactions  (**GET** `/vouchers/{code}/transactions/export`) renamed to Export Voucher Transactions
@@ -40,6 +40,67 @@
 
 - Added missing method for endpoint: GET `/validation-rules-assignments (client.client.validationRules.listRulesAssignments(validationRuleId))`
     - Request body schema: `validation_rules_list_rules_assignments_response_body`
+
+
+## 20231016 - Rewards
+
+**New models**
+- reward
+- reward_base
+- reward_identity
+- reward_response_data
+- reward_parameters
+
+- reward_parameters_CAMPAIGN
+- reward_parameters_COIN
+- reward_parameters_MATERIAL
+- reward_assignment
+- reward_assignment_base
+- reward_assignment_identity
+- reward_assignment_response_data
+- rewards_list_assignments_response_body
+- rewards_create_assignment_request_body
+- rewards_create_assignment_coin_reward_request_body
+- rewards_create_assignment_main_reward_request_body
+- rewards_update_assignment_request_body
+
+**Endpoint changes**
+- Added missing method for endpoint: GET `/v1/rewards/{rewardId)}/assignments/{assignmentId}`
+    - Response body schema: `reward_assignment`
+- GET `/v1/rewards/{rewardId}/assignments` (listAssignments)
+    - New response schema: `rewards_list_assignments_response_body` (old one: `4_res_list_reward_assignments`)
+- POST `/v1/rewards/{rewardId}/assignments` (createAssignment)
+    - New request schema: `rewards_create_assignment_request_body` (old one: `4_req_create_reward_assignment`)
+    - New response schema: `reward_assignment` (old one: `4_obj_reward_assignment_object`)
+- PUT `/v1/rewards/{rewardId}/assignments/{assignmentId}` (updateAssignment)
+    - New request schema: `rewards_update_assignment_request_body` (old one: `4_req_update_reward_assignment`)
+    - New response schema: `reward_assignment` (old one: `4_obj_reward_assignment_object`)
+
+## 20231016 - Loyalties
+
+**New models**
+- reward
+- reward_base
+- reward_identity
+- reward_response_data
+- reward_parameters
+
+- reward_parameters_CAMPAIGN
+- reward_parameters_COIN
+- reward_parameters_MATERIAL
+- reward_assignment
+- reward_assignment_base
+- reward_assignment_identity
+- reward_assignment_response_data
+- loyalties_list_loyalty_tier_rewards_response_body
+- loyalties_loyalty_tier_reward (old one: `8_obj_loyalty_tier_reward_object`)
+- 
+
+**Endpoint changes**
+- Added missing method for endpoint: GET `/v1/loyalties/{campaignId)}/rewards/{assignmentId}`
+    - Response body schema: `reward_assignment`
+- Added missing method for endpoint: GET `/v1/loyalties/{campaignId)}/tiers/{tierId}/rewards`
+    - Response body schema: `loyalties_list_loyalty_tier_rewards_response_body`
 
 ## 20231012 - Product Collections
 
