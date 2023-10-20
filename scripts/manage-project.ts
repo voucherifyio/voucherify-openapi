@@ -90,7 +90,7 @@ const uploadReferenceDocsWithMaxNumberOfAttempts = async (
   console.log(colors.green("UPLOADING REFERENCE DOC FILES..."));
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
     await new Promise((r) => setTimeout(r, 10000));
-    const success = await runCliProcess({
+    const { success, error } = await runCliProcess({
       command: `rdme docs ./docs/reference-docs --version=${version}`,
       stdoutIncludes: "successfully created",
       resolveErrorAsFalse: true,
@@ -100,6 +100,7 @@ const uploadReferenceDocsWithMaxNumberOfAttempts = async (
       break;
     }
     if (i === maxNumberOfUploadingAttempts) {
+      console.log(error);
       throw new Error("REFERENCE DOC FILES WERE NOT UPLOADED!");
     }
   }
@@ -116,7 +117,7 @@ const runCliProcess = async ({
   stdoutIncludes?: string;
   stderrIncludes?: string;
   resolveErrorAsFalse?: boolean;
-}) => {
+}): Promise<{ success: boolean; error?: string }> => {
   return await new Promise((resolve) => {
     exec(command, (error, stdout, stderr) => {
       const stdoutClean = stdout.replace(/.*voucherify/, "").trim();
@@ -125,13 +126,13 @@ const runCliProcess = async ({
         (!stdoutIncludes && stdoutClean) ||
         (stderrIncludes && stderr.includes(stderrIncludes))
       ) {
-        return resolve(true);
-      }
-      if (stderr) {
-        console.log("Error: \n", stderr);
+        return resolve({ success: true });
       }
       if (resolveErrorAsFalse) {
-        return resolve(false);
+        return resolve({ success: false, error: `Error: \n${stderr}` });
+      }
+      if (stderr) {
+        console.log(`Error: \n${stderr}`);
       }
       throw error;
     });
