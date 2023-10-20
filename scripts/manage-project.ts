@@ -11,7 +11,7 @@ const { create, update } = options;
 const help = options.help || options.h;
 const mainVersion = "v2018-08-01";
 const version =
-  versionOption || versionTag ? `${mainVersion}-${versionTag}` : undefined;
+    versionOption || versionTag ? `${mainVersion}-${versionTag}` : undefined;
 
 const listOfGuideCategories = [
   "Getting started",
@@ -26,11 +26,11 @@ const listOfGuideCategories = [
 const listOfReferenceCategories = ["Introduction"];
 
 const main = async ({
-  help,
-  version,
-  create,
-  update,
-}: {
+                      help,
+                      version,
+                      create,
+                      update,
+                    }: {
   help?: boolean;
   version?: string;
   create?: boolean;
@@ -44,9 +44,9 @@ const main = async ({
     await createNewVersion(version);
   } else if (!(await isVersionExists(version))) {
     console.log(
-      colors.red(
-        `Version ${version} does not exist! Create it first. Use parameter --update instead of --create`
-      )
+        colors.red(
+            `Version ${version} does not exist! Create it first. Use parameter --update instead of --create`
+        )
     );
     return;
   }
@@ -57,30 +57,30 @@ const main = async ({
   await uploadGuideFiles(version);
   await uploadReferenceDocsWithMaxNumberOfAttempts(version);
   console.log(
-    colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`)
+      colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`)
   );
 };
 
 const isVersionExists = async (version: string) => {
   return (
-    (
-      await fetch(
-        `https://dash.readme.com/api/v1/api-specification?perPage=100&page=1`,
-        {
-          method: "GET",
-          headers: {
-            "x-readme-version": version,
-            authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
-          },
-        }
-      )
-    ).status === 200
+      (
+          await fetch(
+              `https://dash.readme.com/api/v1/api-specification?perPage=100&page=1`,
+              {
+                method: "GET",
+                headers: {
+                  "x-readme-version": version,
+                  authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
+                },
+              }
+          )
+      ).status === 200
   );
 };
 
 const uploadReferenceDocsWithMaxNumberOfAttempts = async (
-  version,
-  maxNumberOfUploadingAttempts = 3
+    version,
+    maxNumberOfUploadingAttempts = 3
 ) => {
   console.log(colors.green("UPLOADING REFERENCE DOC FILES..."));
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
@@ -102,11 +102,11 @@ const uploadReferenceDocsWithMaxNumberOfAttempts = async (
 };
 
 const runCliProcess = async ({
-  command,
-  stdoutIncludes,
-  stderrIncludes,
-  resolveErrorAsFalse = false,
-}: {
+                               command,
+                               stdoutIncludes,
+                               stderrIncludes,
+                               resolveErrorAsFalse = false,
+                             }: {
   command: string;
   stdoutIncludes?: string;
   stderrIncludes?: string;
@@ -116,9 +116,9 @@ const runCliProcess = async ({
     exec(command, (error, stdout, stderr) => {
       const stdoutClean = stdout.replace(/.*voucherify/, "").trim();
       if (
-        (stdoutIncludes && stdoutClean?.includes(stdoutIncludes)) ||
-        (!stdoutIncludes && stdoutClean) ||
-        (stderrIncludes && stderr.includes(stderrIncludes))
+          (stdoutIncludes && stdoutClean?.includes(stdoutIncludes)) ||
+          (!stdoutIncludes && stdoutClean) ||
+          (stderrIncludes && stderr.includes(stderrIncludes))
       ) {
         return resolve(true);
       }
@@ -132,6 +132,7 @@ const runCliProcess = async ({
     });
   });
 };
+
 const uploadGuideFiles = async (version) => {
   console.log(colors.green("UPLOADING GUIDES DOC FILES..."));
   await runCliProcess({
@@ -158,9 +159,9 @@ const buildMdTables = async () => {
 
 const uploadOpenApiFile = async (version) => {
   console.log(
-    colors.green(
-      "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE"
-    )
+      colors.green(
+          "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE"
+      )
   );
   await runCliProcess({
     command: `rdme openapi ./reference/OpenAPI.json --version=${version} --create`,
@@ -190,13 +191,13 @@ const createNewVersion = async (version) => {
     });
     if (response.status !== 200) {
       throw new Error(
-        `Response status: ${response.status}, maybe this versionTag is already created?`
+          `Response status: ${response.status}, maybe this versionTag is already created?`
       );
     }
     console.log(colors.green(`FORK CREATED! VERSION "${version}"`));
   } catch (error) {
     console.log(colors.red(`Error while creating fork from ${mainVersion}!`)),
-      error;
+        error;
     throw new Error(error);
   }
 };
@@ -205,8 +206,8 @@ const cleanProject = async (version) => {
   const categoriesToDelete = await getAllCategories(version);
   //delete all categories
   await asyncMap(
-    categoriesToDelete,
-    async (category) => await deleteCategory(version, category.slug)
+      categoriesToDelete,
+      async (category) => await deleteCategory(version, category.slug)
   );
   console.log(colors.green(`OLD CATEGORIES DELETED!`));
   //create categories one by one (creation order is important)
@@ -220,13 +221,13 @@ const cleanProject = async (version) => {
   const allCategories = await getAllCategories(version);
   //update reference categories types
   await asyncMap(
-    listOfReferenceCategories,
-    async (categoryTitle) =>
-      await updateCategory(
-        version,
-        allCategories.find((category) => category.title === categoryTitle).slug,
-        { type: "reference" }
-      )
+      listOfReferenceCategories,
+      async (categoryTitle) =>
+          await updateCategory(
+              version,
+              allCategories.find((category) => category.title === categoryTitle).slug,
+              { type: "reference" }
+          )
   );
   console.log(colors.green(`REFERENCE CATEGORIES UPDATED!`));
   const allApiSpecifications = await getAllApiSpecifications(version);
@@ -250,18 +251,18 @@ const updateCategory = async (version, slug, data = {}) => {
 };
 
 const getAllCategories = async (version) =>
-  await (
-    await fetch(
-      `https://dash.readme.com/api/v1/categories?perPage=100&page=1`,
-      {
-        method: "GET",
-        headers: {
-          "x-readme-version": version,
-          authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
-        },
-      }
-    )
-  ).json();
+    await (
+        await fetch(
+            `https://dash.readme.com/api/v1/categories?perPage=100&page=1`,
+            {
+              method: "GET",
+              headers: {
+                "x-readme-version": version,
+                authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
+              },
+            }
+        )
+    ).json();
 
 const deleteCategory = async (version, slug) => {
   await fetch(`https://dash.readme.com/api/v1/categories/${slug}`, {
@@ -288,18 +289,18 @@ const createCategory = async (version, title) => {
 };
 
 const getAllApiSpecifications = async (version) =>
-  await (
-    await fetch(
-      `https://dash.readme.com/api/v1/api-specification?perPage=100&page=1`,
-      {
-        method: "GET",
-        headers: {
-          "x-readme-version": version,
-          authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
-        },
-      }
-    )
-  ).json();
+    await (
+        await fetch(
+            `https://dash.readme.com/api/v1/api-specification?perPage=100&page=1`,
+            {
+              method: "GET",
+              headers: {
+                "x-readme-version": version,
+                authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
+              },
+            }
+        )
+    ).json();
 
 const deleteSpecification = async (id) => {
   await fetch(`https://dash.readme.com/api/v1/api-specification/${id}`, {
@@ -316,11 +317,11 @@ const asyncMap = (arr, asyncFn) => {
 };
 
 const validateOptions = ({
-  help,
-  version,
-  create,
-  update,
-}: {
+                           help,
+                           version,
+                           create,
+                           update,
+                         }: {
   help?: boolean;
   version?: string;
   create?: boolean;
@@ -332,25 +333,25 @@ const validateOptions = ({
   }
   if (!version) {
     console.log(
-      colors.red(
-        "invalid arguments, missing `version` or `versionTag`, check `help` for more information\nrun 'npm run manage-project -- --help'"
-      )
+        colors.red(
+            "invalid arguments, missing `version` or `versionTag`, check `help` for more information\nrun 'npm run manage-project -- --help'"
+        )
     );
     return false;
   }
   if (!create && !update) {
     console.log(
-      colors.red(
-        "invalid arguments, missing `update` or `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
-      )
+        colors.red(
+            "invalid arguments, missing `update` or `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
+        )
     );
     return false;
   }
   if (create && update) {
     console.log(
-      colors.red(
-        "invalid arguments, you provided conflicting arguments `update` and `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
-      )
+        colors.red(
+            "invalid arguments, you provided conflicting arguments `update` and `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
+        )
     );
     return false;
   }
@@ -359,20 +360,20 @@ const validateOptions = ({
 
 const printHelp = () => {
   console.log(
-    colors.green(
-      `options:` +
-        `\n"versionTag" or "vt" for versionTag` +
-        `\n"version" or "v" for version` +
-        `\n"create" if you want to create such version` +
-        `\n"update" if you want to update such version` +
-        `\n\nversionTag or version is required!` +
-        `\ncreate or update option is required!` +
-        `\n\nexamples:` +
-        `\nnpm run manage-project -- --vt=piotr-123 --create` +
-        `\nnpm run manage-project -- --v=v2018-08-01-piotr-123 --create` +
-        `\nnpm run manage-project -- --vt=piotr-123 --update` +
-        `\nnpm run manage-project -- --v=v2018-08-01-piotr-123 --update`
-    )
+      colors.green(
+          `options:` +
+          `\n"versionTag" or "vt" for versionTag` +
+          `\n"version" or "v" for version` +
+          `\n"create" if you want to create such version` +
+          `\n"update" if you want to update such version` +
+          `\n\nversionTag or version is required!` +
+          `\ncreate or update option is required!` +
+          `\n\nexamples:` +
+          `\nnpm run manage-project -- --vt=piotr-123 --create` +
+          `\nnpm run manage-project -- --v=v2018-08-01-piotr-123 --create` +
+          `\nnpm run manage-project -- --vt=piotr-123 --update` +
+          `\nnpm run manage-project -- --v=v2018-08-01-piotr-123 --update`
+      )
   );
 };
 
