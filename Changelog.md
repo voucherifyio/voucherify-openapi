@@ -1,5 +1,47 @@
 # Changelog
 
+# 20231019 - Vouchers
+
+- Vouchers - List Gift Card Transactions  (**GET** `/vouchers/{code}/transactions`) renamed to List Voucher Transactions
+- Vouchers - Export Gift Card Transactions  (**GET** `/vouchers/{code}/transactions/export`) renamed to Export Voucher Transactions
+
+**New models**
+- vouchers_list_vouchers_transactions_response_body (old `1_res_vouchers_code_transactions`)
+- voucher_transaction (old `1_obj_gift_card_transaction_object`)
+- gift_card_transaction
+- gift_card_transaction_identity
+- gift_card_transaction_base
+- gift_card_transaction_created
+- gift_card_transaction_details
+- gift_card_transaction_redemption_details (old `1_obj_gift_card_transaction_object_redemption`)
+- gift_card_transaction_refund_details (old `1_obj_gift_card_transaction_object_refund`)
+- gift_card_transaction_addition_details (old `1_obj_gift_card_transaction_object_addition`)
+- gift_card_transaction_removal_details (old `1_obj_gift_card_transaction_object_removal`)
+
+- vouchers_export_transactions_request_body (old `1_req_create_gift_card_transactions_export`
+- voucher_transactions_export (old `1_obj_export_transactions_object`)
+- voucher_transactions_export_parameters (old `1_obj_export_gift_card_transactions`)
+- voucher_transactions_filters (old `16_obj_export_gift_card_transactions`)
+- voucher_transactions_export_filter_conditions (old `16_obj_filter_gift_card_transactions_voucher_id`)
+
+- validation_rules_list_rules_assignments_response_body (old `13_res_validation-rules_validationRuleId_assignments`)
+- validation_rule_assignment (old `13_obj_validation_rule_assignment_object`)
+
+**Removed models**
+- `8_obj_export_loyalty_card_transactions` - used only in one place, replaced with: `voucher_transactions_export_parameters` in `8_req_create_loyalty_card_transactions_export` schema
+
+**Endpoint changes**
+
+- Added missing method for endpoint: GET `/vouchers/{code}/transactions (client.vouchers.listTransactions(code, query))`
+    - Response body schema: `vouchers_list_vouchers_transactions_response_body`
+
+- Added missing method for endpoint: POST `/vouchers/{code}/transactions/export (client.vouchers.exportTransactions(code, body))`
+    - Request body schema: `vouchers_export_transactions_request_body`
+
+- Added missing method for endpoint: GET `/validation-rules-assignments (client.client.validationRules.listRulesAssignments(validationRuleId))`
+    - Request body schema: `validation_rules_list_rules_assignments_response_body`
+
+
 ## 20231016 - Rewards
 
 **New models**
