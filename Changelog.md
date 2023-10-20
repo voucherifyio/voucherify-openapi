@@ -1,5 +1,30 @@
 # Changelog
 
+## 20231020
+
+**Added schemas**
+- Category
+- CategoriesListResponseBody
+- CategoriesCreateRequestBody
+- CategoriesCreateResponseBody
+- CategoriesGetResponseBody
+- CategoriesUpdateRequestBody
+- CategoriesUpdateResponseBody
+
+**Endpoints changes**
+- `/v1/categories`
+  - GET
+    - Response schema was replaced with `CategoriesListResponseBody` (old 20_res_list_categories)
+  - POST
+    - Request parameters schema was replaced with `CategoriesCreateRequestBody` (old 20_req_create_category)
+    - Response schema was replaced with `CategoriesCreateResponseBody` (old 20_res_create_category)
+- `/v1/categories/{categoryId}`
+  - GET
+    - Response schema was replaced with `CategoriesGetResponseBody` (old 20_obj_category_object)
+  - PUT
+    - Request parameters schema was replaced with `CategoriesUpdateRequestBody` (old 20_req_update_categories_categoryId)
+    - Response schema was replaced with `CategoriesUpdateResponseBody` (old 20_obj_category_object)
+
 ## 20231019 - Promotions Stacks
 
 #### New schemas
