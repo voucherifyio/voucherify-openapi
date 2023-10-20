@@ -2,6 +2,7 @@ import * as fsPromises from "fs/promises";
 import * as fs from "fs";
 import path from "path";
 import axios from "axios";
+import FormData from "form-data";
 
 const readmeUploadMissingImages = async () => {
   if (process.env.README_IO_AUTH?.length < 10) {
@@ -61,7 +62,6 @@ const readmeUploadMissingImages = async () => {
   console.log("Done!");
 };
 
-const FormData = require("form-data");
 const uploadImageToReadme = async (pathToFile) => {
   const fileStream = fs.createReadStream(pathToFile);
   const form = new FormData();
