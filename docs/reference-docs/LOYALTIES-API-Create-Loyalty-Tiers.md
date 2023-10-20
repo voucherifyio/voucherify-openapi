@@ -1,11 +1,11 @@
 ---
-title: List Gift Card Transactions
+title: Create Loyalty Tiers
 type: endpoint
 categorySlug: voucherify-api
-slug: list-gift-card-transactions
-parentDocSlug: vouchers-api
+slug: create-loyalty-tiers
+parentDocSlug: loyalties-api
 hidden: false
-order: 11
+order: 44
 ---
 [block:html]
 {

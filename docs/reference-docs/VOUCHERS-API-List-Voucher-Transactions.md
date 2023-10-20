@@ -1,11 +1,11 @@
 ---
-title: Get Product Collection
+title: List Voucher Transactions
 type: endpoint
 categorySlug: voucherify-api
-slug: get-product-collection
-parentDocSlug: product-collections-api
+slug: list-voucher-transactions
+parentDocSlug: vouchers-api
 hidden: false
-order: 4
+order: 11
 ---
 [block:html]
 {

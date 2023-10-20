@@ -1,7 +1,7 @@
 ---
 title: Geofencing
 excerpt: 
-categorySlug: distribution-1
+categorySlug: distributions-recipes
 slug: geofencing
 type: link
 hidden: false
