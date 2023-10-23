@@ -1,5 +1,17 @@
 # Changelog
 
+## 20230923 - Endpoint bugfixes and improvements
+
+- Described customer object in Track custom event endpoint
+- Fixed qualifications filters (missing and wrong properties)
+- Fixed wrong name of rollback object in Rollback Stackable Redemptions response
+
+| **API** | **Endpoint**                    | **Slug**             |
+|---|---------------------------------|----------------------|
+| **Events** | Track Custom Event              | track-custom-event | true |
+| **Qualifications** | Examine Qualification           | examine-qualification | true |
+| **Stackable Discounts** |  Rollback Stackable Redemptions | rollback-stackable-redemptions | rollback-stacked-redemptions | true |
+
 ## 20231020
 
 **Added schemas**
@@ -598,9 +610,6 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 /docs/orders-1  -> /docs/orders
 /docs/vouchers-1 -> /docs/vouchers
 /docs/campaigns-1 -> /docs/campaigns
-/docs/checking-eligibility-for-coupons -> /docs/checking-eligibility
-/reference/examine-qualification -> /reference/check-eligibility
-/reference/examine-qualification-client-side -> /reference/check-eligibility-client-side
 /reference/vouchers-get -> /reference/get-voucher
 /reference/add-gift-voucher-balance -> /reference/add-remove-gift-voucher-balance
 /reference/import-vouchers-1 -> /reference/import-vouchers
