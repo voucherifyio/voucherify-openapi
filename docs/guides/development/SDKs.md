@@ -1,7 +1,7 @@
 ---
 title: SDKs
 excerpt: 
-category: 639ba16d677235008f800447
+categorySlug: development
 slug: sdks
 type: basic
 hidden: false

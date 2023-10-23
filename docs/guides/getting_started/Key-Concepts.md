@@ -1,7 +1,7 @@
 ---
 title: Key concepts
 excerpt: Voucherify offers several building blocks to help you implement promotional campaigns and integrate it with your stack. 
-category: 639ba16d677235008f80043f
+categorySlug: getting-started
 slug: key-concepts
 type: basic
 hidden: false
@@ -22,7 +22,7 @@ Every promotion type implements these five stages in a slightly different way, b
 
 They are eligible if at least one of two conditions is met:
 
-* They have a code (e.g. coupon, referral code, a gift card).
+* They have a code (e.g. coupon, referral code, a gift card) and they match predefined eligibility conditions
 * They match predefined promotion conditions (e.g. in-cart promotions based on cart structure and customer attributes, earning enough loyalty points to be rewarded, or drawn in a giveaway lottery).
 
 Let's take a look at how Voucherify objects come into play when implementing a campaign workflow.

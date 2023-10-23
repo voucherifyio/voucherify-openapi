@@ -1,7 +1,7 @@
 ---
 title: Rewards
 excerpt: 
-category: 639ba16d677235008f800454
+categorySlug: building-blocks
 slug: rewards
 type: basic
 hidden: false

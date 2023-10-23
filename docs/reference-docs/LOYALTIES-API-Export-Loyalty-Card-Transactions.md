@@ -1,11 +1,11 @@
 ---
 title: Export Loyalty Card Transactions
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: export-loyalty-card-transactions
-parentDoc: 639ba2658407100061f5fab6
+parentDocSlug: loyalties-api
 hidden: false
-order: 18
+order: 21
 ---
 [block:html]
 {

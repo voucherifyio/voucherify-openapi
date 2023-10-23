@@ -1,11 +1,11 @@
 ---
 title: Import Vouchers to Campaign by CSV
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: import-vouchers-to-campaign-using-csv
-parentDoc: 639ba2658407100061f5faaf
+parentDocSlug: campaigns-api
 hidden: false
-order: 9
+order: 10
 ---
 [block:html]
 {

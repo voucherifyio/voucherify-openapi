@@ -1,7 +1,7 @@
 ---
 title: Examples
 excerpt: Here are some exemplary integrations and third-party guides for you to learn more about Voucherify.
-category: 639ba16d677235008f800447
+categorySlug: development
 slug: examples
 type: basic
 hidden: false

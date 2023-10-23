@@ -1,11 +1,11 @@
 ---
 title: Validate Voucher [Deprecated]
 type: endpoint
-category: 639ba2628407100061f5faac
+categorySlug: voucherify-api
 slug: validate-voucher
-parentDoc: 639ba2658407100061f5fab3
+parentDocSlug: validations-api
 hidden: false
-order: 2
+order: 4
 ---
 [block:html]
 {
