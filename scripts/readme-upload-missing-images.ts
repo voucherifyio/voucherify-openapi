@@ -19,25 +19,29 @@ const readmeUploadMissingImages = async () => {
     let match = matchIterator.next();
     const matches = [];
     while (match.value) {
+      // found asset
       matches.push(match);
       match = matchIterator.next();
     }
     if (!matches.length) {
+      // not found any assets
       continue;
     }
     let newFileContent = `${fileData}`;
     while (matches.length) {
+      // looping through matches, start from the last one - `pop` is required!
       const { value } = matches.pop();
       const matchedString = value[0];
       if (matchedString.includes("-->")) {
+        // skip if match found in comment
         continue;
       }
       const matchedIndex = value.index;
       const pathToAsset = matchedString.match(/\.\.\/\.\.\/assets[^" ]+/)?.[0];
       if (!pathToAsset) {
+        // this should be impossible
         throw `Path to asset not found :/ problem in file: ${pathToFile}`;
       }
-
       const absolutePathToAsset = path.join(
         __dirname,
         "../docs",
@@ -45,6 +49,7 @@ const readmeUploadMissingImages = async () => {
       );
       const urlToFile = await uploadImageToReadme(absolutePathToAsset);
       console.log(`Image uploaded, doc file: ${pathToFile}`);
+      // texts
       const textToReplaceWithMatchedString = matchedString.replace(
         pathToAsset,
         urlToFile
