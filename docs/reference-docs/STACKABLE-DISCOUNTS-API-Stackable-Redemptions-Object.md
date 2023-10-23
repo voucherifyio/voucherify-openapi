@@ -403,7 +403,7 @@ One of:
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rule assignments.</p> |
 | data_ref</br>`string` | <p>Identifies the name of the JSON property that contains the array of validation rule assignments.</p> |
-| data</br>`array` | <p>A dictionary that contains an array of validation rule assignments.</p> Array of [Validation Rule Assignment Object](#validation-rule-assignment-object) |
+| data</br>`array` | <p>A dictionary that contains an array of validation rule assignments.</p> Array of [Validation Rule Assignment](#validation-rule-assignment) |
 | total</br>`integer` | <p>Total number of validation rule assignments.</p> |
 
 ## Unstacked Redemption
@@ -411,7 +411,7 @@ One of:
 |:-----|:--------|
 | redemption_ID</br>`object` | <p>The property name is the unique redemption ID; i.e. <code>r_0ba186c4824e4881e1</code>. This object contains information about the redemption of an incentive.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the redemption was created in ISO 8601 format.</p> <strong>Example:</strong> <p>2022-09-02T17:06:56.649Z</p></td></tr><tr><td style="text-align:left">related_object_type</br><code>string</code></td><td style="text-align:left"><p>The source of the incentive.</p> Available values: <code>voucher</code>, <code>promotion_tier</code></td></tr><tr><td style="text-align:left">related_object_id</br><code>string</code></td><td style="text-align:left"><p>Unique ID of the related object that defines the incentive.</p></td></tr><tr><td style="text-align:left">related_object_parent_id</br><code>string</code></td><td style="text-align:left"><p>Represent's the campaign ID of the voucher if the redemption was based on a voucher that was part of bulk codes generated within a campaign. In case of a promotion tier, this represents the campaign ID of the promotion tier's parent campaign.</p></td></tr></tbody></table> |
 
-## Validation Rule Assignment Object
+## Validation Rule Assignment
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Validation rule assignment ID.</p> **Example:** <p>asgm_74F7QZoYbUoljwQO</p> |
@@ -419,7 +419,7 @@ One of:
 | related_object_id</br>`string` | <p>The resource ID to which the validation rule was assigned.</p> **Example:** <p>v_JtWunK6jUo7X2qOFj0SyRHq4p9tgENlT</p> |
 | related_object_type</br>`string` | <p>The type of resource to which the validation rule was assigned.</p> Available values: `voucher`, `campaign`, `earning_rule`, `reward_assignment`, `promotion_tier`, `distribution` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the validation rule assignment was created in ISO 8601 format.</p> **Example:** <p>2022-02-17T08:18:15.085Z</p> |
-| object</br>`string` | <p>The type of object represented by the ID.</p> |
+| object</br>`string` | <p>The type of object represented by the ID.</p> Available values: `validation_rules_assignment` |
 
 [block:html]
 {

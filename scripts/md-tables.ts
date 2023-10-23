@@ -20,7 +20,7 @@ export const mdTables: [string, string?][] = [
     ['11_obj_sku_object', 'PRODUCTS-API-SKU-Object.md'],
     ['product_collections_collection_item', 'PRODUCT-COLLECTIONS-API-Product-Collection-Object.md'],
     ['13_obj_validation_rule_object', 'VALIDATION-RULES-API-Validation-Rule-Object.md'],
-    ['13_obj_validation_rule_assignment_object', 'VALIDATION-RULES-API-Validation-Rule-Assignment-Object.md'],
+    ['validation_rule_assignment', 'VALIDATION-RULES-API-Validation-Rule-Assignment-Object.md'],
     ['14_obj_segment_object', 'SEGMENTS-API-Customer-Segment-Object.md'],
     ['15_req_track_custom_event', 'EVENTS-API-Custom-Event-Object.md'],
     ['18_res_list_consents_GET', 'CONSENTS-API-Consents-Object.md'],
