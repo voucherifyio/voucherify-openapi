@@ -105,6 +105,14 @@ Good practices:
 - Authenticate `rdme` tool by running: `rdme login` command; you can check if it works using the command `rdme whoami`; what should result: `You are currently logged in as xxx@voucherify.io to the voucherify project.`
 - Copy `.env.example` to `.env` and add to this file your personal API Key created in readme.io: `dashboard` > `configuration` > `API Keys`
 
+### Images in .md files
+
+- There are 2 ways to add images to .md files:
+  - with `[block:image]` component, [see example in Quickstart.md](docs/guides/getting_started/Quickstart.md)
+  - with link declaration, for example `![Welcome Diagram](https://files.readme.io/6070078-welcome-diagram.png "Welcome Diagram")`
+- At first always point to assets img folder, for example: `![Recent Changes](../../assets/img/guides_getting_started_quickstart_recent_changes_4.png "Recent Changes")`
+- This path declaration will be automatically updated to url link while during `npm run manage-project` command.
+
 ### Development process
 - For each change / pull request, create your copy of the current documentation, where you will test changes.
 	- Create your own branch from `master`,

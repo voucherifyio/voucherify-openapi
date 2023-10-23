@@ -1,7 +1,8 @@
-import * as fsPromises from 'fs/promises'
-import path from 'path';
-import dotenv from 'dotenv'
-import minimist from 'minimist';
+import * as fsPromises from "fs/promises";
+import path from "path";
+import dotenv from "dotenv";
+import minimist from "minimist";
+import { getFiles } from "./helpers/getFiles";
 
 dotenv.config();
 const { version } = minimist(process.argv.slice(2));
@@ -9,7 +10,7 @@ const { version } = minimist(process.argv.slice(2));
 const readmeFixReferenceDocs = async () => {
   if (!version) {
     console.log(
-        "`version` argument was not provided :/, next time try add `-- --version=************` at the end of file execution command"
+      "`version` argument was not provided :/, next time try add `-- --version=************` at the end of file execution command"
     );
     return;
   }
@@ -18,15 +19,16 @@ const readmeFixReferenceDocs = async () => {
     return;
   }
   const basePath = path.join(__dirname, "../docs");
-  const pathsToFiles = await getFiles(basePath);
-
+  const pathsToFiles = (await getFiles(basePath, [".bin"])).filter((filePath) =>
+    filePath.endsWith(".md")
+  );
   const dataToProcess = [];
   for (const pathToFile of pathsToFiles) {
     const data = await fsPromises.readFile(pathToFile, { encoding: "utf8" });
     const slug = data.match(/slug: .*/)?.[0]?.split?.("slug: ")?.[1];
     const type = data.match(/type: .*/)?.[0]?.split?.("type: ")?.[1];
     const order = parseInt(
-        data.match(/order: .*/)?.[0]?.split?.("order: ")?.[1]
+      data.match(/order: .*/)?.[0]?.split?.("order: ")?.[1]
     );
     if (!slug || isNaN(order)) {
       throw new Error("Invalid slug or order in " + pathToFile);
@@ -51,7 +53,7 @@ const updateDoc = async ({ slug, order, type, pathToFile }) => {
     body: JSON.stringify({ order, type }),
   };
 
-  try{
+  try {
     const response = await fetch(
       `https://dash.readme.com/api/v1/docs/${slug}`,
       options
@@ -60,7 +62,9 @@ const updateDoc = async ({ slug, order, type, pathToFile }) => {
     const responseJSON = await response.json();
 
     if (responseJSON.error) {
-      console.log(`Error in json response from readme for ${slug}`, { responseJSON });
+      console.log(`Error in json response from readme for ${slug}`, {
+        responseJSON,
+      });
       throw new Error(responseJSON.error);
     }
 
@@ -71,9 +75,9 @@ const updateDoc = async ({ slug, order, type, pathToFile }) => {
     }
 
     return responseJSON;
-  }catch(error){
+  } catch (error) {
     console.log(`Error when reqesting readme for ${slug}`, error);
-    throw new Error(error)
+    throw new Error(error);
   }
 };
 
@@ -82,30 +86,8 @@ const chunkArray = (list, chunkSize) =>
     list.splice(0, chunkSize)
   );
 
-const getFiles = async (path: string) => {
-  const pathsToFiles: string[] = [];
-  const items = await fsPromises.readdir(path, {
-    withFileTypes: true,
-  });
-  for (const item of items) {
-    const itemPath = path + `/${item.name}`;
-    if (item.isDirectory() && !itemPath.endsWith(".bin")) {
-      (await getFiles(itemPath)).forEach((value) => {
-        pathsToFiles.push(value);
-      });
-      continue;
-    }
-    if (itemPath.endsWith(".md")) {
-      pathsToFiles.push(itemPath);
-    }
-  }
-  return pathsToFiles;
-};
-
 const asyncMap = (arr, asyncFn) => {
   return Promise.all(arr.map(asyncFn));
 };
 
-
-
-readmeFixReferenceDocs()
+readmeFixReferenceDocs();
