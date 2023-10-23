@@ -1,7 +1,7 @@
 ---
 title: API Endpoints
 excerpt: 
-category: 639ba16d677235008f80043f
+categorySlug: getting-started
 slug: api-endpoints
 type: basic
 hidden: false

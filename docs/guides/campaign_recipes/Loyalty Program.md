@@ -1,7 +1,7 @@
 ---
 title: Loyalty Program
 excerpt: null
-category: 639ba16d677235008f80045c
+categorySlug: campaigns-recipes
 slug: loyalty-program
 type: basic
 hidden: false
@@ -134,7 +134,7 @@ Customers can join a program if you invite them or automatically if they perform
 
 In this case, you should call [Create Member](ref:add-member) by providing a campaign id and a customer joining the program.
 
-https://api.voucherify.io/v1/loyalties/:campaignId/members
+https://api.voucherify.io/v1/loyalties/{campaignId}/members
 
 ```json 
 {

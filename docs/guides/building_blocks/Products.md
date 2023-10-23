@@ -1,7 +1,7 @@
 ---
 title: Products
 excerpt: 
-category: 639ba16d677235008f800454
+categorySlug: building-blocks
 slug: products
 type: basic
 hidden: false
@@ -23,7 +23,8 @@ Voucherify allows for launching product-specific promotions. For example, you ca
 Voucherify supports product → variants relationship by default. This means you can create a parent object (`product`) and attach several variants (`SKUs`). In the [product](ref:get-product) object, you can define `attributes` to distinguish several [SKUs](ref:get-sku). For example:
 
 ```json Products
-  {
+[
+    {
       "id": "prod_yKHc4SyG1agSww",
       "source_id": "internal_erp_id_1477390384",
       "object": "product",
@@ -39,8 +40,7 @@ Voucherify supports product → variants relationship by default. This means you
         "total": 0,
         "data": []
       }
-    }
-
+    },
     {  
       "id":"sku_0KtP4rvwEECQ2U",
       "source_id":"internal_erp_sku_id_1477475922",
@@ -55,6 +55,7 @@ Voucherify supports product → variants relationship by default. This means you
         "country": "us"
     	}
     }
+]
 ```
 
 > 👍 Source_id

@@ -1,7 +1,7 @@
 ---
 title: Object Schemas
 excerpt: Schema model definitions
-category: 639ba44d204cb60020b4b7ec
+categorySlug: introduction
 slug: object-schemas
 type: basic
 hidden: false
@@ -12,24 +12,24 @@ You can find the object definitions for the given schemas by navigating to the r
 
 | **API** | **Object** |
 |:---|:---|
-| Vouchers | [Voucher object](ref:get-voucher) |
-| Campaigns | [Campaign object](ref:get-campaign) |
-| Promotions | [Promotion tier object](ref:list-promotion-tiers) |
-| Rewards | [Reward object](ref:get-reward)<br>[Reward assignment object](ref:get-reward-assignment) |
-| Publications | [Publication object](ref:list-publications) |
-| Validations | [Validation object](ref:validate-voucher) |
-| Redemptions | [Redemption object](ref:get-redemption)<br>[Redemption rollback object](ref:rollback-redemption) |
-| Stackable Discounts | [Redemption object](ref:redeem-stacked-discounts) |
-| Loyalties | [Loyalty campaign object](ref:get-loyalty-program)<br>[Loyalty card object](ref:get-member)<br>[Earning rule object](ref:get-earning-rule)<br>[Loyalty tiers object](ref:get-loyalty-tier) |
-| Customers | [Customer object](ref:get-customer)<br>[Customer activity object](ref:list-customer-activities) |
-| Orders | [Order object](ref:get-order)<br>[Order item object](ref:get-order) |
-| Products | [Product object](ref:get-product)<br>[SKU object](ref:get-sku) |
-| Product Collections | [Product collections object](ref:get-product-collection) |
-| Validation Rules | [Validation rule object](ref:get-validation-rule)<br>[Validation rule assignment object](ref:list-validation-rules-assignments) |
-| Segments | [Segment object](ref:get-segment) |
-| Events | [Event object](ref:track-custom-event) |
-| Consents | [Consent object](ref:get-consents) |
-| Async Actions | [Async action object](ref:get-async-action) |
-| Exports | [Exports object](ref:get-export) |
-| Categories | [Categories object](ref:get-category) |
-| Metadata Schemas | [Metadata schema object](ref:get-metadata-schema) |
+| Vouchers | [Voucher object](ref:voucher-object) |
+| Campaigns | [Campaign object](ref:campaign-object) |
+| Promotions | [Promotion tier object](ref:promotion-tier-object) |
+| Rewards | [Reward object](ref:reward-object)<br>[Reward assignment object](ref:reward-assignment-object) |
+| Publications | [Publication object](ref:publication-object) |
+| Validations | [Validation object](ref:validation-object) |
+| Redemptions | [Redemption object](ref:redemption-object)<br>[Redemption rollback object](ref:rollback-redemption-object) |
+| Stackable Discounts | [Stackable Redemptions object](ref:stackable-redemptions-object) |
+| Loyalties | [Loyalty campaign object](ref:loyalty-campaign-object)<br>[Loyalty card object](ref:loyalty-card-object)<br>[Earning rule object](ref:earning-rule-object)<br>[Loyalty tier object](ref:loyalty-tier-object) |
+| Customers | [Customer object](ref:customer-object)<br>[Customer activity object](ref:customer-activity-object) |
+| Orders | [Order object](ref:order-object) |
+| Products | [Product object](ref:product-object)<br>[SKU object](ref:sku-object) |
+| Product Collections | [Product collection object](ref:product-collection-object) |
+| Validation Rules | [Validation rule object](ref:validation-rule-object)<br>[Validation rule assignment object](ref:validation-rule-assignment-object) |
+| Segments | [Segment object](ref:customer-segment-object) |
+| Events | [Event object](ref:custom-event-object) |
+| Consents | [Consent object](ref:consents-object) |
+| Async Actions | [Async action object](ref:async-action-object) |
+| Exports | [Export object](ref:export-object) |
+| Categories | [Category object](ref:category-object) |
+| Metadata Schemas | [Metadata schema object](ref:metadata-schema-object) |

@@ -1,7 +1,7 @@
 ---
 title: Prepaid Gift Cards
 excerpt: null
-category: 639ba16d677235008f80045c
+categorySlug: campaigns-recipes
 slug: prepaid-gift-cards
 type: basic
 hidden: false
