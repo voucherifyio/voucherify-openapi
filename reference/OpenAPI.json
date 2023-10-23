@@ -712,7 +712,8 @@
             "description": "The merchant’s product/SKU ID (if it is different from the Voucherify product/SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
           },
           "discount_quantity": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Number of dicounted items."
           },
           "initial_quantity": {
             "type": "integer"
@@ -722,20 +723,23 @@
             "description": "The quantity of the particular item in the cart."
           },
           "price": {
-            "type": "number"
+            "type": "number",
+            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
           },
           "amount": {
             "type": "number",
             "description": "The total amount of the order item (price * quantity)."
           },
           "discount_amount": {
-            "type": "number"
+            "type": "number",
+            "description": "\nSum of all order-item-level discounts applied to the order."
           },
           "initial_amount": {
             "type": "number"
           },
           "applied_discount_amount": {
-            "type": "number"
+            "type": "number",
+            "description": "This field shows the order-item-level discount applied."
           },
           "subtotal_amount": {
             "type": "number"
@@ -746,7 +750,8 @@
             "description": "An object containing details of the related product.",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "A unique identifier that represents the product and is assigned by Voucherify."
               },
               "source_id": {
                 "type": "string",
@@ -776,7 +781,8 @@
             "description": "An object containing details of the related SKU.",
             "properties": {
               "id": {
-                "type": "string"
+                "type": "string",
+                "description": "A unique identifier that represents the SKU and is assigned by Voucherify."
               },
               "source_id": {
                 "type": "string",
@@ -862,7 +868,7 @@
             "description": "Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted."
           },
           "inapplicable_to": {
-            "$ref": "#/components/schemas/ApplicableToResultList",
+            "$ref": "#/components/schemas/InapplicableToResultList",
             "description": "Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted."
           },
           "campaign": {
@@ -911,7 +917,11 @@
               },
               "effect": {
                 "type": "string",
-                "description": "Defines how the credits are applied to the customer's order."
+                "description": "Defines how the credits are applied to the customer's order.",
+                "enum": [
+                  "APPLY_TO_ORDER",
+                  "APPLY_TO_ITEMS"
+                ]
               }
             },
             "required": [
@@ -980,7 +990,13 @@
               },
               "status": {
                 "type": "string",
-                "description": "Order status. This parameter is returned if you use the order ID parameter of an already created and synced order in the Voucherify application, i.e by sending the order.id parameter in the request body or if you send the request body parameter when defining an order in the request body. This parameter can be passed but it's not required for validation at all. It's used in the redemption process. Normally after the redemption is done, the order is automatically to a PAID status. To avoid such default behaviour, the user can pass any of the other status options and it will be set the order status after the redemption instead of the default PAID."
+                "description": "Order status. This parameter is returned if you use the order ID parameter of an already created and synced order in the Voucherify application, i.e by sending the order.id parameter in the request body or if you send the request body parameter when defining an order in the request body. This parameter can be passed but it's not required for validation at all. It's used in the redemption process. Normally after the redemption is done, the order is automatically to a PAID status. To avoid such default behaviour, the user can pass any of the other status options and it will be set the order status after the redemption instead of the default PAID.",
+                "enum": [
+                  "CREATED",
+                  "PAID",
+                  "CANCELED",
+                  "FULFILLED"
+                ]
               },
               "amount": {
                 "type": "number",
@@ -1068,13 +1084,16 @@
             "description": "Schema model for session lock object. The session object contains information about the session key that was used to establish a session between multiple parallel validation and redemption requests.\n\n\n"
           },
           "start_date": {
-            "type": "string"
+            "type": "string",
+            "description": "Activation timestamp defines when the voucher starts to be active in ISO 8601 format. Voucher is inactive before this date."
           },
           "expiration_date": {
-            "type": "string"
+            "type": "string",
+            "description": "Expiration timestamp defines when the voucher expires in ISO 8601 format. Voucher is inactive after this date."
           },
           "tracking_id": {
-            "type": "string"
+            "type": "string",
+            "description": "Hashed order source ID."
           }
         },
         "required": [
@@ -1106,7 +1125,8 @@
             "description": "Detailed failure cause for the invalid voucher if the reason has a translation defined in the Dashboard → Project Settings → Error Messages.",
             "properties": {
               "code": {
-                "type": "number"
+                "type": "number",
+                "description": "Voucher code."
               },
               "key": {
                 "type": "string"
@@ -1140,7 +1160,8 @@
             "description": "Hashed customer source ID."
           },
           "customer_id": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique customer ID of the customer making the purchase."
           },
           "metadata": {
             "type": "object",
@@ -45777,31 +45798,92 @@
           "filter"
         ]
       },
-      "ApplicableToResultList": {
-        "title": "Applicable To Result List",
+      "InapplicableToResultList": {
+        "title": "Inapplicable To Result List",
         "type": "object",
         "properties": {
+          "data": {
+            "type": "array",
+            "description": "Contains array of items to which the discount cannot apply.",
+            "items": {
+              "$ref": "#/components/schemas/InapplicableTo"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of objects defining included products, SKUs, or product collections."
+          },
           "object": {
             "type": "string",
             "enum": [
               "list"
+            ],
+            "description": "The type of object represented by JSON."
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "The type of object represented by JSON.",
+            "enum": [
+              "data"
             ]
-          },
-          "list": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicableTo"
-            }
           }
         },
         "required": [
+          "data",
+          "total",
           "object",
-          "list",
-          "data"
+          "data_ref"
+        ],
+        "x-stoplight": {
+          "id": "8adb631858eae"
+        }
+      },
+      "ApplicableToResultList": {
+        "title": "Applicable To Result List",
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "Contains array of items to which the discount can apply.",
+            "items": {
+              "$ref": "#/components/schemas/ApplicableTo"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of objects defining included products, SKUs, or product collections."
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "list"
+            ],
+            "description": "The type of object represented by JSON."
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "The type of object represented by JSON.",
+            "enum": [
+              "data"
+            ]
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "object",
+          "data_ref"
+        ]
+      },
+      "InapplicableTo": {
+        "title": "InapplicableTo",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApplicableTo"
+          }
         ]
       },
       "ApplicableTo": {
@@ -45814,37 +45896,47 @@
               "product",
               "sku",
               "products_collection"
-            ]
+            ],
+            "description": "This object stores information about the product collection."
           },
           "id": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique product collection ID assigned by Voucherify."
           },
           "source_id": {
-            "type": "string"
+            "type": "string",
+            "description": "The source ID from your inventory system."
           },
           "product_id": {
-            "type": "string"
+            "type": "string",
+            "description": "Parent product's unique ID assigned by Voucherify."
           },
           "product_source_id": {
-            "type": "string"
+            "type": "string",
+            "description": "Parent product's source ID from your inventory system."
           },
           "strict": {
             "type": "boolean"
           },
           "price": {
-            "type": "number"
+            "type": "number",
+            "description": "New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the price_formula parameter is present in the fixed price definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price."
           },
           "price_formula": {
-            "type": "number"
+            "type": "number",
+            "description": "Formula used to calculate the discounted price of an item."
           },
           "quantity_limit": {
-            "type": "integer"
+            "type": "integer",
+            "description": "The maximum number of units allowed to be discounted per order line item."
           },
           "aggregated_quantity_limit": {
-            "type": "integer"
+            "type": "integer",
+            "description": "The maximum number of units allowed to be discounted combined across all matched order line items."
           },
           "effect": {
-            "$ref": "#/components/schemas/ApplicableToEffect"
+            "$ref": "#/components/schemas/ApplicableToEffect",
+            "description": "Defines how the discount is applied to the customer's order."
           }
         },
         "required": [
