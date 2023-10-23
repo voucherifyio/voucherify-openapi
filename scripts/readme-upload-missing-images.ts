@@ -3,6 +3,7 @@ import * as fs from "fs";
 import path from "path";
 import axios from "axios";
 import FormData from "form-data";
+import { getFiles } from "./helpers/getFiles";
 
 const readmeUploadMissingImages = async () => {
   if (process.env.README_IO_AUTH?.length < 10) {
@@ -10,7 +11,9 @@ const readmeUploadMissingImages = async () => {
     return;
   }
   const basePath = path.join(__dirname, "../docs");
-  const pathsToFiles = await getFiles(basePath);
+  const pathsToFiles = (await getFiles(basePath, [".bin"])).filter((filePath) =>
+    filePath.endsWith(".md")
+  );
   for (const pathToFile of pathsToFiles) {
     const fileData = await fsPromises.readFile(pathToFile, {
       encoding: "utf8",
@@ -85,25 +88,6 @@ const uploadImageToReadme = async (pathToFile) => {
     throw response;
   }
   return response.data[0];
-};
-const getFiles = async (path: string) => {
-  const pathsToFiles: string[] = [];
-  const items = await fsPromises.readdir(path, {
-    withFileTypes: true,
-  });
-  for (const item of items) {
-    const itemPath = path + `/${item.name}`;
-    if (item.isDirectory() && !itemPath.endsWith(".bin")) {
-      (await getFiles(itemPath)).forEach((value) => {
-        pathsToFiles.push(value);
-      });
-      continue;
-    }
-    if (itemPath.endsWith(".md")) {
-      pathsToFiles.push(itemPath);
-    }
-  }
-  return pathsToFiles;
 };
 
 readmeUploadMissingImages();
