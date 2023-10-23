@@ -516,7 +516,13 @@
               },
               "status": {
                 "type": "string",
-                "description": "The order status."
+                "description": "The order status.",
+                "enum": [
+                  "CREATED",
+                  "PAID",
+                  "CANCELED",
+                  "FULFILLED"
+                ]
               },
               "amount": {
                 "type": "string",
@@ -533,15 +539,42 @@
                 "$ref": "#/components/schemas/Customer",
                 "description": "This is an object containing information about the customer."
               },
+              "customer_id": {
+                "type": "string"
+              },
               "referrer": {
                 "$ref": "#/components/schemas/Customer",
                 "description": "This is an ojbect containing information about the referrer."
+              },
+              "referrer_id": {
+                "type": "string"
               },
               "metadata": {
                 "type": "object",
                 "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
               }
             }
+          },
+          "reward": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Contains information about the reward that the customer wants to redeem and the number of points the customer is choosing to use for the reward.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique reward ID assigned by Voucherify. The reward must be assigned to the campaign in order for the user to be able to use the reward."
+              },
+              "assignment_id": {
+                "type": "string"
+              },
+              "points": {
+                "type": "number",
+                "description": "The number of loyalty points that the user wants to spend in order to fulfill the order. The number of points cannot be higher than the current balance on the loyalty card. If the user gives more points than he/she has on the loyalty card, the application will return an error code in response."
+              }
+            },
+            "required": [
+              "id"
+            ]
           },
           "gift": {
             "type": "object",
@@ -558,27 +591,29 @@
               "credits"
             ]
           },
-          "reward": {
-            "type": "object",
-            "additionalProperties": false,
-            "description": "Contains information about the reward that the customer wants to redeem and the number of points the customer is choosing to use for the reward.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Unique reward ID assigned by Voucherify. The reward must be assigned to the campaign in order for the user to be able to use the reward."
-              },
-              "points": {
-                "type": "number",
-                "description": "The number of loyalty points that the user wants to spend in order to fulfill the order. The number of points cannot be higher than the current balance on the loyalty card. If the user gives more points than he/she has on the loyalty card, the application will return an error code in response."
-              }
-            },
-            "required": [
-              "id"
-            ]
-          },
           "session": {
             "$ref": "#/components/schemas/Session",
             "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session."
+          },
+          "tracking_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "expand": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "category"
+                  ]
+                }
+              }
+            }
           }
         }
       },
@@ -598,17 +633,22 @@
             "type": "string",
             "description": "Customer's first and last name."
           },
+          "description": {
+            "type": "string",
+            "description": "An arbitrary string that you can attach to a customer object."
+          },
           "email": {
             "type": "string",
             "description": "Customer's email address."
           },
-          "metadata": {
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
-          },
-          "description": {
+          "phone": {
             "type": "string",
-            "description": "An arbitrary string that you can attach to a customer object."
+            "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
+          },
+          "birthdate": {
+            "type": "string",
+            "description": "Customer's birthdate; format YYYY-MM-DD.",
+            "format": "date"
           },
           "address": {
             "type": "object",
@@ -641,14 +681,9 @@
               }
             }
           },
-          "phone": {
-            "type": "string",
-            "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
-          },
-          "birthdate": {
-            "type": "string",
-            "description": "Customer's birthdate; format YYYY-MM-DD.",
-            "format": "date"
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
           }
         }
       },
