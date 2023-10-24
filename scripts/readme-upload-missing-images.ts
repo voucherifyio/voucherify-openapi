@@ -40,7 +40,7 @@ const readmeUploadMissingImages = async () => {
         continue;
       }
       const matchedIndex = value.index;
-      const pathToAsset = matchedString.match(/\.\.\/\.\.\/assets[^" ]+/)?.[0];
+      const pathToAsset = matchedString.match(/\.\.\/\.\.\/assets[^" )]+/)?.[0];
       if (!pathToAsset) {
         // this should be impossible
         throw `Path to asset not found :/ problem in file: ${pathToFile}`;

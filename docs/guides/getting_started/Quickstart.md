@@ -25,14 +25,14 @@ After you create your account, you get access to the Sandbox dashboard. Sandbox 
 Type **BLCKFRDY** in the search bar and Voucherify will **redirect** you to the voucher page, which displays the basic information about the discount it carries. Let’s redeem the code with the API.
 
 <!-- ![Voucherify Dashboard](../../assets/img/guides_getting_started_Quickstart_join_the_dashboard.png "Voucher Dashboard") -->
-![Voucherify Dashboard](../../assets/img/guides_getting_started_Quickstart_join_the_dashboard.png)
+![Voucherify Dashboard](https://files.readme.io/d7297c6-guides_getting_started_Quickstart_join_the_dashboard.png)
 
 ## Get your API keys
 
 The Sandbox Project Dashboard is already showing your default API keys for the Sandbox project. You can also navigate to Project Settings to find the Authentication section. 
 
 <!-- ![Application Keys](../../assets/img/guides_getting_started_Quickstart_API_keys.png "Application Keys") -->
-![Application Keys](../../assets/img/guides_getting_started_Quickstart_API_keys.png)
+![Application Keys](https://files.readme.io/994df01-guides_getting_started_Quickstart_API_keys.png)
 
 ## Make a test API request
 
@@ -255,7 +255,7 @@ Every redemption can be [listed](ref:list-redemptions) with the API or in the da
   "images": [
     {
       "image": [
-       "../../assets/img/guides_getting_started_Quickstart_review_logs.png",
+       "https://files.readme.io/95e3dba-guides_getting_started_Quickstart_review_logs.png",
         1004
       ],
       "sizing": "80"
@@ -267,7 +267,7 @@ Every redemption can be [listed](ref:list-redemptions) with the API or in the da
 To monitor and filter the list of all API calls for your project, you can go to the [Audit log](https://app.voucherify.io/#/app/core/logs):
 
 <!-- ![Audit Log](../../assets/img/guides_getting_started_Quickstart_audit_log.png "Audit Log") -->
-![Audit Log](../../assets/img/guides_getting_started_Quickstart_audit_log.png)
+![Audit Log](https://files.readme.io/207c12c-guides_getting_started_Quickstart_audit_log.png)
 
 ## Test promo scenarios with "Hot Beans" demo store
 
