@@ -41,6 +41,23 @@
 - `/v1/validation-object`
   - Response schema was replaced with new one: `VouchersValidateResponseBody` (old one: `anyOf`: `6_res_validate_voucher`, `6_res_validate_voucher_false`)
 
+## 20230924
+
+- Updated `docs/guides/getting_started/Quickstart.md`
+
+
+## 20230923 - Endpoint bugfixes and improvements
+
+- Described customer object in Track custom event endpoint
+- Fixed qualifications filters (missing and wrong properties)
+- Fixed wrong name of rollback object in Rollback Stackable Redemptions response
+
+| **API** | **Endpoint**                    | **Slug**             |
+|---|---------------------------------|----------------------|
+| **Events** | Track Custom Event              | track-custom-event | true |
+| **Qualifications** | Examine Qualification           | examine-qualification | true |
+| **Stackable Discounts** |  Rollback Stackable Redemptions | rollback-stackable-redemptions | rollback-stacked-redemptions | true |
+
 ## 20231020
 
 **Added schemas**
@@ -292,8 +309,6 @@
 - PointsExpirationTypes
 
 #### Schemas changes
-- /v1/loyalties/members/{memberId}/rewards
-    - new response schema `LoyaltiesListMemberRewardsResponseBody` (old `"8_res_list_member_rewards`)
 - /v1/loyalties/{campaignId}/members/{memberId}/balance
     - new request schema `LoyaltiesAddOrRemoveCardBalanceRequestBody` (old `8_req_add_remove_points_balance`)
     - new response schema `LoyaltiesAddOrRemoveCardBalanceResponseBody` (old `8_res_add_remove_points_balance`)
@@ -641,6 +656,9 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 /docs/orders-1  -> /docs/orders
 /docs/vouchers-1 -> /docs/vouchers
 /docs/campaigns-1 -> /docs/campaigns
+/docs/checking-eligibility-for-coupons -> /docs/checking-eligibility
+/reference/examine-qualification -> /reference/check-eligibility
+/reference/examine-qualification-client-side -> /reference/check-eligibility-client-side
 /reference/vouchers-get -> /reference/get-voucher
 /reference/add-gift-voucher-balance -> /reference/add-remove-gift-voucher-balance
 /reference/import-vouchers-1 -> /reference/import-vouchers

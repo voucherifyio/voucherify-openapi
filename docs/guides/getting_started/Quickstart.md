@@ -24,26 +24,26 @@ After you create your account, you get access to the Sandbox dashboard. Sandbox 
 
 Type **BLCKFRDY** in the search bar and Voucherify will **redirect** you to the voucher page, which displays the basic information about the discount it carries. Let’s redeem the code with the API.
 
-<!-- ![Voucherify Dashboard](../../assets/img/guides_getting_started_quickstart_voucher_dashboard_1.png "Voucher Dashboard") -->
-![Voucherify Dashboard](https://files.readme.io/fcb7572-voucher_dashboard.png "Voucher Dashboard")
+<!-- ![Voucherify Dashboard](../../assets/img/guides_getting_started_Quickstart_join_the_dashboard.png "Voucher Dashboard") -->
+![Voucherify Dashboard](https://files.readme.io/d7297c6-guides_getting_started_Quickstart_join_the_dashboard.png)
 
 ## Get your API keys
 
 The Sandbox Project Dashboard is already showing your default API keys for the Sandbox project. You can also navigate to Project Settings to find the Authentication section. 
 
-<!-- ![Application Keys](../../assets/img/guides_getting_started_quickstart_application_keys_2.png "Application Keys") -->
-![Application Keys](https://files.readme.io/9003954-application-keys.png "Application Keys")
+<!-- ![Application Keys](../../assets/img/guides_getting_started_Quickstart_API_keys.png "Application Keys") -->
+![Application Keys](https://files.readme.io/994df01-guides_getting_started_Quickstart_API_keys.png)
 
 ## Make a test API request
 
-Within the Sandbox, you get 100 API calls per hour. Visit [Limits](doc:limits) to learn how to monitor your usage. With the first API request, we’ll [redeem](doc:redeem-voucher) our coupon. This function is essential to Voucherify workflow as it takes care of:
+Within the Sandbox, you get 100 API calls per hour. Visit [Limits](doc:limits) to learn how to monitor your usage. With the first API request, we’ll [redeem](doc:redemption) our coupon. This function is essential to Voucherify workflow as it takes care of:
 
 1. Checking if the code is recognizable with your account.
 2. Validating if it satisfies the business rules.
 3. Calculating and returning the discount value.
 4. Marking the code as used.
 
-**Note:** while calling the [redemption endpoint](ref:redeem-voucher) is enough to satisfy a basic promo code flow, it's useful to add [validation](ref:validate-voucher) to the flow every time the promo code or cart changes. Validation performs 1-3 points, but it doesn't mark the code as used.
+**Note:** while calling the [redemption endpoint](ref:redeem-stacked-discounts) is enough to satisfy a basic promo code flow, it's useful to add [validation](ref:validate-stacked-discounts) to the flow every time the promo code or cart changes. Validation performs 1-3 points, but it doesn't mark the code as used.
 **Note:** Voucherify API supports the redemption of a single promo code and [Stackable discounts API](doc:manage-stackable-discounts), which lets you redeem up to 5 incentives per call. Before integrating Voucherify, choose which redemption endpoint you prefer to use. 
 
 <!-- ![First Call Flow](../../assets/img/guides_getting_started_quickstart_first_call_flow_3.jpeg "First Call Flow") -->
@@ -58,7 +58,7 @@ curl -X POST \
 -H "X-App-Id: ID" \
 -H "X-App-Token: SECRET KEY" \
 -H "Content-Type: application/json" \
--d '{"order": {"amount": 20000} }' "https://api.voucherify.io/v1/vouchers/BLCKFRDY/redemption"
+-d '{"order": {"amount": 12000} }' "https://api.voucherify.io/v1/vouchers/BLCKFRDY/redemption"
 ```
 ```javascript JavaScript
 const { VoucherifyServerSide } = require('@voucherify/sdk')
@@ -69,112 +69,176 @@ const client = VoucherifyServerSide({
 	// apiUrl: 'https://<region>.api.voucherify.io'
 })
 
-client.redemptions.redeem("BLCKFRDY", {"order" : {"amount": 20000}}).then(console.log)
+client.redemptions.redeem("BLCKFRDY", {"order" : {"amount": 12000}}).then(console.log)
 ```
 
 Voucherify should reply with the [redemption](ref:get-redemption) details as in the screenshot below. If Voucherify doesn’t reply with a 20x status, check the [error code](ref:errors) to find the reason.
 
 ```json 200 OK
 {
-    "id": "r_1utfsnmdnq9KMh4xEKjcZT3m",
-    "object": "redemption",
-    "date": "2022-02-16T07:39:21.575Z",
-    "customer_id": null,
-    "tracking_id": null,
-    "metadata": null,
-    "result": "SUCCESS",
+    "redemptions": [
+        {
+            "id": "r_0dafc21888c79c80bf",
+            "customer_id": "cust_ANjd4MFsUPXDoHeoCQXmqgCJ",
+            "tracking_id": "track_9xvOJH7gshn2dlEaRSUyeQ==",
+            "date": "2023-10-16T10:47:11.651Z",
+            "order": {
+                "id": "ord_OdtFaTU2aw6fNCzy6XvXYs51",
+                "source_id": null,
+                "status": "PAID",
+                "customer_id": "cust_ANjd4MFsUPXDoHeoCQXmqgCJ",
+                "referrer_id": null,
+                "amount": 12000,
+                "discount_amount": 1000,
+                "applied_discount_amount": 1000,
+                "total_discount_amount": 1000,
+                "total_applied_discount_amount": 1000,
+                "total_amount": 11000,
+                "items": [
+                    {
+                        "object": "order_item",
+                        "source_id": "t-shirt_white",
+                        "related_object": "product",
+                        "quantity": 1,
+                        "amount": 2500,
+                        "price": 2500
+                    },
+                    {
+                        "object": "order_item",
+                        "source_id": "t-shirt_red",
+                        "related_object": "product",
+                        "quantity": 2,
+                        "amount": 3000,
+                        "price": 1500
+                    },
+                    {
+                        "object": "order_item",
+                        "source_id": "jeans_blue",
+                        "related_object": "product",
+                        "quantity": 1,
+                        "amount": 6500,
+                        "price": 6500
+                    }
+                ],
+                "metadata": {},
+                "object": "order"
+            },
+            "customer": {
+                "id": "cust_ANjd4MFsUPXDoHeoCQXmqgCJ",
+                "name": "Jack Jack",
+                "email": "maciej.krzak+Jack@voucherify.io",
+                "source_id": "16102023",
+                "metadata": {
+                    "metadata_key": "metadata_value",
+                    "customer_location": "geo:37.786971,-122.399677"
+                },
+                "object": "customer"
+            },
+            "result": "SUCCESS",
+            "voucher": {
+                "id": "v_hvY4FNDjL1LYpKDvAtc4I7uXT9DouOv8",
+                "code": "BLCKFRDY",
+                "discount": {
+                    "type": "AMOUNT",
+                    "amount_off": 1000
+                },
+                "type": "DISCOUNT_VOUCHER",
+                "campaign": null,
+                "campaign_id": null,
+                "is_referral_code": false,
+                "holder_id": "cust_iXUTMbFO3QdLFHH8WLKBLyA1",
+                "created_at": "2023-03-01T10:28:04.759Z",
+                "object": "voucher"
+            },
+            "object": "redemption"
+        }
+    ],
     "order": {
-        "id": "ord_0r32g8iQNp0WA84fBK814RgG",
+        "id": "ord_OdtFaTU2aw6fNCzy6XvXYs51",
         "source_id": null,
-        "created_at": "2022-02-16T07:39:21.546Z",
+        "created_at": "2023-10-16T10:47:11.616Z",
         "updated_at": null,
         "status": "PAID",
-        "amount": 20000,
+        "amount": 12000,
         "discount_amount": 1000,
         "total_discount_amount": 1000,
-        "total_amount": 19000,
+        "total_amount": 11000,
         "applied_discount_amount": 1000,
         "total_applied_discount_amount": 1000,
-        "customer_id": null,
+        "items": [
+            {
+                "object": "order_item",
+                "source_id": "t-shirt_white",
+                "related_object": "product",
+                "quantity": 1,
+                "amount": 2500,
+                "price": 2500,
+                "subtotal_amount": 2500,
+                "product": {
+                    "metadata": {
+                        "color": "white",
+                        "any_key": "any_value",
+                        "category": "t-shirt",
+                        "condition": "NEW",
+                        "manufacturing_date_time": "2021-08-13T08:00:00.000Z"
+                    }
+                }
+            },
+            {
+                "object": "order_item",
+                "source_id": "t-shirt_red",
+                "related_object": "product",
+                "quantity": 2,
+                "amount": 3000,
+                "price": 1500,
+                "subtotal_amount": 3000,
+                "product": {
+                    "metadata": {
+                        "color": "red",
+                        "any_key": "any_value",
+                        "category": "t-shirt",
+                        "condition": "NEW",
+                        "manufacturing_date_time": "2021-08-13T08:00:00.000Z"
+                    }
+                }
+            },
+            {
+                "object": "order_item",
+                "source_id": "jeans_blue",
+                "related_object": "product",
+                "quantity": 1,
+                "amount": 6500,
+                "price": 6500,
+                "subtotal_amount": 6500,
+                "product": {
+                    "metadata": {
+                        "color": "blue",
+                        "any_key": "any_value",
+                        "category": "jeans",
+                        "condition": "NEW",
+                        "manufacturing_date_time": "2021-08-13T08:00:00.000Z"
+                    }
+                }
+            }
+        ],
+        "metadata": {},
+        "customer": {
+            "id": "cust_ANjd4MFsUPXDoHeoCQXmqgCJ",
+            "object": "customer"
+        },
+        "customer_id": "cust_ANjd4MFsUPXDoHeoCQXmqgCJ",
         "referrer_id": null,
         "object": "order",
         "redemptions": {
-            "r_1utfsnmdnq9KMh4xEKjcZT3m": {
-                "date": "2022-02-16T07:39:21.575Z",
+            "r_0dafc21888c79c80bf": {
+                "date": "2023-10-16T10:47:11.651Z",
                 "related_object_type": "voucher",
-                "related_object_id": "v_MMn7nc75rwUjdPnfl4X6NtCAK5MDNgNk"
+                "related_object_id": "v_hvY4FNDjL1LYpKDvAtc4I7uXT9DouOv8"
             }
         }
     },
-    "customer": null,
-    "related_object_type": "voucher",
-    "related_object_id": "v_MMn7nc75rwUjdPnfl4X6NtCAK5MDNgNk",
-    "voucher": {
-        "id": "v_MMn7nc75rwUjdPnfl4X6NtCAK5MDNgNk",
-        "code": "BLCKFRDY",
-        "campaign": null,
-        "campaign_id": null,
-        "category": "showcase",
-        "type": "DISCOUNT_VOUCHER",
-        "discount": {
-            "type": "AMOUNT",
-            "amount_off": 1000
-        },
-        "gift": null,
-        "loyalty_card": null,
-        "start_date": null,
-        "expiration_date": null,
-        "validity_timeframe": null,
-        "validity_day_of_week": null,
-        "active": true,
-        "additional_info": null,
-        "metadata": {
-            "name": "Black Friday Coupon"
-        },
-        "assets": {
-            "qr": {
-                "id": "U2FsdGVkX1/FEz2OO26+KPxsV7dn/EFfzLbdGNArC+25Y8CX1j+beNmaxFcbOTVHnHHvmHzc50VdE+D0Cimz+7ZMJC92PSvshoCDBEnu5T10TOKozvVTaZn5O1NfaR5q+3zDnWRoFhfCcg/TilTQng==",
-                "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2FFEz2OO26%2BKPxsV7dn%2FEFfzLbdGNArC%2B25Y8CX1j%2BbeNmaxFcbOTVHnHHvmHzc50VdE%2BD0Cimz%2B7ZMJC92PSvshoCDBEnu5T10TOKozvVTaZn5O1NfaR5q%2B3zDnWRoFhfCcg%2FTilTQng%3D%3D"
-            },
-            "barcode": {
-                "id": "U2FsdGVkX1+Pgk0VxfAp5EbUgyoJxdy9Dcnnt4YYF64Kdk4o3GXzc3NeOvi6wFL27I2/j8bbMm8xZxETc6C0xgV9DcDUarJhpYjA4k+EhSu0dvoqrkSuGo1Pk+yFAeu7dieakoIR2xv+5B2ebqXstQ==",
-                "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BPgk0VxfAp5EbUgyoJxdy9Dcnnt4YYF64Kdk4o3GXzc3NeOvi6wFL27I2%2Fj8bbMm8xZxETc6C0xgV9DcDUarJhpYjA4k%2BEhSu0dvoqrkSuGo1Pk%2ByFAeu7dieakoIR2xv%2B5B2ebqXstQ%3D%3D"
-            }
-        },
-        "is_referral_code": false,
-        "created_at": "2022-02-16T06:58:29.207Z",
-        "updated_at": "2022-02-16T07:39:21.576Z",
-        "validation_rules_assignments": {
-            "object": "list",
-            "data_ref": "data",
-            "data": [],
-            "total": 0
-        },
-        "redemption": {
-            "quantity": null,
-            "redeemed_quantity": 1,
-            "object": "list",
-            "url": "/v1/vouchers/BLCKFRDY/redemptions?page=1&limit=10"
-        },
-        "publish": {
-            "object": "list",
-            "count": 0,
-            "url": "/v1/vouchers/BLCKFRDY/publications?page=1&limit=10"
-        },
-        "object": "voucher",
-        "applicable_to": {
-            "data": [],
-            "total": 0,
-            "data_ref": "data",
-            "object": "list"
-        },
-        "inapplicable_to": {
-            "data": [],
-            "total": 0,
-            "data_ref": "data",
-            "object": "list"
-        }
-    }
+    "inapplicable_redeemables": [],
+    "skipped_redeemables": []
 }
 ```
 
@@ -184,15 +248,14 @@ Because BLCKFRDY doesn’t have any redemption limits, you can use it multiple t
 
 Every redemption can be [listed](ref:list-redemptions) with the API or in the dashboard. When you go to the voucher view, in “Recent changes”, you’ll see operations performed on the object. You can switch to the REDEMPTIONS HISTORY tab to track all redemptions.  
 
-<!-- ![Recent Changes](../../assets/img/guides_getting_started_quickstart_recent_changes_4.png "Recent Changes") -->
+<!-- ![Recent Changes](../../assets/img/guides_getting_started_Quickstart_review_logs.png "Recent Changes") -->
 
 [block:image]
 {
   "images": [
     {
       "image": [
-        "https://files.readme.io/8bc30bc-recent_changes.png",
-        "recent_changes.png",
+       "https://files.readme.io/95e3dba-guides_getting_started_Quickstart_review_logs.png",
         1004
       ],
       "sizing": "80"
@@ -203,8 +266,8 @@ Every redemption can be [listed](ref:list-redemptions) with the API or in the da
 
 To monitor and filter the list of all API calls for your project, you can go to the [Audit log](https://app.voucherify.io/#/app/core/logs):
 
-<!-- ![Audit Log](../../assets/img/guides_getting_started_quickstart_audit_log_5.png "Audit Log") -->
-![Audit Log](https://files.readme.io/1a4682c-audit_log.png "Audit Log")
+<!-- ![Audit Log](../../assets/img/guides_getting_started_Quickstart_audit_log.png "Audit Log") -->
+![Audit Log](https://files.readme.io/207c12c-guides_getting_started_Quickstart_audit_log.png)
 
 ## Test promo scenarios with "Hot Beans" demo store
 
