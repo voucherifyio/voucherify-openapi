@@ -36,29 +36,34 @@ const main = async ({
   create?: boolean;
   update?: boolean;
 }) => {
-  const valid = validateOptions({ help, version, create, update });
-  if (!valid) {
+  if (!(await validate({ help, version, create, update }))) {
     return;
   }
   if (create) {
     await createNewVersion(version);
-  } else if (!(await isVersionExists(version))) {
-    console.log(
-      colors.red(
-        `Version ${version} does not exist! Create it first. Use parameter --update instead of --create`
-      )
-    );
-    return;
   }
   await cleanProject(version);
   await uploadOpenApiFile(version);
   await buildMdTables();
   await updateMdTablesInDocs();
+  await uploadImagesUsedInMdFiles();
   await uploadGuideFiles(version);
   await uploadReferenceDocsWithMaxNumberOfAttempts(version);
   console.log(
     colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`)
   );
+};
+
+const uploadImagesUsedInMdFiles = async () => {
+  console.log(
+    colors.green(
+      "LOOKING FOR NOT UPLOADED IMAGES IN MD FILES, UPLOADING IF NEEDED..."
+    )
+  );
+  await runCliProcess({
+    command: `npm run readme-upload-missing-images`,
+  });
+  console.log(colors.green("OPERATION WAS COMPLETED SUCCESSFULLY!"));
 };
 
 const isVersionExists = async (version: string) => {
@@ -80,12 +85,12 @@ const isVersionExists = async (version: string) => {
 
 const uploadReferenceDocsWithMaxNumberOfAttempts = async (
   version,
-  maxNumberOfUploadingAttempts = 6
+  maxNumberOfUploadingAttempts = 3
 ) => {
   console.log(colors.green("UPLOADING REFERENCE DOC FILES..."));
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
-    await new Promise((r) => setTimeout(r, 5000));
-    const success = await runCliProcess({
+    await new Promise((r) => setTimeout(r, 10000));
+    const { success, error } = await runCliProcess({
       command: `rdme docs ./docs/reference-docs --version=${version}`,
       stdoutIncludes: "successfully created",
       resolveErrorAsFalse: true,
@@ -95,6 +100,7 @@ const uploadReferenceDocsWithMaxNumberOfAttempts = async (
       break;
     }
     if (i === maxNumberOfUploadingAttempts) {
+      console.log(error);
       throw new Error("REFERENCE DOC FILES WERE NOT UPLOADED!");
     }
   }
@@ -111,7 +117,7 @@ const runCliProcess = async ({
   stdoutIncludes?: string;
   stderrIncludes?: string;
   resolveErrorAsFalse?: boolean;
-}) => {
+}): Promise<{ success: boolean; error?: string }> => {
   return await new Promise((resolve) => {
     exec(command, (error, stdout, stderr) => {
       const stdoutClean = stdout.replace(/.*voucherify/, "").trim();
@@ -120,18 +126,19 @@ const runCliProcess = async ({
         (!stdoutIncludes && stdoutClean) ||
         (stderrIncludes && stderr.includes(stderrIncludes))
       ) {
-        return resolve(true);
+        return resolve({ success: true });
       }
       if (resolveErrorAsFalse) {
-        return resolve(false);
+        return resolve({ success: false, error: `Error: \n${stderr}` });
       }
       if (stderr) {
-        console.log(stderr);
+        console.log(`Error: \n${stderr}`);
       }
       throw error;
     });
   });
 };
+
 const uploadGuideFiles = async (version) => {
   console.log(colors.green("UPLOADING GUIDES DOC FILES..."));
   await runCliProcess({
@@ -170,7 +177,7 @@ const uploadOpenApiFile = async (version) => {
 };
 
 const createNewVersion = async (version) => {
-  //create fork
+  console.log(colors.green("CREATING NEW VERSION"));
   try {
     const response = await fetch(`https://dash.readme.com/api/v1/version`, {
       method: "POST",
@@ -188,7 +195,7 @@ const createNewVersion = async (version) => {
         version,
       }),
     });
-    if (response.status !== 200) {
+    if (response.status !== 200 && !(await isVersionExists(version))) {
       throw new Error(
         `Response status: ${response.status}, maybe this versionTag is already created?`
       );
@@ -230,7 +237,9 @@ const cleanProject = async (version) => {
   );
   console.log(colors.green(`REFERENCE CATEGORIES UPDATED!`));
   const allApiSpecifications = await getAllApiSpecifications(version);
-  await asyncMap(allApiSpecifications, deleteSpecification);
+  await asyncMap(allApiSpecifications, (apiSpecification) =>
+    deleteSpecification(apiSpecification.id)
+  );
   console.log(colors.green(`API SPECIFICATIONS DELETED!`));
   console.log(colors.green(`VERSION "${version}" IS CLEANED UP!`));
   return;
@@ -315,7 +324,7 @@ const asyncMap = (arr, asyncFn) => {
   return Promise.all(arr.map(asyncFn));
 };
 
-const validateOptions = ({
+const validate = async ({
   help,
   version,
   create,
@@ -326,6 +335,12 @@ const validateOptions = ({
   create?: boolean;
   update?: boolean;
 }) => {
+  if (process.env.README_IO_AUTH?.length < 10) {
+    console.log(
+      colors.red("`README_IO_AUTH` was not provided in `.env` file :/")
+    );
+    return;
+  }
   if (help || (!version && !create && !update)) {
     printHelp();
     return false;
@@ -350,6 +365,22 @@ const validateOptions = ({
     console.log(
       colors.red(
         "invalid arguments, you provided conflicting arguments `update` and `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
+      )
+    );
+    return false;
+  }
+  if (update && !(await isVersionExists(version))) {
+    console.log(
+      colors.red(
+        `Version ${version} does not exist! Create it first. Use parameter --create instead of --update`
+      )
+    );
+    return false;
+  }
+  if (create && (await isVersionExists(version))) {
+    console.log(
+      colors.red(
+        `Version ${version} already exist! Update it instead. Use parameter --update instead of --create`
       )
     );
     return false;

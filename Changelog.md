@@ -1,5 +1,170 @@
 # Changelog
 
+## 20230923 - Endpoint bugfixes and improvements
+
+- Described customer object in Track custom event endpoint
+- Fixed qualifications filters (missing and wrong properties)
+- Fixed wrong name of rollback object in Rollback Stackable Redemptions response
+
+| **API** | **Endpoint**                    | **Slug**             |
+|---|---------------------------------|----------------------|
+| **Events** | Track Custom Event              | track-custom-event | true |
+| **Qualifications** | Examine Qualification           | examine-qualification | true |
+| **Stackable Discounts** |  Rollback Stackable Redemptions | rollback-stackable-redemptions | rollback-stacked-redemptions | true |
+
+## 20231020
+
+**Added schemas**
+- Category
+- CategoriesListResponseBody
+- CategoriesCreateRequestBody
+- CategoriesCreateResponseBody
+- CategoriesGetResponseBody
+- CategoriesUpdateRequestBody
+- CategoriesUpdateResponseBody
+
+**Endpoints changes**
+- `/v1/categories`
+  - GET
+    - Response schema was replaced with `CategoriesListResponseBody` (old 20_res_list_categories)
+  - POST
+    - Request parameters schema was replaced with `CategoriesCreateRequestBody` (old 20_req_create_category)
+    - Response schema was replaced with `CategoriesCreateResponseBody` (old 20_res_create_category)
+- `/v1/categories/{categoryId}`
+  - GET
+    - Response schema was replaced with `CategoriesGetResponseBody` (old 20_obj_category_object)
+  - PUT
+    - Request parameters schema was replaced with `CategoriesUpdateRequestBody` (old 20_req_update_categories_categoryId)
+    - Response schema was replaced with `CategoriesUpdateResponseBody` (old 20_obj_category_object)
+
+## 20231019 - Promotions Stacks
+
+#### New schemas
+- PromotionsStacksListInCampaignResponseBody
+- PromotionsStacksListResponseBody
+- PromotionsStacksListRequestQuery
+- PromotionsStacksGetResponseBody
+- PromotionsStacksUpdateRequestBody
+- PromotionsStacksUpdateResponseBody
+- PromotionsStacksCreateInCampaignRequestBody
+- PromotionsStacksCreateInCampaignResponseBody
+- PromotionStackBase
+- PromotionStack
+
+- GET /v1/promotions/{campaignId}/stacks
+  - new response schema `PromotionsStacksListInCampaignResponseBody` (old `3_res_list_promotion_stacks`)
+- POST /v1/promotions/{campaignId}/stacks
+  - new request schema `PromotionsStacksCreateInCampaignRequestBody` (old `3_req_create_promotion_stack`)
+  - new response schema `PromotionsStacksCreateInCampaignResponseBody` (old `3_obj_promotion_stack_object`)
+- GET /v1/promotions/{campaignId}/stacks/{stackId}
+  - new response schema `PromotionsStacksGetResponseBody` (old `3_obj_promotion_stack_object`)
+- PUT /v1/promotions/{campaignId}/stacks/{stackId}
+  - new request schema `PromotionsStacksUpdateRequestBody` (old `3_req_create_promotion_stack`)
+  - new response schema `PromotionsStacksUpdateResponseBody` (old `3_obj_promotion_stack_object`)
+- GET /v1/promotions/stacks
+  - new response schema `PromotionsStacksListResponseBody` (old `3_res_list_promotion_stacks`)
+
+# 20231019 - Vouchers
+
+- Vouchers - List Gift Card Transactions  (**GET** `/vouchers/{code}/transactions`) renamed to List Voucher Transactions
+- Vouchers - Export Gift Card Transactions  (**GET** `/vouchers/{code}/transactions/export`) renamed to Export Voucher Transactions
+
+**New models**
+- vouchers_list_vouchers_transactions_response_body (old `1_res_vouchers_code_transactions`)
+- voucher_transaction (old `1_obj_gift_card_transaction_object`)
+- gift_card_transaction
+- gift_card_transaction_identity
+- gift_card_transaction_base
+- gift_card_transaction_created
+- gift_card_transaction_details
+- gift_card_transaction_redemption_details (old `1_obj_gift_card_transaction_object_redemption`)
+- gift_card_transaction_refund_details (old `1_obj_gift_card_transaction_object_refund`)
+- gift_card_transaction_addition_details (old `1_obj_gift_card_transaction_object_addition`)
+- gift_card_transaction_removal_details (old `1_obj_gift_card_transaction_object_removal`)
+
+- vouchers_export_transactions_request_body (old `1_req_create_gift_card_transactions_export`
+- voucher_transactions_export (old `1_obj_export_transactions_object`)
+- voucher_transactions_export_parameters (old `1_obj_export_gift_card_transactions`)
+- voucher_transactions_filters (old `16_obj_export_gift_card_transactions`)
+- voucher_transactions_export_filter_conditions (old `16_obj_filter_gift_card_transactions_voucher_id`)
+
+- validation_rules_list_rules_assignments_response_body (old `13_res_validation-rules_validationRuleId_assignments`)
+- validation_rule_assignment (old `13_obj_validation_rule_assignment_object`)
+
+**Removed models**
+- `8_obj_export_loyalty_card_transactions` - used only in one place, replaced with: `voucher_transactions_export_parameters` in `8_req_create_loyalty_card_transactions_export` schema
+
+**Endpoint changes**
+
+- Added missing method for endpoint: GET `/vouchers/{code}/transactions (client.vouchers.listTransactions(code, query))`
+    - Response body schema: `vouchers_list_vouchers_transactions_response_body`
+
+- Added missing method for endpoint: POST `/vouchers/{code}/transactions/export (client.vouchers.exportTransactions(code, body))`
+    - Request body schema: `vouchers_export_transactions_request_body`
+
+- Added missing method for endpoint: GET `/validation-rules-assignments (client.client.validationRules.listRulesAssignments(validationRuleId))`
+    - Request body schema: `validation_rules_list_rules_assignments_response_body`
+
+
+## 20231016 - Rewards
+
+**New models**
+- reward
+- reward_base
+- reward_identity
+- reward_response_data
+- reward_parameters
+
+- reward_parameters_CAMPAIGN
+- reward_parameters_COIN
+- reward_parameters_MATERIAL
+- reward_assignment
+- reward_assignment_base
+- reward_assignment_identity
+- reward_assignment_response_data
+- rewards_list_assignments_response_body
+- rewards_create_assignment_request_body
+- rewards_create_assignment_coin_reward_request_body
+- rewards_create_assignment_main_reward_request_body
+- rewards_update_assignment_request_body
+
+**Endpoint changes**
+- Added missing method for endpoint: GET `/v1/rewards/{rewardId)}/assignments/{assignmentId}`
+    - Response body schema: `reward_assignment`
+- GET `/v1/rewards/{rewardId}/assignments` (listAssignments)
+    - New response schema: `rewards_list_assignments_response_body` (old one: `4_res_list_reward_assignments`)
+- POST `/v1/rewards/{rewardId}/assignments` (createAssignment)
+    - New request schema: `rewards_create_assignment_request_body` (old one: `4_req_create_reward_assignment`)
+    - New response schema: `reward_assignment` (old one: `4_obj_reward_assignment_object`)
+- PUT `/v1/rewards/{rewardId}/assignments/{assignmentId}` (updateAssignment)
+    - New request schema: `rewards_update_assignment_request_body` (old one: `4_req_update_reward_assignment`)
+    - New response schema: `reward_assignment` (old one: `4_obj_reward_assignment_object`)
+
+## 20231016 - Loyalties
+
+**New models**
+- reward
+- reward_base
+- reward_identity
+- reward_response_data
+- reward_parameters
+
+- reward_parameters_CAMPAIGN
+- reward_parameters_COIN
+- reward_parameters_MATERIAL
+- reward_assignment
+- reward_assignment_base
+- reward_assignment_identity
+- reward_assignment_response_data
+- loyalties_list_loyalty_tier_rewards_response_body
+- loyalties_loyalty_tier_reward (old one: `8_obj_loyalty_tier_reward_object`)
+- 
+
+**Endpoint changes**
+- Added missing method for endpoint: GET `/v1/loyalties/{campaignId)}/rewards/{assignmentId}`
+    - Response body schema: `reward_assignment`
+- Added missing method for endpoint: GET `/v1/loyalties/{campaignId)}/tiers/{tierId}/rewards`
+    - Response body schema: `loyalties_list_loyalty_tier_rewards_response_body`
 
 ## 20231012 - Product Collections
 
@@ -445,9 +610,6 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 /docs/orders-1  -> /docs/orders
 /docs/vouchers-1 -> /docs/vouchers
 /docs/campaigns-1 -> /docs/campaigns
-/docs/checking-eligibility-for-coupons -> /docs/checking-eligibility
-/reference/examine-qualification -> /reference/check-eligibility
-/reference/examine-qualification-client-side -> /reference/check-eligibility-client-side
 /reference/vouchers-get -> /reference/get-voucher
 /reference/add-gift-voucher-balance -> /reference/add-remove-gift-voucher-balance
 /reference/import-vouchers-1 -> /reference/import-vouchers
