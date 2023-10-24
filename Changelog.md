@@ -1,5 +1,10 @@
 # Changelog
 
+## 20230924
+
+- Updated `docs/guides/getting_started/Quickstart.md`
+
+
 ## 20230923 - Endpoint bugfixes and improvements
 
 - Described customer object in Track custom event endpoint
