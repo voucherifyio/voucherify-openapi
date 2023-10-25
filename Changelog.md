@@ -4,7 +4,10 @@
 
 **Added schemas**
 - VouchersValidateRequestBody
-- Customer
+- VouchersValidateDiscountRequestBody
+- VouchersValidateGiftRequestBody
+- VouchersValidateLoyaltyRequestBody
+- Referrer
 - OrderItem
 - Session
 - VouchersValidateValidResponseBody
