@@ -68,30 +68,64 @@ How to edit OpenAPI file:
 > [!WARNING] Each OpenAPI change should be tested by reviewing documentation on readme.io after the full documentation update process.
 
  Building  new models, we should follow the following name convention: 
-- Use snake case casing.
-- If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{resource}_{action}_{request|response}_{body|param|query}`, where:
-	  - `resource`: plural name taken from API path, e.g. `vouchers`, `customers`, `products`
-	  - `action` : `get`(single record), `list`, `update`, `delete`, `create` (etc.)
--  If a 0-level model has dedicated sub-models, then those model's names should follow the pattern:
-  `{resource}_{action}_{differentiator}_{request|response}_{body|param|query}`
-  where the  `differentiator` describes the child model, e.g., `publication`.
-- If a model is used by more than one API endpoint (general model), we use simple domain language, e.g. `voucher`, `customer`, `product`, `discount`, `discount_unit`
+- Use pascal case casing.
+- If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{Resource}{Action}{Request|Response}{Body|Query}`, where:
+	- `Resource`: plural name taken from API path, e.g. `Vouchers`, `Customers`, `Products`
+	- `Action` : `Get`(single record), `List`, `Update`, `Delete`, `Create` (etc.)
+- If a 0-level model has dedicated sub-models, then those model's names should follow the pattern:
+   `{Resource}{Action}{Differentiator}{Request|Response}{Body|Query}`
+   where the  `Differentiator` describes the child model, e.g.:
+  - `Discount [VouchersValidateDiscountRequestBody]`
+  - `Gift [VouchersValidateGiftRequestBody]`
+  - `Loyalty [VouchersValidateLoyaltyRequestBody]` 
+- If a model is used by more than one API endpoint (general model), we use simple domain language, e.g. `Customer`, `Category`, `Discount`, `DiscountUnit`
+- If a portion of a model is used by more than one schema, we can save this portion under a new schema and use it with `allOf` operator:
+```json
+{
+  "GiftCardTransaction": {
+    "title": "Gift Card Transaction",
+    "description": "List of gift card transactions",
+    "anyOf": [
+      {
+        "title": "Redemption",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GiftCardTransactionBase"
+          },
+          {
+            "$ref": "#/components/schemas/GiftCardTransactionRedemptionDetails"
+          }
+        ]
+      },
+      {
+        "title": "Refund",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GiftCardTransactionBase"
+          },
+          {
+            "$ref": "#/components/schemas/GiftCardTransactionRefundDetails"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
 
 For example:
-- The general voucher model, used in many different API endpoints, should have the name `voucher` (currently, it has a name: `1_obj_voucher_object`)
-- for path `GET /v1/vouchers` (list vouchers), we have a `1_res_vouchers_GET` 0-level model, that should be named: `vouchers_list_response_body`.
-- for path `GET /v1/vouchers` (list vouchers), we have a `1_res_vouchers_GET` 0-level model which has sub-model `1_obj_voucher_object_list_vouchers` that should be named: `vouchers_list_item_response_body`
-- General model `1_obj_voucher_object` is used in many paths (`GET /v1/vouchers/{code}`, `POST /v1/vouchers/qualification`, `GET /v1/publications/create`); therefore, we should rename the model to `voucher`.
+- The general voucher model, used in many different API endpoints, should have the name `Voucher` (currently, it has a name: `1_obj_voucher_object`)
+- for path `GET /v1/vouchers` (list vouchers), we have a `1_res_vouchers_GET` 0-level model, that should be named: `VouchersListResponseBody`.
+- for path `GET /v1/vouchers` (list vouchers), we have a `1_res_vouchers_GET` 0-level model which has sub-model `1_obj_voucher_object_list_vouchers` that should be named: `VouchersListItemResponseBody` 
+- General model `1_obj_voucher_object` is used in many paths (`GET /v1/vouchers/{code}`, `POST /v1/vouchers/qualification`, `GET /v1/publications/create`); therefore, we should rename the model to `Voucher`.
 
-> [!NOTE] Try to avoid building complex type structures. 0-level models, sub-modules and general modules should be enough to describe the API. Do not be afraid to repeat models for different API endpoints if there are differences.
-
-
+> [!NOTE] Most likely general model will be same as used in GET method. For example `CategoriesGetResponseBody` is equal by ref to `Category`. This model most likely will not be used in `PUT` requests because, response in `PUT` request always returns value in `updated_at`, so you will need to create a duplicated model just for update response.
 
 Good practices:
 - for literal unions use `enum`
 - for types unions, use `anyOf`,
 - for attributes that may contain `null`, add `"nullable": true` 
-- for dates use `"type": "string", "format": "date-time"`
+- for dates use `"type": "string", "format": "date-time"` or `"type": "string", "format": "date"`
 - for the object, add the "required" attribute which should contain a list of required attributes in the object
 
 ## Contribution to documentation
@@ -111,7 +145,7 @@ Good practices:
   - with `[block:image]` component, [see example in Quickstart.md](docs/guides/getting_started/Quickstart.md)
   - with link declaration, for example `![Welcome Diagram](https://files.readme.io/6070078-welcome-diagram.png "Welcome Diagram")`
 - At first always point to assets img folder, for example: `![Recent Changes](../../assets/img/guides_getting_started_quickstart_recent_changes_4.png "Recent Changes")`
-- This path declaration will be automatically updated to url link while during `npm run manage-project` command.
+- This path declaration will be automatically updated to url link while during `npm run manage-project` command, but if you don't want to update project data, You can run `npm run readme-upload-missing-images` instead.
 
 ### Development process
 - For each change / pull request, create your copy of the current documentation, where you will test changes.
@@ -132,8 +166,10 @@ Good practices:
 
 ## How to merge PR and update public documentation
 
-- Test changes on readme (you can use the version prepared by the contributor).
 - Ensure the changelog was updated.
+- Merge master branch to your branch by running `git merge master`
+- Run `npm run manage-project -- --vt={your name}-{pull request number} --update` to ensure the version is up-to-date.
+- Test last time changes on readme (you can use the version prepared by the contributor).
 - Merge PR to `master` branch
 - In readme.io, change the current documentation version from `v2018-08-01` to `v2018-08-01-deprecated-mm-dd-yyyy`
 - Change the name of your new release version from `2018-08-01-{your name}-{pull request number}` to `v2018-08-01`
