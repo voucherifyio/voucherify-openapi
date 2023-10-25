@@ -1,10 +1,16 @@
 # Changelog
 
+
 ## 20231025 - Vouchers
 
 **Changes in models**
 - Removed `gift_card_transaction_identity`, `gift_card_transaction_created` - these types were combined into the `gift_card_transaction_base` model
 - Fixed the enum defined for `fields` property in `voucher_transactions_export_parameters` and `voucher_transactions_filters` models
+
+## 20231025 - List Loyalty Tiers
+
+Endpoint change:
+- Removed `page` from query params (GET `/v1/loyalties/{campaignId}/tiers`)
 
 ## 20230924
 
