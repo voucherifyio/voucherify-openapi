@@ -1,6 +1,12 @@
 # Changelog
 
 
+## 20231025 - Rewards, Loyalties
+
+**Changes in models**
+- Removed `reward_base`, `reward_identity`, `reward_created` - these types were combined into the `reward` model
+- Removed `reward_assignment_identity`, `reward_assignment_response_data` - these types were combined into the `reward_assignment_base` model
+
 ## 20231025 - Vouchers
 
 **Changes in models**
@@ -15,7 +21,6 @@ Endpoint change:
 ## 20230924
 
 - Updated `docs/guides/getting_started/Quickstart.md`
-
 
 ## 20230923 - Endpoint bugfixes and improvements
 

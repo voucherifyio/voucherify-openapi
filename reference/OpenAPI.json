@@ -8466,33 +8466,6 @@
       "reward_assignment_base": {
         "title": "Reward Assignment Base",
         "type": "object",
-        "x-tags": [
-          "REWARDS API"
-        ],
-        "properties": {
-          "related_object_id": {
-            "type": "string",
-            "description": "Related object ID to which the reward was assigned.",
-            "example": "camp_wciTvaOfYmAa3EmIIW3QpXXZ"
-          },
-          "related_object_type": {
-            "description": "Related object type to which the reward was assigned.",
-            "enum": [
-              "campaign"
-            ]
-          }
-        },
-        "required": [
-          "related_object_id",
-          "related_object_type"
-        ]
-      },
-      "reward_assignment_identity": {
-        "title": "Reward Assignment Identity",
-        "type": "object",
-        "x-tags": [
-          "REWARDS API"
-        ],
         "properties": {
           "id": {
             "type": "string",
@@ -8503,20 +8476,7 @@
             "type": "string",
             "description": "Associated reward ID.",
             "example": "rew_C7wS9eHFDN4CIbXI5PpLSkGY"
-          }
-        },
-        "required": [
-          "id",
-          "reward_id"
-        ]
-      },
-      "reward_assignment_response_data": {
-        "title": "Reward Assignment Response Data",
-        "type": "object",
-        "x-tags": [
-          "REWARDS API"
-        ],
-        "properties": {
+          },
           "created_at": {
             "type": "string",
             "description": "Timestamp representing the date and time when the reward assignment was created in ISO 8601 format.",
@@ -8533,24 +8493,67 @@
             "format": "date-time"
           },
           "object": {
+            "type": "string",
             "description": "The type of object represented by the JSON. This object stores information about the reward assignment.",
             "enum": [
               "reward_assignment"
             ]
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "Related object ID to which the reward was assigned.",
+            "example": "camp_wciTvaOfYmAa3EmIIW3QpXXZ"
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "Related object type to which the reward was assigned.",
+            "enum": [
+              "campaign"
+            ]
           }
         },
         "required": [
+          "related_object_id",
+          "related_object_type",
+          "id",
+          "reward_id",
           "created_at",
           "updated_at",
           "object"
         ]
       },
-      "reward_assignment_campaign_and_material_reward_parameters": {
-        "title": "Reward Assignment Campaign or Material Reward Parameters",
-        "type": "object",
-        "x-tags": [
-          "REWARDS API"
+      "reward_assignment": {
+        "title": "Reward Assignment",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/reward_assignment_coin_reward"
+          },
+          {
+            "$ref": "#/components/schemas/reward_assignment_campaign_and_material_reward"
+          }
         ],
+        "type": "object"
+      },
+      "reward_assignment_coin_reward": {
+        "title": "Pay with Points Reward",
+        "$ref": "#/components/schemas/reward_assignment_base",
+        "type": "object"
+      },
+      "reward_assignment_campaign_and_material_reward": {
+        "title": "Digital or Material Reward",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/reward_assignment_base"
+          },
+          {
+            "$ref": "#/components/schemas/reward_assignment_campaign_and_material_reward_parameters"
+          }
+        ],
+        "type": "object"
+      },
+      "reward_assignment_campaign_and_material_reward_parameters": {
+        "title": "Digital or Material Reward - Parameters",
+        "type": "object",
         "properties": {
           "parameters": {
             "description": "Defines the cost of the reward.",
@@ -8559,9 +8562,6 @@
               "loyalty": {
                 "type": "object",
                 "description": "Defines the equivalent points value of the reward.",
-                "required": [
-                  "points"
-                ],
                 "properties": {
                   "points": {
                     "type": "integer",
@@ -8579,54 +8579,10 @@
           "parameters"
         ]
       },
-      "reward_assignment": {
-        "title": "Reward Assignment",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/reward_assignment_coin_reward"
-          },
-          {
-            "$ref": "#/components/schemas/reward_assignment_campaign_and_material_reward"
-          }
-        ],
-        "type": "object"
-      },
-      "reward_assignment_coin_reward": {
-        "title": "Reward Assignment - Coin Reward",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/reward_assignment_identity"
-          },
-          {
-            "$ref": "#/components/schemas/reward_assignment_base"
-          },
-          {
-            "$ref": "#/components/schemas/reward_assignment_response_data"
-          }
-        ],
-        "type": "object"
-      },
-      "reward_assignment_campaign_and_material_reward": {
-        "title": "Reward Assignment - Campaign or Material Reward",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/reward_assignment_identity"
-          },
-          {
-            "$ref": "#/components/schemas/reward_assignment_base"
-          },
-          {
-            "$ref": "#/components/schemas/reward_assignment_response_data"
-          },
-          {
-            "$ref": "#/components/schemas/reward_assignment_campaign_and_material_reward_parameters"
-          }
-        ],
-        "type": "object"
-      },
+
       "rewards_list_assignments_response_body": {
         "type": "object",
-        "description": "Response body schema for **GET** `/rewards/{rewardID}/assignments`.",
+        "description": "Response body schema for GET /rewards/{rewardID}/assignments.",
         "title": "List Reward Assignments Response Body",
         "properties": {
           "object": {
@@ -8671,7 +8627,7 @@
       },
       "rewards_create_assignment_campaign_and_material_reward_request_body": {
         "description": "Request body schema for **POST** `/rewards/{rewardID}/assignments`.",
-        "title": "Reward Assignment - Campaign Or Material Reward",
+        "title": "Digital Or Material Reward",
         "properties": {
           "campaign": {
             "type": "string",
@@ -8704,7 +8660,7 @@
       },
       "rewards_create_assignment_coin_reward_request_body": {
         "description": "Request body schema for **POST** `/rewards/{rewardID}/assignments`.",
-        "title": "Reward Assignment - Coin Reward",
+        "title": "Pay with Points Reward",
         "type": "object",
         "properties": {
           "campaign": {
@@ -21101,9 +21057,6 @@
         "title": "Loyalty Tier Reward Object",
         "type": "object",
         "description": "This is an object representing a loyalty tier reward.",
-        "x-tags": [
-          "LOYALTIES API"
-        ],
         "properties": {
           "reward": {
             "$ref": "#/components/schemas/reward"
@@ -24631,7 +24584,7 @@
       "loyalties_list_loyalty_tier_rewards_response_body": {
         "title": "List Loyalty Tier Rewards",
         "type": "object",
-        "description": "Response schema for `/loyalties/{campaignId}/tiers/{tierId}/rewards`.",
+        "description": "Response schema for GET `/loyalties/{campaignId}/tiers/{tierId}/rewards`.",
         "properties": {
           "object": {
             "type": "string",
@@ -35884,21 +35837,14 @@
         ]
       },
       "reward": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/reward_identity"
-          },
-          {
-            "$ref": "#/components/schemas/reward_base"
-          },
-          {
-            "$ref": "#/components/schemas/reward_created"
-          }
-        ]
-      },
-      "reward_base": {
         "type": "object",
+        "title": "Reward",
         "properties": {
+          "id": {
+            "type": "string",
+            "example": "rew_nIy4gHpQHle2c3pNMwuj7G6j",
+            "description": "Unique reward ID, assigned by Voucherify."
+          },
           "name": {
             "type": "string",
             "description": "Reward name."
@@ -35947,33 +35893,7 @@
           "parameters": {
             "$ref": "#/components/schemas/reward_type",
             "description": "Defines how the reward is generated."
-          }
-        },
-        "required": [
-          "name",
-          "type",
-          "stock",
-          "redeemed",
-          "attributes",
-          "metadata"
-        ]
-      },
-      "reward_identity": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "rew_nIy4gHpQHle2c3pNMwuj7G6j",
-            "description": "Unique reward ID, assigned by Voucherify."
-          }
-        },
-        "required": [
-          "id"
-        ]
-      },
-      "reward_created": {
-        "type": "object",
-        "properties": {
+          },
           "created_at": {
             "type": "string",
             "description": "Timestamp representing the date and time when the reward was created in ISO 8601 format.",
@@ -35997,12 +35917,20 @@
           }
         },
         "required": [
+          "id",
+          "name",
+          "type",
+          "stock",
+          "redeemed",
+          "attributes",
+          "metadata",
           "created_at",
           "updated_at",
           "object"
         ]
       },
       "reward_type": {
+        "title": "Reward type",
         "oneOf": [
           {
             "$ref": "#/components/schemas/reward_type_campaign"
@@ -36016,7 +35944,7 @@
         ]
       },
       "reward_type_coin": {
-        "title": "Reward Type - Coin",
+        "title": "Pay with Points",
         "type": "object",
         "properties": {
           "coin": {
@@ -36039,7 +35967,7 @@
         }, "required": ["coin"]
       },
       "reward_type_material": {
-        "title": "Reward Type - Material",
+        "title": "Material",
         "type": "object",
         "properties": {
           "product": {
@@ -36052,6 +35980,7 @@
             "properties": {
               "id": {
                 "type": "string",
+                "example": "prod_0b7d7dfb05cbe5c616",
                 "description": "Unique product ID, assigned by Voucherify."
               },
               "sku": {
@@ -36059,6 +35988,7 @@
                   "string",
                   "null"
                 ],
+                "example": "sku_0b7d7dfb090be5c619",
                 "description": "Unique SKU ID, assigned by Voucherify, of the SKU given as a reward."
               }
             }
@@ -36069,7 +35999,7 @@
         ]
       },
       "reward_type_campaign": {
-        "title": "Reward Type - Campaign",
+        "title": "Digital",
         "type": "object",
         "properties": {
           "campaign": {
