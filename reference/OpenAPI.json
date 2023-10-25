@@ -382,8 +382,23 @@
     },
     "schemas": {
       "VouchersValidateRequestBody": {
-        "type": "object",
         "title": "Validate Voucher Request Body",
+        "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/VouchersValidateDiscountRequestBody"
+          },
+          {
+            "$ref": "#/components/schemas/VouchersValidateGiftRequestBody"
+          },
+          {
+            "$ref": "#/components/schemas/VouchersValidateLoyaltyRequestBody"
+          }
+        ]
+      },
+      "VouchersValidateDiscountRequestBody": {
+        "type": "object",
+        "title": "Validate Discount Code",
         "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
         "properties": {
           "customer": {
@@ -432,8 +447,8 @@
                 "type": "string"
               },
               "referrer": {
-                "$ref": "#/components/schemas/Customer",
-                "description": "This is an ojbect containing information about the referrer."
+                "$ref": "#/components/schemas/Referrer",
+                "description": "This is an object containing information about the referrer."
               },
               "referrer_id": {
                 "type": "string"
@@ -444,26 +459,94 @@
               }
             }
           },
-          "reward": {
+          "session": {
+            "$ref": "#/components/schemas/Session",
+            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session."
+          },
+          "tracking_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "expand": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "category"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "VouchersValidateGiftRequestBody": {
+        "type": "object",
+        "title": "Validate Gift Card",
+        "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "description": "Customer's information."
+          },
+          "order": {
             "type": "object",
             "additionalProperties": false,
-            "description": "Contains information about the reward that the customer wants to redeem and the number of points the customer is choosing to use for the reward.",
+            "description": "Order information.",
             "properties": {
               "id": {
                 "type": "string",
-                "description": "Unique reward ID assigned by Voucherify. The reward must be assigned to the campaign in order for the user to be able to use the reward."
+                "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.\n\n"
               },
-              "assignment_id": {
+              "source_id": {
+                "type": "string",
+                "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+              },
+              "status": {
+                "type": "string",
+                "description": "The order status.",
+                "enum": [
+                  "CREATED",
+                  "PAID",
+                  "CANCELED",
+                  "FULFILLED"
+                ]
+              },
+              "amount": {
+                "type": "string",
+                "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts.\n\n"
+              },
+              "items": {
+                "type": "array",
+                "description": "Array of items applied to the order.",
+                "items": {
+                  "$ref": "#/components/schemas/OrderItem"
+                }
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Customer",
+                "description": "This is an object containing information about the customer."
+              },
+              "customer_id": {
                 "type": "string"
               },
-              "points": {
-                "type": "number",
-                "description": "The number of loyalty points that the user wants to spend in order to fulfill the order. The number of points cannot be higher than the current balance on the loyalty card. If the user gives more points than he/she has on the loyalty card, the application will return an error code in response."
+              "referrer": {
+                "$ref": "#/components/schemas/Referrer",
+                "description": "This is an ojbect containing information about the referrer."
+              },
+              "referrer_id": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
               }
-            },
-            "required": [
-              "id"
-            ]
+            }
           },
           "gift": {
             "type": "object",
@@ -504,7 +587,125 @@
               }
             }
           }
-        }
+        },
+        "required": ["gift"]
+      },
+      "VouchersValidateLoyaltyRequestBody": {
+        "type": "object",
+        "title": "Validate Loyalty Card",
+        "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "description": "Customer's information."
+          },
+          "order": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Order information.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.\n\n"
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+              },
+              "status": {
+                "type": "string",
+                "description": "The order status.",
+                "enum": [
+                  "CREATED",
+                  "PAID",
+                  "CANCELED",
+                  "FULFILLED"
+                ]
+              },
+              "amount": {
+                "type": "string",
+                "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts.\n\n"
+              },
+              "items": {
+                "type": "array",
+                "description": "Array of items applied to the order.",
+                "items": {
+                  "$ref": "#/components/schemas/OrderItem"
+                }
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Customer",
+                "description": "This is an object containing information about the customer."
+              },
+              "customer_id": {
+                "type": "string"
+              },
+              "referrer": {
+                "$ref": "#/components/schemas/Referrer",
+                "description": "This is an ojbect containing information about the referrer."
+              },
+              "referrer_id": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
+              }
+            }
+          },
+          "reward": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Contains information about the reward that the customer wants to redeem and the number of points the customer is choosing to use for the reward.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique reward ID assigned by Voucherify. The reward must be assigned to the campaign in order for the user to be able to use the reward."
+              },
+              "assignment_id": {
+                "type": "string"
+              },
+              "points": {
+                "type": "number",
+                "description": "The number of loyalty points that the user wants to spend in order to fulfill the order. The number of points cannot be higher than the current balance on the loyalty card. If the user gives more points than he/she has on the loyalty card, the application will return an error code in response."
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "session": {
+            "$ref": "#/components/schemas/Session",
+            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session."
+          },
+          "tracking_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "expand": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "category"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "required": ["reward"]
+      },
+      "Referrer": {
+        "title": "Referrer",
+        "allOf": [{
+          "$ref": "#/components/schemas/Customer"
+        }]
       },
       "Customer": {
         "type": "object",
@@ -938,7 +1139,7 @@
                 "description": "Unique customer ID of the customer making the purchase."
               },
               "referrer": {
-                "$ref": "#/components/schemas/Customer",
+                "$ref": "#/components/schemas/Referrer",
                 "description": "Object containing information about the referrer."
               },
               "referrer_id": {
