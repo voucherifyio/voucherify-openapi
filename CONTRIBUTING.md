@@ -68,14 +68,50 @@ How to edit OpenAPI file:
 > [!WARNING] Each OpenAPI change should be tested by reviewing documentation on readme.io after the full documentation update process.
 
  Building  new models, we should follow the following name convention: 
-- Use snake case casing.
-- If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{resource}_{action}_{request|response}_{body|param|query}`, where:
-	  - `resource`: plural name taken from API path, e.g. `vouchers`, `customers`, `products`
-	  - `action` : `get`(single record), `list`, `update`, `delete`, `create` (etc.)
--  If a 0-level model has dedicated sub-models, then those model's names should follow the pattern:
-  `{resource}_{action}_{differentiator}_{request|response}_{body|param|query}`
-  where the  `differentiator` describes the child model, e.g., `publication`.
-- If a model is used by more than one API endpoint (general model), we use simple domain language, e.g. `Customer`, `Category`, `Discount`, `Discount_unit`
+- Use pascal case casing.
+- If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{Resource}{Action}{Request|Response}{Body|Query}`, where:
+	- `Resource`: plural name taken from API path, e.g. `Vouchers`, `Customers`, `Products`
+	- `Action` : `Get`(single record), `List`, `Update`, `Delete`, `Create` (etc.)
+- If a 0-level model has dedicated sub-models, then those model's names should follow the pattern:
+   `{Resource}{Action}{Differentiator}{Request|Response}{Body|Query}`
+   where the  `Differentiator` describes the child model, e.g.:
+  - `Discount [VouchersValidateDiscountRequestBody]`
+  - `Gift [VouchersValidateGiftRequestBody]`
+  - `Loyalty [VouchersValidateLoyaltyRequestBody]` 
+- If a model is used by more than one API endpoint (general model), we use simple domain language, e.g. `Customer`, `Category`, `Discount`, `DiscountUnit`
+- If a portion of a model is used by more than one schema, we can save this portion under a new schema and use it with `allOf` operator:
+```json
+{
+  "GiftCardTransaction": {
+    "title": "Gift Card Transaction",
+    "description": "List of gift card transactions",
+    "anyOf": [
+      {
+        "title": "Redemption",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GiftCardTransactionBase"
+          },
+          {
+            "$ref": "#/components/schemas/GiftCardTransactionRedemptionDetails"
+          }
+        ]
+      },
+      {
+        "title": "Refund",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/GiftCardTransactionBase"
+          },
+          {
+            "$ref": "#/components/schemas/GiftCardTransactionRefundDetails"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
 
 For example:
 - The general voucher model, used in many different API endpoints, should have the name `Voucher` (currently, it has a name: `1_obj_voucher_object`)
