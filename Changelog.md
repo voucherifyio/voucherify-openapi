@@ -1,5 +1,23 @@
 # Changelog
 
+
+## 20231025 - Rewards, Loyalties
+
+**Changes in models**
+- Removed `reward_base`, `reward_identity`, `reward_created` - these types were combined into the `reward` model
+- Removed `reward_assignment_identity`, `reward_assignment_response_data` - these types were combined into the `reward_assignment_base` model
+
+## 20231025 - Vouchers
+
+**Changes in models**
+- Removed `gift_card_transaction_identity`, `gift_card_transaction_created` - these types were combined into the `gift_card_transaction_base` model
+- Fixed the enum defined for `fields` property in `voucher_transactions_export_parameters` and `voucher_transactions_filters` models
+
+## 20231025 - List Loyalty Tiers
+
+Endpoint change:
+- Removed `page` from query params (GET `/v1/loyalties/{campaignId}/tiers`)
+
 ## 20231023
 
 **Added schemas**
@@ -47,7 +65,6 @@
 ## 20230924
 
 - Updated `docs/guides/getting_started/Quickstart.md`
-
 
 ## 20230923 - Endpoint bugfixes and improvements
 
