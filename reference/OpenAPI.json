@@ -381,6 +381,1218 @@
       }
     },
     "schemas": {
+      "VouchersValidateRequestBody": {
+        "title": "Validate Voucher Request Body",
+        "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/VouchersValidateDiscountRequestBody"
+          },
+          {
+            "$ref": "#/components/schemas/VouchersValidateGiftRequestBody"
+          },
+          {
+            "$ref": "#/components/schemas/VouchersValidateLoyaltyRequestBody"
+          }
+        ]
+      },
+      "VouchersValidateDiscountRequestBody": {
+        "type": "object",
+        "title": "Validate Discount Code",
+        "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "description": "Customer's information."
+          },
+          "order": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Order information.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.\n\n"
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+              },
+              "status": {
+                "type": "string",
+                "description": "The order status.",
+                "enum": [
+                  "CREATED",
+                  "PAID",
+                  "CANCELED",
+                  "FULFILLED"
+                ]
+              },
+              "amount": {
+                "type": "string",
+                "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts.\n\n"
+              },
+              "items": {
+                "type": "array",
+                "description": "Array of items applied to the order.",
+                "items": {
+                  "$ref": "#/components/schemas/OrderItem"
+                }
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Customer",
+                "description": "This is an object containing information about the customer."
+              },
+              "customer_id": {
+                "type": "string"
+              },
+              "referrer": {
+                "$ref": "#/components/schemas/Referrer",
+                "description": "This is an object containing information about the referrer."
+              },
+              "referrer_id": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
+              }
+            }
+          },
+          "session": {
+            "$ref": "#/components/schemas/Session",
+            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session."
+          },
+          "tracking_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "expand": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "category"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "VouchersValidateGiftRequestBody": {
+        "type": "object",
+        "title": "Validate Gift Card",
+        "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "description": "Customer's information."
+          },
+          "order": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Order information.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.\n\n"
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+              },
+              "status": {
+                "type": "string",
+                "description": "The order status.",
+                "enum": [
+                  "CREATED",
+                  "PAID",
+                  "CANCELED",
+                  "FULFILLED"
+                ]
+              },
+              "amount": {
+                "type": "string",
+                "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts.\n\n"
+              },
+              "items": {
+                "type": "array",
+                "description": "Array of items applied to the order.",
+                "items": {
+                  "$ref": "#/components/schemas/OrderItem"
+                }
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Customer",
+                "description": "This is an object containing information about the customer."
+              },
+              "customer_id": {
+                "type": "string"
+              },
+              "referrer": {
+                "$ref": "#/components/schemas/Referrer",
+                "description": "This is an ojbect containing information about the referrer."
+              },
+              "referrer_id": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
+              }
+            }
+          },
+          "gift": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Contains information on the number of gift card credits that the customer wants to apply to the order.",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "minimum": 0,
+                "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+              }
+            },
+            "required": [
+              "credits"
+            ]
+          },
+          "session": {
+            "$ref": "#/components/schemas/Session",
+            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session."
+          },
+          "tracking_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "expand": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "category"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "required": ["gift"]
+      },
+      "VouchersValidateLoyaltyRequestBody": {
+        "type": "object",
+        "title": "Validate Loyalty Card",
+        "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "description": "Customer's information."
+          },
+          "order": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Order information.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.\n\n"
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+              },
+              "status": {
+                "type": "string",
+                "description": "The order status.",
+                "enum": [
+                  "CREATED",
+                  "PAID",
+                  "CANCELED",
+                  "FULFILLED"
+                ]
+              },
+              "amount": {
+                "type": "string",
+                "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts.\n\n"
+              },
+              "items": {
+                "type": "array",
+                "description": "Array of items applied to the order.",
+                "items": {
+                  "$ref": "#/components/schemas/OrderItem"
+                }
+              },
+              "customer": {
+                "$ref": "#/components/schemas/Customer",
+                "description": "This is an object containing information about the customer."
+              },
+              "customer_id": {
+                "type": "string"
+              },
+              "referrer": {
+                "$ref": "#/components/schemas/Referrer",
+                "description": "This is an ojbect containing information about the referrer."
+              },
+              "referrer_id": {
+                "type": "string"
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
+              }
+            }
+          },
+          "reward": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Contains information about the reward that the customer wants to redeem and the number of points the customer is choosing to use for the reward.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique reward ID assigned by Voucherify. The reward must be assigned to the campaign in order for the user to be able to use the reward."
+              },
+              "assignment_id": {
+                "type": "string"
+              },
+              "points": {
+                "type": "number",
+                "description": "The number of loyalty points that the user wants to spend in order to fulfill the order. The number of points cannot be higher than the current balance on the loyalty card. If the user gives more points than he/she has on the loyalty card, the application will return an error code in response."
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "session": {
+            "$ref": "#/components/schemas/Session",
+            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session."
+          },
+          "tracking_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "options": {
+            "type": "object",
+            "properties": {
+              "expand": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "category"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "required": ["reward"]
+      },
+      "Referrer": {
+        "title": "Referrer",
+        "allOf": [{
+          "$ref": "#/components/schemas/Customer"
+        }]
+      },
+      "Customer": {
+        "type": "object",
+        "title": "Customer",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of an existing customer that will be linked to redemption in this request."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "A unique identifier of a customer that validates a voucher. It can be a customer ID or email from a CRM system, database or 3rd-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
+          },
+          "name": {
+            "type": "string",
+            "description": "Customer's first and last name."
+          },
+          "description": {
+            "type": "string",
+            "description": "An arbitrary string that you can attach to a customer object."
+          },
+          "email": {
+            "type": "string",
+            "description": "Customer's email address."
+          },
+          "phone": {
+            "type": "string",
+            "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
+          },
+          "birthdate": {
+            "type": "string",
+            "description": "Customer's birthdate; format YYYY-MM-DD.",
+            "format": "date"
+          },
+          "address": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Customer's address.",
+            "properties": {
+              "city": {
+                "type": "string",
+                "description": "City"
+              },
+              "state": {
+                "type": "string",
+                "description": "State"
+              },
+              "line_1": {
+                "type": "string",
+                "description": "First line of address."
+              },
+              "line_2": {
+                "type": "string",
+                "description": "Second line of address."
+              },
+              "country": {
+                "type": "string",
+                "description": "Country."
+              },
+              "postal_code": {
+                "type": "string",
+                "description": "Postal code."
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
+          }
+        }
+      },
+      "OrderItem": {
+        "type": "object",
+        "title": "Order Item",
+        "properties": {
+          "sku_id": {
+            "type": "string",
+            "description": "A unique SKU ID assigned by Voucherify."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "A unique product ID assigned by Voucherify."
+          },
+          "related_object": {
+            "type": "string",
+            "enum": [
+              "product",
+              "sku"
+            ],
+            "description": "Used along with the source_id property, can be set to either sku or product."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s product/SKU ID (if it is different from the Voucherify product/SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
+          },
+          "discount_quantity": {
+            "type": "integer",
+            "description": "Number of dicounted items."
+          },
+          "initial_quantity": {
+            "type": "integer"
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The quantity of the particular item in the cart."
+          },
+          "price": {
+            "type": "number",
+            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+          },
+          "amount": {
+            "type": "number",
+            "description": "The total amount of the order item (price * quantity)."
+          },
+          "discount_amount": {
+            "type": "number",
+            "description": "\nSum of all order-item-level discounts applied to the order."
+          },
+          "initial_amount": {
+            "type": "number"
+          },
+          "applied_discount_amount": {
+            "type": "number",
+            "description": "This field shows the order-item-level discount applied."
+          },
+          "subtotal_amount": {
+            "type": "number"
+          },
+          "product": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "An object containing details of the related product.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "A unique identifier that represents the product and is assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant’s product ID (if it is different than Voucherify's product ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
+              },
+              "override": {
+                "type": "boolean",
+                "description": "The override set to true is used to store the product information in the system. If product does not exist, it will be created with the use of source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system."
+              },
+              "name": {
+                "type": "string",
+                "description": "Product name."
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format."
+              },
+              "price": {
+                "type": "number",
+                "description": "Product price. A positive integer in the smallest currency unit (that is, 100 cents for $1.00)."
+              }
+            }
+          },
+          "sku": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "An object containing details of the related SKU.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "A unique identifier that represents the SKU and is assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant’s SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
+              },
+              "override": {
+                "type": "boolean",
+                "description": "The override set to true is used to store the product information in the system. If product does not exist, it will be created with the use of source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system."
+              },
+              "sku": {
+                "type": "string",
+                "description": "The SKU name."
+              },
+              "price": {
+                "type": "number",
+                "description": "SKU price. A positive integer in the smallest currency unit (that is, 100 cents for $1.00)."
+              }
+            }
+          },
+          "object": {
+            "type": "string",
+            "default": "order_item"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format."
+          }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "title": "Session",
+        "properties": {
+          "key": {
+            "type": "string",
+            "enum": [
+              "LOCK"
+            ],
+            "description": "The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "LOCK"
+            ],
+            "description": "This parameter is required to establish a new session. The session locks the redemption quantity by 1."
+          },
+          "ttl": {
+            "type": "number",
+            "description": "Value for the period of time that the session is active. Units for this parameter are defined by the session.ttl_unit parameter."
+          },
+          "ttl_unit": {
+            "type": "string",
+            "enum": [
+              "DAYS",
+              "HOURS",
+              "MICROSECONDS",
+              "MILLISECONDS",
+              "MINUTES",
+              "NANOSECONDS",
+              "SECONDS"
+            ],
+            "description": "Defines the type of unit in which the session time is counted."
+          }
+        }
+      },
+      "VouchersValidateValidResponseBody": {
+        "type": "object",
+        "title": "Valid Voucher",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "default": true,
+            "description": "Indicates whether the voucher is valid within the context of the parameters provided in the request body."
+          },
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
+          },
+          "applicable_to": {
+            "$ref": "#/components/schemas/ApplicableToResultList",
+            "description": "Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted."
+          },
+          "inapplicable_to": {
+            "$ref": "#/components/schemas/InapplicableToResultList",
+            "description": "Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted."
+          },
+          "campaign": {
+            "type": "string",
+            "description": "Voucher's parent campaign name."
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Voucher's parent campaign's unique ID."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
+          },
+          "discount": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DiscountAmount"
+              },
+              {
+                "$ref": "#/components/schemas/DiscountUnit"
+              },
+              {
+                "$ref": "#/components/schemas/DiscountUnitMultiple"
+              },
+              {
+                "$ref": "#/components/schemas/DiscountPercent"
+              },
+              {
+                "$ref": "#/components/schemas/DiscountFixed"
+              }
+            ]
+          },
+          "gift": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Contains current gift card balance information.",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "description": "Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+              },
+              "balance": {
+                "type": "number",
+                "description": "Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+              },
+              "effect": {
+                "type": "string",
+                "description": "Defines how the credits are applied to the customer's order.",
+                "enum": [
+                  "APPLY_TO_ORDER",
+                  "APPLY_TO_ITEMS"
+                ]
+              }
+            },
+            "required": [
+              "amount",
+              "balance"
+            ]
+          },
+          "loyalty": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Contains the cost of reward in points.",
+            "properties": {
+              "points_cost": {
+                "type": "number",
+                "description": "Number of points that wlil be deducted from loyaty card for the associated reward."
+              }
+            },
+            "required": [
+              "points_cost"
+            ]
+          },
+          "reward": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Contains information about the reward that is being validated.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique reward ID assigned by Voucherify."
+              },
+              "assignment_id": {
+                "type": "string",
+                "description": "Unique reward assignment ID assigned by Voucherify."
+              },
+              "points": {
+                "type": "number",
+                "description": "Number of points applied to the reward."
+              }
+            },
+            "required": [
+              "id",
+              "assignment_id",
+              "points"
+            ]
+          },
+          "order": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "This is an object representing an order with calculated discounts applied using the voucher code.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique order ID, assigned by Voucherify. This parameter is returned only if you use the order ID parameter of an already created and synced order in the Voucherify application, i.e by sending the order.id parameter in the request body."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant’s order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service. This parameter is returned only if you use the order ID parameter of an already created and synced order in the Voucherify application, i.e by sending the order.id parameter in the request body."
+              },
+              "created_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the order was created in ISO 8601 format. This parameter is returned only if you use the order ID parameter of an already created and synced order in the Voucherify application, i.e by sending the order.id parameter in the request body."
+              },
+              "updated_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the order was updated in ISO 8601 format. This parameter is returned only if you use the order ID parameter of an already created and synced order in the Voucherify application, i.e by sending the order.id parameter in the request body."
+              },
+              "status": {
+                "type": "string",
+                "description": "Order status. This parameter is returned if you use the order ID parameter of an already created and synced order in the Voucherify application, i.e by sending the order.id parameter in the request body or if you send the request body parameter when defining an order in the request body. This parameter can be passed but it's not required for validation at all. It's used in the redemption process. Normally after the redemption is done, the order is automatically to a PAID status. To avoid such default behaviour, the user can pass any of the other status options and it will be set the order status after the redemption instead of the default PAID.",
+                "enum": [
+                  "CREATED",
+                  "PAID",
+                  "CANCELED",
+                  "FULFILLED"
+                ]
+              },
+              "amount": {
+                "type": "number",
+                "description": "Order amount before applying any discount."
+              },
+              "initial_amount": {
+                "type": "number"
+              },
+              "discount_amount": {
+                "type": "number",
+                "description": "Sum of all order-level discounts applied to the order."
+              },
+              "applied_discount_amount": {
+                "type": "number",
+                "description": "This field shows the order-level discount applied."
+              },
+              "items_discount_amount": {
+                "type": "number"
+              },
+              "total_discount_amount": {
+                "type": "number",
+                "description": "Sum of all order-level discounts."
+              },
+              "total_amount": {
+                "type": "number"
+              },
+              "items_applied_discount_amount": {
+                "type": "number"
+              },
+              "total_applied_discount_amount": {
+                "type": "number",
+                "description": "This field sums up all order-level discounts applied to the order."
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/OrderItem"
+                }
+              },
+              "metadata": {
+                "type": "object",
+                "description": "The metadata object stores all custom attributes assigned to the order. A set of key/value pairs that are att to an order object. Stores additional information about the order in a structured format."
+              },
+              "customer": {
+                "type": "string",
+                "description": "Object containing information about the customer that is making the purchase."
+              },
+              "customer_id": {
+                "type": "string",
+                "description": "Unique customer ID of the customer making the purchase."
+              },
+              "referrer": {
+                "$ref": "#/components/schemas/Referrer",
+                "description": "Object containing information about the referrer."
+              },
+              "referrer_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Unique referrer ID."
+              },
+              "object": {
+                "type": "string",
+                "default": "order",
+                "enum": [
+                  "order"
+                ],
+                "description": "The type of object represented by JSON. This object stores information about the order."
+              },
+              "redemptions": {
+                "$ref": "#/components/schemas/OrderRedemptions"
+              }
+            },
+            "required": [
+              "amount",
+              "discount_amount",
+              "total_amount",
+              "referrer_id",
+              "object"
+            ]
+          },
+          "session": {
+            "$ref": "#/components/schemas/Session",
+            "description": "Schema model for session lock object. The session object contains information about the session key that was used to establish a session between multiple parallel validation and redemption requests.\n\n\n"
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Activation timestamp defines when the voucher starts to be active in ISO 8601 format. Voucher is inactive before this date."
+          },
+          "expiration_date": {
+            "type": "string",
+            "description": "Expiration timestamp defines when the voucher expires in ISO 8601 format. Voucher is inactive after this date."
+          },
+          "tracking_id": {
+            "type": "string",
+            "description": "Hashed order source ID."
+          }
+        },
+        "required": [
+          "valid",
+          "code",
+          "applicable_to",
+          "inapplicable_to",
+          "metadata",
+          "tracking_id"
+        ]
+      },
+      "VouchersValidateInvalidResponseBody": {
+        "type": "object",
+        "title": "Invalid Voucher",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "default": false,
+            "description": "Indicates whether the voucher is valid within the context of the parameters provided in the request body."
+          },
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
+          },
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Detailed failure cause for the invalid voucher if the reason has a translation defined in the Dashboard → Project Settings → Error Messages.",
+            "properties": {
+              "code": {
+                "type": "number",
+                "description": "Voucher code."
+              },
+              "key": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string",
+                "description": "Customized error message."
+              },
+              "details": {
+                "type": "string"
+              },
+              "request_id": {
+                "type": "string"
+              },
+              "resource_id": {
+                "type": "string"
+              },
+              "resource_type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "code",
+              "key",
+              "message",
+              "details"
+            ]
+          },
+          "tracking_id": {
+            "type": "string",
+            "description": "Hashed customer source ID."
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Unique customer ID of the customer making the purchase."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "valid",
+          "code"
+        ]
+      },
+      "OrderRedemptions": {
+        "type": "object",
+        "title": "Order Redemptions",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string"
+            },
+            "related_object_type": {
+              "type": "string"
+            },
+            "related_object_id": {
+              "type": "string"
+            },
+            "related_object_parent_id": {
+              "type": "string"
+            },
+            "stacked": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "SimpleProductDiscountUnit": {
+        "type": "object",
+        "title": "Simple Product Discount Unit",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique product ID, assigned by Voucherify."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Product's source ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Product name."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "SimpleSkuDiscountUnit": {
+        "type": "object",
+        "title": "Simple Sku Discount Unit",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique SKU ID, assigned by Voucherify."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Product variant's source ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Sku name"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "DiscountUnit": {
+        "type": "object",
+        "title": "Unit",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "UNIT"
+            ],
+            "description": "Discount type."
+          },
+          "unit_off": {
+            "type": "integer",
+            "description": "Number of units to be granted a full value discount."
+          },
+          "unit_off_formula": {
+            "type": "string"
+          },
+          "effect": {
+            "$ref": "#/components/schemas/DiscountUnitVouchersEffectTypes",
+            "description": "Defines how the unit is added to the customer's order."
+          },
+          "unit_type": {
+            "type": "string",
+            "description": "The product deemed as free, chosen from product inventory (e.g. time, items)."
+          },
+          "product": {
+            "$ref": "#/components/schemas/SimpleProductDiscountUnit",
+            "description": "Contains information about the product."
+          },
+          "sku": {
+            "$ref": "#/components/schemas/SimpleSkuDiscountUnit"
+          }
+        },
+        "required": [
+          "type",
+          "effect",
+          "unit_type"
+        ]
+      },
+      "DiscountUnitMultiple": {
+        "type": "object",
+        "title": "Unit Multiple",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "UNIT"
+            ],
+            "description": "Discount type."
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "ADD_MANY_ITEMS"
+            ],
+            "description": "Defines how the discount is applied to the customer's order."
+          },
+          "units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiscountUnitMultipleOneUnit"
+            }
+          }
+        },
+        "required": [
+          "type",
+          "effect",
+          "units"
+        ]
+      },
+      "DiscountUnitMultipleOneUnit": {
+        "type": "object",
+        "title": "One Unit",
+        "properties": {
+          "unit_off": {
+            "type": "number",
+            "description": "Number of units to be granted a full value discount."
+          },
+          "unit_off_formula": {
+            "type": "string"
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "ADD_NEW_ITEMS",
+              "ADD_MISSING_ITEMS"
+            ],
+            "description": "Defines how the unit is added to the customer's order.\n\n"
+          },
+          "unit_type": {
+            "type": "string",
+            "description": "The product deemed as free, chosen from product inventory (e.g. time, items)."
+          },
+          "product": {
+            "$ref": "#/components/schemas/SimpleProductDiscountUnit",
+            "description": "Contains information about the product."
+          },
+          "sku": {
+            "$ref": "#/components/schemas/SimpleSkuDiscountUnit",
+            "description": "Contains information about the sku."
+          }
+        },
+        "required": [
+          "effect",
+          "unit_type"
+        ]
+      },
+      "DiscountAmount": {
+        "type": "object",
+        "title": "Amount",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "AMOUNT"
+            ],
+            "description": "Defines the type of voucher."
+          },
+          "amount_off": {
+            "type": "number",
+            "description": "Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000."
+          },
+          "amount_off_formula": {
+            "type": "string"
+          },
+          "effect": {
+            "$ref": "#/components/schemas/DiscountAmountVouchersEffectTypes",
+            "description": "Defines how the discount is applied to the customer's order."
+          }
+        },
+        "required": [
+          "type",
+          "effect"
+        ]
+      },
+      "DiscountPercent": {
+        "type": "object",
+        "title": "Percent",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "PERCENT"
+            ],
+            "description": "Defines the type of voucher."
+          },
+          "percent_off": {
+            "type": "number",
+            "description": "The percent discount that the customer will receive."
+          },
+          "percent_off_formula": {
+            "type": "string"
+          },
+          "amount_limit": {
+            "type": "number",
+            "description": "Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600."
+          },
+          "effect": {
+            "$ref": "#/components/schemas/DiscountPercentVouchersEffectTypes",
+            "description": "Defines how the discount is applied to the customer's order."
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
+          }
+        },
+        "required": [
+          "type",
+          "effect"
+        ]
+      },
+      "DiscountFixed": {
+        "title": "Fixed",
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "FIXED"
+            ],
+            "description": "Defines the type of voucher."
+          },
+          "fixed_amount": {
+            "type": "number",
+            "description": "Set a fixed valued for an order total or price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the fixed amount being calculated by the formula, i.e. the fixed_amount_formula parameter is present in the fixed amount definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value."
+          },
+          "fixed_amount_formula": {
+            "type": "string"
+          },
+          "effect": {
+            "$ref": "#/components/schemas/DiscountFixedVouchersEffectTypes",
+            "description": "Defines how the discount is applied to the customer's order."
+          }
+        },
+        "required": [
+          "type",
+          "effect"
+        ]
+      },
+      "DiscountAmountVouchersEffectTypes": {
+        "title": "Discount Amount Vouchers Effect Types",
+        "enum": [
+          "APPLY_TO_ORDER",
+          "APPLY_TO_ITEMS",
+          "APPLY_TO_ITEMS_PROPORTIONALLY",
+          "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY"
+        ],
+        "type": "string"
+      },
+      "DiscountPercentVouchersEffectTypes": {
+        "title": "Discount Percent Vouchers Effect Types",
+        "enum": [
+          "APPLY_TO_ORDER",
+          "APPLY_TO_ITEMS"
+        ],
+        "type": "string"
+      },
+      "DiscountFixedVouchersEffectTypes": {
+        "title": "Discount Fixed Vouchers Effect Types",
+        "enum": [
+          "APPLY_TO_ORDER",
+          "APPLY_TO_ITEMS"
+        ],
+        "type": "string"
+      },
+      "DiscountUnitVouchersEffectTypes": {
+        "title": "Discount Unit Vouchers Effect Types",
+        "enum": [
+          "ADD_MISSING_ITEMS",
+          "ADD_NEW_ITEMS",
+          "ADD_MANY_ITEMS"
+        ],
+        "type": "string"
+      },
+      "DiscountVouchersEffectTypes": {
+        "title": "Discount Vouchers Effect Types",
+        "enum": [
+          "ADD_MISSING_ITEMS",
+          "ADD_NEW_ITEMS",
+          "ADD_MANY_ITEMS",
+          "APPLY_TO_ORDER",
+          "APPLY_TO_ITEMS",
+          "APPLY_TO_ITEMS_PROPORTIONALLY",
+          "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY"
+        ],
+        "type": "string"
+      },
+      "DiscountVouchersTypes": {
+        "title": "Discount Vouchers Types",
+        "enum": [
+          "AMOUNT",
+          "PERCENT",
+          "UNIT",
+          "FIXED"
+        ],
+        "type": "string"
+      },
       "1_obj_voucher_object": {
         "title": "Voucher Object",
         "type": "object",
@@ -9383,21 +10595,6 @@
             "description": "Total number of publications."
           }
         }
-      },
-      "6_req_validate_voucher": {
-        "title": "Validate Voucher Request Body",
-        "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
-        "anyOf": [
-          {
-            "$ref": "#/components/schemas/6_req_validate_voucher_discount_code"
-          },
-          {
-            "$ref": "#/components/schemas/6_req_validate_voucher_gift_card"
-          },
-          {
-            "$ref": "#/components/schemas/6_req_validate_voucher_loyalty_card"
-          }
-        ]
       },
       "6_req_validate_voucher_customer_id": {
         "title": "Customer ID",
@@ -35964,7 +37161,10 @@
               }
             }
           }
-        }, "required": ["coin"]
+        },
+        "required": [
+          "coin"
+        ]
       },
       "reward_type_material": {
         "title": "Material",
@@ -36456,49 +37656,6 @@
           "PROGRAM_RULES",
           "CUSTOM_DATE",
           "NON_EXPIRING"
-        ]
-      },
-      "Category": {
-        "title": "Category",
-        "type": "object",
-        "description": "This is an object representing a category.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique category ID assigned by Voucherify."
-          },
-          "name": {
-            "type": "string",
-            "description": "Category name."
-          },
-          "hierarchy": {
-            "type": "integer",
-            "description": "Category hierarchy."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp representing the date and time when the category was created in ISO 8601 format."
-          },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp representing the date and time when the category was updated in ISO 8601 format."
-          },
-          "object": {
-            "type": "string",
-            "enum": [
-              "category"
-            ],
-            "description": "The type of object represented by the JSON. This object stores information about the category."
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "hierarchy",
-          "created_at",
-          "object"
         ]
       },
       "ExportsCreateRequestBody": {
@@ -39880,6 +41037,171 @@
             "required": true
           }
         }
+      },
+      "InapplicableToResultList": {
+        "title": "Inapplicable To Result List",
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "Contains array of items to which the discount cannot apply.",
+            "items": {
+              "$ref": "#/components/schemas/InapplicableTo"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of objects defining included products, SKUs, or product collections."
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "list"
+            ],
+            "description": "The type of object represented by JSON."
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "The type of object represented by JSON.",
+            "enum": [
+              "data"
+            ]
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "object",
+          "data_ref"
+        ]
+      },
+      "ApplicableToResultList": {
+        "title": "Applicable To Result List",
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "description": "Contains array of items to which the discount can apply.",
+            "items": {
+              "$ref": "#/components/schemas/ApplicableTo"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of objects defining included products, SKUs, or product collections."
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "list"
+            ],
+            "description": "The type of object represented by JSON."
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "The type of object represented by JSON.",
+            "enum": [
+              "data"
+            ]
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "object",
+          "data_ref"
+        ]
+      },
+      "InapplicableTo": {
+        "title": "InapplicableTo",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ApplicableTo"
+          }
+        ]
+      },
+      "ApplicableTo": {
+        "title": "ApplicableTo",
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "enum": [
+              "product",
+              "sku",
+              "products_collection"
+            ],
+            "description": "This object stores information about the product collection."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique product collection ID assigned by Voucherify."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The source ID from your inventory system."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "Parent product's unique ID assigned by Voucherify."
+          },
+          "product_source_id": {
+            "type": "string",
+            "description": "Parent product's source ID from your inventory system."
+          },
+          "strict": {
+            "type": "boolean"
+          },
+          "price": {
+            "type": "number",
+            "description": "New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the price_formula parameter is present in the fixed price definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price."
+          },
+          "price_formula": {
+            "type": "number",
+            "description": "Formula used to calculate the discounted price of an item."
+          },
+          "quantity_limit": {
+            "type": "integer",
+            "description": "The maximum number of units allowed to be discounted per order line item."
+          },
+          "aggregated_quantity_limit": {
+            "type": "integer",
+            "description": "The maximum number of units allowed to be discounted combined across all matched order line items."
+          },
+          "effect": {
+            "$ref": "#/components/schemas/ApplicableToEffect",
+            "description": "Defines how the discount is applied to the customer's order."
+          }
+        },
+        "required": [
+          "object",
+          "id",
+          "strict",
+          "effect"
+        ]
+      },
+      "ApplicableToEffect": {
+        "title": "Applicable To Effect",
+        "type": "string",
+        "enum": [
+          "APPLY_TO_EVERY",
+          "APPLY_TO_CHEAPEST",
+          "APPLY_TO_MOST_EXPENSIVE"
+        ]
+      },
+      "VouchersValidateResponseBody": {
+        "title": "Vouchers Validate Response Body",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/VouchersValidateValidResponseBody"
+          },
+          {
+            "$ref": "#/components/schemas/VouchersValidateInvalidResponseBody"
+          }
+        ]
       }
     },
     "examples": {
@@ -50374,14 +51696,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/6_res_validate_voucher_false"
-                    },
-                    {
-                      "$ref": "#/components/schemas/6_res_validate_voucher"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/VouchersValidateResponseBody"
                 }
               }
             }
@@ -50422,7 +51737,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/6_req_validate_voucher"
+                "$ref": "#/components/schemas/VouchersValidateRequestBody"
               },
               "examples": {
                 "Free Shipping": {
@@ -50714,14 +52029,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/6_res_validate_voucher"
-                    },
-                    {
-                      "$ref": "#/components/schemas/6_res_validate_voucher_false"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/VouchersValidateResponseBody"
                 },
                 "examples": {
                   "False": {
