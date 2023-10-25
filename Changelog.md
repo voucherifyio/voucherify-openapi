@@ -1,5 +1,9 @@
 # Changelog
 
+## 20230925
+
+- Removed schema: `PromotionStackBase`
+
 ## 20230924
 
 - Updated `docs/guides/getting_started/Quickstart.md`
