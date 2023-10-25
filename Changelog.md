@@ -1,6 +1,6 @@
 # Changelog
 
-## 20231025
+## 20231025 - List Loyalty Tiers
 
 Endpoint change:
 - Removed `page` from query params (GET `/v1/loyalties/{campaignId}/tiers`)
