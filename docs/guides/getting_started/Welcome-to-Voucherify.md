@@ -10,7 +10,7 @@ order: 2
 
 ## Platform overview
 
-Voucherify is an API-first Promotions and Loyalty Engine that helps brands run personalized coupons, gift cards, auto-applied promotions, loyalty programs, and referral campaigns. 
+Voucherify is an API-first Promotions and Loyalty Engine that helps brands run personalized [coupons](https://www.voucherify.io/coupon-software "Voucherify coupon software"), [gift cards](https://www.voucherify.io/gift-cards "Voucherify gift cards"), [auto-applied promotions](https://www.voucherify.io/discount-promotions "Voucherify discount promotions"), [loyalty programs](https://www.voucherify.io/loyalty-software "Voucherify loyalty programs"), and [referral campaigns](https://www.voucherify.io/referral-programs "Voucherify referral programs"). 
 
 Voucherify gives you access to a collection of promotion & loyalty REST API endpoints and a visual Dashboard. 
 
@@ -90,12 +90,12 @@ Customer story – BAEMIN
 
 
 
-What problems does Voucherify solve?
+## What problems does Voucherify solve?
 
-Integrating promotions with external tools and dynamic customer touchpoints.
-Paying through the nose for promotion maintenance and real-time monitoring of all digital offers. 
-Generating unsatisfactory ROI with cookie-cutter offers, low-key loyalty programs, and promotional fraud.
-Continuously mediating between marketing and development teams' priorities. 
-Writing extra code to keep multiple promotion & loyalty platforms in sync across applications, brands, and teams.  
-Struggling to build branded customer-facing UIs using legacy and monolithic services. 
-Failing to effectively manage traffic spikes and priority changes. 
+- Integrating promotions with external tools and dynamic customer touchpoints.
+- Paying through the nose for promotion maintenance and real-time monitoring of all digital offers. 
+- Generating unsatisfactory ROI with cookie-cutter offers, low-key loyalty programs, and promotional fraud.
+- Continuously mediating between marketing and development teams' priorities. 
+- Writing extra code to keep multiple promotion & loyalty platforms in sync across applications, brands, and teams.  
+- Struggling to build branded customer-facing UIs using legacy and monolithic services. 
+- Failing to effectively manage traffic spikes and priority changes. 
