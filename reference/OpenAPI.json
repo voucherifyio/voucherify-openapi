@@ -13767,91 +13767,8 @@
           }
         }
       },
-      "19_req_redemptions": {
-        "title": "Redeem Stackable Discounts Request Body",
-        "type": "object",
-        "description": "This data model represents the request body for redeeming multiple incentives.",
-        "properties": {
-          "options": {
-            "type": "object",
-            "description": "Configure parameters returned in the response.",
-            "properties": {
-              "expand": {
-                "type": "array",
-                "description": "Expand array lets you configure params included in the response. Depending on the strings included in the array, the response will contain different details. \n\n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"order\"] | - Same response as fallback response (without an options object).<br>- Order data with calculated discounts are listed in each child redemption object.<br>- Metadata not included for each discount type. |\n| [\"order\", \"redemption\"] | - Returns redemption object `metadata`.<br>- Order data with calculated discounts are listed in each child redemption object. |\n| [\"redeemable\", \"redemption\"] | - Returns each discount type's `metadata` in each child redemption object.<br>- Returns redemption object `metadata`. |\n| [\"redemption\"] | - Returns redemption object `metadata`. |\n| [\"redeemable\", \"redemption\", \"category\"] | - Returns each discount type's `metadata` in each child redemption object<br>- Returns redemption object `metadata`.<br>- Returns an expanded `categories` object, showing details about the category. |",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "order",
-                    "redemption",
-                    "redeemable",
-                    "category"
-                  ]
-                }
-              }
-            }
-          },
-          "redeemables": {
-            "type": "array",
-            "minItems": 1,
-            "maxItems": 5,
-            "description": "An array of redeemables. You can combine `voucher`(s) and `promotion_tier`(s). Alternatively, send one unique`promotion_stack` in the array.",
-            "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/19_req_redeemables_discount_referral_promotion_tier_promotion_stack"
-                },
-                {
-                  "$ref": "#/components/schemas/19_req_redeemables_gift_card"
-                },
-                {
-                  "$ref": "#/components/schemas/19_req_redeemables_loyalty_card"
-                }
-              ]
-            }
-          },
-          "session": {
-            "$ref": "#/components/schemas/19_req_session_lock"
-          },
-          "customer": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/6_req_validate_voucher_customer_id"
-              },
-              {
-                "$ref": "#/components/schemas/6_req_validate_voucher_customer_source_id"
-              },
-              {
-                "$ref": "#/components/schemas/9_req_create_customer"
-              }
-            ],
-            "description": "Customer's information."
-          },
-          "order": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/6_req_validate_voucher_order_id"
-              },
-              {
-                "$ref": "#/components/schemas/6_req_validate_voucher_order_source_id"
-              },
-              {
-                "$ref": "#/components/schemas/10_req_create_order"
-              }
-            ],
-            "description": "Order information. This object enables you to pass purchase transaction data. Read what properties you can use in the <!-- [Order object reference](OpenAPI.json/components/schemas/10_obj_order_object) -->[Order object](ref:get-order)."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "A set of key/value pairs that you can attach to a redemption object. It can be useful for storing additional information about the redemption in a structured format."
-          }
-        },
-        "required": [
-          "redeemables"
-        ]
-      },
       "RedeemPromotionStack": {
-        "title": "Redeem Voucher",
+        "title": "Redeem Promotion Stack",
         "type": "object",
         "description": "Redeem a discount code.",
         "properties": {
@@ -13874,7 +13791,7 @@
         ]
       },
       "RedeemPromotionTier": {
-        "title": "Redeem Voucher",
+        "title": "Redeem Promotion Tier",
         "type": "object",
         "description": "Redeem a discount code.",
         "properties": {
@@ -14020,14 +13937,16 @@
             }
           },
           "session": {
-            "$ref": "#/components/schemas/Session"
+            "$ref": "#/components/schemas/Session",
+            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session."
           },
           "customer": {
-            "$ref": "#/components/schemas/Customer"
+            "$ref": "#/components/schemas/Customer",
+            "description": "Customer's information."
           },
           "order": {
             "$ref": "#/components/schemas/Order",
-            "description": "Order information. This object enables you to pass purchase transaction data."
+            "description": "Order information."
           },
           "metadata": {
             "type": "object",
@@ -56928,7 +56847,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/19_req_redemptions"
+                "$ref": "#/components/schemas/RedemptionsRedeemRequestBody"
               },
               "examples": {
                 "Example": {
@@ -61419,7 +61338,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/19_req_redemptions"
+                "$ref": "#/components/schemas/RedemptionsRedeemRequestBody"
               },
               "examples": {
                 "Example": {
@@ -61640,7 +61559,7 @@
         },
         "responses": {
           "200": {
-            "description": "All codes and tiers provided in redeemables are validated during the request and the result of their validation is returned in the API response. \n\n| **Response** | **Description** |\n|:---|:---|\n| valid<br>`boolean` | If **all** redeemables can be applied in the given context, the API returns `true`. Otherwise, if at least one redeemable can't be applied, the API returns `false`. |\n| redeemables<br>`array of objects` | The `redeemables` array lists the validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"` |\n| order<br>`object` | The `order` object presents details of the order provided in the request after all discounts are applied. |\n",
+            "description": "Valid stackable validation response.",
             "content": {
               "application/json": {
                 "schema": {
