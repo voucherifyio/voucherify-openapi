@@ -26,7 +26,7 @@ Personalized offers are a top focus for brands. However, moving data to **manage
 
 With native integrations and robust API connectivity across the customer data & experience stack, **Voucherify empowers marketers to run any incentive using any data.** 
 
-Voucherify **supports brands operating in various models and industries** – from ecommerce to subscription-based brands in B2C, B2B, or D2C models. For maximum flexibility, the Voucherify data model can be easily extended with <span style="color:blue">custom fields and objects (metadata)</span> that let you run fully custom campaigns with the support of arrays and nesting for deeper targeting. 
+Voucherify **supports brands operating in various models and industries** – from ecommerce to subscription-based brands in B2C, B2B, or D2C models. For maximum flexibility, the Voucherify data model can be easily extended with <font color="red">custom fields and objects (metadata)</font> that let you run fully custom campaigns with the support of arrays and nesting for deeper targeting. 
 
 By verifying and defining the data model early by translating data and actions into attributes and events that Voucherify can consume, you can run campaigns relevant to your business model and audience.
 
