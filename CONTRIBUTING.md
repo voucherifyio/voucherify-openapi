@@ -147,6 +147,27 @@ Good practices:
 - At first always point to assets img folder, for example: `![Recent Changes](../../assets/img/guides_getting_started_quickstart_recent_changes_4.png "Recent Changes")`
 - This path declaration will be automatically updated to url link while during `npm run manage-project` command, but if you don't want to update project data, You can run `npm run readme-upload-missing-images` instead.
 
+### Categories
+
+- In order to add new category please go to `scripts/manage-project.ts` and edit following fragment (be informed that the order of each category title is important):
+```js
+const listOfGuideCategories = [
+  "Getting started",
+  "Development",
+  "Building blocks",
+  "Campaigns Recipes",
+  "Discounts Recipes",
+  "Distributions Recipes",
+  "More",
+];
+
+const listOfReferenceCategories = ["Introduction"];
+```
+- In order to change categories order please change the order of categories titles in the fragment presented above.
+- In order to remove category, simply remove the title from the list. Make sure to remove .md files associated with this `categorySlag` as well.
+
+> [!NOTE] `categorySlag` is created from category title by converting title to `kebab-case`/`dash-case` (all lower case). Example: `Campaigns Recipes` -> `campaigns-recipes`
+
 ### Development process
 - For each change / pull request, create your copy of the current documentation, where you will test changes.
 	- Create your own branch from `master`,
