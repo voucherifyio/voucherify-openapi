@@ -37,27 +37,26 @@ which lets you sync various pieces of information under a unified ID.
 
 To quickly map out your data model, consider using the ready connectors with [Segment](https://voucherify.io/integrations/segment "Integration with Segment") and [mParticle](https://voucherify.io/integrations/mparticle "Integration with mParticle") CDPs. 
 
-For the initial data migration, use asynchronous bulk API import endpoints or upload CSV files in the Dashboard. Learn more about data integration.
+For the initial data migration, use asynchronous bulk API import endpoints or upload CSV files in the Dashboard. [Learn more about data integration](https://support.voucherify.io/article/574-data-import "Data Import").
 
-Voucherify gives you complete control over how and when to sync
-data needed for incentive validation and redemption. You can sync the data before the final stage of the checkout process or send us relevant customer, product, order, and other data right in the validation and redemption requests on the fly. 
+Voucherify gives you complete control over **how and when to sync data** needed for incentive validation and redemption. You can sync the data before the final stage of the checkout process or send us relevant customer, product, order, and other data right in the validation and redemption requests on the fly. 
 
-Customer story – TIER Mobility
+## Customer story – TIER Mobility
 
 TIER Mobility uses free unlocks and free 
 minutes as incentives. The custom attributes 
 (metadata) let TIER attach minutes and unlocks 
 to a given customer for a predefined period of time.
 
-Discover the full story 
+[Discover the full story ->](https://voucherify.io/ebooks/tier-mobility-case-study "Tier mobility case study")
 
-Sample data models
+# Sample data models
 
 Industry | Ecommerce | Services | Travel | QSR & Food Delivery
 User traits | locale, currency, lifetime value, order count | device, app version, session duration, subscription group, notification preferences | traveler status, age range, destinations, travel companions, booking channel | order history, favorite items, delivery address, dietary preferences, favorite restaurants, delivery instructions
 Custom events | product_viewed, product_added, checkout_started, order_completed, cart_abandoned | account_set, user_login, searches, feature_usage | destination_search, car_rental, bookign_type, booking_date | menu_item view, app_rating, menu_search, order_tracking, delivery_completed
 
-To learn more about tracking custom events, go here > 
+[To learn more about tracking custom events, go here >](ref:custom-event-object) 
 
 
 
