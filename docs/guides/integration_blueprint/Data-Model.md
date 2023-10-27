@@ -16,6 +16,7 @@ Goals:
 
 * Choose which attributes and events you would like to share with Voucherify.
 
+*** 
 
 Outcome:
 
