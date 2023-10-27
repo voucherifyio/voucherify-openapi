@@ -28,14 +28,14 @@ With native integrations and robust API connectivity across the customer data & 
 
 Voucherify **supports brands operating in various models and industries** – from ecommerce to subscription-based brands in B2C, B2B, or D2C models. For maximum flexibility, the Voucherify data model can be easily extended with [custom fields and objects (metadata)](https://support.voucherify.io/article/99-schema-validation-metadata "Getting stared with Metadata") that let you run fully custom campaigns with the support of **arrays** and **nesting** for deeper targeting. 
 
-By verifying and defining the data model early by translating data and actions into attributes and events that Voucherify can consume, you can run campaigns relevant to your business model and audience.
+By verifying and defining the data model early by translating data and actions into attributes and events that Voucherify can consume, **you can run campaigns relevant to your business model and audience.**
 
-The next step is to plan the frequency of data sync. Voucherify can work with real-time traffic, which might impact your subscription plan's monthly API call usage.
+The next step is to **plan the frequency of data sync.** Voucherify can work with real-time traffic, which might impact your subscription plan's monthly API call usage.
 
 Voucherify operates on top of an external master ID (source_id),
 which lets you sync various pieces of information under a unified ID. 
 
-To quickly map out your data model, consider using the ready connectors with Segment and mParticle CDPs. 
+To quickly map out your data model, consider using the ready connectors with [Segment](https://voucherify.io/integrations/segment "Integration with Segment") and [mParticle](https://voucherify.io/integrations/mparticle "Integration with mParticle") CDPs. 
 
 For the initial data migration, use asynchronous bulk API import endpoints or upload CSV files in the Dashboard. Learn more about data integration.
 
