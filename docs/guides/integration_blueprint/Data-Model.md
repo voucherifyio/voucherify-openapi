@@ -12,9 +12,7 @@ Data model
 
 
 Goals: 
-body{
-    background-color: blue;
-}
+
 *Learn more about metadata. 
 *Choose which attributes and events you would like to share with Voucherify.
 
