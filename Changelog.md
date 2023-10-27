@@ -1,9 +1,70 @@
 # Changelog
 
+
+## 20231025 - Rewards, Loyalties
+
+**Changes in models**
+- Removed `reward_base`, `reward_identity`, `reward_created` - these types were combined into the `reward` model
+- Removed `reward_assignment_identity`, `reward_assignment_response_data` - these types were combined into the `reward_assignment_base` model
+
+## 20231025 - Vouchers
+
+**Changes in models**
+- Removed `gift_card_transaction_identity`, `gift_card_transaction_created` - these types were combined into the `gift_card_transaction_base` model
+- Fixed the enum defined for `fields` property in `voucher_transactions_export_parameters` and `voucher_transactions_filters` models
+
+## 20231025 - List Loyalty Tiers
+
+Endpoint change:
+- Removed `page` from query params (GET `/v1/loyalties/{campaignId}/tiers`)
+
+## 20231023
+
+**Added schemas**
+- VouchersValidateRequestBody
+- VouchersValidateDiscountRequestBody
+- VouchersValidateGiftRequestBody
+- VouchersValidateLoyaltyRequestBody
+- Referrer
+- OrderItem
+- Session
+- VouchersValidateValidResponseBody
+- VouchersValidateInvalidResponseBody
+- OrderRedemptions
+- SimpleProductDiscountUnit
+- SimpleSkuDiscountUnit
+- DiscountUnit
+- DiscountUnitMultiple
+- DiscountUnitMultipleOneUnit
+- DiscountAmount
+- DiscountPercent
+- DiscountFixed
+- DiscountAmountVouchersEffectTypes
+- DiscountPercentVouchersEffectTypes
+- DiscountFixedVouchersEffectTypes
+- DiscountUnitVouchersEffectTypes
+- DiscountVouchersEffectTypes
+- DiscountVouchersTypes
+- InapplicableToResultList
+- ApplicableToResultList
+- InapplicableTo
+- ApplicableTo
+- ApplicableToEffect
+- VouchersValidateResponseBody
+
+**Removed schemas**
+- 6_req_validate_voucher
+
+**Endpoints changes**
+- `/v1/vouchers/{code}/validate`
+  - Request parameters schema was replaced with new one: `VouchersValidateRequestBody` (old one: `6_req_validate_voucher` *has been deleted*)
+  - Response schema was replaced with new one: `VouchersValidateResponseBody` (old one: `anyOf`: `6_res_validate_voucher`, `6_res_validate_voucher_false`)
+- `/v1/validation-object`
+  - Response schema was replaced with new one: `VouchersValidateResponseBody` (old one: `anyOf`: `6_res_validate_voucher`, `6_res_validate_voucher_false`)
+
 ## 20230924
 
 - Updated `docs/guides/getting_started/Quickstart.md`
-
 
 ## 20230923 - Endpoint bugfixes and improvements
 
@@ -615,6 +676,9 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 /docs/orders-1  -> /docs/orders
 /docs/vouchers-1 -> /docs/vouchers
 /docs/campaigns-1 -> /docs/campaigns
+/docs/checking-eligibility-for-coupons -> /docs/checking-eligibility
+/reference/examine-qualification -> /reference/check-eligibility
+/reference/examine-qualification-client-side -> /reference/check-eligibility-client-side
 /reference/vouchers-get -> /reference/get-voucher
 /reference/add-gift-voucher-balance -> /reference/add-remove-gift-voucher-balance
 /reference/import-vouchers-1 -> /reference/import-vouchers
