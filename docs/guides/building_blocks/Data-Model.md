@@ -1,3 +1,13 @@
+---
+title: Data Model
+excerpt:
+categorySlug: integration-blueprint
+slug: data_model
+type: basic
+hidden: false
+order: 1
+---
+
 Data model
 
 
