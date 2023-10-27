@@ -1,5 +1,9 @@
 # Changelog
 
+## 20231027 - GET List Member Rewards
+
+Added `required` and `description` attributes.
+
 ## 20231026 - Stackable API
 
 **Added schemas**
