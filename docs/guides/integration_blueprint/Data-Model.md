@@ -55,7 +55,6 @@ to a given customer for a predefined period of time.
 | Industry      | Ecommerce    | Services    | Travel    | QSR & Food Delivery   |
 | :---:         |    :---:     |     :---:   |    :---:  |       :---:           |
 | User traits   | locale, currency, lifetime value, order count |                
-| :---:         |              |             |           |                       |
 | Custom events |              |             |           |                       |
 
 Industry | Ecommerce | Services | Travel | QSR & Food Delivery
