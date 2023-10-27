@@ -1,5 +1,21 @@
 # Changelog
 
+## 20231030 - Order Model
+
+**Removed schemas**
+- Order
+
+**Added schemas**
+- OrderBaseRequest
+- OrderRequest
+- OrderItemResponse
+- OrderExtendedRequest
+- OrderItemExtendedRequest
+- OrderResponse
+- OrderItemResponse
+
+**Updated order object markdown.**
+
 ## 20231027 - GET List Member Rewards
 
 Added `required` and `description` attributes in `LoyaltiesListMemberRewardsResponseBody` schema.
