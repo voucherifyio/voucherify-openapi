@@ -18,12 +18,11 @@ Goals:
 
 *** 
 
-Outcome:
+## Outcome:
 
 Data model PoC that is based on your use cases and business model.
 
-
-Personalized offers are a top focus for brands. However, moving data to manage targeted incentives at scale is a major operational challenge.
+Personalized offers are a top focus for brands. However, moving data to **manage targeted incentives at scale** is a major operational challenge.
 
 With native integrations and robust API connectivity across the customer data & experience stack, Voucherify empowers marketers to run any incentive using any data. 
 
@@ -33,22 +32,15 @@ By verifying and defining the data model early by translating data and actions i
 
 The next step is to plan the frequency of data sync. Voucherify can work with real-time traffic, which might impact your subscription plan's monthly API call usage.
 
-
 Voucherify operates on top of an external master ID (source_id),
 which lets you sync various pieces of information under a unified ID. 
 
 To quickly map out your data model, consider using the ready connectors with Segment and mParticle CDPs. 
 
-
 For the initial data migration, use asynchronous bulk API import endpoints or upload CSV files in the Dashboard. Learn more about data integration.
-
-
 
 Voucherify gives you complete control over how and when to sync
 data needed for incentive validation and redemption. You can sync the data before the final stage of the checkout process or send us relevant customer, product, order, and other data right in the validation and redemption requests on the fly. 
-
-
-
 
 Customer story – TIER Mobility
 
@@ -57,14 +49,9 @@ minutes as incentives. The custom attributes
 (metadata) let TIER attach minutes and unlocks 
 to a given customer for a predefined period of time.
 
-
-
 Discover the full story 
 
-
-
 Sample data models
-
 
 Industry | Ecommerce | Services | Travel | QSR & Food Delivery
 User traits | locale, currency, lifetime value, order count | device, app version, session duration, subscription group, notification preferences | traveler status, age range, destinations, travel companions, booking channel | order history, favorite items, delivery address, dietary preferences, favorite restaurants, delivery instructions
