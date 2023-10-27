@@ -1,5 +1,8 @@
 # Changelog
 
+## 20231027 - Product Collections
+
+- Fixed displaying of product collections object in response.
 
 ## 20231025 - Rewards, Loyalties
 
