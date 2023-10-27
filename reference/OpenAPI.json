@@ -4893,14 +4893,14 @@
           "effect"
         ]
       },
-      "1_req_vouchers_code_balance": {
-        "title": "Add or Remove Gift Voucher Balance Request Body",
+      "vouchers_add_or_remove_voucher_balance_request_body": {
+        "title": "Add or Remove Voucher Balance Request Body",
         "type": "object",
         "description": "Request body schema for `vouchers/{code}/balance`.",
         "properties": {
           "amount": {
             "type": "integer",
-            "description": "The incremental amount to be added to or removed from the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000. To remove balance, simply add a minus sign before the value, i.e. to remove $20, use -2000."
+            "description": "The incremental amount to be added to or removed from the current balance on the gift card or loyalty card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000. To remove balance, simply add a minus sign before the value, i.e. to remove $20, use -2000."
           },
           "source_id": {
             "type": "string",
@@ -4915,18 +4915,19 @@
           "amount"
         ]
       },
-      "1_res_vouchers_code_balance": {
+      "vouchers_add_or_remove_voucher_balance_response_body": {
         "description": "Response body schema for `vouchers/{code}/balance.`",
         "type": "object",
-        "title": "Add or Remove Gift Voucher Balance Response Body",
+        "title": "Add or Remove Voucher Balance Response Body",
+        "required": [ "amount", "total", "balance", "type", "related_object", "operation_type" ],
         "properties": {
           "amount": {
             "type": "integer",
-            "description": "The incremental amount added (positive integer) or subtracted (negative integer) to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+            "description": "The incremental amount added (positive integer) or subtracted (negative integer) to the current balance on the gift card or loyalty card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
           },
           "total": {
             "type": "integer",
-            "description": "Total income incurred over the lifespan of the gift card.  \n\n Expect this result:    \n\n&Delta; `total` parameter: total<sub>stored in Voucherify system</sub> + amount<sub>in request body</sub>"
+            "description": "Total income incurred over the lifespan of the gift card or loyalty card.  \n\n Expect this result:    \n\n&Delta; `total` parameter: total<sub>stored in Voucherify system</sub> + amount<sub>in request body</sub>"
           },
           "balance": {
             "type": "integer",
@@ -4935,21 +4936,38 @@
           "type": {
             "type": "string",
             "description": "The type of voucher being modified.",
-            "default": "gift_voucher"
+            "enum": [
+              "gift_voucher",
+              "loyalty_card"
+            ]
+          },
+          "operation_type": {
+            "type": "string",
+            "default": "MANUAL",
+            "enum": [
+              "MANUAL"
+            ]
           },
           "object": {
             "type": "string",
             "description": "The type of object represented by JSON. Default is `balance`.",
-            "default": "balance"
+            "default": "balance",
+            "enum": [
+              "balance"
+            ]
           },
           "related_object": {
             "type": "object",
             "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
+            "required": [ "type", "id "],
             "properties": {
               "type": {
                 "type": "string",
                 "description": "The object being modified, i.e. `voucher`.",
-                "default": "voucher"
+                "default": "voucher",
+                "enum": [
+                  "voucher"
+                ]
               },
               "id": {
                 "type": "string",
@@ -43955,7 +43973,7 @@
         }
       ],
       "post": {
-        "operationId": "add-remove-gift-voucher-balance",
+        "operationId": "add-remove-voucher-balance",
         "tags": [
           "VOUCHERS API"
         ],
@@ -43966,15 +43984,15 @@
             "X-App-Token-1": []
           }
         ],
-        "summary": "Add or Remove Gift Card Balance",
-        "description": "Add balance to an existing gift card.",
+        "summary": "Add or Remove Voucher Balance",
+        "description": "Add balance to an existing gift card or loyalty card.",
         "requestBody": {
           "required": true,
-          "description": "Provide the amount to be added to/subtracted from the gift card.",
+          "description": "Provide the amount to be added to/subtracted from the voucher.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/1_req_vouchers_code_balance"
+                "$ref": "#/components/schemas/vouchers_add_or_remove_voucher_balance_request_body"
               },
               "examples": {
                 "Example": {
@@ -43992,7 +44010,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/1_res_vouchers_code_balance"
+                  "$ref": "#/components/schemas/vouchers_add_or_remove_voucher_balance_response_body"
                 },
                 "examples": {
                   "Example": {

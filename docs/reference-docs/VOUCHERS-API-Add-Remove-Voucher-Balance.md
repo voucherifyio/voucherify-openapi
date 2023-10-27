@@ -1,8 +1,8 @@
 ---
-title: Add or Remove Gift Card Balance
+title: Add or Remove Voucher Balance
 type: endpoint
 categorySlug: voucherify-api
-slug: add-remove-gift-voucher-balance
+slug: add-remove-voucher-balance
 parentDocSlug: vouchers-api
 hidden: false
 order: 10
