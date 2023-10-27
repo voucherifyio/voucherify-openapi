@@ -5,7 +5,7 @@ categorySlug: integration-blueprint
 slug: data-model
 type: basic
 hidden: false
-order: 1
+order: 3
 ---
 
 Data model
