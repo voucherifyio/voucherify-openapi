@@ -2,7 +2,7 @@
 
 ## 20231027 - GET List Member Rewards
 
-Added `required` and `description` attributes.
+Added `required` and `description` attributes in `LoyaltiesListMemberRewardsResponseBody` schema.
 
 ## 20231026 - Stackable API
 
