@@ -11,10 +11,14 @@ order: 3
 Data model
 
 
-Goals: 
+Goals:  
 
-*Learn more about metadata. 
-*Choose which attributes and events you would like to share with Voucherify.
+
+Learn more about metadata. 
+
+
+Choose which attributes and events you would like to share with Voucherify.
+
 
 Outcome:
 
@@ -35,7 +39,7 @@ The next step is to plan the frequency of data sync. Voucherify can work with re
 Voucherify operates on top of an external master ID (source_id),
 which lets you sync various pieces of information under a unified ID. 
 
-To quickly map out your data model, consider using the ready connectors with Segment and mParticle CDPs.
+To quickly map out your data model, consider using the ready connectors with Segment and mParticle CDPs. 
 
 
 For the initial data migration, use asynchronous bulk API import endpoints or upload CSV files in the Dashboard. Learn more about data integration.
@@ -69,6 +73,7 @@ User traits | locale, currency, lifetime value, order count | device, app versio
 Custom events | product_viewed, product_added, checkout_started, order_completed, cart_abandoned | account_set, user_login, searches, feature_usage | destination_search, car_rental, bookign_type, booking_date | menu_item view, app_rating, menu_search, order_tracking, delivery_completed
 
 To learn more about tracking custom events, go here > 
+
 
 
 
