@@ -1,5 +1,30 @@
 # Changelog
 
+## 20231027 - GET List Member Rewards
+
+Added `required` and `description` attributes in `LoyaltiesListMemberRewardsResponseBody` schema.
+
+## 20231026 - Stackable API
+
+**Added schemas**
+- Order
+- RedeemPromotionStack
+- RedeemPromotionTier
+- RedeemGiftCard
+- RedeemLoyaltyCard
+- RedeemVoucher
+- ValidationsValidateRequestBody
+- RedemptionsRedeemRequestBody
+
+**Endpoints changes**
+- POST `/v1/validations`
+    - Request body schema was replaced with new one: `ValidationsValidateRequestBody` (old one: `19_req_validations`)
+- POST `/v1/redemptions`
+    - Request body schema was replaced with new one: `RedemptionsRedeemRequestBody` (old one: `19_req_redemptions`)
+- POST `/client/v1/validations`
+    - Request body schema was replaced with new one: `ValidationsValidateRequestBody` (old one: `19_req_validations`)
+- POST `/client/v1/redemptions`
+    - Request body schema was replaced with new one: `RedemptionsRedeemRequestBody` (old one: `19_req_redemptions`)
 
 ## 20231025 - Rewards, Loyalties
 
