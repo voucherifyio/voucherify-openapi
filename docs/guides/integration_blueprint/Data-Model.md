@@ -12,13 +12,11 @@ Data model
 
 
 Goals: 
-
-
-Learn more about metadata. 
-
-
-Choose which attributes and events you would like to share with Voucherify.
-
+body{
+    background-color: blue;
+}
+*Learn more about metadata. 
+*Choose which attributes and events you would like to share with Voucherify.
 
 Outcome:
 
