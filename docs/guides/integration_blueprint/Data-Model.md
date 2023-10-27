@@ -52,6 +52,12 @@ to a given customer for a predefined period of time.
 
 # Sample data models
 
+| Industry      | Ecommerce    | Services    | Travel    | QSR & Food Delivery   |
+:---:             :---:          :---:          :---:           :---:
+| User traits   | locale, currency, lifetime value, order count |
+:---:
+| Custom events |
+
 Industry | Ecommerce | Services | Travel | QSR & Food Delivery
 User traits | locale, currency, lifetime value, order count | device, app version, session duration, subscription group, notification preferences | traveler status, age range, destinations, travel companions, booking channel | order history, favorite items, delivery address, dietary preferences, favorite restaurants, delivery instructions
 Custom events | product_viewed, product_added, checkout_started, order_completed, cart_abandoned | account_set, user_login, searches, feature_usage | destination_search, car_rental, bookign_type, booking_date | menu_item view, app_rating, menu_search, order_tracking, delivery_completed
