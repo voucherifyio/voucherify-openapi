@@ -8,7 +8,7 @@ hidden: false
 order: 1
 ---
 
-Voucherify API for stackable discounts lets you validate and redeem up to 5 objects using a single API request. You can combine coupons, gift cards, promotion tiers, loyalty, and referral codes. 
+Voucherify API for stackable discounts lets you validate and redeem up to 30 objects using a single API request. You can combine coupons, gift cards, promotion tiers, loyalty, and referral codes. 
 
 In the redemption request, you need to provide a list of redeemables that define what discounts or codes will be redeemed/validated. 
 
@@ -19,13 +19,13 @@ In the redemption request, you need to provide a list of redeemables that define
 | **The workflow** | **API Endpoint** |
 |---|---|
 | VALIDATION<br>Validation checks if all redeemables provided in the request can be applied in the given context (checks customer and order details against validation rules and other attached limits). Only if all redeemables can be applied, the validation returns `valid: true`. | **POST** `base_URL/v1/validations` _for server-side_<br>**POST** `base_URL/client/v1/validations` _for client-side_ |
-| REDEMPTION<br>You can pass up to 5 redeemables that will be redeemed during the request. Only if all redeemables can be applied (each redeemable is validated before the redemption), the redemption is successful. | **POST** `base_URL/v1/redemptions` _for server-side_<br>**POST** `base_URL/client/v1/redemptions` _for client-side_ |
+| REDEMPTION<br>You can pass up to 30 redeemables that will be redeemed during the request. Only if all redeemables can be applied (each redeemable is validated before the redemption), the redemption is successful. | **POST** `base_URL/v1/redemptions` _for server-side_<br>**POST** `base_URL/client/v1/redemptions` _for client-side_ |
 | ROLLBACK<br>In the case of unwanted redemption, you can roll it back. Note that if you call this endpoint, all applied discounts will be rolled back too. There is no way to roll back a redemption of a single redeemable. | **POST** `base_URL/redemptions/parent_redemption_id/rollbacks` |
 
 ## Redeemables reference
 
-Redeemables array can gather up to 5 objects. Each element represents an object that will be validated/redeemed when calling the API. In the reference below, you can learn how to pass each type of redeemable in the payload.
-**Redeemables array can gather up to 5 objects or 1 promotion stack with 5 tiers included.** Each array element represents an object that will be redeemed when calling the API. In the reference below, you can learn how to pass each type of redeemable in the payload.
+Redeemables array can gather up to 30 objects. Each element represents an object that will be validated/redeemed when calling the API. In the reference below, you can learn how to pass each type of redeemable in the payload.
+**Redeemables array can gather up to 30 objects or 1 promotion stack with 5 tiers included.** Each array element represents an object that will be redeemed when calling the API. In the reference below, you can learn how to pass each type of redeemable in the payload.
 
 | Redeemable type | Payload | Reference |
 |---|---|---|
@@ -196,7 +196,7 @@ POST https://URL/v1/validations
 
 ## Redemption
 
-You can pass up to 5 redeemables that will be redeemed during the request. Only if all redeemables can be redeemed (each redeemable is validated before the redemption), the redemption is successful.
+You can pass up to 30 redeemables that will be redeemed during the request. Only if all redeemables can be redeemed (each redeemable is validated before the redemption), the redemption is successful.
 
 POST https://URL/v1/redemptions 
 
