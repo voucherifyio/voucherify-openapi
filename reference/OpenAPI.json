@@ -31810,42 +31810,6 @@
           }
         }
       },
-      "16_filter_conditions_string_qualification": {
-        "title": "Filter by conditions",
-        "type": "object",
-        "description": "Data filters used to narrow the data records to be returned in the result.",
-        "properties": {
-          "conditions": {
-            "type": "object",
-            "description": "Data filters used to narrow the data records to be returned in the result.",
-            "properties": {
-              "$in": {
-                "type": "array",
-                "description": "Array of resource values that should be included in the results. (multiple values)",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "$is": {
-                "type": "string",
-                "description": "Value is exactly this value. (single value)"
-              },
-              "$is_not": {
-                "type": "string",
-                "description": "Results omit this value. (single value)"
-              },
-              "$has_value": {
-                "type": "string",
-                "description": "Value is NOT null. The value for this parameter is an empty string."
-              },
-              "$is_unknown": {
-                "type": "string",
-                "description": "Value is null. The value for this parameter is an empty string."
-              }
-            }
-          }
-        }
-      },
       "17_obj_async_action_object": {
         "title": "Async Action Object",
         "type": "object",
@@ -34630,7 +34594,7 @@
         },
         "description": "A filter on the list based on the id of the location."
       },
-      "23_obj_qualification_object": {
+      "QualificationsCheckEligibilityResponseBody": {
         "title": "Qualification object",
         "type": "object",
         "description": "This is an object representing a qualification.",
@@ -34877,98 +34841,33 @@
           }
         }
       },
-      "23_req_create_qualification": {
+      "QualificationsCheckEligibilityRequestBody": {
         "type": "object",
-        "title": "Examine Qualification Request Body",
-        "description": "Request body schema for examining a qualification`.",
+        "title": "Check Eligibility Request Body",
+        "description": "Request body schema for checking eligibility of a qualification`.",
         "properties": {
           "customer": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/23_req_create_qualification_customer_id"
-              },
-              {
-                "$ref": "#/components/schemas/23_req_create_qualification_customer_source_id"
-              },
-              {
-                "$ref": "#/components/schemas/9_req_create_customer"
-              }
-            ],
+            "$ref": "#/components/schemas/Customer",
             "description": "Customer's information."
           },
           "order": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/23_req_create_qualification_order_id"
-              },
-              {
-                "$ref": "#/components/schemas/23_req_create_qualification_order_source_id"
-              },
-              {
-                "$ref": "#/components/schemas/10_req_create_order"
-              }
-            ],
             "description": "Order information. This object enables you to pass purchase transaction data. Read what properties you can use in the <!-- [Order object reference](OpenAPI.json/components/schemas/10_obj_order_object) -->[Order object](ref:get-order)."
-          },
-          "options": {
-            "type": "object",
-            "description": "Configure parameters returned in the response.",
-            "properties": {
-              "expand": {
-                "type": "array",
-                "description": "Expand array lets you configure params included in the response. Depending on the strings included in the array, the response will contain different details. \n\n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"redeemable\"] | - Returns the redeemables' metadata. |\n| [\"category\"] | - Returns an expanded `categories` object, showing details about the category. |",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "redeemable",
-                    "category"
-                  ]
-                }
-              },
-              "limit": {
-                "type": "integer",
-                "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5, and the maximum value is 50.",
-                "maximum": 50
-              },
-              "starting_after": {
-                "type": "string",
-                "example": "2021-09-08T13:52:18.227Z",
-                "format": "date-time",
-                "description": "Curser used for paging."
-              },
-              "filters": {
-                "description": "A set of fiters to return only a specific category or type of redeemable.",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/23_obj_filter_category_id"
-                  },
-                  {
-                    "$ref": "#/components/schemas/23_obj_filter_campaign_id"
-                  },
-                  {
-                    "$ref": "#/components/schemas/23_obj_filter_resource_type"
-                  },
-                  {
-                    "$ref": "#/components/schemas/23_obj_filter_voucher_type"
-                  },
-                  {
-                    "$ref": "#/components/schemas/qualificationJunction"
-                  }
-                ]
-              }
-            }
-          },
-          "metadata": {
-            "type": "object",
-            "description": "A set of key/value pairs that you can send in the request body to check against redeemables requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Advanced_ &rarr; _Redemption metadata satisfy_ or _Basic Builder_ &rarr; _Attributes match_ &rarr; _REDEMPTION METADATA_. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule)."
           },
           "mode": {
             "type": "string",
-            "description": "Defines which resources Voucherify will use. Currently, `BASIC` is supported."
+            "description": "Defines which resources Voucherify will use",
+            "enum": [
+              "BASIC",
+              "ADVANCED"
+            ]
+          },
+          "tracking_id": {
+            "description": "Is correspondent to Customer's source_id",
+            "type": "string"
           },
           "scenario": {
             "type": "string",
-            "description": "Defines the scenario Voucherify should consider during the qualification process.\n\n- `ALL` - Scenario that returns all redeemables available for the customer in one API request.\n- `CUSTOMER_WALLET` - returns vouchers applicable to the customer’s cart based on the vouchers assigned to the customer’s profile.\n- `AUDIENCE_ONLY` - returns all vouchers, promotion tiers, and campaigns available to the customer. Voucherify validates the rules based on the customer profile only.\n- `PRODUCTS` - returns all promotions available for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).\n- `PRODUCTS_DISCOUNT` - returns all promotions available for products when a discount is defined as applicable to specific item(s).\n- `PROMOTION_STACKS` - returns the applicable promotion stacks.\n- `PRODUCTS_BY_CUSTOMER` - returns all promotions available for a customer for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).\n- `PRODUCTS_DISCOUNT_BY_CUSTOMER` - returns all promotions available for a customer for products when a discount is defined as applicable to specific item(s).",
+            "description": "Defines the scenario Voucherify should consider during the qualification process.\n\n- `ALL` - Scenario that returns all redeemables available for the customer in one API request. This scenario is used by default when no value is selected.\n- `CUSTOMER_WALLET` - returns vouchers applicable to the customer’s cart based on the vouchers assigned to the customer’s profile.\n- `AUDIENCE_ONLY` - returns all vouchers, promotion tiers, and campaigns available to the customer. Voucherify validates the rules based on the customer profile only.\n- `PRODUCTS` - returns all promotions available for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).\n- `PRODUCTS_DISCOUNT` - returns all promotions available for products when a discount is defined as applicable to specific item(s).\n- `PROMOTION_STACKS` - returns the applicable promotion stacks.\n- `PRODUCTS_BY_CUSTOMER` - returns all promotions available for a customer for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).\n- `PRODUCTS_DISCOUNT_BY_CUSTOMER` - returns all promotions available for a customer for products when a discount is defined as applicable to specific item(s).",
             "enum": [
               "ALL",
               "CUSTOMER_WALLET",
@@ -34979,6 +34878,114 @@
               "PRODUCTS_BY_CUSTOMER",
               "PRODUCTS_DISCOUNT_BY_CUSTOMER"
             ]
+          },
+          "options": {
+            "type": "object",
+            "description": "Configure parameters returned in the response.",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5",
+                "maximum": 100
+              },
+              "starting_after": {
+                "type": "string",
+                "nullable": true,
+                "example": "2021-09-08T13:52:18.227Z",
+                "format": "date-time",
+                "description": "Cursor used for paging."
+              },
+              "ignore_rules_cache": {
+                "type": "boolean"
+              },
+              "filters": {
+                "type": "object",
+                "additionalProperties": false,
+                "description": "A set of filters to return only a specific category or type of redeemable.",
+                "properties": {
+                  "junction": {
+                    "$ref": "#/components/schemas/Junction"
+                  },
+                  "category_id": {
+                    "$ref": "#/components/schemas/QualificationsFieldConditions"
+                  },
+                  "campaign_id": {
+                    "$ref": "#/components/schemas/QualificationsFieldConditions"
+                  },
+                  "resource_id": {
+                    "$ref": "#/components/schemas/QualificationsFieldConditions"
+                  },
+                  "resource_type": {
+                    "$ref": "#/components/schemas/QualificationsFieldConditions"
+                  },
+                  "voucher_type": {
+                    "$ref": "#/components/schemas/QualificationsFieldConditions"
+                  },
+                  "code": {
+                    "$ref": "#/components/schemas/QualificationsFieldConditions"
+                  }
+                }
+              },
+              "expand": {
+                "type": "array",
+                "description": "Expand array lets you configure params included in the response. Depending on the strings included in the array, the response will contain different details. \n\n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"redeemable\"] | - Returns the redeemables' metadata. |\n| [\"category\"] | - Returns an expanded `categories` object, showing details about the category. |\n| [\"validation_rules\"] | - Returns an expanded `validation_rules` object, showing details about the validation rules. |",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "redeemable",
+                    "category",
+                    "validation_rules"
+                  ]
+                }
+              },
+              "sorting_rule": {
+                "type": "string",
+                "description": "Strategy for sorting by total_applied_discount_amount property. \n\n - `DEFAULT`, `BEST_DEAL` - Sorting descending \n - `LEAST_DEAL` - Sorting ascending",
+                "enum": [
+                  "BEST_DEAL",
+                  "LEAST_DEAL",
+                  "DEFAULT"
+                ]
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of key/value pairs that you can send in the request body to check against redeemables requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Advanced_ &rarr; _Redemption metadata satisfy_ or _Basic Builder_ &rarr; _Attributes match_ &rarr; _REDEMPTION METADATA_. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule)."
+          }
+        }
+      },
+      "QualificationsFieldConditions": {
+        "title": "Field Conditions",
+        "type": "object",
+        "properties": {
+          "conditions": {
+            "$ref": "#/components/schemas/QualificationsFiltersCondition",
+            "description": "Data filters used to narrow the data records to be returned in the result."
+          }
+        }
+      },
+      "QualificationsFiltersCondition": {
+        "title": "Filters Condition",
+        "type": "object",
+        "properties": {
+          "$is": {
+            "$ref": "#/components/schemas/Any"
+          },
+          "$is_not": {
+            "$ref": "#/components/schemas/Any"
+          },
+          "$has_value": {
+            "$ref": "#/components/schemas/Any"
+          },
+          "$is_unknown": {
+            "$ref": "#/components/schemas/Any"
+          },
+          "$in": {
+            "$ref": "#/components/schemas/Any"
+          },
+          "$not_in": {
+            "$ref": "#/components/schemas/Any"
           }
         }
       },
@@ -35026,51 +35033,6 @@
             "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
           }
         }
-      },
-      "23_obj_filter_category_id": {
-        "description": "Filter conditions set on the resource `category_id`.",
-        "title": "Filter by category ID",
-        "type": "object",
-        "properties": {
-          "category_id": {
-            "$ref": "#/components/schemas/16_filter_conditions_string_qualification"
-          }
-        }
-      },
-      "23_obj_filter_campaign_id": {
-        "description": "Filter conditions set on the resource `campaign_id`.",
-        "title": "Filter by campaign ID",
-        "type": "object",
-        "properties": {
-          "campaign_id": {
-            "$ref": "#/components/schemas/16_filter_conditions_string_qualification"
-          }
-        }
-      },
-      "23_obj_filter_resource_type": {
-        "description": "Filter conditions set on the resource `resource_type`. The resource types include: `voucher`, `promotion_tier`, `campaign`.",
-        "title": "Filter by type",
-        "type": "object",
-        "properties": {
-          "resource_type": {
-            "$ref": "#/components/schemas/16_filter_conditions_string_qualification"
-          }
-        }
-      },
-      "23_obj_filter_voucher_type": {
-        "description": "Filter conditions set on the resource `voucher_type`.",
-        "title": "Filter by type",
-        "type": "object",
-        "properties": {
-          "voucher_type": {
-            "$ref": "#/components/schemas/16_filter_conditions_string_qualification"
-          }
-        }
-      },
-      "qualificationJunction": {
-        "description": "Filter by conditions set on the `junction` parameter indicating how the `conditions` should be accounted for in the query. An `AND` is an all-inclusive logical operator, meaning the `AND` operator displays a record if **ALL** the conditions separated by AND are TRUE, while  an `OR` operator displays a record if **ANY** of the conditions separated by OR is TRUE.",
-        "title": "Logical Operator Between Filters",
-        "$ref": "#/components/schemas/Junction"
       },
       "23_obj_qualification_redeemables": {
         "title": "Redeemables",
@@ -82136,7 +82098,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/23_obj_qualification_object"
+                  "$ref": "#/components/schemas/QualificationsCheckEligibilityResponseBody"
                 }
               }
             }
@@ -82164,7 +82126,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/23_req_create_qualification"
+                "$ref": "#/components/schemas/QualificationsCheckEligibilityRequestBody"
               }
             }
           }
@@ -82175,7 +82137,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/23_obj_qualification_object"
+                  "$ref": "#/components/schemas/QualificationsCheckEligibilityResponseBody"
                 }
               }
             }
@@ -82203,7 +82165,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/23_req_create_qualification"
+                "$ref": "#/components/schemas/QualificationsCheckEligibilityRequestBody"
               }
             }
           }
@@ -82214,7 +82176,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/23_obj_qualification_object"
+                  "$ref": "#/components/schemas/QualificationsCheckEligibilityResponseBody"
                 }
               }
             }
