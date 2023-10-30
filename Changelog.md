@@ -1,5 +1,22 @@
 # Changelog
 
+## 20231027 - Product Collections
+
+- Fixed displaying of product collections object in response.
+
+## 20231027 - Add or Remove Voucher Balance
+
+- Renamed reference document `VOUCHERS-API-Add-Remove-Gift-Card-Balance` to `VOUCHERS-API-Add-Remove-Voucher-Balance`.
+- Updated `operationId` and `slug` according to the new name.
+
+**Added schemas**:
+- vouchers_add_or_remove_voucher_balance_request_body (old `1_req_vouchers_code_balance`)
+- vouchers_add_or_remove_voucher_balance_response_body (old `1_res_vouchers_code_balance`)
+
+**Endpoint change**:
+- Changed `operationId` to `add-remove-voucher-balance` for POST `/v1/vouchers/{code}/balance`
+- Updated title and descriptions so that they also apply to loyalty cards.
+
 ## 20231027 - GET List Member Rewards
 
 Added `required` and `description` attributes in `LoyaltiesListMemberRewardsResponseBody` schema.
@@ -786,6 +803,7 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 /reference/the-custom-event-object -> /reference/custom-event-object
 /reference/the-export-object -> /reference/export-object
 /reference/the-metadata-schema-object -> /reference/metadata-schema-object
+/reference/add-remove-gift-voucher-balance -> /reference/add-remove-voucher-balance
 
 ### Dummy endpoints
 
