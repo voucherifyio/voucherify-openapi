@@ -12,37 +12,39 @@ Voucherify API for stackable discounts lets you validate and redeem up to 30 obj
 
 In the redemption request, you need to provide a list of redeemables that define what discounts or codes will be redeemed/validated. 
 
-> 📘 API reference
+> 📘 Reference documents
 > 
-> Go to [here](ref:stackable-discounts-api) to see all endpoints for stackable discounts API.
+> Go to [Stackable redemptions object](ref:stackable-redemptions-object) to learn more about the stackable discounts API.
+>
+> Read the [Stacking rules article](https://support.voucherify.io/article/604-stacking-rules) to learn more about the configuration of the stacking rules.
 
 | **The workflow** | **API Endpoint** |
 |---|---|
-| VALIDATION<br>Validation checks if all redeemables provided in the request can be applied in the given context (checks customer and order details against validation rules and other attached limits). Only if all redeemables can be applied, the validation returns `valid: true`. | **POST** `base_URL/v1/validations` _for server-side_<br>**POST** `base_URL/client/v1/validations` _for client-side_ |
-| REDEMPTION<br>You can pass up to 30 redeemables that will be redeemed during the request. Only if all redeemables can be applied (each redeemable is validated before the redemption), the redemption is successful. | **POST** `base_URL/v1/redemptions` _for server-side_<br>**POST** `base_URL/client/v1/redemptions` _for client-side_ |
+| VALIDATION<br>Validation checks which redeemables provided in the request can be applied in the given context, i.e. checks customer and order details against validation rules and other applied limits. <!-- Only if all redeemables can be applied, the validation returns `valid: true`. To już tak nie działa moim zdaniem. sprawdzić później --> | **POST** `base_URL/v1/validations` _for server-side_<br>**POST** `base_URL/client/v1/validations` _for client-side_ |
+| REDEMPTION<br>You can pass up to 30 redeemables that will be redeemed during the request. The redemption is successful:<br> if all redeemables can be applied (each redeemable is validated before the redemption – [Discount application rule: ALL](https://support.voucherify.io/article/604-stacking-rules#application-rules)).<br>for those redeemables which can be applied, i.e. succeeded validation. The redeemables which failed validation are inapplicable ([Discount application rule: PARTIAL](https://support.voucherify.io/article/604-stacking-rules#application-rules)).| **POST** `base_URL/v1/redemptions` _for server-side_<br>**POST** `base_URL/client/v1/redemptions` _for client-side_ |
 | ROLLBACK<br>In the case of unwanted redemption, you can roll it back. Note that if you call this endpoint, all applied discounts will be rolled back too. There is no way to roll back a redemption of a single redeemable. | **POST** `base_URL/redemptions/parent_redemption_id/rollbacks` |
 
 ## Redeemables reference
 
-Redeemables array can gather up to 30 objects. Each element represents an object that will be validated/redeemed when calling the API. In the reference below, you can learn how to pass each type of redeemable in the payload.
-**Redeemables array can gather up to 30 objects or 1 promotion stack with 5 tiers included.** Each array element represents an object that will be redeemed when calling the API. In the reference below, you can learn how to pass each type of redeemable in the payload.
+Redeemables array can gather up to 30 objects. Each element represents an object that will be validated or redeemed when calling the API. In the reference below, you can learn how to pass each type of redeemable in the payload.
+**The redeemables array can gather up to 30 objects or 1 promotion stack with 5 tiers included.** Each array element represents an object that will be redeemed when calling the API. In the reference below, you can learn how to pass each type of redeemable in the payload.
 
 | Redeemable type | Payload | Reference |
 |---|---|---|
 | Coupon code (discount voucher) | {<br>"object": "voucher",<br>"id": "VOUCHER_CODE"<br>} | object (string) required<br>id (string) required is a voucher code or a unique internal identifier of a voucher code,<br>example "id":<br>- when using voucher code: blackFriday20<br>- when using voucher id: v_Vt0mOlx2OWBmFe9f3e3ElgWSbYsEPTbJ |
-| Gift card (gift voucher) | {<br>"object": "voucher",<br>"id": "GIFT_VOUCHER_CODE",<br>"gift": {<br>"credits": 2000<br>}<br>} | object (string) required<br><br>id (string) required is a gift card code or unique internal identifier of a voucher code,<br>example "id":<br>- when using voucher code: gift-87lta6<br>- when using voucher id: v_Vt0mOlx2OWBmFe9f3e3ElgWSbYsEPTbJ<br><br>gift (object) required<br><br>gift.credits (integer) define the amount that will be deducted from the card balance and applied to the order. You need to multiply the credits amount by 100 in the payload (for example $20 is 2000 in the gift.credits valu). |
+| Gift card (gift voucher) | {<br>"object": "voucher",<br>"id": "GIFT_VOUCHER_CODE",<br>"gift": {<br>"credits": 2000<br>}<br>} | object (string) required<br><br>id (string) required is a gift card code or unique internal identifier of a voucher code,<br>example "id":<br>- when using voucher code: gift-87lta6<br>- when using voucher id: v_Vt0mOlx2OWBmFe9f3e3ElgWSbYsEPTbJ<br><br>gift (object) required<br><br>gift.credits (integer) define the amount that will be deducted from the card balance and applied to the order. You need to multiply the credits amount by 100 in the payload (for example $20 is 2000 in the gift.credits value). |
 | Promotion tier | {<br>"object": "promotion_tier",<br>"id": "PROMOTION_TIER_ID"<br>} | object (string) required<br><br>id (string) required is a unique internal identifier of a promotion tier,<br>example "id": promo_DkBL24GWmNZ1A75bhEiBTNWO |
 | Promotion stack<br><br>**Important!**<br>Note that you can pass only one promotion stack in a single validation/redemption call. Each stack can include up to 5 promotion tiers. | {<br>"object": "promotion_stack",<br>"id": "STACK_ID"<br>} | object (string) required<br><br>id (string) required is a unique internal identifier of a promotion stack,<br>example "id": stack_3Q4EJpZqg3DI5IRwgBYfsb37 |
 | Loyalty card<br><br>This endpoint allows you to redeem loyalty **pay with points reward** and pay for the order using loyalty credits. For redeeming other loyalty rewards call Redeem Reward endpoint. | {<br>"object": "voucher",<br>"id": "LOYALTY_CARD_CODE",<br>"reward": {<br>"id": "REWARD_ID",<br>"points": 200<br>}<br>} | object (string) required<br><br>id (string) required is a loyalty card code or a unique internal identifier of a loyalty card, example:<br>- when using voucher code: card-87lta6<br>- when using voucher id: v_Vt0mOlx2OWBmFe9f3e3ElgWSbYsEPTbJ<br><br>reward (object) required is required to redeem loyalty card.<br><br>reward.id (string) required is a unique reward identifier.<br><br>reward.points (intiger) defines how many points will be used to pay for the order (required for redeeming pay with points reward). |
 | Referral code | {<br>"object": "voucher",<br>"id": "REFERRAL_CODE"<br>} | object (string) required<br><br>id (string) required is a referral code or a unique internal identifier of a referral code,<br>example "id":<br>- when using voucher code: card-87lta6<br>- when using voucher id: v_Vt0mOlx2OWBmFe9f3e3ElgWSbYsEPTbJ |
 
-As a result, the API returns the parent redemption id and child redemptions ids. parent_redemption refers to the redemption of all redeemables, whereas child_redemption represents the redemption of a single redeemable.
+As a result, the API returns the parent redemption id and child redemptions ids. `parent_redemption` refers to the redemption of all redeemables, whereas `child_redemption` represents the redemption of a single redeemable.
 
 ## Validation
 
-Validation checks if all redeemables provided in the request can be applied in the given context (checks customer and order details against validation rules and other attached limits). Only if all redeemables can be applied, the validation returns **valid: true**.
+Validation checks which redeemables provided in the request can be applied in the given context, i.e. checks customer and order details against validation rules and other applied limits. <!-- Only if all redeemables can be applied, the validation returns `valid: true`. To już tak nie działa moim zdaniem. sprawdzić później -->
 
-POST https://URL/v1/validations
+POST `https://URL/v1/validations`
 
 ```json Example Request
 {
@@ -196,9 +198,11 @@ POST https://URL/v1/validations
 
 ## Redemption
 
-You can pass up to 30 redeemables that will be redeemed during the request. Only if all redeemables can be redeemed (each redeemable is validated before the redemption), the redemption is successful.
+You can pass up to 30 redeemables that will be redeemed during the request. The redemption is successful:
+- If all redeemables can be applied (each redeemable is validated before the redemption – [Discount application rule: ALL](https://support.voucherify.io/article/604-stacking-rules#application-rules)).
+- For those redeemables which can be applied, i.e. succeeded validation. The redeemables which failed validation are inapplicable ([Discount application rule: PARTIAL](https://support.voucherify.io/article/604-stacking-rules#application-rules)).
 
-POST https://URL/v1/redemptions 
+POST `https://URL/v1/redemptions` 
 
 ```json Example request
 {
@@ -415,7 +419,7 @@ POST https://URL/v1/redemptions
 
 You can always roll back any unwanted redemption. Note that if you call this endpoint, all discounts applied to the order during the redemption will be rolled back. There is no way to roll back a redemption of a single redeemable.
 
-POST https://URL/v1/redemptions/{ParentRedemptionId}/rollbacks
+POST `https://URL/v1/redemptions/{ParentRedemptionId}/rollbacks`
 
 ```markdown Example 
 POST https://URL/v1/redemptions/r_5J38i6KjSnkHYw3bwLB4v72j/rollbacks
