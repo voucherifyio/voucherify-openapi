@@ -10,7 +10,7 @@ order: 3
 
 # Data model
 
-> 📘 Goals
+> 📘 **Goals**
 > * Learn more about metadata. 
 > * Choose which attributes and events you would like to share with Voucherify.
 
