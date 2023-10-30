@@ -2,7 +2,7 @@
 title: Security
 excerpt:
 categorySlug: integration-blueprint
-slug: security
+slug: security-1
 type: basic
 hidden: false
 order: 12
@@ -40,4 +40,6 @@ As an **ISO-27001-certified product**, Voucherify implements several security st
 
 Contact our Customer Success team for a complete **Security Architecture Model** or the recent pentest report.
 
-> 📘 If you plan to use Voucherify's built-in messaging, go to a dedicated [GDPR guide](https://support.voucherify.io/article/125-security-data-protection). It showcases how Voucherify implements marketing consents and other requirements from the Directive.
+> 📘 
+>
+> If you plan to use Voucherify's built-in messaging, go to a dedicated [GDPR guide](https://support.voucherify.io/article/125-security-data-protection). It showcases how Voucherify implements marketing consents and other requirements from the Directive.
