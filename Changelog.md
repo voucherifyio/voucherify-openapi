@@ -6,11 +6,8 @@
 - Order
 
 **Added schemas**
-- OrderBaseRequest
 - OrderRequest
 - OrderItemResponse
-- OrderExtendedRequest
-- OrderItemExtendedRequest
 - OrderResponse
 - OrderItemResponse
 
