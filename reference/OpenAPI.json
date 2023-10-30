@@ -14161,10 +14161,21 @@
         "description": "Response body schema for POST `/validations`.",
         "oneOf": [
           {
-            "$ref": "#/components/schemas/ValidationsValidateAllProvidedPromotionsMustBeValidResponseBody"
+            "$ref": "#/components/schemas/ValidationsValidateValidResponseBody"
           },
           {
             "$ref": "#/components/schemas/ValidationsValidateInvalidResponseBody"
+          }
+        ]
+      },
+      "ValidationsValidateValidResponseBody": {
+        "title": "ValidationsValidateValidResponseBody",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/ValidationsValidateAllProvidedPromotionsMustBeValidResponseBody"
+          },
+          {
+            "$ref": "#/components/schemas/ValidationsValidateAtLeastOnePromotionMustBeValidResponseBody"
           }
         ]
       },
@@ -14234,8 +14245,7 @@
       },
       "ValidationsRedeemableApplicable": {
         "type": "object",
-        "description": "Response schema model for validating a discount code.",
-        "title": "Discount Voucher",
+        "title": "Applicable Redeemable",
         "properties": {
           "status": {
             "type": "string",
@@ -14256,13 +14266,13 @@
             ]
           },
           "order": {
-            "$ref": "#/components/schemas/19_obj_order_object_validation_res_per_redeemable"
+            "$ref": "#/components/schemas/OrderResponse"
           },
           "applicable_to": {
-            "$ref": "#/components/schemas/6_res_applicable_to_object"
+            "$ref": "#/components/schemas/ApplicableTo"
           },
           "inapplicable_to": {
-            "$ref": "#/components/schemas/6_res_inapplicable_to_object"
+            "$ref": "#/components/schemas/InapplicableTo"
           },
           "result": {
             "description": "Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.",
@@ -14289,13 +14299,77 @@
             "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable."
           },
           "categories": {
-            "$ref": "#/components/schemas/20_obj_category_object"
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          }
+        }
+      },
+      "ValidationsRedeemableInapplicable": {
+        "type": "object",
+        "title": "Inapplicable Redeemable",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "INAPPLICABLE"
+            ],
+            "description": "Indicates whether the redeemable can be applied or not applied based on the validation rules."
+          },
+          "id": {
+            "type": "string",
+            "description": "Redeemable ID, i.e. the voucher code."
+          },
+          "object": {
+            "type": "string",
+            "description": "Redeemable's object type.",
+            "enum": [
+              "voucher"
+            ]
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "$ref": "#/components/schemas/e_error"
+              }
+            }
+          }
+        }
+      },
+      "ValidationsRedeemableSkipped": {
+        "type": "object",
+        "title": "Skipped Redeemable",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "INAPPLICABLE"
+            ],
+            "description": "Indicates whether the redeemable can be applied or not applied based on the validation rules."
+          },
+          "id": {
+            "type": "string",
+            "description": "Redeemable ID, i.e. the voucher code."
+          },
+          "object": {
+            "type": "string",
+            "description": "Redeemable's object type.",
+            "enum": [
+              "voucher"
+            ]
+          },
+          "result": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": false
           }
         }
       },
       "ValidationsValidateAllProvidedPromotionsMustBeValidResponseBody": {
+        "title": "All Provided Promotions Must Be Valid",
         "type": "object",
-        "title": "True",
         "description": "Response body schema for POST `/validations`.",
         "properties": {
           "valid": {
@@ -14309,12 +14383,18 @@
               "anyOf": [
                 {
                   "$ref": "#/components/schemas/ValidationsRedeemableApplicable"
+                },
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
+                },
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableSkipped"
                 }
               ]
             }
           },
           "order": {
-            "$ref": "#/components/schemas/Order"
+            "$ref": "#/components/schemas/OrderResponse"
           },
           "tracking_id": {
             "type": "string",
@@ -14324,7 +14404,59 @@
           "session": {
             "$ref": "#/components/schemas/Session"
           }
-        }
+        },
+        "required": [
+          "valid",
+          "redeemables"
+        ]
+      },
+      "ValidationsValidateAtLeastOnePromotionMustBeValidResponseBody": {
+        "title": "At Least One Promotion Must Be Valid",
+        "type": "object",
+        "description": "Response body schema for POST `/validations`.",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "description": "The result of the validation. It takes all of the redeemables into account and returns a `false` if at least one redeemable is inapplicable. Returns `true` if all redeemables are applicable."
+          },
+          "redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"`.",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableApplicable"
+                }
+              ]
+            }
+          },
+          "inapplicable_redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"`.",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
+                }
+              ]
+            }
+          },
+          "order": {
+            "$ref": "#/components/schemas/OrderResponse"
+          },
+          "tracking_id": {
+            "type": "string",
+            "example": "track_VAVo1/z+G2GI2LPw==",
+            "description": "Hashed customer source ID."
+          },
+          "session": {
+            "$ref": "#/components/schemas/Session"
+          }
+        },
+        "required": [
+          "valid",
+          "redeemables"
+        ]
       },
       "RedeemableResultVoucherCode": {
         "type": "object",
