@@ -10,15 +10,11 @@ order: 3
 
 # Data model
 
-Goals:  
+> 📘 Goals
+> * Learn more about metadata. 
+> * Choose which attributes and events you would like to share with Voucherify.
 
-* Learn more about metadata. 
-
-* Choose which attributes and events you would like to share with Voucherify.
-
-*** 
-
-## Outcome:
+ ## Outcome:
 
 Data model PoC that is based on your use cases and business model.
 
@@ -32,14 +28,14 @@ By verifying and defining the data model early by translating data and actions i
 
 The next step is to **plan the frequency of data sync.** Voucherify can work with real-time traffic, which might impact your subscription plan's monthly API call usage.
 
-Voucherify operates on top of an external master ID (source_id),
+> 📘 Voucherify operates on top of an external master ID (source_id),
 which lets you sync various pieces of information under a unified ID. 
 
 To quickly map out your data model, consider using the ready connectors with [Segment](https://voucherify.io/integrations/segment "Integration with Segment") and [mParticle](https://voucherify.io/integrations/mparticle "Integration with mParticle") CDPs. 
 
 For the initial data migration, use asynchronous bulk API import endpoints or upload CSV files in the Dashboard. [Learn more about data integration](https://support.voucherify.io/article/574-data-import "Data Import").
 
-Voucherify gives you complete control over **how and when to sync data** needed for incentive validation and redemption. You can sync the data before the final stage of the checkout process or send us relevant customer, product, order, and other data right in the validation and redemption requests on the fly. 
+> 📘 Voucherify gives you complete control over **how and when to sync data** needed for incentive validation and redemption. You can sync the data before the final stage of the checkout process or send us relevant customer, product, order, and other data right in the validation and redemption requests on the fly. 
 
 ## Customer story – TIER Mobility
 
@@ -58,6 +54,8 @@ to a given customer for a predefined period of time.
 | Custom events | product_viewed, product_added, checkout_started, order_completed, cart_abandoned | account_set, user_login, searches, feature_usage | destination_search, car_rental, booking_type, booking_date | menu_item_view, app_rating, menu_search, order_tracking, delivery_completed |
 
 [To learn more about tracking custom events, go here >](ref:custom-event-object) 
+
+
 
 
 
