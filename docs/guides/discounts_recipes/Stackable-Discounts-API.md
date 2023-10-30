@@ -21,7 +21,7 @@ In the redemption request, you need to provide a list of redeemables that define
 | **The workflow** | **API Endpoint** |
 |---|---|
 | VALIDATION<br>Validation checks which redeemables provided in the request can be applied in the given context, i.e. checks customer and order details against validation rules and other applied limits. <!-- Only if all redeemables can be applied, the validation returns `valid: true`. To już tak nie działa moim zdaniem. sprawdzić później --> | **POST** `base_URL/v1/validations` _for server-side_<br>**POST** `base_URL/client/v1/validations` _for client-side_ |
-| REDEMPTION<br>You can pass up to 30 redeemables that will be redeemed during the request. The redemption is successful:<br> if all redeemables can be applied (each redeemable is validated before the redemption – [Discount application rule: ALL](https://support.voucherify.io/article/604-stacking-rules#application-rules)).<br>for those redeemables which can be applied, i.e. succeeded validation. The redeemables which failed validation are inapplicable ([Discount application rule: PARTIAL](https://support.voucherify.io/article/604-stacking-rules#application-rules)).| **POST** `base_URL/v1/redemptions` _for server-side_<br>**POST** `base_URL/client/v1/redemptions` _for client-side_ |
+| REDEMPTION<br>You can pass up to 30 redeemables that will be redeemed during the request. The redemption is successful:<br> if all redeemables can be applied i.e. each redeemable is successfully validated before the redemption ([the discount application rule is set to ALL](https://support.voucherify.io/article/604-stacking-rules#application-rules)).<br>for those redeemables which can be applied, i.e. which succeeded validation. The redeemables which failed validation are inapplicable ([the discount application rule is set to PARTIAL](https://support.voucherify.io/article/604-stacking-rules#application-rules)).| **POST** `base_URL/v1/redemptions` _for server-side_<br>**POST** `base_URL/client/v1/redemptions` _for client-side_ |
 | ROLLBACK<br>In the case of unwanted redemption, you can roll it back. Note that if you call this endpoint, all applied discounts will be rolled back too. There is no way to roll back a redemption of a single redeemable. | **POST** `base_URL/redemptions/parent_redemption_id/rollbacks` |
 
 ## Redeemables reference
@@ -199,8 +199,8 @@ POST `https://URL/v1/validations`
 ## Redemption
 
 You can pass up to 30 redeemables that will be redeemed during the request. The redemption is successful:
-- If all redeemables can be applied (each redeemable is validated before the redemption – [Discount application rule: ALL](https://support.voucherify.io/article/604-stacking-rules#application-rules)).
-- For those redeemables which can be applied, i.e. succeeded validation. The redeemables which failed validation are inapplicable ([Discount application rule: PARTIAL](https://support.voucherify.io/article/604-stacking-rules#application-rules)).
+- If all redeemables can be applied, i.e. each redeemable is successfully validated before the redemption ([the discount application rule is set to ALL](https://support.voucherify.io/article/604-stacking-rules#application-rules)).
+- For those redeemables which can be applied, i.e. which succeeded validation. The redeemables which failed validation are inapplicable ([the discount application rule is set to PARTIAL](https://support.voucherify.io/article/604-stacking-rules#application-rules)).
 
 POST `https://URL/v1/redemptions` 
 
