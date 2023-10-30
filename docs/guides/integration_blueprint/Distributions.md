@@ -5,7 +5,7 @@ categorySlug: integration-blueprint
 slug: distributions
 type: basic
 hidden: false
-order: 3
+order: 4
 ---
 
 # Distributions
