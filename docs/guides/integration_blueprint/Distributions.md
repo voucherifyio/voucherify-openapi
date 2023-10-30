@@ -27,7 +27,7 @@ Evaluate your customer journey and think of places and times the information abo
 
 Both push and pull modes can be used with 3rd party platforms. 
 
-> 📘 Publication means incentive assignment. Typically, a publication is performed by sharing codes with customers (via Publication API).
-
 <!-- ![3rd party platforms](../../assets/img/guides_integration_blueprint_distributions_3rd_party_platforms.png "3rd party platforms") -->
 ![3rd party platforms](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/updating-quickstart-article/docs/assets/img/guides_integration_blueprint_distributions_3rd_party_platforms.png)
+
+> 📘 Publication means incentive assignment. Typically, a publication is performed by sharing codes with customers (via Publication API).
