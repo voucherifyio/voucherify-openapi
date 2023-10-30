@@ -803,6 +803,7 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 /reference/the-custom-event-object -> /reference/custom-event-object
 /reference/the-export-object -> /reference/export-object
 /reference/the-metadata-schema-object -> /reference/metadata-schema-object
+/reference/add-remove-gift-voucher-balance -> /reference/add-remove-voucher-balance
 
 ### Dummy endpoints
 
