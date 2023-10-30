@@ -1,11 +1,11 @@
 ---
-title: Order Object
+title: Order Response Object
 type: basic
 categorySlug: voucherify-api
 parentDocSlug: orders-api
-slug: order-object
+slug: order-response-object
 hidden: false
-order: 1
+order: 2
 ---
 
 ## Order Response
