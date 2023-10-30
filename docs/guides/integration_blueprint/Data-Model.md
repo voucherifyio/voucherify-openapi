@@ -55,7 +55,8 @@ to a given customer for a predefined period of time.
 
 [To learn more about tracking custom events, go here >](ref:custom-event-object) 
 
-
+<!-- ![Sample Data Models](../../assets/img/guides_integration_blueprint_data_model_sample_data_models.png "Sample Data Models") -->
+![Sample Data Models](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/updating-quickstart-article/docs/assets/img/guides_integration_blueprint_data_model_sample_data_models.png)
 
 
 
