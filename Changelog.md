@@ -17,6 +17,19 @@
 - Changed `operationId` to `add-remove-voucher-balance` for POST `/v1/vouchers/{code}/balance`
 - Updated title and descriptions so that they also apply to loyalty cards.
 
+## 20231030 - Order Model
+
+**Removed schemas**
+- Order
+
+**Added schemas**
+- OrderRequest
+- OrderItemResponse
+- OrderResponse
+- OrderItemResponse
+
+**Updated order object markdown.**
+
 ## 20231027 - GET List Member Rewards
 
 Added `required` and `description` attributes in `LoyaltiesListMemberRewardsResponseBody` schema.
@@ -803,7 +816,6 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 /reference/the-custom-event-object -> /reference/custom-event-object
 /reference/the-export-object -> /reference/export-object
 /reference/the-metadata-schema-object -> /reference/metadata-schema-object
-/reference/add-remove-gift-voucher-balance -> /reference/add-remove-voucher-balance
 
 ### Dummy endpoints
 
