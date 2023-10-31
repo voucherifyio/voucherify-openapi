@@ -4899,14 +4899,14 @@
           "effect"
         ]
       },
-      "1_req_vouchers_code_balance": {
-        "title": "Add or Remove Gift Voucher Balance Request Body",
+      "vouchers_add_or_remove_voucher_balance_request_body": {
+        "title": "Add or Remove Voucher Balance Request Body",
         "type": "object",
         "description": "Request body schema for `vouchers/{code}/balance`.",
         "properties": {
           "amount": {
             "type": "integer",
-            "description": "The incremental amount to be added to or removed from the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000. To remove balance, simply add a minus sign before the value, i.e. to remove $20, use -2000."
+            "description": "The incremental amount to be added to or removed from the current balance on the gift card or loyalty card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000. To remove balance, simply add a minus sign before the value, i.e. to remove $20, use -2000."
           },
           "source_id": {
             "type": "string",
@@ -4921,41 +4921,59 @@
           "amount"
         ]
       },
-      "1_res_vouchers_code_balance": {
+      "vouchers_add_or_remove_voucher_balance_response_body": {
         "description": "Response body schema for `vouchers/{code}/balance.`",
         "type": "object",
-        "title": "Add or Remove Gift Voucher Balance Response Body",
+        "title": "Add or Remove Voucher Balance Response Body",
+        "required": [ "amount", "total", "balance", "type", "object", "related_object", "operation_type" ],
         "properties": {
           "amount": {
             "type": "integer",
-            "description": "The incremental amount added (positive integer) or subtracted (negative integer) to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+            "description": "The incremental amount added (positive integer) or subtracted (negative integer) to the current balance on the gift card or loyalty card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
           },
           "total": {
             "type": "integer",
-            "description": "Total income incurred over the lifespan of the gift card.  \n\n Expect this result:    \n\n&Delta; `total` parameter: total<sub>stored in Voucherify system</sub> + amount<sub>in request body</sub>"
+            "description": "Total income incurred over the lifespan of the gift card or loyalty card."
           },
           "balance": {
             "type": "integer",
-            "description": "The balance after adding or subtracting a specified amount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000. \n\n Expect this result:    \n\n&Delta; `balance` parameter: balance<sub>stored in Voucherify system</sub> + amount<sub>in request body</sub>"
+            "description": "The balance after adding or subtracting a specified amount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
           },
           "type": {
             "type": "string",
             "description": "The type of voucher being modified.",
-            "default": "gift_voucher"
+            "enum": [
+              "gift_voucher",
+              "loyalty_card"
+            ]
+          },
+          "operation_type": {
+            "type": "string",
+            "default": "MANUAL",
+            "enum": [
+              "MANUAL"
+            ]
           },
           "object": {
             "type": "string",
             "description": "The type of object represented by JSON. Default is `balance`.",
-            "default": "balance"
+            "default": "balance",
+            "enum": [
+              "balance"
+            ]
           },
           "related_object": {
             "type": "object",
             "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
+            "required": [ "type", "id" ],
             "properties": {
               "type": {
                 "type": "string",
                 "description": "The object being modified, i.e. `voucher`.",
-                "default": "voucher"
+                "default": "voucher",
+                "enum": [
+                  "voucher"
+                ]
               },
               "id": {
                 "type": "string",
@@ -29395,7 +29413,7 @@
       },
       "product_collections_list_products_response_body": {
         "type": "object",
-        "description": "Response body schema for **GET** `/product-collections/{productCollectionID}/products`.",
+        "description": "Response body schema for GET /product-collections/{productCollectionID}/products.",
         "title": "List Products in Collection Response Body",
         "properties": {
           "object": {
@@ -29462,132 +29480,191 @@
           }
         }
       },
-      "product_collections_static_collection": {
+      "product_collections_collection_item_base": {
+        "title": "Product Collection Base",
+        "description": "This is an object representing a product collection base. ",
         "type": "object",
-        "title": "Static Product Collection",
-        "description": "Schema model for a `STATIC` product collection.",
         "properties": {
-          "type": {
-            "description": "Describes whether the product collection is dynamic (products come in and leave based on set criteria) or static (manually selected products).",
-            "enum": [
-              "STATIC"
-            ]
+          "id": {
+            "type": "string",
+            "description": "Product collection ID."
           },
-          "products": {
-            "description": "Defines a set of products for a `STATIC` product collection type.",
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "example": "prod_0a41bcf807c5fcaaf6",
-                  "description": "The product ID."
-                },
-                "product_id": {
-                  "type": "string",
-                  "description": "Product ID for SKUs."
-                },
-                "object": {
-                  "enum": [
-                    "sku",
-                    "product"
-                  ],
-                  "description": "Denotes the type of object represented by the ID."
-                }
-              },
-              "required": [
-                "id",
-                "object"
-              ]
-            }
+          "name": {
+            "type": "string",
+            "example": "All Products",
+            "description": "Unique user-defined product collection name."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-09T12:51:29.898Z",
+            "description": "Timestamp representing the date and time when the product collection was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON. This object stores information about the static product collection.",
+            "enum": [
+              "products_collection"
+            ]
           }
         },
         "required": [
-          "type",
-          "products"
+          "id",
+          "name",
+          "created_at",
+          "object"
+        ]
+      },
+
+      "product_collections_static_collection": {
+        "title": "Static Product Collection",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/product_collections_collection_item_base"
+          },
+          {
+            "title": "Static Product Collection - Parameters",
+            "type": "object",
+            "description": "Schema model for a `STATIC` product collection.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Describes whether the product collection is dynamic (products come in and leave based on set criteria) or static (manually selected products).",
+                "enum": [
+                  "STATIC"
+                ]
+              },
+              "products": {
+                "description": "Defines a set of products for a `STATIC` product collection type.",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "prod_0a41bcf807c5fcaaf6",
+                      "description": "The product ID."
+                    },
+                    "product_id": {
+                      "type": "string",
+                      "description": "Product ID for SKUs."
+                    },
+                    "object": {
+                      "type": "string",
+                      "enum": [
+                        "sku",
+                        "product"
+                      ],
+                      "description": "Denotes the type of object represented by the ID."
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "object"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "type",
+              "products"
+            ]
+          }
         ]
       },
       "product_collections_dynamic_collection": {
-        "type": "object",
         "title": "Dynamic Product Collection",
-        "description": "Schema model for an `AUTO_UPDATE` product collection.",
-        "properties": {
-          "type": {
-            "description": "Describes whether the product collection is dynamic (products come in and leave based on set criteria) or static (manually selected products).",
-            "enum": [
-              "AUTO_UPDATE"
-            ]
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/product_collections_collection_item_base"
           },
-          "filter": {
+          {
+            "title": "Dynamic Product Collection - Parameters",
+            "description": "Schema model for an `AUTO_UPDATE` product collection.",
             "type": "object",
-            "description": "Defines a set of criteria and boundary conditions for an `AUTO_UPDATE` product collection type.",
-            "additionalProperties": false,
-            "required": [
-              "junction"
-            ],
             "properties": {
-              "junction": {
-                "$ref": "#/components/schemas/Junction"
+              "type": {
+                "type": "string",
+                "description": "Describes whether the product collection is dynamic (products come in and leave based on set criteria) or static (manually selected products).",
+                "enum": [
+                  "AUTO_UPDATE"
+                ]
               },
-              "id": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "product_id": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "source_id": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "name": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "price": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "object": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "attributes": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "metadata": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "image_url": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "skus": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "created_at": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "updated_at": {
-                "$ref": "#/components/schemas/FieldConditions"
+              "filter": {
+                "type": "object",
+                "description": "Defines a set of criteria and boundary conditions for an `AUTO_UPDATE` product collection type.",
+                "additionalProperties": false,
+                "required": [
+                  "junction"
+                ],
+                "properties": {
+                  "junction": {
+                    "$ref": "#/components/schemas/Junction"
+                  },
+                  "id": {
+                    "$ref": "#/components/schemas/FieldConditions"
+                  },
+                  "product_id": {
+                    "$ref": "#/components/schemas/FieldConditions"
+                  },
+                  "source_id": {
+                    "$ref": "#/components/schemas/FieldConditions"
+                  },
+                  "name": {
+                    "$ref": "#/components/schemas/FieldConditions"
+                  },
+                  "price": {
+                    "$ref": "#/components/schemas/FieldConditions"
+                  },
+                  "object": {
+                    "$ref": "#/components/schemas/FieldConditions"
+                  },
+                  "attributes": {
+                    "$ref": "#/components/schemas/FieldConditions"
+                  },
+                  "metadata": {
+                    "$ref": "#/components/schemas/FieldConditions"
+                  },
+                  "image_url": {
+                    "$ref": "#/components/schemas/FieldConditions"
+                  },
+                  "skus": {
+                    "$ref": "#/components/schemas/FieldConditions"
+                  },
+                  "created_at": {
+                    "$ref": "#/components/schemas/FieldConditions"
+                  },
+                  "updated_at": {
+                    "$ref": "#/components/schemas/FieldConditions"
+                  }
+                }
               }
-            }
+            },
+            "required": [
+              "type",
+              "filter"
+            ]
           }
-        },
-        "required": [
-          "type",
-          "filter"
         ]
       },
       "product_collections_list_response_body": {
         "type": "object",
         "title": "List Product Collections Response Body",
-        "description": "Response body schema for **GET** `/product-collections`.",
+        "description": "Response body schema for GET /product-collections.",
         "properties": {
           "object": {
             "type": "string",
             "description": "The type of object represented by JSON. This object stores information about product collections.",
-            "default": "list"
+            "default": "list",
+            "enum":  [ "list" ]
           },
           "data_ref": {
             "type": "string",
             "default": "data",
-            "description": "Identifies the name of the JSON property that contains the array of product collections."
+            "description": "Identifies the name of the JSON property that contains the array of product collections.",
+            "enum":  [ "data" ]
           },
           "data": {
             "description": "A dictionary that contains an array of product collections and their details.",
@@ -40760,17 +40837,10 @@
         "title": "Get Product Collection Response Body"
       },
       "product_collections_collection_item": {
-        "title": "Product Collection Object",
+        "title": "Product Collection",
+        "type":  "object",
         "description": "This is an object representing a product collection.  \n\nThe products can be grouped into collections by the creation of a products collection object. You can retrieve a product collection and a list of products in the collection. Product collections are identified by a unique ID.",
-        "x-tags": [
-          "PRODUCT COLLECTIONS API"
-        ],
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/product_collections_collection_item_base"
-          },
-          {
-            "anyOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/product_collections_static_collection"
               },
@@ -40778,45 +40848,6 @@
                 "$ref": "#/components/schemas/product_collections_dynamic_collection"
               }
             ]
-          }
-        ]
-      },
-      "product_collections_collection_item_base": {
-        "title": "Product Collection Base",
-        "description": "This is an object representing a product collection base. ",
-        "x-tags": [
-          "PRODUCT COLLECTIONS API"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Product collection ID."
-          },
-          "name": {
-            "type": "string",
-            "example": "All Products",
-            "description": "Unique user-defined product collection name."
-          },
-          "created_at": {
-            "type": "string",
-            "example": "2021-12-09T12:51:29.898Z",
-            "description": "Timestamp representing the date and time when the product collection was created in ISO 8601 format.",
-            "format": "date-time"
-          },
-          "object": {
-            "description": "The type of object represented by JSON. This object stores information about the static product collection.",
-            "enum": [
-              "products_collection"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "created_at",
-          "object"
-        ]
       },
       "product_collections_create_request_body": {
         "title": "product_collections_create_request_body",
@@ -43910,7 +43941,7 @@
         }
       ],
       "post": {
-        "operationId": "add-remove-gift-voucher-balance",
+        "operationId": "add-remove-voucher-balance",
         "tags": [
           "VOUCHERS API"
         ],
@@ -43921,15 +43952,15 @@
             "X-App-Token-1": []
           }
         ],
-        "summary": "Add or Remove Gift Card Balance",
-        "description": "Add balance to an existing gift card.",
+        "summary": "Add or Remove Voucher Balance",
+        "description": "Add balance to an existing gift card or loyalty card.",
         "requestBody": {
           "required": true,
-          "description": "Provide the amount to be added to/subtracted from the gift card.",
+          "description": "Provide the amount to be added to/subtracted from the voucher.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/1_req_vouchers_code_balance"
+                "$ref": "#/components/schemas/vouchers_add_or_remove_voucher_balance_request_body"
               },
               "examples": {
                 "Example": {
@@ -43947,7 +43978,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/1_res_vouchers_code_balance"
+                  "$ref": "#/components/schemas/vouchers_add_or_remove_voucher_balance_response_body"
                 },
                 "examples": {
                   "Example": {

@@ -5,7 +5,7 @@ categorySlug: getting-started
 slug: quickstart
 type: basic
 hidden: false
-order: 2
+order: 3
 ---
 
 Welcome to Voucherify! We’re excited to be your partner in building a future-proof Promotion Engine. Let’s start with a simple use case — applying a $10 off BLCKFRDY coupon to the cart — to learn how Voucherify works.
