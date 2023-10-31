@@ -1,8 +1,8 @@
 ---
-title: Integration Overview
+title: Integration overview
 excerpt:
 categorySlug: integration-blueprint
-slug: data-model
+slug: integration-overview
 type: basic
 hidden: false
 order: 1

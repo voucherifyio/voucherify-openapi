@@ -1,5 +1,11 @@
 # Changelog
 
+## 20231031 Integration blueprint – 2 new articles
+
+Added the following articles to the Integration Blueprint section:
+- Integration overview
+- Modeling Voucherify integration
+- Campaign limits
 
 ## 20231025 - Rewards, Loyalties
 

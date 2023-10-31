@@ -1,8 +1,8 @@
 ---
-title: Modeling Voucherify Isntegration
+title: Modeling Voucherify integration
 excerpt:
 categorySlug: integration-blueprint
-slug: modeling-oucherify-integration
+slug: modeling-voucherify-integration
 type: basic
 hidden: false
 order: 2
