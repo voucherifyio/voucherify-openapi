@@ -48,6 +48,18 @@ Added `required` and `description` attributes in `LoyaltiesListMemberRewardsResp
 - POST `/client/v1/redemptions`
     - Request body schema was replaced with new one: `RedemptionsRedeemRequestBody` (old one: `19_req_redemptions`)
 
+## 20231031 - Integration Blueprint
+
+**Adding a new section and articles**
+- Added 'Integration Blueprint' section in 'Guides'
+- Added 'Data-Model.md' article
+- Added 'Data-Volume-Estimation.md' article
+- Added 'Distributions.md' article
+- Added 'Multi-brand management & internationalization.md' article
+- Added 'Security.md' article
+- Added 'Team-management.md' article
+
+
 ## 20231025 - Rewards, Loyalties
 
 **Changes in models**
