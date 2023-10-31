@@ -10,7 +10,7 @@ order: 12
 
 # Security
 
-> 📘 **Goals**
+> **Goals**
 > * Learn how Voucherify guarantees campaign security.
 > * Identify PII data to be shared with Voucherify.
 > * Analyze your distribution processes in relation to GDPR and Data Privacy laws. 				
@@ -40,6 +40,6 @@ As an **ISO-27001-certified product**, Voucherify implements several security st
 
 Contact our Customer Success team for a complete **Security Architecture Model** or the recent pentest report.
 
-> 📘 
+> 
 >
 > If you plan to use Voucherify's built-in messaging, go to a dedicated [GDPR guide](https://support.voucherify.io/article/125-security-data-protection). It showcases how Voucherify implements marketing consents and other requirements from the Directive.

@@ -10,7 +10,7 @@ order: 5
 
 # Distributions
 
-> 📘 **Goals**
+> **Goals**
 > * Identify which channels should be used for distribution.
 > * Learn how Voucherify publication works.
 > * Discover Voucherify integrations for messaging.
@@ -29,6 +29,6 @@ Both push and pull modes can be used with 3rd party platforms.
 
 ![3rd party platforms](https://files.readme.io/341f152-guides_integration_blueprint_distributions_3rd_party_platforms.png)
 
-> 📘 
+> 
 >
 > Publication means incentive assignment. Typically, a publication is performed by sharing codes with customers [via Publication API](ref:publication-object).
