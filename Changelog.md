@@ -1,5 +1,12 @@
 # Changelog
 
+## 20231031 Integration blueprint – 2 new articles
+
+Added the following articles to the Integration Blueprint section:
+- Integration overview
+- Modeling Voucherify integration
+- Campaign limits
+- 
 ## 20231027 - Welcome to Voucherify, Stackable Discounts
 
 - Added new article "Welcome to Voucherify" in "Getting started"
