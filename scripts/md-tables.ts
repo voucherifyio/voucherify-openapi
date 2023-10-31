@@ -1,7 +1,7 @@
 export const mdTables: [string, string?][] = [
-    ['1_obj_voucher_object', 'VOUCHERS-API-Voucher-Object.md'],
+    ['Voucher', 'VOUCHERS-API-Voucher-Object.md'],
     ['2_obj_campaign_object', 'CAMPAIGNS-API-Campaign-Object.md'],
-    ['3_obj_promotion_tier_object', 'PROMOTIONS-API-Promotion-Tier-Object.md'],
+    ['PromotionTier', 'PROMOTIONS-API-Promotion-Tier-Object.md'],
     ['reward', 'REWARDS-API-Reward-Object.md'],
     ['reward_assignment', 'REWARDS-API-Reward-Assignment-Object.md'],
     ['5_obj_publication_object', 'PUBLICATIONS-API-Publication-Object.md'],
