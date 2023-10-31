@@ -44,7 +44,9 @@ Most Voucherify implementations are built on top of the following workflow:
 - **Data model**: Defining the business-appropriate data model for customer traits, custom events, and even custom incentives (e.g., free e-scooter unlocks or subscription periods).
 
     [See Data Model for more information](https://docs.voucherify.io/docs/data-model "Data model")
+
 <!-- This link will work once Maciek's doc will be published -->
+
 - **Data sync**: Setting up the data scope and sync policies to ensure that Voucherify can access any relevant information when needed. 
 
 - **Experience**: Creating a qualification process to hint and share relevant offers to customers at any journey stage. 
@@ -116,8 +118,6 @@ A use case should **specify the scenario you want to launch using Voucherify**. 
 
 ---
 
-
-
 ## Sample campaigns based on industry
 
 Here are some of the popular use cases we have helped clients launch:
@@ -157,7 +157,7 @@ Here are some of the popular use cases we have helped clients launch:
 > - Identify where and how the codes (e.g., promo code, referral code, gift card, loyalty card) will be validated and redeemed.
 
 
-Outcome: 
+**Outcome**: 
 
 Ability to embed Voucherify APIs for building custom promotion experiences across touchpoints.
 
@@ -172,8 +172,10 @@ After you define your pilot campaign, the next step is to **choose where and how
 **Here are some of the most popular ways to enhance CX with Voucherify APIs**:
 - **Various validation and redemption methods** – choose between API, ecommerce plugins, offline mobile app scanning, widgets, landing pages, and manual redemption methods.
 - **Customer wallets** – pull relevant customer data, such as assigned promo codes or loyalty scores, to build fully custom user dashboards. 
-    > 📘 How to get customer wallets?
-    > Voucherify API comes with a selection of **GET APIs to pull information about the customer status and assigned incentives**. Use these endpoints to create customer-facing UIs such as progress trackers or wallets. 
+
+> 📘 How to get customer wallets?
+> Voucherify API comes with a selection of **GET APIs to pull information about the customer status and assigned incentives**. Use these endpoints to create customer-facing UIs such as progress trackers or wallets. 
+
 - **Discount stacking** – let customers redeem multiple incentives and define combinability rules. The Stacking API is **universal**, meaning that you can validate and redeem all types of incentives with the same interface – use the same endpoint for redeeming promo codes, applying loyalty points, counting successful referrals, or updating the gift card balance. Learn more about [Stackable discounts API](https://docs.voucherify.io/docs/manage-stackable-discounts "Stackable discounts API in Voucherify").
 
 ![Stackable discounts API and order](https://files.readme.io/ee30b2e-guides_integration_blueprint_modeling-voucherify-integration-05.png "Stackable discounts API and order")
