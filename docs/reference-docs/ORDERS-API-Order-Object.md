@@ -30,7 +30,7 @@ order: 1
 | customer_id</br>`string,null` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
 | referrer | <p>This is an object containing information about the referrer.</p> See: [Referrer Request](#referrer-request) |
 | referrer_id</br>`string,null` | <p>Unique referrer ID.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
-| object</br>`string` | <p>Unique referrer ID.</p> Available values: `order` |
+| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `order` |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.</p> |
 
 ## Order Item Response
