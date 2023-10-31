@@ -1,5 +1,10 @@
 # Changelog
 
+## 20231027 - Welcome to Voucherify, Stackable Discounts
+
+- Added new article "Welcome to Voucherify" in "Getting started"
+- Updated the "Stackable discounts API" article – current redeemable limit is 30, not 5
+
 ## 20231027 - Product Collections
 
 - Fixed displaying of product collections object in response.
