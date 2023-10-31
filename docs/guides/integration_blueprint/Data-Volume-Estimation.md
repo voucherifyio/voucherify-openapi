@@ -28,7 +28,7 @@ Voucherify works in a [pay-as-you-grow pricing model](https://www.voucherify.io/
 
 Depending on your data volume and/or security policies, your account might require additional activities from the Voucherify team. One of them is setting up **a dedicated cluster near your customers**. This might impact the pricing significantly, so please remember to provide this information to your Technical Integration Manager.
 
-> 📘 
+> 📘 API usage and availability
 >
 > Besides API usage, you should define your minimum availability requirements. These will be included in a custom SLA.
 [Check system status for historical performance](https://status.voucherify.io/)

@@ -10,7 +10,7 @@ order: 3
 
 ## Data model
 
-> **Goals**
+> 📘 **Goals**
 > 
 > * Learn more about metadata. 
 > * Choose which attributes and events you would like to share with Voucherify.
@@ -31,7 +31,7 @@ By verifying and defining the data model early by translating data and actions i
 
 The next step is to **plan the frequency of data sync.** Voucherify can work with real-time traffic, which might impact your subscription plan's monthly API call usage.
 
->  📘 IDs in Voucherify
+> 📘 IDs in Voucherify
 >
 > Voucherify operates on top of an external master ID (source_id), which lets you sync various pieces of information under a unified ID. 
 
