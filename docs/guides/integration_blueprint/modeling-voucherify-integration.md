@@ -177,11 +177,11 @@ After you define your pilot campaign, the next step is to **choose where and how
     > :blue_book: How to get customer wallets?
     > Voucherify API comes with a selection of **GET APIs to pull information about the customer status and assigned incentives**. Use these endpoints to create customer-facing UIs such as progress trackers or wallets. 
 - **Discount stacking** – let customers redeem multiple incentives and define combinability rules. The Stacking API is **universal**, meaning that you can validate and redeem all types of incentives with the same interface – use the same endpoint for redeeming promo codes, applying loyalty points, counting successful referrals, or updating the gift card balance. Learn more about [Stackable discounts API](https://docs.voucherify.io/docs/manage-stackable-discounts "Stackable discounts API in Voucherify").
-![Stackable discounts API and order](../../assets/img/guides_integration_blueprint_modeling-voucherify-integration-05.png "Stackable discounts API and order")
+![Stackable discounts API and order](https://files.readme.io/ee30b2e-guides_integration_blueprint_modeling-voucherify-integration-05.png "Stackable discounts API and order")
 - **Dynamic discounts** – run dynamic promotions with variable effects based on context. For example, a promo code grants a 20% discount to all users but a bonus 10% off to loyalty program members. [Learn more about dynamic discounts](https://support.voucherify.io/article/568-how-to-create-dynamic-discount-value "Dynamic Discount Value Builder").
-![Dynamic discount formula](../../assets/img/guides_integration_blueprint_modeling-voucherify-integration-06.png "Dynamic discount formula builder in Voucherify")
+![Dynamic discount formula](https://files.readme.io/94e74fe-guides_integration_blueprint_modeling-voucherify-integration-06.png "Dynamic discount formula builder in Voucherify")
 - **Qualification** – use the qualification mechanisms to pull relevant campaigns and display them to eligible customers as recommendations. Learn more about. 
-  ![Qualification with Voucherify](../../assets/img/guides_integration_blueprint_modeling-voucherify-integration-07.png "Qualification API example")
+  ![Qualification with Voucherify](https://files.readme.io/6203025-guides_integration_blueprint_modeling-voucherify-integration-07.png "Qualification API example")
 - **Strikethrough pricing** – use the qualification API to display product- and SKU-level discounts. 
 
 Voucherify is responsible for the **backend logic** and **maintenance** of digital promotions. Following **the headless approach**, we believe in separating the back and front end. This way, you make the integration faster, have total control over the final look of your offers, and minimize the risk that a back-end error will cause disruption to your front-end applications.
