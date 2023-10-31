@@ -15,7 +15,7 @@ As a developer-first tool, Voucherify exposes several integration paths:
 - **REST API** – a rich set of **granular REST APIs** that help you deliver personalized incentives to any channel, device, and commerce solution while keeping your data in secure, highly available environments in a multi-tenant or dedicated cluster near you.
 
 
-    [Check our interactive API Reference](https://docs.voucherify.io/docs "Voucherify interactive API reference") 
+    [Check our interactive API Reference](https://docs.voucherify.io/reference/introduction-1 "Voucherify interactive API reference") 
 
 - **Webhooks** – allow Voucherify to send instant updates to your app or URL endpoints when specific events occur. Rather than constantly checking endpoints for new data, you can **set up webhooks to receive notifications** about critical campaign-related events. 
   
@@ -23,7 +23,7 @@ As a developer-first tool, Voucherify exposes several integration paths:
 
 - **Event-bus (Kafka)** – Voucherify can work with event buses as **producers** and **subscribers**.
 
-- **CDP integrations** – Voucherify integrates with popular Customer Data Platforms, such as [**Twilio Segment**](https://www.voucherify.io/integrations/segment "Make customer data easy to manage and a pleasure to use with Segment"), [mParticle](https://www.voucherify.io/integrations/mparticle "Use granular customer data to build better promotions"), allowing you to stream data.
+- **CDP integrations** – Voucherify integrates with popular Customer Data Platforms, such as [Twilio Segment](https://www.voucherify.io/integrations/segment "Make customer data easy to manage and a pleasure to use with Segment"), [mParticle](https://www.voucherify.io/integrations/mparticle "Use granular customer data to build better promotions"), allowing you to stream data.
 
 - **CEP integrations** – Voucherify provides ready connectors with Customer Engagement Platforms, such as [Bloomreach Engagement](https://support.voucherify.io/article/613-bloomreach-engagement-integration "Bloomreach Engagement Integration with Voucherify"), [Braze](https://www.voucherify.io/integrations/braze "Omnichannel incentives to grow customer engagement"), [Klaviyo](https://www.voucherify.io/integrations/klaviyo "Maximize customer engagement"), or [MoEngage](https://www.voucherify.io/integrations/moengage "Engage customers with cross-channel promotions"). 
 
@@ -44,7 +44,7 @@ Most Voucherify implementations are built on top of the following workflow:
 - **Data model**: Defining the business-appropriate data model for customer traits, custom events, and even custom incentives (e.g., free e-scooter unlocks or subscription periods).
 
     [See Data Model for more information](https://docs.voucherify.io/docs/data-model "Data model")
-
+<!-- This link will work once Maciek's doc will be published -->
 - **Data sync**: Setting up the data scope and sync policies to ensure that Voucherify can access any relevant information when needed. 
 
 - **Experience**: Creating a qualification process to hint and share relevant offers to customers at any journey stage. 
@@ -53,7 +53,7 @@ Most Voucherify implementations are built on top of the following workflow:
 
 - **Redemption**: Each Voucherify-generated incentive can be validated against a set of predefined limits and redeemed if a customer is eligible for the offer. 
 
-> :blue_book: Universality of Voucherify API
+> 📘 Universality of Voucherify API
 > 
 > Voucherify API is **universal**. This means that if you already integrated the Redemption or Validation endpoints into your checkout for promo codes, **you can effortlessly run other campaign types**, such as gift cards or referrals, without any additional input from the tech team, significantly lowering the costs associated with extending Voucherify usage risk-free.
 >
@@ -67,7 +67,7 @@ Most Voucherify implementations are built on top of the following workflow:
 
 ## Scenarios discovery
 
-> :blue_book: **Goals**:
+> 📘 **Goals**:
 >
 > - Identify a campaign for your pilot project. 
 > - Learn key capabilities for each campaign type.
@@ -79,7 +79,7 @@ Creation of an initial POC for Voucherify integration.
 
 ---
 
-**Choose between available campaign types**:
+### Choose between available campaign types
 
 - Coupon campaigns (generic and bulk promo codes) – [See tutorial](https://support.voucherify.io/article/514-coupons "Coupons Ultimate Guide")
 - Referral programs (affiliate programs) – [See tutorial](https://support.voucherify.io/article/48-referral-program-basics "Getting Started with Referral Program")
@@ -87,8 +87,6 @@ Creation of an initial POC for Voucherify integration.
 - Cart-level discounts (strike-through promotions and bundling) – [See tutorial](https://support.voucherify.io/article/519-create-cart-level-promotions "Cart-level Promotion")
 - Gift cards – [See tutorial](https://support.voucherify.io/article/47-prepaid-gift-cards-campaign "Gift Cards Campaign")
 - Giveaways – [See tutorial](https://support.voucherify.io/article/187-how-to-create-a-giveaways-program "Getting Started with Giveaways Campaign")
-
----
 
 Each campaign type follows a different flow, but all of them can be **parametrized with customer attributes, order structure, or any custom data (metadata)**. 
 
@@ -152,7 +150,7 @@ Here are some of the popular use cases we have helped clients launch:
 
 ## Promotion experience
 
-> :blue_book: **Goals**:  
+> 📘 **Goals**:  
 >
 > - Learn more about campaign recommendations and qualification API. 
 > - Discover touchpoints for embedding Voucherify APIs to enhance CX. 
@@ -167,20 +165,23 @@ Ability to embed Voucherify APIs for building custom promotion experiences acros
 
 After you define your pilot campaign, the next step is to **choose where and how to embed Voucherify API in your customer journey flow**. Consider what touchpoints must be connected to Voucherify APIs to execute your scenario.
 
-> :blue_book: Validation and redemption 
+> 📘 Validation and redemption 
 > 
 > Validation is the initial eligibility check. It also returns the discount, allowing customers to see the effect of the incentive. Redemption refers to the actual usage of the offer. Your integration can include both requests or use redemption only, as it also validates the customer’s eligibility.
 
 **Here are some of the most popular ways to enhance CX with Voucherify APIs**:
 - **Various validation and redemption methods** – choose between API, ecommerce plugins, offline mobile app scanning, widgets, landing pages, and manual redemption methods.
 - **Customer wallets** – pull relevant customer data, such as assigned promo codes or loyalty scores, to build fully custom user dashboards. 
-    > :blue_book: How to get customer wallets?
+    > 📘 How to get customer wallets?
     > Voucherify API comes with a selection of **GET APIs to pull information about the customer status and assigned incentives**. Use these endpoints to create customer-facing UIs such as progress trackers or wallets. 
 - **Discount stacking** – let customers redeem multiple incentives and define combinability rules. The Stacking API is **universal**, meaning that you can validate and redeem all types of incentives with the same interface – use the same endpoint for redeeming promo codes, applying loyalty points, counting successful referrals, or updating the gift card balance. Learn more about [Stackable discounts API](https://docs.voucherify.io/docs/manage-stackable-discounts "Stackable discounts API in Voucherify").
+
 ![Stackable discounts API and order](https://files.readme.io/ee30b2e-guides_integration_blueprint_modeling-voucherify-integration-05.png "Stackable discounts API and order")
 - **Dynamic discounts** – run dynamic promotions with variable effects based on context. For example, a promo code grants a 20% discount to all users but a bonus 10% off to loyalty program members. [Learn more about dynamic discounts](https://support.voucherify.io/article/568-how-to-create-dynamic-discount-value "Dynamic Discount Value Builder").
+
 ![Dynamic discount formula](https://files.readme.io/94e74fe-guides_integration_blueprint_modeling-voucherify-integration-06.png "Dynamic discount formula builder in Voucherify")
 - **Qualification** – use the qualification mechanisms to pull relevant campaigns and display them to eligible customers as recommendations. Learn more about. 
+  
   ![Qualification with Voucherify](https://files.readme.io/6203025-guides_integration_blueprint_modeling-voucherify-integration-07.png "Qualification API example")
 - **Strikethrough pricing** – use the qualification API to display product- and SKU-level discounts. 
 
