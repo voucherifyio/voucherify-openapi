@@ -1,5 +1,18 @@
 # Changelog
 
+## 20231030 - Order Model
+
+**Removed schemas**
+- Order
+
+**Added schemas**
+- OrderRequest
+- OrderItemResponse
+- OrderResponse
+- OrderItemResponse
+
+**Updated order object markdown.**
+
 ## 20231027 - Welcome to Voucherify, Stackable Discounts
 
 - Added new article "Welcome to Voucherify" in "Getting started"
