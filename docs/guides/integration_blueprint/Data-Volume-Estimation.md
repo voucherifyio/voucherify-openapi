@@ -11,6 +11,7 @@ order: 11
 ## Data volume estimation
 
 > 📘 **Goals**
+> 
 > * Understand what API endpoints will be used to map your scenarios.
 > * Estimate how many customers will be included in promotions and how often their data should be synced with Voucherify.
 > * Think of what it takes to migrate promotions from your current system. 
