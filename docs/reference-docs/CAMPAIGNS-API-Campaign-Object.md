@@ -83,7 +83,7 @@ order: 1
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about promotion tiers in a dictionary.</p> |
 | data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of promotion tier objects.</p> |
-| tiers</br>`array` | <p>Contains array of promotion tier objects.</p> Array of [Promotion Tier Object](#promotion-tier-object) |
+| tiers</br>`array` | <p>Contains array of promotion tier objects.</p> Array of [Promotion Tier](#promotion-tier) |
 | total</br>`integer` | <p>Total number of promotion tiers.</p> |
 | has_more</br>`boolean` | <p>As query results are always limited (by the limit parameter), the <code>has_more</code> flag indicates whether there are more records for given filter parameters. This let's you know if you are able to run another request (with a different page or a different start date filter) to get more records returned in the results.</p> |
 
@@ -153,7 +153,7 @@ order: 1
 | unit_type</br>`string` | <p>The shipping product deemed as free.</p> |
 | effect</br>`string` | <p>Defines how the unit is added to the customer's order.</p> |
 
-## Promotion Tier Object
+## Promotion Tier
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique promotion tier ID.</p> **Example:** <p>promo_63fYCt81Aw0h7lzyRkrGZh9p</p> |

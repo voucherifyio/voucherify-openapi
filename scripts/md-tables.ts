@@ -8,7 +8,7 @@ export const mdTables: [string, string?][] = [
     ['VouchersValidateResponseBody', 'VALIDATIONS-API-Validation-Object.md'],
     ['7_obj_redemption_object', 'REDEMPTIONS-API-Redemption-Object.md'],
     ['7_obj_rollback_redemption_object_extended', 'REDEMPTIONS-API-Rollback-Redemption-Object.md'],
-    ['19_res_redemptions_POST', 'STACKABLE-DISCOUNTS-API-Stackable-Redemptions-Object.md'],
+    ['RedemptionsRedeemResponseBody', 'STACKABLE-DISCOUNTS-API-Stackable-Redemptions-Object.md'],
     ['8_obj_loyalty_campaign_object', 'LOYALTIES-API-Loyalty-Campaign-Object.md'],
     ['8_obj_loyalty_card_object_non_expanded_categories', 'LOYALTIES-API-Loyalty-Card-Object.md'],
     ['8_obj_earning_rule_object', 'LOYALTIES-API-Earning-Rule-Object.md'],

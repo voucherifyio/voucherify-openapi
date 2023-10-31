@@ -222,7 +222,7 @@ One of:
 |:-----|:--------|
 | customer</br>`object` | <p>Defines the customer redeeming the reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>The unique ID of a customer that is assigned by Voucherify.</p> <strong>Example:</strong> <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Customer's first and last name.</p></td></tr><tr><td style="text-align:left">email</br><code>string</code></td><td style="text-align:left"><p>Customer's email address.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant's customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service.</p></td></tr><tr><td style="text-align:left">metadata</br><code>object</code></td><td style="text-align:left"><p>The metadata object stores all custom attributes assigned to the customer. A set of key/value pairs that you can attach to a customer object. It can be useful for storing additional information about the customer in a structured format.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Type of object represented is <code>customer</code>.</p></td></tr></tbody></table> |
 | assignment_id</br>`string` | <p>Unique reward assginment ID assigned by Voucherify.</p> **Example:** <p>rewa_YAIuU7AY6LNJVlUbRxSbNgiD</p> |
-| voucher | <p>Voucher object.</p> See: [Voucher Object](#voucher-object) |
+| voucher | <p>Voucher object.</p> See: [Voucher](#voucher) |
 | id</br>`string` | <p>Unique reward ID assigned by Voucherify.</p> **Example:** <p>rew_INt3fGH3n7xIr3ZQcq4kkUZ1</p> |
 | object</br>`string` | <p>Type of object represented is <code>reward</code>.</p> |
 | name</br>`string` | <p>Reward name.</p> |
@@ -332,7 +332,7 @@ One of:
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the SKU was updated in ISO 8601 format.</p> **Example:** <p>2022-05-17T10:55:09.137Z</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>SKU</code>.</p> |
 
-## Voucher Object
+## Voucher
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Assigned by the Voucherify API, identifies the voucher.</p> **Example:** <p>v_mkZN9v7vjYUadXnHrMza8W5c34fE5KiV</p> |

@@ -8,7 +8,7 @@ hidden: false
 order: 1
 ---
 
-## Promotion Tier Object
+## Promotion Tier
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique promotion tier ID.</p> **Example:** <p>promo_63fYCt81Aw0h7lzyRkrGZh9p</p> |
