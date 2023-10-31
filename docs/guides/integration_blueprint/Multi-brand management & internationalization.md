@@ -10,7 +10,8 @@ order: 10
 
 ## Multi-brand management & internationalization
 
-> 📘 **Goals**				
+> 📘 **Goals**
+> 
 > * Understand how Voucherify supports multiple brands and locations through projects.
 
 **Outcome**: 
