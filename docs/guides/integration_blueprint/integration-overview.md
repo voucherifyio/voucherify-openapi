@@ -1,5 +1,5 @@
 ---
-title: Integration overview
+title: Integration Overview
 excerpt:
 categorySlug: integration-blueprint
 slug: data-model
@@ -14,7 +14,7 @@ Voucherify offers **a business-agnostic API to model any promotion case**. You c
 
 A pivotal factor for evaluating the total cost of integration is to understand how Voucherify can be connected to your e-commerce and marketing infrastructure that runs your business. There are three angles to consider.
 
-![Voucherify as an ecommerce engine](../../assets/img/guides_integration_blueprint_how_voucherify_helps-01.png "Voucherify as an ecommerce engine")
+![Voucherify as an ecommerce engine](https://files.readme.io/fce4ab0-guides_integration_blueprint_how_voucherify_helps-01.png "Voucherify as an ecommerce engine")
 
 ## Ecommerce engine
 
@@ -43,7 +43,8 @@ Our API can **ingest** and **egress** data like product information or customer 
 For security reasons, you may not want to synchronize and maintain customer attributes or product information in Voucherify. In this case, you can send the business context with a validation request and Voucherify will calculate the discount – the “meaning” will be offloaded to the “source of truth” system.
 
 > 📘 Voucherify Partners
+> 
 > Voucherify partners with leading Solution Integrators that can help you build and 
 maintain promotions and loyalty programs.
 >
-> Go to [Partner Directory](https://www.voucherify.io/partners-directory "Voucherify Partners").
+> Learn more about [our partners](https://www.voucherify.io/partners-directory "Voucherify Partners").
