@@ -33,4 +33,4 @@ User management starts with mapping how various departments, such as marketing, 
 >
 > Each project can have separate access options. Voucherify also does not limit the number of users within the account.
 
-![team management](../../assets/img/guides_integration_blueprint_team_management_user_roles.png)
+![team management](https://files.readme.io/f1d446d-guides_integration_blueprint_team_management_user_roles.png)
