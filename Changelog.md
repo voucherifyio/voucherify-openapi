@@ -6,6 +6,66 @@ Added the following articles to the Integration Blueprint section:
 - Integration overview
 - Modeling Voucherify integration
 - Campaign limits
+- 
+## 20231027 - Welcome to Voucherify, Stackable Discounts
+
+- Added new article "Welcome to Voucherify" in "Getting started"
+- Updated the "Stackable discounts API" article – current redeemable limit is 30, not 5
+
+## 20231027 - Product Collections
+
+- Fixed displaying of product collections object in response.
+
+## 20231027 - Add or Remove Voucher Balance
+
+- Renamed reference document `VOUCHERS-API-Add-Remove-Gift-Card-Balance` to `VOUCHERS-API-Add-Remove-Voucher-Balance`.
+- Updated `operationId` and `slug` according to the new name.
+
+**Added schemas**:
+- vouchers_add_or_remove_voucher_balance_request_body (old `1_req_vouchers_code_balance`)
+- vouchers_add_or_remove_voucher_balance_response_body (old `1_res_vouchers_code_balance`)
+
+**Endpoint change**:
+- Changed `operationId` to `add-remove-voucher-balance` for POST `/v1/vouchers/{code}/balance`
+- Updated title and descriptions so that they also apply to loyalty cards.
+
+## 20231027 - GET List Member Rewards
+
+Added `required` and `description` attributes in `LoyaltiesListMemberRewardsResponseBody` schema.
+
+## 20231026 - Stackable API
+
+**Added schemas**
+- Order
+- RedeemPromotionStack
+- RedeemPromotionTier
+- RedeemGiftCard
+- RedeemLoyaltyCard
+- RedeemVoucher
+- ValidationsValidateRequestBody
+- RedemptionsRedeemRequestBody
+
+**Endpoints changes**
+- POST `/v1/validations`
+    - Request body schema was replaced with new one: `ValidationsValidateRequestBody` (old one: `19_req_validations`)
+- POST `/v1/redemptions`
+    - Request body schema was replaced with new one: `RedemptionsRedeemRequestBody` (old one: `19_req_redemptions`)
+- POST `/client/v1/validations`
+    - Request body schema was replaced with new one: `ValidationsValidateRequestBody` (old one: `19_req_validations`)
+- POST `/client/v1/redemptions`
+    - Request body schema was replaced with new one: `RedemptionsRedeemRequestBody` (old one: `19_req_redemptions`)
+
+## 20231031 - Integration Blueprint
+
+**Adding a new section and articles**
+- Added 'Integration Blueprint' section in 'Guides'
+- Added 'Data-Model.md' article
+- Added 'Data-Volume-Estimation.md' article
+- Added 'Distributions.md' article
+- Added 'Multi-brand management & internationalization.md' article
+- Added 'Security.md' article
+- Added 'Team-management.md' article
+
 
 ## 20231025 - Rewards, Loyalties
 
@@ -767,6 +827,7 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 /reference/the-custom-event-object -> /reference/custom-event-object
 /reference/the-export-object -> /reference/export-object
 /reference/the-metadata-schema-object -> /reference/metadata-schema-object
+/reference/add-remove-gift-voucher-balance -> /reference/add-remove-voucher-balance
 
 ### Dummy endpoints
 
