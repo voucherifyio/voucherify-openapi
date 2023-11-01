@@ -1248,50 +1248,11 @@
             "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
           },
           "discount": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/DiscountAmount"
-              },
-              {
-                "$ref": "#/components/schemas/DiscountUnit"
-              },
-              {
-                "$ref": "#/components/schemas/DiscountUnitMultiple"
-              },
-              {
-                "$ref": "#/components/schemas/DiscountPercent"
-              },
-              {
-                "$ref": "#/components/schemas/DiscountFixed"
-              }
-            ]
+            "$ref": "#/components/schemas/Discount"
           },
           "gift": {
-            "type": "object",
-            "additionalProperties": false,
-            "description": "Contains current gift card balance information.",
-            "properties": {
-              "amount": {
-                "type": "number",
-                "description": "Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-              },
-              "balance": {
-                "type": "number",
-                "description": "Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-              },
-              "effect": {
-                "type": "string",
-                "description": "Defines how the credits are applied to the customer's order.",
-                "enum": [
-                  "APPLY_TO_ORDER",
-                  "APPLY_TO_ITEMS"
-                ]
-              }
-            },
-            "required": [
-              "amount",
-              "balance"
-            ]
+            "description": "Gift object response",
+            "$ref": "#/components/schemas/Gift"
           },
           "loyalty": {
             "type": "object",
@@ -6104,6 +6065,72 @@
         "required": [
           "code"
         ]
+      },
+      "Discount": {
+        "title": "Discount",
+        "type": "object",
+        "description": "Contains information about discount.",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/DiscountAmount"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountUnit"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountUnitMultiple"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountPercent"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountFixed"
+          }
+        ]
+      },
+      "Gift": {
+        "title": "Gift",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Contains current gift card balance information.",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+          },
+          "balance": {
+            "type": "number",
+            "description": "Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+          },
+          "effect": {
+            "type": "string",
+            "description": "Defines how the credits are applied to the customer's order.",
+            "enum": [
+              "APPLY_TO_ORDER",
+              "APPLY_TO_ITEMS"
+            ]
+          }
+        },
+        "required": [
+          "amount",
+          "balance"
+        ]
+      },
+      "RedeemableGift": {
+        "title": "Gift",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Contains current gift card balance information.",
+        "properties": {
+          "balance": {
+            "type": "number",
+            "description": "Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+          },
+          "credits": {
+            "type": "number",
+            "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+          }
+        }
       },
       "1_res_vouchers_qualification": {
         "title": "Vouchers Qualification Response Body",
@@ -34838,19 +34865,18 @@
         ],
         "properties": {
           "redeemables": {
-            "$ref": "#/components/schemas/23_obj_qualification_redeemables"
+            "$ref": "#/components/schemas/QualificationsRedeemablesResponse"
           },
           "tracking_id": {
             "type": "string",
             "description": "This identifier is generated during voucher qualification based on your internal id (e.g., email, database ID). This is a hashed customer source ID."
           },
           "order": {
-            "type": "object",
-            "description": "The order object sent in the request.",
-            "$ref": "#/components/schemas/23_obj_order_object"
+            "$ref": "#/components/schemas/OrderResponse",
+            "description": "The order object sent in the request."
           },
           "stacking_rules": {
-            "$ref": "#/components/schemas/23_obj_qualification_object_stacking_rules"
+            "$ref": "#/components/schemas/QualificationsStackingRulesResponse"
           }
         }
       },
@@ -35059,22 +35085,56 @@
           }
         }
       },
-      "23_obj_qualification_object_stacking_rules": {
+      "QualificationsStackingRulesResponse": {
         "type": "object",
         "title": "Examine Qualification Stacking Rules",
         "description": "Defines stacking rules for the redeemables.",
         "properties": {
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent with one stacking request. We have extended the maximum value from 5 to 30 (comment: but more redeemables means more processing time!). Default limit is `30`.",
-            "default": 30
+            "description": "Defines how many redeemables can be sent with one stacking request (comment: more redeemables means more processing time!).",
+            "default": 30,
+            "maximum": 30,
+            "minimum": 1
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many of sent redeemables will be actually applied to the order (e.g. user can select 30 discounts but only 5 will be applied to the order, the remaining will be marked as SKIPPED). Default limit is `5`.",
-            "default": 5
+            "description": "Defines how many of sent redeemables will be actually applied to the order (e.g. user can select 30 discounts but only 5 will be applied to the order, the remaining will be marked as SKIPPED).",
+            "default": 5,
+            "maximum": 30,
+            "minimum": 1
+          },
+          "applicable_exclusive_redeemables_limit": {
+            "type": "integer",
+            "description": "",
+            "default": 1,
+            "maximum": 30,
+            "minimum": 1
+          },
+          "exclusive_categories": {
+            "type": "array",
+            "description": "",
+            "default": [],
+            "items": {
+              "type": "string"
+            }
+          },
+          "joint_categories":  {
+            "type": "array",
+            "description": "",
+            "default" : [],
+            "items": {
+              "type": "string"
+            }
           }
-        }
+        },
+        "required":  [
+          "redeemables_limit",
+          "applicable_redeemables_limit",
+          "applicable_exclusive_redeemables_limit",
+          "exclusive_categories",
+          "joint_categories"
+        ]
       },
       "QualificationsCheckEligibilityRequestBody": {
         "type": "object",
@@ -35086,7 +35146,8 @@
             "description": "Customer's information."
           },
           "order": {
-            "description": "Order information. This object enables you to pass purchase transaction data. Read what properties you can use in the <!-- [Order object reference](OpenAPI.json/components/schemas/10_obj_order_object) -->[Order object](ref:get-order)."
+            "$ref": "#/components/schemas/OrderRequest",
+            "description": "Order information."
           },
           "mode": {
             "type": "string",
@@ -35266,7 +35327,7 @@
           }
         }
       },
-      "23_obj_qualification_redeemables": {
+      "QualificationsRedeemablesResponse": {
         "title": "Redeemables",
         "type": "object",
         "description": "List or redeemables for examine qualification.",
@@ -35285,7 +35346,7 @@
             "type": "array",
             "description": "Array of qualified redeemables.",
             "items": {
-              "allOf": []
+              "$ref": "#/components/schemas/QualificationsRedeemableSingleResponse"
             }
           },
           "total": {
@@ -35296,6 +35357,259 @@
           "has_more": {
             "type": "boolean",
             "description": "As results are always limited, the `has_more` flag indicates whether there are more records for given parameters. This let's you know if you are able to run another request (with different options) to get more records returned in the results."
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Timestamp representing the date and time to use in starting_after cursor to get more redeemables.",
+            "format": "date-time",
+            "example": "2023-10-31T12:13:16.374Z"
+          }
+        }
+      },
+      "QualificationsRedeemableSingleResponse": {
+        "title": "Single redeemable",
+        "description": "",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of the redeemable."
+          },
+          "object": {
+            "type": "string",
+            "description": "Object type of the redeemable",
+            "enum":  [
+              "campaign",
+              "promotion_tier",
+              "voucher"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the object was created in ISO 8601 format.",
+            "example": "2022-03-09T11:19:04.819Z",
+            "format": "date-time"
+          },
+          "result":{
+            "$ref": "#/components/schemas/RedeemableSingleResultResponse"
+          },
+          "order": {
+            "$ref": "#/components/schemas/OrderResponse"
+          },
+          "validation_rule_id": {
+            "type": "string",
+            "description": "A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance."
+          },
+          "applicable_to": {
+            "$ref": "#/components/schemas/ApplicableToResultList",
+            "description": "Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted."
+          },
+          "inapplicable_to": {
+            "$ref": "#/components/schemas/InapplicableToResultList",
+            "description": "Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
+          },
+          "categories": {
+            "$ref": "#/components/schemas/Category"
+          },
+          "banner": {
+            "type": "string",
+            "example": "Order Paid - You will get 100 points",
+            "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+          },
+          "name": {
+            "type": "string",
+            "example": "promotion_tier_get_points",
+            "description": "Name of the redeemable."
+          },
+          "campaign_name": {
+            "type": "string",
+            "example": "PromotionCampaign",
+            "description": "Name of the campaign associated to the redeemable. This field is available only if object is not `campaign`"
+          },
+          "campaign_id": {
+            "type": "string",
+            "example": "camp_Mow7u4gSxagLlZ2oDQ01ZS5N",
+            "description": "Id of the campaign associated to the redeemable. This field is available only if object is not `campaign`"
+          },
+          "validation_rules_assignments": {
+            "$ref": "#/components/schemas/ValidationRulesAssignments"
+          }
+        }
+      },
+      "ValidationRulesAssignments": {
+        "tittle": "Validation Rules Assignments",
+        "description": "List of Validation Rules Assignments",
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "enum": [
+              "list"
+            ],
+            "description": "The type of object represented by JSON. This object stores information about validation rules assignments."
+          },
+          "data_ref": {
+            "type": "string",
+            "enum": [
+              "data"
+            ],
+            "description": "Identifies the name of the attribute that contains the array of validation rules assignments."
+          },
+          "data": {
+            "type": "array",
+            "description": "Contains array of validation rules assignments.",
+            "items": {
+              "$ref": "#/components/schemas/BusValRuleAssignment"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of validation rules assignments."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
+      "BusValRuleAssignment": {
+        "title": "Business Validation Rule Assignment",
+        "description": "Assignments of business validation rule",
+        "example": {
+          "id": "asgm_LnY1g7UNFA9KyDrD",
+          "rule_id": "val_3gPNA6SnH4ae",
+          "related_object_id": "camp_CZOnEGiZfwIKWmSjhIoIT7Ol",
+          "related_object_type": "campaign",
+          "object": "validation_rules_assignment",
+          "validation_status": "PARTIALLY_VALID",
+          "validation_omitted_rules": [
+            "1"
+          ]
+        },
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for a assignment"
+          },
+          "rule_id": {
+            "type": "string",
+            "description": "The unique identifier for a rule"
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "The unique identifier for a related object"
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "The type of related object"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the object was created in ISO 8601 format.",
+            "example": "2022-03-09T11:19:04.819Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the object was last updated in ISO 8601 format.",
+            "example": "2022-03-09T11:19:04.819Z",
+            "format": "date-time"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON.",
+            "enum": ["validation_rules_assignment"]
+          },
+          "validation_status": {
+            "type": "string",
+            "description": "The validation status of the assignment",
+            "enum": ["VALID", "PARTIALLY_VALID", "INVALID"]
+          },
+          "validation_omitted_rules": {
+            "type": "array",
+            "description": "The list of omitted rules",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "rule_id",
+          "related_object_id",
+          "related_object_type",
+          "object",
+          "validation_status",
+          "validation_omitted_rules"
+        ]
+      },
+      "RedeemableSingleResultResponse": {
+        "title": "Redeemable Single Result",
+        "description": "",
+        "properties": {
+          "discount": {
+            "$ref": "#/components/schemas/Discount"
+          },
+          "gift": {
+            "$ref": "#/components/schemas/RedeemableGift"
+          },
+          "loyalty_card":  {
+            "description": "Loyalty Card object response",
+            "$ref": "#/components/schemas/RedeemableLoyaltyCard"
+          },
+          "error":  {}
+        }
+      },
+      "RedeemableLoyaltyCard": {
+        "type": "object",
+        "title": "Loyalty Card",
+        "description": "Loyalty Card object response",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "example": 7000,
+            "description": "Total points incurred over lifespan of loyalty card."
+          },
+          "balance": {
+            "type": "integer",
+            "example": 6970,
+            "description": "Points available for reward redemption."
+          },
+          "exchange_ratio": {
+            "type": "number",
+            "description": "The cash equivalent of the points defined in the points_ratio property."
+          },
+          "points_ratio": {
+            "type": "integer",
+            "description": "The number of loyalty points that will map to the predefined cash amount defined by the exchange_ratio property."
+          },
+          "transfers": {
+            "type": "object",
+            "description": "Information about points transfers between loyalty cards. The object may also contain additional properties with unspecified keys!",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": ""
+              },
+              "points":  {
+                "type": "integer",
+                "description": ""
+              },
+              "source_id": {
+                "type": "string",
+                "description": ""
+              },
+              "reason": {
+                "type": "string",
+                "description": ""
+              }
+            }
           }
         }
       },
@@ -40065,6 +40379,14 @@
             "example": "2022-08-16T10:52:08.094Z",
             "description": "Timestamp representing the date and time when the category was updated in ISO 8601 format.",
             "format": "date-time"
+          },
+          "stacking_rules_type": {
+            "type": "string",
+            "description": "The type of category stacking rules",
+            "enum": [
+              "JOINT",
+              "EXCLUSIVE"
+            ]
           }
         },
         "required": [
