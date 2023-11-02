@@ -10,14 +10,14 @@ order: 9
 
 As developers, we understand how important it is to have performant 3rd party APIs. Especially when it comes to the sales funnel process. That's why we put effort to make sure that Voucherify responds fast. Here are average response rates from our recent tests.
 
-| **API call**                                              | **Average response rate** |
-|:----------------------------------------------------------|:--------------------------|
-| [Code Validation](ref:validate-voucher)                   | 120 ms                    |
-| [Code Redemption](ref:redeem-voucher)                     | 200 ms                    |
-| [Stackable Validation](ref:validate-stacked-discounts)    | 150 ms                    |
-| [Stackable Redemption](ref:redeem-stacked-discounts)      | 350 ms                    |
-| [Qualifications API](ref:check-eligibility)               | 400 ms                    |
-| [Create Campaign](ref:create-campaign) (100 000 vouchers) | 60 sec                    |
+| **API call**                                              | **Response time – average** | **Response time – p95** |
+|:----------------------------------------------------------|:--------------------------| :--- |
+| [Code Validation](ref:validate-voucher)                   | 120 ms                    | 200 ms |
+| [Code Redemption](ref:redeem-voucher)                     | 200 ms                    | 500 ms |
+| [Stackable Validation](ref:validate-stacked-discounts)    | 150 ms                    | 300 ms |
+| [Stackable Redemption](ref:redeem-stacked-discounts)      | 350 ms                    | 500 ms |
+| [Qualifications API](ref:check-eligibility)               | 400 ms                    | 600 ms |
+| [Create Campaign](ref:create-campaign) (100 000 vouchers) | 60 sec                    | – |
 
 > 👍 Enterprise plan
 >
