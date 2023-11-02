@@ -525,10 +525,9 @@ export default class SchemaToMarkdownTable {
 
     const schemaResult = nodeWithTitleAndPropertiesSchema.validateSync(schema)
     const {  title, additionalProperties } = schemaResult
-    const properties = schemaResult.properties || {}
-    if(additionalProperties){
-      properties['[additionalProperties]'] = additionalProperties
-      console.log(properties)
+    const properties = schemaResult.properties instanceof Object ? schemaResult.properties : additionalProperties instanceof Object ? {} : undefined
+    if(additionalProperties instanceof Object){
+      properties['[propertyName]'] = additionalProperties
     }
     const respopnseStrArr = [];
 
