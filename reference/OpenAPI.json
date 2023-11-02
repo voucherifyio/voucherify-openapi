@@ -1304,50 +1304,11 @@
             "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
           },
           "discount": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/DiscountAmount"
-              },
-              {
-                "$ref": "#/components/schemas/DiscountUnit"
-              },
-              {
-                "$ref": "#/components/schemas/DiscountUnitMultiple"
-              },
-              {
-                "$ref": "#/components/schemas/DiscountPercent"
-              },
-              {
-                "$ref": "#/components/schemas/DiscountFixed"
-              }
-            ]
+            "$ref": "#/components/schemas/Discount"
           },
           "gift": {
-            "type": "object",
-            "additionalProperties": false,
-            "description": "Contains current gift card balance information.",
-            "properties": {
-              "amount": {
-                "type": "number",
-                "description": "Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-              },
-              "balance": {
-                "type": "number",
-                "description": "Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-              },
-              "effect": {
-                "type": "string",
-                "description": "Defines how the credits are applied to the customer's order.",
-                "enum": [
-                  "APPLY_TO_ORDER",
-                  "APPLY_TO_ITEMS"
-                ]
-              }
-            },
-            "required": [
-              "amount",
-              "balance"
-            ]
+            "description": "Gift object response",
+            "$ref": "#/components/schemas/Gift"
           },
           "loyalty": {
             "type": "object",
@@ -6144,6 +6105,72 @@
         "required": [
           "code"
         ]
+      },
+      "Discount": {
+        "title": "Discount",
+        "type": "object",
+        "description": "Contains information about discount.",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/DiscountAmount"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountUnit"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountUnitMultiple"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountPercent"
+          },
+          {
+            "$ref": "#/components/schemas/DiscountFixed"
+          }
+        ]
+      },
+      "Gift": {
+        "title": "Gift",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Contains current gift card balance information.",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+          },
+          "balance": {
+            "type": "number",
+            "description": "Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+          },
+          "effect": {
+            "type": "string",
+            "description": "Defines how the credits are applied to the customer's order.",
+            "enum": [
+              "APPLY_TO_ORDER",
+              "APPLY_TO_ITEMS"
+            ]
+          }
+        },
+        "required": [
+          "amount",
+          "balance"
+        ]
+      },
+      "RedeemableGift": {
+        "title": "Gift",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Contains current gift card balance information.",
+        "properties": {
+          "balance": {
+            "type": "number",
+            "description": "Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+          },
+          "credits": {
+            "type": "number",
+            "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+          }
+        }
       },
       "1_res_vouchers_qualification": {
         "title": "Vouchers Qualification Response Body",
@@ -32089,42 +32116,6 @@
           }
         }
       },
-      "16_filter_conditions_string_qualification": {
-        "title": "Filter by conditions",
-        "type": "object",
-        "description": "Data filters used to narrow the data records to be returned in the result.",
-        "properties": {
-          "conditions": {
-            "type": "object",
-            "description": "Data filters used to narrow the data records to be returned in the result.",
-            "properties": {
-              "$in": {
-                "type": "array",
-                "description": "Array of resource values that should be included in the results. (multiple values)",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "$is": {
-                "type": "string",
-                "description": "Value is exactly this value. (single value)"
-              },
-              "$is_not": {
-                "type": "string",
-                "description": "Results omit this value. (single value)"
-              },
-              "$has_value": {
-                "type": "string",
-                "description": "Value is NOT null. The value for this parameter is an empty string."
-              },
-              "$is_unknown": {
-                "type": "string",
-                "description": "Value is null. The value for this parameter is an empty string."
-              }
-            }
-          }
-        }
-      },
       "17_obj_async_action_object": {
         "title": "Async Action Object",
         "type": "object",
@@ -34909,7 +34900,7 @@
         },
         "description": "A filter on the list based on the id of the location."
       },
-      "23_obj_qualification_object": {
+      "QualificationsCheckEligibilityResponseBody": {
         "title": "Qualification object",
         "type": "object",
         "description": "This is an object representing a qualification.",
@@ -34918,19 +34909,17 @@
         ],
         "properties": {
           "redeemables": {
-            "$ref": "#/components/schemas/23_obj_qualification_redeemables"
+            "$ref": "#/components/schemas/QualificationsRedeemablesResponse"
           },
           "tracking_id": {
             "type": "string",
             "description": "This identifier is generated during voucher qualification based on your internal id (e.g., email, database ID). This is a hashed customer source ID."
           },
           "order": {
-            "type": "object",
-            "description": "The order object sent in the request.",
-            "$ref": "#/components/schemas/23_obj_order_object"
+            "$ref": "#/components/schemas/OrderResponse"
           },
           "stacking_rules": {
-            "$ref": "#/components/schemas/23_obj_qualification_object_stacking_rules"
+            "$ref": "#/components/schemas/QualificationsStackingRulesResponse"
           }
         }
       },
@@ -35139,115 +35128,85 @@
           }
         }
       },
-      "23_obj_qualification_object_stacking_rules": {
+      "QualificationsStackingRulesResponse": {
         "type": "object",
         "title": "Examine Qualification Stacking Rules",
-        "description": "Defines stacking rules for the redeemables.",
+        "description": "Defines stacking rules for the redeemables. See more in [help center](https://support.voucherify.io/article/604-stacking-rules)",
         "properties": {
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent with one stacking request. We have extended the maximum value from 5 to 30 (comment: but more redeemables means more processing time!). Default limit is `30`.",
-            "default": 30
+            "description": "Defines how many redeemables can be sent with one stacking request (comment: more redeemables means more processing time!).",
+            "default": 30,
+            "maximum": 30,
+            "minimum": 1
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many of sent redeemables will be actually applied to the order (e.g. user can select 30 discounts but only 5 will be applied to the order, the remaining will be marked as SKIPPED). Default limit is `5`.",
-            "default": 5
+            "description": "Defines how many of sent redeemables will be actually applied to the order (e.g. user can select 30 discounts but only 5 will be applied to the order, the remaining will be marked as SKIPPED).",
+            "default": 5,
+            "maximum": 30,
+            "minimum": 1
+          },
+          "applicable_exclusive_redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables with an exclusive category can be applied in one request.",
+            "default": 1,
+            "maximum": 30,
+            "minimum": 1
+          },
+          "exclusive_categories": {
+            "type": "array",
+            "description": "Lists all exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
+            "default": [],
+            "items": {
+              "type": "string"
+            }
+          },
+          "joint_categories": {
+            "type": "array",
+            "description": "Lists all joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
+            "default": [],
+            "items": {
+              "type": "string"
+            }
           }
-        }
+        },
+        "required": [
+          "redeemables_limit",
+          "applicable_redeemables_limit",
+          "applicable_exclusive_redeemables_limit",
+          "exclusive_categories",
+          "joint_categories"
+        ]
       },
-      "23_req_create_qualification": {
+      "QualificationsCheckEligibilityRequestBody": {
         "type": "object",
-        "title": "Examine Qualification Request Body",
-        "description": "Request body schema for examining a qualification`.",
+        "title": "Check Eligibility Request Body",
+        "description": "Request body schema for checking eligibility of a qualification`.",
         "properties": {
           "customer": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/23_req_create_qualification_customer_id"
-              },
-              {
-                "$ref": "#/components/schemas/23_req_create_qualification_customer_source_id"
-              },
-              {
-                "$ref": "#/components/schemas/9_req_create_customer"
-              }
-            ],
+            "$ref": "#/components/schemas/Customer",
             "description": "Customer's information."
           },
           "order": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/23_req_create_qualification_order_id"
-              },
-              {
-                "$ref": "#/components/schemas/23_req_create_qualification_order_source_id"
-              },
-              {
-                "$ref": "#/components/schemas/10_req_create_order"
-              }
-            ],
-            "description": "Order information. This object enables you to pass purchase transaction data. Read what properties you can use in the <!-- [Order object reference](OpenAPI.json/components/schemas/10_obj_order_object) -->[Order object](ref:get-order)."
-          },
-          "options": {
-            "type": "object",
-            "description": "Configure parameters returned in the response.",
-            "properties": {
-              "expand": {
-                "type": "array",
-                "description": "Expand array lets you configure params included in the response. Depending on the strings included in the array, the response will contain different details. \n\n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"redeemable\"] | - Returns the redeemables' metadata. |\n| [\"category\"] | - Returns an expanded `categories` object, showing details about the category. |",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "redeemable",
-                    "category"
-                  ]
-                }
-              },
-              "limit": {
-                "type": "integer",
-                "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5, and the maximum value is 50.",
-                "maximum": 50
-              },
-              "starting_after": {
-                "type": "string",
-                "example": "2021-09-08T13:52:18.227Z",
-                "format": "date-time",
-                "description": "Curser used for paging."
-              },
-              "filters": {
-                "description": "A set of fiters to return only a specific category or type of redeemable.",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/23_obj_filter_category_id"
-                  },
-                  {
-                    "$ref": "#/components/schemas/23_obj_filter_campaign_id"
-                  },
-                  {
-                    "$ref": "#/components/schemas/23_obj_filter_resource_type"
-                  },
-                  {
-                    "$ref": "#/components/schemas/23_obj_filter_voucher_type"
-                  },
-                  {
-                    "$ref": "#/components/schemas/qualificationJunction"
-                  }
-                ]
-              }
-            }
-          },
-          "metadata": {
-            "type": "object",
-            "description": "A set of key/value pairs that you can send in the request body to check against redeemables requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Advanced_ &rarr; _Redemption metadata satisfy_ or _Basic Builder_ &rarr; _Attributes match_ &rarr; _REDEMPTION METADATA_. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule)."
+            "$ref": "#/components/schemas/OrderRequest",
+            "description": "Order information."
           },
           "mode": {
             "type": "string",
-            "description": "Defines which resources Voucherify will use. Currently, `BASIC` is supported."
+            "description": "Defines which resources Voucherify will use",
+            "enum": [
+              "BASIC",
+              "ADVANCED"
+            ]
+          },
+          "tracking_id": {
+            "description": "Is correspondent to Customer's source_id",
+            "type": "string"
           },
           "scenario": {
             "type": "string",
-            "description": "Defines the scenario Voucherify should consider during the qualification process.\n\n- `ALL` - Scenario that returns all redeemables available for the customer in one API request.\n- `CUSTOMER_WALLET` - returns vouchers applicable to the customer’s cart based on the vouchers assigned to the customer’s profile.\n- `AUDIENCE_ONLY` - returns all vouchers, promotion tiers, and campaigns available to the customer. Voucherify validates the rules based on the customer profile only.\n- `PRODUCTS` - returns all promotions available for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).\n- `PRODUCTS_DISCOUNT` - returns all promotions available for products when a discount is defined as applicable to specific item(s).\n- `PROMOTION_STACKS` - returns the applicable promotion stacks.\n- `PRODUCTS_BY_CUSTOMER` - returns all promotions available for a customer for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).\n- `PRODUCTS_DISCOUNT_BY_CUSTOMER` - returns all promotions available for a customer for products when a discount is defined as applicable to specific item(s).",
+            "description": "Defines the scenario Voucherify should consider during the qualification process.\n\n- `ALL` - Scenario that returns all redeemables available for the customer in one API request. This scenario is used by default when no value is selected.\n- `CUSTOMER_WALLET` - returns vouchers applicable to the customer’s cart based on the vouchers assigned to the customer’s profile.\n- `AUDIENCE_ONLY` - returns all vouchers, promotion tiers, and campaigns available to the customer. Voucherify validates the rules based on the customer profile only.\n- `PRODUCTS` - returns all promotions available for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).\n- `PRODUCTS_DISCOUNT` - returns all promotions available for products when a discount is defined as applicable to specific item(s).\n- `PROMOTION_STACKS` - returns the applicable promotion stacks.\n- `PRODUCTS_BY_CUSTOMER` - returns all promotions available for a customer for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).\n- `PRODUCTS_DISCOUNT_BY_CUSTOMER` - returns all promotions available for a customer for products when a discount is defined as applicable to specific item(s).",
             "enum": [
               "ALL",
               "CUSTOMER_WALLET",
@@ -35258,6 +35217,111 @@
               "PRODUCTS_BY_CUSTOMER",
               "PRODUCTS_DISCOUNT_BY_CUSTOMER"
             ]
+          },
+          "options": {
+            "type": "object",
+            "description": "Configure parameters returned in the response.",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5",
+                "maximum": 100
+              },
+              "starting_after": {
+                "type": "string",
+                "nullable": true,
+                "example": "2021-09-08T13:52:18.227Z",
+                "format": "date-time",
+                "description": "Cursor used for paging."
+              },
+              "filters": {
+                "type": "object",
+                "additionalProperties": false,
+                "description": "A set of filters to return only a specific category or type of redeemable.",
+                "properties": {
+                  "junction": {
+                    "$ref": "#/components/schemas/Junction"
+                  },
+                  "category_id": {
+                    "$ref": "#/components/schemas/QualificationsFieldConditions"
+                  },
+                  "campaign_id": {
+                    "$ref": "#/components/schemas/QualificationsFieldConditions"
+                  },
+                  "resource_id": {
+                    "$ref": "#/components/schemas/QualificationsFieldConditions"
+                  },
+                  "resource_type": {
+                    "$ref": "#/components/schemas/QualificationsFieldConditions"
+                  },
+                  "voucher_type": {
+                    "$ref": "#/components/schemas/QualificationsFieldConditions"
+                  },
+                  "code": {
+                    "$ref": "#/components/schemas/QualificationsFieldConditions"
+                  }
+                }
+              },
+              "expand": {
+                "type": "array",
+                "description": "Expand array lets you configure params included in the response. Depending on the strings included in the array, the response will contain different details. \n\n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"redeemable\"] | - Returns the redeemables' metadata. |\n| [\"category\"] | - Returns an expanded `categories` object, showing details about the category. |\n| [\"validation_rules\"] | - Returns an expanded `validation_rules` object, showing details about the validation rules. |",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "redeemable",
+                    "category",
+                    "validation_rules"
+                  ]
+                }
+              },
+              "sorting_rule": {
+                "type": "string",
+                "description": "Strategy for sorting. \n\n - `DEFAULT` - Sorting descending by `created_at` \n `BEST_DEAL` - Sorting descending by `total_applied_discount_amount` \n - `LEAST_DEAL` - Sorting ascending by `total_applied_discount_amount`",
+                "enum": [
+                  "BEST_DEAL",
+                  "LEAST_DEAL",
+                  "DEFAULT"
+                ]
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of key/value pairs that you can send in the request body to check against redeemables requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Advanced_ &rarr; _Redemption metadata satisfy_ or _Basic Builder_ &rarr; _Attributes match_ &rarr; _REDEMPTION METADATA_. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule)."
+          }
+        }
+      },
+      "QualificationsFieldConditions": {
+        "title": "Field Conditions",
+        "type": "object",
+        "properties": {
+          "conditions": {
+            "$ref": "#/components/schemas/QualificationsFiltersCondition",
+            "description": "Data filters used to narrow the data records to be returned in the result."
+          }
+        }
+      },
+      "QualificationsFiltersCondition": {
+        "title": "Filters Condition",
+        "type": "object",
+        "properties": {
+          "$is": {
+            "$ref": "#/components/schemas/Any"
+          },
+          "$is_not": {
+            "$ref": "#/components/schemas/Any"
+          },
+          "$has_value": {
+            "$ref": "#/components/schemas/Any"
+          },
+          "$is_unknown": {
+            "$ref": "#/components/schemas/Any"
+          },
+          "$in": {
+            "$ref": "#/components/schemas/Any"
+          },
+          "$not_in": {
+            "$ref": "#/components/schemas/Any"
           }
         }
       },
@@ -35306,52 +35370,7 @@
           }
         }
       },
-      "23_obj_filter_category_id": {
-        "description": "Filter conditions set on the resource `category_id`.",
-        "title": "Filter by category ID",
-        "type": "object",
-        "properties": {
-          "category_id": {
-            "$ref": "#/components/schemas/16_filter_conditions_string_qualification"
-          }
-        }
-      },
-      "23_obj_filter_campaign_id": {
-        "description": "Filter conditions set on the resource `campaign_id`.",
-        "title": "Filter by campaign ID",
-        "type": "object",
-        "properties": {
-          "campaign_id": {
-            "$ref": "#/components/schemas/16_filter_conditions_string_qualification"
-          }
-        }
-      },
-      "23_obj_filter_resource_type": {
-        "description": "Filter conditions set on the resource `resource_type`. The resource types include: `voucher`, `promotion_tier`, `campaign`.",
-        "title": "Filter by type",
-        "type": "object",
-        "properties": {
-          "resource_type": {
-            "$ref": "#/components/schemas/16_filter_conditions_string_qualification"
-          }
-        }
-      },
-      "23_obj_filter_voucher_type": {
-        "description": "Filter conditions set on the resource `voucher_type`.",
-        "title": "Filter by type",
-        "type": "object",
-        "properties": {
-          "voucher_type": {
-            "$ref": "#/components/schemas/16_filter_conditions_string_qualification"
-          }
-        }
-      },
-      "qualificationJunction": {
-        "description": "Filter by conditions set on the `junction` parameter indicating how the `conditions` should be accounted for in the query. An `AND` is an all-inclusive logical operator, meaning the `AND` operator displays a record if **ALL** the conditions separated by AND are TRUE, while  an `OR` operator displays a record if **ANY** of the conditions separated by OR is TRUE.",
-        "title": "Logical Operator Between Filters",
-        "$ref": "#/components/schemas/Junction"
-      },
-      "23_obj_qualification_redeemables": {
+      "QualificationsRedeemablesResponse": {
         "title": "Redeemables",
         "type": "object",
         "description": "List or redeemables for examine qualification.",
@@ -35370,7 +35389,7 @@
             "type": "array",
             "description": "Array of qualified redeemables.",
             "items": {
-              "allOf": []
+              "$ref": "#/components/schemas/QualificationsRedeemableSingleResponse"
             }
           },
           "total": {
@@ -35381,6 +35400,279 @@
           "has_more": {
             "type": "boolean",
             "description": "As results are always limited, the `has_more` flag indicates whether there are more records for given parameters. This let's you know if you are able to run another request (with different options) to get more records returned in the results."
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Timestamp representing the date and time to use in starting_after cursor to get more redeemables.",
+            "format": "date-time",
+            "example": "2023-10-31T12:13:16.374Z"
+          }
+        }
+      },
+      "QualificationsRedeemableSingleResponseBase": {
+        "title": "Single redeemable",
+        "description": "Data of single redeemable which was properly qualified.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of the redeemable."
+          },
+          "object": {
+            "type": "string",
+            "description": "Object type of the redeemable",
+            "enum": [
+              "campaign",
+              "promotion_tier",
+              "promotion_stack",
+              "voucher"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the object was created in ISO 8601 format.",
+            "example": "2022-03-09T11:19:04.819Z",
+            "format": "date-time"
+          },
+          "result": {
+            "$ref": "#/components/schemas/RedeemableSingleResultResponse"
+          },
+          "order": {
+            "$ref": "#/components/schemas/OrderResponse"
+          },
+          "validation_rule_id": {
+            "type": "string",
+            "description": "A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance."
+          },
+          "applicable_to": {
+            "$ref": "#/components/schemas/ApplicableToResultList",
+            "description": "Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted."
+          },
+          "inapplicable_to": {
+            "$ref": "#/components/schemas/InapplicableToResultList",
+            "description": "Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
+          },
+          "categories": {
+            "type": "array",
+            "description": "List of categories",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
+          "banner": {
+            "type": "string",
+            "example": "Order Paid - You will get 100 points",
+            "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+          },
+          "name": {
+            "type": "string",
+            "example": "promotion_tier_get_points",
+            "description": "Name of the redeemable."
+          },
+          "campaign_name": {
+            "type": "string",
+            "example": "PromotionCampaign",
+            "description": "Name of the campaign associated to the redeemable. This field is available only if object is not `campaign`"
+          },
+          "campaign_id": {
+            "type": "string",
+            "example": "camp_Mow7u4gSxagLlZ2oDQ01ZS5N",
+            "description": "Id of the campaign associated to the redeemable. This field is available only if object is not `campaign`"
+          },
+          "validation_rules_assignments": {
+            "$ref": "#/components/schemas/ValidationRulesAssignments"
+          }
+        }
+      },
+      "QualificationsRedeemableSingleResponse": {
+        "title": "Combined response of redeemable object and multiple redeemables within",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/QualificationsRedeemableSingleResponseBase"
+          },
+          {
+            "type": "object",
+            "title": "",
+            "properties": {
+              "redeemables": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/QualificationsRedeemableSingleResponseBase"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ValidationRulesAssignments": {
+        "title": "Validation Rules Assignments",
+        "description": "List of Validation Rules Assignments",
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "enum": [
+              "list"
+            ],
+            "description": "The type of object represented by JSON. This object stores information about validation rules assignments."
+          },
+          "data_ref": {
+            "type": "string",
+            "enum": [
+              "data"
+            ],
+            "description": "Identifies the name of the attribute that contains the array of validation rules assignments."
+          },
+          "data": {
+            "type": "array",
+            "description": "Contains array of validation rules assignments.",
+            "items": {
+              "$ref": "#/components/schemas/BusValRuleAssignment"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Total number of validation rules assignments."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
+      "BusValRuleAssignment": {
+        "title": "Business Validation Rule Assignment",
+        "description": "Assignments of business validation rule",
+        "example": {
+          "id": "asgm_LnY1g7UNFA9KyDrD",
+          "rule_id": "val_3gPNA6SnH4ae",
+          "related_object_id": "camp_CZOnEGiZfwIKWmSjhIoIT7Ol",
+          "related_object_type": "campaign",
+          "object": "validation_rules_assignment",
+          "validation_status": "PARTIALLY_VALID",
+          "validation_omitted_rules": [
+            "1"
+          ]
+        },
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for a assignment"
+          },
+          "rule_id": {
+            "type": "string",
+            "description": "The unique identifier for a rule"
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "The unique identifier for a related object"
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "The type of related object"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the object was created in ISO 8601 format.",
+            "example": "2022-03-09T11:19:04.819Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the object was last updated in ISO 8601 format.",
+            "example": "2022-03-09T11:19:04.819Z",
+            "format": "date-time"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON.",
+            "enum": [
+              "validation_rules_assignment"
+            ]
+          },
+          "validation_status": {
+            "type": "string",
+            "description": "The validation status of the assignment",
+            "enum": [
+              "VALID",
+              "PARTIALLY_VALID",
+              "INVALID"
+            ]
+          },
+          "validation_omitted_rules": {
+            "type": "array",
+            "description": "The list of omitted rules",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "rule_id",
+          "related_object_id",
+          "related_object_type",
+          "object",
+          "validation_status",
+          "validation_omitted_rules"
+        ]
+      },
+      "RedeemableSingleResultResponse": {
+        "title": "Redeemable Single Result",
+        "description": "Information about redeemable result.",
+        "properties": {
+          "discount": {
+            "$ref": "#/components/schemas/Discount"
+          },
+          "gift": {
+            "$ref": "#/components/schemas/RedeemableGift"
+          },
+          "loyalty_card": {
+            "description": "Loyalty Card object response",
+            "$ref": "#/components/schemas/RedeemableLoyaltyCard"
+          },
+          "error": {
+            "description": "Error in result",
+            "$ref": "#/components/schemas/Error"
+          }
+        }
+      },
+      "RedeemableLoyaltyCard": {
+        "type": "object",
+        "title": "Loyalty Card",
+        "description": "Loyalty Card object response",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "example": 7000,
+            "description": "Total points incurred over lifespan of loyalty card."
+          },
+          "balance": {
+            "type": "integer",
+            "example": 6970,
+            "description": "Points available for reward redemption."
+          },
+          "exchange_ratio": {
+            "type": "number",
+            "description": "The cash equivalent of the points defined in the points_ratio property."
+          },
+          "points_ratio": {
+            "type": "integer",
+            "description": "The number of loyalty points that will map to the predefined cash amount defined by the exchange_ratio property."
+          },
+          "transfers": {
+            "title": "Loyalties Transfer",
+            "descriptions": "List of redeemable loyalty card transfers",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltiesTransferPoints"
+            }
           }
         }
       },
@@ -37161,7 +37453,7 @@
       "LoyaltiesExportCardTransactionsResponseBody": {
         "title": "Loyalties Export Card Transactions Response Body",
         "type": "object",
-        "description": "",
+        "description": "Data about export of loyalties card transactions.",
         "properties": {
           "id": {
             "type": "string",
@@ -40150,6 +40442,14 @@
             "example": "2022-08-16T10:52:08.094Z",
             "description": "Timestamp representing the date and time when the category was updated in ISO 8601 format.",
             "format": "date-time"
+          },
+          "stacking_rules_type": {
+            "type": "string",
+            "description": "The type of category stacking rules",
+            "enum": [
+              "JOINT",
+              "EXCLUSIVE"
+            ]
           }
         },
         "required": [
@@ -40453,6 +40753,53 @@
             }
           }
         }
+      },
+      "Error": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0a885062c80375740f",
+            "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team."
+          },
+          "resource_id": {
+            "type": "string",
+            "description": "Unique resource ID that can be used in another endpoint to get more details.",
+            "example": "rf_0c5d710a87c8a31f86"
+          },
+          "resource_type": {
+            "type": "string",
+            "description": "The resource type.",
+            "example": "voucher"
+          }
+        },
+        "required": [
+          "code",
+          "key",
+          "message",
+          "details",
+          "request_id",
+          "resource_id",
+          "resource_type"
+        ]
       },
       "e_error_no_translation": {
         "title": "Error Object",
@@ -82351,7 +82698,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/23_obj_qualification_object"
+                  "$ref": "#/components/schemas/QualificationsCheckEligibilityResponseBody"
                 }
               }
             }
@@ -82379,7 +82726,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/23_req_create_qualification"
+                "$ref": "#/components/schemas/QualificationsCheckEligibilityRequestBody"
               }
             }
           }
@@ -82390,7 +82737,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/23_obj_qualification_object"
+                  "$ref": "#/components/schemas/QualificationsCheckEligibilityResponseBody"
                 }
               }
             }
@@ -82418,7 +82765,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/23_req_create_qualification"
+                "$ref": "#/components/schemas/QualificationsCheckEligibilityRequestBody"
               }
             }
           }
@@ -82429,7 +82776,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/23_obj_qualification_object"
+                  "$ref": "#/components/schemas/QualificationsCheckEligibilityResponseBody"
                 }
               }
             }

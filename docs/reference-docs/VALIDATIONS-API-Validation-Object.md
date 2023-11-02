@@ -23,8 +23,8 @@ Any of:
 | campaign</br>`string` | <p>Voucher's parent campaign name.</p> |
 | campaign_id</br>`string` | <p>Voucher's parent campaign's unique ID.</p> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format.</p> |
-| discount | Any of: [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed) |
-| gift</br>`object` | <p>Contains current gift card balance information.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">amount</br><code>number</code></td><td style="text-align:left"><p>Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p></td></tr><tr><td style="text-align:left">balance</br><code>number</code></td><td style="text-align:left"><p>Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p></td></tr><tr><td style="text-align:left">effect</br><code>string</code></td><td style="text-align:left"><p>Defines how the credits are applied to the customer's order.</p> Available values: <code>APPLY_TO_ORDER</code>, <code>APPLY_TO_ITEMS</code></td></tr></tbody></table> |
+| discount | See: [Discount](#discount) |
+| gift | <p>Gift object response</p> See: [Gift](#gift) |
 | loyalty</br>`object` | <p>Contains the cost of reward in points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points_cost</br><code>number</code></td><td style="text-align:left"><p>Number of points that wlil be deducted from loyaty card for the associated reward.</p></td></tr></tbody></table> |
 | reward</br>`object` | <p>Contains information about the reward that is being validated.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique reward ID assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">assignment_id</br><code>string</code></td><td style="text-align:left"><p>Unique reward assignment ID assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">points</br><code>number</code></td><td style="text-align:left"><p>Number of points applied to the reward.</p></td></tr></tbody></table> |
 | order | See: [Order Response](#order-response) |
@@ -60,49 +60,19 @@ Any of:
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
 | data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
 
-## Amount
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>Defines the type of voucher.</p> Available values: `AMOUNT` |
-| amount_off</br>`number` | <p>Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000.</p> |
-| amount_off_formula</br>`string` |  |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Amount Vouchers Effect Types](#discount-amount-vouchers-effect-types) |
+## Discount
+<p>Contains information about discount.</p>
 
-## Unit
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
-| unit_off</br>`integer` | <p>Number of units to be granted a full value discount.</p> |
-| unit_off_formula</br>`string` |  |
-| effect | <p>Defines how the unit is added to the customer's order.</p> See: [Discount Unit Vouchers Effect Types](#discount-unit-vouchers-effect-types) |
-| unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
-| product | <p>Contains information about the product.</p> See: [Simple Product Discount Unit](#simple-product-discount-unit) |
-| sku | See: [Simple Sku Discount Unit](#simple-sku-discount-unit) |
+Any of:
 
-## Unit Multiple
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
-| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `ADD_MANY_ITEMS` |
-| units</br>`array` | Array of [One Unit](#one-unit) |
+[Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
-## Percent
+## Gift
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Defines the type of voucher.</p> Available values: `PERCENT` |
-| percent_off</br>`number` | <p>The percent discount that the customer will receive.</p> |
-| percent_off_formula</br>`string` |  |
-| amount_limit</br>`number` | <p>Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Percent Vouchers Effect Types](#discount-percent-vouchers-effect-types) |
-| is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
-
-## Fixed
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>Defines the type of voucher.</p> Available values: `FIXED` |
-| fixed_amount</br>`number` | <p>Set a fixed valued for an order total or price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the fixed amount being calculated by the formula, i.e. the fixed_amount_formula parameter is present in the fixed amount definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
-| fixed_amount_formula</br>`string` |  |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
+| amount</br>`number` | <p>Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
+| balance</br>`number` | <p>Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
+| effect</br>`string` | <p>Defines how the credits are applied to the customer's order.</p> Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS` |
 
 ## Order Response
 | Attributes |  Description |
@@ -158,41 +128,49 @@ All of:
 
 1. [ApplicableTo](#applicableto)
 
-## Discount Amount Vouchers Effect Types
-Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`, `APPLY_TO_ITEMS_PROPORTIONALLY`, `APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY`
-
-## Discount Unit Vouchers Effect Types
-Available values: `ADD_MISSING_ITEMS`, `ADD_NEW_ITEMS`, `ADD_MANY_ITEMS`
-
-## Simple Product Discount Unit
+## Amount
 | Attributes |  Description |
 |:-----|:--------|
-| id</br>`string` | <p>Unique product ID, assigned by Voucherify.</p> |
-| source_id</br>`string` | <p>Product's source ID.</p> |
-| name</br>`string` | <p>Product name.</p> |
+| type</br>`string` | <p>Defines the type of voucher.</p> Available values: `AMOUNT` |
+| amount_off</br>`number` | <p>Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000.</p> |
+| amount_off_formula</br>`string` |  |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Amount Vouchers Effect Types](#discount-amount-vouchers-effect-types) |
 
-## Simple Sku Discount Unit
+## Unit
 | Attributes |  Description |
 |:-----|:--------|
-| id</br>`string` | <p>Unique SKU ID, assigned by Voucherify.</p> |
-| source_id</br>`string` | <p>Product variant's source ID.</p> |
-| name</br>`string` | <p>Sku name</p> |
-
-## One Unit
-| Attributes |  Description |
-|:-----|:--------|
-| unit_off</br>`number` | <p>Number of units to be granted a full value discount.</p> |
+| type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
+| unit_off</br>`integer` | <p>Number of units to be granted a full value discount.</p> |
 | unit_off_formula</br>`string` |  |
-| effect</br>`string` | <p>Defines how the unit is added to the customer's order.</p> Available values: `ADD_NEW_ITEMS`, `ADD_MISSING_ITEMS` |
+| effect | <p>Defines how the unit is added to the customer's order.</p> See: [Discount Unit Vouchers Effect Types](#discount-unit-vouchers-effect-types) |
 | unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
 | product | <p>Contains information about the product.</p> See: [Simple Product Discount Unit](#simple-product-discount-unit) |
-| sku | <p>Contains information about the sku.</p> See: [Simple Sku Discount Unit](#simple-sku-discount-unit) |
+| sku | See: [Simple Sku Discount Unit](#simple-sku-discount-unit) |
 
-## Discount Percent Vouchers Effect Types
-Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
+## Unit Multiple
+| Attributes |  Description |
+|:-----|:--------|
+| type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
+| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `ADD_MANY_ITEMS` |
+| units</br>`array` | Array of [One Unit](#one-unit) |
 
-## Discount Fixed Vouchers Effect Types
-Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
+## Percent
+| Attributes |  Description |
+|:-----|:--------|
+| type</br>`string` | <p>Defines the type of voucher.</p> Available values: `PERCENT` |
+| percent_off</br>`number` | <p>The percent discount that the customer will receive.</p> |
+| percent_off_formula</br>`string` |  |
+| amount_limit</br>`number` | <p>Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Percent Vouchers Effect Types](#discount-percent-vouchers-effect-types) |
+| is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
+
+## Fixed
+| Attributes |  Description |
+|:-----|:--------|
+| type</br>`string` | <p>Defines the type of voucher.</p> Available values: `FIXED` |
+| fixed_amount</br>`number` | <p>Set a fixed valued for an order total or price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the fixed amount being calculated by the formula, i.e. the fixed_amount_formula parameter is present in the fixed amount definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
+| fixed_amount_formula</br>`string` |  |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
 
 ## Order Item Response
 | Attributes |  Description |
@@ -247,6 +225,42 @@ All of:
 
 ## Applicable To Effect
 Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`
+
+## Discount Amount Vouchers Effect Types
+Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`, `APPLY_TO_ITEMS_PROPORTIONALLY`, `APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY`
+
+## Discount Unit Vouchers Effect Types
+Available values: `ADD_MISSING_ITEMS`, `ADD_NEW_ITEMS`, `ADD_MANY_ITEMS`
+
+## Simple Product Discount Unit
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique product ID, assigned by Voucherify.</p> |
+| source_id</br>`string` | <p>Product's source ID.</p> |
+| name</br>`string` | <p>Product name.</p> |
+
+## Simple Sku Discount Unit
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique SKU ID, assigned by Voucherify.</p> |
+| source_id</br>`string` | <p>Product variant's source ID.</p> |
+| name</br>`string` | <p>Sku name</p> |
+
+## One Unit
+| Attributes |  Description |
+|:-----|:--------|
+| unit_off</br>`number` | <p>Number of units to be granted a full value discount.</p> |
+| unit_off_formula</br>`string` |  |
+| effect</br>`string` | <p>Defines how the unit is added to the customer's order.</p> Available values: `ADD_NEW_ITEMS`, `ADD_MISSING_ITEMS` |
+| unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
+| product | <p>Contains information about the product.</p> See: [Simple Product Discount Unit](#simple-product-discount-unit) |
+| sku | <p>Contains information about the sku.</p> See: [Simple Sku Discount Unit](#simple-sku-discount-unit) |
+
+## Discount Percent Vouchers Effect Types
+Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
+
+## Discount Fixed Vouchers Effect Types
+Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
 
 [block:html]
 {
