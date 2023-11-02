@@ -128,7 +128,7 @@ Any of:
 | customer_id</br>`string,null` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
 | referrer_id</br>`string,null` | <p>Unique referrer ID.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `order` |
-| redemptions</br>`object` |  |
+| redemptions</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#order-redemptions">Order Redemptions</a></td></tr></tbody></table> |
 
 ## Session
 | Attributes |  Description |
@@ -232,6 +232,18 @@ Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
 All of:
 
 1. [Customer](#customer)
+
+## Order Redemptions
+| Attributes |  Description |
+|:-----|:--------|
+| date</br>`string` | <p>Timestamp representing the date and time when the redemption was created in ISO 8601 format.</p> **Example:** <p>2022-09-02T17:06:56.649Z</p> |
+| rollback_id</br>`string` | <p>Unique ID of the redemption rollback.</p> **Example:** <p>rr_0c63c84eb78ee0a6c0</p> |
+| rollback_date</br>`string` | <p>Timestamp representing the date and tiem when the redemption rollback was created in ISO 8601 format.</p> **Example:** <p>2023-01-31T14:18:37.150Z</p> |
+| related_object_type</br>`string` | <p>The source of the incentive.</p> |
+| related_object_id</br>`string` | <p>Unique ID of the parent redemption.</p> **Example:** <p>r_0ba186c4824e4881e1</p> |
+| related_object_parent_id</br>`string` | <p>Represent's the campaign ID of the voucher if the redemption was based on a voucher that was part of bulk codes generated within a campaign. In case of a promotion tier, this represents the campaign ID of the promotion tier's parent campaign.</p> |
+| stacked</br>`array` | <p>Contains a list of unique IDs of child redemptions, which belong to the stacked incentives.</p> |
+| rollback_stacked</br>`array` | <p>Lists the rollback redemption IDs of the particular child redemptions.</p> |
 
 ## Applicable To Effect
 Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`
