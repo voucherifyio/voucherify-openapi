@@ -522,8 +522,14 @@ export default class SchemaToMarkdownTable {
     if (!schema) {
       throw new Error(`Schema "${schema}" not found`);
     }
-    const { properties, title, additionalProperties } =
-      nodeWithTitleAndPropertiesSchema.validateSync(schema);
+
+    const schemaResult = nodeWithTitleAndPropertiesSchema.validateSync(schema)
+    const {  title, additionalProperties } = schemaResult
+    const properties = schemaResult.properties || {}
+    if(additionalProperties){
+      properties['[additionalProperties]'] = additionalProperties
+      console.log(properties)
+    }
     const respopnseStrArr = [];
 
     if (!skipTitle && title) {
@@ -534,8 +540,6 @@ export default class SchemaToMarkdownTable {
       }
     }
     const relatedObjects: string[] = [];
-
-    console.log(properties)
 
     if (properties) {
       const { html, relatedObjectsNames } = this.renderPropertiesAsTableRow(
