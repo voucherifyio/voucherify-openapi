@@ -31,6 +31,44 @@
 
 **REMOVED ALL DUMMY ENDPOINTS AS WE DON'T USE THEM ANYMORE!!!**
 
+## 20231102 - Qualifications
+
+**Added schemas**
+- Discount
+- Gift
+- RedeemableGift
+- QualificationsFieldConditions
+- QualificationsFiltersCondition
+- QualificationsRedeemableSingleResponse
+- ValidationRulesAssignments
+- BusValRuleAssignment
+- RedeemableSingleResultResponse
+- RedeemableLoyaltyCard
+- Error
+
+**Removed schemas**
+- 16_filter_conditions_string_qualification
+- 23_obj_filter_category_id
+- 23_obj_filter_campaign_id
+- 23_obj_filter_resource_type
+- 23_obj_filter_voucher_type
+- qualificationJunction
+
+**Changed schemas**
+- 16_filter_conditions_string_qualification to QualificationsCheckEligibilityResponseBody
+- 23_obj_qualification_object_stacking_rules to QualificationsStackingRulesResponse
+- 23_req_create_qualification to QualificationsCheckEligibilityRequestBody
+- 23_obj_qualification_redeemables to QualificationsRedeemablesResponse
+
+
+## 20231031 Integration blueprint – 2 new articles
+
+Added the following articles to the Integration Blueprint section:
+- Integration overview
+- Modeling Voucherify integration
+- Campaign limits
+-
+
 ## 20231030 - Order Model
 
 **Removed schemas**
