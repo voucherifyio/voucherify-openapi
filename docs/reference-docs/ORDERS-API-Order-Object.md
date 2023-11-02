@@ -27,9 +27,9 @@ order: 1
 | total_applied_discount_amount</br>`integer` | <p>Sum of all order-level AND all product-specific discounts applied in a particular request.<br><code>total_applied_discount_amount</code> = <code>applied_discount_amount</code> + <code>items_applied_discount_amount</code></p> |
 | items</br>`array` | <p>Array of items applied to the order.</p> Array of [Order Item Response](#order-item-response) |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.</p> |
-| customer | <p>This is an object containing information about the customer.</p> See: [Customer](#customer) |
-| referrer | <p>This is an object containing information about the referrer.</p> See: [Referrer](#referrer) |
+| customer | <p>This is an object containing information about the customer.</p> See: [Customer Request](#customer-request) |
 | customer_id</br>`string,null` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
+| referrer | <p>This is an object containing information about the referrer.</p> See: [Referrer Request](#referrer-request) |
 | referrer_id</br>`string,null` | <p>Unique referrer ID.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `order` |
 | redemptions</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#order-redemptions">Order Redemptions</a></td></tr></tbody></table> |
@@ -55,7 +55,7 @@ order: 1
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>order_item</code>.</p> Available values: `order_item` |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format.</p> |
 
-## Customer
+## Customer Request
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>The ID of an existing customer that will be linked to redemption in this request.</p> |
@@ -68,10 +68,10 @@ order: 1
 | address</br>`object` | <p>Customer's address.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">city</br><code>string</code></td><td style="text-align:left"><p>City</p></td></tr><tr><td style="text-align:left">state</br><code>string</code></td><td style="text-align:left"><p>State</p></td></tr><tr><td style="text-align:left">line_1</br><code>string</code></td><td style="text-align:left"><p>First line of address.</p></td></tr><tr><td style="text-align:left">line_2</br><code>string</code></td><td style="text-align:left"><p>Second line of address.</p></td></tr><tr><td style="text-align:left">country</br><code>string</code></td><td style="text-align:left"><p>Country.</p></td></tr><tr><td style="text-align:left">postal_code</br><code>string</code></td><td style="text-align:left"><p>Postal code.</p></td></tr></tbody></table> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.</p> |
 
-## Referrer
+## Referrer Request
 All of:
 
-1. [Customer](#customer)
+1. [Customer Request](#customer-request)
 
 ## Order Redemptions
 | Attributes |  Description |
