@@ -10,8 +10,11 @@
 - OrderItemResponse
 - OrderResponse
 - OrderItemResponse
+- OrderRedemptions
 
 **Updated order object markdown.**
+
+**Added support for `additionalProperties` to markdown generator.**
 
 ## 20231031 Integration blueprint – 2 new articles
 
