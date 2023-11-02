@@ -396,11 +396,9 @@
           }
         ]
       },
-      "Order": {
-        "title": "Order",
+      "OrderRequest": {
+        "title": "Order Request",
         "type": "object",
-        "additionalProperties": false,
-        "description": "Order information.",
         "properties": {
           "id": {
             "type": "string",
@@ -421,14 +419,22 @@
             ]
           },
           "amount": {
-            "type": "string",
+            "type": "integer",
             "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts.\n\n"
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level discounts applied to the order."
+          },
+          "initial_amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts."
           },
           "items": {
             "type": "array",
             "description": "Array of items applied to the order.",
             "items": {
-              "$ref": "#/components/schemas/OrderItem"
+              "$ref": "#/components/schemas/OrderItemRequest"
             }
           },
           "customer": {
@@ -436,18 +442,203 @@
             "description": "This is an object containing information about the customer."
           },
           "customer_id": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique customer ID of the customer making the purchase.",
+            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
           },
           "referrer": {
             "$ref": "#/components/schemas/Referrer",
             "description": "This is an object containing information about the referrer."
           },
           "referrer_id": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique referrer ID.",
+            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
           },
           "metadata": {
             "type": "object",
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
+          }
+        }
+      },
+      "OrderResponse": {
+        "title": "Order Response",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Order information.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.\n\n"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the order was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "2021-12-22T10:14:45.316Z",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+          },
+          "status": {
+            "type": "string",
+            "description": "The order status.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "CANCELED",
+              "FULFILLED"
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts.\n\n"
+          },
+          "initial_amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level discounts applied to the order."
+          },
+          "items_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all product-specific discounts applied to the order."
+          },
+          "total_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level AND all product-specific discounts applied to the order."
+          },
+          "total_amount": {
+            "type": "integer",
+            "description": "Order amount after undoing all the discounts through the rollback redemption."
+          },
+          "applied_discount_amount": {
+            "type": "number",
+            "description": "This field shows the order-level discount applied."
+          },
+          "items_applied_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all product-specific discounts applied in a particular request.  \n`sum(items, i => i.applied_discount_amount)`"
+          },
+          "total_applied_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level AND all product-specific discounts applied in a particular request.  \n`total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount`"
+          },
+          "items": {
+            "type": "array",
+            "description": "Array of items applied to the order.",
+            "items": {
+              "$ref": "#/components/schemas/OrderItemResponse"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
+          },
+          "customer": {
+            "$ref": "#/components/schemas/Customer",
+            "description": "This is an object containing information about the customer."
+          },
+          "referrer": {
+            "$ref": "#/components/schemas/Referrer",
+            "description": "This is an object containing information about the referrer."
+          },
+          "customer_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unique customer ID of the customer making the purchase.",
+            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
+          },
+          "referrer_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unique referrer ID.",
+            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON.",
+            "enum": [
+              "order"
+            ]
+          },
+          "redemptions": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OrderRedemptions"
+            }
+          }
+        },
+        "required": [
+          "customer_id",
+          "referrer_id",
+          "object"
+        ]
+      },
+      "OrderRedemptions": {
+        "title": "Order Redemptions",
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the redemption was created in ISO 8601 format.",
+            "example": "2022-09-02T17:06:56.649Z",
+            "format": "date-time"
+          },
+          "rollback_id": {
+            "type": "string",
+            "description": "Unique ID of the redemption rollback.",
+            "example": "rr_0c63c84eb78ee0a6c0"
+          },
+          "rollback_date": {
+            "type": "string",
+            "description": "Timestamp representing the date and tiem when the redemption rollback was created in ISO 8601 format.",
+            "example": "2023-01-31T14:18:37.150Z",
+            "format": "date-time"
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "The source of the incentive.",
+            "default": "redemption"
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "Unique ID of the parent redemption.",
+            "example": "r_0ba186c4824e4881e1"
+          },
+          "related_object_parent_id": {
+            "type": "string",
+            "description": "Represent's the campaign ID of the voucher if the redemption was based on a voucher that was part of bulk codes generated within a campaign. In case of a promotion tier, this represents the campaign ID of the promotion tier's parent campaign."
+          },
+          "stacked": {
+            "type": "array",
+            "description": "Contains a list of unique IDs of child redemptions, which belong to the stacked incentives.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rollback_stacked": {
+            "type": "array",
+            "description": "Lists the rollback redemption IDs of the particular child redemptions.",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -461,7 +652,7 @@
             "description": "Customer's information."
           },
           "order": {
-            "$ref": "#/components/schemas/Order",
+            "$ref": "#/components/schemas/OrderRequest",
             "description": "Order information."
           },
           "session": {
@@ -530,7 +721,7 @@
                 "type": "array",
                 "description": "Array of items applied to the order.",
                 "items": {
-                  "$ref": "#/components/schemas/OrderItem"
+                  "$ref": "#/components/schemas/OrderItemRequest"
                 }
               },
               "customer": {
@@ -593,7 +784,9 @@
             }
           }
         },
-        "required": ["gift"]
+        "required": [
+          "gift"
+        ]
       },
       "VouchersValidateLoyaltyRequestBody": {
         "type": "object",
@@ -635,7 +828,7 @@
                 "type": "array",
                 "description": "Array of items applied to the order.",
                 "items": {
-                  "$ref": "#/components/schemas/OrderItem"
+                  "$ref": "#/components/schemas/OrderItemRequest"
                 }
               },
               "customer": {
@@ -704,13 +897,17 @@
             }
           }
         },
-        "required": ["reward"]
+        "required": [
+          "reward"
+        ]
       },
       "Referrer": {
         "title": "Referrer",
-        "allOf": [{
-          "$ref": "#/components/schemas/Customer"
-        }]
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Customer"
+          }
+        ]
       },
       "Customer": {
         "type": "object",
@@ -782,9 +979,9 @@
           }
         }
       },
-      "OrderItem": {
+      "OrderItemRequest": {
         "type": "object",
-        "title": "Order Item",
+        "title": "Order Item Request",
         "properties": {
           "sku_id": {
             "type": "string",
@@ -806,38 +1003,33 @@
             "type": "string",
             "description": "The merchant’s product/SKU ID (if it is different from the Voucherify product/SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
           },
+          "quantity": {
+            "type": "integer",
+            "description": "The quantity of the particular item in the cart."
+          },
           "discount_quantity": {
             "type": "integer",
             "description": "Number of dicounted items."
           },
           "initial_quantity": {
-            "type": "integer"
-          },
-          "quantity": {
             "type": "integer",
-            "description": "The quantity of the particular item in the cart."
-          },
-          "price": {
-            "type": "number",
-            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "A positive integer in the smallest unit quantity representing the total amount of the order; this is the sum of the order items' quantity."
           },
           "amount": {
-            "type": "number",
+            "type": "integer",
             "description": "The total amount of the order item (price * quantity)."
           },
           "discount_amount": {
-            "type": "number",
+            "type": "integer",
             "description": "\nSum of all order-item-level discounts applied to the order."
           },
           "initial_amount": {
-            "type": "number"
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts."
           },
-          "applied_discount_amount": {
-            "type": "number",
-            "description": "This field shows the order-item-level discount applied."
-          },
-          "subtotal_amount": {
-            "type": "number"
+          "price": {
+            "type": "integer",
+            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
           },
           "product": {
             "type": "object",
@@ -899,7 +1091,141 @@
           },
           "object": {
             "type": "string",
-            "default": "order_item"
+            "enum": [
+              "order_item"
+            ],
+            "description": "The type of object represented by JSON. This object stores information about the `order_item`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format."
+          }
+        }
+      },
+      "OrderItemResponse": {
+        "type": "object",
+        "title": "Order Item Response",
+        "properties": {
+          "sku_id": {
+            "type": "string",
+            "description": "A unique SKU ID assigned by Voucherify."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "A unique product ID assigned by Voucherify."
+          },
+          "related_object": {
+            "type": "string",
+            "enum": [
+              "product",
+              "sku"
+            ],
+            "description": "Used along with the source_id property, can be set to either sku or product."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s product/SKU ID (if it is different from the Voucherify product/SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The quantity of the particular item in the cart."
+          },
+          "discount_quantity": {
+            "type": "integer",
+            "description": "Number of dicounted items."
+          },
+          "initial_quantity": {
+            "type": "integer",
+            "description": "A positive integer in the smallest unit quantity representing the total amount of the order; this is the sum of the order items' quantity."
+          },
+          "amount": {
+            "type": "integer",
+            "description": "The total amount of the order item (price * quantity)."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "\nSum of all order-item-level discounts applied to the order."
+          },
+          "initial_amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts."
+          },
+          "total_applied_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level AND all product-specific discounts applied in a particular request.  \n`total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount`"
+          },
+          "price": {
+            "type": "integer",
+            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+          },
+          "subtotal_amount": {
+            "type": "integer",
+            "description": "Final order item amount after the applied item-level discount.  If there are no item-level discounts applied, this item is equal to the `amount`.   \n`subtotal_amount`=`amount`-`applied_discount_amount`"
+          },
+          "product": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "An object containing details of the related product.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "A unique identifier that represents the product and is assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant’s product ID (if it is different than Voucherify's product ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
+              },
+              "override": {
+                "type": "boolean",
+                "description": "The override set to true is used to store the product information in the system. If product does not exist, it will be created with the use of source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system."
+              },
+              "name": {
+                "type": "string",
+                "description": "Product name."
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format."
+              },
+              "price": {
+                "type": "number",
+                "description": "Product price. A positive integer in the smallest currency unit (that is, 100 cents for $1.00)."
+              }
+            }
+          },
+          "sku": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "An object containing details of the related SKU.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "A unique identifier that represents the SKU and is assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant’s SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
+              },
+              "override": {
+                "type": "boolean",
+                "description": "The override set to true is used to store the product information in the system. If product does not exist, it will be created with the use of source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system."
+              },
+              "sku": {
+                "type": "string",
+                "description": "The SKU name."
+              },
+              "price": {
+                "type": "number",
+                "description": "SKU price. A positive integer in the smallest currency unit (that is, 100 cents for $1.00)."
+              }
+            }
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "order_item"
+            ],
+            "description": "The type of object represented by JSON. This object stores information about the `order_item`."
           },
           "metadata": {
             "type": "object",
@@ -1062,116 +1388,7 @@
             ]
           },
           "order": {
-            "type": "object",
-            "additionalProperties": false,
-            "description": "This is an object representing an order with calculated discounts applied using the voucher code.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Unique order ID, assigned by Voucherify. This parameter is returned only if you use the order ID parameter of an already created and synced order in the Voucherify application, i.e by sending the order.id parameter in the request body."
-              },
-              "source_id": {
-                "type": "string",
-                "description": "The merchant’s order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service. This parameter is returned only if you use the order ID parameter of an already created and synced order in the Voucherify application, i.e by sending the order.id parameter in the request body."
-              },
-              "created_at": {
-                "type": "string",
-                "description": "Timestamp representing the date and time when the order was created in ISO 8601 format. This parameter is returned only if you use the order ID parameter of an already created and synced order in the Voucherify application, i.e by sending the order.id parameter in the request body."
-              },
-              "updated_at": {
-                "type": "string",
-                "description": "Timestamp representing the date and time when the order was updated in ISO 8601 format. This parameter is returned only if you use the order ID parameter of an already created and synced order in the Voucherify application, i.e by sending the order.id parameter in the request body."
-              },
-              "status": {
-                "type": "string",
-                "description": "Order status. This parameter is returned if you use the order ID parameter of an already created and synced order in the Voucherify application, i.e by sending the order.id parameter in the request body or if you send the request body parameter when defining an order in the request body. This parameter can be passed but it's not required for validation at all. It's used in the redemption process. Normally after the redemption is done, the order is automatically to a PAID status. To avoid such default behaviour, the user can pass any of the other status options and it will be set the order status after the redemption instead of the default PAID.",
-                "enum": [
-                  "CREATED",
-                  "PAID",
-                  "CANCELED",
-                  "FULFILLED"
-                ]
-              },
-              "amount": {
-                "type": "number",
-                "description": "Order amount before applying any discount."
-              },
-              "initial_amount": {
-                "type": "number"
-              },
-              "discount_amount": {
-                "type": "number",
-                "description": "Sum of all order-level discounts applied to the order."
-              },
-              "applied_discount_amount": {
-                "type": "number",
-                "description": "This field shows the order-level discount applied."
-              },
-              "items_discount_amount": {
-                "type": "number"
-              },
-              "total_discount_amount": {
-                "type": "number",
-                "description": "Sum of all order-level discounts."
-              },
-              "total_amount": {
-                "type": "number"
-              },
-              "items_applied_discount_amount": {
-                "type": "number"
-              },
-              "total_applied_discount_amount": {
-                "type": "number",
-                "description": "This field sums up all order-level discounts applied to the order."
-              },
-              "items": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/OrderItem"
-                }
-              },
-              "metadata": {
-                "type": "object",
-                "description": "The metadata object stores all custom attributes assigned to the order. A set of key/value pairs that are att to an order object. Stores additional information about the order in a structured format."
-              },
-              "customer": {
-                "type": "string",
-                "description": "Object containing information about the customer that is making the purchase."
-              },
-              "customer_id": {
-                "type": "string",
-                "description": "Unique customer ID of the customer making the purchase."
-              },
-              "referrer": {
-                "$ref": "#/components/schemas/Referrer",
-                "description": "Object containing information about the referrer."
-              },
-              "referrer_id": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Unique referrer ID."
-              },
-              "object": {
-                "type": "string",
-                "default": "order",
-                "enum": [
-                  "order"
-                ],
-                "description": "The type of object represented by JSON. This object stores information about the order."
-              },
-              "redemptions": {
-                "$ref": "#/components/schemas/OrderRedemptions"
-              }
-            },
-            "required": [
-              "amount",
-              "discount_amount",
-              "total_amount",
-              "referrer_id",
-              "object"
-            ]
+            "$ref": "#/components/schemas/OrderResponse"
           },
           "session": {
             "$ref": "#/components/schemas/Session",
@@ -1268,33 +1485,6 @@
           "valid",
           "code"
         ]
-      },
-      "OrderRedemptions": {
-        "type": "object",
-        "title": "Order Redemptions",
-        "additionalProperties": {
-          "type": "object",
-          "properties": {
-            "date": {
-              "type": "string"
-            },
-            "related_object_type": {
-              "type": "string"
-            },
-            "related_object_id": {
-              "type": "string"
-            },
-            "related_object_parent_id": {
-              "type": "string"
-            },
-            "stacked": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        }
       },
       "SimpleProductDiscountUnit": {
         "type": "object",
@@ -4924,7 +5114,15 @@
         "description": "Response body schema for `vouchers/{code}/balance.`",
         "type": "object",
         "title": "Add or Remove Voucher Balance Response Body",
-        "required": [ "amount", "total", "balance", "type", "object", "related_object", "operation_type" ],
+        "required": [
+          "amount",
+          "total",
+          "balance",
+          "type",
+          "object",
+          "related_object",
+          "operation_type"
+        ],
         "properties": {
           "amount": {
             "type": "integer",
@@ -4964,7 +5162,10 @@
           "related_object": {
             "type": "object",
             "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
-            "required": [ "type", "id" ],
+            "required": [
+              "type",
+              "id"
+            ],
             "properties": {
               "type": {
                 "type": "string",
@@ -5030,52 +5231,52 @@
       "gift_card_transaction": {
         "title": "Gift Card Transaction",
         "description": "List of gift card transactions",
-          "anyOf": [
-            {
-              "title": "Redemption",
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/gift_card_transaction_base"
-                },
-                {
-                  "$ref": "#/components/schemas/gift_card_transaction_redemption_details"
-                }
-              ]
-            },
-            {
-              "title": "Refund",
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/gift_card_transaction_base"
-                },
-                {
-                  "$ref": "#/components/schemas/gift_card_transaction_refund_details"
-                }
-              ]
-            },
-            {
-              "title": "Addition",
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/gift_card_transaction_base"
-                },
-                {
-                  "$ref": "#/components/schemas/gift_card_transaction_addition_details"
-                }
-              ]
-            },
-            {
-              "title": "Removal",
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/gift_card_transaction_base"
-                },
-                {
-                  "$ref": "#/components/schemas/gift_card_transaction_removal_details"
-                }
-              ]
-            }
-          ]
+        "anyOf": [
+          {
+            "title": "Redemption",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/gift_card_transaction_base"
+              },
+              {
+                "$ref": "#/components/schemas/gift_card_transaction_redemption_details"
+              }
+            ]
+          },
+          {
+            "title": "Refund",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/gift_card_transaction_base"
+              },
+              {
+                "$ref": "#/components/schemas/gift_card_transaction_refund_details"
+              }
+            ]
+          },
+          {
+            "title": "Addition",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/gift_card_transaction_base"
+              },
+              {
+                "$ref": "#/components/schemas/gift_card_transaction_addition_details"
+              }
+            ]
+          },
+          {
+            "title": "Removal",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/gift_card_transaction_base"
+              },
+              {
+                "$ref": "#/components/schemas/gift_card_transaction_removal_details"
+              }
+            ]
+          }
+        ]
       },
       "gift_card_transaction_base": {
         "type": "object",
@@ -9827,7 +10028,6 @@
           "parameters"
         ]
       },
-
       "rewards_list_assignments_response_body": {
         "type": "object",
         "description": "Response body schema for GET /rewards/{rewardID}/assignments.",
@@ -13848,10 +14048,10 @@
         "title": "Redeem Gift Card",
         "allOf": [
           {
-          "$ref": "#/components/schemas/RedeemVoucher"
+            "$ref": "#/components/schemas/RedeemVoucher"
           },
           {
-          "type": "object",
+            "type": "object",
             "properties": {
               "gift": {
                 "type": "object",
@@ -13976,7 +14176,7 @@
             "description": "Customer's information."
           },
           "order": {
-            "$ref": "#/components/schemas/Order",
+            "$ref": "#/components/schemas/OrderRequest",
             "description": "Order information."
           },
           "metadata": {
@@ -13993,7 +14193,7 @@
         "description": "This data model represents the request body for redeeming multiple incentives.",
         "allOf": [
           {
-          "$ref": "#/components/schemas/ValidationsValidateRequestBody"
+            "$ref": "#/components/schemas/ValidationsValidateRequestBody"
           }
         ]
       },
@@ -29514,7 +29714,6 @@
           "object"
         ]
       },
-
       "product_collections_static_collection": {
         "title": "Static Product Collection",
         "type": "object",
@@ -29657,13 +29856,17 @@
             "type": "string",
             "description": "The type of object represented by JSON. This object stores information about product collections.",
             "default": "list",
-            "enum":  [ "list" ]
+            "enum": [
+              "list"
+            ]
           },
           "data_ref": {
             "type": "string",
             "default": "data",
             "description": "Identifies the name of the JSON property that contains the array of product collections.",
-            "enum":  [ "data" ]
+            "enum": [
+              "data"
+            ]
           },
           "data": {
             "description": "A dictionary that contains an array of product collections and their details.",
@@ -31662,7 +31865,6 @@
         "required": [
           "voucher_id"
         ],
-        "description": "Filter condition.",
         "properties": {
           "voucher_id": {
             "type": "object",
@@ -35183,9 +35385,6 @@
       },
       "PromotionsStacksListInCampaignResponseBody": {
         "title": "Promotions Stacks List In Campaign Response Body",
-        "x-stoplight": {
-          "id": "4vg6isqaq6snd"
-        },
         "type": "object",
         "properties": {
           "object": {
@@ -35224,9 +35423,6 @@
       },
       "PromotionsStacksListResponseBody": {
         "title": "Promotions Stacks List Response Body",
-        "x-stoplight": {
-          "id": "xulqc9a55rqq1"
-        },
         "type": "object",
         "properties": {
           "object": {
@@ -35265,9 +35461,6 @@
       },
       "PromotionsStacksListRequestQuery": {
         "title": "Promotions Stacks List Request Query",
-        "x-stoplight": {
-          "id": "tlxava3tsdz67"
-        },
         "type": "object",
         "properties": {
           "limit": {
@@ -35332,9 +35525,6 @@
       },
       "PromotionsStacksUpdateRequestBody": {
         "title": "Promotions Stacks Update Request Body",
-        "x-stoplight": {
-          "id": "8jlymzh3ddocw"
-        },
         "type": "object",
         "properties": {
           "name": {
@@ -35499,9 +35689,6 @@
       },
       "PromotionStackBase": {
         "title": "Promotion Stack Base",
-        "x-stoplight": {
-          "id": "m7vtpwtnuvjpe"
-        },
         "type": "object",
         "properties": {
           "name": {
@@ -40019,10 +40206,7 @@
           "data_ref",
           "data",
           "total"
-        ],
-        "x-stoplight": {
-          "id": "c967c76fc93e1"
-        }
+        ]
       },
       "CategoriesCreateRequestBody": {
         "title": "CategoriesCreateRequestBody",
@@ -40878,16 +41062,16 @@
       },
       "product_collections_collection_item": {
         "title": "Product Collection",
-        "type":  "object",
+        "type": "object",
         "description": "This is an object representing a product collection.  \n\nThe products can be grouped into collections by the creation of a products collection object. You can retrieve a product collection and a list of products in the collection. Product collections are identified by a unique ID.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/product_collections_static_collection"
-              },
-              {
-                "$ref": "#/components/schemas/product_collections_dynamic_collection"
-              }
-            ]
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/product_collections_static_collection"
+          },
+          {
+            "$ref": "#/components/schemas/product_collections_dynamic_collection"
+          }
+        ]
       },
       "product_collections_create_request_body": {
         "title": "product_collections_create_request_body",

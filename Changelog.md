@@ -1,5 +1,21 @@
 # Changelog
 
+## 20231030 - Order Model
+
+**Removed schemas**
+- Order
+
+**Added schemas**
+- OrderRequest
+- OrderItemResponse
+- OrderResponse
+- OrderItemResponse
+- OrderRedemptions
+
+**Updated order object markdown.**
+
+**Added support for `additionalProperties` to markdown generator.**
+
 ## 20231031 Integration blueprint – 2 new articles
 
 Added the following articles to the Integration Blueprint section:
