@@ -504,13 +504,13 @@
             "type": "integer",
             "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts.\n\n"
           },
-          "discount_amount": {
-            "type": "integer",
-            "description": "Sum of all order-level discounts applied to the order."
-          },
           "initial_amount": {
             "type": "integer",
             "description": "A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level discounts applied to the order."
           },
           "items_discount_amount": {
             "type": "integer",
@@ -543,6 +543,10 @@
               "$ref": "#/components/schemas/OrderItemResponse"
             }
           },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
+          },
           "customer": {
             "$ref": "#/components/schemas/CustomerRequest",
             "description": "This is an object containing information about the customer."
@@ -574,9 +578,11 @@
               "order"
             ]
           },
-          "metadata": {
+          "redemptions": {
             "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OrderRedemptions"
+            }
           }
         },
         "required": [
@@ -584,6 +590,57 @@
           "referrer_id",
           "object"
         ]
+      },
+      "OrderRedemptions": {
+        "title": "Order Redemptions",
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the redemption was created in ISO 8601 format.",
+            "example": "2022-09-02T17:06:56.649Z",
+            "format": "date-time"
+          },
+          "rollback_id": {
+            "type": "string",
+            "description": "Unique ID of the redemption rollback.",
+            "example": "rr_0c63c84eb78ee0a6c0"
+          },
+          "rollback_date": {
+            "type": "string",
+            "description": "Timestamp representing the date and tiem when the redemption rollback was created in ISO 8601 format.",
+            "example": "2023-01-31T14:18:37.150Z",
+            "format": "date-time"
+          },
+          "related_object_type": {
+            "type": "string",
+            "description": "The source of the incentive.",
+            "default": "redemption"
+          },
+          "related_object_id": {
+            "type": "string",
+            "description": "Unique ID of the parent redemption.",
+            "example": "r_0ba186c4824e4881e1"
+          },
+          "related_object_parent_id": {
+            "type": "string",
+            "description": "Represent's the campaign ID of the voucher if the redemption was based on a voucher that was part of bulk codes generated within a campaign. In case of a promotion tier, this represents the campaign ID of the promotion tier's parent campaign."
+          },
+          "stacked": {
+            "type": "array",
+            "description": "Contains a list of unique IDs of child redemptions, which belong to the stacked incentives.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rollback_stacked": {
+            "type": "array",
+            "description": "Lists the rollback redemption IDs of the particular child redemptions.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
       },
       "VouchersValidateDiscountRequestBody": {
         "type": "object",
@@ -1548,33 +1605,6 @@
           "valid",
           "code"
         ]
-      },
-      "OrderRedemptions": {
-        "type": "object",
-        "title": "Order Redemptions",
-        "additionalProperties": {
-          "type": "object",
-          "properties": {
-            "date": {
-              "type": "string"
-            },
-            "related_object_type": {
-              "type": "string"
-            },
-            "related_object_id": {
-              "type": "string"
-            },
-            "related_object_parent_id": {
-              "type": "string"
-            },
-            "stacked": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        }
       },
       "SimpleProductDiscountUnit": {
         "type": "object",
@@ -5169,7 +5199,15 @@
         "description": "Response body schema for `vouchers/{code}/balance.`",
         "type": "object",
         "title": "Add or Remove Voucher Balance Response Body",
-        "required": [ "amount", "total", "balance", "type", "object", "related_object", "operation_type" ],
+        "required": [
+          "amount",
+          "total",
+          "balance",
+          "type",
+          "object",
+          "related_object",
+          "operation_type"
+        ],
         "properties": {
           "amount": {
             "type": "integer",
@@ -5209,7 +5247,10 @@
           "related_object": {
             "type": "object",
             "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
-            "required": [ "type", "id" ],
+            "required": [
+              "type",
+              "id"
+            ],
             "properties": {
               "type": {
                 "type": "string",
@@ -29014,7 +29055,6 @@
           "object"
         ]
       },
-
       "product_collections_static_collection": {
         "title": "Static Product Collection",
         "type": "object",
@@ -29157,13 +29197,17 @@
             "type": "string",
             "description": "The type of object represented by JSON. This object stores information about product collections.",
             "default": "list",
-            "enum":  [ "list" ]
+            "enum": [
+              "list"
+            ]
           },
           "data_ref": {
             "type": "string",
             "default": "data",
             "description": "Identifies the name of the JSON property that contains the array of product collections.",
-            "enum":  [ "data" ]
+            "enum": [
+              "data"
+            ]
           },
           "data": {
             "description": "A dictionary that contains an array of product collections and their details.",
@@ -40359,16 +40403,16 @@
       },
       "product_collections_collection_item": {
         "title": "Product Collection",
-        "type":  "object",
+        "type": "object",
         "description": "This is an object representing a product collection.  \n\nThe products can be grouped into collections by the creation of a products collection object. You can retrieve a product collection and a list of products in the collection. Product collections are identified by a unique ID.",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/product_collections_static_collection"
-              },
-              {
-                "$ref": "#/components/schemas/product_collections_dynamic_collection"
-              }
-            ]
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/product_collections_static_collection"
+          },
+          {
+            "$ref": "#/components/schemas/product_collections_dynamic_collection"
+          }
+        ]
       },
       "product_collections_create_request_body": {
         "title": "product_collections_create_request_body",
@@ -53145,7 +53189,7 @@
           "VALIDATIONS API"
         ],
         "summary": "Validate Promotions [Deprecated]",
-        "description": "<!-- theme: danger -->\n> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for qualification, and we do not recommend using it. The new [Qualifications API](ref:examine-qualification) introduces additional features and improvements while maintaining backward compatibility. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint. \n\nUse this method to get valid promotions for a given customer and order.\n\n### Advanced validation filters\n\nYou can narrow down a validation to a specific promotion ID or tier metadata. Here are the examples of filtering queries you can use:\n\n| **Filter** | **Example** |\n|:---|:---|\n| promotion_id | [filters][promotion_id][conditions][$is]={{campaign_id}} |\n| tier metadata | [filters][metadata.{{promotion tier metadata key}}][conditions][$is]={{promotion tier metadata value}} |\n\n<!--\ntitle: \"Validate promotion against customer rules\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }'/\n  'https://api.voucherify.io/v1/promotions/validation?audienceRulesOnly=true'\n```\n<!--\ntitle: \"Validate promotion for specific campaign\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    },\n    \"metadata\": {\n        \"store_names\": \"Store 1 - New York - Broadway\"\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][promotion_id][conditions][$is]=camp_nYcAyjFXmEaBU0nB7EQ4hVTr'\n```\n<!--\ntitle: \"Validate promotion based on tier metadata\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][metadata.has_budget][conditions][$is]=true'\n```",
+        "description": "<!-- theme: danger -->\n> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for qualification, and we do not recommend using it. The new [Qualifications API](ref:examine-qualification) introduces additional features and improvements while maintaining backward compatibility. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint. \n\n <!-- theme: danger -->\n> ❗️ Limitation  \n>\n> Only the first 150 most recent promotion tiers are checked for eligibility. Older promotion tiers are ignored and not returned. \n\n Use this method to get valid promotions for a given customer and order.\n\n### Advanced validation filters\n\nYou can narrow down a validation to a specific promotion ID or tier metadata. Here are the examples of filtering queries you can use:\n\n| **Filter** | **Example** |\n|:---|:---|\n| promotion_id | [filters][promotion_id][conditions][$is]={{campaign_id}} |\n| tier metadata | [filters][metadata.{{promotion tier metadata key}}][conditions][$is]={{promotion tier metadata value}} |\n\n<!--\ntitle: \"Validate promotion against customer rules\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }'/\n  'https://api.voucherify.io/v1/promotions/validation?audienceRulesOnly=true'\n```\n<!--\ntitle: \"Validate promotion for specific campaign\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    },\n    \"metadata\": {\n        \"store_names\": \"Store 1 - New York - Broadway\"\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][promotion_id][conditions][$is]=camp_nYcAyjFXmEaBU0nB7EQ4hVTr'\n```\n<!--\ntitle: \"Validate promotion based on tier metadata\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][metadata.has_budget][conditions][$is]=true'\n```",
         "parameters": [
           {
             "schema": {

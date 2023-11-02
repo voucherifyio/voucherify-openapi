@@ -1,5 +1,33 @@
 # Changelog
 
+## 20231030 - Order Model
+
+**Removed schemas**
+- Order
+
+**Added schemas**
+- OrderRequest
+- OrderItemResponse
+- OrderResponse
+- OrderItemResponse
+- OrderRedemptions
+
+**Updated order object markdown.**
+
+**Added support for `additionalProperties` to markdown generator.**
+
+## 20231031 Integration blueprint – 2 new articles
+
+Added the following articles to the Integration Blueprint section:
+- Integration overview
+- Modeling Voucherify integration
+- Campaign limits
+- 
+## 20231027 - Welcome to Voucherify, Stackable Discounts
+
+- Added new article "Welcome to Voucherify" in "Getting started"
+- Updated the "Stackable discounts API" article – current redeemable limit is 30, not 5
+
 ## 20231027 - Product Collections
 
 - Fixed displaying of product collections object in response.
@@ -16,19 +44,6 @@
 **Endpoint change**:
 - Changed `operationId` to `add-remove-voucher-balance` for POST `/v1/vouchers/{code}/balance`
 - Updated title and descriptions so that they also apply to loyalty cards.
-
-## 20231030 - Order Model
-
-**Removed schemas**
-- Order
-
-**Added schemas**
-- OrderRequest
-- OrderItemResponse
-- OrderResponse
-- OrderItemResponse
-
-**Updated order object markdown.**
 
 ## 20231027 - GET List Member Rewards
 
@@ -55,6 +70,18 @@ Added `required` and `description` attributes in `LoyaltiesListMemberRewardsResp
     - Request body schema was replaced with new one: `ValidationsValidateRequestBody` (old one: `19_req_validations`)
 - POST `/client/v1/redemptions`
     - Request body schema was replaced with new one: `RedemptionsRedeemRequestBody` (old one: `19_req_redemptions`)
+
+## 20231031 - Integration Blueprint
+
+**Adding a new section and articles**
+- Added 'Integration Blueprint' section in 'Guides'
+- Added 'Data-Model.md' article
+- Added 'Data-Volume-Estimation.md' article
+- Added 'Distributions.md' article
+- Added 'Multi-brand management & internationalization.md' article
+- Added 'Security.md' article
+- Added 'Team-management.md' article
+
 
 ## 20231025 - Rewards, Loyalties
 
