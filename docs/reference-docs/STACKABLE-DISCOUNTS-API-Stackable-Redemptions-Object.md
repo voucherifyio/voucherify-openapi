@@ -14,7 +14,7 @@ order: 3
 | redemptions</br>`array` | Array of [Redemption](#redemption) |
 | parent_redemption | See: [Redemption](#redemption) |
 | order | <p>Contains the order details associated with the redemption.</p> See: [Order Response](#order-response) |
-| inapplicable_redeemables</br>`array` | <p>Lists validation results of each redeemable. If a redeemable can be applied, the API returns <code>&quot;status&quot;: &quot;APPLICABLE&quot;</code>.</p> Array of [Inapplicable Redeemable](#inapplicable-redeemable) |
+| inapplicable_redeemables</br>`array` | <p>Lists validation results of each inapplicable redeemable.</p> Array of [Inapplicable Redeemable](#inapplicable-redeemable) |
 | skipped_redeemables</br>`array` | <p>Lists validation results of each redeemable. If a redeemable can be applied, the API returns <code>&quot;status&quot;: &quot;APPLICABLE&quot;</code>.</p> Array of [Skipped Redeemable](#skipped-redeemable) |
 
 ## Redemption
@@ -54,15 +54,15 @@ All of:
 |:-----|:--------|
 | status</br>`string` | <p>Indicates whether the redeemable can be applied or not applied based on the validation rules.</p> Available values: `INAPPLICABLE` |
 | id</br>`string` | <p>Redeemable ID, i.e. the voucher code.</p> |
-| object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher` |
+| object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
 | result</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">error</td><td style="text-align:left">See: <a href="#error-object">Error Object</a></td></tr></tbody></table> |
 
 ## Skipped Redeemable
 | Attributes |  Description |
 |:-----|:--------|
-| status</br>`string` | <p>Indicates whether the redeemable can be applied or not applied based on the validation rules.</p> Available values: `INAPPLICABLE` |
+| status</br>`string` | <p>Indicates whether the redeemable can be applied or not applied based on the validation rules.</p> Available values: `SKIPPED` |
 | id</br>`string` | <p>Redeemable ID, i.e. the voucher code.</p> |
-| object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher` |
+| object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
 | result</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead></table> |
 
 ## Redemption Base
@@ -154,7 +154,8 @@ All of:
 | message</br>`string` | <p>A human-readable message providing a short description about the error.</p> |
 | details</br>`string` | <p>A human-readable message providing more details about the error.</p> |
 | request_id</br>`string` | <p>This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team.</p> **Example:** <p>v-0a885062c80375740f</p> |
-| error</br>`object` | <p>Contains custom user-defined error message translation.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>Error message translation defined in Dashboard → Project Settings → Error Messages</p></td></tr></tbody></table> |
+| resource_id</br>`string` | <p>Unique resource ID that can be used in another endpoint to get more details.</p> **Example:** <p>rf_0c5d710a87c8a31f86</p> |
+| resource_type</br>`string` | <p>The resource type.</p> **Example:** <p>voucher</p> |
 
 ## Pay with Points Reward
 | Attributes |  Description |
@@ -339,9 +340,10 @@ All of:
 | object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
+| stacking_rules_type</br>`string` | <p>The type of category stacking rules</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Discount
-<p>Discount details about the type of discount to be applied for the redeemable.</p>
+<p>Contains information about discount.</p>
 
 Any of:
 
