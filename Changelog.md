@@ -8,6 +8,12 @@
 
 - StackableValidateRedeemRequestBase
 
+## 20231103 - Events API
+
+**Changed schemas**
+- 15_req_track_custom_event to TrackCustomEventRequestBody
+- 15_res_track_custom_event to TrackCustomEventResponseBody
+
 ## 20231102 - Stackable Validations and stackable redemptions
 
 **Removed schemas**
