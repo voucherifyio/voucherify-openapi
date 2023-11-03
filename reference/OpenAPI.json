@@ -1015,6 +1015,11 @@
             "type": "string",
             "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
           },
+          "birthday": {
+            "type": "string",
+            "description": "*Deprecated* Customer's birthdate; format YYYY-MM-DD.",
+            "format": "date"
+          },
           "birthdate": {
             "type": "string",
             "description": "Customer's birthdate; format YYYY-MM-DD.",
@@ -1051,9 +1056,44 @@
               }
             }
           },
+          "summary": {
+            "$ref": "#/components/schemas/CustomerSummary"
+          },
+          "loyalty": {
+            "$ref": "#/components/schemas/CustomerLoyalty"
+          },
+          "referrals": {
+            "$ref": "#/components/schemas/CustomerReferrals"
+          },
           "metadata": {
             "type": "object",
             "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
+          },
+          "system_metadata": {
+            "type": "object",
+            "description": "Object used to store system metadata information."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the customer was created in ISO 8601 format.",
+            "example": "2022-08-30T06:32:07.380Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the customer was updated in ISO 8601 format.",
+            "example": "2022-08-31T06:32:07.380Z",
+            "format": "date-time"
+          },
+          "assets": {
+            "type": "object",
+            "description": "Contains information about the customer's cockpit.",
+            "properties": {
+              "cockpit_url": {
+                "type": "string",
+                "description": "Customer's cockpit URL address."
+              }
+            }
           },
           "object": {
             "type": "string",
@@ -1062,6 +1102,186 @@
             "enum": [
               "customer"
             ]
+          }
+        }
+      },
+      "CustomerReferrals": {
+        "title": "Customer Referrals",
+        "type": "object",
+        "description": "Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total number of times this customer received a referral, i.e. was referred by another customer."
+          },
+          "campaigns": {
+            "type": "array",
+            "description": "Contains an array of campaigns that served as the source of a referral for the customer.",
+            "items": {
+              "type": "object",
+              "description": "Contains information about the source of the referral.",
+              "properties": {
+                "campaign_id": {
+                  "type": "string",
+                  "description": "Unique campaign ID, assigned by Voucherify.",
+                  "example": "camp_rRsfatlwN7unSeUIJDCYedal"
+                },
+                "referrer_id": {
+                  "type": "string",
+                  "example": "cust_sehkNIi8Uq2qQuRqSr7xn4Zi",
+                  "description": "Unique referrer ID, assigned by Voucherify. This is the customer ID of a customer that is referring this customer."
+                },
+                "related_object_id": {
+                  "type": "string",
+                  "description": "Related object ID, i.e. `r_0b9d4cc4aa164dd073`."
+                },
+                "related_object_type": {
+                  "type": "string",
+                  "description": "Related object type, i.e. `redemption`."
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2022-08-30T10:19:39.196Z",
+                  "description": "Timestamp representing the date and time when the customer was referred in ISO 8601 format."
+                }
+              }
+            }
+          }
+        }
+      },
+      "CustomerLoyalty": {
+        "title": "Customer Loyalty",
+        "type":   "object",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "Customer's loyalty points."
+          },
+          "referred_customers": {
+            "type": "integer",
+            "description": "Total number of customers referred by the customer."
+          },
+          "campaigns": {
+            "type": "object",
+            "description": "Contains campaigns with details about point balances and how many customers were referred by the customer.",
+            "additionalProperties": {
+                "type": "object",
+                "description": "Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.",
+                "properties": {
+                  "points": {
+                    "type": "integer",
+                    "description": "Remaining point balance in campaign."
+                  },
+                  "loyalty_tier": {
+                    "type": "string",
+                    "example": "ltr_UJ5Q54Q0OvEhua87Qfv2Ki5x",
+                    "description": "Customer's loyalty tier within the campaign."
+                  },
+                  "referred_customers": {
+                    "type": "integer",
+                    "description": "Number of customers referred by the customer in campaign."
+                  }
+                }
+            }
+          }
+        }
+      },
+      "CustomerSummary": {
+        "title": "Customer Summary",
+        "type":   "object",
+        "properties": {
+          "redemptions": {
+            "$ref": "#/components/schemas/CustomerSummaryRedemptions"
+          },
+          "campaigns": {
+            "$ref": "#/components/schemas/CustomerSummaryOrders"
+          }
+        }
+      },
+      "CustomerSummaryOrders": {
+        "title": "Customer Summary Orders",
+        "type":   "object",
+        "properties": {
+          "total_amount": {
+            "type": "integer",
+            "description": "The total amount spent by the customer. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "Total number of orders made by the customer."
+          },
+          "average_amount": {
+            "type": "integer",
+            "description": "Average amount spent on orders. `total_amount` &divide; `total_count`. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+          },
+          "last_order_amount": {
+            "type": "integer",
+            "description": "Amount spent on last order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+          },
+          "last_order_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-08-30T11:51:08.029Z",
+            "description": "Timestamp representing the date and time of the customer's last order in ISO 8601 format."
+          }
+        }
+      },
+      "CustomerSummaryRedemptions": {
+        "title": "Customer Summary Redemptions",
+        "type":   "object",
+        "properties": {
+          "total_redeemed": {
+            "type": "integer",
+            "description": "Total number of redemptions made by the customer."
+          },
+          "total_failed": {
+            "type": "integer",
+            "description": "Total number of redemptions that failed."
+          },
+          "total_succeeded": {
+            "type": "integer",
+            "description": "Total number of redemptions that succeeded."
+          },
+          "total_rolled_back": {
+            "type": "integer",
+            "description": "Total number of redemptions that were rolled back for the customer."
+          },
+          "total_rollback_failed": {
+            "type": "integer",
+            "description": "Total number of redemption rollbacks that failed."
+          },
+          "total_rollback_succeeded": {
+            "type": "integer",
+            "description": "Total number of redemption rollbacks that succeeded."
+          },
+          "gift": {
+            "type": "object",
+            "description": "Summary of gift card credits.",
+            "properties": {
+              "redeemed_amount": {
+                "type": "integer",
+                "description": "Total amount of gift card credits redeemed by customer. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+              },
+              "amount_to_go": {
+                "type": "integer",
+                "description": "Remaining gift card balance across all gift cards. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+              }
+            }
+          },
+          "loyalty_card": {
+            "type": "object",
+            "description": "Summary of loyalty points.",
+            "properties": {
+              "redeemed_points": {
+                "type": "integer",
+                "description": "Total number of loyalty points redeemed by the customer."
+              },
+              "points_to_go": {
+                "type": "integer",
+                "description": "Sum of remaining available point balance across all loyalty cards."
+              }
+            }
           }
         }
       },
