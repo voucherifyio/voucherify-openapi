@@ -1869,27 +1869,6 @@
         ],
         "type": "string"
       },
-      "Discount": {
-        "title": "Discount",
-        "description": "Discount details about the type of discount to be applied for the redeemable.",
-        "anyOf": [
-          {
-            "$ref": "#/components/schemas/DiscountAmount"
-          },
-          {
-            "$ref": "#/components/schemas/DiscountUnit"
-          },
-          {
-            "$ref": "#/components/schemas/DiscountUnitMultiple"
-          },
-          {
-            "$ref": "#/components/schemas/DiscountPercent"
-          },
-          {
-            "$ref": "#/components/schemas/DiscountFixed"
-          }
-        ]
-      },
       "Voucher": {
         "title": "Voucher",
         "type": "object",
@@ -30358,28 +30337,20 @@
           }
         }
       },
-      "15_req_track_custom_event": {
+      "TrackCustomEventRequestBody": {
         "title": "Track Custom Event Request Body",
         "type": "object",
         "description": "Request schema for tracking a custom event.",
         "properties": {
           "event": {
             "type": "string",
-            "description": "Event name. This is the same name that you used to define a custom event in the **Dashboard** > **Project Settings** > **Event Schema**."
+            "description": "Event name. This is the same name that you used to define a custom event in the **Dashboard** > **Project Settings** > **Event Schema**.",
+            "minLength": 1,
+            "maxLength": 300
           },
           "customer": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/6_req_validate_voucher_customer_id"
-              },
-              {
-                "$ref": "#/components/schemas/6_req_validate_voucher_customer_source_id"
-              },
-              {
-                "$ref": "#/components/schemas/9_req_create_customer"
-              }
-            ],
-            "type": "object"
+            "$ref": "#/components/schemas/CustomerRequest",
+            "description": "Customer's information."
           },
           "referral": {
             "type": "object",
@@ -30394,7 +30365,10 @@
                 "description": "Unique ID of the referring person - it is optional and not required if the referral **code** is provided.",
                 "example": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv"
               }
-            }
+            },
+            "required": [
+              "code"
+            ]
           },
           "loyalty": {
             "type": "object",
@@ -30404,15 +30378,22 @@
                 "type": "string",
                 "description": "Code of the loyalty card to receive points based on the calculation method defined in the related earning rule. An earning rule is triggered for the loyalty card when the event passed in the `event` parameter of the request payload gets sent along with this loyalty card code."
               }
-            }
+            },
+            "required": [
+              "code"
+            ]
           },
           "metadata": {
             "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the event. A set of key/value pairs that you can attach to an event object. It can be useful for storing additional information about the event in a structured format. Event metadata schema is defined in the **Dashboard** > **Project Settings** > **Event Schema** > **Edit particular event** > **Metadata property definition**."
           }
-        }
+        },
+        "required": [
+          "event",
+          "customer"
+        ]
       },
-      "15_res_track_custom_event": {
+      "TrackCustomEventResponseBody": {
         "title": "Track Custom Event Request Body",
         "type": "object",
         "description": "Request schema for tracking a custom event.",
@@ -30420,7 +30401,10 @@
           "object": {
             "type": "string",
             "default": "event",
-            "description": "The object represented is an `event`."
+            "description": "The object represented is an `event`.",
+            "enum": [
+              "event"
+            ]
           },
           "type": {
             "type": "string",
@@ -30433,13 +30417,22 @@
           },
           "referral": {
             "type": "null",
-            "description": "A `null` referral object."
+            "description": "A `null` referral object.",
+            "nullable": "true"
           },
           "loyalty": {
             "type": "null",
-            "description": "A `null` loyalty object."
+            "description": "A `null` loyalty object.",
+            "nullable": "true"
           }
-        }
+        },
+        "required": [
+          "object",
+          "type",
+          "customer",
+          "referral",
+          "loyalty"
+        ]
       },
       "16_obj_export_object": {
         "title": "Export Object",
@@ -31234,13 +31227,12 @@
         }
       },
       "voucher_transactions_export_filter_conditions": {
-        "description": "Filter conditions set on the `voucher_id`.",
+        "description": "Filter condition.",
         "title": "Filter by voucher ID",
         "type": "object",
         "required": [
           "voucher_id"
         ],
-        "description": "Filter condition.",
         "properties": {
           "voucher_id": {
             "type": "object",
@@ -40144,9 +40136,7 @@
           "key",
           "message",
           "details",
-          "request_id",
-          "resource_id",
-          "resource_type"
+          "request_id"
         ]
       },
       "e_error_no_translation": {
@@ -78185,7 +78175,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/15_req_track_custom_event"
+                "$ref": "#/components/schemas/TrackCustomEventRequestBody"
               },
               "examples": {
                 "Example": {
@@ -78245,14 +78235,23 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/15_res_track_custom_event"
+                  "$ref": "#/components/schemas/TrackCustomEventResponseBody"
                 },
                 "examples": {
                   "Example": {
                     "value": {
                       "object": "event",
                       "type": "cart_abandoned",
-                      "customer": {},
+                      "customer": {
+                        "id": "cust_ypePCF6IU6fnUvec6RMXZuH4",
+                        "name": "John Doe",
+                        "email": "john@voucherify.io",
+                        "source_id": "source_customer_event",
+                        "metadata": {
+                          "prop": "value"
+                        },
+                        "object": "customer"
+                      },
                       "referral": null,
                       "loyalty": null
                     }
@@ -78266,16 +78265,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Invalid payload": {
                     "value": {
-                      "code": 400,
-                      "key": "invalid_payload",
-                      "message": "Invalid payload",
-                      "details": "Property .referral should have required property 'code'",
-                      "request_id": "v-0c15694e0e022146dd"
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id registered_10055",
+                      "request_id": "v-0dc6ead2680056a15a",
+                      "resource_id": "registered_10055",
+                      "resource_type": "customer"
                     }
                   }
                 }
@@ -78309,7 +78310,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/15_req_track_custom_event"
+                "$ref": "#/components/schemas/TrackCustomEventRequestBody"
               },
               "examples": {
                 "Referral triggered by custom event": {
@@ -78357,14 +78358,23 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/15_res_track_custom_event"
+                  "$ref": "#/components/schemas/TrackCustomEventResponseBody"
                 },
                 "examples": {
                   "Example": {
                     "value": {
                       "object": "event",
                       "type": "cart_abandoned",
-                      "customer": {},
+                      "customer": {
+                        "id": "cust_ypePCF6IU6fnUvec6RMXZuH4",
+                        "name": "John Doe",
+                        "email": "john@voucherify.io",
+                        "source_id": "source_customer_event",
+                        "metadata": {
+                          "prop": "value"
+                        },
+                        "object": "customer"
+                      },
                       "referral": null,
                       "loyalty": null
                     }
@@ -78378,7 +78388,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Invalid payload": {
