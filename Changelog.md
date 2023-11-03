@@ -7,6 +7,7 @@
 - CustomerBase
 - CustomersCreateRequestBody
 - CustomersUpdateRequestBody
+- CustomersUpdateResponseBody
 - CustomerRequest
 - CustomersCreateResponseBody
 - CustomerReferrals
@@ -21,6 +22,25 @@
 - CustomersUpdateCustomersConsentsRequestBody
 - CustomersListCustomersSegments
 - SimpleSegment
+
+**Endpoints changes**
+- GET `/v1/customers`
+  - Request body schema was replaced with new one: `CustomersListResponseBody` (old one: `9_res_list_customers`)
+- POST `/v1/customers`
+  - Request body schema was replaced with new one: `CustomersCreateRequestBody` (old one: `9_req_create_customer`)
+  - Response body schema was replaced with new one: `CustomersCreateResponseBody` (old one: `9_obj_customer_object`)
+- GET `/v1/customers/{id}`
+  - Response body schema was replaced with new one: `CustomersGetResponseBody` (old one: `9_obj_customer_object`)
+- PUT `/v1/customers/{customerId}`
+  - Request body schema was replaced with new one: `CustomersUpdateRequestBody` (old one: `9_req_update_customer`)
+  - Response body schema was replaced with new one: `CustomersUpdateResponseBody` (old one: `9_obj_customer_object`)
+- POST `/v1/customers/bulk/async`
+  - Request body schema was replaced with new one: `CustomersUpdateInBulkRequestBody` (old one: `customers_update_in_bulk_request_body`)
+- PUT `/v1/customers/{customerId}/consents`
+  - Request body schema was replaced with new one: `CustomersUpdateCustomersConsentsRequestBody` (old one: `9_req_update_customers_consents`)
+  - Response body schema was replaced with new one: `CustomersUpdateCustomersConsentsRequestBody` (old one: `9_req_update_customers_consents`)
+- GET `/v1/customers/{customerId}/segments`
+  - Response body schema was replaced with new one: `CustomersListCustomersSegments` (old one: `14_res_customers_customerId_segments`)
 
 ## 20231103 - Events API
 
