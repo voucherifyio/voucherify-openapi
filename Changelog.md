@@ -1,5 +1,36 @@
 # Changelog
 
+## 20231102 - Stackable Validations and stackable redemptions
+
+**Removed schemas**
+- Customer
+- Referrer
+
+**Added schemas**
+
+- ReferrerRequest
+- ReferrerResponse
+- CustomerRequest
+- CustomerResponse
+- Discount
+- VoucherAssets
+- ValidationsValidateResponseBody
+- ValidationsRedeemableApplicable
+- ValidationsRedeemableInapplicable
+- ValidationsRedeemableSkipped
+- ValidationsValidateAllProvidedPromotionsMustBeValidResponseBody
+- ValidationsValidateAtLeastOnePromotionMustBeValidResponseBody
+- RedeemableResultVoucherCode
+- RedeemableResultGiftCard
+- RedeemableResultLoyaltyCard
+- RedeemableResultPromotionTier
+- RedeemableResultPromotionStack
+- RedemptionsRedeemResponseBody
+- RedemptionsRedemption
+- RedemptionsRedemptionBase
+
+**REMOVED ALL DUMMY ENDPOINTS AS WE DON'T USE THEM ANYMORE!!!**
+
 ## 20231102 - Qualifications
 
 **Added schemas**
@@ -881,7 +912,6 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 /reference/the-custom-event-object -> /reference/custom-event-object
 /reference/the-export-object -> /reference/export-object
 /reference/the-metadata-schema-object -> /reference/metadata-schema-object
-/reference/add-remove-gift-voucher-balance -> /reference/add-remove-voucher-balance
 
 ### Dummy endpoints
 
