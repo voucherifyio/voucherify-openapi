@@ -18,16 +18,22 @@ order: 1
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the event. A set of key/value pairs that you can attach to an event object. It can be useful for storing additional information about the event in a structured format. Event metadata schema is defined in the <strong>Dashboard</strong> &gt; <strong>Project Settings</strong> &gt; <strong>Event Schema</strong> &gt; <strong>Edit particular event</strong> &gt; <strong>Metadata property definition</strong>.</p> |
 
 ## Customer Request
+All of:
+
+1. <h3>Customer Id</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>The ID of an existing customer that will be linked to redemption in this request.</p></td></tr></tbody></table>
+2. [Customer Base](#customer-base)
+
+## Customer Base
 | Attributes |  Description |
 |:-----|:--------|
-| id</br>`string` | <p>The ID of an existing customer that will be linked to redemption in this request.</p> |
 | source_id</br>`string` | <p>A unique identifier of a customer that validates a voucher. It can be a customer ID or email from a CRM system, database or 3rd-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.</p> |
 | name</br>`string` | <p>Customer's first and last name.</p> |
 | description</br>`string` | <p>An arbitrary string that you can attach to a customer object.</p> |
 | email</br>`string` | <p>Customer's email address.</p> |
 | phone</br>`string` | <p>Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel.</p> |
+| birthday</br>`string` | <p><em>Deprecated</em> Customer's birthdate; format YYYY-MM-DD.</p> |
 | birthdate</br>`string` | <p>Customer's birthdate; format YYYY-MM-DD.</p> |
-| address</br>`object` | <p>Customer's address.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">city</br><code>string</code></td><td style="text-align:left"><p>City</p></td></tr><tr><td style="text-align:left">state</br><code>string</code></td><td style="text-align:left"><p>State</p></td></tr><tr><td style="text-align:left">line_1</br><code>string</code></td><td style="text-align:left"><p>First line of address.</p></td></tr><tr><td style="text-align:left">line_2</br><code>string</code></td><td style="text-align:left"><p>Second line of address.</p></td></tr><tr><td style="text-align:left">country</br><code>string</code></td><td style="text-align:left"><p>Country.</p></td></tr><tr><td style="text-align:left">postal_code</br><code>string</code></td><td style="text-align:left"><p>Postal code.</p></td></tr></tbody></table> |
+| address</br>`object,null` | <p>Customer's address.</p> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.</p> |
 
 [block:html]

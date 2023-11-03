@@ -917,14 +917,10 @@
           }
         ]
       },
-      "CustomerRequest": {
+      "CustomerBase": {
+        "title": "Customer Base",
         "type": "object",
-        "title": "Customer Request",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "The ID of an existing customer that will be linked to redemption in this request."
-          },
           "source_id": {
             "type": "string",
             "description": "A unique identifier of a customer that validates a voucher. It can be a customer ID or email from a CRM system, database or 3rd-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
@@ -945,14 +941,18 @@
             "type": "string",
             "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
           },
+          "birthday": {
+            "type": "string",
+            "description": "*Deprecated* Customer's birthdate; format YYYY-MM-DD.",
+            "format": "date"
+          },
           "birthdate": {
             "type": "string",
             "description": "Customer's birthdate; format YYYY-MM-DD.",
             "format": "date"
           },
           "address": {
-            "type": "object",
-            "additionalProperties": false,
+            "type": ["object","null"],
             "description": "Customer's address.",
             "properties": {
               "city": {
@@ -987,134 +987,108 @@
           }
         }
       },
+      "CustomersCreateRequestBody": {
+        "title": "Customers Create Request Body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CustomerBase"
+          }
+        ]
+      },
+      "CustomersUpdateRequestBody": {
+        "title": "Customers Update Request Body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CustomerBase"
+          }
+        ]
+      },
+      "CustomerRequest": {
+        "title": "Customer Request",
+        "allOf": [
+          {
+            "type": "object",
+            "title": "Customer Id",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The ID of an existing customer that will be linked to redemption in this request."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/CustomerBase"
+          }
+        ]
+      },
       "CustomerResponse": {
-        "type": "object",
         "title": "Customer Response",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "The ID of an existing customer that will be linked to redemption in this request."
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CustomerBase"
           },
-          "source_id": {
-            "type": "string",
-            "description": "A unique identifier of a customer that validates a voucher. It can be a customer ID or email from a CRM system, database or 3rd-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
-          },
-          "name": {
-            "type": "string",
-            "description": "Customer's first and last name."
-          },
-          "description": {
-            "type": "string",
-            "description": "An arbitrary string that you can attach to a customer object."
-          },
-          "email": {
-            "type": "string",
-            "description": "Customer's email address."
-          },
-          "phone": {
-            "type": "string",
-            "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
-          },
-          "birthday": {
-            "type": "string",
-            "description": "*Deprecated* Customer's birthdate; format YYYY-MM-DD.",
-            "format": "date"
-          },
-          "birthdate": {
-            "type": "string",
-            "description": "Customer's birthdate; format YYYY-MM-DD.",
-            "format": "date"
-          },
-          "address": {
-            "type": [
-              "object",
-              "null"
-            ],
-            "additionalProperties": false,
-            "description": "Customer's address.",
+          {
+            "type": "object",
+            "title": "Customer Response Data",
             "properties": {
-              "city": {
+              "id": {
                 "type": "string",
-                "description": "City"
+                "description": "The ID of an existing customer that will be linked to redemption in this request."
               },
-              "state": {
-                "type": "string",
-                "description": "State"
+              "summary": {
+                "$ref": "#/components/schemas/CustomerSummary"
               },
-              "line_1": {
-                "type": "string",
-                "description": "First line of address."
+              "loyalty": {
+                "$ref": "#/components/schemas/CustomerLoyalty"
               },
-              "line_2": {
-                "type": "string",
-                "description": "Second line of address."
+              "referrals": {
+                "$ref": "#/components/schemas/CustomerReferrals"
               },
-              "country": {
-                "type": "string",
-                "description": "Country."
+              "system_metadata": {
+                "type": "object",
+                "description": "Object used to store system metadata information."
               },
-              "postal_code": {
+              "created_at": {
                 "type": "string",
-                "description": "Postal code."
+                "description": "Timestamp representing the date and time when the customer was created in ISO 8601 format.",
+                "example": "2022-08-30T06:32:07.380Z",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the customer was updated in ISO 8601 format.",
+                "example": "2022-08-31T06:32:07.380Z",
+                "format": "date-time"
+              },
+              "assets": {
+                "type": "object",
+                "description": "Contains information about the customer's cockpit.",
+                "properties": {
+                  "cockpit_url": {
+                    "type": "string",
+                    "description": "Customer's cockpit URL address."
+                  }
+                }
+              },
+              "object": {
+                "type": "string",
+                "description": "The type of object represented by JSON.",
+                "default": "customer",
+                "enum": [
+                  "customer"
+                ]
               }
-            }
-          },
-          "summary": {
-            "$ref": "#/components/schemas/CustomerSummary"
-          },
-          "loyalty": {
-            "$ref": "#/components/schemas/CustomerLoyalty"
-          },
-          "referrals": {
-            "$ref": "#/components/schemas/CustomerReferrals"
-          },
-          "metadata": {
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
-          },
-          "system_metadata": {
-            "type": "object",
-            "description": "Object used to store system metadata information."
-          },
-          "created_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the customer was created in ISO 8601 format.",
-            "example": "2022-08-30T06:32:07.380Z",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the customer was updated in ISO 8601 format.",
-            "example": "2022-08-31T06:32:07.380Z",
-            "format": "date-time"
-          },
-          "assets": {
-            "type": "object",
-            "description": "Contains information about the customer's cockpit.",
-            "properties": {
-              "cockpit_url": {
-                "type": "string",
-                "description": "Customer's cockpit URL address."
-              }
-            }
-          },
-          "object": {
-            "type": "string",
-            "description": "The type of object represented by JSON.",
-            "default": "customer",
-            "enum": [
-              "customer"
+            },
+            "required": [
+              "address",
+              "summary",
+              "loyalty",
+              "referrals",
+              "system_metadata",
+              "created_at",
+              "object"
             ]
           }
-        },
-        "required": [
-          "address",
-          "summary",
-          "loyalty",
-          "referrals",
-          "system_metadata",
-          "created_at",
-          "object"
         ]
       },
       "CustomerReferrals": {
@@ -72392,7 +72366,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/9_req_create_customer"
+                "$ref": "#/components/schemas/CustomersCreateRequestBody"
               },
               "examples": {
                 "Example": {
@@ -72678,7 +72652,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/9_req_update_customer"
+                "$ref": "#/components/schemas/CustomersUpdateRequestBody"
               },
               "examples": {
                 "Example": {
