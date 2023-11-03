@@ -1,5 +1,27 @@
 # Changelog
 
+## 20231102 - Customers API
+
+**Added schemas**
+
+- CustomerBase
+- CustomersCreateRequestBody
+- CustomersUpdateRequestBody
+- CustomerRequest
+- CustomersCreateResponseBody
+- CustomerReferrals
+- CustomerLoyalty
+- CustomerSummary
+- CustomerSummaryOrders
+- CustomerSummaryRedemptions
+- CustomersListResponseBody
+- CustomersGetResponseBody
+- CustomersUpdateInBulkRequestBody
+- CustomersUpdateInBulkItemRequestBody
+- CustomersUpdateCustomersConsentsRequestBody
+- CustomersListCustomersSegments
+- SimpleSegment
+
 ## 20231103 - Events API
 
 **Changed schemas**
