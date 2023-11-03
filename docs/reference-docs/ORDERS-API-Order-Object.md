@@ -29,7 +29,7 @@ order: 1
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.</p> |
 | customer | Any of: [Customer Response](#customer-response), [Customer Id Object](#customer-id-object) |
 | customer_id</br>`string,null` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
-| referrer | Any of: [Referrer Request](#referrer-request), [Referrer Id Object](#referrer-id-object) |
+| referrer | Any of: [Referrer Response](#referrer-response), [Referrer Id Object](#referrer-id-object) |
 | referrer_id</br>`string,null` | <p>Unique referrer ID.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `order` |
 | redemptions</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#order-redemptions">Order Redemptions</a></td></tr></tbody></table> |
@@ -67,7 +67,7 @@ All of:
 | id</br>`string` | <p>The ID of an existing customer.</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `customer` |
 
-## Referrer Request
+## Referrer Response
 All of:
 
 1. [Customer Response](#customer-response)
