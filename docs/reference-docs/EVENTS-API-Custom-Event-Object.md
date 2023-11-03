@@ -20,7 +20,7 @@ order: 1
 ## Customer Request
 All of:
 
-1. <h3>Customer Id</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>The ID of an existing customer that will be linked to redemption in this request.</p></td></tr></tbody></table>
+1. <h3>Customer Id</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>The ID of an existing customer.</p></td></tr></tbody></table>
 2. [Customer Base](#customer-base)
 
 ## Customer Base

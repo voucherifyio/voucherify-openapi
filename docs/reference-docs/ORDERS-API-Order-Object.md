@@ -27,9 +27,9 @@ order: 1
 | total_applied_discount_amount</br>`integer` | <p>Sum of all order-level AND all product-specific discounts applied in a particular request.<br><code>total_applied_discount_amount</code> = <code>applied_discount_amount</code> + <code>items_applied_discount_amount</code></p> |
 | items</br>`array` | <p>Array of items applied to the order.</p> Array of [Order Item Response](#order-item-response) |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.</p> |
-| customer | <p>This is an object containing information about the customer.</p> See: [Customer Response](#customer-response) |
+| customer | Any of: [Customer Response](#customer-response), [Customer Id Object](#customer-id-object) |
 | customer_id</br>`string,null` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
-| referrer | <p>This is an object containing information about the referrer.</p> See: [Referrer Request](#referrer-request) |
+| referrer | Any of: [Referrer Request](#referrer-request), [Referrer Id Object](#referrer-id-object) |
 | referrer_id</br>`string,null` | <p>Unique referrer ID.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `order` |
 | redemptions</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#order-redemptions">Order Redemptions</a></td></tr></tbody></table> |
@@ -61,10 +61,21 @@ All of:
 1. [Customer Base](#customer-base)
 2. <h3>Customer Response Data</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>The ID of an existing customer that will be linked to redemption in this request.</p></td></tr><tr><td style="text-align:left">summary</td><td style="text-align:left">See: <a href="#customer-summary">Customer Summary</a></td></tr><tr><td style="text-align:left">loyalty</td><td style="text-align:left">See: <a href="#customer-loyalty">Customer Loyalty</a></td></tr><tr><td style="text-align:left">referrals</td><td style="text-align:left">See: <a href="#customer-referrals">Customer Referrals</a></td></tr><tr><td style="text-align:left">system_metadata</br><code>object</code></td><td style="text-align:left"><p>Object used to store system metadata information.</p></td></tr><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the customer was created in ISO 8601 format.</p> <strong>Example:</strong> <p>2022-08-30T06:32:07.380Z</p></td></tr><tr><td style="text-align:left">updated_at</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the customer was updated in ISO 8601 format.</p> <strong>Example:</strong> <p>2022-08-31T06:32:07.380Z</p></td></tr><tr><td style="text-align:left">assets</br><code>object</code></td><td style="text-align:left"><p>Contains information about the customer's cockpit.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">cockpit_url</br><code>string</code></td><td style="text-align:left"><p>Customer's cockpit URL address.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of object represented by JSON.</p> Available values: <code>customer</code></td></tr></tbody></table>
 
+## Customer Id Object
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>The ID of an existing customer.</p> |
+| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `customer` |
+
 ## Referrer Request
 All of:
 
 1. [Customer Response](#customer-response)
+
+## Referrer Id Object
+All of:
+
+1. [Customer Id Object](#customer-id-object)
 
 ## Order Redemptions
 | Attributes |  Description |

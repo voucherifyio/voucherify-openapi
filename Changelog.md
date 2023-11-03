@@ -5,6 +5,7 @@
 **Added schemas**
 
 - CustomerBase
+- CustomerIdObject
 - CustomersCreateRequestBody
 - CustomersUpdateRequestBody
 - CustomersUpdateResponseBody
