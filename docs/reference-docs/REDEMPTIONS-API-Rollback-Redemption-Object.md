@@ -264,7 +264,7 @@ Any of:
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the SKU. A set of key/value pairs that you can attach to a SKU object. It can be useful for storing additional information about the SKU in a structured format.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the SKU was created in ISO 8601 format.</p> **Example:** <p>2022-05-17T10:36:30.187Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the SKU was updated in ISO 8601 format.</p> **Example:** <p>2022-05-17T10:55:09.137Z</p> |
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>SKU</code>.</p> |
+| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>SKU</code>.</p> Available values: `sku` |
 
 ## Discount Voucher
 | Attributes |  Description |
