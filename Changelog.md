@@ -6,7 +6,7 @@
 
 - CustomerBase
 - CustomerIdObjectResponse
-- ReferrerIdObject
+- ReferrerIdObjectResponse
 - CustomersCreateRequestBody
 - CustomersUpdateRequestBody
 - CustomersUpdateResponseBody
