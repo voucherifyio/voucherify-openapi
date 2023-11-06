@@ -1,5 +1,13 @@
 # Changelog
 
+## 20231103 - Fix `options` in `RedemptionsRedeemRequestBod
+
+- Fix `options` in `RedemptionsRedeemRequestBody`
+
+**Added schemas**
+
+- StackableValidateRedeemRequestBase
+
 ## 20231103 - Events API
 
 **Changed schemas**
