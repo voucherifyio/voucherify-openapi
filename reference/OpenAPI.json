@@ -13546,7 +13546,7 @@
                 "$ref": "#/components/schemas/6_res_validate_promotion_tier_false_custom_message"
               },
               {
-                "$ref": "#/components/schemas/e_error_no_translation"
+                "$ref": "#/components/schemas/Error"
               }
             ]
           },
@@ -18862,7 +18862,7 @@
           },
           "product": {
             "description": "Details of the product redeemed as a reward.",
-            "$ref": "#/components/schemas/11_obj_product_object_truncated"
+            "$ref": "#/components/schemas/ProductResponse"
           },
           "id": {
             "type": "string",
@@ -18963,7 +18963,7 @@
           },
           "product": {
             "description": "Details of the SKU's parent product redeemed as a reward.",
-            "$ref": "#/components/schemas/11_obj_product_object_truncated"
+            "$ref": "#/components/schemas/ProductResponse"
           },
           "sku": {
             "description": "Details of the SKU redeemed as a reward.",
@@ -28209,76 +28209,16 @@
           }
         }
       },
-      "ProductResponse": {
-        "type": "object",
-        "description": "This is an object representing a product.  \n\nThis entity should be used to map product items from your inventory management system. The aim of products is to build  validation rules which reflect product-specific campaigns.",
-        "title": "Product Object",
-        "x-tags": [
-          "PRODUCTS API"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique product ID assigned by Voucherify.",
-            "example": "prod_0b1da8105693710357"
-          },
-          "source_id": {
-            "type": "string",
-            "example": "productSourceID16",
-            "description": "Unique product source ID from your inventory system."
-          },
-          "name": {
-            "type": "string",
-            "description": "Unique user-defined product name.",
-            "example": "T-shirt"
-          },
-          "price": {
-            "type": "integer",
-            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
-          },
-          "attributes": {
-            "type": "array",
-            "description": "A list of product attributes whose values you can customize for given SKUs: `[\"color\",\"size\",\"ranking\"]`. Each child SKU can have a unique value for a given attribute.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
-          },
-          "image_url": {
-            "type": "string",
-            "description": "The HTTPS URL pointing to the .png or .jpg file that will be used to render the product image.",
-            "example": "https://images.com/original.jpg"
-          },
-          "created_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the product was created in ISO 8601 format.",
-            "example": "2022-05-23T06:52:55.008Z",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the product was updated in ISO 8601 format.",
-            "example": "2022-05-23T09:24:07.405Z",
-            "format": "date-time"
-          },
-          "object": {
-            "type": "string",
-            "description": "The type of object represented by JSON. This object stores information about the `product`.",
-            "default": "product"
-          },
-          "skus": {
-            "$ref": "#/components/schemas/SkusListResponse"
-          }
-        }
-      },
-      "11_req_create_product": {
+      "UpsertProductRequestBody": {
         "type": "object",
         "description": "Request schema for **POST** `/products`.",
         "title": "Create Product Request Body",
         "properties": {
+          "id": {
+            "type": "string",
+            "example": "prod_5h0wc453_1",
+            "description": "A unique identifier that represents the product and is assigned by Voucherify."
+          },
           "source_id": {
             "type": "string",
             "example": "productSourceID16",
@@ -28311,32 +28251,10 @@
           }
         }
       },
-      "11_req_update_products_metadata_in_bulk": {
+      "UpdateProductRequestBody": {
         "type": "object",
-        "description": "Request schema for **POST** `/products/metadata/async`.",
-        "title": "Update Products' Metadata in Bulk Request Body",
-        "properties": {
-          "source_ids": {
-            "type": "array",
-            "description": "Array of unique product source IDs.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
-          }
-        },
-        "required": [
-          "source_ids",
-          "metadata"
-        ]
-      },
-      "11_req_update_product": {
-        "type": "object",
-        "description": "Request schema for **PUT** `/products/{productId}`.",
-        "title": "Update Product Request Body",
+        "description": "Request schema for **PUT** `/products`.",
+        "title": "Create Product Request Body",
         "properties": {
           "name": {
             "type": "string",
@@ -28365,7 +28283,29 @@
           }
         }
       },
-      "11_req_update_product_bulk": {
+      "BulkUpsertProductsMetadataRequestBody": {
+        "type": "object",
+        "description": "Request schema for **POST** `/products/metadata/async`.",
+        "title": "Update Products' Metadata in Bulk Request Body",
+        "properties": {
+          "source_ids": {
+            "type": "array",
+            "description": "Array of unique product source IDs.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
+          }
+        },
+        "required": [
+          "source_ids",
+          "metadata"
+        ]
+      },
+      "BulkUpsertProductRequestBody": {
         "type": "object",
         "description": "Request schema for **POST** `/products/bulk/async`.",
         "title": "Update Product Request Body",
@@ -28391,16 +28331,19 @@
               "type": "string"
             }
           },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
-          },
           "image_url": {
             "type": "string",
             "description": "The HTTPS URL pointing to the .png or .jpg file that will be used to render the product image.",
             "example": "https://images.com/original.jpg"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
           }
-        }
+        },
+        "required":  [
+          "source_id"
+        ]
       },
       "ProductsListResponse": {
         "type": "object",
@@ -28432,8 +28375,11 @@
       },
       "ProductResponse": {
         "type": "object",
-        "description": "This is an object representing a product.  \n\nThis entity should be used to map product items from your inventory management system. The aim of products is to build  which reflect product-specific campaigns.",
+        "description": "This is an object representing a product.  \n\nThis entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.",
         "title": "Product Object",
+        "x-tags": [
+          "PRODUCTS API"
+        ],
         "properties": {
           "id": {
             "type": "string",
@@ -28443,16 +28389,19 @@
           "source_id": {
             "type": "string",
             "example": "productSourceID16",
-            "description": "Unique product source ID."
+            "description": "Unique product source ID.",
+            "nullable": true
           },
           "name": {
             "type": "string",
             "description": "Unique user-defined product name.",
-            "example": "T-shirt"
+            "example": "T-shirt",
+            "nullable": true
           },
           "price": {
             "type": "integer",
-            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.",
+            "nullable": true
           },
           "attributes": {
             "type": "array",
@@ -28468,7 +28417,8 @@
           "image_url": {
             "type": "string",
             "description": "The HTTPS URL pointing to the .png or .jpg file that will be used to render the product image.",
-            "example": "https://images.com/original.jpg"
+            "example": "https://images.com/original.jpg",
+            "nullable": true
           },
           "created_at": {
             "type": "string",
@@ -28480,7 +28430,8 @@
             "type": "string",
             "description": "Timestamp representing the date and time when the product was updated in ISO 8601 format.",
             "example": "2022-05-23T09:24:07.405Z",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "object": {
             "type": "string",
@@ -28506,7 +28457,18 @@
                 "description": "Total number of SKUs."
               }
             }
-          }
+          },
+          "required":  [
+            "id",
+            "source_id",
+            "name",
+            "attributes",
+            "metadata",
+            "image_url",
+            "created_at",
+            "updated_at",
+            "object"
+          ]
         }
       },
       "SkusListResponse": {
@@ -28622,65 +28584,6 @@
           "object"
         ]
       },
-      "11_obj_product_object_truncated": {
-        "type": "object",
-        "description": "This is an object representing a product.",
-        "title": "Product Object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique product ID.",
-            "example": "prod_f1r5Tpr0DuC7"
-          },
-          "source_id": {
-            "type": "string",
-            "example": "productSourceID16",
-            "description": "Unique product source ID."
-          },
-          "name": {
-            "type": "string",
-            "description": "Unique user-defined product name.",
-            "example": "T-shirt"
-          },
-          "price": {
-            "type": "integer",
-            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
-          },
-          "attributes": {
-            "type": "array",
-            "description": "A list of product attributes whose values you can customize for given SKUs: `[\"color\",\"size\",\"ranking\"]`. Each child SKU can have a unique value for a given attribute.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
-          },
-          "image_url": {
-            "type": "string",
-            "description": "The HTTPS URL pointing to the .png or .jpg file that will be used to render the product image.",
-            "example": "https://images.com/original.jpg"
-          },
-          "created_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the product was created in ISO 8601 format.",
-            "example": "2022-05-23T06:52:55.008Z",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the product was updated in ISO 8601 format.",
-            "example": "2022-05-23T09:24:07.405Z",
-            "format": "date-time"
-          },
-          "object": {
-            "type": "string",
-            "description": "The type of object represented by JSON. This object stores information about the `product`.",
-            "default": "product"
-          }
-        }
-      },
       "SkuResponse": {
         "title": "SKU Object",
         "type": "object",
@@ -28772,11 +28675,16 @@
           }
         }
       },
-      "11_req_create_sku": {
+      "UpsertSkuRequestBody": {
         "title": "SKU Object",
         "type": "object",
         "description": "Request body schema for **POST** `/products/{productId}/skus",
         "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique SKU ID.",
+            "example": "sku_0c0c0012a9029bccef"
+          },
           "source_id": {
             "type": "string",
             "example": "sku_source_id_4",
@@ -28958,7 +28866,7 @@
           "product"
         ]
       },
-      "11_req_update_sku": {
+      "UpdateSkuRequestBody": {
         "title": "Update SKU Request Body",
         "type": "object",
         "description": "Request body schema for **PUT** `/products/{productId}/skus/{skuId}`.",
@@ -39997,7 +39905,7 @@
           "updated_at"
         ]
       },
-      "a_req_importCSV": {
+      "ImportCSVRequestBody": {
         "type": "object",
         "title": "Import CSV file",
         "description": "Request body schema for importing data using a CSV file.",
@@ -40013,7 +39921,7 @@
           "file"
         ]
       },
-      "a_res_async_actions": {
+      "AsyncActionsResponse": {
         "type": "object",
         "title": "Asynchronous Actions",
         "description": "Response to requests that are processed asynchronously.",
@@ -40164,34 +40072,6 @@
           "details",
           "request_id"
         ]
-      },
-      "e_error_no_translation": {
-        "title": "Error Object",
-        "type": "object",
-        "description": "Error details",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "Error's HTTP status code."
-          },
-          "key": {
-            "type": "string",
-            "description": "Short string describing the kind of error which occurred."
-          },
-          "message": {
-            "type": "string",
-            "description": "A human-readable message providing a short description about the error."
-          },
-          "details": {
-            "type": "string",
-            "description": "A human-readable message providing more details about the error."
-          },
-          "request_id": {
-            "type": "string",
-            "example": "v-0a885062c80375740f",
-            "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team."
-          }
-        }
       },
       "e_integration_key": {
         "title": "Error Object",
@@ -40655,45 +40535,6 @@
                 "description": "Error message translation defined in Dashboard &rarr; Project Settings &rarr; Error Messages"
               }
             }
-          }
-        }
-      },
-      "e_404_not_found": {
-        "description": "Error: Not Found",
-        "type": "object",
-        "title": "Not Found",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "default": 404,
-            "description": "Error's HTTP status code."
-          },
-          "key": {
-            "type": "string",
-            "default": "not_found",
-            "description": "Short string describing the kind of error which occurred."
-          },
-          "message": {
-            "type": "string",
-            "default": "Resource not found",
-            "description": "A human-readable message providing a short description about the error."
-          },
-          "details": {
-            "type": "string",
-            "description": "A human-readable message providing more details about the error."
-          },
-          "request_id": {
-            "type": "string",
-            "example": "v-0a96cd820301c0483a",
-            "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team."
-          },
-          "resource_id": {
-            "type": "string",
-            "description": "Name or ID of the resource that was not found."
-          },
-          "resource_type": {
-            "type": "string",
-            "description": "Specifies the type of resource that was not found."
           }
         }
       },
@@ -42423,7 +42264,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -42991,7 +42832,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Invalid Voucher": {
@@ -43041,7 +42882,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Voucher Not Found": {
@@ -43689,7 +43530,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -43820,7 +43661,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -43917,7 +43758,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -44215,7 +44056,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -44374,7 +44215,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -44653,7 +44494,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Example": {
@@ -44688,7 +44529,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/a_req_importCSV"
+                "$ref": "#/components/schemas/ImportCSVRequestBody"
               }
             }
           }
@@ -44699,7 +44540,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Example": {
@@ -44716,7 +44557,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example 1": {
@@ -45277,7 +45118,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Example": {
@@ -45336,7 +45177,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Example": {
@@ -46225,7 +46066,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example": {
@@ -46246,7 +46087,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -46697,7 +46538,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -46870,7 +46711,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Delete Campaign": {
@@ -46885,7 +46726,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Campaign Not Found": {
@@ -46999,7 +46840,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 }
               }
             }
@@ -47351,7 +47192,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Example": {
@@ -47441,7 +47282,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/a_req_importCSV"
+                "$ref": "#/components/schemas/ImportCSVRequestBody"
               }
             }
           },
@@ -47453,7 +47294,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Example": {
@@ -47468,7 +47309,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example": {
@@ -47647,7 +47488,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -47716,7 +47557,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -48699,7 +48540,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -48819,7 +48660,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example": {
@@ -48939,7 +48780,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example": {
@@ -49326,7 +49167,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Campaign Not Found": {
@@ -49429,7 +49270,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Stack Not Found": {
@@ -49553,7 +49394,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Stack Not Found": {
@@ -49928,7 +49769,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not found": {
@@ -50157,7 +49998,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Reward Not Found": {
@@ -50266,7 +50107,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -50377,7 +50218,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Reward Not Found": {
@@ -50524,7 +50365,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -50567,7 +50408,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Reward Not Found": {
@@ -50628,7 +50469,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Reward Assignment Not Found": {
@@ -50834,7 +50675,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Missing customer": {
@@ -50927,7 +50768,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Resource not found": {
@@ -51201,7 +51042,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example": {
@@ -51413,7 +51254,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Missing Parameters": {
@@ -51451,7 +51292,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Campaign Not Found": {
@@ -53524,7 +53365,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Missing customer": {
@@ -60556,7 +60397,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Already rolledback": {
@@ -60615,7 +60456,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Cannot find customer": {
@@ -62159,7 +62000,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Invalid Redemption Parent": {
@@ -62747,7 +62588,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
@@ -62973,7 +62814,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Example": {
@@ -62990,7 +62831,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Loyalty Campaign Not Found": {
@@ -63340,7 +63181,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "No Voucher Suitable for Publication": {
@@ -63370,7 +63211,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -63788,7 +63629,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Invalid expiration date": {
@@ -63889,7 +63730,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Invalid payload": {
@@ -64864,7 +64705,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -65030,7 +64871,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -67093,7 +66934,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example": {
@@ -67548,7 +67389,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Earning Rule Not Found": {
@@ -67667,7 +67508,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example": {
@@ -67769,7 +67610,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -68703,7 +68544,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -68812,7 +68653,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Reward Assignment Not Found": {
@@ -70262,7 +70103,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Campaign Not Found": {
@@ -70584,7 +70425,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Member Not Found": {
@@ -72338,7 +72179,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not found": {
@@ -72381,7 +72222,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Customer Not Found": {
@@ -72546,7 +72387,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example": {
@@ -72630,7 +72471,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -72671,7 +72512,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/a_req_importCSV"
+                "$ref": "#/components/schemas/ImportCSVRequestBody"
               },
               "examples": {}
             }
@@ -72683,7 +72524,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Example": {
@@ -72795,7 +72636,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 }
               }
             }
@@ -72805,7 +72646,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Metadata validation failed": {
@@ -72898,7 +72739,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Example": {
@@ -72915,7 +72756,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not enough source IDs": {
@@ -73001,7 +72842,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example": {
@@ -73078,7 +72919,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example": {
@@ -74247,7 +74088,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -74684,7 +74525,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Example": {
@@ -74701,7 +74542,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Invalid Payload": {
@@ -74844,7 +74685,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Invalid payload": {
@@ -75035,11 +74876,11 @@
         }
       },
       "post": {
-        "operationId": "create-product",
+        "operationId": "upsert-product",
         "tags": [
           "PRODUCTS API"
         ],
-        "summary": "Create Product",
+        "summary": "Upsert Product",
         "description": "Creates a product object.\n\n<!-- theme: info -->\n\n> 🚧 Upsert Mode\n>\n> If you pass a `source_id` that already exists in the product database, Voucherify will return a related product object with updated fields.",
         "parameters": [],
         "security": [
@@ -75053,7 +74894,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/11_req_create_product"
+                "$ref": "#/components/schemas/UpsertProductRequestBody"
               },
               "examples": {
                 "Example": {
@@ -75220,7 +75061,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -75259,7 +75100,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/11_req_update_product"
+                "$ref": "#/components/schemas/UpdateProductRequestBody"
               },
               "examples": {
                 "Example": {
@@ -75277,7 +75118,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/11_obj_product_object_truncated"
+                  "$ref": "#/components/schemas/ProductResponse"
                 },
                 "examples": {
                   "Example": {
@@ -75339,7 +75180,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Product Not Found": {
@@ -75382,7 +75223,7 @@
               "schema": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/11_req_update_product_bulk"
+                  "$ref": "#/components/schemas/BulkUpsertProductRequestBody"
                 }
               },
               "examples": {
@@ -75430,7 +75271,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Example": {
@@ -75447,7 +75288,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example": {
@@ -75486,7 +75327,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/11_req_update_products_metadata_in_bulk"
+                "$ref": "#/components/schemas/BulkUpsertProductsMetadataRequestBody"
               },
               "examples": {
                 "Example": {
@@ -75511,7 +75352,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Example": {
@@ -75528,7 +75369,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not enough source IDs": {
@@ -75620,7 +75461,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -75668,18 +75509,13 @@
             "$ref": "#/components/parameters/page"
           },
           {
-            "schema": {
-              "type": "string",
-              "enum": [
-                "created_at",
-                "-created_at",
-                "updated_at",
-                "-updated_at"
-              ]
-            },
-            "in": "query",
-            "name": "order",
-            "description": "This is a property that controls the sorting direction of the results. Sort the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+            "$ref": "#/components/parameters/order"
+          },
+          {
+            "$ref": "#/components/parameters/start_date"
+          },
+          {
+            "$ref": "#/components/parameters/end_date"
           }
         ],
         "security": [
@@ -75787,7 +75623,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Example": {
@@ -75808,12 +75644,12 @@
         }
       },
       "post": {
-        "operationId": "create-sku",
+        "operationId": "upsert-sku",
         "tags": [
           "PRODUCTS API"
         ],
-        "summary": "Create SKU",
-        "description": "This method adds product varients to a <!-- [created product](OpenAPI.json/paths/~1products/post) -->[created product](ref:create-product).",
+        "summary": "Upsert SKU",
+        "description": "This method adds product variants to a <!-- [created product](OpenAPI.json/paths/~1products/post) -->[created product](ref:upsert-product).",
         "parameters": [],
         "security": [
           {
@@ -75826,7 +75662,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/11_req_create_sku"
+                "$ref": "#/components/schemas/UpsertSkuRequestBody"
               },
               "examples": {
                 "Example": {
@@ -75928,7 +75764,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/11_req_update_sku"
+                "$ref": "#/components/schemas/UpdateSkuRequestBody"
               },
               "examples": {
                 "Example": {
@@ -76010,7 +75846,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Product Not Found": {
@@ -76062,7 +75898,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/a_req_importCSV"
+                "$ref": "#/components/schemas/ImportCSVRequestBody"
               }
             }
           }
@@ -76073,7 +75909,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Async Action": {
@@ -76090,7 +75926,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Invalid payload": {
@@ -76129,7 +75965,7 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/a_req_importCSV"
+                "$ref": "#/components/schemas/ImportCSVRequestBody"
               }
             }
           }
@@ -76140,7 +75976,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/a_res_async_actions"
+                  "$ref": "#/components/schemas/AsyncActionsResponse"
                 },
                 "examples": {
                   "Async Action": {
@@ -76487,7 +76323,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -76555,7 +76391,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Product Collection Not Found": {
@@ -76765,7 +76601,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -77531,7 +77367,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Validation Rule Not Found": {
@@ -77915,7 +77751,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Validation Rule Not Found": {
@@ -78012,7 +77848,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -78055,7 +77891,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Customer Segment Not Found": {
@@ -78694,7 +78530,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_error_no_translation"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Invalid Query Parameters": {
@@ -79288,7 +79124,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Async-Action-Not-Found": {
@@ -79590,7 +79426,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -79633,7 +79469,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Export Not Found": {
@@ -79978,7 +79814,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
@@ -81031,7 +80867,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_404_not_found"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
                   "Not Found": {
