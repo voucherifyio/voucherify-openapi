@@ -44,6 +44,19 @@
 - GET `/v1/customers/{customerId}/segments`
   - Response body schema was replaced with new one: `CustomersListCustomersSegments` (old one: `14_res_customers_customerId_segments`)
 
+## 20231106 - Language fixes #535
+
+- Descriptions changes in multiple schemas
+https://github.com/voucherifyio/voucherify-openapi/pull/535/files
+
+## 20231103 - Fix `options` in `RedemptionsRedeemRequestBod
+
+- Fix `options` in `RedemptionsRedeemRequestBody`
+
+**Added schemas**
+
+- StackableValidateRedeemRequestBase
+
 ## 20231103 - Events API
 
 **Changed schemas**

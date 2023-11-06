@@ -125,7 +125,7 @@ order: 1
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Sets a fixed total on cart or item(s) and then calculates the discount to apply.</p> |
-| fixed_amount</br>`integer` | <p>Set a fixed valued for an order total or price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the fixed amount being calculated by the formula, i.e. the <code>fixed_amount_formula</code> parameter is present in the fixed amount definition, this value becomes the <strong>fallback value</strong>. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> **Example:** <p>1000</p> |
+| fixed_amount</br>`integer` | <p>Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the <code>fixed_amount_formula</code> parameter is present in the fixed amount definition, this value becomes the <strong>fallback value</strong>. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> **Example:** <p>1000</p> |
 | fixed_amount_formula</br>`string` | <p>Formula used to calculate the discounted price of an item or a new order total.</p> |
 | effect</br>`string` | <table><thead><tr><th style="text-align:left"><strong>Effect</strong></th><th style="text-align:left"><strong>Definition</strong></th></tr></thead><tbody><tr><td style="text-align:left"><strong>APPLY_TO_ORDER</strong></td><td style="text-align:left">Sets the order total amount to the value of the fixed amount. The discount value is calculated dynamically during the redemption as it's a difference between the total amount of the customer's order and the fixed amount. For example, if the fixed amount is set to equal $10 and the order amount equals $25, then the calculated discount will be $15.</td></tr><tr><td style="text-align:left"><strong>APPLY_TO_ITEMS</strong></td><td style="text-align:left">Sets a new price on items. The total discount amount is dynamically calculated during the redemption and it's a difference between the initial item price and the fixed amount. During the redemption, prices for items will change only if the new price is lower than the original price. If the new product price you set is different from the product price in a collection, then the new product price will be passed during the redemption. If a prodct is in more than one collection, the price is always changed to the lowest price. The new price for products with several SKUs will force the price change for SKUs if their original price is higher than the new price.</td></tr></tbody></table> Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS` |
 
@@ -214,7 +214,7 @@ Any of:
 | object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
-| stacking_rules_type</br>`string` | <p>The type of category stacking rules</p> Available values: `JOINT`, `EXCLUSIVE` |
+| stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Calendar Periods
 | Attributes |  Description |
@@ -233,7 +233,7 @@ Any of:
 ## Amount
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Defines the type of voucher.</p> Available values: `AMOUNT` |
+| type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `AMOUNT` |
 | amount_off</br>`number` | <p>Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000.</p> |
 | amount_off_formula</br>`string` |  |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Amount Vouchers Effect Types](#discount-amount-vouchers-effect-types) |
@@ -259,7 +259,7 @@ Any of:
 ## Percent
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Defines the type of voucher.</p> Available values: `PERCENT` |
+| type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `PERCENT` |
 | percent_off</br>`number` | <p>The percent discount that the customer will receive.</p> |
 | percent_off_formula</br>`string` |  |
 | amount_limit</br>`number` | <p>Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
@@ -269,8 +269,8 @@ Any of:
 ## Fixed
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Defines the type of voucher.</p> Available values: `FIXED` |
-| fixed_amount</br>`number` | <p>Set a fixed valued for an order total or price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the fixed amount being calculated by the formula, i.e. the fixed_amount_formula parameter is present in the fixed amount definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
+| type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `FIXED` |
+| fixed_amount</br>`number` | <p>Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the <code>fixed_amount_formula</code> parameter is present in the fixed amount definition, this value becomes the <strong>fallback value</strong>. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
 | fixed_amount_formula</br>`string` |  |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
 
