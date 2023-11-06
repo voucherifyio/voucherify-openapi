@@ -5,7 +5,7 @@
 **Added schemas**
 
 - CustomerBase
-- CustomerIdObject
+- CustomerIdObjectResponse
 - ReferrerIdObject
 - CustomersCreateRequestBody
 - CustomersUpdateRequestBody
