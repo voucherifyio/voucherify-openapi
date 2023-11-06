@@ -47,7 +47,7 @@ Any of:
 ## Applicable To Result List
 | Attributes |  Description |
 |:-----|:--------|
-| data</br>`array` | <p>Contains array of items to which the discount can apply.</p> Array of [ApplicableTo](#applicableto) |
+| data</br>`array` | <p>Contains array of items to which the discount can apply.</p> Array of [Applicable To](#applicable-to) |
 | total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
 | data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
@@ -55,7 +55,7 @@ Any of:
 ## Inapplicable To Result List
 | Attributes |  Description |
 |:-----|:--------|
-| data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> Array of [InapplicableTo](#inapplicableto) |
+| data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> Array of [Inapplicable To](#inapplicable-to) |
 | total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
 | data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
@@ -95,7 +95,7 @@ Any of:
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.</p> |
 | customer | <p>This is an object containing information about the customer.</p> See: [Customer Response](#customer-response) |
 | customer_id</br>`string,null` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
-| referrer | <p>This is an object containing information about the referrer.</p> See: [Referrer Request](#referrer-request) |
+| referrer | <p>This is an object containing information about the referrer.</p> See: [Referrer Response](#referrer-response) |
 | referrer_id</br>`string,null` | <p>Unique referrer ID.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `order` |
 | redemptions</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#order-redemptions">Order Redemptions</a></td></tr></tbody></table> |
@@ -108,7 +108,7 @@ Any of:
 | ttl</br>`number` | <p>Value for the period of time that the session is active. Units for this parameter are defined by the session.ttl_unit parameter.</p> |
 | ttl_unit</br>`string` | <p>Defines the type of unit in which the session time is counted.</p> Available values: `DAYS`, `HOURS`, `MICROSECONDS`, `MILLISECONDS`, `MINUTES`, `NANOSECONDS`, `SECONDS` |
 
-## ApplicableTo
+## Applicable To
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>This object stores information about the product collection.</p> Available values: `product`, `sku`, `products_collection` |
@@ -123,10 +123,10 @@ Any of:
 | aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Applicable To Effect](#applicable-to-effect) |
 
-## InapplicableTo
+## Inapplicable To
 All of:
 
-1. [ApplicableTo](#applicableto)
+1. [Applicable To](#applicable-to)
 
 ## Amount
 | Attributes |  Description |
@@ -207,7 +207,7 @@ All of:
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `customer` |
 
-## Referrer Request
+## Referrer Response
 All of:
 
 1. [Customer Response](#customer-response)
