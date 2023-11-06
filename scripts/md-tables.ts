@@ -14,7 +14,7 @@ export const mdTables: [string, string?][] = [
     ['8_obj_earning_rule_object', 'LOYALTIES-API-Earning-Rule-Object.md'],
     ['8_obj_loyalty_tier_object', 'LOYALTIES-API-Loyalty-Tier-Object.md'],
     ['CustomerResponse', 'CUSTOMERS-API-Customer-Object.md'],
-    ['9_obj_customer_activity_object', 'CUSTOMERS-API-Customer-Activity-Object.md'],
+    ['CustomerActivity', 'CUSTOMERS-API-Customer-Activity-Object.md'],
     ['OrderResponse', 'ORDERS-API-Order-Object.md'],
     ['11_obj_product_object', 'PRODUCTS-API-Product-Object.md'],
     ['11_obj_sku_object', 'PRODUCTS-API-SKU-Object.md'],
