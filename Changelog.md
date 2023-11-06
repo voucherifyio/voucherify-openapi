@@ -1,5 +1,10 @@
 # Changelog
 
+## 20231106 - Language fixes #535
+
+- Descriptions changes in multiple schemas
+https://github.com/voucherifyio/voucherify-openapi/pull/535/files
+
 ## 20231103 - Fix `options` in `RedemptionsRedeemRequestBod
 
 - Fix `options` in `RedemptionsRedeemRequestBody`

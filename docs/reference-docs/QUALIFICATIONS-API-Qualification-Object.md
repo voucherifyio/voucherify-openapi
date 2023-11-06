@@ -38,8 +38,8 @@ order: 1
 | created_at</br>`string` | <p>Timestamp representing the date and time when the order was created in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | updated_at</br>`string,null` | <p>Timestamp representing the date and time when the order was last updated in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:14:45.316Z</p> |
 | status</br>`string` | <p>The order status.</p> Available values: `CREATED`, `PAID`, `CANCELED`, `FULFILLED` |
-| amount</br>`integer` | <p>A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts.</p> |
-| initial_amount</br>`integer` | <p>A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts.</p> |
+| amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.</p> |
+| initial_amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.</p> |
 | discount_amount</br>`integer` | <p>Sum of all order-level discounts applied to the order.</p> |
 | items_discount_amount</br>`integer` | <p>Sum of all product-specific discounts applied to the order.</p> |
 | total_discount_amount</br>`integer` | <p>Sum of all order-level AND all product-specific discounts applied to the order.</p> |
@@ -59,8 +59,8 @@ order: 1
 ## Examine Qualification Stacking Rules
 | Attributes |  Description |
 |:-----|:--------|
-| redeemables_limit</br>`integer` | <p>Defines how many redeemables can be sent with one stacking request (comment: more redeemables means more processing time!).</p> |
-| applicable_redeemables_limit</br>`integer` | <p>Defines how many of sent redeemables will be actually applied to the order (e.g. user can select 30 discounts but only 5 will be applied to the order, the remaining will be marked as SKIPPED).</p> |
+| redeemables_limit</br>`integer` | <p>Defines how many redeemables can be sent in one stacking request (note: more redeemables means more processing time!).</p> |
+| applicable_redeemables_limit</br>`integer` | <p>Defines how many of the sent redeemables will be applied to the order. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be labelled as SKIPPED.</p> |
 | applicable_exclusive_redeemables_limit</br>`integer` | <p>Defines how many redeemables with an exclusive category can be applied in one request.</p> |
 | exclusive_categories</br>`array` | <p>Lists all exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.</p> |
 | joint_categories</br>`array` | <p>Lists all joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.</p> |
@@ -77,18 +77,18 @@ All of:
 | sku_id</br>`string` | <p>A unique SKU ID assigned by Voucherify.</p> |
 | product_id</br>`string` | <p>A unique product ID assigned by Voucherify.</p> |
 | related_object</br>`string` | <p>Used along with the source_id property, can be set to either sku or product.</p> Available values: `product`, `sku` |
-| source_id</br>`string` | <p>The merchant’s product/SKU ID (if it is different from the Voucherify product/SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.</p> |
+| source_id</br>`string` | <p>The merchant’s product/SKU ID (if it is different from the Voucherify product/SKU ID). It is useful in the integration between multiple systems. It can be an ID from an eCommerce site, a database, or a third-party service.</p> |
 | quantity</br>`integer` | <p>The quantity of the particular item in the cart.</p> |
 | discount_quantity</br>`integer` | <p>Number of dicounted items.</p> |
 | initial_quantity</br>`integer` | <p>A positive integer in the smallest unit quantity representing the total amount of the order; this is the sum of the order items' quantity.</p> |
 | amount</br>`integer` | <p>The total amount of the order item (price * quantity).</p> |
 | discount_amount</br>`integer` | <p>Sum of all order-item-level discounts applied to the order.</p> |
-| initial_amount</br>`integer` | <p>A positive integer in the smallest currency unit (that is, 100 cents for $1.00) representing the total amount of the order; this is the sum of the order items' amounts.</p> |
+| initial_amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.</p> |
 | total_applied_discount_amount</br>`integer` | <p>Sum of all order-level AND all product-specific discounts applied in a particular request.<br><code>total_applied_discount_amount</code> = <code>applied_discount_amount</code> + <code>items_applied_discount_amount</code></p> |
 | price</br>`integer` | <p>Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.</p> |
 | subtotal_amount</br>`integer` | <p>Final order item amount after the applied item-level discount.  If there are no item-level discounts applied, this item is equal to the <code>amount</code>.<br><code>subtotal_amount</code>=<code>amount</code>-<code>applied_discount_amount</code></p> |
-| product</br>`object` | <p>An object containing details of the related product.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier that represents the product and is assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant’s product ID (if it is different than Voucherify's product ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.</p></td></tr><tr><td style="text-align:left">override</br><code>boolean</code></td><td style="text-align:left"><p>The override set to true is used to store the product information in the system. If product does not exist, it will be created with the use of source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Product name.</p></td></tr><tr><td style="text-align:left">metadata</br><code>object</code></td><td style="text-align:left"><p>A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format.</p></td></tr><tr><td style="text-align:left">price</br><code>number</code></td><td style="text-align:left"><p>Product price. A positive integer in the smallest currency unit (that is, 100 cents for $1.00).</p></td></tr></tbody></table> |
-| sku</br>`object` | <p>An object containing details of the related SKU.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier that represents the SKU and is assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant’s SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.</p></td></tr><tr><td style="text-align:left">override</br><code>boolean</code></td><td style="text-align:left"><p>The override set to true is used to store the product information in the system. If product does not exist, it will be created with the use of source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.</p></td></tr><tr><td style="text-align:left">sku</br><code>string</code></td><td style="text-align:left"><p>The SKU name.</p></td></tr><tr><td style="text-align:left">price</br><code>number</code></td><td style="text-align:left"><p>SKU price. A positive integer in the smallest currency unit (that is, 100 cents for $1.00).</p></td></tr></tbody></table> |
+| product</br>`object` | <p>An object containing details of the related product.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier that represents the product and is assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant’s product ID (if it is different than Voucherify's product ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.</p></td></tr><tr><td style="text-align:left">override</br><code>boolean</code></td><td style="text-align:left"><p>The override set to <code>true</code> is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Product name.</p></td></tr><tr><td style="text-align:left">metadata</br><code>object</code></td><td style="text-align:left"><p>A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format.</p></td></tr><tr><td style="text-align:left">price</br><code>number</code></td><td style="text-align:left"><p>Product price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
+| sku</br>`object` | <p>An object containing details of the related SKU.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier that represents the SKU and is assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant’s SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.</p></td></tr><tr><td style="text-align:left">override</br><code>boolean</code></td><td style="text-align:left"><p>The override set to <code>true</code> is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.</p></td></tr><tr><td style="text-align:left">sku</br><code>string</code></td><td style="text-align:left"><p>The SKU name.</p></td></tr><tr><td style="text-align:left">price</br><code>number</code></td><td style="text-align:left"><p>SKU price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>order_item</code>.</p> Available values: `order_item` |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format.</p> |
 
@@ -96,7 +96,7 @@ All of:
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>The ID of an existing customer that will be linked to redemption in this request.</p> |
-| source_id</br>`string` | <p>A unique identifier of a customer that validates a voucher. It can be a customer ID or email from a CRM system, database or 3rd-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.</p> |
+| source_id</br>`string` | <p>A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.</p> |
 | name</br>`string` | <p>Customer's first and last name.</p> |
 | description</br>`string` | <p>An arbitrary string that you can attach to a customer object.</p> |
 | email</br>`string` | <p>Customer's email address.</p> |
@@ -127,7 +127,7 @@ All of:
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Id of the redeemable.</p> |
-| object</br>`string` | <p>Object type of the redeemable</p> Available values: `campaign`, `promotion_tier`, `promotion_stack`, `voucher` |
+| object</br>`string` | <p>Object type of the redeemable.</p> Available values: `campaign`, `promotion_tier`, `promotion_stack`, `voucher` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the object was created in ISO 8601 format.</p> **Example:** <p>2022-03-09T11:19:04.819Z</p> |
 | result | See: [Redeemable Single Result](#redeemable-single-result) |
 | order | See: [Order Response](#order-response) |
@@ -135,7 +135,7 @@ All of:
 | applicable_to | <p>Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted.</p> See: [Applicable To Result List](#applicable-to-result-list) |
 | inapplicable_to | <p>Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted.</p> See: [Inapplicable To Result List](#inapplicable-to-result-list) |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format.</p> |
-| categories</br>`array` | <p>List of categories</p> Array of [Category](#category) |
+| categories</br>`array` | <p>List of category information.</p> Array of [Category](#category) |
 | banner</br>`string` | <p>Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard.</p> **Example:** <p>Order Paid - You will get 100 points</p> |
 | name</br>`string` | <p>Name of the redeemable.</p> **Example:** <p>promotion_tier_get_points</p> |
 | campaign_name</br>`string` | <p>Name of the campaign associated to the redeemable. This field is available only if object is not <code>campaign</code></p> **Example:** <p>PromotionCampaign</p> |
@@ -175,7 +175,7 @@ All of:
 | object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
-| stacking_rules_type</br>`string` | <p>The type of category stacking rules</p> Available values: `JOINT`, `EXCLUSIVE` |
+| stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Validation Rules Assignments
 | Attributes |  Description |
@@ -254,7 +254,7 @@ All of:
 ## Amount
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Defines the type of voucher.</p> Available values: `AMOUNT` |
+| type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `AMOUNT` |
 | amount_off</br>`number` | <p>Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000.</p> |
 | amount_off_formula</br>`string` |  |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Amount Vouchers Effect Types](#discount-amount-vouchers-effect-types) |
@@ -280,7 +280,7 @@ All of:
 ## Percent
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Defines the type of voucher.</p> Available values: `PERCENT` |
+| type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `PERCENT` |
 | percent_off</br>`number` | <p>The percent discount that the customer will receive.</p> |
 | percent_off_formula</br>`string` |  |
 | amount_limit</br>`number` | <p>Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
@@ -290,8 +290,8 @@ All of:
 ## Fixed
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Defines the type of voucher.</p> Available values: `FIXED` |
-| fixed_amount</br>`number` | <p>Set a fixed valued for an order total or price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the fixed amount being calculated by the formula, i.e. the fixed_amount_formula parameter is present in the fixed amount definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
+| type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `FIXED` |
+| fixed_amount</br>`number` | <p>Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the <code>fixed_amount_formula</code> parameter is present in the fixed amount definition, this value becomes the <strong>fallback value</strong>. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
 | fixed_amount_formula</br>`string` |  |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
 
