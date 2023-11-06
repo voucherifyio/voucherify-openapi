@@ -18,7 +18,8 @@ yup.addMethod(
 const nodeWithTitleAndPropertiesSchema = yup.object({
   title: yup.string().optional(),
   type: yup.string().oneOf(["object", "string", "array", "number"]),
-  properties: yup.object({}),
+  properties: yup.object({}).optional(),
+  additionalProperties: yup.mixed().oneOfSchemas([yup.boolean(), yup.object({})]).optional(),
   anyOf: yup.array().optional(),
 });
 
@@ -55,7 +56,8 @@ const allOfSchema = anyOfSchema;
 
 const propertySchema = yup.object({
   type: yup.mixed().oneOfSchemas([yup.string(), yup.array().of(yup.string())]),
-  properties: yup.object({}),
+  properties: yup.object({}).optional(),
+  additionalProperties: yup.mixed().oneOfSchemas([yup.boolean(), yup.object({})]).optional(),
   description: yup.string().optional(),
   enum: yup
     .array()
@@ -392,6 +394,7 @@ export default class SchemaToMarkdownTable {
       type,
       $ref,
       properties,
+        additionalProperties,
     } = propertySchema.validateSync(property);
 
     if (description) {
@@ -450,7 +453,7 @@ export default class SchemaToMarkdownTable {
       relatedObjectsNames.push(...relatedObjectsNamesItems);
     }
 
-    if (type === "object" && properties) {
+    if (type === "object" && (properties instanceof Object || additionalProperties instanceof Object)) {
       const { html, relatedObjects } = this.renderSchema(property, level + 1);
       relatedObjectsNames.push(...relatedObjects);
       descriptionArr.push(renderMarkdown(html));
@@ -519,8 +522,13 @@ export default class SchemaToMarkdownTable {
     if (!schema) {
       throw new Error(`Schema "${schema}" not found`);
     }
-    const { properties, title } =
-      nodeWithTitleAndPropertiesSchema.validateSync(schema);
+
+    const schemaResult = nodeWithTitleAndPropertiesSchema.validateSync(schema)
+    const {  title, additionalProperties } = schemaResult
+    const properties = schemaResult.properties instanceof Object ? schemaResult.properties : additionalProperties instanceof Object ? {} : undefined
+    if(additionalProperties instanceof Object){
+      properties['[propertyName]'] = additionalProperties
+    }
     const respopnseStrArr = [];
 
     if (!skipTitle && title) {

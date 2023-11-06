@@ -1,12 +1,116 @@
 # Changelog
 
+## 20231106 - Language fixes #535
+
+- Descriptions changes in multiple schemas
+https://github.com/voucherifyio/voucherify-openapi/pull/535/files
+
+## 20231103 - Fix `options` in `RedemptionsRedeemRequestBod
+
+- Fix `options` in `RedemptionsRedeemRequestBody`
+
+**Added schemas**
+
+- StackableValidateRedeemRequestBase
+
+## 20231103 - Events API
+
+**Changed schemas**
+- 15_req_track_custom_event to TrackCustomEventRequestBody
+- 15_res_track_custom_event to TrackCustomEventResponseBody
+
+## 20231102 - Stackable Validations and stackable redemptions
+
+**Removed schemas**
+- Customer
+- Referrer
+
+**Added schemas**
+
+- ReferrerRequest
+- ReferrerResponse
+- CustomerRequest
+- CustomerResponse
+- Discount
+- VoucherAssets
+- ValidationsValidateResponseBody
+- ValidationsRedeemableApplicable
+- ValidationsRedeemableInapplicable
+- ValidationsRedeemableSkipped
+- ValidationsValidateAllProvidedPromotionsMustBeValidResponseBody
+- ValidationsValidateAtLeastOnePromotionMustBeValidResponseBody
+- RedeemableResultVoucherCode
+- RedeemableResultGiftCard
+- RedeemableResultLoyaltyCard
+- RedeemableResultPromotionTier
+- RedeemableResultPromotionStack
+- RedemptionsRedeemResponseBody
+- RedemptionsRedemption
+- RedemptionsRedemptionBase
+
+**REMOVED ALL DUMMY ENDPOINTS AS WE DON'T USE THEM ANYMORE!!!**
+
+## 20231102 - Qualifications
+
+**Added schemas**
+- Discount
+- Gift
+- RedeemableGift
+- QualificationsFieldConditions
+- QualificationsFiltersCondition
+- QualificationsRedeemableSingleResponse
+- ValidationRulesAssignments
+- BusValRuleAssignment
+- RedeemableSingleResultResponse
+- RedeemableLoyaltyCard
+- Error
+
+**Removed schemas**
+- 16_filter_conditions_string_qualification
+- 23_obj_filter_category_id
+- 23_obj_filter_campaign_id
+- 23_obj_filter_resource_type
+- 23_obj_filter_voucher_type
+- qualificationJunction
+
+**Changed schemas**
+- 16_filter_conditions_string_qualification to QualificationsCheckEligibilityResponseBody
+- 23_obj_qualification_object_stacking_rules to QualificationsStackingRulesResponse
+- 23_req_create_qualification to QualificationsCheckEligibilityRequestBody
+- 23_obj_qualification_redeemables to QualificationsRedeemablesResponse
+
+
 ## 20231031 Integration blueprint – 2 new articles
 
 Added the following articles to the Integration Blueprint section:
 - Integration overview
 - Modeling Voucherify integration
 - Campaign limits
-- 
+-
+
+## 20231030 - Order Model
+
+**Removed schemas**
+- Order
+
+**Added schemas**
+- OrderRequest
+- OrderItemResponse
+- OrderResponse
+- OrderItemResponse
+- OrderRedemptions
+
+**Updated order object markdown.**
+
+**Added support for `additionalProperties` to markdown generator.**
+
+## 20231031 Integration blueprint – 2 new articles
+
+Added the following articles to the Integration Blueprint section:
+- Integration overview
+- Modeling Voucherify integration
+- Campaign limits
+-
 ## 20231027 - Welcome to Voucherify, Stackable Discounts
 
 - Added new article "Welcome to Voucherify" in "Getting started"
@@ -827,7 +931,6 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 /reference/the-custom-event-object -> /reference/custom-event-object
 /reference/the-export-object -> /reference/export-object
 /reference/the-metadata-schema-object -> /reference/metadata-schema-object
-/reference/add-remove-gift-voucher-balance -> /reference/add-remove-voucher-balance
 
 ### Dummy endpoints
 

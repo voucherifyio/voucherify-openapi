@@ -114,10 +114,10 @@ How to edit OpenAPI file:
 ```
 
 For example:
-- The general voucher model, used in many different API endpoints, should have the name `Voucher` (currently, it has a name: `1_obj_voucher_object`)
+- The general voucher model, used in many different API endpoints, should have the name `Voucher` (currently, it has a name: `Voucher`)
 - for path `GET /v1/vouchers` (list vouchers), we have a `1_res_vouchers_GET` 0-level model, that should be named: `VouchersListResponseBody`.
-- for path `GET /v1/vouchers` (list vouchers), we have a `1_res_vouchers_GET` 0-level model which has sub-model `1_obj_voucher_object_list_vouchers` that should be named: `VouchersListItemResponseBody` 
-- General model `1_obj_voucher_object` is used in many paths (`GET /v1/vouchers/{code}`, `POST /v1/vouchers/qualification`, `GET /v1/publications/create`); therefore, we should rename the model to `Voucher`.
+- for path `GET /v1/vouchers` (list vouchers), we have a `1_res_vouchers_GET` 0-level model which has sub-model `Voucher_list_vouchers` that should be named: `VouchersListItemResponseBody` 
+- General model `Voucher` is used in many paths (`GET /v1/vouchers/{code}`, `POST /v1/vouchers/qualification`, `GET /v1/publications/create`); therefore, we should rename the model to `Voucher`.
 
 > [!NOTE] Most likely general model will be same as used in GET method. For example `CategoriesGetResponseBody` is equal by ref to `Category`. This model most likely will not be used in `PUT` requests because, response in `PUT` request always returns value in `updated_at`, so you will need to create a duplicated model just for update response.
 

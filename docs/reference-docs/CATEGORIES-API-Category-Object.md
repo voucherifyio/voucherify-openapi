@@ -8,15 +8,16 @@ hidden: false
 order: 1
 ---
 
-## Category Object
+## Category
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
 | name</br>`string` | <p>Category name.</p> |
 | hierarchy</br>`integer` | <p>Category hierarchy.</p> |
+| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
-| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> |
+| stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 [block:html]
 {
