@@ -239,7 +239,7 @@ Any of:
 ## Product Object
 | Attributes |  Description |
 |:-----|:--------|
-| id</br>`string` | <p>Unique product ID.</p> **Example:** <p>prod_f1r5Tpr0DuC7</p> |
+| id</br>`string` | <p>Unique product ID assigned by Voucherify.</p> **Example:** <p>prod_0b1da8105693710357</p> |
 | source_id</br>`string` | <p>Unique product source ID.</p> **Example:** <p>productSourceID16</p> |
 | name</br>`string` | <p>Unique user-defined product name.</p> **Example:** <p>T-shirt</p> |
 | price</br>`integer` | <p>Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.</p> |
@@ -248,7 +248,8 @@ Any of:
 | image_url</br>`string` | <p>The HTTPS URL pointing to the .png or .jpg file that will be used to render the product image.</p> **Example:** <p>https://images.com/original.jpg</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the product was created in ISO 8601 format.</p> **Example:** <p>2022-05-23T06:52:55.008Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the product was updated in ISO 8601 format.</p> **Example:** <p>2022-05-23T09:24:07.405Z</p> |
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>product</code>.</p> |
+| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the product.</p> Available values: `product` |
+| skus</br>`object` | <p>Contains a list of related child SKUs.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">data</br><code>array</code></td><td style="text-align:left"><p>Contains a list of SKU objects.</p> Array of <a href="#sku-object">SKU Object</a></td></tr><tr><td style="text-align:left">total</br><code>number</code></td><td style="text-align:left"><p>Total number of SKUs.</p></td></tr></tbody></table> |
 
 ## SKU Object
 | Attributes |  Description |
