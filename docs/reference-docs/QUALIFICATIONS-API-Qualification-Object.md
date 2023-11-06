@@ -23,8 +23,8 @@ order: 1
 ## Redeemables
 | Attributes |  Description |
 |:-----|:--------|
-| object</br>`string` | <p>The type of object represented by JSON. Default is <code>list</code>.</p> |
-| data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of qualified redeemables.</p> |
+| object</br>`string` | <p>The type of object represented by JSON. Default is <code>list</code>.</p> Available values: `list` |
+| data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of qualified redeemables.</p> Available values: `data` |
 | data</br>`array` | <p>Array of qualified redeemables.</p> Array of [Combined response of redeemable object and multiple redeemables within](#combined-response-of-redeemable-object-and-multiple-redeemables-within) |
 | total</br>`integer` | <p>The number of redeemables returned in the API request.</p> **Example:** <p>5</p> |
 | has_more</br>`boolean` | <p>As results are always limited, the <code>has_more</code> flag indicates whether there are more records for given parameters. This let's you know if you are able to run another request (with different options) to get more records returned in the results.</p> |
@@ -188,7 +188,7 @@ All of:
 ## Applicable To Result List
 | Attributes |  Description |
 |:-----|:--------|
-| data</br>`array` | <p>Contains array of items to which the discount can apply.</p> Array of [ApplicableTo](#applicableto) |
+| data</br>`array` | <p>Contains array of items to which the discount can apply.</p> Array of [Applicable To](#applicable-to) |
 | total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
 | data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
@@ -196,7 +196,7 @@ All of:
 ## Inapplicable To Result List
 | Attributes |  Description |
 |:-----|:--------|
-| data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> Array of [InapplicableTo](#inapplicableto) |
+| data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> Array of [Inapplicable To](#inapplicable-to) |
 | total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
 | data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
@@ -274,7 +274,7 @@ Any of:
 | resource_id</br>`string` | <p>Unique resource ID that can be used in another endpoint to get more details.</p> **Example:** <p>rf_0c5d710a87c8a31f86</p> |
 | resource_type</br>`string` | <p>The resource type.</p> **Example:** <p>voucher</p> |
 
-## ApplicableTo
+## Applicable To
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>This object stores information about the product collection.</p> Available values: `product`, `sku`, `products_collection` |
@@ -289,10 +289,10 @@ Any of:
 | aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Applicable To Effect](#applicable-to-effect) |
 
-## InapplicableTo
+## Inapplicable To
 All of:
 
-1. [ApplicableTo](#applicableto)
+1. [Applicable To](#applicable-to)
 
 ## Business Validation Rule Assignment
 | Attributes |  Description |

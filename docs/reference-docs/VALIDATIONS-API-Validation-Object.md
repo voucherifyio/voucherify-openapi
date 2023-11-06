@@ -47,7 +47,7 @@ Any of:
 ## Applicable To Result List
 | Attributes |  Description |
 |:-----|:--------|
-| data</br>`array` | <p>Contains array of items to which the discount can apply.</p> Array of [ApplicableTo](#applicableto) |
+| data</br>`array` | <p>Contains array of items to which the discount can apply.</p> Array of [Applicable To](#applicable-to) |
 | total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
 | data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
@@ -55,7 +55,7 @@ Any of:
 ## Inapplicable To Result List
 | Attributes |  Description |
 |:-----|:--------|
-| data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> Array of [InapplicableTo](#inapplicableto) |
+| data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> Array of [Inapplicable To](#inapplicable-to) |
 | total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
 | data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
@@ -108,7 +108,7 @@ Any of:
 | ttl</br>`number` | <p>Value for the period of time that the session is active. Units for this parameter are defined by the session.ttl_unit parameter.</p> |
 | ttl_unit</br>`string` | <p>Defines the type of unit in which the session time is counted.</p> Available values: `DAYS`, `HOURS`, `MICROSECONDS`, `MILLISECONDS`, `MINUTES`, `NANOSECONDS`, `SECONDS` |
 
-## ApplicableTo
+## Applicable To
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>This object stores information about the product collection.</p> Available values: `product`, `sku`, `products_collection` |
@@ -123,10 +123,10 @@ Any of:
 | aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Applicable To Effect](#applicable-to-effect) |
 
-## InapplicableTo
+## Inapplicable To
 All of:
 
-1. [ApplicableTo](#applicableto)
+1. [Applicable To](#applicable-to)
 
 ## Amount
 | Attributes |  Description |
