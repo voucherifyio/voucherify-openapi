@@ -4,6 +4,112 @@
 
 **Added schemas**
 
+- SimpleOrder
+- SimpleOrderItem
+- SimplePromotionTier
+- SimpleRedemption
+- ReferralProgram
+- SimpleVoucher
+- SimpleConsent
+- CustomersListCustomerActivitiesResponseBody
+- CustomerActivity
+- CustomerActivityData
+- EventCustomerSent
+- EventCustomerRecovered
+- EventCustomerFailed
+- EventCustomerConfirmed
+- EventCustomerCreated
+- EventCustomerUpdated
+- EventCustomerDeleted
+- EventCustomerReferred
+- EventCustomerCustomEvent
+- EventCustomerSegmentEntered
+- EventCustomerSegmentLeft
+- EventCustomerSmsSent
+- EventCustomerSmsRecovered
+- EventCustomerSmsFailed
+- EventCustomerEmailSent
+- EventCustomerEmailRecovered
+- EventCustomerEmailFailed
+- EventCustomerActiveCampaignSent
+- EventCustomerActiveCampaignRecovered
+- EventCustomerActiveCampaignFailed
+- EventCustomerBrazeSent
+- EventCustomerBrazeRecovered
+- EventCustomerMailchimpSent
+- EventCustomerMailchimpRecovered
+- EventCustomerMailchimpFailed
+- EventCustomerIntercomSent
+- EventCustomerIntercomRecovered
+- EventCustomerIntercomFailed
+- EventCustomerShopifySent
+- EventCustomerShopifyRecovered
+- EventCustomerShopifyFailed
+- EventCustomerKlaviyoSent
+- EventCustomerKlaviyoRecovered
+- EventCustomerKlaviyoFailed
+- EventCustomerBatchSent
+- EventCustomerBatchRecovered
+- EventCustomerBatchFailed
+- EventCustomerRewarded
+- EventCustomerRewardedLoyaltyPoints
+- EventCustomerGiftVoucherBalanceAdded
+- EventCustomerLoyaltyCardPointsAdded
+- EventCustomerLoyaltyCardPointsTransferred
+- EventCustomerVouchersLoyaltyPointsExpired
+- EventCustomerVoucherDeleted
+- EventCustomerPublicationSucceeded
+- EventCustomerPublicationFailed
+- EventCustomerValidationSucceeded
+- EventCustomerValidationFailed
+- EventCustomerRedemption
+- EventCustomerRedemptionSucceeded
+- EventCustomerRedemptionFailed
+- EventCustomerRedemptionRollbackSucceeded
+- EventCustomerRedemptionRollbackFailed
+- EventCustomerConsents
+- EventCustomerConsentsGiven
+- EventCustomerConsentsRevoked
+- EventCustomerOrder
+- EventCustomerOrderCanceled
+- EventCustomerOrderCreated
+- EventCustomerOrderFulfilled
+- EventCustomerOrderPaid
+- EventCustomerOrderProcessing
+- EventCustomerOrderUpdated
+- EventCustomerRewardRedemptions
+- EventCustomerRewardRedemptionsCreated
+- EventCustomerRewardRedemptionsPending
+- EventCustomerRewardRedemptionsCompleted
+- EventCustomerRewardRedemptionsRolledBack
+- EventCustomerLoyaltyUpdated
+- EventCustomerLoyaltyTierBase
+- EventCustomerLoyaltyTierUpgraded
+- EventCustomerLoyaltyTierDowngraded
+- EventCustomerLoyaltyTierProlonged
+- EventCustomerLoyaltyTierExpirationChanged
+- EventCustomerLoyaltyTierJoined
+- EventCustomerLoyaltyTierLeft
+- ValidationRulesListRulesAssignmentsResponseBody
+- SimpleReferralTier
+- CustomEvent
+- ValidationEntity
+- SimpleSku
+- SimpleProduct
+- LoyaltyTierExpiration
+- VoucherTransaction
+- LoyaltyCardTransaction
+
+- GET `/v1/customers/{customerId}/activities`
+  - Request body schema was replaced with new one: `CustomersListCustomerActivitiesResponseBody` (old one: `9_res_list_customer_activities`)
+
+- **reward_assignment** renamed to **RewardAssignment**
+- **validation_rules_list_rules_assignments_response_body** renamed to **ValidationRulesListRulesAssignmentsResponseBody**
+
+## 20231102 - Customers API
+
+**Added schemas**
+
 - CustomerBase
 - CustomerIdObjectResponse
 - ReferrerIdObjectResponse
