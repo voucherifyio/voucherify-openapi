@@ -5,7 +5,7 @@ categorySlug: integration-blueprint
 slug: campaign-limits
 type: basic
 hidden: false
-order: 4
+order: 9
 ---
 
 > 📘 **Goals**:
