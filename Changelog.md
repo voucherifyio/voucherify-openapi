@@ -1,6 +1,6 @@
 # Changelog
 
-## 20231102 - Customers API
+## 20231107 - Customers API
 
 **Added schemas**
 
