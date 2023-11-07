@@ -9,6 +9,14 @@ order: 1
 ---
 
 ## Product Object
+<p>This is an object representing a product.</p><p>This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.</p>
+
+All of:
+
+1. [Product without Skus Object](#product-without-skus-object)
+2. [SKUs object](#skus-object)
+
+## Product without Skus Object
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique product ID assigned by Voucherify.</p> **Example:** <p>prod_0b1da8105693710357</p> |
@@ -21,7 +29,14 @@ order: 1
 | created_at</br>`string` | <p>Timestamp representing the date and time when the product was created in ISO 8601 format.</p> **Example:** <p>2022-05-23T06:52:55.008Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the product was updated in ISO 8601 format.</p> **Example:** <p>2022-05-23T09:24:07.405Z</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the product.</p> Available values: `product` |
-| skus</br>`object` | <p>Contains a list of related child SKUs.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">data</br><code>array</code></td><td style="text-align:left"><p>Contains a list of SKU objects.</p> Array of <a href="#sku-object">SKU Object</a></td></tr><tr><td style="text-align:left">total</br><code>number</code></td><td style="text-align:left"><p>Total number of SKUs.</p></td></tr></tbody></table> |
+
+## SKUs object
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>The type of object represented by JSON. This object stores information about SKUs.</p> |
+| data_ref</br>`string` | <p>Identifies the name of the JSON property that contains the array of SKUs.</p> |
+| skus</br>`array` | <p>A dictionary that contains an array of SKUs.</p> Array of [SKU Object](#sku-object) |
+| total</br>`integer` | <p>Total number of SKUs in the product.</p> |
 
 ## SKU Object
 | Attributes |  Description |

@@ -28384,12 +28384,7 @@
         }
       },
       "ProductWithoutSkusResponse": {
-        "type": "object",
-        "description": "This is an object representing a product.  \n\nThis entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.",
-        "title": "Product Object",
-        "x-tags": [
-          "PRODUCTS API"
-        ],
+        "title": "Product without Skus Object",
         "properties": {
           "id": {
             "type": "string",
@@ -28465,35 +28460,48 @@
         ]
       },
       "ProductResponse": {
+        "type": "object",
+        "description": "This is an object representing a product.  \n\nThis entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.",
+        "title": "Product Object",
+        "x-tags": [
+          "PRODUCTS API"
+        ],
         "allOf": [
           {
             "$ref": "#/components/schemas/ProductWithoutSkusResponse"
           },
           {
-            "type": "object",
-            "description": "Contains information about child SKUs.",
-            "title": "SKUs object",
-            "properties": {
-              "skus": {
-                "type": "object",
-                "description": "Contains a list of related child SKUs.",
-                "properties": {
-                  "data": {
-                    "type": "array",
-                    "description": "Contains a list of SKU objects.",
-                    "items": {
-                      "$ref": "#/components/schemas/SkuResponse"
-                    }
-                  },
-                  "total": {
-                    "type": "number",
-                    "description": "Total number of SKUs."
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/schemas/SkusListForProductResponse"
           }
         ]
+      },
+      "SkusListForProductResponse": {
+        "type": "object",
+        "description": "Contains information about child SKUs.",
+        "title": "SKUs object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON. This object stores information about SKUs.",
+            "default": "list"
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "Identifies the name of the JSON property that contains the array of SKUs.",
+            "default": "data"
+          },
+          "skus": {
+            "type": "array",
+            "description": "A dictionary that contains an array of SKUs.",
+            "items": {
+              "$ref": "#/components/schemas/SkuResponse"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of SKUs in the product."
+          }
+        }
       },
       "SkusListResponse": {
         "type": "object",
@@ -28508,7 +28516,7 @@
           "data_ref": {
             "type": "string",
             "description": "Identifies the name of the JSON property that contains the array of SKUs.",
-            "default": "data"
+            "default": "skus"
           },
           "skus": {
             "type": "array",
@@ -39822,6 +39830,36 @@
           "request_id"
         ]
       },
+      "ResourceInUseError": {
+        "title": "Resource in Use Error Object",
+        "type": "object",
+        "description": "Error: Bad Request - Resource in use",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Error"
+          },
+          {
+            "properties": {
+              "related_object_ids": {
+                "type": "array",
+                "description": "Name or ID of the resources that are related.",
+                "items": {
+                  "type": "string",
+                  "example": "rewa_5WV7H3y2lT3GGl03Xjw29IEc"
+                }
+              },
+              "related_object_type": {
+                "type": "string",
+                "description": "Specifies the type of resource that is related."
+              },
+              "related_object_total": {
+                "type": "integer",
+                "description": "Specifies the total resource that are related."
+              }
+            }
+          }
+        ]
+      },
       "e_integration_key": {
         "title": "Error Object",
         "type": "object",
@@ -39931,49 +39969,6 @@
             "type": "string",
             "example": "v-0a884c6be8c3756f42",
             "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team."
-          }
-        }
-      },
-      "e_400_resource_in_use": {
-        "title": "Resource in use",
-        "type": "object",
-        "description": "Error: Bad Request - Resource in use",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "default": 400,
-            "description": "Error's HTTP status code."
-          },
-          "key": {
-            "type": "string",
-            "default": "resource_in_use",
-            "description": "Short string describing the kind of error which occurred."
-          },
-          "message": {
-            "type": "string",
-            "default": "Resource in use",
-            "description": "A human-readable message providing a short description about the error."
-          },
-          "details": {
-            "type": "string",
-            "description": "A human-readable message providing more details about the error."
-          },
-          "request_id": {
-            "type": "string",
-            "example": "v-0a884c6be8c3756f42",
-            "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team."
-          },
-          "related_object_ids": {
-            "type": "array",
-            "description": "Name or ID of the resources that are related.",
-            "items": {
-              "type": "string",
-              "example": "rewa_5WV7H3y2lT3GGl03Xjw29IEc"
-            }
-          },
-          "related_object_type": {
-            "type": "string",
-            "description": "Specifies the type of resource that is related."
           }
         }
       },
@@ -49714,7 +49709,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_400_resource_in_use"
+                  "$ref": "#/components/schemas/ResourceInUseError"
                 },
                 "examples": {
                   "Example": {
@@ -76098,7 +76093,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/e_400_resource_in_use"
+                  "$ref": "#/components/schemas/ResourceInUseError"
                 },
                 "examples": {
                   "Product Colllection In Use": {

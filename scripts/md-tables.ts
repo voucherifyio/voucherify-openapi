@@ -18,7 +18,7 @@ export const mdTables: [string, string?][] = [
     ['OrderResponse', 'ORDERS-API-Order-Object.md'],
     ['ProductResponse', 'PRODUCTS-API-Product-Object.md'],
     ['SkuResponse', 'PRODUCTS-API-SKU-Object.md'],
-    ['product_collections_collection_item', 'PRODUCT-COLLECTIONS-API-Product-Collection-Object.md'],
+    ['ProductCollectionsItemResponse', 'PRODUCT-COLLECTIONS-API-Product-Collection-Object.md'],
     ['13_obj_validation_rule_object', 'VALIDATION-RULES-API-Validation-Rule-Object.md'],
     ['validation_rule_assignment', 'VALIDATION-RULES-API-Validation-Rule-Assignment-Object.md'],
     ['14_obj_segment_object', 'SEGMENTS-API-Customer-Segment-Object.md'],

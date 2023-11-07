@@ -237,19 +237,12 @@ Any of:
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `customer` |
 
 ## Product Object
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique product ID assigned by Voucherify.</p> **Example:** <p>prod_0b1da8105693710357</p> |
-| source_id</br>`string` | <p>Unique product source ID.</p> **Example:** <p>productSourceID16</p> |
-| name</br>`string` | <p>Unique user-defined product name.</p> **Example:** <p>T-shirt</p> |
-| price</br>`integer` | <p>Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.</p> |
-| attributes</br>`array` | <p>A list of product attributes whose values you can customize for given SKUs: <code>[&quot;color&quot;,&quot;size&quot;,&quot;ranking&quot;]</code>. Each child SKU can have a unique value for a given attribute.</p> |
-| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format.</p> |
-| image_url</br>`string` | <p>The HTTPS URL pointing to the .png or .jpg file that will be used to render the product image.</p> **Example:** <p>https://images.com/original.jpg</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the product was created in ISO 8601 format.</p> **Example:** <p>2022-05-23T06:52:55.008Z</p> |
-| updated_at</br>`string` | <p>Timestamp representing the date and time when the product was updated in ISO 8601 format.</p> **Example:** <p>2022-05-23T09:24:07.405Z</p> |
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the product.</p> Available values: `product` |
-| skus</br>`object` | <p>Contains a list of related child SKUs.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">data</br><code>array</code></td><td style="text-align:left"><p>Contains a list of SKU objects.</p> Array of <a href="#sku-object">SKU Object</a></td></tr><tr><td style="text-align:left">total</br><code>number</code></td><td style="text-align:left"><p>Total number of SKUs.</p></td></tr></tbody></table> |
+<p>This is an object representing a product.</p><p>This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.</p>
+
+All of:
+
+1. [Product without Skus Object](#product-without-skus-object)
+2. [SKUs object](#skus-object)
 
 ## SKU Object
 | Attributes |  Description |
@@ -330,6 +323,28 @@ Any of:
 | fixed_amount</br>`number` | <p>Set a fixed valued for an order total or price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the fixed amount being calculated by the formula, i.e. the fixed_amount_formula parameter is present in the fixed amount definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
 | fixed_amount_formula</br>`string` |  |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
+
+## Product without Skus Object
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique product ID assigned by Voucherify.</p> **Example:** <p>prod_0b1da8105693710357</p> |
+| source_id</br>`string` | <p>Unique product source ID.</p> **Example:** <p>productSourceID16</p> |
+| name</br>`string` | <p>Unique user-defined product name.</p> **Example:** <p>T-shirt</p> |
+| price</br>`integer` | <p>Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.</p> |
+| attributes</br>`array` | <p>A list of product attributes whose values you can customize for given SKUs: <code>[&quot;color&quot;,&quot;size&quot;,&quot;ranking&quot;]</code>. Each child SKU can have a unique value for a given attribute.</p> |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format.</p> |
+| image_url</br>`string` | <p>The HTTPS URL pointing to the .png or .jpg file that will be used to render the product image.</p> **Example:** <p>https://images.com/original.jpg</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the product was created in ISO 8601 format.</p> **Example:** <p>2022-05-23T06:52:55.008Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the product was updated in ISO 8601 format.</p> **Example:** <p>2022-05-23T09:24:07.405Z</p> |
+| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the product.</p> Available values: `product` |
+
+## SKUs object
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>The type of object represented by JSON. This object stores information about SKUs.</p> |
+| data_ref</br>`string` | <p>Identifies the name of the JSON property that contains the array of SKUs.</p> |
+| skus</br>`array` | <p>A dictionary that contains an array of SKUs.</p> Array of [SKU Object](#sku-object) |
+| total</br>`integer` | <p>Total number of SKUs in the product.</p> |
 
 ## Discount Amount Vouchers Effect Types
 Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`, `APPLY_TO_ITEMS_PROPORTIONALLY`, `APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY`
