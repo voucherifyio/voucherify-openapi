@@ -345,6 +345,16 @@
           "format": "date-time"
         }
       },
+      "starting_after": {
+        "name": "starting_after",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "example": "2023-12-22T10:13:06.487Z",
+          "description": "Timestamp representing the date and time to use in starting_after cursor to get more data. Represented in ISO 8601 format.",
+          "format": "date-time"
+        }
+      },
       "campaign_type": {
         "name": "campaign_type",
         "in": "query",
@@ -28373,7 +28383,7 @@
           }
         }
       },
-      "ProductResponse": {
+      "ProductWithoutSkusResponse": {
         "type": "object",
         "description": "This is an object representing a product.  \n\nThis entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.",
         "title": "Product Object",
@@ -28440,26 +28450,9 @@
             "enum": [
               "product"
             ]
-          },
-          "skus": {
-            "type": "object",
-            "description": "Contains a list of related child SKUs.",
-            "properties": {
-              "data": {
-                "type": "array",
-                "description": "Contains a list of SKU objects.",
-                "items": {
-                  "$ref": "#/components/schemas/SkuResponse"
-                }
-              },
-              "total": {
-                "type": "number",
-                "description": "Total number of SKUs."
-              }
-            }
           }
         },
-        "required":  [
+        "required": [
           "id",
           "source_id",
           "name",
@@ -28469,6 +28462,37 @@
           "created_at",
           "updated_at",
           "object"
+        ]
+      },
+      "ProductResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ProductWithoutSkusResponse"
+          },
+          {
+            "type": "object",
+            "description": "Contains information about child SKUs.",
+            "title": "SKUs object",
+            "properties": {
+              "skus": {
+                "type": "object",
+                "description": "Contains a list of related child SKUs.",
+                "properties": {
+                  "data": {
+                    "type": "array",
+                    "description": "Contains a list of SKU objects.",
+                    "items": {
+                      "$ref": "#/components/schemas/SkuResponse"
+                    }
+                  },
+                  "total": {
+                    "type": "number",
+                    "description": "Total number of SKUs."
+                  }
+                }
+              }
+            }
+          }
         ]
       },
       "SkusListResponse": {
@@ -28499,89 +28523,15 @@
           }
         }
       },
-      "product_collections_product_in_collection": {
-        "type": "object",
-        "description": "This is an object representing a product in product collection.",
-        "title": "Product in Collection",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique product ID.",
-            "example": "prod_f1r5Tpr0DuC7"
+      "SkuWithProductResponse": {
+        "title": "SKU Object with information about parent product.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SkuResponse"
           },
-          "source_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "example": "productSourceID16",
-            "description": "Unique product source ID."
-          },
-          "name": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Unique user-defined product name.",
-            "example": "T-shirt"
-          },
-          "price": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
-          },
-          "attributes": {
-            "type": "array",
-            "description": "A list of product attributes whose values you can customize for given SKUs: `[\"color\",\"size\",\"ranking\"]`. Each child SKU can have a unique value for a given attribute.",
-            "items": {
-              "type": "string"
-            }
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
-          },
-          "image_url": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "The HTTPS URL pointing to the .png or .jpg file that will be used to render the product image.",
-            "example": "https://images.com/original.jpg"
-          },
-          "created_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the product was created in ISO 8601 format.",
-            "example": "2022-05-23T06:52:55.008Z",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Timestamp representing the date and time when the product was updated in ISO 8601 format.",
-            "example": "2022-05-23T09:24:07.405Z"
-          },
-          "object": {
-            "type": "string",
-            "description": "The type of object represented by JSON. This object stores information about the `product`.",
-            "default": "product"
+          {
+            "$ref": "#/components/schemas/ProductWithoutSkusResponse"
           }
-        },
-        "required": [
-          "id",
-          "source_id",
-          "name",
-          "price",
-          "attributes",
-          "metadata",
-          "image_url",
-          "created_at",
-          "updated_at",
-          "object"
         ]
       },
       "SkuResponse": {
@@ -28620,7 +28570,8 @@
           "source_id": {
             "type": "string",
             "example": "sku_source_id_4",
-            "description": "A unique SKU identifier from your inventory system."
+            "description": "A unique SKU identifier from your inventory system.",
+            "nullable": true
           },
           "product_id": {
             "type": "string",
@@ -28630,16 +28581,19 @@
           "sku": {
             "type": "string",
             "example": "Large Pink Shirt",
-            "description": "Unique user-defined SKU name."
+            "description": "Unique user-defined SKU name.",
+            "nullable": true
           },
           "price": {
             "type": "integer",
-            "description": "SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.",
+            "nullable": true
           },
           "currency": {
             "type": "string",
             "description": "SKU price currency.",
-            "example": "USD"
+            "example": "USD",
+            "nullable": true
           },
           "attributes": {
             "type": "object",
@@ -28647,7 +28601,8 @@
           },
           "image_url": {
             "type": "string",
-            "description": "The HTTPS URL pointing to the .png or .jpg file that will be used to render the SKU image."
+            "description": "The HTTPS URL pointing to the .png or .jpg file that will be used to render the SKU image.",
+            "nullable": true
           },
           "metadata": {
             "type": "object",
@@ -28663,7 +28618,8 @@
             "type": "string",
             "example": "2022-05-17T10:55:09.137Z",
             "description": "Timestamp representing the date and time when the SKU was updated in ISO 8601 format.",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "object": {
             "type": "string",
@@ -28673,7 +28629,21 @@
               "sku"
             ]
           }
-        }
+        },
+        "required": [
+          "id",
+          "source_id",
+          "product_id",
+          "sku",
+          "price",
+          "currency",
+          "attributes",
+          "metadata",
+          "image_url",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
       },
       "UpsertSkuRequestBody": {
         "title": "SKU Object",
@@ -28718,154 +28688,6 @@
           }
         }
       },
-      "product_collections_sku_in_collection": {
-        "title": "SKU in Collection",
-        "type": "object",
-        "description": "This is an object representing a SKU in product collection.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "sku_0b1621b319d248b79f",
-            "description": "A unique identifier that represents the SKU and is assigned by Voucherify."
-          },
-          "source_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "example": "sku_source_id_4",
-            "description": "A unique SKU identifier from your inventory system."
-          },
-          "product_id": {
-            "type": "string",
-            "example": "prod_0b15f6b9f650c16990",
-            "description": "The parent product's unique ID."
-          },
-          "sku": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "example": "Large Pink Shirt",
-            "description": "Unique user-defined SKU name."
-          },
-          "price": {
-            "type": [
-              "integer",
-              "null"
-            ],
-            "description": "SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
-          },
-          "attributes": {
-            "type": "object",
-            "description": "The attributes object stores values for all custom attributes inherited by the SKU from the parent product. A set of key/value pairs that are attached to a SKU object and are unique to each SKU within a product family."
-          },
-          "image_url": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "The HTTPS URL pointing to the .png or .jpg file that will be used to render the SKU image."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the SKU. A set of key/value pairs that you can attach to a SKU object. It can be useful for storing additional information about the SKU in a structured format."
-          },
-          "created_at": {
-            "type": "string",
-            "example": "2022-05-17T10:36:30.187Z",
-            "description": "Timestamp representing the date and time when the SKU was created in ISO 8601 format.",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "example": "2022-05-17T10:55:09.137Z",
-            "description": "Timestamp representing the date and time when the SKU was updated in ISO 8601 format.",
-            "format": "date-time"
-          },
-          "object": {
-            "type": "string",
-            "default": "sku",
-            "description": "The type of object represented by JSON. This object stores information about the `SKU`."
-          },
-          "product": {
-            "type": "object",
-            "description": "Stores information about the parent product.",
-            "required": [
-              "id",
-              "source_id",
-              "name",
-              "price",
-              "attributes",
-              "metadata",
-              "object"
-            ],
-            "properties": {
-              "id": {
-                "type": "string",
-                "example": "prod_f15Tpr0DuC7",
-                "description": "Unique product ID."
-              },
-              "source_id": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "example": "productSourceID11",
-                "description": "A unique product ID from your inventory system."
-              },
-              "name": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "example": "Shirts",
-                "description": "Unique user-defined product name."
-              },
-              "price": {
-                "type": [
-                  "integer",
-                  "null"
-                ],
-                "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
-              },
-              "attributes": {
-                "type": "array",
-                "description": "A list of product attributes whose values you can customize for given SKUs: `[\"'color\", \"size\", \"ranking\"]` . Each child SKL can have a unique value for a given attribute.",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "metadata": {
-                "type": "object",
-                "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
-              },
-              "object": {
-                "type": "string",
-                "default": "product",
-                "description": "The type of object represented by the object. This object stores information about the parent `product`."
-              }
-            }
-          }
-        },
-        "required": [
-          "id",
-          "source_id",
-          "product_id",
-          "sku",
-          "price",
-          "attributes",
-          "image_url",
-          "metadata",
-          "created_at",
-          "updated_at",
-          "object",
-          "product"
-        ]
-      },
       "UpdateSkuRequestBody": {
         "title": "Update SKU Request Body",
         "type": "object",
@@ -28898,7 +28720,7 @@
           }
         }
       },
-      "product_collections_list_products_response_body": {
+      "ProductCollectionsProductsListResponse": {
         "type": "object",
         "description": "Response body schema for GET /product-collections/{productCollectionID}/products.",
         "title": "List Products in Collection Response Body",
@@ -28919,10 +28741,10 @@
             "items": {
               "oneOf": [
                 {
-                  "$ref": "#/components/schemas/product_collections_product_in_collection"
+                  "$ref": "#/components/schemas/ProductWithoutSkusResponse"
                 },
                 {
-                  "$ref": "#/components/schemas/product_collections_sku_in_collection"
+                  "$ref": "#/components/schemas/SkuWithProductResponse"
                 }
               ]
             }
@@ -28939,35 +28761,7 @@
           "total"
         ]
       },
-      "11_res_products_productId_skus": {
-        "type": "object",
-        "description": "Response body schema for **GET** `/products/{productID}/skus`.",
-        "title": "List SKUs in Product Response Body",
-        "properties": {
-          "object": {
-            "type": "string",
-            "description": "The type of object represented by JSON. This object stores information about SKUs.",
-            "default": "list"
-          },
-          "data_ref": {
-            "type": "string",
-            "description": "Identifies the name of the JSON property that contains the array of SKUs.",
-            "default": "skus"
-          },
-          "skus": {
-            "type": "array",
-            "description": "A dictionary that contains an array of SKUs.",
-            "items": {
-              "$ref": "#/components/schemas/SkuResponse"
-            }
-          },
-          "total": {
-            "type": "integer",
-            "description": "Total number of SKUs in the product."
-          }
-        }
-      },
-      "product_collections_collection_item_base": {
+      "ProductCollectionsItemResponse": {
         "title": "Product Collection Base",
         "description": "This is an object representing a product collection base. ",
         "type": "object",
@@ -28980,6 +28774,93 @@
             "type": "string",
             "example": "All Products",
             "description": "Unique user-defined product collection name."
+          },
+          "type": {
+            "type": "string",
+            "description": "Describes whether the product collection is dynamic (products come in and leave based on set criteria) or static (manually selected products).",
+            "enum": [
+              "STATIC",
+              "AUTO_UPDATE"
+            ]
+          },
+          "filter": {
+            "type": "object",
+            "description": "Defines a set of criteria and boundary conditions for an `AUTO_UPDATE` product collection type.",
+            "additionalProperties": false,
+            "required": [
+              "junction"
+            ],
+            "properties": {
+              "junction": {
+                "$ref": "#/components/schemas/Junction"
+              },
+              "id": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "product_id": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "source_id": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "name": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "price": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "object": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "attributes": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "metadata": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "image_url": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "skus": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "created_at": {
+                "$ref": "#/components/schemas/FieldConditions"
+              },
+              "updated_at": {
+                "$ref": "#/components/schemas/FieldConditions"
+              }
+            }
+          },
+          "products": {
+            "description": "Defines a set of products for a `STATIC` product collection type.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "prod_0a41bcf807c5fcaaf6",
+                  "description": "The product ID."
+                },
+                "product_id": {
+                  "type": "string",
+                  "description": "Product ID for SKUs."
+                },
+                "object": {
+                  "type": "string",
+                  "enum": [
+                    "sku",
+                    "product"
+                  ],
+                  "description": "Denotes the type of object represented by the ID."
+                }
+              },
+              "required": [
+                "id",
+                "object"
+              ]
+            }
           },
           "created_at": {
             "type": "string",
@@ -28998,144 +28879,12 @@
         "required": [
           "id",
           "name",
+          "type",
           "created_at",
           "object"
         ]
       },
-      "product_collections_static_collection": {
-        "title": "Static Product Collection",
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/product_collections_collection_item_base"
-          },
-          {
-            "title": "Static Product Collection - Parameters",
-            "type": "object",
-            "description": "Schema model for a `STATIC` product collection.",
-            "properties": {
-              "type": {
-                "type": "string",
-                "description": "Describes whether the product collection is dynamic (products come in and leave based on set criteria) or static (manually selected products).",
-                "enum": [
-                  "STATIC"
-                ]
-              },
-              "products": {
-                "description": "Defines a set of products for a `STATIC` product collection type.",
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "example": "prod_0a41bcf807c5fcaaf6",
-                      "description": "The product ID."
-                    },
-                    "product_id": {
-                      "type": "string",
-                      "description": "Product ID for SKUs."
-                    },
-                    "object": {
-                      "type": "string",
-                      "enum": [
-                        "sku",
-                        "product"
-                      ],
-                      "description": "Denotes the type of object represented by the ID."
-                    }
-                  },
-                  "required": [
-                    "id",
-                    "object"
-                  ]
-                }
-              }
-            },
-            "required": [
-              "type",
-              "products"
-            ]
-          }
-        ]
-      },
-      "product_collections_dynamic_collection": {
-        "title": "Dynamic Product Collection",
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/product_collections_collection_item_base"
-          },
-          {
-            "title": "Dynamic Product Collection - Parameters",
-            "description": "Schema model for an `AUTO_UPDATE` product collection.",
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "description": "Describes whether the product collection is dynamic (products come in and leave based on set criteria) or static (manually selected products).",
-                "enum": [
-                  "AUTO_UPDATE"
-                ]
-              },
-              "filter": {
-                "type": "object",
-                "description": "Defines a set of criteria and boundary conditions for an `AUTO_UPDATE` product collection type.",
-                "additionalProperties": false,
-                "required": [
-                  "junction"
-                ],
-                "properties": {
-                  "junction": {
-                    "$ref": "#/components/schemas/Junction"
-                  },
-                  "id": {
-                    "$ref": "#/components/schemas/FieldConditions"
-                  },
-                  "product_id": {
-                    "$ref": "#/components/schemas/FieldConditions"
-                  },
-                  "source_id": {
-                    "$ref": "#/components/schemas/FieldConditions"
-                  },
-                  "name": {
-                    "$ref": "#/components/schemas/FieldConditions"
-                  },
-                  "price": {
-                    "$ref": "#/components/schemas/FieldConditions"
-                  },
-                  "object": {
-                    "$ref": "#/components/schemas/FieldConditions"
-                  },
-                  "attributes": {
-                    "$ref": "#/components/schemas/FieldConditions"
-                  },
-                  "metadata": {
-                    "$ref": "#/components/schemas/FieldConditions"
-                  },
-                  "image_url": {
-                    "$ref": "#/components/schemas/FieldConditions"
-                  },
-                  "skus": {
-                    "$ref": "#/components/schemas/FieldConditions"
-                  },
-                  "created_at": {
-                    "$ref": "#/components/schemas/FieldConditions"
-                  },
-                  "updated_at": {
-                    "$ref": "#/components/schemas/FieldConditions"
-                  }
-                }
-              }
-            },
-            "required": [
-              "type",
-              "filter"
-            ]
-          }
-        ]
-      },
-      "product_collections_list_response_body": {
+      "ProductCollectionsListResponse": {
         "type": "object",
         "title": "List Product Collections Response Body",
         "description": "Response body schema for GET /product-collections.",
@@ -29160,7 +28909,7 @@
             "description": "A dictionary that contains an array of product collections and their details.",
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/product_collections_collection_item"
+              "$ref": "#/components/schemas/ProductCollectionsItemResponse"
             }
           },
           "total": {
@@ -40608,59 +40357,48 @@
           }
         }
       },
-      "product_collections_get_response_body": {
-        "$ref": "#/components/schemas/product_collections_collection_item",
-        "description": "\"Response body schema for **GET** `/product-collections/{collectionId}`.\",",
-        "title": "Get Product Collection Response Body"
-      },
-      "product_collections_collection_item": {
-        "title": "Product Collection",
-        "type": "object",
-        "description": "This is an object representing a product collection.  \n\nThe products can be grouped into collections by the creation of a products collection object. You can retrieve a product collection and a list of products in the collection. Product collections are identified by a unique ID.",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/product_collections_static_collection"
-          },
-          {
-            "$ref": "#/components/schemas/product_collections_dynamic_collection"
-          }
-        ]
-      },
-      "product_collections_create_request_body": {
-        "title": "product_collections_create_request_body",
+      "CreateProductCollectionsRequestBody": {
+        "title": "Create Product Collections Request Body",
         "anyOf": [
           {
-            "$ref": "#/components/schemas/product_collections_create_static_request_body"
+            "$ref": "#/components/schemas/CreateStaticProductCollectionsRequestBody"
           },
           {
-            "$ref": "#/components/schemas/product_collections_create_dynamic_request_body"
+            "$ref": "#/components/schemas/CreateDynamicProductCollectionsRequestBody"
           }
         ]
       },
-      "product_collections_create_static_request_body": {
+      "CreateStaticProductCollectionsRequestBody": {
         "title": "Create Product Collection - Static",
         "type": "object",
         "properties": {
           "type": {
+            "description": "Show that the product collection is static (manually selected products).",
             "enum": [
               "STATIC"
             ]
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "description": "Unique user-defined product collection name."
           },
           "products": {
             "type": "array",
+            "description": "Defines a set of products for a `STATIC` product collection type.",
             "items": {
               "type": "object",
               "properties": {
                 "id": {
-                  "type": "string"
+                  "type": "string",
+                  "example": "prod_0a41bcf807c5fcaaf6",
+                  "description": "The product ID."
                 },
                 "product_id": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Product ID for SKUs."
                 },
                 "object": {
+                  "description": "Denotes the type of object represented by the ID.",
                   "enum": [
                     "sku",
                     "product"
@@ -40679,20 +40417,23 @@
           "name"
         ]
       },
-      "product_collections_create_dynamic_request_body": {
+      "CreateDynamicProductCollectionsRequestBody": {
         "title": "Create Product Collection - Auto Update",
         "type": "object",
         "properties": {
+          "description": "Show that the product collection is dynamic (products come in and leave based on set criteria).",
           "type": {
             "enum": [
               "AUTO_UPDATE"
             ]
           },
           "name": {
+            "description": "Unique user-defined product collection name.",
             "type": "string"
           },
           "filter": {
             "type": "object",
+            "description": "Defines a set of criteria and boundary conditions for an `AUTO_UPDATE` product collection type.",
             "additionalProperties": false,
             "required": [
               "junction"
@@ -75158,7 +74899,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string"
+              "type": "boolean"
             },
             "in": "query",
             "name": "force",
@@ -75824,7 +75565,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string"
+              "type": "boolean"
             },
             "in": "query",
             "name": "force",
@@ -76007,16 +75748,7 @@
             "$ref": "#/components/parameters/page"
           },
           {
-            "schema": {
-              "type": "string",
-              "enum": [
-                "created_at",
-                "-created_at"
-              ]
-            },
-            "in": "query",
-            "name": "order",
-            "description": "This is a property that controls the sorting direction of the results. Sort the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+            "$ref": "#/components/parameters/order"
           }
         ],
         "security": [
@@ -76031,7 +75763,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/product_collections_list_response_body"
+                  "$ref": "#/components/schemas/ProductCollectionsListResponse"
                 },
                 "examples": {
                   "Example": {
@@ -76215,7 +75947,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/product_collections_collection_item"
+                  "$ref": "#/components/schemas/ProductCollectionsItemResponse"
                 }
               }
             }
@@ -76232,7 +75964,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/product_collections_create_request_body"
+                "$ref": "#/components/schemas/CreateProductCollectionsRequestBody"
               }
             }
           }
@@ -76272,7 +76004,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/product_collections_get_response_body",
+                  "$ref": "#/components/schemas/ProductCollectionsItemResponse",
                   "description": "Returns a products collection object if a valid identifier was provided in the path."
                 },
                 "examples": {
@@ -76437,6 +76169,12 @@
           },
           {
             "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/order"
+          },
+          {
+            "$ref": "#/components/parameters/starting_after"
           }
         ],
         "security": [
@@ -76451,7 +76189,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/product_collections_list_products_response_body"
+                  "$ref": "#/components/schemas/ProductCollectionsProductsListResponse"
                 },
                 "examples": {
                   "Example": {
