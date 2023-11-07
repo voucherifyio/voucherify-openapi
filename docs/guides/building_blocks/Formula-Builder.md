@@ -4,7 +4,7 @@ excerpt:
 categorySlug: building-blocks
 slug: formula-builder
 type: basic
-hidden: false
+hidden: true
 order: 14
 ---
 

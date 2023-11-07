@@ -4,7 +4,7 @@ excerpt:
 categorySlug: building-blocks
 slug: validation-rules
 type: basic
-hidden: false
+hidden: true
 order: 5
 ---
 
