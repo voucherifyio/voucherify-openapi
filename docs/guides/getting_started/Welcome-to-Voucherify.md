@@ -41,9 +41,10 @@ Discover the full story
 
 DTC Ecommerce -->
 
-> 📘 <details>
-> <summary>Customer story – Breville</summary>
+> 👍 Customer story – Breville
 > 
+> <details><summary>Unroll to read their story</summary>
+>
 > [Breville](https://www.breville.com/us/en/home/index.html "Breville website") is an iconic global brand known for its extensive line of premium home appliances, particularly blenders and coffee machines.
 > 
 > In pursuit of building new direct-to-consumer sales channels, Breville began its digital transformation journey. They chose [commercetools](https://www.voucherify.io/integrations/commercetools "Integration between Voucherify and commercetools") as their MACH-compliant commerce platform.
@@ -66,61 +67,58 @@ DTC Ecommerce -->
 
 Whether it’s fin-tech, ed-tech, mobility, or anything else, Voucherify is a driving force for customer engagement (especially in the context of recent changes in ad tracking). With a flexible data model and integrations with leading CDP and CRM platforms, mobile apps can make the most of the collected data in minimal time.
 
-<details>
-<summary>
-Customer story – Taxfix
-</summary>
-
-[Taxfix](https://taxfix.de/) is a Germany-based high-growth fintech startup that provides a mobile app designed to simplify and streamline the tax filing process.
-
-Key challenges for Taxfix:
-- Finding an API-first referral and discounting solution.
-- Connecting the promotion engine with other marketing automation tools. 
-- Enhancing revenue generation from the Taxfix user base via referrals and targeted offers.
-
-To maximize customer acquisition, Taxfix has previously employed referral tactics. However, their refer-a-friend initiatives lacked market receptiveness and user engagement, primarily due to outdated technologies and manual execution. That is why Taxfix turned to Voucherify and [Braze](https://www.braze.com/) to maximize their referral potential with modern API-first solutions.
-
-Voucherify equipped Taxfix with essential features to execute their bespoke referral campaign:
-- Referral program setup
-- Omnichannel engagement
-
-As a result, Taxfix achieved with Voucherify:
-- 95% increase in referral-driven sign-ups.
-- Accelerated iteration time and lower development costs.
-- Accelerated time to value and quick mix and match of campaign scenarios due to deploying API-first tools.
-- 90% more referrals made compared to previous program editions.
-
-Read the [whole Taxfix story](https://www.voucherify.io/customers/taxfix "How Taxfix increased referral registrations by 95% with Voucherify and Braze?")
-
-</details>
+> 👍 Customer story – Taxfix 
+> <details>
+> <summary>Unroll to read their story</summary>
+>
+> [Taxfix](https://taxfix.de/) is a Germany-based high-growth fintech startup that provides a mobile app designed to simplify and streamline the tax filing process.
+> 
+> Key challenges for Taxfix:
+> - Finding an API-first referral and discounting solution.
+> - Connecting the promotion engine with other marketing automation tools. 
+> - Enhancing revenue generation from the Taxfix user base via referrals and targeted offers.
+> 
+> To maximize customer acquisition, Taxfix has previously employed referral tactics. However, their refer-a-friend initiatives lacked market receptiveness and user engagement, primarily due to outdated technologies and manual execution. That is why Taxfix turned to Voucherify and [Braze](https://www.braze.com/) to maximize their referral potential with modern API-first solutions.
+> 
+> Voucherify equipped Taxfix with essential features to execute their bespoke referral campaign:
+> - Referral program setup
+> - Omnichannel engagement
+> 
+> As a result, Taxfix achieved with Voucherify:
+> - 95% increase in referral-driven sign-ups.
+> - Accelerated iteration time and lower development costs.
+> - Accelerated time to value and quick mix and match of campaign scenarios due to deploying API-first tools.
+> - 90% more referrals made compared to previous program editions.
+> 
+> Read the [whole Taxfix story](https://www.voucherify.io/customers/taxfix "How Taxfix increased referral registrations by 95% with Voucherify and Braze?")
+>
+> </details>
 
 ## QSRs
 
 
 QSRs often need to handle a large volume of data in real-time. Voucherify provides a scalable infrastructure to support the creation, distribution, and management of rewards and incentives in both slow and peak periods. Voucherify API can be integrated with POS, mobile apps, web apps, and other devices, allowing QSR brands to run omnichannel promotions.
 
-<details>
-<summary>
-Customer story – BAEMIN
-</summary>
-
-[BAEMIN](https://baemin.vn/) was born in June 2010, with the desire to "Helping people eat delicious food anytime, anywhere." In 2019, BAEMIN officially entered the Vietnam market and became one of the largest players there, having about 5 million customers.
-
-Key challenges for BAEMIN:
-- Saving development time with flexible coupon software. 
-- Capturing customers’ attention in a competitive market with unique incentives. 
-- Securing the promotion budget in a price-sensitive environment.
-
-BAEMIN Vietnam opted for time-limited unique coupon codes to grab customers’ attention and they were looking for a coupon solution that would allow their marketing team to generate and manage unique coupon codes and thematic campaigns with little to no IT development.
-
-As a result, BAEMIN achieved with Voucherify:
-- Over 60 million engaged users and over 800 campaigns launched with Voucherify
-- Flexible campaign management by the marketing team
-- Fast campaign time-to-market thanks to API-first built and Braze integration
-
-Read the [whole BAEMIN story](https://www.voucherify.io/customers/baemin "How BAEMIN Vietnam handled over 60 million redemptions in a coupon-hungry market")
-
-</details>
+> 👍 Customer story – BAEMIN
+> <details><summary>Unroll to read their story</summary>
+> 
+> [BAEMIN](https://baemin.vn/) was born in June 2010, with the desire to "Helping people eat delicious food anytime, anywhere." In 2019, BAEMIN officially entered the Vietnam market and became one of the largest players there, having about 5 million customers.
+> 
+> Key challenges for BAEMIN:
+> - Saving development time with flexible coupon software. 
+> - Capturing customers’ attention in a competitive market with unique incentives. 
+> - Securing the promotion budget in a price-sensitive environment.
+> 
+> BAEMIN Vietnam opted for time-limited unique coupon codes to grab customers’ attention and they were looking for a coupon solution that would allow their marketing team to generate and manage unique coupon codes and thematic campaigns with little to no IT development.
+> 
+> As a result, BAEMIN achieved with Voucherify:
+> - Over 60 million engaged users and over 800 campaigns launched with Voucherify
+> - Flexible campaign management by the marketing team
+> - Fast campaign time-to-market thanks to API-first built and Braze integration
+> 
+> Read the [whole BAEMIN story](https://www.voucherify.io/customers/baemin "How BAEMIN Vietnam handled over 60 million redemptions in a coupon-hungry market")
+>
+> </details>
 
 ## What problems does Voucherify solve?
 
