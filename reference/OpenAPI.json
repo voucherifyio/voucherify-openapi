@@ -548,8 +548,16 @@
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
           },
           "customer": {
-            "$ref": "#/components/schemas/CustomerResponse",
-            "description": "This is an object containing information about the customer."
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CustomerResponse",
+                "description": "This is an object containing information about the customer."
+              },
+              {
+                "$ref": "#/components/schemas/CustomerIdObjectResponse",
+                "description": "If only `customer_id` was provided, customer return data will be limited."
+              }
+            ]
           },
           "customer_id": {
             "type": [
@@ -560,8 +568,16 @@
             "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
           },
           "referrer": {
-            "$ref": "#/components/schemas/ReferrerResponse",
-            "description": "This is an object containing information about the referrer."
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReferrerResponse",
+                "description": "This is an object containing information about the referrer."
+              },
+              {
+                "$ref": "#/components/schemas/ReferrerIdObjectResponse",
+                "description": "If only `referrer_id` was provided, referrer return data will be limited."
+              }
+            ]
           },
           "referrer_id": {
             "type": [
@@ -752,7 +768,7 @@
               "credits": {
                 "type": "number",
                 "minimum": 0,
-                "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
               }
             },
             "required": [
@@ -917,14 +933,18 @@
           }
         ]
       },
-      "CustomerRequest": {
+      "ReferrerIdObjectResponse": {
+        "title": "Referrer Id Object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CustomerIdObjectResponse"
+          }
+        ]
+      },
+      "CustomerBase": {
+        "title": "Customer Base",
         "type": "object",
-        "title": "Customer Request",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "The ID of an existing customer that will be linked to redemption in this request."
-          },
           "source_id": {
             "type": "string",
             "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
@@ -945,14 +965,21 @@
             "type": "string",
             "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
           },
+          "birthday": {
+            "type": "string",
+            "description": "*Deprecated* Customer's birthdate; format YYYY-MM-DD.",
+            "format": "date"
+          },
           "birthdate": {
             "type": "string",
             "description": "Customer's birthdate; format YYYY-MM-DD.",
             "format": "date"
           },
           "address": {
-            "type": "object",
-            "additionalProperties": false,
+            "type": [
+              "object",
+              "null"
+            ],
             "description": "Customer's address.",
             "properties": {
               "city": {
@@ -987,73 +1014,54 @@
           }
         }
       },
-      "CustomerResponse": {
-        "type": "object",
-        "title": "Customer Response",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "The ID of an existing customer that will be linked to redemption in this request."
-          },
-          "source_id": {
-            "type": "string",
-            "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
-          },
-          "name": {
-            "type": "string",
-            "description": "Customer's first and last name."
-          },
-          "description": {
-            "type": "string",
-            "description": "An arbitrary string that you can attach to a customer object."
-          },
-          "email": {
-            "type": "string",
-            "description": "Customer's email address."
-          },
-          "phone": {
-            "type": "string",
-            "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel."
-          },
-          "birthdate": {
-            "type": "string",
-            "description": "Customer's birthdate; format YYYY-MM-DD.",
-            "format": "date"
-          },
-          "address": {
+      "CustomersCreateRequestBody": {
+        "title": "Customers Create Request Body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CustomerBase"
+          }
+        ]
+      },
+      "CustomersUpdateRequestBody": {
+        "title": "Customers Update Request Body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CustomerBase"
+          }
+        ]
+      },
+      "CustomersUpdateResponseBody": {
+        "title": "Customers Update Request Body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CustomerResponse"
+          }
+        ]
+      },
+      "CustomerRequest": {
+        "title": "Customer Request",
+        "allOf": [
+          {
             "type": "object",
-            "additionalProperties": false,
-            "description": "Customer's address.",
+            "title": "Customer Id",
             "properties": {
-              "city": {
+              "id": {
                 "type": "string",
-                "description": "City"
-              },
-              "state": {
-                "type": "string",
-                "description": "State"
-              },
-              "line_1": {
-                "type": "string",
-                "description": "First line of address."
-              },
-              "line_2": {
-                "type": "string",
-                "description": "Second line of address."
-              },
-              "country": {
-                "type": "string",
-                "description": "Country."
-              },
-              "postal_code": {
-                "type": "string",
-                "description": "Postal code."
+                "description": "The ID of an existing customer."
               }
             }
           },
-          "metadata": {
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
+          {
+            "$ref": "#/components/schemas/CustomerBase"
+          }
+        ]
+      },
+      "CustomerIdObjectResponse": {
+        "title": "Customer Id Object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "A unique identifier of an existing customer."
           },
           "object": {
             "type": "string",
@@ -1063,7 +1071,316 @@
               "customer"
             ]
           }
-        }
+        },
+        "required": [
+          "id",
+          "object"
+        ]
+      },
+      "CustomersCreateResponseBody": {
+        "title": "Customers Create Response Body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CustomerResponse"
+          }
+        ]
+      },
+      "CustomerResponse": {
+        "title": "Customer Response",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CustomerBase"
+          },
+          {
+            "type": "object",
+            "title": "Customer Response Data",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The ID of an existing customer that will be linked to redemption in this request."
+              },
+              "summary": {
+                "$ref": "#/components/schemas/CustomerSummary"
+              },
+              "loyalty": {
+                "$ref": "#/components/schemas/CustomerLoyalty"
+              },
+              "referrals": {
+                "$ref": "#/components/schemas/CustomerReferrals"
+              },
+              "system_metadata": {
+                "type": "object",
+                "description": "Object used to store system metadata information."
+              },
+              "created_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the customer was created in ISO 8601 format.",
+                "example": "2022-08-30T06:32:07.380Z",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the customer was updated in ISO 8601 format.",
+                "example": "2022-08-31T06:32:07.380Z",
+                "format": "date-time"
+              },
+              "assets": {
+                "type": "object",
+                "description": "Contains information about the customer's cockpit.",
+                "properties": {
+                  "cockpit_url": {
+                    "type": "string",
+                    "description": "Customer's cockpit URL address."
+                  }
+                }
+              },
+              "object": {
+                "type": "string",
+                "description": "The type of object represented by JSON.",
+                "default": "customer",
+                "enum": [
+                  "customer"
+                ]
+              }
+            },
+            "required": [
+              "address",
+              "summary",
+              "loyalty",
+              "referrals",
+              "system_metadata",
+              "created_at",
+              "object"
+            ]
+          }
+        ]
+      },
+      "CustomerReferrals": {
+        "title": "Customer Referrals",
+        "type": "object",
+        "description": "Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Total number of times this customer received a referral, i.e. was referred by another customer."
+          },
+          "campaigns": {
+            "type": "array",
+            "description": "Contains an array of campaigns that served as the source of a referral for the customer.",
+            "items": {
+              "type": "object",
+              "description": "Contains information about the source of the referral.",
+              "properties": {
+                "campaign_id": {
+                  "type": "string",
+                  "description": "Unique campaign ID, assigned by Voucherify.",
+                  "example": "camp_rRsfatlwN7unSeUIJDCYedal"
+                },
+                "referrer_id": {
+                  "type": "string",
+                  "example": "cust_sehkNIi8Uq2qQuRqSr7xn4Zi",
+                  "description": "Unique referrer ID, assigned by Voucherify. This is the customer ID of a customer that is referring this customer."
+                },
+                "related_object_id": {
+                  "type": "string",
+                  "description": "Related object id",
+                  "example": "r_0b9d4cc4aa164dd073"
+                },
+                "related_object_type": {
+                  "type": "string",
+                  "description": "Related object type, i.e. `redemption`."
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2022-08-30T10:19:39.196Z",
+                  "description": "Timestamp representing the date and time when the customer was referred in ISO 8601 format."
+                }
+              },
+              "required": [
+                "campaign_id",
+                "referrer_id",
+                "related_object_id",
+                "related_object_type",
+                "date"
+              ]
+            }
+          }
+        },
+        "required": [
+          "total",
+          "campaigns"
+        ]
+      },
+      "CustomerLoyalty": {
+        "title": "Customer Loyalty",
+        "type": "object",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "Customer's loyalty points."
+          },
+          "referred_customers": {
+            "type": "integer",
+            "description": "Total number of customers referred by the customer."
+          },
+          "campaigns": {
+            "type": "object",
+            "description": "Contains campaigns with details about point balances and how many customers were referred by the customer.",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.",
+              "properties": {
+                "points": {
+                  "type": "integer",
+                  "description": "Remaining point balance in campaign."
+                },
+                "loyalty_tier": {
+                  "type": "string",
+                  "example": "ltr_UJ5Q54Q0OvEhua87Qfv2Ki5x",
+                  "description": "Customer's loyalty tier within the campaign."
+                },
+                "referred_customers": {
+                  "type": "integer",
+                  "description": "Number of customers referred by the customer in campaign."
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "points",
+          "referred_customers",
+          "campaigns"
+        ]
+      },
+      "CustomerSummary": {
+        "title": "Customer Summary",
+        "type": "object",
+        "properties": {
+          "redemptions": {
+            "$ref": "#/components/schemas/CustomerSummaryRedemptions"
+          },
+          "orders": {
+            "$ref": "#/components/schemas/CustomerSummaryOrders"
+          }
+        },
+        "required": [
+          "redemptions",
+          "orders"
+        ]
+      },
+      "CustomerSummaryOrders": {
+        "title": "Customer Summary Orders",
+        "type": "object",
+        "properties": {
+          "total_amount": {
+            "type": "integer",
+            "description": "The total amount spent by the customer. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
+          },
+          "total_count": {
+            "type": "integer",
+            "description": "Total number of orders made by the customer."
+          },
+          "average_amount": {
+            "type": "integer",
+            "description": "Average amount spent on orders. `total_amount` &divide; `total_count`. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
+          },
+          "last_order_amount": {
+            "type": "integer",
+            "description": "Amount spent on last order. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
+          },
+          "last_order_date": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-08-30T11:51:08.029Z",
+            "description": "Timestamp representing the date and time of the customer's last order in ISO 8601 format."
+          }
+        },
+        "required": [
+          "total_amount",
+          "total_count",
+          "average_amount",
+          "last_order_amount"
+        ]
+      },
+      "CustomerSummaryRedemptions": {
+        "title": "Customer Summary Redemptions",
+        "type": "object",
+        "properties": {
+          "total_redeemed": {
+            "type": "integer",
+            "description": "Total number of redemptions made by the customer."
+          },
+          "total_failed": {
+            "type": "integer",
+            "description": "Total number of redemptions that failed."
+          },
+          "total_succeeded": {
+            "type": "integer",
+            "description": "Total number of redemptions that succeeded."
+          },
+          "total_rolled_back": {
+            "type": "integer",
+            "description": "Total number of redemptions that were rolled back for the customer."
+          },
+          "total_rollback_failed": {
+            "type": "integer",
+            "description": "Total number of redemption rollbacks that failed."
+          },
+          "total_rollback_succeeded": {
+            "type": "integer",
+            "description": "Total number of redemption rollbacks that succeeded."
+          },
+          "gift": {
+            "type": "object",
+            "description": "Summary of gift card credits.",
+            "required": [
+              "redeemed_amount",
+              "amount_to_go"
+            ],
+            "properties": {
+              "redeemed_amount": {
+                "type": "integer",
+                "description": "Total amount of gift card credits redeemed by customer. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
+                "default": 0
+              },
+              "amount_to_go": {
+                "type": "integer",
+                "description": "Remaining gift card balance across all gift cards. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
+                "default": 0
+              }
+            }
+          },
+          "loyalty_card": {
+            "type": "object",
+            "description": "Summary of loyalty points.",
+            "required": [
+              "redeemed_points",
+              "points_to_go"
+            ],
+            "properties": {
+              "redeemed_points": {
+                "type": "integer",
+                "description": "Total number of loyalty points redeemed by the customer."
+              },
+              "points_to_go": {
+                "type": "integer",
+                "description": "Sum of remaining available point balance across all loyalty cards."
+              }
+            }
+          }
+        },
+        "required": [
+          "total_redeemed",
+          "total_failed",
+          "total_succeeded",
+          "total_rolled_back",
+          "total_rollback_failed",
+          "total_rollback_succeeded",
+          "gift",
+          "loyalty_card"
+        ]
       },
       "SimpleCustomer": {
         "type": "object",
@@ -1149,7 +1466,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "product": {
             "type": "object",
@@ -1276,7 +1593,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "subtotal_amount": {
             "type": "integer",
@@ -6232,7 +6549,7 @@
           },
           "credits": {
             "type": "number",
-            "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           }
         }
       },
@@ -6351,7 +6668,7 @@
               "amount": {
                 "type": "integer",
                 "minimum": 0,
-                "description": "Pre-discount order amount represents the total amount of order items' amounts (sum of each item's `amount` property). You can send the total order amount or the amount of each item individually in the request body to check against vouchers requiring specific total order amount validation rules to be satisfied. The qualification runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order volume_ &rarr; _Total amount_ \n\nValue is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.",
+                "description": "Pre-discount order amount represents the total amount of order items' amounts (sum of each item's `amount` property). You can send the total order amount or the amount of each item individually in the request body to check against vouchers requiring specific total order amount validation rules to be satisfied. The qualification runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order volume_ &rarr; _Total amount_ \n\nValue is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
                 "example": 10000
               },
               "items": {
@@ -6495,7 +6812,7 @@
           },
           "amount": {
             "type": "integer",
-            "description": "Represents a total pre-discount amount of order item (`price` * `quantity`). You can send the total item amount to check against vouchers requiring specific order amount validation rules to be satisfied.\n\n The qualification runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order volume_ &rarr; _Total amount_. The qualification adds the individual amounts of the items and checks whether the sum meets the limits set by the _Total amount_. Additionally, another rule checked is one that is defined in _Advanced Rule Builder_ &rarr; _Order structure_ &rarr; _Every order item/Any order item_ &rarr; _Subtotal of matched items_.  \n\nValue is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.\n",
+            "description": "Represents a total pre-discount amount of order item (`price` * `quantity`). You can send the total item amount to check against vouchers requiring specific order amount validation rules to be satisfied.\n\n The qualification runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order volume_ &rarr; _Total amount_. The qualification adds the individual amounts of the items and checks whether the sum meets the limits set by the _Total amount_. Additionally, another rule checked is one that is defined in _Advanced Rule Builder_ &rarr; _Order structure_ &rarr; _Every order item/Any order item_ &rarr; _Subtotal of matched items_.  \n\nValue is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
             "example": 10000
           },
           "quantity": {
@@ -6505,7 +6822,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "Unit price of an item. [This is not true in the case of using sourceid what was the case that this happened.]This `price` property takes precedence. If you provide a value at this level, then a price property defined once again in the `related_object` will be ignored. If this property will not be defined here, then the `price` property in the `related_object` will be used in the qualification.\n\n The qualification runs against rules that are defined through the Create Validation Rules endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order Structure_ &rarr; _Every order item/Any order item_ &rarr; _Unit Price of any matching order line_ and also _Order Volume_ &rarr; _Price of each item/Price of any item_. [Read more](https://support.voucherify.io/article/529-validation-rules-campaign-limits).\n\n Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.",
+            "description": "Unit price of an item. [This is not true in the case of using sourceid what was the case that this happened.]This `price` property takes precedence. If you provide a value at this level, then a price property defined once again in the `related_object` will be ignored. If this property will not be defined here, then the `price` property in the `related_object` will be used in the qualification.\n\n The qualification runs against rules that are defined through the Create Validation Rules endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order Structure_ &rarr; _Every order item/Any order item_ &rarr; _Unit Price of any matching order line_ and also _Order Volume_ &rarr; _Price of each item/Price of any item_. [Read more](https://support.voucherify.io/article/529-validation-rules-campaign-limits).\n\n Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
             "example": 10000
           },
           "metadata": {
@@ -6535,7 +6852,7 @@
               },
               "price": {
                 "type": "integer",
-                "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.",
+                "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
                 "example": 10000
               },
               "metadata": {
@@ -6558,7 +6875,7 @@
           },
           "amount": {
             "type": "integer",
-            "description": "Represents a total pre-discount amount of order item (`price` * `quantity`). You can send the total item amount to check against vouchers requiring specific order amount validation rules to be satisfied.\n\n The qualification runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order volume_ &rarr; _Total amount_. The qualification adds the individual amounts of the items and checks whether the sum meets the limits set by the _Total amount_. Additionally, another rule checked is one that is defined in _Advanced Rule Builder_ &rarr; _Order structure_ &rarr; _Every order item/Any order item_ &rarr; _Subtotal of matched items_.  \n\nValue is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.\n",
+            "description": "Represents a total pre-discount amount of order item (`price` * `quantity`). You can send the total item amount to check against vouchers requiring specific order amount validation rules to be satisfied.\n\n The qualification runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order volume_ &rarr; _Total amount_. The qualification adds the individual amounts of the items and checks whether the sum meets the limits set by the _Total amount_. Additionally, another rule checked is one that is defined in _Advanced Rule Builder_ &rarr; _Order structure_ &rarr; _Every order item/Any order item_ &rarr; _Subtotal of matched items_.  \n\nValue is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
             "example": 10000
           },
           "quantity": {
@@ -6568,7 +6885,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "Unit price of an item. [This is not true in the case of using sourceid what was the case that this happened.]This `price` property takes precedence. If you provide a value at this level, then a price property defined once again in the `related_object` will be ignored. If this property will not be defined here, then the `price` property in the `related_object` will be used in the qualification.\n\n The qualification runs against rules that are defined through the Create Validation Rules endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order Structure_ &rarr; _Every order item/Any order item_ &rarr; _Unit Price of any matching order line_ and also _Order Volume_ &rarr; _Price of each item/Price of any item_. Even if this price is explicitly provided, it will not override the `price` when running qualifications against _Advanced Rule Builder_ &rarr; _Order structure_ &rarr; _Every order item/Any order item/None of the order items_ &rarr; _Select/create a product collection filtered by a Price_.   [Read more](https://support.voucherify.io/article/529-validation-rules-campaign-limits).\n\n Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.",
+            "description": "Unit price of an item. [This is not true in the case of using sourceid what was the case that this happened.]This `price` property takes precedence. If you provide a value at this level, then a price property defined once again in the `related_object` will be ignored. If this property will not be defined here, then the `price` property in the `related_object` will be used in the qualification.\n\n The qualification runs against rules that are defined through the Create Validation Rules endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order Structure_ &rarr; _Every order item/Any order item_ &rarr; _Unit Price of any matching order line_ and also _Order Volume_ &rarr; _Price of each item/Price of any item_. Even if this price is explicitly provided, it will not override the `price` when running qualifications against _Advanced Rule Builder_ &rarr; _Order structure_ &rarr; _Every order item/Any order item/None of the order items_ &rarr; _Select/create a product collection filtered by a Price_.   [Read more](https://support.voucherify.io/article/529-validation-rules-campaign-limits).\n\n Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
             "example": 10000
           },
           "metadata": {
@@ -6586,7 +6903,7 @@
               },
               "price": {
                 "type": "integer",
-                "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.",
+                "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
                 "example": 10000
               },
               "metadata": {
@@ -6609,7 +6926,7 @@
           },
           "amount": {
             "type": "integer",
-            "description": "Represents a total pre-discount amount of order item (`price` * `quantity`). You can send the total item amount to check against vouchers requiring specific order amount validation rules to be satisfied.\n\n The qualification runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order volume_ &rarr; _Total amount_. The qualification adds the individual amounts of the items and checks whether the sum meets the limits set by the _Total amount_. Additionally, another rule checked is one that is defined in _Advanced Rule Builder_ &rarr; _Order structure_ &rarr; _Every order item/Any order item_ &rarr; _Subtotal of matched items_.  \n\nValue is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.\n",
+            "description": "Represents a total pre-discount amount of order item (`price` * `quantity`). You can send the total item amount to check against vouchers requiring specific order amount validation rules to be satisfied.\n\n The qualification runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order volume_ &rarr; _Total amount_. The qualification adds the individual amounts of the items and checks whether the sum meets the limits set by the _Total amount_. Additionally, another rule checked is one that is defined in _Advanced Rule Builder_ &rarr; _Order structure_ &rarr; _Every order item/Any order item_ &rarr; _Subtotal of matched items_.  \n\nValue is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
             "example": 10000
           },
           "quantity": {
@@ -6619,7 +6936,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "Unit price of an item. [This is not true in the case of using sourceid what was the case that this happened.]This `price` property takes precedence. If you provide a value at this level, then a price property defined once again in the `related_object` will be ignored. If this property will not be defined here, then the `price` property in the `related_object` will be used in the qualification.\n\n The qualification runs against rules that are defined through the Create Validation Rules endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order Structure_ &rarr; _Every order item/Any order item_ &rarr; _Unit Price of any matching order line_ and also _Order Volume_ &rarr; _Price of each item/Price of any item_. [Read more](https://support.voucherify.io/article/529-validation-rules-campaign-limits).\n\n Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.",
+            "description": "Unit price of an item. [This is not true in the case of using sourceid what was the case that this happened.]This `price` property takes precedence. If you provide a value at this level, then a price property defined once again in the `related_object` will be ignored. If this property will not be defined here, then the `price` property in the `related_object` will be used in the qualification.\n\n The qualification runs against rules that are defined through the Create Validation Rules endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Order Structure_ &rarr; _Every order item/Any order item_ &rarr; _Unit Price of any matching order line_ and also _Order Volume_ &rarr; _Price of each item/Price of any item_. [Read more](https://support.voucherify.io/article/529-validation-rules-campaign-limits).\n\n Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
             "example": 10000
           },
           "metadata": {
@@ -6649,7 +6966,7 @@
               },
               "price": {
                 "type": "integer",
-                "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.",
+                "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
                 "example": 10000
               },
               "metadata": {
@@ -6713,7 +7030,7 @@
               },
               "price": {
                 "type": "integer",
-                "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.",
+                "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
                 "example": 10000
               },
               "metadata": {
@@ -6738,7 +7055,7 @@
               },
               "price": {
                 "type": "integer",
-                "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.",
+                "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
                 "example": 10000
               },
               "metadata": {
@@ -11073,7 +11390,7 @@
             "properties": {
               "credits": {
                 "type": "integer",
-                "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
               }
             }
           },
@@ -12754,7 +13071,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -12781,7 +13098,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 },
@@ -12805,7 +13122,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 }
@@ -12964,7 +13281,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -12991,7 +13308,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 },
@@ -13015,7 +13332,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 }
@@ -13780,7 +14097,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -13807,7 +14124,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 },
@@ -13831,7 +14148,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 }
@@ -13988,7 +14305,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 }
               }
             }
@@ -14055,7 +14372,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -14136,7 +14453,7 @@
                 "properties": {
                   "credits": {
                     "type": "integer",
-                    "description": "The number of credits that the user wants to use from the gift card to fulfill the order. The value of credits cannot be higher than the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                    "description": "The number of credits that the user wants to use from the gift card to fulfill the order. The value of credits cannot be higher than the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                   }
                 }
               }
@@ -14986,7 +15303,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -15013,7 +15330,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 },
@@ -15037,7 +15354,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 }
@@ -15129,7 +15446,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -15156,7 +15473,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 },
@@ -15180,7 +15497,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 }
@@ -15319,7 +15636,7 @@
                         },
                         "price": {
                           "type": "integer",
-                          "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                          "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                         },
                         "subtotal_amount": {
                           "type": "integer",
@@ -15346,7 +15663,7 @@
                             },
                             "price": {
                               "type": "integer",
-                              "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                              "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                             }
                           }
                         },
@@ -15370,7 +15687,7 @@
                             },
                             "price": {
                               "type": "integer",
-                              "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                              "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                             }
                           }
                         }
@@ -16089,7 +16406,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -16116,7 +16433,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 },
@@ -16140,7 +16457,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 }
@@ -16347,7 +16664,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -16374,7 +16691,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 },
@@ -16398,7 +16715,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 }
@@ -16561,7 +16878,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -16588,7 +16905,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 },
@@ -16612,7 +16929,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 }
@@ -16783,7 +17100,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -16810,7 +17127,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 },
@@ -16834,7 +17151,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 }
@@ -20980,7 +21297,7 @@
             "properties": {
               "credits": {
                 "type": "integer",
-                "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
               }
             }
           },
@@ -25819,11 +26136,11 @@
                     "properties": {
                       "redeemed_amount": {
                         "type": "integer",
-                        "description": "Total amount of gift card credits redeemed by customer. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                        "description": "Total amount of gift card credits redeemed by customer. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                       },
                       "amount_to_go": {
                         "type": "integer",
-                        "description": "Remaining gift card balance across all gift cards. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                        "description": "Remaining gift card balance across all gift cards. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                       }
                     }
                   },
@@ -25849,7 +26166,7 @@
                 "properties": {
                   "total_amount": {
                     "type": "integer",
-                    "description": "The total amount spent by the customer. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                    "description": "The total amount spent by the customer. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                   },
                   "total_count": {
                     "type": "integer",
@@ -25857,11 +26174,11 @@
                   },
                   "average_amount": {
                     "type": "integer",
-                    "description": "Average amount spent on orders. `total_amount` &divide; `total_count`. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                    "description": "Average amount spent on orders. `total_amount` &divide; `total_count`. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                   },
                   "last_order_amount": {
                     "type": "integer",
-                    "description": "Amount spent on last order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                    "description": "Amount spent on last order. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                   },
                   "last_order_date": {
                     "type": "string",
@@ -26204,11 +26521,11 @@
                     "properties": {
                       "redeemed_amount": {
                         "type": "integer",
-                        "description": "Total amount of gift card credits redeemed by customer. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                        "description": "Total amount of gift card credits redeemed by customer. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                       },
                       "amount_to_go": {
                         "type": "integer",
-                        "description": "Remaining gift card balance across all gift cards. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                        "description": "Remaining gift card balance across all gift cards. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                       }
                     }
                   },
@@ -26234,7 +26551,7 @@
                 "properties": {
                   "total_amount": {
                     "type": "integer",
-                    "description": "The total amount spent by the customer. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                    "description": "The total amount spent by the customer. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                   },
                   "total_count": {
                     "type": "integer",
@@ -26242,11 +26559,11 @@
                   },
                   "average_amount": {
                     "type": "integer",
-                    "description": "Average amount spent on orders. `total_amount` &divide; `total_count`. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                    "description": "Average amount spent on orders. `total_amount` &divide; `total_count`. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                   },
                   "last_order_amount": {
                     "type": "integer",
-                    "description": "Amount spent on last order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                    "description": "Amount spent on last order. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                   },
                   "last_order_date": {
                     "type": "string",
@@ -26406,9 +26723,8 @@
           }
         }
       },
-      "9_res_list_customers": {
-        "type": "object",
-        "title": "List Customers Response Body",
+      "CustomersListResponseBody": {
+        "title": "Customers List Response Body",
         "description": "Response body schema for **GET** `/customers`.",
         "properties": {
           "object": {
@@ -26425,14 +26741,29 @@
             "type": "array",
             "description": "Contains array of customer objects.",
             "items": {
-              "$ref": "#/components/schemas/9_obj_customer_object"
+              "$ref": "#/components/schemas/CustomerResponse"
             }
           },
           "total": {
             "type": "integer",
             "description": "Total number of customers."
           }
-        }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "customers",
+          "total"
+        ]
+      },
+      "CustomersGetResponseBody": {
+        "title": "Customers Get Response Body",
+        "description": "Retrieve customer details.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CustomerResponse"
+          }
+        ]
       },
       "9_res_list_customer_activities": {
         "type": "object",
@@ -27205,130 +27536,49 @@
           "metadata"
         ]
       },
-      "customers_update_in_bulk_request_body": {
+      "CustomersUpdateInBulkRequestBody": {
         "type": "array",
         "title": "Update Customers in bulk Request Body",
         "description": "Request body schema for `/customers/bulk/async`.",
         "items": {
-          "$ref": "#/components/schemas/customers_update_in_bulk_item_request_body"
+          "$ref": "#/components/schemas/CustomersUpdateInBulkItemRequestBody"
         }
       },
-      "customers_update_in_bulk_item_request_body": {
+      "CustomersUpdateInBulkItemRequestBody": {
         "title": "Update Customers in bulk Request Body",
         "description": "Request body schema for `/customers/bulk/async`.",
-        "properties": {
-          "source_id": {
-            "type": "string",
-            "description": "Unique customer source ID."
-          },
-          "name": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Customer's first and last name."
-          },
-          "description": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "An arbitrary string that you can attach to a customer object."
-          },
-          "email": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Customer's email address."
-          },
-          "phone": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Customer's phone number."
-          },
-          "address": {
+        "allOf": [
+          {
+            "title": "CustomerSourceId",
             "type": "object",
-            "description": "Customer's address.",
             "properties": {
-              "city": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "City"
-              },
-              "state": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "State"
-              },
-              "line_1": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "First line of address."
-              },
-              "line_2": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Second line of address."
-              },
-              "country": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Country."
-              },
-              "postal_code": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Postal code."
+              "source_id": {
+                "type": "string",
+                "description": "Unique customer source ID."
               }
-            }
+            },
+            "required": [
+              "source_id"
+            ]
           },
-          "birthdate": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Customer's birthdate; format `YYYY-MM-DD`."
-          },
-          "metadata": {
-            "type": [
-              "object",
-              "null"
-            ],
-            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments. "
+          {
+            "$ref": "#/components/schemas/CustomerBase"
           }
-        },
-        "required": [
-          "source_id"
         ]
       },
-      "9_req_update_customers_consents": {
+      "CustomersUpdateCustomersConsentsRequestBody": {
         "type": "object",
         "title": "Update Customer Consents Request Body",
         "description": "Request body schema for **PUT** `/customers/{customerId}/consents`.",
         "properties": {
-          "consent_id": {
-            "type": "boolean",
-            "description": "Key-value pairs where the key is the consent identifier and value is a boolean that identifies if a customer has given the consent or not."
-          },
           "unsubscribed": {
             "type": "boolean",
             "description": "To deny all consents, use `unsubscribed` as a consent identifier and `true` as a value."
           }
+        },
+        "additionalProperties": {
+          "type": "boolean",
+          "description": "Key-value pair where the key is the consent identifier and value is a boolean that identifies if a customer has given the consent or not."
         }
       },
       "10_obj_order_object": {
@@ -27425,7 +27675,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -27452,7 +27702,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 },
@@ -27476,7 +27726,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 }
@@ -27633,7 +27883,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -27660,7 +27910,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 },
@@ -27684,7 +27934,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 }
@@ -28251,7 +28501,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "attributes": {
             "type": "array",
@@ -28308,7 +28558,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "attributes": {
             "type": "array",
@@ -28362,7 +28612,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "attributes": {
             "type": "array",
@@ -28399,7 +28649,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "attributes": {
             "type": "array",
@@ -28469,7 +28719,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "attributes": {
             "type": "array",
@@ -28582,7 +28832,7 @@
               "integer",
               "null"
             ],
-            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "attributes": {
             "type": "array",
@@ -28658,7 +28908,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "attributes": {
             "type": "array",
@@ -28745,7 +28995,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "currency": {
             "type": "string",
@@ -28800,7 +29050,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "currency": {
             "type": "string",
@@ -28857,7 +29107,7 @@
               "integer",
               "null"
             ],
-            "description": "SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "attributes": {
             "type": "object",
@@ -28933,7 +29183,7 @@
                   "integer",
                   "null"
                 ],
-                "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                "description": "Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
               },
               "attributes": {
                 "type": "array",
@@ -28981,7 +29231,7 @@
           },
           "price": {
             "type": "integer",
-            "description": "SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+            "description": "SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           },
           "currency": {
             "type": "string",
@@ -30330,7 +30580,7 @@
           }
         }
       },
-      "14_res_customers_customerId_segments": {
+      "CustomersListCustomersSegments": {
         "type": "object",
         "title": "List Segments for Customer Response Body",
         "description": "Response body schema for `/customers/{customerId}/segments`.",
@@ -30349,30 +30599,48 @@
             "type": "array",
             "description": "A dictionary that contains an array of segment IDs and names.",
             "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Unique segment ID.",
-                  "example": "seg_DNAOhUtJffvX0f57ajLMFBYR"
-                },
-                "name": {
-                  "type": "string",
-                  "description": "Segment name."
-                },
-                "object": {
-                  "type": "string",
-                  "description": "The type of object represented by the ID.",
-                  "default": "segment"
-                }
-              }
+              "$ref": "#/components/schemas/SimpleSegment"
             }
           },
           "total": {
             "type": "integer",
             "description": "Total number of segments the customer belongs to."
           }
-        }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
+      "SimpleSegment": {
+        "title": "Simple Segment",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique segment ID.",
+            "example": "seg_DNAOhUtJffvX0f57ajLMFBYR"
+          },
+          "name": {
+            "type": "string",
+            "description": "Segment name."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by the ID.",
+            "default": "segment",
+            "enum": [
+              "segment"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "object"
+        ]
       },
       "TrackCustomEventRequestBody": {
         "title": "Track Custom Event Request Body",
@@ -34395,7 +34663,7 @@
                 },
                 "price": {
                   "type": "integer",
-                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                  "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                 },
                 "subtotal_amount": {
                   "type": "integer",
@@ -34422,7 +34690,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a product. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 },
@@ -34446,7 +34714,7 @@
                     },
                     "price": {
                       "type": "integer",
-                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000."
+                      "description": "Unit price of a SKU. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
                     }
                   }
                 }
@@ -71891,6 +72159,54 @@
           },
           {
             "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "description": "Filter customers by the segment id.",
+            "name": "segment_id"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2021-12-24T10:13:06.487Z"
+            },
+            "in": "query",
+            "description": "Filter customers by date customer was created.",
+            "name": "created_at[before]"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2021-12-22T10:13:06.487Z"
+            },
+            "in": "query",
+            "description": "Filter customers by date customer was created.",
+            "name": "created_at[after]"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2021-12-24T10:13:06.487Z"
+            },
+            "in": "query",
+            "description": "Filter customers by date customer was updated last time.",
+            "name": "updated_at[before]"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "example": "2021-12-22T10:13:06.487Z"
+            },
+            "in": "query",
+            "description": "Filter customers by date customer was updated last time.",
+            "name": "updated_at[after]"
+          },
+          {
+            "schema": {
               "type": "string",
               "enum": [
                 "created_at",
@@ -71926,7 +72242,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/9_res_list_customers"
+                  "$ref": "#/components/schemas/CustomersListResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -72146,7 +72462,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/9_req_create_customer"
+                "$ref": "#/components/schemas/CustomersCreateRequestBody"
               },
               "examples": {
                 "Example": {
@@ -72181,7 +72497,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/9_obj_customer_object"
+                  "$ref": "#/components/schemas/CustomersCreateResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -72283,7 +72599,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/9_obj_customer_object"
+                  "$ref": "#/components/schemas/CustomersGetResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -72432,7 +72748,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/9_req_update_customer"
+                "$ref": "#/components/schemas/CustomersUpdateRequestBody"
               },
               "examples": {
                 "Example": {
@@ -72467,7 +72783,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/9_obj_customer_object"
+                  "$ref": "#/components/schemas/CustomersUpdateResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -72670,7 +72986,7 @@
           "CUSTOMERS API"
         ],
         "summary": "Import and Update Customers using CSV",
-        "description": "This API method lets you import or update customer data. To get a proper and valid response, please send a CSV file with data separated by commas.  \n\n## Request Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/customers/importCSV \\\n  -F file=@/path/to/customers.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n## CSV File Format\n\nThe CSV file has to include headers in the first line. All properties which cannot be mapped to standard customer fields will be added to the metadata object.\n\n<!-- theme: info -->\n> 📘 Standard customer fields mapping\n>\n> **No spaces allowed in field names**  \n> Name, Email, Phone, Birthdate, Source_id, Address_line_1, Address_line_2, Address_Postal_Code, Address_City, Address_State, Address_Country, Description, Metadata_name_1, Metadata_name_2\n\n## Update Customers using CSV\n\nIf you would like to update customer's data, you can do it using the CSV file with new data. However, remember to include a `source_id` in your CSV file to manage the update successfully.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
+        "description": "This API method lets you import or update customer data. To get a proper and valid response, please send a CSV file with data separated by commas.  \n\n## Request Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/customers/importCSV \\\n  -F file=@/path/to/customers.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n## CSV File Format\n\nThe CSV file has to include headers in the first line. All properties which cannot be mapped to standard customer fields will be added to the metadata object.\n\n<!-- theme: info -->\n> 📘 Standard customer fields mapping\n>\n> **No spaces allowed in field names**  \n> Id, Name, Email, Phone, Birthdate, Source_id, Address_line_1, Address_line_2, Address_Postal_Code, Address_City, Address_State, Address_Country, Description, Metadata_name_1, Metadata_name_2\n\n## Update Customers using CSV\n\nIf you would like to update customer's data, you can do it using the CSV file with new data. However, remember to include a `source_id` in your CSV file to manage the update successfully.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
         "parameters": [],
         "security": [
           {
@@ -72730,7 +73046,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/customers_update_in_bulk_request_body"
+                "$ref": "#/components/schemas/CustomersUpdateInBulkRequestBody"
               },
               "examples": {
                 "Example": {
@@ -72986,7 +73302,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/9_req_update_customers_consents"
+                "$ref": "#/components/schemas/CustomersUpdateCustomersConsentsRequestBody"
               },
               "examples": {
                 "Example": {
@@ -73063,7 +73379,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/9_req_update_customers_consents"
+                "$ref": "#/components/schemas/CustomersUpdateCustomersConsentsRequestBody"
               },
               "examples": {
                 "Example": {
@@ -73222,7 +73538,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/14_res_customers_customerId_segments"
+                  "$ref": "#/components/schemas/CustomersListCustomersSegments"
                 },
                 "examples": {
                   "Example": {
