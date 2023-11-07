@@ -1,7 +1,7 @@
 ---
 title: API Reference
 excerpt: 
-categorySlug: development
+categorySlug: implementation-blueprint
 slug: api-reference
 type: link
 hidden: false

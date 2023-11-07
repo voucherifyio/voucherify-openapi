@@ -5,7 +5,7 @@ categorySlug: integration-blueprint
 slug: data-volume-estimation
 type: basic
 hidden: false
-order: 11
+order: 14
 ---
 
 ## Data volume estimation

@@ -5,7 +5,7 @@ categorySlug: integration-blueprint
 slug: team-management
 type: basic
 hidden: false
-order: 9
+order: 12
 ---
 
 ## Team management
