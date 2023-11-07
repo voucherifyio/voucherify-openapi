@@ -100,8 +100,10 @@
 - VoucherTransaction
 - LoyaltyCardTransaction
 
+
 - GET `/v1/customers/{customerId}/activities`
   - Request body schema was replaced with new one: `CustomersListCustomerActivitiesResponseBody` (old one: `9_res_list_customer_activities`)
+
 
 - **reward_assignment** renamed to **RewardAssignment**
 - **validation_rules_list_rules_assignments_response_body** renamed to **ValidationRulesListRulesAssignmentsResponseBody**
