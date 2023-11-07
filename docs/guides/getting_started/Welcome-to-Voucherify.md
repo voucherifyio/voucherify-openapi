@@ -41,26 +41,26 @@ Discover the full story
 
 DTC Ecommerce -->
 
-<details>
-<summary>Customer story – Breville</summary>
-
-[Breville](https://www.breville.com/us/en/home/index.html "Breville website") is an iconic global brand known for its extensive line of premium home appliances, particularly blenders and coffee machines.
-
-In pursuit of building new direct-to-consumer sales channels, Breville began its digital transformation journey. They chose [commercetools](https://www.voucherify.io/integrations/commercetools "Integration between Voucherify and commercetools") as their MACH-compliant commerce platform.
-
-As the marketing team was coming up with more complex use cases, soon the default campaign configuration options provided by commercetools were not enough for Breville’s needs.
-
-And so, the team started looking for [a MACH-compliant promotion engine](https://www.voucherify.io/learn/promotion-engine-how-to "Voucherify as a promotion engine") that could quickly integrate with their commerce platform. Voucherify soon proved to be the winning solution thanks to the robust rules engine and metadata capabilities to support business- and brand-specific campaigns.
-
-As a result, Breville achieved with Voucherify:
-- Substantial time and financial savings on developing a promotion tool from scratch.
-- Integration of best-of-breed headless commerce solutions to deliver better customer experience on a global scale.
-- Shortened time-to-market and the possibility to iterate quickly for introducing new campaigns to other Breville brands.
-- Increased campaign personalization and order conversions driven by targeted incentives.
-
-Read the [whole Breville story](https://www.voucherify.io/customers/breville "How Breville is Winning Digital Transformation with Voucherify and Friends").
-
-</details>
+> 📘 <details>
+> <summary>Customer story – Breville</summary>
+> 
+> [Breville](https://www.breville.com/us/en/home/index.html "Breville website") is an iconic global brand known for its extensive line of premium home appliances, particularly blenders and coffee machines.
+> 
+> In pursuit of building new direct-to-consumer sales channels, Breville began its digital transformation journey. They chose [commercetools](https://www.voucherify.io/integrations/commercetools "Integration between Voucherify and commercetools") as their MACH-compliant commerce platform.
+> 
+> As the marketing team was coming up with more complex use cases, soon the default campaign configuration options provided by commercetools were not enough for Breville’s needs.
+>
+> And so, the team started looking for [a MACH-compliant promotion engine](https://www.voucherify.io/learn/promotion-engine-how-to "Voucherify as a promotion engine") that could quickly integrate with their commerce platform. Voucherify soon proved to be the winning solution thanks to the robust rules engine and metadata capabilities to support business- and brand-specific campaigns.
+> 
+> As a result, Breville achieved with Voucherify:
+> - Substantial time and financial savings on developing a promotion tool from scratch.
+> - Integration of best-of-breed headless commerce solutions to deliver better customer experience on a global scale.
+> - Shortened time-to-market and the possibility to iterate quickly for introducing new campaigns to other Breville brands.
+> - Increased campaign personalization and order conversions driven by targeted incentives.
+> 
+> Read the [whole Breville story](https://www.voucherify.io/customers/breville "How Breville is Winning Digital Transformation with Voucherify and Friends").
+> 
+> </details>
 
 ## On-demand services
 
