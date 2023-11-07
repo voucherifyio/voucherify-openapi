@@ -367,7 +367,7 @@ export default class SchemaToMarkdownTable {
       const nestedObjectName = ref.replace("#/components/schemas/", "");
       relatedObjectsNames.push(nestedObjectName);
       const title = (this.schemas[nestedObjectName].title ||
-        nestedObjectName) as string;
+        nestedObjectName.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z])([A-Z])/g, '$1 $2')) as string;
       if (this.redenderMode === RenderMode.List) {
         descriptionArr.push(`See: ${this.getMarkdownLinkToHeader(title)}`);
       } else {
