@@ -1,7 +1,7 @@
 ---
 title: Test mode (Sandbox)
 excerpt: Run integration tests of your promotions before going to production
-categorySlug: development
+categorySlug: implementation-blueprint
 slug: testing
 type: basic
 hidden: false

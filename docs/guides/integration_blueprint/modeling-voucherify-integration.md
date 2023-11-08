@@ -5,7 +5,7 @@ categorySlug: integration-blueprint
 slug: modeling-voucherify-integration
 type: basic
 hidden: false
-order: 2
+order: 3
 ---
 
 ## Sample integration

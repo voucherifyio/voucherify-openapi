@@ -5,7 +5,7 @@ categorySlug: integration-blueprint
 slug: brand-management
 type: basic
 hidden: false
-order: 10
+order: 13
 ---
 
 ## Multi-brand management & internationalization

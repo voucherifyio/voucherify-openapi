@@ -1,7 +1,7 @@
 ---
 title: API Version Upgrades
 excerpt: Keep track of changes and upgrades to the Voucherify API.
-categorySlug: development
+categorySlug: implementation-blueprint
 slug: api-version-upgrades
 type: basic
 hidden: false

@@ -1,7 +1,7 @@
 ---
 title: Troubleshooting
 excerpt: 
-categorySlug: development
+categorySlug: implementation-blueprint
 slug: troubleshooting
 type: basic
 hidden: false

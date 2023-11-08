@@ -5,7 +5,7 @@ categorySlug: integration-blueprint
 slug: distributions
 type: basic
 hidden: false
-order: 5
+order: 10
 ---
 
 ## Distributions
@@ -27,9 +27,17 @@ Evaluate your customer journey and **think of places and times the information a
 * **Pull** – you can use API to get promotions in front of customers (e.g., list all active coupons for John Doe).
 * **Push** – an integral distribution mechanism that you can use to define a trigger for the message send-out (e.g., if John Doe signs up for a newsletter, send him a 10% off promo code).
 
-Both push and pull modes can be used with 3rd party platforms. 
+Both push and pull modes can be used with third party platforms:
+- [Braze](https://support.voucherify.io/article/588-braze-integration "Voucherify and Braze integration article")
+- [Twilio](https://support.voucherify.io/article/110-twilio "Voucherify and Twilio integration article")
+- [Klaviyo](https://support.voucherify.io/article/598-klaviyo-integration "Voucherify and Klaviyo integration article")
+- [MoEngage](https://support.voucherify.io/article/596-moengage-integration "Voucherify and MoEngage integration article")
+- [Iterable](https://support.voucherify.io/article/594-iterable-integration "Voucherify and Iterable integration article")
+- Airship
+- [ActiveCampaign](https://support.voucherify.io/article/165-activecampaign "Voucherify and ActiveCampaign integration article")
+- Batch
 
-![3rd party platforms](https://files.readme.io/341f152-guides_integration_blueprint_distributions_3rd_party_platforms.png)
+<!--- ![3rd party platforms](https://files.readme.io/341f152-guides_integration_blueprint_distributions_3rd_party_platforms.png) -->
 
 
 > 📘 Publication

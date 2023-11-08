@@ -1,5 +1,230 @@
 # Changelog
 
+
+## 20231108 - Orders API
+
+**Added schemas**
+
+- OrderRequestBase
+- OrderResponseBase
+- OrderResponseNoCustomerData
+- OrdersCreateRequestBody
+- OrdersCreateRequestBody
+- OrdersUpdateRequestBody
+- OrdersUpdateResponseBody
+- OrdersGetResponseBody
+- OrdersListResponseBody
+
+- GET `/v1/orders`
+  - Request body schema was replaced with new one: `OrdersListResponseBody` (old one: `10_res_list_orders`)
+- POST `/v1/orders`
+  - Request body schema was replaced with new one: `OrdersCreateRequestBody` (old one: `10_req_create_order`)
+  - Response body schema was replaced with new one: `OrdersCreateResponseBody` (old one: `10_obj_order_object_no_discount_calculations`)
+- GET `/v1/orders/{orderId}`
+  - Request body schema was replaced with new one: `OrdersGetResponseBody` (old one: `10_obj_order_object`)
+- PUT `/v1/orders/{orderId}`
+  - Request body schema was replaced with new one: `OrdersUpdateRequestBody` (old one: `10_req_update_order`)
+  - Response body schema was replaced with new one: `OrdersUpdateResponseBody` (old one: `10_obj_order_object`)
+
+## 20231107 - Customers API
+
+**Added schemas**
+
+- SimpleOrder
+- SimpleOrderItem
+- SimplePromotionTier
+- SimpleRedemption
+- ReferralProgram
+- SimpleVoucher
+- SimpleConsent
+- CustomersListCustomerActivitiesResponseBody
+- CustomerActivity
+- CustomerActivityData
+- EventCustomerSent
+- EventCustomerRecovered
+- EventCustomerFailed
+- EventCustomerConfirmed
+- EventCustomerCreated
+- EventCustomerUpdated
+- EventCustomerDeleted
+- EventCustomerReferred
+- EventCustomerCustomEvent
+- EventCustomerSegmentEntered
+- EventCustomerSegmentLeft
+- EventCustomerSmsSent
+- EventCustomerSmsRecovered
+- EventCustomerSmsFailed
+- EventCustomerEmailSent
+- EventCustomerEmailRecovered
+- EventCustomerEmailFailed
+- EventCustomerActiveCampaignSent
+- EventCustomerActiveCampaignRecovered
+- EventCustomerActiveCampaignFailed
+- EventCustomerBrazeSent
+- EventCustomerBrazeRecovered
+- EventCustomerMailchimpSent
+- EventCustomerMailchimpRecovered
+- EventCustomerMailchimpFailed
+- EventCustomerIntercomSent
+- EventCustomerIntercomRecovered
+- EventCustomerIntercomFailed
+- EventCustomerShopifySent
+- EventCustomerShopifyRecovered
+- EventCustomerShopifyFailed
+- EventCustomerKlaviyoSent
+- EventCustomerKlaviyoRecovered
+- EventCustomerKlaviyoFailed
+- EventCustomerBatchSent
+- EventCustomerBatchRecovered
+- EventCustomerBatchFailed
+- EventCustomerRewarded
+- EventCustomerRewardedLoyaltyPoints
+- EventCustomerGiftVoucherBalanceAdded
+- EventCustomerLoyaltyCardPointsAdded
+- EventCustomerLoyaltyCardPointsTransferred
+- EventCustomerVouchersLoyaltyPointsExpired
+- EventCustomerVoucherDeleted
+- EventCustomerPublicationSucceeded
+- EventCustomerPublicationFailed
+- EventCustomerValidationSucceeded
+- EventCustomerValidationFailed
+- EventCustomerRedemption
+- EventCustomerRedemptionSucceeded
+- EventCustomerRedemptionFailed
+- EventCustomerRedemptionRollbackSucceeded
+- EventCustomerRedemptionRollbackFailed
+- EventCustomerConsents
+- EventCustomerConsentsGiven
+- EventCustomerConsentsRevoked
+- EventCustomerOrder
+- EventCustomerOrderCanceled
+- EventCustomerOrderCreated
+- EventCustomerOrderFulfilled
+- EventCustomerOrderPaid
+- EventCustomerOrderProcessing
+- EventCustomerOrderUpdated
+- EventCustomerRewardRedemptions
+- EventCustomerRewardRedemptionsCreated
+- EventCustomerRewardRedemptionsPending
+- EventCustomerRewardRedemptionsCompleted
+- EventCustomerRewardRedemptionsRolledBack
+- EventCustomerLoyaltyUpdated
+- EventCustomerLoyaltyTierBase
+- EventCustomerLoyaltyTierUpgraded
+- EventCustomerLoyaltyTierDowngraded
+- EventCustomerLoyaltyTierProlonged
+- EventCustomerLoyaltyTierExpirationChanged
+- EventCustomerLoyaltyTierJoined
+- EventCustomerLoyaltyTierLeft
+- ValidationRulesListRulesAssignmentsResponseBody
+- SimpleReferralTier
+- CustomEvent
+- ValidationEntity
+- SimpleSku
+- SimpleProduct
+- LoyaltyTierExpiration
+- VoucherTransaction
+- LoyaltyCardTransaction
+
+
+- GET `/v1/customers/{customerId}/activities`
+  - Request body schema was replaced with new one: `CustomersListCustomerActivitiesResponseBody` (old one: `9_res_list_customer_activities`)
+
+
+- **reward_assignment** renamed to **RewardAssignment**
+- **validation_rules_list_rules_assignments_response_body** renamed to **ValidationRulesListRulesAssignmentsResponseBody**
+
+## 20231107 - Product and Products Collections API
+
+**Added schemas**
+- UpdateProductRequestBody
+- UpsertProductRequestBody
+- BulkUpsertProductsMetadataRequestBody
+- BulkUpsertProductRequestBody
+- ProductsListResponse
+- ProductWithoutSkusResponse
+- ProductResponse
+- SkusListForProductResponse
+- SkusListResponse
+- SkuWithProductResponse
+- SkuResponse
+- UpsertSkuRequestBody
+- UpdateSkuRequestBody
+- ProductCollectionsProductsListResponse
+- ProductCollectionsItemResponse
+- ProductCollectionsListResponse
+- ImportCSVRequestBody
+
+**Removed schemas**
+- e_error_no_translation
+- 11_obj_sku_object
+- 11_obj_product_object
+- 11_req_create_product
+- 11_req_update_products_metadata_in_bulk
+- 11_res_list_products
+- 11_obj_list_products_product_object
+- 11_res_get_product_skus_object
+- product_collections_product_in_collection
+- 11_obj_product_object_truncated
+- product_collections_sku_in_collection
+- 11_req_update_sku
+- product_collections_list_products_response_body
+- 11_res_products_productId_skus
+- product_collections_collection_item_base
+- product_collections_static_collection
+- product_collections_dynamic_collection
+- product_collections_list_response_body
+- a_req_importCSV
+
+**Changed schemas**
+- a_res_async_actions to AsyncActionsResponse
+- e_400_resource_in_use to ResourceInUseError
+- e_404_not_found to Error
+
+## 20231102 - Customers API
+
+**Added schemas**
+
+- CustomerBase
+- CustomerIdObjectResponse
+- ReferrerIdObjectResponse
+- CustomersCreateRequestBody
+- CustomersUpdateRequestBody
+- CustomersUpdateResponseBody
+- CustomerRequest
+- CustomersCreateResponseBody
+- CustomerReferrals
+- CustomerLoyalty
+- CustomerSummary
+- CustomerSummaryOrders
+- CustomerSummaryRedemptions
+- CustomersListResponseBody
+- CustomersGetResponseBody
+- CustomersUpdateInBulkRequestBody
+- CustomersUpdateInBulkItemRequestBody
+- CustomersUpdateCustomersConsentsRequestBody
+- CustomersListCustomersSegments
+- SimpleSegment
+
+**Endpoints changes**
+- GET `/v1/customers`
+  - Request body schema was replaced with new one: `CustomersListResponseBody` (old one: `9_res_list_customers`)
+- POST `/v1/customers`
+  - Request body schema was replaced with new one: `CustomersCreateRequestBody` (old one: `9_req_create_customer`)
+  - Response body schema was replaced with new one: `CustomersCreateResponseBody` (old one: `9_obj_customer_object`)
+- GET `/v1/customers/{id}`
+  - Response body schema was replaced with new one: `CustomersGetResponseBody` (old one: `9_obj_customer_object`)
+- PUT `/v1/customers/{customerId}`
+  - Request body schema was replaced with new one: `CustomersUpdateRequestBody` (old one: `9_req_update_customer`)
+  - Response body schema was replaced with new one: `CustomersUpdateResponseBody` (old one: `9_obj_customer_object`)
+- POST `/v1/customers/bulk/async`
+  - Request body schema was replaced with new one: `CustomersUpdateInBulkRequestBody` (old one: `customers_update_in_bulk_request_body`)
+- PUT `/v1/customers/{customerId}/consents`
+  - Request body schema was replaced with new one: `CustomersUpdateCustomersConsentsRequestBody` (old one: `9_req_update_customers_consents`)
+  - Response body schema was replaced with new one: `CustomersUpdateCustomersConsentsRequestBody` (old one: `9_req_update_customers_consents`)
+- GET `/v1/customers/{customerId}/segments`
+  - Response body schema was replaced with new one: `CustomersListCustomersSegments` (old one: `14_res_customers_customerId_segments`)
+
 ## 20231106 - Language fixes #535
 
 - Descriptions changes in multiple schemas

@@ -16,7 +16,7 @@ const version =
 const listOfGuideCategories = [
   "Getting started",
   "Integration Blueprint",
-  "Development",
+  "Implementation Blueprint",
   "Building blocks",
   "Campaigns Recipes",
   "Discounts Recipes",
