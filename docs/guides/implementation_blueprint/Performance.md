@@ -1,7 +1,7 @@
 ---
 title: Performance
 excerpt: Average response rates
-categorySlug: development
+categorySlug: implementation-blueprint
 slug: performance
 type: basic
 hidden: false

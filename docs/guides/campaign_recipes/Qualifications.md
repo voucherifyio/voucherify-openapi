@@ -48,6 +48,8 @@ To specify the types of promotions and codes that you would like to reveal to yo
 | PRODUCTS_BY_CUSTOMER | Returns all promotions available for a customer for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule). |
 | PRODUCTS_DISCOUNT_BY_CUSTOMER | Returns all promotions available for a customer for products when a discount is defined as applicable to specific item(s). |
 
+In the request, you can add [opions](ref:check-eligibility) to configure the parameters returned in the response, e.g. filters for types of redeemables or sorting rules like `BEST_DEAL` or `LEAST_DEAL`.
+
 ## Use Cases
 
 To show a couple of the use cases that are possible with the qualifications API, we'll show it using the following scenarios. Depending on the different scenario, we'll send a slightly different API call and the results will be returned in the context of the scenario.
