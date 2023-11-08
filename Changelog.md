@@ -26,6 +26,161 @@
   - Request body schema was replaced with new one: `OrdersUpdateRequestBody` (old one: `10_req_update_order`)
   - Response body schema was replaced with new one: `OrdersUpdateResponseBody` (old one: `10_obj_order_object`)
 
+## 20231107 - Customers API
+
+**Added schemas**
+
+- SimpleOrder
+- SimpleOrderItem
+- SimplePromotionTier
+- SimpleRedemption
+- ReferralProgram
+- SimpleVoucher
+- SimpleConsent
+- CustomersListCustomerActivitiesResponseBody
+- CustomerActivity
+- CustomerActivityData
+- EventCustomerSent
+- EventCustomerRecovered
+- EventCustomerFailed
+- EventCustomerConfirmed
+- EventCustomerCreated
+- EventCustomerUpdated
+- EventCustomerDeleted
+- EventCustomerReferred
+- EventCustomerCustomEvent
+- EventCustomerSegmentEntered
+- EventCustomerSegmentLeft
+- EventCustomerSmsSent
+- EventCustomerSmsRecovered
+- EventCustomerSmsFailed
+- EventCustomerEmailSent
+- EventCustomerEmailRecovered
+- EventCustomerEmailFailed
+- EventCustomerActiveCampaignSent
+- EventCustomerActiveCampaignRecovered
+- EventCustomerActiveCampaignFailed
+- EventCustomerBrazeSent
+- EventCustomerBrazeRecovered
+- EventCustomerMailchimpSent
+- EventCustomerMailchimpRecovered
+- EventCustomerMailchimpFailed
+- EventCustomerIntercomSent
+- EventCustomerIntercomRecovered
+- EventCustomerIntercomFailed
+- EventCustomerShopifySent
+- EventCustomerShopifyRecovered
+- EventCustomerShopifyFailed
+- EventCustomerKlaviyoSent
+- EventCustomerKlaviyoRecovered
+- EventCustomerKlaviyoFailed
+- EventCustomerBatchSent
+- EventCustomerBatchRecovered
+- EventCustomerBatchFailed
+- EventCustomerRewarded
+- EventCustomerRewardedLoyaltyPoints
+- EventCustomerGiftVoucherBalanceAdded
+- EventCustomerLoyaltyCardPointsAdded
+- EventCustomerLoyaltyCardPointsTransferred
+- EventCustomerVouchersLoyaltyPointsExpired
+- EventCustomerVoucherDeleted
+- EventCustomerPublicationSucceeded
+- EventCustomerPublicationFailed
+- EventCustomerValidationSucceeded
+- EventCustomerValidationFailed
+- EventCustomerRedemption
+- EventCustomerRedemptionSucceeded
+- EventCustomerRedemptionFailed
+- EventCustomerRedemptionRollbackSucceeded
+- EventCustomerRedemptionRollbackFailed
+- EventCustomerConsents
+- EventCustomerConsentsGiven
+- EventCustomerConsentsRevoked
+- EventCustomerOrder
+- EventCustomerOrderCanceled
+- EventCustomerOrderCreated
+- EventCustomerOrderFulfilled
+- EventCustomerOrderPaid
+- EventCustomerOrderProcessing
+- EventCustomerOrderUpdated
+- EventCustomerRewardRedemptions
+- EventCustomerRewardRedemptionsCreated
+- EventCustomerRewardRedemptionsPending
+- EventCustomerRewardRedemptionsCompleted
+- EventCustomerRewardRedemptionsRolledBack
+- EventCustomerLoyaltyUpdated
+- EventCustomerLoyaltyTierBase
+- EventCustomerLoyaltyTierUpgraded
+- EventCustomerLoyaltyTierDowngraded
+- EventCustomerLoyaltyTierProlonged
+- EventCustomerLoyaltyTierExpirationChanged
+- EventCustomerLoyaltyTierJoined
+- EventCustomerLoyaltyTierLeft
+- ValidationRulesListRulesAssignmentsResponseBody
+- SimpleReferralTier
+- CustomEvent
+- ValidationEntity
+- SimpleSku
+- SimpleProduct
+- LoyaltyTierExpiration
+- VoucherTransaction
+- LoyaltyCardTransaction
+
+
+- GET `/v1/customers/{customerId}/activities`
+  - Request body schema was replaced with new one: `CustomersListCustomerActivitiesResponseBody` (old one: `9_res_list_customer_activities`)
+
+
+- **reward_assignment** renamed to **RewardAssignment**
+- **validation_rules_list_rules_assignments_response_body** renamed to **ValidationRulesListRulesAssignmentsResponseBody**
+
+## 20231107 - Product and Products Collections API
+
+**Added schemas**
+- UpdateProductRequestBody
+- UpsertProductRequestBody
+- BulkUpsertProductsMetadataRequestBody
+- BulkUpsertProductRequestBody
+- ProductsListResponse
+- ProductWithoutSkusResponse
+- ProductResponse
+- SkusListForProductResponse
+- SkusListResponse
+- SkuWithProductResponse
+- SkuResponse
+- UpsertSkuRequestBody
+- UpdateSkuRequestBody
+- ProductCollectionsProductsListResponse
+- ProductCollectionsItemResponse
+- ProductCollectionsListResponse
+- ImportCSVRequestBody
+
+**Removed schemas**
+- e_error_no_translation
+- 11_obj_sku_object
+- 11_obj_product_object
+- 11_req_create_product
+- 11_req_update_products_metadata_in_bulk
+- 11_res_list_products
+- 11_obj_list_products_product_object
+- 11_res_get_product_skus_object
+- product_collections_product_in_collection
+- 11_obj_product_object_truncated
+- product_collections_sku_in_collection
+- 11_req_update_sku
+- product_collections_list_products_response_body
+- 11_res_products_productId_skus
+- product_collections_collection_item_base
+- product_collections_static_collection
+- product_collections_dynamic_collection
+- product_collections_list_response_body
+- a_req_importCSV
+
+**Changed schemas**
+- a_res_async_actions to AsyncActionsResponse
+- e_400_resource_in_use to ResourceInUseError
+- e_404_not_found to Error
+
 ## 20231102 - Customers API
 
 **Added schemas**
