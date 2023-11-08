@@ -1,5 +1,21 @@
 # Changelog
 
+
+## 20231108 - Orders API
+
+**Added schemas**
+
+- OrderRequestBase
+- OrderResponseBase
+- OrderResponseNoCustomerData
+- OrdersCreateRequestBody
+- OrdersCreateRequestBody
+- OrdersUpdateRequestBody
+- OrdersUpdateResponseBody
+- OrdersGetResponseBody
+- OrdersListResponseBody
+
+
 ## 20231102 - Customers API
 
 **Added schemas**
