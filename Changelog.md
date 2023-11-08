@@ -1,5 +1,52 @@
 # Changelog
 
+## 20231107 - Product and Products Collections API
+
+**Added schemas**
+- UpdateProductRequestBody
+- UpsertProductRequestBody
+- BulkUpsertProductsMetadataRequestBody
+- BulkUpsertProductRequestBody
+- ProductsListResponse
+- ProductWithoutSkusResponse
+- ProductResponse
+- SkusListForProductResponse
+- SkusListResponse
+- SkuWithProductResponse
+- SkuResponse
+- UpsertSkuRequestBody
+- UpdateSkuRequestBody
+- ProductCollectionsProductsListResponse
+- ProductCollectionsItemResponse
+- ProductCollectionsListResponse
+- ImportCSVRequestBody
+
+**Removed schemas**
+- e_error_no_translation
+- 11_obj_sku_object
+- 11_obj_product_object
+- 11_req_create_product
+- 11_req_update_products_metadata_in_bulk
+- 11_res_list_products
+- 11_obj_list_products_product_object
+- 11_res_get_product_skus_object
+- product_collections_product_in_collection
+- 11_obj_product_object_truncated
+- product_collections_sku_in_collection
+- 11_req_update_sku
+- product_collections_list_products_response_body
+- 11_res_products_productId_skus
+- product_collections_collection_item_base
+- product_collections_static_collection
+- product_collections_dynamic_collection
+- product_collections_list_response_body
+- a_req_importCSV
+
+**Changed schemas**
+- a_res_async_actions to AsyncActionsResponse
+- e_400_resource_in_use to ResourceInUseError
+- e_404_not_found to Error
+
 ## 20231102 - Customers API
 
 **Added schemas**
