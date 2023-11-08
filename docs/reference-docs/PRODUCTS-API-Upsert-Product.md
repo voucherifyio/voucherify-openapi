@@ -1,8 +1,8 @@
 ---
-title: Upsert Product
+title: Create Product
 type: endpoint
 categorySlug: voucherify-api
-slug: upsert-product
+slug: create-product
 parentDocSlug: products-api
 hidden: false
 order: 5

@@ -1,8 +1,8 @@
 ---
-title: Upsert SKU
+title: Create SKU
 type: endpoint
 categorySlug: voucherify-api
-slug: upsert-sku
+slug: create-sku
 parentDocSlug: products-api
 hidden: false
 order: 13
