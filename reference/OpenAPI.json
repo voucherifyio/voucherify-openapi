@@ -491,6 +491,101 @@
           }
         }
       },
+      "SimpleOrder": {
+        "title": "Simple Order",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Order information.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.\n\n"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+          },
+          "status": {
+            "type": "string",
+            "description": "The order status.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "CANCELED",
+              "FULFILLED"
+            ]
+          },
+          "customer_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unique customer ID of the customer making the purchase.",
+            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
+          },
+          "referrer_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Unique referrer ID.",
+            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level discounts applied to the order."
+          },
+          "applied_discount_amount": {
+            "type": "integer",
+            "description": "This field shows the order-level discount applied."
+          },
+          "items_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all product-specific discounts applied to the order."
+          },
+          "items_applied_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all product-specific discounts applied in a particular request.  \n`sum(items, i => i.applied_discount_amount)`"
+          },
+          "total_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level AND all product-specific discounts applied to the order."
+          },
+          "total_applied_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level AND all product-specific discounts applied in a particular request.  \n`total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount`"
+          },
+          "total_amount": {
+            "type": "integer",
+            "description": "Order amount after undoing all the discounts through the rollback redemption."
+          },
+          "items": {
+            "type": "array",
+            "description": "Array of items applied to the order.",
+            "items": {
+              "$ref": "#/components/schemas/SimpleOrderItem"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON.",
+            "enum": [
+              "order"
+            ]
+          }
+        },
+        "required": [
+          "object"
+        ]
+      },
       "OrderResponse": {
         "title": "Order Response",
         "type": "object",
@@ -532,7 +627,7 @@
           },
           "amount": {
             "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.\n\n"
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts."
           },
           "initial_amount": {
             "type": "integer",
@@ -555,7 +650,7 @@
             "description": "Order amount after undoing all the discounts through the rollback redemption."
           },
           "applied_discount_amount": {
-            "type": "number",
+            "type": "integer",
             "description": "This field shows the order-level discount applied."
           },
           "items_applied_discount_amount": {
@@ -1566,6 +1661,63 @@
           "metadata": {
             "type": "object",
             "description": "A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format."
+          }
+        }
+      },
+      "SimpleOrderItem": {
+        "type": "object",
+        "title": "Simple Order Item",
+        "properties": {
+          "object": {
+            "type": "string",
+            "enum": [
+              "order_item"
+            ],
+            "description": "The type of object represented by JSON. This object stores information about the `order_item`."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant’s product/SKU ID (if it is different from the Voucherify product/SKU ID). It is useful in the integration between multiple systems. It can be an ID from an eCommerce site, a database, or a third-party service."
+          },
+          "related_object": {
+            "type": "string",
+            "enum": [
+              "product",
+              "sku"
+            ],
+            "description": "Used along with the source_id property, can be set to either sku or product."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "A unique product ID assigned by Voucherify."
+          },
+          "sku_id": {
+            "type": "string",
+            "description": "A unique SKU ID assigned by Voucherify."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The quantity of the particular item in the cart."
+          },
+          "discount_quantity": {
+            "type": "integer",
+            "description": "Number of dicounted items."
+          },
+          "amount": {
+            "type": "integer",
+            "description": "The total amount of the order item (price * quantity)."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "\nSum of all order-item-level discounts applied to the order."
+          },
+          "applied_discount_amount": {
+            "type": "integer",
+            "description": "This field shows the order-level discount applied."
+          },
+          "price": {
+            "type": "integer",
+            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
           }
         }
       },
@@ -9116,6 +9268,39 @@
           }
         }
       },
+      "SimplePromotionTier": {
+        "title": "Simple Promotion Tier",
+        "type": "object",
+        "description": "This is an object representing a simple promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.",
+        "x-tags": [
+          "PROMOTIONS API"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "promo_63fYCt81Aw0h7lzyRkrGZh9p",
+            "description": "Unique promotion tier ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the promotion tier."
+          },
+          "banner": {
+            "type": "string",
+            "description": "Text to be displayed to your customers on your website."
+          },
+          "campaign": {
+            "type": "object",
+            "description": "Contains details about promotion tier's parent campaign.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique campaign ID."
+              }
+            }
+          }
+        }
+      },
       "PromotionTier": {
         "type": "object",
         "description": "This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.",
@@ -9304,7 +9489,7 @@
             "description": "The type of object represented by JSON. This object stores information about the promotion tier."
           },
           "validation_rule_assignments": {
-            "$ref": "#/components/schemas/validation_rules_list_rules_assignments_response_body"
+            "$ref": "#/components/schemas/ValidationRulesListRulesAssignmentsResponseBody"
           },
           "category_id": {
             "type": "string",
@@ -10395,7 +10580,7 @@
           "object"
         ]
       },
-      "reward_assignment": {
+      "RewardAssignment": {
         "title": "Reward Assignment",
         "oneOf": [
           {
@@ -10470,7 +10655,7 @@
           "data": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/reward_assignment"
+              "$ref": "#/components/schemas/RewardAssignment"
             }
           },
           "total": {
@@ -17455,6 +17640,75 @@
           }
         ]
       },
+      "SimpleRedemption": {
+        "type": "object",
+        "title": "Simple Redemption",
+        "description": "This is an object representing a simple redemption.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "r_0bc92f81a6801f9bca",
+            "description": "Unique redemption ID."
+          },
+          "customer_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "cust_i8t5Tt6eiKG5K79KQlJ0Vs64",
+            "description": "Unique customer ID of the redeeming customer."
+          },
+          "tracking_id": {
+            "type": "string",
+            "description": "Hashed customer source ID."
+          },
+          "date": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the redemption was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
+            "example": 10000
+          },
+          "order": {
+            "$ref": "#/components/schemas/SimpleOrder"
+          },
+          "reward": {
+            "$ref": "#/components/schemas/SimpleRedemptionRewardResult"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "FAILURE"
+            ],
+            "description": "Redemption result."
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher",
+            "description": "Defines the details of the voucher being redeemed."
+          },
+          "promotion_tier": {
+            "$ref": "#/components/schemas/SimplePromotionTier"
+          },
+          "redemption": {
+            "type": "string",
+            "description": "Unique redemption ID of the parent redemption.",
+            "example": "r_0c656311b5878a2031"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by the JSON. This object stores information about the `redemption`.",
+            "default": "redemption"
+          }
+        }
+      },
       "RedemptionsRedemptionBase": {
         "type": "object",
         "title": "Redemption Base",
@@ -22175,7 +22429,7 @@
             "$ref": "#/components/schemas/reward"
           },
           "assignment": {
-            "$ref": "#/components/schemas/reward_assignment"
+            "$ref": "#/components/schemas/RewardAssignment"
           },
           "object": {
             "description": "The type of object represented by JSON. This object stores information about the loyalty tier reward.",
@@ -26795,9 +27049,241 @@
           }
         ]
       },
-      "9_res_list_customer_activities": {
+      "ReferralProgram": {
+        "title": "Referral Program",
+        "description": "Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.",
         "type": "object",
-        "title": "List Customer Activities Response Body",
+        "properties": {
+          "conversion_event_type": {
+            "type": "string",
+            "enum": [
+              "redemption",
+              "custom_event"
+            ],
+            "description": "Define how a referral is triggered."
+          },
+          "custom_event": {
+            "type": "object",
+            "description": "Contains details about the custom event.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "ms_Ll9enAm2BCN0M1s4VxWobLFM",
+                "description": "Unique custom event ID."
+              },
+              "name": {
+                "type": "string",
+                "description": "Custom event name."
+              }
+            }
+          },
+          "referee_reward": {
+            "type": "object",
+            "description": "Defines the referee reward.",
+            "properties": {
+              "related_object_parent": {
+                "type": "object",
+                "description": "Details of the resource from which the reward originates.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
+                    "description": "Unique ID of the reward source."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the reward source."
+                  },
+                  "object": {
+                    "type": "string",
+                    "enum": [
+                      "CAMPAIGN"
+                    ],
+                    "description": "Type of resource represented by the source of the reward."
+                  }
+                }
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "LOYALTY_CARD",
+                  "GIFT_VOUCHER"
+                ],
+                "description": "Type of reward."
+              },
+              "amount": {
+                "type": "string",
+                "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+              }
+            }
+          }
+        }
+      },
+      "SimpleVoucher": {
+        "type": "object",
+        "title": "Simple Voucher",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "A unique identifier that represents the voucher assigned by Voucherify."
+          },
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
+          },
+          "gift": {
+            "description": "Gift object response",
+            "$ref": "#/components/schemas/Gift"
+          },
+          "discount": {
+            "$ref": "#/components/schemas/Discount"
+          },
+          "loyalty_card": {
+            "description": "Defines the loyalty card details.",
+            "type": "object"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the object.",
+            "default": "voucher",
+            "enum": [
+              "voucher"
+            ]
+          },
+          "campaign": {
+            "description": "Campaign object",
+            "type": "object"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Campaign unique ID."
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Indicates whether the voucher is a referral code; this is `true` for campaign type `REFERRAL_PROGRAM`."
+          },
+          "holder_id": {
+            "type": "string",
+            "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+            "description": "Unique customer ID of campaign owner."
+          },
+          "referrer_id": {
+            "type": "string",
+            "description": "Unique referrer ID.",
+            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the order was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON.",
+            "enum": [
+              "voucher"
+            ]
+          }
+        },
+        "required": [
+          "valid",
+          "code",
+          "applicable_to",
+          "inapplicable_to",
+          "metadata",
+          "tracking_id"
+        ]
+      },
+      "SimpleCampaign": {
+        "title": "Simple Campaign",
+        "type": "object",
+        "description": "Request body schema for creating a discount voucher campaign using **POST** `/campaigns`.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Campaign name."
+          },
+          "name": {
+            "type": "string",
+            "description": "Campaign name."
+          },
+          "campaign_type": {
+            "type": "string",
+            "description": "Type of campaign."
+          },
+          "type": {
+            "type": "string",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).\n-  `STATIC`: vouchers need to be manually published.",
+            "enum": [
+              "AUTO_UPDATE",
+              "STATIC"
+            ]
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Flag indicating whether this voucher is a referral code."
+          },
+          "voucher": {
+            "type": "object"
+          },
+          "lucky_draw": {
+            "type": "object"
+          },
+          "referral_program": {
+            "$ref": "#/components/schemas/ReferralProgram"
+          },
+          "auto_join": {
+            "type": "boolean",
+            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled."
+          },
+          "join_once": {
+            "type": "boolean",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Indicates whether campaign is active"
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the campaign was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "campaign"
+            ],
+            "description": "The type of object represented by JSON. This object stores information about the campaign."
+          }
+        }
+      },
+      "SimpleConsent": {
+        "title": "Simple Consent",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "consent"
+            ]
+          }
+        },
+        "required": [
+          "object"
+        ]
+      },
+      "CustomersListCustomerActivitiesResponseBody": {
+        "type": "object",
+        "title": "Customers List Customer Activities Response Body",
         "description": "Request body schema for `/customers/{customerId}/activities`.",
         "properties": {
           "object": {
@@ -26814,19 +27300,20 @@
             "type": "array",
             "description": "Array of customer activity objects.",
             "items": {
-              "$ref": "#/components/schemas/9_obj_customer_activity_object"
+              "$ref": "#/components/schemas/CustomerActivity"
             }
           },
           "total": {
             "type": "integer",
             "description": "Total number of customer activities."
           }
-        }
+        },
+        "required":  ["object", "data_ref", "data", "total"]
       },
-      "9_obj_customer_activity_object": {
+      "CustomerActivity": {
+        "title": "Customer Activity",
         "type": "object",
-        "title": "Customer Activity Object",
-        "description": "This is an object representing customer activity.  \n\nThis is a general object which presents moments from customers' activity. There are all types of different events that customers perform during their journey once they participate in Promotions. Events describe moments when customers redeem coupons and earn points or rewards. The list of all types of activities is listed below.\n\nThe details describing the activity are collected in a property named `data`. In this object, software integrators will find all further information explaining the event context.  \n\nCustomer Activity Object is a type of <!-- [Event](OpenAPI.json/components/schemas/15_obj_event_object) -->[Event](ref:track-custom-event)  which is our way of letting you know when something interesting happens in your project. When an interesting event concerning an individual customer occurs, we create a new Customer Activity object. For example, when a code is published to a customer, we create a `customer.publication.succeeded` event.\n\n| **Event types (definition in progress)** |\n|:---|\n| customer.confirmed |\n| customer.created |\n| customer.updated |\n| customer.deleted |\n| customer.referred |\n| customer.custom_event |\n| customer.segment.entered |\n| customer.segment.left |\n| customer.sms.sent |\n| customer.sms.failed |\n| customer.email.sent |\n| customer.email.failed |\n| customer.activecampaign.sent |\n| customer.activecampaign.failed |\n| customer.braze.sent |\n| customer.braze.failed |\n| customer.mailchimp.sent |\n| customer.mailchimp.failed |\n| customer.intercom.sent |\n| customer.intercom.failed |\n| customer.rewarded |\n| customer.rewarded.loyalty_points |\n| customer.voucher.gift.balance_added |\n| customer.voucher.loyalty_card.points_added |\n| customer.voucher.loyalty_card.points_transferred |\n| customer.publication.succeeded |\n| customer.publication.failed |\n| customer.redemption.succeeded |\n| customer.redemption.failed |\n| customer.redemption.rollback.succeeded |\n| customer.redemption.rollback.failed |\n| customer.consents.given |\n| customer.consents.revoked |",
+        "description": "This is an object representing customer activity.  \n\nThis is a general object which presents moments from customers' activity. There are all types of different events that customers perform during their journey once they participate in Promotions. Events describe moments when customers redeem coupons and earn points or rewards. The list of all types of activities is listed below.\n\nThe details describing the activity are collected in a property named `data`. In this object, software integrators will find all further information explaining the event context.",
         "x-tags": [
           "CUSTOMERS API"
         ],
@@ -26846,37 +27333,76 @@
               "customer.deleted",
               "customer.referred",
               "customer.custom_event",
-              "customer.segment_entered",
+              "customer.segment.entered",
               "customer.segment.left",
               "customer.sms.sent",
+              "customer.sms.recovered",
               "customer.sms.failed",
               "customer.email.sent",
+              "customer.email.recovered",
               "customer.email.failed",
               "customer.activecampaign.sent",
+              "customer.activecampaign.recovered",
+              "customer.activecampaign.failed",
               "customer.braze.sent",
+              "customer.braze.recovered",
+              "customer.braze.failed",
               "customer.mailchimp.sent",
+              "customer.mailchimp.recovered",
+              "customer.mailchimp.failed",
               "customer.intercom.sent",
+              "customer.intercom.recovered",
               "customer.intercom.failed",
+              "customer.shopify.sent",
+              "customer.shopify.recovered",
+              "customer.shopify.failed",
+              "customer.klaviyo.sent",
+              "customer.klaviyo.recovered",
+              "customer.klaviyo.failed",
+              "customer.batch.sent",
+              "customer.batch.recovered",
+              "customer.batch.failed",
               "customer.rewarded",
               "customer.rewarded.loyalty_points",
               "customer.voucher.gift.balance_added",
               "customer.voucher.loyalty_card.points_added",
               "customer.voucher.loyalty_card.points_transferred",
+              "customer.voucher.loyalty_card.points_expired",
+              "customer.voucher.deleted",
               "customer.publication.succeeded",
               "customer.publication.failed",
-              "customer.redemption.succeeded",
+              "customer.validation.succeeded",
+              "customer.validation.failed",
               "customer.redemption.failed",
-              "customer.redemption.rollback.succeeded",
+              "customer.redemption.succeeded",
               "customer.redemption.rollback.failed",
+              "customer.redemption.rollback.succeeded",
               "customer.consents.given",
-              "customer.consents.revoked"
+              "customer.consents.revoked",
+              "customer.order.canceled",
+              "customer.order.created",
+              "customer.order.fulfilled",
+              "customer.order.paid",
+              "customer.order.processing",
+              "customer.order.updated",
+              "customer.reward_redemptions.created",
+              "customer.reward_redemptions.pending",
+              "customer.reward_redemptions.completed",
+              "customer.reward_redemptions.rolledback",
+              "customer.loyalty.updated",
+              "customer.loyalty.tier.upgraded",
+              "customer.loyalty.tier.downgraded",
+              "customer.loyalty.tier.prolonged",
+              "customer.loyalty.tier.expiration.changed",
+              "customer.loyalty.tier.joined",
+              "customer.loyalty.tier.left"
             ]
           },
           "data": {
             "type": "array",
             "description": "Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.",
             "items": {
-              "$ref": "#/components/schemas/9_obj_customer_activity_object_data"
+              "$ref": "#/components/schemas/CustomerActivityData"
             }
           },
           "created_at": {
@@ -26887,571 +27413,1364 @@
           }
         }
       },
-      "9_obj_customer_activity_object_data": {
-        "title": "Customer Activity Data Object",
+      "CustomerActivityData": {
+        "title": "Customer Activity Data",
         "description": "Event data object schema.",
         "anyOf": [
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_confirmed"
+            "$ref": "#/components/schemas/EventCustomerConfirmed"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_created"
+            "$ref": "#/components/schemas/EventCustomerCreated"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_updated"
+            "$ref": "#/components/schemas/EventCustomerUpdated"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_deleted"
+            "$ref": "#/components/schemas/EventCustomerDeleted"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_referred"
+            "$ref": "#/components/schemas/EventCustomerReferred"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_custom_event"
+            "$ref": "#/components/schemas/EventCustomerCustomEvent"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_segment_entered"
+            "$ref": "#/components/schemas/EventCustomerSegmentEntered"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_segment_left"
+            "$ref": "#/components/schemas/EventCustomerSegmentLeft"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_sms_sent"
+            "$ref": "#/components/schemas/EventCustomerSmsSent"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_sms_failed"
+            "$ref": "#/components/schemas/EventCustomerSmsRecovered"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_email_sent"
+            "$ref": "#/components/schemas/EventCustomerSmsFailed"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_email_failed"
+            "$ref": "#/components/schemas/EventCustomerEmailSent"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_activecampaign_sent"
+            "$ref": "#/components/schemas/EventCustomerEmailRecovered"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_activecampaign_failed"
+            "$ref": "#/components/schemas/EventCustomerEmailFailed"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_braze_sent"
+            "$ref": "#/components/schemas/EventCustomerActiveCampaignSent"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_braze_failed"
+            "$ref": "#/components/schemas/EventCustomerActiveCampaignRecovered"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_mailchimp_sent"
+            "$ref": "#/components/schemas/EventCustomerActiveCampaignFailed"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_mailchimp_failed"
+            "$ref": "#/components/schemas/EventCustomerBrazeSent"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_intercom_sent"
+            "$ref": "#/components/schemas/EventCustomerBrazeRecovered"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_intercom_failed"
+            "$ref": "#/components/schemas/EventCustomerBrazeFailed"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_rewarded"
+            "$ref": "#/components/schemas/EventCustomerMailchimpSent"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_rewarded_loyalty_points"
+            "$ref": "#/components/schemas/EventCustomerMailchimpRecovered"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_voucher_gift_voucher_balance_added"
+            "$ref": "#/components/schemas/EventCustomerMailchimpFailed"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_voucher_loyalty_card_points_added"
+            "$ref": "#/components/schemas/EventCustomerIntercomSent"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_voucher_loyalty_card_points_transferred"
+            "$ref": "#/components/schemas/EventCustomerIntercomRecovered"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_publication_succeeded"
+            "$ref": "#/components/schemas/EventCustomerIntercomFailed"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_publication_failed"
+            "$ref": "#/components/schemas/EventCustomerShopifySent"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_redemption_succeeded"
+            "$ref": "#/components/schemas/EventCustomerShopifyRecovered"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_redemption_failed"
+            "$ref": "#/components/schemas/EventCustomerShopifyFailed"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_redemption_rollback_succeeded"
+            "$ref": "#/components/schemas/EventCustomerKlaviyoSent"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_redemption_rollback_failed"
+            "$ref": "#/components/schemas/EventCustomerKlaviyoRecovered"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_consents_given"
+            "$ref": "#/components/schemas/EventCustomerKlaviyoFailed"
           },
           {
-            "$ref": "#/components/schemas/9_obj_customer_activity_object_data_customer_consents_revoked"
+            "$ref": "#/components/schemas/EventCustomerBatchSent"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerBatchRecovered"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerBatchFailed"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRewarded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardedLoyaltyPoints"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerGiftVoucherBalanceAdded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyCardPointsAdded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyCardPointsTransferred"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerVouchersLoyaltyPointsExpired"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerVoucherDeleted"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerPublicationSucceeded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerPublicationFailed"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerValidationSucceeded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerValidationFailed"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemptionSucceeded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemptionFailed"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemptionRollbackSucceeded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemptionRollbackFailed"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerConsentsGiven"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerConsentsRevoked"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerOrderCanceled"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerOrderCreated"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerOrderFulfilled"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerOrderPaid"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerOrderProcessing"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerOrderUpdated"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardRedemptionsCreated"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardRedemptionsPending"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardRedemptionsCompleted"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardRedemptionsRolledBack"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyUpdated"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierUpgraded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierDowngraded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierProlonged"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierExpirationChanged"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierJoined"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierLeft"
           }
         ]
       },
-      "9_obj_customer_activity_object_data_customer_confirmed": {
-        "title": "Customer Confirmed",
+      "EventCustomerSent": {
+        "title": "Event Customer Sent",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "distribution": {
+            "type": "object"
+          },
+          "sent_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the distribution was sent in ISO 8601 format.",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "sent_at"
+        ]
+      },
+      "EventCustomerRecovered": {
+        "title": "Event Customer Recovered",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "distribution": {
+            "type": "object"
+          },
+          "recovered_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the distribution was recovered in ISO 8601 format.",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "recovered_at"
+        ]
+      },
+      "EventCustomerFailed": {
+        "title": "Event Customer Failed",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "distribution": {
+            "type": "object"
+          },
+          "failed_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the distribution failed in ISO 8601 format.",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "failed_at"
+        ]
+      },
+      "EventCustomerConfirmed": {
+        "title": "Event Customer Confirmed",
         "description": "Event data object schema for `customer.confirmed`.",
         "type": "object",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/9_obj_customer_object_email_parameter"
+            "$ref": "#/components/schemas/CustomerResponse"
           },
           "unconfirmed_customer": {
-            "type": "string",
-            "example": "ucust_1qa70mVfYkl11Ab0ZxDPdWNa"
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "ucust_1qa70mVfYkl11Ab0ZxDPdWNa"
+              }
+            }
           }
         }
       },
-      "9_obj_customer_activity_object_data_customer_created": {
-        "title": "Customer Created",
+      "EventCustomerCreated": {
+        "title": "Event Customer Created",
         "description": "Event data object schema for `customer.created`.",
         "type": "object",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/9_obj_customer_object_email_parameter"
+            "$ref": "#/components/schemas/CustomerResponse"
           }
         }
       },
-      "9_obj_customer_activity_object_data_customer_updated": {
-        "title": "Customer Updated",
+      "EventCustomerUpdated": {
+        "title": "Event Customer Updated",
         "description": "Event data object schema for `customer.updated`.",
         "type": "object",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/9_obj_customer_object_email_parameter"
+            "$ref": "#/components/schemas/CustomerResponse"
           }
         }
       },
-      "9_obj_customer_activity_object_data_customer_deleted": {
-        "title": "Customer Deleted",
+      "EventCustomerDeleted": {
+        "title": "Event Customer Deleted",
         "description": "Event data object schema for `customer.deleted`.",
         "type": "object",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/9_obj_customer_object_email_parameter"
+            "$ref": "#/components/schemas/CustomerResponse"
           }
         }
       },
-      "9_obj_customer_activity_object_data_customer_referred": {
-        "title": "Customer Referred",
+      "EventCustomerReferred": {
+        "title": "Event Customer Referred",
         "description": "Event data object schema for `customer.referred`.",
         "type": "object",
         "properties": {
-          "voucher": {
-            "type": "object"
-          },
-          "campaign": {
-            "type": "object"
-          },
           "customer": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleCustomer"
           },
           "referrer": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleCustomer"
           },
-          "redemption": {
-            "type": "object"
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
           },
           "custom_event": {
-            "type": "object"
+            "$ref": "#/components/schemas/CustomEvent"
+          },
+          "redemption": {
+            "$ref": "#/components/schemas/RedemptionsRedemption"
           }
-        }
+        },
+        "required": [
+          "referrer",
+          "campaign",
+          "voucher",
+          "custom_event"
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_custom_event": {
-        "title": "Custom Event",
+      "EventCustomerCustomEvent": {
+        "title": "Event Customer Custom Event",
         "description": "Event data object schema for `customer.custom_event`.",
         "type": "object",
         "properties": {
-          "event": {
-            "type": "object"
-          },
-          "loyalty": {
-            "type": "object"
-          },
           "customer": {
-            "type": "object"
-          },
-          "referral": {
-            "type": "object"
-          },
-          "event_schema": {
-            "type": "object"
+            "$ref": "#/components/schemas/CustomerResponse"
           }
-        }
+        },
+        "additionalProperties": true,
+        "required": [
+          "customer"
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_segment_entered": {
-        "title": "Segment Entered",
+      "EventCustomerSegmentEntered": {
+        "title": "Event Customer Segment Entered",
         "description": "Event data object schema for `customer.segment.entered`.",
         "type": "object",
         "properties": {
-          "segment": {
-            "type": "object"
-          },
           "customer": {
-            "type": "object"
+            "$ref": "#/components/schemas/CustomerResponse"
+          },
+          "segment": {
+            "$ref": "#/components/schemas/SimpleSegment"
           }
-        }
+        },
+        "required": [
+          "customer",
+          "segment"
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_segment_left": {
-        "title": "Segment Left",
+      "EventCustomerSegmentLeft": {
+        "title": "Event Customer Segment Left",
         "description": "Event data object schema for `customer.segment.left`.",
         "type": "object",
         "properties": {
-          "segment": {
-            "type": "object"
-          },
           "customer": {
-            "type": "object"
+            "$ref": "#/components/schemas/CustomerResponse"
+          },
+          "segment": {
+            "$ref": "#/components/schemas/SimpleSegment"
           }
-        }
+        },
+        "required": [
+          "customer",
+          "segment"
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_sms_sent": {
-        "title": "SMS Sent",
+      "EventCustomerSmsSent": {
+        "title": "Event Customer SMS Sent",
         "description": "Event data object schema for `customer.sms.sent`.",
-        "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerSent"
+          }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_sms_failed": {
-        "title": "SMS Failed",
+      "EventCustomerSmsRecovered": {
+        "title": "Event Customer SMS Recovered",
+        "description": "Event data object schema for `customer.sms.recovered`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRecovered"
+          }
+        ]
+      },
+      "EventCustomerSmsFailed": {
+        "title": "Event Customer SMS Failed",
         "description": "Event data object schema for `customer.sms.failed`.",
-        "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerFailed"
+          }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_email_sent": {
-        "title": "Email Sent",
+      "EventCustomerEmailSent": {
+        "title": "Event Customer Email Sent",
         "description": "Event data object schema for `customer.email.sent`.",
-        "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerSent"
+          }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_email_failed": {
-        "title": "Email Failed",
+      "EventCustomerEmailRecovered": {
+        "title": "Event Customer Email Recovered",
+        "description": "Event data object schema for `customer.email.recovered`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRecovered"
+          }
+        ]
+      },
+      "EventCustomerEmailFailed": {
+        "title": "Event Customer Email Failed",
         "description": "Event data object schema for `customer.email.failed`.",
-        "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerFailed"
+          }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_activecampaign_sent": {
-        "title": "ActiveCampaign Sent",
+      "EventCustomerActiveCampaignSent": {
+        "title": "Event Customer ActiveCampaign Sent",
         "description": "Event data object schema for `customer.activecampaign.sent`.",
-        "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerSent"
+          }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_activecampaign_failed": {
-        "title": "ActiveCampaign Failed",
+      "EventCustomerActiveCampaignRecovered": {
+        "title": "Event Customer ActiveCampaign Recovered",
+        "description": "Event data object schema for `customer.activecampaign.recovered`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRecovered"
+          }
+        ]
+      },
+      "EventCustomerActiveCampaignFailed": {
+        "title": "Event Customer ActiveCampaign Failed",
         "description": "Event data object schema for `customer.activecampaign.failed`.",
-        "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerFailed"
+          }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_braze_sent": {
-        "title": "Braze Sent",
+      "EventCustomerBrazeSent": {
+        "title": "Event Customer Braze Sent",
         "description": "Event data object schema for `customer.braze.sent`.",
-        "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerSent"
+          }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_braze_failed": {
-        "title": "Braze Failed",
+      "EventCustomerBrazeRecovered": {
+        "title": "Event Customer Braze Recovered",
+        "description": "Event data object schema for `customer.braze.recovered`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRecovered"
+          }
+        ]
+      },
+      "EventCustomerBrazeFailed": {
+        "title": "Event Customer Braze Failed",
         "description": "Event data object schema for `customer.braze.failed`.",
-        "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerFailed"
+          }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_mailchimp_sent": {
-        "title": "Mailchimp Sent",
+      "EventCustomerMailchimpSent": {
+        "title": "Event Customer Mailchimp Sent",
         "description": "Event data object schema for `customer.mailchimp.sent`.",
-        "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerSent"
+          }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_mailchimp_failed": {
-        "title": "Mailchimp Failed",
+      "EventCustomerMailchimpRecovered": {
+        "title": "Event Customer Mailchimp Recovered",
+        "description": "Event data object schema for `customer.mailchimp.recovered`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRecovered"
+          }
+        ]
+      },
+      "EventCustomerMailchimpFailed": {
+        "title": "Event Customer Mailchimp Failed",
         "description": "Event data object schema for `customer.mailchimp.failed`.",
-        "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerFailed"
+          }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_intercom_sent": {
-        "title": "Intercom Sent",
+      "EventCustomerIntercomSent": {
+        "title": "Event Customer Intercom Sent",
         "description": "Event data object schema for `customer.intercom.sent`.",
-        "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerSent"
+          }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_intercom_failed": {
-        "title": "Intercom Failed",
+      "EventCustomerIntercomRecovered": {
+        "title": "Event Customer Intercom Recovered",
+        "description": "Event data object schema for `customer.intercom.recovered`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRecovered"
+          }
+        ]
+      },
+      "EventCustomerIntercomFailed": {
+        "title": "Event Customer Intercom Failed",
         "description": "Event data object schema for `customer.intercom.failed`.",
-        "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerFailed"
+          }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_rewarded": {
-        "title": "Customer Rewarded",
+      "EventCustomerShopifySent": {
+        "title": "Event Customer Shopify Sent",
+        "description": "Event data object schema for `customer.shopify.sent`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerSent"
+          }
+        ]
+      },
+      "EventCustomerShopifyRecovered": {
+        "title": "Event Customer Shopify Recovered",
+        "description": "Event data object schema for `customer.shopify.recovered`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRecovered"
+          }
+        ]
+      },
+      "EventCustomerShopifyFailed": {
+        "title": "Event Customer Shopify Failed",
+        "description": "Event data object schema for `customer.shopify.failed`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerFailed"
+          }
+        ]
+      },
+      "EventCustomerKlaviyoSent": {
+        "title": "Event Customer Klaviyo Sent",
+        "description": "Event data object schema for `customer.klaviyo.sent`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerSent"
+          }
+        ]
+      },
+      "EventCustomerKlaviyoRecovered": {
+        "title": "Event Customer Klaviyo Recovered",
+        "description": "Event data object schema for `customer.klaviyo.recovered`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRecovered"
+          }
+        ]
+      },
+      "EventCustomerKlaviyoFailed": {
+        "title": "Event Customer Klaviyo Failed",
+        "description": "Event data object schema for `customer.klaviyo.failed`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerFailed"
+          }
+        ]
+      },
+      "EventCustomerBatchSent": {
+        "title": "Event Customer Batch Sent",
+        "description": "Event data object schema for `customer.batch.sent`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerSent"
+          }
+        ]
+      },
+      "EventCustomerBatchRecovered": {
+        "title": "Event Customer Batch Recovered",
+        "description": "Event data object schema for `customer.batch.recovered`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRecovered"
+          }
+        ]
+      },
+      "EventCustomerBatchFailed": {
+        "title": "Event Customer Batch Failed",
+        "description": "Event data object schema for `customer.batch.failed`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerFailed"
+          }
+        ]
+      },
+      "EventCustomerRewarded": {
+        "title": "Event Customer Rewarded",
         "description": "Event data object schema for `customer.rewarded`.",
         "type": "object",
         "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
           "holder": {
-            "type": "object"
-          },
-          "reward": {
-            "type": "object"
-          },
-          "balance": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleCustomer"
           },
           "voucher": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleVoucher"
           },
           "campaign": {
-            "type": "object"
-          },
-          "customer": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleCampaign"
           },
           "redemption": {
-            "type": "object"
+            "$ref": "#/components/schemas/RedemptionsRedemption"
           },
-          "custom_event": {
-            "type": "object"
+          "reward": {
+            "$ref": "#/components/schemas/SimpleRedemptionRewardResult"
           },
           "referral_tier": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleReferralTier"
+          },
+          "balance": {
+            "type": "integer"
+          },
+          "custom_event": {
+            "$ref": "#/components/schemas/CustomEvent"
           },
           "customer_event": {
             "type": "object"
           }
         }
       },
-      "9_obj_customer_activity_object_data_customer_rewarded_loyalty_points": {
-        "title": "Customer Rewarded Loyalty Points",
+      "EventCustomerRewardedLoyaltyPoints": {
+        "title": "Event Customer Rewarded Loyalty Points",
         "description": "Event data object schema for `customer.rewarded.loyalty_points`.",
         "type": "object",
         "properties": {
-          "order": {
-            "type": "object"
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
           },
           "holder": {
-            "type": "object"
-          },
-          "balance": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleCustomer"
           },
           "voucher": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleVoucher"
           },
           "campaign": {
-            "type": "object"
-          },
-          "customer": {
-            "type": "object"
-          },
-          "earning_rule": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleCampaign"
           },
           "loyalty_tier": {
+            "$ref": "#/components/schemas/LoyaltyTier"
+          },
+          "earning_rule": {
+            "$ref": "#/components/schemas/EarningRule"
+          },
+          "balance": {
+            "type": "integer"
+          },
+          "order": {
+            "$ref": "#/components/schemas/OrderResponse"
+          },
+          "event": {
             "type": "object"
           }
         }
       },
-      "9_obj_customer_activity_object_data_customer_voucher_gift_voucher_balance_added": {
-        "title": "Gift Voucher Balance Added",
+      "EventCustomerGiftVoucherBalanceAdded": {
+        "title": "Event Customer Gift Voucher Balance Added",
         "description": "Event data object schema for `customer.voucher.gift.balance_added`.",
         "type": "object",
         "properties": {
-          "balance": {
-            "type": "object"
-          },
-          "voucher": {
-            "type": "object"
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
           },
           "campaign": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleCampaign"
           },
-          "customer": {
-            "type": "object"
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "balance": {
+            "type": "integer"
+          },
+          "transaction": {
+            "$ref": "#/components/schemas/VoucherTransaction"
           }
         }
       },
-      "9_obj_customer_activity_object_data_customer_voucher_loyalty_card_points_added": {
-        "title": "Loyalty Card Points Added",
+      "EventCustomerLoyaltyCardPointsAdded": {
+        "title": "Event Customer Loyalty Card Points Added",
         "description": "Event data object schema for `customer.voucher.loyalty_card.points_added`.",
         "type": "object",
         "properties": {
-          "balance": {
-            "type": "object"
-          },
-          "voucher": {
-            "type": "object"
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
           },
           "campaign": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleCampaign"
           },
-          "customer": {
-            "type": "object"
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "balance": {
+            "type": "integer"
+          },
+          "transaction": {
+            "$ref": "#/components/schemas/VoucherTransaction"
           }
         }
       },
-      "9_obj_customer_activity_object_data_customer_voucher_loyalty_card_points_transferred": {
-        "title": "Loyalty Card Points Transferred",
+      "EventCustomerLoyaltyCardPointsTransferred": {
+        "title": "Event Customer Loyalty Card Points Transferred",
         "description": "Event data object schema for `customer.voucher.loyalty_card.points_transferred`.",
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "source_voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "destination_voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "balance": {
+            "type": "integer"
+          },
+          "transaction": {
+            "$ref": "#/components/schemas/VoucherTransaction"
+          }
+        }
       },
-      "9_obj_customer_activity_object_data_customer_publication_succeeded": {
-        "title": "Publication Succeeded",
+      "EventCustomerVouchersLoyaltyPointsExpired": {
+        "title": "Event Customer Loyalty Card Points Expired",
+        "description": "Event data object schema for `customer.voucher.loyalty_card.points_expired`.",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "points": {
+            "type": "integer"
+          },
+          "buckets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoucherTransaction"
+            }
+          },
+          "transaction": {
+            "$ref": "#/components/schemas/VoucherTransaction"
+          }
+        }
+      },
+      "EventCustomerVoucherDeleted": {
+        "title": "Event Customer Voucher Deleted",
+        "description": "Event data object schema for `customer.voucher.deleted`.",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          }
+        }
+      },
+      "EventCustomerPublicationSucceeded": {
+        "title": "Event Customer Publication Succeeded",
         "description": "Event data object schema for `customer.publication.succeeded`.",
         "type": "object",
         "properties": {
-          "campaign": {
-            "type": "object"
-          },
           "customer": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
           },
           "publication": {
             "type": "object"
           }
         }
       },
-      "9_obj_customer_activity_object_data_customer_publication_failed": {
-        "title": "Publication Failed",
+      "EventCustomerPublicationFailed": {
+        "title": "Event Customer Publication Failed",
         "description": "Event data object schema for `customer.publication.failed`.",
         "type": "object",
         "properties": {
-          "campaign": {
-            "type": "object"
-          },
           "customer": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
           },
           "publication": {
             "type": "object"
           }
         }
       },
-      "9_obj_customer_activity_object_data_customer_redemption_succeeded": {
-        "title": "Redemption Succeeded",
+      "EventCustomerValidationSucceeded": {
+        "title": "Event Customer Validation Succeeded",
+        "description": "Event data object schema for `customer.validation.succeeded`.",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/ValidationEntity"
+          }
+        }
+      },
+      "EventCustomerValidationFailed": {
+        "title": "Event Customer Validation Failed",
+        "description": "Event data object schema for `customer.validation.failed`.",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/ValidationEntity"
+          }
+        }
+      },
+      "EventCustomerRedemption": {
+        "title": "Event Customer Redemption",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "order": {
+            "$ref": "#/components/schemas/SimpleOrder"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "holder": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "promotion_tier": {
+            "$ref": "#/components/schemas/SimplePromotionTier"
+          },
+          "redemption": {
+            "$ref": "#/components/schemas/SimpleRedemption"
+          }
+        }
+      },
+      "EventCustomerRedemptionSucceeded": {
+        "title": "Event Customer Redemption Succeeded",
         "description": "Event data object schema for `customer.redemption.succeeded`.",
-        "type": "object",
-        "properties": {
-          "order": {
-            "type": "object"
-          },
-          "holder": {
-            "type": "object"
-          },
-          "voucher": {
-            "type": "object"
-          },
-          "campaign": {
-            "type": "object"
-          },
-          "customer": {
-            "type": "object"
-          },
-          "redemption": {
-            "type": "object"
-          },
-          "promotion_tier": {
-            "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemption"
           }
-        }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_redemption_failed": {
-        "title": "Redemption Succeeded",
+      "EventCustomerRedemptionFailed": {
+        "title": "Event Customer Redemption Failed",
         "description": "Event data object schema for `customer.redemption.failed`.",
-        "type": "object",
-        "properties": {
-          "order": {
-            "type": "object"
-          },
-          "holder": {
-            "type": "object"
-          },
-          "voucher": {
-            "type": "object"
-          },
-          "campaign": {
-            "type": "object"
-          },
-          "customer": {
-            "type": "object"
-          },
-          "redemption": {
-            "type": "object"
-          },
-          "promotion_tier": {
-            "type": "object"
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemption"
           }
-        }
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_redemption_rollback_succeeded": {
-        "title": "Redemption Rollback Succeeded",
+      "EventCustomerRedemptionRollbackSucceeded": {
+        "title": "Event Customer Redemption Rollback Succeeded",
         "description": "Event data object schema for `customer.redemption.rollback.succeeded`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemption"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "redemption_rollback": {
+                "$ref": "#/components/schemas/SimpleRedemption"
+              }
+            }
+          }
+        ]
+      },
+      "EventCustomerRedemptionRollbackFailed": {
+        "title": "Event Customer Redemption Rollback Failed",
+        "description": "Event data object schema for `customer.redemption.rollback.failed`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemption"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "redemption_rollback": {
+                "$ref": "#/components/schemas/SimpleRedemption"
+              }
+            }
+          }
+        ]
+      },
+      "EventCustomerConsents": {
+        "title": "Event Customer Consents",
         "type": "object",
         "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "consents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SimpleConsent"
+            }
+          }
+        }
+      },
+      "EventCustomerConsentsGiven": {
+        "title": "Event Customer Consents Given",
+        "description": "Event data object schema for `customer.consents.given`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerConsents"
+          }
+        ]
+      },
+      "EventCustomerConsentsRevoked": {
+        "title": "Event Customer Consents Revoked",
+        "description": "Event data object schema for `customer.consents.revoked`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerConsents"
+          }
+        ]
+      },
+      "EventCustomerOrder": {
+        "title": "Event Customer Order",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "referrer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
           "order": {
-            "type": "object"
+            "$ref": "#/components/schemas/OrderResponse"
+          },
+          "redemption": {
+            "$ref": "#/components/schemas/RedemptionsRedemption"
+          }
+        }
+      },
+      "EventCustomerOrderCanceled": {
+        "title": "Event Customer Order Canceled",
+        "description": "Event data object schema for `customer.order.canceled`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerOrder"
+          }
+        ]
+      },
+      "EventCustomerOrderCreated": {
+        "title": "Event Customer Order Created",
+        "description": "Event data object schema for `customer.order.created`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerOrder"
+          }
+        ]
+      },
+      "EventCustomerOrderFulfilled": {
+        "title": "Event Customer Order Fulfilled",
+        "description": "Event data object schema for `customer.order.fulfilled`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerOrder"
+          }
+        ]
+      },
+      "EventCustomerOrderPaid": {
+        "title": "Event Customer Order Paid",
+        "description": "Event data object schema for `customer.order.paid`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerOrder"
+          }
+        ]
+      },
+      "EventCustomerOrderProcessing": {
+        "title": "Event Customer Order Processing",
+        "description": "Event data object schema for `customer.order.processing`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerOrder"
+          }
+        ]
+      },
+      "EventCustomerOrderUpdated": {
+        "title": "Event Customer Order Updated",
+        "description": "Event data object schema for `customer.order.updated`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerOrder"
+          }
+        ]
+      },
+      "EventCustomerRewardRedemptions": {
+        "title": "Event Customer Reward Redemptions",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
           },
           "holder": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleCustomer"
           },
           "voucher": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleVoucher"
           },
           "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "reward_redemption": {
             "type": "object"
           },
-          "customer": {
-            "type": "object"
+          "reward": {
+            "$ref": "#/components/schemas/SimpleRedemptionRewardResult"
           },
-          "redemption": {
-            "type": "object"
+          "reward_assignment": {
+            "$ref": "#/components/schemas/RewardAssignment"
           },
-          "promotion_tier": {
-            "type": "object"
+          "source": {
+            "type": "string"
           },
-          "redemption_rollback": {
-            "type": "object"
+          "balance": {
+            "type": "integer"
           }
         }
       },
-      "9_obj_customer_activity_object_data_customer_redemption_rollback_failed": {
-        "title": "Redemption Rollback Failed",
-        "description": "Event data object schema for `customer.redemption.rollback.failed`.",
+      "EventCustomerRewardRedemptionsCreated": {
+        "title": "Event Customer Reward Redemptions Created",
+        "description": "Event data object schema for `customer.reward_redemptions.created`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardRedemptions"
+          }
+        ]
+      },
+      "EventCustomerRewardRedemptionsPending": {
+        "title": "Event Customer Reward Redemptions Pending",
+        "description": "Event data object schema for `customer.reward_redemptions.pending`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardRedemptions"
+          }
+        ]
+      },
+      "EventCustomerRewardRedemptionsCompleted": {
+        "title": "Event Customer Reward Redemptions Completed",
+        "description": "Event data object schema for `customer.reward_redemptions.completed`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardRedemptions"
+          }
+        ]
+      },
+      "EventCustomerRewardRedemptionsRolledBack": {
+        "title": "Event Customer Reward Redemptions Rolled Back",
+        "description": "Event data object schema for `customer.reward_redemptions.rolledback`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardRedemptions"
+          }
+        ]
+      },
+      "EventCustomerLoyaltyUpdated": {
+        "title": "Event Customer Loyalty Updated",
+        "description": "Event data object schema for `customer.loyalty.updated`.",
         "type": "object",
         "properties": {
-          "order": {
-            "type": "object"
-          },
-          "holder": {
-            "type": "object"
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
           },
           "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "loyalty": {
             "type": "object"
           },
-          "customer": {
-            "type": "object"
-          },
-          "redemption": {
-            "type": "object"
-          },
-          "promotion_tier": {
-            "type": "object"
-          },
-          "redemption_rollback": {
-            "type": "object"
+          "created_at": {
+            "type": "string",
+            "example": "2022-02-25T13:32:08.734Z",
+            "format": "date-time"
           }
-        }
+        },
+        "required": [
+          "created_at"
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_consents_given": {
-        "title": "Consents Given",
-        "description": "Event data object schema for `customer.consents.given`.",
+      "EventCustomerLoyaltyTierBase": {
+        "title": "Event Customer Loyalty Tier Base",
         "type": "object",
         "properties": {
-          "consents": {
-            "type": "object"
-          },
           "customer": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
           }
-        }
+        },
+        "required": [
+          "created_at",
+          "loyalty_tier_to"
+        ]
       },
-      "9_obj_customer_activity_object_data_customer_consents_revoked": {
-        "title": "Consents Given",
-        "description": "Event data object schema for `customer.consents.revoked`.",
-        "type": "object",
-        "properties": {
-          "consents": {
-            "type": "object"
+      "EventCustomerLoyaltyTierUpgraded": {
+        "title": "Event Customer Loyalty Tier Upgraded",
+        "description": "Event data object schema for `customer.loyalty.tier.upgraded`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierBase"
           },
-          "customer": {
-            "type": "object"
+          {
+            "title": "Loyalty Tier Upgraded",
+            "type": "object",
+            "properties": {
+              "loyalty_tier_from": {
+                "$ref": "#/components/schemas/LoyaltyTier"
+              },
+              "loyalty_tier_to": {
+                "$ref": "#/components/schemas/LoyaltyTier"
+              },
+              "created_at": {
+                "type": "string",
+                "example": "2022-02-25T13:32:08.734Z",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "created_at",
+              "loyalty_tier_to"
+            ]
           }
-        }
+        ]
+      },
+      "EventCustomerLoyaltyTierDowngraded": {
+        "title": "Event Customer Loyalty Tier Downgraded",
+        "description": "Event data object schema for `customer.loyalty.tier.downgraded`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierBase"
+          },
+          {
+            "title": "Loyalty Tier Downgraded",
+            "type": "object",
+            "properties": {
+              "loyalty_tier_from": {
+                "$ref": "#/components/schemas/LoyaltyTier"
+              },
+              "loyalty_tier_to": {
+                "$ref": "#/components/schemas/LoyaltyTier"
+              },
+              "created_at": {
+                "type": "string",
+                "example": "2022-02-25T13:32:08.734Z",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "created_at",
+              "loyalty_tier_from"
+            ]
+          }
+        ]
+      },
+      "EventCustomerLoyaltyTierProlonged": {
+        "title": "Event Customer Loyalty Tier Prolonged",
+        "description": "Event data object schema for `customer.loyalty.tier.prolonged`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierBase"
+          },
+          {
+            "title": "Loyalty Tier Prolonged",
+            "type": "object",
+            "properties": {
+              "loyalty_tier": {
+                "$ref": "#/components/schemas/LoyaltyTier"
+              },
+              "created_at": {
+                "type": "string",
+                "example": "2022-02-25T13:32:08.734Z",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "created_at",
+              "loyalty_tier"
+            ]
+          }
+        ]
+      },
+      "EventCustomerLoyaltyTierExpirationChanged": {
+        "title": "Event Customer Loyalty Tier Expiration Changed",
+        "description": "Event data object schema for `customer.loyalty.tier.expiration.changed`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierBase"
+          },
+          {
+            "title": "Loyalty Tier Expiration Changed",
+            "type": "object",
+            "properties": {
+              "loyalty_tier": {
+                "$ref": "#/components/schemas/LoyaltyTier"
+              },
+              "created_at": {
+                "type": "string",
+                "example": "2022-02-25T13:32:08.734Z",
+                "format": "date-time"
+              },
+              "expiration_date": {
+                "type": "string",
+                "example": "2022-02-25T13:32:08.734Z",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "created_at",
+              "loyalty_tier",
+              "expiration_date"
+            ]
+          }
+        ]
+      },
+      "EventCustomerLoyaltyTierJoined": {
+        "title": "Event Customer Loyalty Tier Joined",
+        "description": "Event data object schema for `customer.loyalty.tier.joined`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierBase"
+          },
+          {
+            "title": "Loyalty Tier Joined",
+            "type": "object",
+            "properties": {
+              "loyalty_tier": {
+                "$ref": "#/components/schemas/LoyaltyTier"
+              },
+              "created_at": {
+                "type": "string",
+                "example": "2022-02-25T13:32:08.734Z",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "created_at",
+              "loyalty_tier"
+            ]
+          }
+        ]
+      },
+      "EventCustomerLoyaltyTierLeft": {
+        "title": "Event Customer Loyalty Tier Left",
+        "description": "Event data object schema for `customer.loyalty.tier.left`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierBase"
+          },
+          {
+            "title": "Loyalty Tier Left",
+            "type": "object",
+            "properties": {
+              "loyalty_tier": {
+                "$ref": "#/components/schemas/LoyaltyTier"
+              },
+              "created_at": {
+                "type": "string",
+                "example": "2022-02-25T13:32:08.734Z",
+                "format": "date-time"
+              }
+            },
+            "required": [
+              "created_at",
+              "loyalty_tier"
+            ]
+          }
+        ]
       },
       "customers_permanent_deletion_response_body": {
         "type": "object",
@@ -30055,7 +31374,7 @@
           "object"
         ]
       },
-      "validation_rules_list_rules_assignments_response_body": {
+      "ValidationRulesListRulesAssignmentsResponseBody": {
         "type": "object",
         "description": "Validation Rule Assignments",
         "title": "Validation Rule Assignments",
@@ -30333,6 +31652,258 @@
           "total"
         ]
       },
+      "SimpleReferralTier": {
+        "title": "Simple Referral Tier",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique referral tier ID.",
+            "example": "seg_DNAOhUtJffvX0f57ajLMFBYR"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Campaign Id."
+          },
+          "banner": {
+            "type": "string",
+            "description": "Text to be displayed to your customers on your website."
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Referral tier parameters"
+          }
+        }
+      },
+      "CustomEvent": {
+        "title": "Custom Event",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique custom event ID."
+          },
+          "object": {
+            "type": "string",
+            "default": "event",
+            "description": "The object represented is an `event`.",
+            "enum": [
+              "event"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "description": "The event name."
+          },
+          "customer": {
+            "type": "object",
+            "description": "A simple customer object",
+            "$ref": "#/components/schemas/SimpleCustomerResponse"
+          },
+          "referral": {
+            "type": "object",
+            "description": "Referral object.",
+            "properties": {
+              "referrer_id": {
+                "type": "string",
+                "description": "Unique referrer ID.",
+                "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+              },
+              "code": {
+                "type": "string",
+                "description": "Voucher code."
+              },
+              "id": {
+                "type": "string",
+                "description": "Unique voucher ID."
+              }
+            }
+          },
+          "loyalty": {
+            "type": "object"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the custom event."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the custom event was created in ISO 8601 format.",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "object",
+          "type",
+          "customer",
+          "referral",
+          "loyalty"
+        ]
+      },
+      "SimpleRedemptionRewardResult": {
+        "title": "Simple Redemption Reward Result",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "assignment_id": {
+            "type": "string",
+            "description": "Unique reward assignment ID assigned by Voucherify."
+          },
+          "voucher": {
+            "description": "Defines of the voucher.",
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "product": {
+            "description": "Defines of the product.",
+            "$ref": "#/components/schemas/SimpleProduct"
+          },
+          "sku": {
+            "description": "Defines of the sku.",
+            "$ref": "#/components/schemas/SimpleSku"
+          },
+          "loyalty_tier_id": {
+            "type": "string",
+            "description": "Unique loyalty tier ID assigned by Voucherify."
+          },
+          "id": {
+            "type": "string",
+            "example": "rew_nIy4gHpQHle2c3pNMwuj7G6j",
+            "description": "Unique reward ID, assigned by Voucherify."
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "reward"
+            ],
+            "description": "The type of object represented by the JSON. This object stores information about the reward."
+          },
+          "name": {
+            "type": "string",
+            "description": "Reward name."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the reward was created in ISO 8601 format.",
+            "example": "2022-08-11T14:49:22.586Z",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Timestamp representing the date and time when the reward was updated in ISO 8601 format.",
+            "example": "2022-08-11T16:01:34.885Z",
+            "format": "date-time"
+          },
+          "parameters": {
+            "description": "Defines how the reward is generated.",
+            "type": "object"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "CAMPAIGN",
+              "COIN",
+              "MATERIAL"
+            ],
+            "description": "Reward type."
+          }
+        }
+      },
+      "ValidationEntity": {
+        "title": "Validation Entity",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique validation id."
+          },
+          "session_id": {
+            "type": "string",
+            "description": "Unique session id."
+          },
+          "status": {
+            "type": "string",
+            "description": "The validation status",
+            "enum": [
+              "VALID",
+              "INVALID"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the validation was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Unique customer ID of the customer making the purchase.",
+            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
+          },
+          "redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each redeemable.",
+            "items": {
+              "$ref": "#/components/schemas/ValidationsRedeemableApplicable"
+            }
+          },
+          "skipped_redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each redeemable.",
+            "items": {
+              "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
+            }
+          },
+          "inapplicable_redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each redeemable.",
+            "items": {
+              "$ref": "#/components/schemas/ValidationsRedeemableSkipped"
+            }
+          }
+        }
+      },
+      "SimpleSku": {
+        "title": "Simple Sku",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique sku ID."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Sku source id."
+          },
+          "sku": {
+            "type": "string",
+            "description": "Sku name."
+          }
+        }
+      },
+      "SimpleProduct": {
+        "title": "Simple Product",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique product ID."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Product source id."
+          },
+          "name": {
+            "type": "string",
+            "description": "Product name."
+          }
+        }
+      },
       "SimpleSegment": {
         "title": "Simple Segment",
         "type": "object",
@@ -30359,6 +31930,53 @@
           "id",
           "name",
           "object"
+        ]
+      },
+      "LoyaltyTierExpiration": {
+        "title": "Loyalty Tier Expiration",
+        "description": "Defines loyalty tier expiration date.",
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "Unique customer ID of the customer making the purchase.",
+            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unique campaign ID, assigned by Voucherify.",
+            "example": "camp_rRsfatlwN7unSeUIJDCYedal"
+          },
+          "tier_id": {
+            "type": "string",
+            "description": "Unique tier ID, assigned by Voucherify."
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Activation timestamp defines when the loyalty tier starts to be active in ISO 8601 format. Loyalty tier is inactive before this date."
+          },
+          "expiration_date": {
+            "type": "string",
+            "description": "Expiration timestamp defines when the loyalty tier expires in ISO 8601 format. Loyalty tier is inactive after this date."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the loyalty tier was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the loyalty tier was updated in ISO 8601 format.",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "customer_id",
+          "campaign_id",
+          "tier_id",
+          "created_at"
         ]
       },
       "TrackCustomEventRequestBody": {
@@ -34744,13 +36362,17 @@
             "type": "string",
             "default": "list",
             "description": "The type of object represented by JSON. Default is `list`.",
-            "enum": ["list"]
+            "enum": [
+              "list"
+            ]
           },
           "data_ref": {
             "type": "string",
             "default": "data",
             "description": "Identifies the name of the attribute that contains the array of qualified redeemables.",
-            "enum": ["data"]
+            "enum": [
+              "data"
+            ]
           },
           "data": {
             "type": "array",
@@ -35746,7 +37368,7 @@
         ]
       },
       "EarningRuleEvent": {
-        "title": "EarningRuleEvent",
+        "title": "Earning Rule Event",
         "type": "string",
         "enum": [
           "order.paid",
@@ -36373,6 +37995,7 @@
         ]
       },
       "LoyaltyCardTransactionsType": {
+        "title": "LoyaltyCardTransactionsType",
         "type": "string",
         "enum": [
           "POINTS_ACCRUAL",
@@ -36386,81 +38009,8 @@
           "POINTS_TRANSFER_OUT"
         ]
       },
-      "SimpleLoyaltyVoucher": {
-        "title": "Simple Loyalty Voucher",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "code": {
-            "type": "string"
-          },
-          "loyalty_card": {
-            "type": "object",
-            "required": [
-              "points",
-              "balance"
-            ],
-            "properties": {
-              "points": {
-                "type": "string"
-              },
-              "balance": {
-                "type": "string"
-              },
-              "next_expiration_date": {
-                "type": "string"
-              },
-              "next_expiration_points": {
-                "type": "string"
-              }
-            }
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "LOYALTY_CARD"
-            ]
-          },
-          "campaign": {
-            "type": "string"
-          },
-          "campaign_id": {
-            "type": "string"
-          },
-          "is_referral_code": {
-            "type": "boolean"
-          },
-          "holder_id": {
-            "type": "string"
-          },
-          "referrer_id": {
-            "type": "string"
-          },
-          "created_at": {
-            "type": "string"
-          },
-          "object": {
-            "type": "string",
-            "pattern": "voucher",
-            "enum": [
-              "voucher"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "code",
-          "loyalty_card",
-          "type",
-          "campaign",
-          "campaign_id",
-          "object"
-        ]
-      },
-      "LoyaltyCardTransaction": {
-        "title": "Loyalty Card Transaction",
+      "VoucherTransaction": {
+        "title": "Voucher Transaction",
         "type": "object",
         "properties": {
           "id": {
@@ -36744,11 +38294,11 @@
                 ]
               },
               "source_voucher": {
-                "$ref": "#/components/schemas/SimpleLoyaltyVoucher",
+                "$ref": "#/components/schemas/SimpleVoucher",
                 "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction."
               },
               "destination_voucher": {
-                "$ref": "#/components/schemas/SimpleLoyaltyVoucher",
+                "$ref": "#/components/schemas/SimpleVoucher",
                 "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction."
               }
             }
@@ -36763,7 +38313,7 @@
           "created_at": {
             "type": "string",
             "format": "date-time",
-            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format.\n\n"
+            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
           }
         },
         "required": [
@@ -36777,6 +38327,14 @@
           "details",
           "related_transaction_id",
           "created_at"
+        ]
+      },
+      "LoyaltyCardTransaction": {
+        "title": "Loyalty Card Transaction",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherTransaction"
+          }
         ]
       },
       "LoyaltyCardTransactionsFields": {
@@ -39319,7 +40877,7 @@
       },
       "LoyaltiesGetRewardAssignmentResponseBody": {
         "title": "Loyalties Get Reward Assignment Response Body",
-        "$ref": "#/components/schemas/reward_assignment"
+        "$ref": "#/components/schemas/RewardAssignment"
       },
       "LoyaltiesGetRewardDetailsResponseBody": {
         "title": "Loyalties Get Reward Details Response Body",
@@ -39381,7 +40939,7 @@
                 },
                 "assignment": {
                   "description": "This is an object representing a reward assignment.",
-                  "$ref": "#/components/schemas/reward_assignment"
+                  "$ref": "#/components/schemas/RewardAssignment"
                 },
                 "object": {
                   "type": "string",
@@ -39500,6 +41058,7 @@
         ]
       },
       "EarningRule": {
+        "title": "Earning Rule",
         "allOf": [
           {
             "$ref": "#/components/schemas/EarningRuleBase"
@@ -39615,6 +41174,7 @@
         ]
       },
       "LoyaltyTier": {
+        "title": "Loyalty Tier",
         "allOf": [
           {
             "$ref": "#/components/schemas/LoyaltyTierBase"
@@ -39674,41 +41234,7 @@
                 }
               },
               "expiration": {
-                "type": "object",
-                "description": "Defines loyalty tier expiration date.",
-                "properties": {
-                  "customer_id": {
-                    "type": "string"
-                  },
-                  "campaign_id": {
-                    "type": "string"
-                  },
-                  "tier_id": {
-                    "type": "string"
-                  },
-                  "start_date": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "expiration_date": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "created_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "format": "date-time"
-                  }
-                },
-                "required": [
-                  "customer_id",
-                  "campaign_id",
-                  "tier_id",
-                  "created_at"
-                ]
+                "$ref": "#/components/schemas/LoyaltyTierExpiration"
               },
               "object": {
                 "type": "string",
@@ -39764,6 +41290,7 @@
         }
       },
       "MappingPoints": {
+        "title": "MappingPoints",
         "anyOf": [
           {
             "$ref": "#/components/schemas/MappingMultiply"
@@ -50241,7 +51768,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/reward_assignment"
+                  "$ref": "#/components/schemas/RewardAssignment"
                 },
                 "examples": {
                   "Example": {
@@ -50409,7 +51936,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/reward_assignment"
+                  "$ref": "#/components/schemas/RewardAssignment"
                 },
                 "examples": {
                   "Example": {
@@ -50531,7 +52058,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/reward_assignment"
+                  "$ref": "#/components/schemas/RewardAssignment"
                 }
               }
             }
@@ -68586,7 +70113,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/reward_assignment"
+                  "$ref": "#/components/schemas/RewardAssignment"
                 },
                 "examples": {
                   "Example": {
@@ -73082,7 +74609,7 @@
             },
             "in": "query",
             "name": "starting_after",
-            "description": "A cursor for use in pagination. `starting_after` is a date-time value that defines your place in the list based on `created_at` property from the activity object. For instance, if you make a list request and receive 100 objects, ending with an object created at 2020-05-24T13:43:09.024Z, your subsequent call can include starting_after=2020-05-24T13:43:09.024Z in order to fetch the next page of the list."
+            "description": "A cursor for use in pagination. `starting_after` is a date-time value that defines your place in the list based on `created_at` property from the activity object. For instance, if you make a list request and receive 100 objects, ending with an object created at `2020-05-24T13:43:09.024Z`, your subsequent call can include `starting_after=2020-05-24T13:43:09.024Z` in order to fetch the next page of the list."
           },
           {
             "schema": {
@@ -73114,6 +74641,34 @@
             "in": "query",
             "name": "campaign_id",
             "description": "By applying this parameter you request only events related to specific campaign identified by its ID."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "product_id",
+            "description": "By applying this parameter you request only events related to specific product identified by its ID."
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "2023-12-22T10:13:06.487Z",
+              "description": "Timestamp representing the date and time which results must end on. Represented in ISO 8601 format.",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "2023-12-22T10:13:06.487Z",
+              "description": "Timestamp representing the date and time which results must end on. Represented in ISO 8601 format.",
+              "format": "date-time"
+            }
           }
         ],
         "security": [
@@ -73128,7 +74683,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/9_res_list_customer_activities"
+                  "$ref": "#/components/schemas/CustomersListCustomerActivitiesResponseBody"
                 }
               }
             }
@@ -77556,7 +79111,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/validation_rules_list_rules_assignments_response_body"
+                  "$ref": "#/components/schemas/ValidationRulesListRulesAssignmentsResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -77682,7 +79237,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/validation_rules_list_rules_assignments_response_body"
+                  "$ref": "#/components/schemas/ValidationRulesListRulesAssignmentsResponseBody"
                 },
                 "examples": {
                   "Example": {
