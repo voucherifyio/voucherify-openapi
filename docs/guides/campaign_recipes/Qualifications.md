@@ -48,7 +48,7 @@ To specify the types of promotions and codes that you would like to reveal to yo
 | PRODUCTS_BY_CUSTOMER | Returns all promotions available for a customer for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule). |
 | PRODUCTS_DISCOUNT_BY_CUSTOMER | Returns all promotions available for a customer for products when a discount is defined as applicable to specific item(s). |
 
-In the request, you can add [opions](ref:check-eligibility) to configure the parameters returned in the response, e.g. filters for types of redeemables or sorting rules like `BEST_DEAL` or `LEAST_DEAL`.
+In the request, you can add [options](ref:check-eligibility) to configure the parameters returned in the response, e.g. filters for types of redeemables or sorting rules like `BEST_DEAL` or `LEAST_DEAL`.
 
 ## Use Cases
 
