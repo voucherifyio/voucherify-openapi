@@ -5,7 +5,7 @@ categorySlug: getting-started
 slug: key-concepts
 type: basic
 hidden: false
-order: 5
+order: 6
 ---
 
 Voucherify splits each campaign into 5 stages:
