@@ -15,6 +15,16 @@
 - OrdersGetResponseBody
 - OrdersListResponseBody
 
+- GET `/v1/orders`
+  - Request body schema was replaced with new one: `OrdersListResponseBody` (old one: `10_res_list_orders`)
+- POST `/v1/orders`
+  - Request body schema was replaced with new one: `OrdersCreateRequestBody` (old one: `10_req_create_order`)
+  - Response body schema was replaced with new one: `OrdersCreateResponseBody` (old one: `10_obj_order_object_no_discount_calculations`)
+- GET `/v1/orders/{orderId}`
+  - Request body schema was replaced with new one: `OrdersGetResponseBody` (old one: `10_obj_order_object`)
+- PUT `/v1/orders/{orderId}`
+  - Request body schema was replaced with new one: `OrdersUpdateRequestBody` (old one: `10_req_update_order`)
+  - Response body schema was replaced with new one: `OrdersUpdateResponseBody` (old one: `10_obj_order_object`)
 
 ## 20231102 - Customers API
 
