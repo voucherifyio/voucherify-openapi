@@ -4,7 +4,7 @@ excerpt:
 categorySlug: building-blocks
 slug: earning-rules
 type: basic
-hidden: false
+hidden: true
 order: 10
 ---
 

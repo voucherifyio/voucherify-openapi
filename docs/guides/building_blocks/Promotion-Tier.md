@@ -4,7 +4,7 @@ excerpt:
 categorySlug: building-blocks
 slug: promotion-tier
 type: basic
-hidden: false
+hidden: true
 order: 8
 ---
 

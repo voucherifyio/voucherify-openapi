@@ -4,7 +4,7 @@ excerpt:
 categorySlug: building-blocks
 slug: campaigns
 type: basic
-hidden: false
+hidden: true
 order: 6
 ---
 

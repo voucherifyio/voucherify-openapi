@@ -5,7 +5,7 @@ categorySlug: integration-blueprint
 slug: integration-overview
 type: basic
 hidden: false
-order: 1
+order: 2
 ---
 
 ## Integration overview
