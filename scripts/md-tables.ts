@@ -13,7 +13,7 @@ export const mdTables: [string, string?][] = [
     ['8_obj_loyalty_card_object_non_expanded_categories', 'LOYALTIES-API-Loyalty-Card-Object.md'],
     ['8_obj_earning_rule_object', 'LOYALTIES-API-Earning-Rule-Object.md'],
     ['8_obj_loyalty_tier_object', 'LOYALTIES-API-Loyalty-Tier-Object.md'],
-    ['9_obj_customer_object', 'CUSTOMERS-API-Customer-Object.md'],
+    ['CustomerResponse', 'CUSTOMERS-API-Customer-Object.md'],
     ['9_obj_customer_activity_object', 'CUSTOMERS-API-Customer-Activity-Object.md'],
     ['OrderResponse', 'ORDERS-API-Order-Object.md'],
     ['ProductResponse', 'PRODUCTS-API-Product-Object.md'],

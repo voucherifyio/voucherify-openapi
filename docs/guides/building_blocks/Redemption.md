@@ -4,7 +4,7 @@ excerpt:
 categorySlug: building-blocks
 slug: redemption
 type: basic
-hidden: false
+hidden: true
 order: 1
 ---
 
