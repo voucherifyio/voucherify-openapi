@@ -461,8 +461,8 @@
           }
         }
       },
-      "OrderResponse": {
-        "title": "Order Response",
+      "OrderResponseBase": {
+        "title": "Order Response Base",
         "type": "object",
         "additionalProperties": false,
         "description": "Order information.",
@@ -547,18 +547,6 @@
             "type": "object",
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
           },
-          "customer": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/CustomerResponse",
-                "description": "This is an object containing information about the customer."
-              },
-              {
-                "$ref": "#/components/schemas/CustomerIdObjectResponse",
-                "description": "If only `customer_id` was provided, customer return data will be limited."
-              }
-            ]
-          },
           "customer_id": {
             "type": [
               "string",
@@ -566,18 +554,6 @@
             ],
             "description": "Unique customer ID of the customer making the purchase.",
             "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
-          },
-          "referrer": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ReferrerResponse",
-                "description": "This is an object containing information about the referrer."
-              },
-              {
-                "$ref": "#/components/schemas/ReferrerIdObjectResponse",
-                "description": "If only `referrer_id` was provided, referrer return data will be limited."
-              }
-            ]
           },
           "referrer_id": {
             "type": [
@@ -605,6 +581,79 @@
           "customer_id",
           "referrer_id",
           "object"
+        ]
+      },
+      "OrderResponse": {
+        "title": "Order Response",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderResponseBase"
+          },
+          {
+            "title": "Order Response",
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Order information.",
+            "properties": {
+              "customer": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerResponse",
+                    "description": "This is an object containing information about the customer."
+                  },
+                  {
+                    "$ref": "#/components/schemas/CustomerIdObjectResponse",
+                    "description": "If only `customer_id` was provided, customer return data will be limited."
+                  }
+                ]
+              },
+              "referrer": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ReferrerResponse",
+                    "description": "This is an object containing information about the referrer."
+                  },
+                  {
+                    "$ref": "#/components/schemas/ReferrerIdObjectResponse",
+                    "description": "If only `referrer_id` was provided, referrer return data will be limited."
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "OrderResponseNoCustomerData": {
+        "title": "Order Response",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderResponseBase"
+          },
+          {
+            "title": "Order Customer And Referrer Ids Objects",
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Order information.",
+            "properties": {
+              "customer": {
+                "$ref": "#/components/schemas/CustomerIdObjectResponse",
+                "description": "If only `customer_id` was provided, customer return data will be limited."
+              },
+              "referrer": {
+                "$ref": "#/components/schemas/ReferrerIdObjectResponse",
+                "description": "If only `referrer_id` was provided, referrer return data will be limited."
+              }
+            }
+          }
+        ]
+      },
+      "OrdersGetResponseBody": {
+        "title": "Orders Get Order Response Body",
+        "description": "Returns the order object.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderResponseNoCustomerData"
+          }
         ]
       },
       "OrderRedemptions": {
@@ -28065,33 +28114,39 @@
           }
         }
       },
-      "10_res_list_orders": {
+      "OrdersListResponseBody": {
         "type": "object",
-        "title": "List Orders Response Body",
+        "title": "Orders List Response Body",
         "description": "Response body schema representing **GET** `/orders`.",
         "properties": {
           "object": {
             "type": "string",
-            "default": "list",
+            "enum": ["list"],
             "description": "The type of object represented by JSON. This object stores information about orders in a dictionary."
           },
           "data_ref": {
             "type": "string",
-            "default": "orders",
+            "enum": ["orders"],
             "description": "Identifies the name of the attribute that contains the array of order objects."
           },
           "orders": {
             "type": "array",
             "description": "Contains array of order objects.",
             "items": {
-              "$ref": "#/components/schemas/10_obj_order_object"
+              "$ref": "#/components/schemas/OrderResponseNoCustomerData"
             }
           },
           "total": {
             "type": "integer",
             "description": "Total number of orders."
           }
-        }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "orders",
+          "total"
+        ]
       },
       "10_req_create_order": {
         "type": "object",
@@ -73624,7 +73679,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/10_res_list_orders"
+                  "$ref": "#/components/schemas/OrdersListResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -74565,7 +74620,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/10_obj_order_object"
+                  "$ref": "#/components/schemas/OrdersGetResponseBody"
                 }
               }
             }
