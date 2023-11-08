@@ -242,7 +242,7 @@ Any of:
 All of:
 
 1. [Product without Skus Object](#product-without-skus-object)
-2. [SKUs object](#skus-object)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">skus</td><td style="text-align:left">See: <a href="#skus-object">SKUs object</a></td></tr></tbody></table>
 
 ## SKU Object
 | Attributes |  Description |
@@ -343,7 +343,7 @@ All of:
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about SKUs.</p> |
 | data_ref</br>`string` | <p>Identifies the name of the JSON property that contains the array of SKUs.</p> |
-| skus</br>`array` | <p>A dictionary that contains an array of SKUs.</p> Array of [SKU Object](#sku-object) |
+| data</br>`array` | <p>A dictionary that contains an array of SKUs.</p> Array of [SKU Object](#sku-object) |
 | total</br>`integer` | <p>Total number of SKUs in the product.</p> |
 
 ## Discount Amount Vouchers Effect Types
