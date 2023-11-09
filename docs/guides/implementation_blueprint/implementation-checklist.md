@@ -2,7 +2,7 @@
 title: Implementation checklist
 excerpt: Get the documentation, sample code, and developer tools — everything you need to build digital promotions faster
 categorySlug: implementation-blueprint
-slug: implementation
+slug: welcome
 type: basic
 hidden: false
 order: 1
@@ -58,7 +58,7 @@ The following examples are meant to give you an overview of what is possible. Ke
 Trying to build a PoC? Grasp the basics and start building:
 
 - Get to know our API with a [Quickstart](doc:quickstart) guide.
-- Understand Voucherify [basic building blocks ](doc:key-concepts) and the API calls [Limits](doc:limits).
+- Understand Voucherify [basic building blocks](doc:key-concepts) and the API call [Limits](doc:limits).
 - Learn how to navigate [Voucherify Dashboard](https://support.voucherify.io/article/16-dashboard-sections).
 - Read the [Complete User Guide](https://support.voucherify.io/article/162-voucherify-complete-user-guide) to feel comfortable Voucherify workflows.
 - Start building with our pre-built libraries and developer documentation:

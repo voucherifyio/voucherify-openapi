@@ -12,7 +12,7 @@ With Voucherify, you can build a future-proof Promotion Engine. In this article,
 
 > 👍 Creating an account
 > 
-> If you do not have a Voucherify account yet, go to 
+> If you do not have a Voucherify account yet, go to [Getting started](doc:getting-started) to create one.
 
 [block:html]
 {
