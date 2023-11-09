@@ -1,11 +1,11 @@
 ---
-title: Integration checklist
+title: Implementation checklist
 excerpt: Get the documentation, sample code, and developer tools — everything you need to build digital promotions faster
-categorySlug: getting-started
-slug: welcome
+categorySlug: implementation-blueprint
+slug: implementation
 type: basic
 hidden: false
-order: 5
+order: 1
 ---
 
 Voucherify makes launching and tracking digital promotions easy. Get the documentation, sample code, and developer tools you need to build exactly what you want, fast. We will handle the complexity of promotions delivery and validation. Let’s get building!

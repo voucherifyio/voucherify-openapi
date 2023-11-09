@@ -1,16 +1,18 @@
 ---
-title: Quickstart
+title: First steps in Voucherify
 excerpt: Get started with Voucherify API and dashboard by redeeming your first coupon code.
-categorySlug: getting-started
+categorySlug: implementation-blueprint
 slug: quickstart
 type: basic
 hidden: false
-order: 4
+order: 2
 ---
 
 With Voucherify, you can build a future-proof Promotion Engine. In this article, you will start with a simple use case — applying a $10 off BLCKFRDY coupon to the cart — to learn how Voucherify works.
 
-You must first create an [account](http://app.voucherify.io/#/signup) — Voucherify offers a **free tier** (“Sandbox project”) you can use to build a proof of concept and, further, test it in production. 
+> 👍 Creating an account
+> 
+> If you do not have a Voucherify account yet, go to 
 
 [block:html]
 {

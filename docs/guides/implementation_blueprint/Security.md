@@ -5,7 +5,7 @@ categorySlug: implementation-blueprint
 slug: security
 type: basic
 hidden: false
-order: 1
+order: 3
 ---
 
 Security is one of the biggest concerns in every aspect of our product. So, we've taken several measures to keep your data safe. 
