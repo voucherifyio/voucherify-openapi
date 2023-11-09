@@ -284,7 +284,7 @@ https://github.com/voucherifyio/voucherify-openapi/pull/535/files
 - QualificationsFieldConditions
 - QualificationsFiltersCondition
 - QualificationsRedeemableSingleResponse
-- ValidationRulesAssignments
+- ValidationRulesAssignmentsList
 - BusValRuleAssignment
 - RedeemableSingleResultResponse
 - RedeemableLoyaltyCard

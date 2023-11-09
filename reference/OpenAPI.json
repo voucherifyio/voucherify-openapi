@@ -768,7 +768,7 @@
         ]
       },
       "OrderResponseNoCustomerData": {
-        "title": "Order Response",
+        "title": "Order Response No Customer Data",
         "allOf": [
           {
             "$ref": "#/components/schemas/OrderResponseBase"
@@ -1201,7 +1201,8 @@
             "type": "object",
             "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
           }
-        }
+        },
+        "required": ["address"]
       },
       "CustomersCreateRequestBody": {
         "title": "Customers Create Request Body",
@@ -1338,7 +1339,6 @@
               }
             },
             "required": [
-              "address",
               "summary",
               "loyalty",
               "referrals",
@@ -36016,11 +36016,13 @@
             "format": "date-time",
             "example": "2023-10-31T12:13:16.374Z"
           }
-        }
+        },
+        "required":  ["object", "data_ref", "data", "total", "has_more"]
       },
       "QualificationsRedeemableSingleResponseBase": {
         "title": "Single redeemable",
         "description": "Data of single redeemable which was properly qualified.",
+        "type": "object",
         "properties": {
           "id": {
             "type": "string",
@@ -36092,7 +36094,7 @@
             "description": "Id of the campaign associated to the redeemable. This field is available only if object is not `campaign`"
           },
           "validation_rules_assignments": {
-            "$ref": "#/components/schemas/ValidationRulesAssignments"
+            "$ref": "#/components/schemas/ValidationRulesAssignmentsList"
           }
         }
       },
@@ -36116,8 +36118,8 @@
           }
         ]
       },
-      "ValidationRulesAssignments": {
-        "title": "Validation Rules Assignments",
+      "ValidationRulesAssignmentsList": {
+        "title": "Validation Rules Assignments List",
         "description": "List of Validation Rules Assignments",
         "type": "object",
         "properties": {
@@ -42145,6 +42147,10 @@
             "type": "number",
             "description": "Formula used to calculate the discounted price of an item."
           },
+          "effect": {
+            "$ref": "#/components/schemas/ApplicableToEffect",
+            "description": "Defines how the discount is applied to the customer's order."
+          },
           "quantity_limit": {
             "type": "integer",
             "description": "The maximum number of units allowed to be discounted per order line item."
@@ -42153,9 +42159,20 @@
             "type": "integer",
             "description": "The maximum number of units allowed to be discounted combined across all matched order line items."
           },
-          "effect": {
-            "$ref": "#/components/schemas/ApplicableToEffect",
-            "description": "Defines how the discount is applied to the customer's order."
+          "amount_limit": {
+            "type": "integer",
+            "description": "Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600."
+          },
+          "aggregated_amount_limit": {
+            "type": "integer",
+            "description": "Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:\n- `APPLY_TO_ITEMS` (each item subtotal is discounted equally)\n- `APPLY_TO_ITEMS_BY_QUANTITY` (each unit of matched products has the same discount value)"
+
+          },
+          "order_item_indices": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
           }
         },
         "required": [
