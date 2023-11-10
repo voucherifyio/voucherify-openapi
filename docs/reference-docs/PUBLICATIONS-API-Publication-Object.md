@@ -21,7 +21,7 @@ One of:
 All of:
 
 1. [Publications Create Response Base Body](#publications-create-response-base-body)
-2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">voucher</td><td style="text-align:left">See: <a href="#voucher">Voucher</a></td></tr><tr><td style="text-align:left">vouchers_id</br><code>array</code></td><td style="text-align:left"><p>Contains the unique internal voucher ID that was assigned by Voucherify.</p></td></tr></tbody></table>
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">voucher</td><td style="text-align:left">See: <a href="#voucher">Voucher</a></td></tr></tbody></table>
 
 ## Publications Create Response Multiple Vouchers Body
 <p>Response schema model for publishing a multiple vouchers to a specific customer.</p>
@@ -29,7 +29,7 @@ All of:
 All of:
 
 1. [Publications Create Response Base Body](#publications-create-response-base-body)
-2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">vouchers</br><code>array</code></td><td style="text-align:left"><p>Contains the unique voucher codes that was assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">vouchers_id</br><code>array</code></td><td style="text-align:left"><p>Contains the unique internal voucher ID that was assigned by Voucherify.</p></td></tr></tbody></table>
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">vouchers</br><code>array</code></td><td style="text-align:left"><p>Contains the unique voucher codes that was assigned by Voucherify.</p></td></tr></tbody></table>
 
 ## Publications Create Response Base Body
 | Attributes |  Description |
@@ -44,6 +44,7 @@ All of:
 | source_id</br>`string` | <p>The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.</p> |
 | result</br>`string` | <p>Status of the publication attempt.</p> Available values: `SUCCESS` |
 | customer | See: [Customer Response](#customer-response) |
+| vouchers_id</br>`array` | <p>Contains the unique internal voucher ID that was assigned by Voucherify.</p> |
 
 ## Voucher
 | Attributes |  Description |
