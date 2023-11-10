@@ -28,8 +28,8 @@ Voucherify supports **different approaches to campaign management**. You can use
 * Metadata schema.
 * Categories. 
 * API keys, usage & webhooks.
-
+<!--
 > 📘 Voucherify Management API
 > 
 > Voucherify offers a Management API which allows large teams to manage projects via API, for instance, to set up new projects 
-under a specific configuration fully programmatically.
+under a specific configuration fully programmatically. --!>
