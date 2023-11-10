@@ -40,7 +40,7 @@ Create campaigns and experiment with Voucherify.
 
 ## Enabling distributions
 
-If you want to test the distribution of vouchers, your account must be verified as part of our [anti-spam policy](https://www.voucherify.io/legal/anti-spam-policy-v1-1 "Voucherify anti-spam policy"). You can send 10 messages per day, per month, and 0 emails from an unverified account.
+If you want to test the distribution of vouchers, your account must be verified as part of our [anti-spam policy](https://www.voucherify.io/legal/anti-spam-policy-v1-1 "Voucherify anti-spam policy"). You can send 10 messages per day, per month, and no emails from an unverified account.
 
 To unlock the limits for trial accounts, [set up brand details](#setting-up-brand-details) and [contact our support](https://support.voucherify.io/article/125-security-data-protection "Voucherify support").
 
