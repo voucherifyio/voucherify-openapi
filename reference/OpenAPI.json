@@ -1294,13 +1294,34 @@
                 "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
               },
               "summary": {
-                "$ref": "#/components/schemas/CustomerSummary"
+                "type": ["object", "null"],
+                "properties": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/CustomerSummary"
+                    }
+                  ]
+                }
               },
               "loyalty": {
-                "$ref": "#/components/schemas/CustomerLoyalty"
+                "type": ["object", "null"],
+                "properties": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/CustomerLoyalty"
+                    }
+                  ]
+                }
               },
               "referrals": {
-                "$ref": "#/components/schemas/CustomerReferrals"
+                "type": ["object", "null"],
+                "properties": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/CustomerReferrals"
+                    }
+                  ]
+                }
               },
               "system_metadata": {
                 "type": "object",
@@ -1338,12 +1359,9 @@
               }
             },
             "required": [
-              "address",
               "summary",
               "loyalty",
               "referrals",
-              "system_metadata",
-              "created_at",
               "object"
             ]
           },
@@ -11137,7 +11155,7 @@
       },
       "PublicationsCreateRequestBody": {
         "title": "Create Publication Request Body",
-        "description": "Request body schema for publishing a voucher.",
+        "description": "Request body schema for publishing vouchers.",
         "oneOf": [
           {
             "$ref": "#/components/schemas/CreatePublicationWithSpecificVoucher"
@@ -11147,10 +11165,27 @@
           }
         ]
       },
-      "PublicationsCreateResponseBody": {
-        "title": "Create Publication Response Body",
+      "PublicationsCreateResponseSingleVoucherBody": {
+        "title": "Publications Create Response Single Voucher Body",
         "type": "object",
-        "description": "Response schema model for publishing a voucher to a specific customer.",
+        "description": "Response schema model for publishing a single voucher to a specific customer.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PublicationsCreateResponseBaseBody"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "$ref": "#/components/schemas/Voucher"
+              }
+            }
+          }
+        ]
+      },
+      "PublicationsCreateResponseBaseBody": {
+        "title": "Publications Create Response Base Body",
+        "type": "object",
         "properties": {
           "id": {
             "type": "string",
@@ -11193,26 +11228,57 @@
           "result": {
             "type": "string",
             "enum": [
-              "SUCCESS",
-              "FAILURE"
+              "SUCCESS"
             ],
             "description": "Status of the publication attempt."
           },
           "customer": {
-            "$ref": "#/components/schemas/CustomerIdResponse"
-          },
-          "voucher": {
-            "$ref": "#/components/schemas/Voucher"
+            "$ref": "#/components/schemas/CustomerResponse"
           },
           "vouchers_id": {
             "type": "array",
             "description": "Contains the unique internal voucher ID that was assigned by Voucherify.",
             "items": {
               "type": "string",
-              "example": "[ v_Bw3qWZWv47yb1Onra8F2LlFI1enLakfA ]"
+              "example": "v_Bw3qWZWv47yb1Onra8F2LlFI1enLakfA"
             }
           }
         }
+      },
+      "PublicationsCreateResponseMultipleVouchersBody": {
+        "title": "Publications Create Response Multiple Vouchers Body",
+        "description": "Response schema model for publishing a multiple vouchers to a specific customer.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PublicationsCreateResponseBaseBody"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "vouchers": {
+                "type": "array",
+                "description": "Contains the unique voucher codes that was assigned by Voucherify.",
+                "items": {
+                  "type": "string",
+                  "example": "Q1K4XT5S"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "PublicationsCreateResponseBody": {
+        "title": "Create Publication Response Body",
+        "type": "object",
+        "description": "Response schema model for publishing vouchers to a specific customer.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/PublicationsCreateResponseSingleVoucherBody"
+          },
+          {
+            "$ref": "#/components/schemas/PublicationsCreateResponseMultipleVouchersBody"
+          }
+        ]
       },
       "5_req_create_publication_campaign_id": {
         "title": "Campaign ID",
