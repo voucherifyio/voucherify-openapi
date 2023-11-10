@@ -14,13 +14,13 @@ To start with Voucherify, follow this guide.
 
 Create an [account](http://app.voucherify.io/#/signup).
 
-Provide all the necessary details and select your preferred region. The selected region affects the latency.
+Provide all the necessary details and select your preferred region. The selected region affects primarily the latency.
 
 > 📘 Europe region
 >
 > Remember that if your organization sells products or services to customers based in the EU, you must adhere to the General Data Protection Regulation (GDPR).
 >
-> Learn more from our [security and data protection article](https://support.voucherify.io/article/125-security-data-protection "Voucherify, GDPR and CCPA compliance").
+> Learn more in the [security and data protection article](https://support.voucherify.io/article/125-security-data-protection "Voucherify, GDPR and CCPA compliance").
 
 Once you click sign up, you should receive a verification email. If you do not receive the email or if you have lost it, [contact our support](https://support.voucherify.io/article/125-security-data-protection "Voucherify support").
 
@@ -28,28 +28,35 @@ Once you click sign up, you should receive a verification email. If you do not r
 
 Manage your team roles and invite your team members:
 1. Click your name in the upper tab.
-2. Go to Team Settings.
-3. Go to Roles to manage the roles.
-4. Go to Team to invite members and assign roles to them. <!-- I'm leaving this as simple as that because a new V% user won't have many projects -->
+2. Go to **Team Settings**.
+3. Go to **Roles** to manage the roles.
+4. Go to **Team** to invite members and assign roles to them. <!-- I'm leaving this as simple as that because a new V% user won't have many projects -->
 
 ## Play around in the Sandbox
 
-Make your [first API call](doc:quickstart) and explore the [Sandbox project](doc:testing). See the test camapigns with pre-defined validation rules to learn Voucherify possibilities.
+Make your [first API call](doc:quickstart) and explore the [Sandbox project](doc:testing). See the test campaigns with pre-defined validation rules to learn Voucherify possibilities.
 
-Create your own campaign and experiment with Voucherify.
+Create campaigns and experiment with Voucherify.
 
 <!-- Add links in this section -->
 
 ## Enabling distributions
 
-<!-- Message distribution – as part of our anti-spam policy, we are limiting the number of messages sent with Voucherify Distribution Manager.The limits for unverified accounts are: 10 messages per day, 10 messages per month, and 0 emails from Voucherify.The limits for verified trial and free plans are: 10 messages per day and 100 messages per month, respectively.Note that these limits do not apply to third-party email distribution services. Contact our Support team to have your account verified.
+If you want to test the distribution of vouchers, your account must be verified as part of our [anti-spam policy](https://www.voucherify.io/legal/anti-spam-policy-v1-1 "Voucherify anti-spam policy"). You can send 10 messages per day, per month, and 0 emails from an unverified account.
 
-https://www.voucherify.io/legal/anti-spam-policy-v1-1
+To unlock the limits for trial accounts, [set up brand details](#setting-up-brand-details) and [contact our support](https://support.voucherify.io/article/125-security-data-protection "Voucherify support").
 
-https://www.voucherify.io/legal/fair-use-policy-v2-1 -->
+### Setting up brand details
 
+To set up your brand details:
+1. Click your name in the upper tab.
+2. Go to **Team Settings**.
+3. Go to **Brand details**.
+4. Provide the necessary details. You can also provide your logo, a link to your privacy policy or your website.
+<!-- Again, keeping this lightweight in line with Sędzia's comments. To be considered: link to Help Scout article on the topic? -->
 
+### Distribution limits
 
-## Next steps
+The limits for verified trial accounts are 10 messages per day and 100 messages per month. Note that these limits do not apply to third-party email distribution services.
 
-Voucherify offers a **free tier** (“Sandbox project”) you can use to build a proof of concept and, further, test it in production. 
+Learn more about distribution limits in our [fair use policy](https://www.voucherify.io/legal/fair-use-policy-v2-1).
