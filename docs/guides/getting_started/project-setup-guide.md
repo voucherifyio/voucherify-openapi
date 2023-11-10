@@ -12,7 +12,7 @@ order: 3
 
 Create an [account](http://app.voucherify.io/#/signup).
 
-Provide all the necessary details and select your preferred region. The selected region affects primarily the latency.
+Provide all the necessary details and select your preferred region. The selected region affects where your data is stored. To decrease the latency time, setting the region in your operating region is advised.
 
 > 📘 Europe region
 >
