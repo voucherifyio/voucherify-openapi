@@ -8,8 +8,6 @@ hidden: false
 order: 3
 ---
 
-To start with Voucherify, follow this guide.
-
 ## Creating an account
 
 Create an [account](http://app.voucherify.io/#/signup).
@@ -32,7 +30,7 @@ Manage your team roles and invite your team members:
 3. Go to **Roles** to manage the roles.
 4. Go to **Team** to invite members and assign roles to them. <!-- I'm leaving this as simple as that because a new V% user won't have many projects -->
 
-## Play around in the Sandbox
+## Playing around in the Sandbox
 
 Make your [first API call](doc:quickstart) and explore the [Sandbox project](doc:testing). See the test campaigns with pre-defined validation rules to learn Voucherify possibilities.
 
