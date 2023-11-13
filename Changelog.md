@@ -1,5 +1,15 @@
 # Changelog
 
+## 20231113 - Publications API
+
+**Added schemas**
+
+- CreatePublicationCampaign
+
+**Other changes**
+
+- Query params changed in `/v1/publications/create` `GET` request.
+
 ## 20231110 - Publications API
 
 **Added schemas**

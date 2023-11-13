@@ -1300,43 +1300,31 @@
                 "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
               },
               "summary": {
-                "type": [
-                  "object",
-                  "null"
-                ],
-                "properties": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/CustomerSummary"
-                    }
-                  ]
-                }
+                "type": "object",
+                "nullable": "true",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerSummary"
+                  }
+                ]
               },
               "loyalty": {
-                "type": [
-                  "object",
-                  "null"
-                ],
-                "properties": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/CustomerLoyalty"
-                    }
-                  ]
-                }
+                "type": "object",
+                "nullable": "true",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerLoyalty"
+                  }
+                ]
               },
               "referrals": {
-                "type": [
-                  "object",
-                  "null"
-                ],
-                "properties": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/CustomerReferrals"
-                    }
-                  ]
-                }
+                "type": "object",
+                "nullable": "true",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerReferrals"
+                  }
+                ]
               },
               "system_metadata": {
                 "type": "object",
@@ -11027,33 +11015,38 @@
           }
         ]
       },
+      "CreatePublicationCampaign": {
+        "title": "Create Publication With Campaign",
+        "type": "object",
+        "description": "Create publication with campaign.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify.",
+            "example":  "camp_dphuwqH7BOVkgh4JmpDtS32l"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Number of vouchers to be published to customer.",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
       "CreatePublicationWithCampaign": {
         "title": "Create Publication With Campaign",
         "type": "object",
         "description": "Create publication with campaign.",
         "allOf": [
           {
-            "title": "Voucher code",
+            "title": "Campaign",
             "type": "object",
             "properties": {
               "campaign": {
-                "type": "object",
-                "description": "Contains name of source campaign and number of vouchers to be published.",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`."
-                  },
-                  "count": {
-                    "type": "integer",
-                    "description": "Number of vouchers to be published to customer.",
-                    "minimum": 1,
-                    "maximum": 20
-                  }
-                },
-                "required": [
-                  "name"
-                ]
+                "$ref": "#/components/schemas/CreatePublicationCampaign"
               }
             },
             "required": [
@@ -11113,7 +11106,8 @@
           },
           "campaign": {
             "type": "string",
-            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`."
+            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify",
+            "example":  "camp_dphuwqH7BOVkgh4JmpDtS32l"
           },
           "metadata": {
             "type": "object",
@@ -11173,7 +11167,8 @@
             "properties": {
               "name": {
                 "type": "string",
-                "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`."
+                "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify",
+                "example":  "camp_dphuwqH7BOVkgh4JmpDtS32l"
               },
               "count": {
                 "type": "string",
@@ -11533,7 +11528,8 @@
       "5_req_create_publication_campaign": {
         "title": "Campaign's name or ID",
         "type": "string",
-        "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`. "
+        "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify",
+        "example":  "camp_dphuwqH7BOVkgh4JmpDtS32l"
       },
       "5_res_create_publication_customer_id": {
         "title": "Customer ID",
@@ -42144,6 +42140,7 @@
         "properties": {
           "description": "Show that the product collection is dynamic (products come in and leave based on set criteria).",
           "type": {
+            "type": "string",
             "enum": [
               "AUTO_UPDATE"
             ]
@@ -51973,16 +51970,15 @@
           "PUBLICATIONS API"
         ],
         "summary": "Create Publication",
-        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.\n> ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for specific integrations and the API keys need to be configured to access this endpoint. Navigate to the **Dashboard** &rarr; **Project Settings** &rarr; **General** &rarr; **Integration Keys** to set up a pair of API keys and use them to send the request.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple vouchers from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use a [dedicated endpoint](ref:create-publication).  \n<!-- theme: info -->\n\n> 📘 Specifying the voucher to be published\n>\n> - In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign and in the query parameters specify the `campaign` without specifying the voucher.\n> - If you would like to publish a specific code from a specific campaign, then you need to provide the `campaign` and the `voucher` parameters.\n> - If you would like to publish a standalone voucher, then omit the campaign parameter and simply provide the `voucher` parameter.  \n\n## Example Request \n```markdown Publication Query \n/publications/create?campaign=camp_T0bUgWGCAV6S0X3smH4MEboG&metadata[year]=2&metadata[Date]=2023-03-03&metadata[DateTime]=2023-03-03T14:06:08.311Z&metadata[Flag]=true&metadata[Number]=222&metadata[String]=stringy&metadata[ImageURL]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&metadata[Object][payment][payment_tax]=9&metadata[Object][payment][payment_method]=Visa&metadata[Object][payment][payment_date]=2023-03-03&metadata[Object][payment][payment_datetime]=2023-03-03T14:06:08.311Z&metadata[Object][payment][payment_completed]=true&metadata[Object][payment][payment_url]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&customer[source_id]=try-new-12&customer[name]=John%20Jimmy&customer[description]=This is testing the publication endpoint.&customer[email]=johnjimy2%40email.com&customer[phone]=%2B48%20123%20333%20333&customer[address][city]=Warsaw&customer[address][state]=Mazowieckie&customer[address][line_1]=4499%20Main%20St.&customer[address][line_2]=Blg%202%20APT%204&customer[address][country]=Poland&customer[address][postal_code]=122333&customer[birthday]=2222-01-22&customer[metadata][paid_bill]=true&customer[metadata][age]=22&customer[metadata][location]=Poland&customer[metadata][acquisition_date]=2022-09-09&customer[metadata][birth_date]=2023-03-20T18:44:19.215Z&customer[metadata][ImageURL]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&customer[metadata][location-unknown][city]=Katowice&customer[metadata][location-unknown][state]=slask&customer[metadata][location-unknown][number]=2&customer[metadata][location-unknown][date]=2034-09-11&customer[metadata][location-unknown][dateTime]=2023-03-20T18:44:19.215Z&customer[metadata][Object][payment][payment_date]=2023-03-03&customer[metadata][Object][payment][payment_datetime]=2023-03-03T14:06:08.311Z&customer[metadata][Object][payment][payment_completed]=true&customer[metadata][Object][payment][payment_url]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&customer[metadata][Object][payment][payment_tax]=9&customer[metadata][Object][payment][payment_method]=Visa```",
+        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.\n> ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for specific integrations and the API keys need to be configured to access this endpoint. Navigate to the **Dashboard** &rarr; **Project Settings** &rarr; **General** &rarr; **Integration Keys** to set up a pair of API keys and use them to send the request.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple vouchers from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use a [dedicated endpoint](ref:create-publication).  \n\n<!-- theme: info -->\n\n> 📘 Auto-update campaign\n>\n> In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign.  \n\n## Example Request \n```markdown Publication Query \n/publications/create?campaign=camp_T0bUgWGCAV6S0X3smH4MEboG&metadata[year]=2&metadata[Date]=2023-03-03&metadata[DateTime]=2023-03-03T14:06:08.311Z&metadata[Flag]=true&metadata[Number]=222&metadata[String]=stringy&metadata[ImageURL]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&metadata[Object][payment][payment_tax]=9&metadata[Object][payment][payment_method]=Visa&metadata[Object][payment][payment_date]=2023-03-03&metadata[Object][payment][payment_datetime]=2023-03-03T14:06:08.311Z&metadata[Object][payment][payment_completed]=true&metadata[Object][payment][payment_url]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&customer[source_id]=try-new-12&customer[name]=John%20Jimmy&customer[description]=This is testing the publication endpoint.&customer[email]=johnjimy2%40email.com&customer[phone]=%2B48%20123%20333%20333&customer[address][city]=Warsaw&customer[address][state]=Mazowieckie&customer[address][line_1]=4499%20Main%20St.&customer[address][line_2]=Blg%202%20APT%204&customer[address][country]=Poland&customer[address][postal_code]=122333&customer[birthday]=2222-01-22&customer[metadata][paid_bill]=true&customer[metadata][age]=22&customer[metadata][location]=Poland&customer[metadata][acquisition_date]=2022-09-09&customer[metadata][birth_date]=2023-03-20T18:44:19.215Z&customer[metadata][ImageURL]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&customer[metadata][location-unknown][city]=Katowice&customer[metadata][location-unknown][state]=slask&customer[metadata][location-unknown][number]=2&customer[metadata][location-unknown][date]=2034-09-11&customer[metadata][location-unknown][dateTime]=2023-03-20T18:44:19.215Z&customer[metadata][Object][payment][payment_date]=2023-03-03&customer[metadata][Object][payment][payment_datetime]=2023-03-03T14:06:08.311Z&customer[metadata][Object][payment][payment_completed]=true&customer[metadata][Object][payment][payment_url]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&customer[metadata][Object][payment][payment_tax]=9&customer[metadata][Object][payment][payment_method]=Visa \n```  \n\n<!-- theme: danger -->\n> ❗\uFE0F Required  \n>\n> Query param `voucher` OR `campaign` MUST be filled out. If you provide both, `campaign` param will be skipped.",
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "example": "custom_publication_source_id"
+              "type": "boolean"
             },
             "in": "query",
-            "name": "source_id",
-            "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service."
+            "name": "join_once",
+            "description": "Through this flag, you can control if a particular person gets only one and always the same code even if the app sends multiple publication requests. It means that if you have a referral program, a referrer is assigned only to one code if an integration sends publication requests more than once for the same customer."
           },
           {
             "schema": {
@@ -51991,7 +51987,37 @@
             },
             "in": "query",
             "name": "voucher",
-            "description": "Code of voucher being published. If there is a particular code that you would like to publish, then you can use this parameter to specify the code. You can omit this parameter if you would like to publish a random code from a campaign, where the campaign is in `AUTO_UPDATE` mode."
+            "description": "Code of voucher being published."
+          },
+          {
+            "name": "campaign",
+            "in": "query",
+            "description": "Create publication with campaign.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/CreatePublicationCampaign"
+            }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "custom_publication_source_id"
+            },
+            "in": "query",
+            "name": "source_id",
+            "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.\nIf `source_id` is provided only 1 voucher can be published per request."
+          },
+          {
+            "name": "customer",
+            "in": "query",
+            "required": true,
+            "description": "Contains information about the customer to whom the publication was directed.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/CustomerRequest"
+            }
           },
           {
             "name": "metadata",
@@ -52001,51 +52027,6 @@
             "explode": true,
             "schema": {
               "type": "object"
-            }
-          },
-          {
-            "name": "customer",
-            "in": "query",
-            "required": true,
-            "description": "Specify the customer who is to receive a code. You can either directly provide the respective ID's as strings or provide them in the form of an object.",
-            "style": "deepObject",
-            "explode": true,
-            "schema": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/5_req_create_publication_customer"
-                },
-                {
-                  "$ref": "#/components/schemas/5_res_create_publication_customer_id"
-                },
-                {
-                  "$ref": "#/components/schemas/5_res_create_publication_customer_source_id"
-                },
-                {
-                  "$ref": "#/components/schemas/9_req_create_customer"
-                }
-              ]
-            }
-          },
-          {
-            "name": "campaign",
-            "in": "query",
-            "required": true,
-            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`. You can use this parameter without having to specify a particular `voucher` code if the campaign is in `AUTO_UPDATE` mode. This parameter not required for a standalone code, however, if you intend to use a code from a campaign, then this parameter is required.",
-            "style": "deepObject",
-            "explode": true,
-            "schema": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/5_req_create_publication_campaign"
-                },
-                {
-                  "$ref": "#/components/schemas/5_req_create_publication_campaign_id"
-                },
-                {
-                  "$ref": "#/components/schemas/5_req_create_publication_campaign_name"
-                }
-              ]
             }
           }
         ],
