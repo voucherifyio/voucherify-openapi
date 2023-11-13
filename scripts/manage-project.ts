@@ -44,7 +44,7 @@ const main = async ({
     await createNewVersion(version);
   }
   await cleanProject(version);
-  await uploadOpenApiFileWithMaxNumberOfAttempts(version, 10);
+  await uploadOpenApiFileWithMaxNumberOfAttempts(version, 50);
   await buildMdTables();
   await updateMdTablesInDocs();
   await uploadImagesUsedInMdFiles();
@@ -94,7 +94,6 @@ const uploadOpenApiFileWithMaxNumberOfAttempts = async (
     )
   );
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
-    await new Promise((r) => setTimeout(r, 10000));
     const { success, error } = await runCliProcess({
       command: `rdme openapi ./reference/OpenAPI.json --version=${version} --create`,
       stderrIncludes: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`,
