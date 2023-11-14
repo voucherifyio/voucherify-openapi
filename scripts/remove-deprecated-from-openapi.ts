@@ -109,7 +109,7 @@ const main = async () => {
   }
   await fsPromises.writeFile(
     path.join(__dirname, "../tmp/reference/OpenAPI.json"),
-    JSON.stringify(openAPIContent, null, 2)
+    JSON.stringify(newOpenApiFile, null, 2)
   );
 };
 
