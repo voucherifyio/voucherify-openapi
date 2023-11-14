@@ -363,8 +363,8 @@ https://github.com/voucherifyio/voucherify-openapi/pull/535/files
 - RedeemableResultPromotionTier
 - RedeemableResultPromotionStack
 - RedemptionsRedeemResponseBody
-- RedemptionsRedemption
-- RedemptionsRedemptionBase
+- Redemption
+- RedemptionBase
 
 **REMOVED ALL DUMMY ENDPOINTS AS WE DON'T USE THEM ANYMORE!!!**
 
