@@ -76,4 +76,4 @@ Webhooks enable Voucherify to send real-time updates to your app or URL endpoint
 
 Also, instead of polling data from some endpoints, you can configure webhooks to get notified about triggered events, distribution channels, loyalty programs, and referral programs.
 
-For more information on webhooks, [go here](https://support.voucherify.io/article/68-webhooks-notifications).
+Read more [in our webhook article]](https://support.voucherify.io/article/68-webhooks-notifications).
