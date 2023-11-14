@@ -12,7 +12,7 @@ With Voucherify, you can build a future-proof Promotion Engine. In this article,
 
 > 👍 Creating an account
 > 
-> If you do not have a Voucherify account yet, go to [Getting started](doc:getting-started) to create one.
+> If you do not have a Voucherify account yet, go to [Getting started](doc:getting-started) to learn how to create one.
 
 [block:html]
 {
@@ -282,6 +282,7 @@ Try redeeming BLCKFRDY to go through the coupon flow end-to-end (make sure “ca
 <!-- ![Hot Beans Demo](../../assets/img/guides_getting_started_quickstart_hot_beans_demo_6.png "Hot Beans Demo") -->
 ![Hot Beans Demo](https://files.readme.io/16e5bf6-hot_beans.png "Hot Beans Demo")
 
-## What's next?
+<!-- ## What's next?
 
 The BLCKFRDY coupon redemption uses only the minimum business context (order amount). To enable advanced promotional rules, go to the [integration checklist](doc:welcome) and explore the Voucherify building blocks to learn what data you can share with Voucherify.
+-->
