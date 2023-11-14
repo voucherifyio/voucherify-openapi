@@ -12,6 +12,39 @@ File changes:
   - Changed title to `First steps in Voucherify`
 - Changed the order of the files in the `Implementation blueprint` category
 
+## 20231113 - Publications API
+
+**Added schemas**
+
+- CreatePublicationCampaign
+
+**Other changes**
+
+- Query params changed in `/v1/publications/create` `GET` request.
+
+## 20231110 - Publications API
+
+**Added schemas**
+
+- PublicationsCreateRequestBody
+- PublicationsCreateResponseSingleVoucherBody
+- ListPublicationsItemBase
+- ListPublicationsItemValidSingleVoucher
+- ListPublicationsItemValidMultipleVouchers
+- ListPublicationsItemInvalid
+- PublicationsCreateResponseBaseBody
+- PublicationsCreateResponseMultipleVouchersBody
+- PublicationsCreateResponseBody
+- PublicationsListResponseBody
+- ValidationRulesAssignmentsList
+
+- GET `/v1/publications`
+  - Response body schema was replaced with new one: `PublicationsListResponseBody` (old one: `5_res_list_publications`)
+- POST `/v1/publications`
+  - Request body schema was replaced with new one: `PublicationsCreateRequestBody` (old one: `5_req_create_publication`)
+  - Response body schema was replaced with new one: `PublicationsCreateResponseBody` (old one: `5_res_create_publication`)
+- GET `/v1/publications/create`
+  - Response body schema was replaced with new one: `PublicationsCreateResponseBody` (old one: `5_res_create_publication`)
 
 ## 20231108 - Orders API
 
@@ -296,7 +329,7 @@ https://github.com/voucherifyio/voucherify-openapi/pull/535/files
 - QualificationsFieldConditions
 - QualificationsFiltersCondition
 - QualificationsRedeemableSingleResponse
-- ValidationRulesAssignments
+- ValidationRulesAssignmentsList
 - BusValRuleAssignment
 - RedeemableSingleResultResponse
 - RedeemableLoyaltyCard

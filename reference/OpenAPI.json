@@ -611,7 +611,10 @@
             "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request."
           },
           "source_id": {
-            "type": ["string","null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
           },
           "created_at": {
@@ -746,7 +749,7 @@
                     "description": "This is an object containing information about the customer."
                   },
                   {
-                    "$ref": "#/components/schemas/CustomerIdObjectResponse",
+                    "$ref": "#/components/schemas/CustomerIdResponse",
                     "description": "If only `customer_id` was provided, customer return data will be limited."
                   }
                 ]
@@ -768,7 +771,7 @@
         ]
       },
       "OrderResponseNoCustomerData": {
-        "title": "Order Response",
+        "title": "Order Response No Customer Data",
         "allOf": [
           {
             "$ref": "#/components/schemas/OrderResponseBase"
@@ -780,7 +783,7 @@
             "description": "Order information.",
             "properties": {
               "customer": {
-                "$ref": "#/components/schemas/CustomerIdObjectResponse",
+                "$ref": "#/components/schemas/CustomerIdResponse",
                 "description": "If only `customer_id` was provided, customer return data will be limited."
               },
               "referrer": {
@@ -1130,7 +1133,7 @@
         "title": "Referrer Id",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CustomerIdObjectResponse"
+            "$ref": "#/components/schemas/CustomerIdResponse"
           }
         ]
       },
@@ -1201,7 +1204,10 @@
             "type": "object",
             "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
           }
-        }
+        },
+        "required": [
+          "address"
+        ]
       },
       "CustomersCreateRequestBody": {
         "title": "Customers Create Request Body",
@@ -1249,7 +1255,7 @@
           }
         ]
       },
-      "CustomerIdObjectResponse": {
+      "CustomerIdResponse": {
         "title": "Customer Id",
         "properties": {
           "id": {
@@ -1294,13 +1300,31 @@
                 "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
               },
               "summary": {
-                "$ref": "#/components/schemas/CustomerSummary"
+                "type": "object",
+                "nullable": "true",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerSummary"
+                  }
+                ]
               },
               "loyalty": {
-                "$ref": "#/components/schemas/CustomerLoyalty"
+                "type": "object",
+                "nullable": "true",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerLoyalty"
+                  }
+                ]
               },
               "referrals": {
-                "$ref": "#/components/schemas/CustomerReferrals"
+                "type": "object",
+                "nullable": "true",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerReferrals"
+                  }
+                ]
               },
               "system_metadata": {
                 "type": "object",
@@ -1338,12 +1362,9 @@
               }
             },
             "required": [
-              "address",
               "summary",
               "loyalty",
               "referrals",
-              "system_metadata",
-              "created_at",
               "object"
             ]
           },
@@ -1723,13 +1744,6 @@
               }
             }
           },
-          "object": {
-            "type": "string",
-            "enum": [
-              "order_item"
-            ],
-            "description": "The type of object represented by JSON."
-          },
           "metadata": {
             "type": "object",
             "description": "A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format."
@@ -1923,7 +1937,9 @@
             "description": "A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format."
           }
         },
-        "required": ["object"]
+        "required": [
+          "object"
+        ]
       },
       "Session": {
         "type": "object",
@@ -2215,6 +2231,10 @@
           },
           "sku": {
             "$ref": "#/components/schemas/SimpleSkuDiscountUnit"
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
           }
         },
         "required": [
@@ -2309,9 +2329,17 @@
           "amount_off_formula": {
             "type": "string"
           },
+          "aggregated_amount_limit": {
+            "type": "integer",
+            "description": "Maximum discount amount per order."
+          },
           "effect": {
             "$ref": "#/components/schemas/DiscountAmountVouchersEffectTypes",
             "description": "Defines how the discount is applied to the customer's order."
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
           }
         },
         "required": [
@@ -2340,6 +2368,10 @@
           "amount_limit": {
             "type": "number",
             "description": "Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600."
+          },
+          "aggregated_amount_limit": {
+            "type": "integer",
+            "description": "Maximum discount amount per order."
           },
           "effect": {
             "$ref": "#/components/schemas/DiscountPercentVouchersEffectTypes",
@@ -2376,6 +2408,10 @@
           "effect": {
             "$ref": "#/components/schemas/DiscountFixedVouchersEffectTypes",
             "description": "Defines how the discount is applied to the customer's order."
+          },
+          "is_dynamic": {
+            "type": "boolean",
+            "description": "Flag indicating whether the discount was calculated using a formula."
           }
         },
         "required": [
@@ -2389,7 +2425,8 @@
           "APPLY_TO_ORDER",
           "APPLY_TO_ITEMS",
           "APPLY_TO_ITEMS_PROPORTIONALLY",
-          "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY"
+          "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY",
+          "APPLY_TO_ITEMS_BY_QUANTITY"
         ],
         "type": "string"
       },
@@ -2427,7 +2464,8 @@
           "APPLY_TO_ORDER",
           "APPLY_TO_ITEMS",
           "APPLY_TO_ITEMS_PROPORTIONALLY",
-          "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY"
+          "APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY",
+          "APPLY_TO_ITEMS_BY_QUANTITY"
         ],
         "type": "string"
       },
@@ -10932,128 +10970,93 @@
           }
         }
       },
-      "5_req_create_publication_standalone_voucher": {
-        "title": "Standalone Voucher",
+      "CreatePublicationBase": {
+        "title": "Create Publication Base",
         "type": "object",
-        "description": "Create publication for standalone voucher.",
+        "description": "Create publication",
         "properties": {
           "source_id": {
             "type": "string",
-            "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service. "
-          },
-          "channel": {
-            "type": "string",
-            "description": "How the publication was originated. It can be your own custom channel or an example value provided here.",
-            "enum": [
-              "voucherify-website",
-              "Dashboard",
-              "Automation",
-              "API",
-              "Braze",
-              "Reward",
-              "SMS",
-              "Email",
-              "Activecampaign",
-              "Webhook",
-              "Intercom",
-              "Mailchimp",
-              "Shopify"
-            ]
+            "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.\nIf `source_id` is provided only 1 voucher can be published per request."
           },
           "customer": {
             "description": "Contains information about the customer to whom the publication was directed.",
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/5_res_create_publication_customer_id"
-              },
-              {
-                "$ref": "#/components/schemas/5_res_create_publication_customer_source_id"
-              },
-              {
-                "$ref": "#/components/schemas/9_req_create_customer"
-              }
-            ]
-          },
-          "voucher": {
-            "description": "Code of voucher being published.",
-            "type": "string"
-          },
-          "campaign": {
-            "type": "string",
-            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`."
+            "$ref": "#/components/schemas/CustomerRequest"
           },
           "metadata": {
             "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format."
           }
-        }
+        },
+        "required": [
+          "customer"
+        ]
       },
-      "5_req_create_publication_from_campaign": {
-        "title": "Voucher from Campaign",
-        "description": "Create a publication for a voucher from a campaign.",
-        "oneOf": [
+      "CreatePublicationWithSpecificVoucher": {
+        "title": "Create Publication With Specific Voucher",
+        "type": "object",
+        "description": "Create publication with specific voucher.",
+        "allOf": [
           {
-            "$ref": "#/components/schemas/5_req_create_publication_from_campaign_auto_update"
+            "title": "Voucher code",
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "description": "Code of voucher being published.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "voucher"
+            ]
           },
           {
-            "$ref": "#/components/schemas/5_req_create_publication_from_campaign_one_specific_voucher"
-          },
-          {
-            "$ref": "#/components/schemas/5_req_create_publication_from_campaign_multiple_vouchers"
+            "$ref": "#/components/schemas/CreatePublicationBase"
           }
         ]
       },
-      "5_req_create_publication_from_campaign_auto_update": {
-        "title": "Voucher from Auto-Update Campaign",
+      "CreatePublicationCampaign": {
+        "title": "Create Publication With Campaign",
         "type": "object",
-        "description": "Create a publication for a voucher from an auto-update campaign. It will choose the next available voucher.",
+        "description": "Create publication with campaign.",
         "properties": {
-          "source_id": {
+          "name": {
             "type": "string",
-            "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service. "
+            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify.",
+            "example":  "camp_dphuwqH7BOVkgh4JmpDtS32l"
           },
-          "channel": {
-            "type": "string",
-            "description": "How the publication was originated. It can be your own custom channel or an example value provided here.",
-            "enum": [
-              "voucherify-website",
-              "Dashboard",
-              "Automation",
-              "API",
-              "Braze",
-              "Reward",
-              "SMS",
-              "Email",
-              "Activecampaign",
-              "Webhook",
-              "Intercom",
-              "Mailchimp",
-              "Shopify"
-            ]
-          },
-          "customer": {
-            "description": "Contains information about the customer to whom the publication was directed.",
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/5_res_create_publication_customer_id"
-              },
-              {
-                "$ref": "#/components/schemas/5_res_create_publication_customer_source_id"
-              },
-              {
-                "$ref": "#/components/schemas/9_req_create_customer"
-              }
-            ]
-          },
-          "campaign": {
-            "type": "string",
-            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format."
+          "count": {
+            "type": "integer",
+            "description": "Number of vouchers to be published to customer.",
+            "minimum": 1,
+            "maximum": 20
           }
-        }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CreatePublicationWithCampaign": {
+        "title": "Create Publication With Campaign",
+        "type": "object",
+        "description": "Create publication with campaign.",
+        "allOf": [
+          {
+            "title": "Campaign",
+            "type": "object",
+            "properties": {
+              "campaign": {
+                "$ref": "#/components/schemas/CreatePublicationCampaign"
+              }
+            },
+            "required": [
+              "campaign"
+            ]
+          },
+          {
+            "$ref": "#/components/schemas/CreatePublicationBase"
+          }
+        ]
       },
       "5_req_create_publication_from_campaign_one_specific_voucher": {
         "title": "Voucher from Campaign",
@@ -11103,7 +11106,8 @@
           },
           "campaign": {
             "type": "string",
-            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`."
+            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify",
+            "example":  "camp_dphuwqH7BOVkgh4JmpDtS32l"
           },
           "metadata": {
             "type": "object",
@@ -11163,13 +11167,17 @@
             "properties": {
               "name": {
                 "type": "string",
-                "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`."
+                "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify",
+                "example":  "camp_dphuwqH7BOVkgh4JmpDtS32l"
               },
               "count": {
                 "type": "string",
                 "description": "Number of vouchers to be published to customer."
               }
-            }
+            },
+            "required": [
+              "name"
+            ]
           },
           "metadata": {
             "type": "object",
@@ -11177,22 +11185,42 @@
           }
         }
       },
-      "5_req_create_publication": {
+      "PublicationsCreateRequestBody": {
         "title": "Create Publication Request Body",
-        "description": "Request body schema for publishing a voucher.",
+        "description": "Request body schema for publishing vouchers.",
         "oneOf": [
           {
-            "$ref": "#/components/schemas/5_req_create_publication_standalone_voucher"
+            "$ref": "#/components/schemas/CreatePublicationWithSpecificVoucher"
           },
           {
-            "$ref": "#/components/schemas/5_req_create_publication_from_campaign"
+            "$ref": "#/components/schemas/CreatePublicationWithCampaign"
           }
         ]
       },
-      "5_res_create_publication": {
-        "title": "Create Publication Response Body",
+      "PublicationsCreateResponseSingleVoucherBody": {
+        "title": "Publications Create Response Single Voucher Body",
         "type": "object",
-        "description": "Response schema model for publishing a voucher to a specific customer.",
+        "description": "Response schema model for publishing a single voucher to a specific customer.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PublicationsCreateResponseBaseBody"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "$ref": "#/components/schemas/Voucher"
+              }
+            },
+            "required": [
+              "voucher"
+            ]
+          }
+        ]
+      },
+      "ListPublicationsItemBase": {
+        "title": "List Publications Item Base",
+        "type": "object",
         "properties": {
           "id": {
             "type": "string",
@@ -11201,7 +11229,173 @@
           },
           "object": {
             "type": "string",
-            "default": "publication",
+            "enum": [
+              "publication"
+            ],
+            "description": "The type of object represented by the JSON. This object stores information about the `publication`."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2022-09-23T09:57:00.434Z",
+            "description": "Timestamp representing the date and time when the publication was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "customer_id": {
+            "type": "string",
+            "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+            "description": "Unique customer ID of the customer receiving the publication."
+          },
+          "tracking_id": {
+            "type": "string",
+            "description": "Customer's `source_id`."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format."
+          },
+          "channel": {
+            "type": "string",
+            "description": "How the publication was originated. It can be your own custom channel or an example value provided here."
+          },
+          "source_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service. "
+          },
+          "customer": {
+            "$ref": "#/components/schemas/CustomerResponse"
+          },
+          "vouchers_id": {
+            "type": "array",
+            "description": "Contains the unique internal voucher ID that was assigned by Voucherify.",
+            "items": {
+              "type": "string",
+              "example": "v_Bw3qWZWv47yb1Onra8F2LlFI1enLakfA"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "object",
+          "created_at",
+          "customer_id",
+          "metadata",
+          "channel",
+          "source_id",
+          "customer",
+          "vouchers_id"
+        ]
+      },
+      "ListPublicationsItemValidSingleVoucher": {
+        "title": "Valid Single Voucher",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListPublicationsItemBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "result": {
+                "type": "string",
+                "enum": [
+                  "SUCCESS"
+                ],
+                "description": "Status of the publication attempt."
+              },
+              "voucher": {
+                "$ref": "#/components/schemas/SimpleVoucher"
+              }
+            },
+            "required": [
+              "result",
+              "voucher"
+            ]
+          }
+        ]
+      },
+      "ListPublicationsItemValidMultipleVouchers": {
+        "title": "Valid Multiple Vouchers",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListPublicationsItemBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "result": {
+                "type": "string",
+                "enum": [
+                  "SUCCESS"
+                ],
+                "description": "Status of the publication attempt."
+              },
+              "vouchers": {
+                "type": "array",
+                "description": "Contains the unique voucher codes that was assigned by Voucherify.",
+                "items": {
+                  "type": "string",
+                  "example": "Q1K4XT5S"
+                }
+              }
+            },
+            "required": [
+              "result",
+              "vouchers"
+            ]
+          }
+        ]
+      },
+      "ListPublicationsItemInvalid": {
+        "title": "Invalid",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListPublicationsItemBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "result": {
+                "type": "string",
+                "enum": [
+                  "FAILURE"
+                ],
+                "description": "Status of the publication attempt."
+              },
+              "failure_code": {
+                "type": "string",
+                "description": "Generic reason as to why the create publication operation failed."
+              },
+              "failure_message": {
+                "type": "string",
+                "description": "This parameter will provide more expanded reason as to why the create publication operation failed."
+              }
+            },
+            "required": [
+              "result",
+              "vouchers"
+            ]
+          }
+        ]
+      },
+      "PublicationsCreateResponseBaseBody": {
+        "title": "Publications Create Response Base Body",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "pub_BbjAXnmm8e0SIm3zG8qvvFCP0KuLywtp",
+            "description": "Unique publication ID, assigned by Voucherify."
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "publication"
+            ],
             "description": "The type of object represented by the JSON. This object stores information about the `publication`."
           },
           "created_at": {
@@ -11227,77 +11421,85 @@
             "type": "string",
             "description": "How the publication was originated. It can be your own custom channel or an example value provided here.",
             "enum": [
-              "voucherify-website",
-              "Dashboard",
-              "Automation",
-              "API",
-              "Braze",
-              "Reward",
-              "SMS",
-              "Email",
-              "Activecampaign",
-              "Webhook",
-              "Intercom",
-              "Mailchimp",
-              "Shopify"
+              "API"
             ]
           },
           "source_id": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service. "
           },
           "result": {
             "type": "string",
             "enum": [
-              "SUCCESS",
-              "FAILURE"
+              "SUCCESS"
             ],
             "description": "Status of the publication attempt."
           },
           "customer": {
-            "description": "Contains information about the customer to whom the publication was directed.",
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Unique customer ID, assigned by Voucherify.",
-                "example": "cust_eWgXlBBiY6THFRJwX45Iakv4"
-              },
-              "name": {
-                "type": "string",
-                "description": "Customer's name."
-              },
-              "email": {
-                "type": "string",
-                "description": "Customer's email."
-              },
-              "source_id": {
-                "type": "string",
-                "description": "The merchant’s customer ID if it is different from the Voucherify customer ID. It is really useful in case of an integration between multiple systems. It can be a customer ID from a CRM system, database or 3rd-party service."
-              },
-              "metadata": {
-                "type": "object",
-                "description": "A set of custom key/value pairs attached to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
-              },
-              "object": {
-                "type": "string",
-                "default": "customer",
-                "description": "The type of object represented by the JSON. This object stores information about the `customer`."
-              }
-            }
-          },
-          "voucher": {
-            "$ref": "#/components/schemas/Voucher"
+            "$ref": "#/components/schemas/CustomerResponse"
           },
           "vouchers_id": {
             "type": "array",
             "description": "Contains the unique internal voucher ID that was assigned by Voucherify.",
             "items": {
               "type": "string",
-              "example": "[ v_Bw3qWZWv47yb1Onra8F2LlFI1enLakfA ]"
+              "example": "v_Bw3qWZWv47yb1Onra8F2LlFI1enLakfA"
             }
           }
-        }
+        },
+        "required": [
+          "id",
+          "object",
+          "created_at",
+          "customer_id",
+          "metadata",
+          "channel",
+          "source_id",
+          "result",
+          "customer",
+          "vouchers_id"
+        ]
+      },
+      "PublicationsCreateResponseMultipleVouchersBody": {
+        "title": "Publications Create Response Multiple Vouchers Body",
+        "description": "Response schema model for publishing a multiple vouchers to a specific customer.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PublicationsCreateResponseBaseBody"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "vouchers": {
+                "type": "array",
+                "description": "Contains the unique voucher codes that was assigned by Voucherify.",
+                "items": {
+                  "type": "string",
+                  "example": "Q1K4XT5S"
+                }
+              }
+            },
+            "required": [
+              "vouchers"
+            ]
+          }
+        ]
+      },
+      "PublicationsCreateResponseBody": {
+        "title": "Create Publication Response Body",
+        "type": "object",
+        "description": "Response schema model for publishing vouchers to a specific customer.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/PublicationsCreateResponseSingleVoucherBody"
+          },
+          {
+            "$ref": "#/components/schemas/PublicationsCreateResponseMultipleVouchersBody"
+          }
+        ]
       },
       "5_req_create_publication_campaign_id": {
         "title": "Campaign ID",
@@ -11326,7 +11528,8 @@
       "5_req_create_publication_campaign": {
         "title": "Campaign's name or ID",
         "type": "string",
-        "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`. "
+        "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify",
+        "example":  "camp_dphuwqH7BOVkgh4JmpDtS32l"
       },
       "5_res_create_publication_customer_id": {
         "title": "Customer ID",
@@ -11486,7 +11689,7 @@
           }
         }
       },
-      "5_res_list_publications": {
+      "PublicationsListResponseBody": {
         "type": "object",
         "description": "Response body schema for listing publications using **GET** `/publications`.",
         "title": "List Publications Response Body",
@@ -11503,16 +11706,28 @@
           },
           "publications": {
             "type": "array",
-            "description": "Contains array of publication objects.",
+            "description": "Contains array of publication objects, voucher object will be simplified.",
             "items": {
-              "$ref": "#/components/schemas/5_obj_publication_object"
+              "description": "Response schema model for publishing vouchers to a specific customer.",
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ListPublicationsItemValidSingleVoucher"
+                },
+                {
+                  "$ref": "#/components/schemas/ListPublicationsItemValidMultipleVouchers"
+                },
+                {
+                  "$ref": "#/components/schemas/ListPublicationsItemInvalid"
+                }
+              ]
             }
           },
           "total": {
             "type": "integer",
             "description": "Total number of publications."
           }
-        }
+        },
+        "required":  ["object", "data_ref", "publications", "total"]
       },
       "6_req_validate_voucher_customer_id": {
         "title": "Customer ID",
@@ -14824,7 +15039,7 @@
                   "$ref": "#/components/schemas/RedeemGiftCard"
                 },
                 {
-                  "$ref": "#/components/schemas/RedeemLoyaltyCard "
+                  "$ref": "#/components/schemas/RedeemLoyaltyCard"
                 }
               ]
             }
@@ -27381,7 +27596,12 @@
             "description": "Total number of customer activities."
           }
         },
-        "required":  ["object", "data_ref", "data", "total"]
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
       },
       "CustomerActivity": {
         "title": "Customer Activity",
@@ -29104,12 +29324,16 @@
         "properties": {
           "object": {
             "type": "string",
-            "enum": ["list"],
+            "enum": [
+              "list"
+            ],
             "description": "The type of object represented by JSON. This object stores information about orders in a dictionary."
           },
           "data_ref": {
             "type": "string",
-            "enum": ["orders"],
+            "enum": [
+              "orders"
+            ],
             "description": "Identifies the name of the attribute that contains the array of order objects."
           },
           "orders": {
@@ -29584,7 +29808,7 @@
             "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
           }
         },
-        "required":  [
+        "required": [
           "source_id"
         ]
       },
@@ -29795,7 +30019,7 @@
           },
           {
             "type": "object",
-            "properties":  {
+            "properties": {
               "product": {
                 "$ref": "#/components/schemas/ProductWithoutSkusResponse"
               }
@@ -36023,11 +36247,19 @@
             "format": "date-time",
             "example": "2023-10-31T12:13:16.374Z"
           }
-        }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total",
+          "has_more"
+        ]
       },
       "QualificationsRedeemableSingleResponseBase": {
         "title": "Single redeemable",
         "description": "Data of single redeemable which was properly qualified.",
+        "type": "object",
         "properties": {
           "id": {
             "type": "string",
@@ -36099,7 +36331,7 @@
             "description": "Id of the campaign associated to the redeemable. This field is available only if object is not `campaign`"
           },
           "validation_rules_assignments": {
-            "$ref": "#/components/schemas/ValidationRulesAssignments"
+            "$ref": "#/components/schemas/ValidationRulesAssignmentsList"
           }
         }
       },
@@ -36123,8 +36355,8 @@
           }
         ]
       },
-      "ValidationRulesAssignments": {
-        "title": "Validation Rules Assignments",
+      "ValidationRulesAssignmentsList": {
+        "title": "Validation Rules Assignments List",
         "description": "List of Validation Rules Assignments",
         "type": "object",
         "properties": {
@@ -41906,8 +42138,9 @@
         "title": "Create Product Collection - Auto Update",
         "type": "object",
         "properties": {
-          "description": "Show that the product collection is dynamic (products come in and leave based on set criteria).",
           "type": {
+            "type": "string",
+            "description": "Show that the product collection is dynamic (products come in and leave based on set criteria).",
             "enum": [
               "AUTO_UPDATE"
             ]
@@ -42152,6 +42385,10 @@
             "type": "number",
             "description": "Formula used to calculate the discounted price of an item."
           },
+          "effect": {
+            "$ref": "#/components/schemas/ApplicableToEffect",
+            "description": "Defines how the discount is applied to the customer's order."
+          },
           "quantity_limit": {
             "type": "integer",
             "description": "The maximum number of units allowed to be discounted per order line item."
@@ -42160,9 +42397,19 @@
             "type": "integer",
             "description": "The maximum number of units allowed to be discounted combined across all matched order line items."
           },
-          "effect": {
-            "$ref": "#/components/schemas/ApplicableToEffect",
-            "description": "Defines how the discount is applied to the customer's order."
+          "amount_limit": {
+            "type": "integer",
+            "description": "Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600."
+          },
+          "aggregated_amount_limit": {
+            "type": "integer",
+            "description": "Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:\n- `APPLY_TO_ITEMS` (each item subtotal is discounted equally)\n- `APPLY_TO_ITEMS_BY_QUANTITY` (each unit of matched products has the same discount value)"
+          },
+          "order_item_indices": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
           }
         },
         "required": [
@@ -51723,16 +51970,15 @@
           "PUBLICATIONS API"
         ],
         "summary": "Create Publication",
-        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.\n> ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for specific integrations and the API keys need to be configured to access this endpoint. Navigate to the **Dashboard** &rarr; **Project Settings** &rarr; **General** &rarr; **Integration Keys** to set up a pair of API keys and use them to send the request.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple vouchers from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use a [dedicated endpoint](ref:create-publication).  \n<!-- theme: info -->\n\n> 📘 Specifying the voucher to be published\n>\n> - In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign and in the query parameters specify the `campaign` without specifying the voucher.\n> - If you would like to publish a specific code from a specific campaign, then you need to provide the `campaign` and the `voucher` parameters.\n> - If you would like to publish a standalone voucher, then omit the campaign parameter and simply provide the `voucher` parameter.  \n\n## Example Request \n```markdown Publication Query \n/publications/create?campaign=camp_T0bUgWGCAV6S0X3smH4MEboG&metadata[year]=2&metadata[Date]=2023-03-03&metadata[DateTime]=2023-03-03T14:06:08.311Z&metadata[Flag]=true&metadata[Number]=222&metadata[String]=stringy&metadata[ImageURL]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&metadata[Object][payment][payment_tax]=9&metadata[Object][payment][payment_method]=Visa&metadata[Object][payment][payment_date]=2023-03-03&metadata[Object][payment][payment_datetime]=2023-03-03T14:06:08.311Z&metadata[Object][payment][payment_completed]=true&metadata[Object][payment][payment_url]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&customer[source_id]=try-new-12&customer[name]=John%20Jimmy&customer[description]=This is testing the publication endpoint.&customer[email]=johnjimy2%40email.com&customer[phone]=%2B48%20123%20333%20333&customer[address][city]=Warsaw&customer[address][state]=Mazowieckie&customer[address][line_1]=4499%20Main%20St.&customer[address][line_2]=Blg%202%20APT%204&customer[address][country]=Poland&customer[address][postal_code]=122333&customer[birthday]=2222-01-22&customer[metadata][paid_bill]=true&customer[metadata][age]=22&customer[metadata][location]=Poland&customer[metadata][acquisition_date]=2022-09-09&customer[metadata][birth_date]=2023-03-20T18:44:19.215Z&customer[metadata][ImageURL]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&customer[metadata][location-unknown][city]=Katowice&customer[metadata][location-unknown][state]=slask&customer[metadata][location-unknown][number]=2&customer[metadata][location-unknown][date]=2034-09-11&customer[metadata][location-unknown][dateTime]=2023-03-20T18:44:19.215Z&customer[metadata][Object][payment][payment_date]=2023-03-03&customer[metadata][Object][payment][payment_datetime]=2023-03-03T14:06:08.311Z&customer[metadata][Object][payment][payment_completed]=true&customer[metadata][Object][payment][payment_url]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&customer[metadata][Object][payment][payment_tax]=9&customer[metadata][Object][payment][payment_method]=Visa```",
+        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.\n> ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for specific integrations and the API keys need to be configured to access this endpoint. Navigate to the **Dashboard** &rarr; **Project Settings** &rarr; **General** &rarr; **Integration Keys** to set up a pair of API keys and use them to send the request.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple vouchers from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use a [dedicated endpoint](ref:create-publication).  \n\n<!-- theme: info -->\n\n> 📘 Auto-update campaign\n>\n> In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign.  \n\n## Example Request \n```markdown Publication Query \n/publications/create?campaign=camp_T0bUgWGCAV6S0X3smH4MEboG&metadata[year]=2&metadata[Date]=2023-03-03&metadata[DateTime]=2023-03-03T14:06:08.311Z&metadata[Flag]=true&metadata[Number]=222&metadata[String]=stringy&metadata[ImageURL]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&metadata[Object][payment][payment_tax]=9&metadata[Object][payment][payment_method]=Visa&metadata[Object][payment][payment_date]=2023-03-03&metadata[Object][payment][payment_datetime]=2023-03-03T14:06:08.311Z&metadata[Object][payment][payment_completed]=true&metadata[Object][payment][payment_url]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&customer[source_id]=try-new-12&customer[name]=John%20Jimmy&customer[description]=This is testing the publication endpoint.&customer[email]=johnjimy2%40email.com&customer[phone]=%2B48%20123%20333%20333&customer[address][city]=Warsaw&customer[address][state]=Mazowieckie&customer[address][line_1]=4499%20Main%20St.&customer[address][line_2]=Blg%202%20APT%204&customer[address][country]=Poland&customer[address][postal_code]=122333&customer[birthday]=2222-01-22&customer[metadata][paid_bill]=true&customer[metadata][age]=22&customer[metadata][location]=Poland&customer[metadata][acquisition_date]=2022-09-09&customer[metadata][birth_date]=2023-03-20T18:44:19.215Z&customer[metadata][ImageURL]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&customer[metadata][location-unknown][city]=Katowice&customer[metadata][location-unknown][state]=slask&customer[metadata][location-unknown][number]=2&customer[metadata][location-unknown][date]=2034-09-11&customer[metadata][location-unknown][dateTime]=2023-03-20T18:44:19.215Z&customer[metadata][Object][payment][payment_date]=2023-03-03&customer[metadata][Object][payment][payment_datetime]=2023-03-03T14:06:08.311Z&customer[metadata][Object][payment][payment_completed]=true&customer[metadata][Object][payment][payment_url]=https://user-images.githubusercontent.com/95409292/222734777-a6d9e41a-de3a-42a8-8cc7-24f31e857edd.png&customer[metadata][Object][payment][payment_tax]=9&customer[metadata][Object][payment][payment_method]=Visa \n```  \n\n<!-- theme: danger -->\n> ❗\uFE0F Required  \n>\n> Query param `voucher` OR `campaign` MUST be filled out. If you provide both, `campaign` param will be skipped.",
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "example": "custom_publication_source_id"
+              "type": "boolean"
             },
             "in": "query",
-            "name": "source_id",
-            "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service."
+            "name": "join_once",
+            "description": "Through this flag, you can control if a particular person gets only one and always the same code even if the app sends multiple publication requests. It means that if you have a referral program, a referrer is assigned only to one code if an integration sends publication requests more than once for the same customer."
           },
           {
             "schema": {
@@ -51741,7 +51987,37 @@
             },
             "in": "query",
             "name": "voucher",
-            "description": "Code of voucher being published. If there is a particular code that you would like to publish, then you can use this parameter to specify the code. You can omit this parameter if you would like to publish a random code from a campaign, where the campaign is in `AUTO_UPDATE` mode."
+            "description": "Code of voucher being published."
+          },
+          {
+            "name": "campaign",
+            "in": "query",
+            "description": "Create publication with campaign.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/CreatePublicationCampaign"
+            }
+          },
+          {
+            "schema": {
+              "type": "string",
+              "example": "custom_publication_source_id"
+            },
+            "in": "query",
+            "name": "source_id",
+            "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.\nIf `source_id` is provided only 1 voucher can be published per request."
+          },
+          {
+            "name": "customer",
+            "in": "query",
+            "required": true,
+            "description": "Contains information about the customer to whom the publication was directed.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/CustomerRequest"
+            }
           },
           {
             "name": "metadata",
@@ -51751,51 +52027,6 @@
             "explode": true,
             "schema": {
               "type": "object"
-            }
-          },
-          {
-            "name": "customer",
-            "in": "query",
-            "required": true,
-            "description": "Specify the customer who is to receive a code. You can either directly provide the respective ID's as strings or provide them in the form of an object.",
-            "style": "deepObject",
-            "explode": true,
-            "schema": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/5_req_create_publication_customer"
-                },
-                {
-                  "$ref": "#/components/schemas/5_res_create_publication_customer_id"
-                },
-                {
-                  "$ref": "#/components/schemas/5_res_create_publication_customer_source_id"
-                },
-                {
-                  "$ref": "#/components/schemas/9_req_create_customer"
-                }
-              ]
-            }
-          },
-          {
-            "name": "campaign",
-            "in": "query",
-            "required": true,
-            "description": "Name of voucher's parent campaign or unique campaign ID that was assigned by Voucherify, i.e. `camp_dphuwqH7BOVkgh4JmpDtS32l`. You can use this parameter without having to specify a particular `voucher` code if the campaign is in `AUTO_UPDATE` mode. This parameter not required for a standalone code, however, if you intend to use a code from a campaign, then this parameter is required.",
-            "style": "deepObject",
-            "explode": true,
-            "schema": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/5_req_create_publication_campaign"
-                },
-                {
-                  "$ref": "#/components/schemas/5_req_create_publication_campaign_id"
-                },
-                {
-                  "$ref": "#/components/schemas/5_req_create_publication_campaign_name"
-                }
-              ]
             }
           }
         ],
@@ -51811,7 +52042,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/5_res_create_publication"
+                  "$ref": "#/components/schemas/PublicationsCreateResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -52139,7 +52370,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/5_res_list_publications"
+                  "$ref": "#/components/schemas/PublicationsListResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -52314,7 +52545,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/5_req_create_publication"
+                "$ref": "#/components/schemas/PublicationsCreateRequestBody"
               },
               "examples": {
                 "Example - Specific Voucher": {
@@ -52390,7 +52621,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/5_res_create_publication"
+                  "$ref": "#/components/schemas/PublicationsCreateResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -82542,7 +82773,7 @@
           "QUALIFICATIONS API"
         ],
         "summary": "Check Eligibility",
-        "description": "<!-- theme: warning -->\n> 🚧 The Qualifications endpoint in the basic mode ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> \uD83D\uDC4D Scenario Guide\n>\n> Read our dedicated guide to learn about some use cases this endpoint can cover [here](doc:checking-eligibility).\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
+        "description": "<!-- theme: warning -->\n> 🚧 The Qualifications endpoint in the basic mode ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read our dedicated guide to learn about some use cases this endpoint can cover [here](doc:checking-eligibility).\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
         "parameters": [],
         "security": [
           {

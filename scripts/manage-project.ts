@@ -44,7 +44,7 @@ const main = async ({
     await createNewVersion(version);
   }
   await cleanProject(version);
-  await uploadOpenApiFile(version);
+  await uploadOpenApiFileWithMaxNumberOfAttempts(version, 50);
   await buildMdTables();
   await updateMdTablesInDocs();
   await uploadImagesUsedInMdFiles();
@@ -82,6 +82,34 @@ const isVersionExists = async (version: string) => {
       )
     ).status === 200
   );
+};
+
+const uploadOpenApiFileWithMaxNumberOfAttempts = async (
+  version,
+  maxNumberOfUploadingAttempts = 3
+) => {
+  console.log(
+    colors.green(
+      "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE"
+    )
+  );
+  for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
+    const { success, error } = await runCliProcess({
+      command: `rdme openapi ./reference/OpenAPI.json --version=${version} --create`,
+      stderrIncludes: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`,
+      stdoutIncludes: `You've successfully uploaded a new OpenAPI file to your ReadMe project!`,
+      resolveErrorAsFalse: true,
+    });
+    if (success) {
+      console.log(colors.green("OPEN API FILE WAS UPLOADED"));
+      break;
+    }
+    if (i === maxNumberOfUploadingAttempts) {
+      console.log(error);
+      throw new Error("OPEN API FILE WAS NOT UPLOADED!");
+    }
+  }
+  return;
 };
 
 const uploadReferenceDocsWithMaxNumberOfAttempts = async (
@@ -162,19 +190,6 @@ const buildMdTables = async () => {
     command: `npm run build-md-tables-from-openapi`,
   });
   console.log(colors.green("MD TABLES WERE BUILDED SUCCESSFULLY!"));
-};
-
-const uploadOpenApiFile = async (version) => {
-  console.log(
-    colors.green(
-      "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE"
-    )
-  );
-  await runCliProcess({
-    command: `rdme openapi ./reference/OpenAPI.json --version=${version} --create`,
-    stderrIncludes: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`,
-  });
-  console.log(colors.green("OPEN API FILE WAS UPLOADED"));
 };
 
 const createNewVersion = async (version) => {
