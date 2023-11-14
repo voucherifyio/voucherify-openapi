@@ -71,7 +71,7 @@ const main = async () => {
     schemas[schemaName] = openAPIContent.components.schemas[schemaName];
   }
 
-  // xxx
+  // Finding other schemas uses
   let lastSchemaStringify = "";
   while (true) {
     const schemaStringify = JSON.stringify(schemas);
