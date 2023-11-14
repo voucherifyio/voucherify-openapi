@@ -1,11 +1,11 @@
 ---
-title: Integration checklist
+title: Implementation checklist
 excerpt: Get the documentation, sample code, and developer tools — everything you need to build digital promotions faster
-categorySlug: getting-started
+categorySlug: implementation-blueprint
 slug: welcome
 type: basic
 hidden: false
-order: 4
+order: 1
 ---
 
 Voucherify makes launching and tracking digital promotions easy. Get the documentation, sample code, and developer tools you need to build exactly what you want, fast. We will handle the complexity of promotions delivery and validation. Let’s get building!
@@ -58,7 +58,7 @@ The following examples are meant to give you an overview of what is possible. Ke
 Trying to build a PoC? Grasp the basics and start building:
 
 - Get to know our API with a [Quickstart](doc:quickstart) guide.
-- Understand Voucherify [basic building blocks ](doc:key-concepts) and the API calls [Limits](doc:limits).
+- Understand Voucherify [basic building blocks](doc:key-concepts) and the API call [Limits](doc:limits).
 - Learn how to navigate [Voucherify Dashboard](https://support.voucherify.io/article/16-dashboard-sections).
 - Read the [Complete User Guide](https://support.voucherify.io/article/162-voucherify-complete-user-guide) to feel comfortable Voucherify workflows.
 - Start building with our pre-built libraries and developer documentation:
@@ -80,17 +80,17 @@ Assuming your integration allows for a [basic coupon redemption](doc:quickstart)
 
   * Check out Voucherify [data import](doc:import-codes) capabilities.
   * Learn how to use validation rules based on the data you want to import/sync:
-      - [Customer segments](doc:customers#segments) 
-      - [Products](doc:products) 
-      - [Order structure](doc:orders) 
-  * Get familiar with [metadata](doc:metadata-custom-fields). Every object in Voucherify can be extended with custom fields. You can use them for customer segment filters, validation rules, and reporting purposes.  
+      - Customer segments 
+      - Products 
+      - Order structure
+  * Get familiar with metadata. Every object in Voucherify can be extended with custom fields. You can use them for customer segment filters, validation rules, and reporting purposes.  
   * Once you have validation rules configured, learn how to define a discount or incentive with the [Campaign Manager](https://support.voucherify.io/article/511-discount-effects-cheat-sheet).
   * [Deliver](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work) your promotions to customers. Learn how you can share the promotion and what channels are available.
   * Decide what redemption endpoint you prefer to use. Voucherify API supports the [Redeem Voucher](ref:redeem-voucher) of a single promo code and [Stacking discounts](doc:manage-stackable-discounts) for up to 5 incentives per API call.
  
 
 For advanced customization, you should read about how Voucherify: 
-  * [Handles webhooks](doc:webhooks).
+  * Handles webhooks.
   * [Integrates](https://www.voucherify.io/integrations) with other tools from ecommerce/CRM landscape.
   * [Organizes team structure and roles](https://support.voucherify.io/article/40-how-does-the-access-control-work-in-voucherify).
 

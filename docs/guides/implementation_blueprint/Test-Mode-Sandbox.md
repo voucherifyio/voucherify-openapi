@@ -5,7 +5,7 @@ categorySlug: implementation-blueprint
 slug: testing
 type: basic
 hidden: false
-order: 6
+order: 8
 ---
 
 Each Voucherify account has a Sandbox project which is not included in your project limit. You can use it to run your use cases and try out Voucherify capabilities. 
