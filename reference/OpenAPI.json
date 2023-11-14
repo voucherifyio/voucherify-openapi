@@ -16708,21 +16708,7 @@
             "$ref": "#/components/schemas/OrderResponse"
           },
           "reward": {
-            "description": "Defines the reward being redeemed.",
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/7_obj_redemption_object_loyalty_card_pay_with_points"
-              },
-              {
-                "$ref": "#/components/schemas/7_obj_redemption_object_loyalty_card_material_product"
-              },
-              {
-                "$ref": "#/components/schemas/7_obj_redemption_object_loyalty_card_material_sku"
-              },
-              {
-                "$ref": "#/components/schemas/7_obj_redemption_object_loyalty_card_digital"
-              }
-            ]
+            "$ref": "#/components/schemas/RedemptionRewardResult"
           },
           "amount": {
             "type": "integer",
@@ -20650,34 +20636,15 @@
           }
         }
       },
-      "7_req_rollback_redemption": {
+      "RedemptionsRollbackRequestBody": {
         "title": "Rollback Redemption Request Body",
         "type": "object",
         "properties": {
           "customer": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/6_req_rollback_redemption_customer_id"
-              },
-              {
-                "$ref": "#/components/schemas/6_req_rollback_redemption_customer_source_id"
-              },
-              {
-                "$ref": "#/components/schemas/9_req_create_customer"
-              }
-            ],
-            "description": "Customer's information."
+            "$ref": "#/components/schemas/CustomerRequest"
           },
           "order": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/6_req_rollback_redemption_order_id"
-              },
-              {
-                "$ref": "#/components/schemas/6_req_rollback_redemption_order_source_id"
-              }
-            ],
-            "description": "Send order information to ensure the correct order is being undone."
+            "$ref": "#/components/schemas/OrderRequest"
           },
           "metadata": {
             "type": "object",
@@ -20686,7 +20653,7 @@
         },
         "description": "Request body schema for **POST** `/redemptions/{redemptionId}/rollback`."
       },
-      "7_res_rollback_redemption": {
+      "RedemptionsRollbackResponseBody": {
         "title": "Rollback Redemption Response Body",
         "$ref": "#/components/schemas/7_obj_rollback_redemption_object_extended",
         "description": "Response body schema for **POST** `/redemptions/{redemptionId}/rollback`."
@@ -29262,6 +29229,46 @@
           "loyalty"
         ]
       },
+      "RedemptionRewardResult": {
+        "title": "Redemption Reward Result",
+        "type": "object",
+        "properties": {
+          "reward": {
+            "nullable": true,
+            "$ref": "#/components/schemas/reward"
+          },
+          "customer": {
+            "nullable": true,
+            "$ref": "#/components/schemas/CustomerResponse"
+          },
+          "assignment_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique reward assignment ID assigned by Voucherify."
+          },
+          "voucher": {
+            "description": "Defines of the voucher.",
+            "nullable": true,
+            "$ref": "#/components/schemas/Voucher"
+          },
+          "product": {
+            "description": "Defines of the product.",
+            "nullable": true,
+            "$ref": "#/components/schemas/Product"
+          },
+          "sku": {
+            "description": "Defines of the sku.",
+            "nullable": true,
+            "$ref": "#/components/schemas/Sku"
+          },
+          "loyalty_tier_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique loyalty tier ID assigned by Voucherify."
+          }
+        },
+        "required":  ["reward", "customer", "assignment_id", "voucher", "product", "sku", "loyalty_tier_id"]
+      },
       "SimpleRedemptionRewardResult": {
         "title": "Simple Redemption Reward Result",
         "type": "object",
@@ -29404,6 +29411,132 @@
           "sku": {
             "type": "string",
             "description": "Sku name."
+          }
+        }
+      },
+      "Sku": {
+        "title": "Sku",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique sku ID."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Sku source id."
+          },
+          "sku": {
+            "type": "string",
+            "description": "Sku name."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "A unique product ID assigned by Voucherify."
+          },
+          "currency": {
+            "type": "string",
+            "description": "SKU price currency.",
+            "example": "USD",
+            "nullable": true
+          },
+          "price": {
+            "type": "integer",
+            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
+          },
+          "attributes": {
+            "type": "array",
+            "description": "A list of product attributes whose values you can customize for given SKUs: `[\"color\",\"size\",\"ranking\"]`. Each child SKU can have a unique value for a given attribute.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
+          },
+          "image_url": {
+            "type": "string",
+            "description": "The HTTPS URL pointing to the .png or .jpg file."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2021-12-01T08:00:50.038Z",
+            "description": "Timestamp representing the date and time when the sku was created in ISO 8601 format."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-09-20T09:18:19.623Z",
+            "description": "Timestamp representing the date and time when the sku was updated in ISO 8601 format."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON.",
+            "enum": [
+              "sku"
+            ]
+          }
+        }
+      },
+      "Product": {
+        "title": "Product",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique product ID."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "Product source id."
+          },
+          "name": {
+            "type": "string",
+            "description": "Product name."
+          },
+          "price": {
+            "type": "integer",
+            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
+          },
+          "attributes": {
+            "type": "array",
+            "description": "A list of product attributes whose values you can customize for given SKUs: `[\"color\",\"size\",\"ranking\"]`. Each child SKU can have a unique value for a given attribute.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format."
+          },
+          "image_url": {
+            "type": "string",
+            "description": "The HTTPS URL pointing to the .png or .jpg file."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2021-12-01T08:00:50.038Z",
+            "description": "Timestamp representing the date and time when the product was created in ISO 8601 format."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-09-20T09:18:19.623Z",
+            "description": "Timestamp representing the date and time when the product was updated in ISO 8601 format."
+          },
+          "deleted": {
+            "type": "boolean",
+            "description": "Flag indicating whether this product is deleted."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON.",
+            "enum": [
+              "product"
+            ]
           }
         }
       },
@@ -58520,6 +58653,14 @@
             "in": "query",
             "name": "reason",
             "description": "Reason for the rollback."
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "query",
+            "name": "tracking_id",
+            "description": "Customer's `source_id`."
           }
         ],
         "security": [
@@ -58533,7 +58674,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/7_req_rollback_redemption"
+                "$ref": "#/components/schemas/RedemptionsRollbackRequestBody"
               },
               "examples": {
                 "Promotion": {
@@ -58577,7 +58718,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/7_res_rollback_redemption"
+                  "$ref": "#/components/schemas/RedemptionsRollbackResponseBody"
                 },
                 "examples": {
                   "Loyalty Card": {
