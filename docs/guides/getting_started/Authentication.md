@@ -5,7 +5,7 @@ categorySlug: getting-started
 slug: authentication
 type: basic
 hidden: false
-order: 6
+order: 7
 ---
 
 ## Authorization overview

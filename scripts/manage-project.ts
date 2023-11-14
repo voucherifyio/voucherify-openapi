@@ -44,12 +44,12 @@ const main = async ({
     await createNewVersion(version);
   }
   await cleanProject(version);
-  await uploadOpenApiFileWithMaxNumberOfAttempts(version, 50);
+  await uploadOpenApiFileWithMaxNumberOfAttempts(version, 2);
   await buildMdTables();
   await updateMdTablesInDocs();
   await uploadImagesUsedInMdFiles();
   await uploadGuideFiles(version);
-  await uploadReferenceDocsWithMaxNumberOfAttempts(version);
+  await uploadReferenceDocsWithMaxNumberOfAttempts(version, 4);
   console.log(
     colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`)
   );

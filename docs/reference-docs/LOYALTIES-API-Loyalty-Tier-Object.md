@@ -8,28 +8,43 @@ hidden: false
 order: 3
 ---
 
-## Loyalty Tier Object
+## Loyalty Tier
+All of:
+
+1. [Loyalty Tier Base](#loyalty-tier-base)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique loyalty tier ID.</p></td></tr><tr><td style="text-align:left">campaign_id</br><code>string</code></td><td style="text-align:left"><p>Unique parent campaign ID.</p></td></tr><tr><td style="text-align:left">metadata</br><code>object,null</code></td><td style="text-align:left"><p>The metadata object stores all custom attributes assigned to the loyalty tier. A set of key/value pairs that you can attach to a loyalty tier object. It can be useful for storing additional information about the loyalty tier in a structured format.</p></td></tr><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the loyalty tier was created in ISO 8601 format.</p></td></tr><tr><td style="text-align:left">updated_at</br><code>string,null</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the loyalty tier was updated in ISO 8601 format.</p></td></tr><tr><td style="text-align:left">config</br><code>object</code></td><td style="text-align:left"><p>Defines loyalty tier range in points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>object</code></td><td style="text-align:left"><p>Defines range of loyalty tier in points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">from</br><code>integer</code></td><td style="text-align:left"><p>Bottom points threshold value.</p></td></tr><tr><td style="text-align:left">to</br><code>integer</code></td><td style="text-align:left"><p>Top points threshold value.</p></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td style="text-align:left">expiration</td><td style="text-align:left">See: <a href="#loyalty-tier-expiration">Loyalty Tier Expiration</a></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of object represented by JSON. This object stores information about the loyalty.</p> Available values: <code>loyalty_tier</code></td></tr></tbody></table>
+
+## Loyalty Tier Base
 | Attributes |  Description |
 |:-----|:--------|
-| id</br>`string` | <p>Unique loyalty tier ID.</p> **Example:** <p>ltr_30KHciA0UG8B71Fo51GZqwgN</p> |
 | name</br>`string` | <p>Loyalty Tier name.</p> |
-| campaign_id</br>`string` | <p>Unique parent campaign ID.</p> **Example:** <p>camp_fkZ28pe7DUAEmmabofkxHI8N</p> |
-| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the loyalty tier. A set of key/value pairs that you can attach to a loyalty tier object. It can be useful for storing additional information about the loyalty tier in a structured format.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the loyalty tier was created in ISO 8601 format.</p> **Example:** <p>2022-11-10T12:20:52.755Z</p> |
-| updated_at</br>`string` | <p>Timestamp representing the date and time when the loyalty tier was updated in ISO 8601 format.</p> **Example:** <p>2022-11-25T10:59:43.231Z</p> |
-| earning_rules</br>`object` | <p>Contains a list of earning rule IDs and their points mapping for the given earning rule.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">unique_earning_rule_ID</td><td style="text-align:left"><p>ern_95aq3JaE5A8xzHjoJPYNRqXZ</p> Any of: <a href="#multiply-points">Multiply Points</a>, <a href="#fixed-points">Fixed Points</a></td></tr></tbody></table> |
-| rewards</br>`object` | <p>Contains a list of reward IDs and their points mapping for the given reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">unique_reward_ID</td><td style="text-align:left"><p>rewa_t88DnSdNnE0IzQX6gqH3jHGQ</p> Any of: <a href="#multiply-points">Multiply Points</a>, <a href="#fixed-points">Fixed Points</a></td></tr></tbody></table> |
-| config</br>`object` | <p>Defines loyalty tier range in points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>object</code></td><td style="text-align:left"><p>Defines range of loyalty tier in points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">from</br><code>integer</code></td><td style="text-align:left"><p>Bottom points threshold value.</p></td></tr><tr><td style="text-align:left">to</br><code>integer</code></td><td style="text-align:left"><p>Top points threshold value.</p></td></tr></tbody></table></td></tr></tbody></table> |
+| earning_rules</br>`object` | <p>Contains a list of earning rule IDs and their points mapping for the given earning rule.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#mappingpoints">MappingPoints</a></td></tr></tbody></table> |
+| rewards</br>`object` | <p>Contains a list of reward IDs and their points mapping for the given reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#mappingpoints">MappingPoints</a></td></tr></tbody></table> |
 | points</br>`object` | <p>Defines range of loyalty tier in points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">from</br><code>integer</code></td><td style="text-align:left"><p>Bottom points threshold value.</p></td></tr><tr><td style="text-align:left">to</br><code>integer</code></td><td style="text-align:left"><p>Top points threshold value.</p></td></tr></tbody></table> |
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the loyalty.</p> |
 
-## Multiply Points
+## Loyalty Tier Expiration
+| Attributes |  Description |
+|:-----|:--------|
+| customer_id</br>`string` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
+| campaign_id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_rRsfatlwN7unSeUIJDCYedal</p> |
+| tier_id</br>`string` | <p>Unique tier ID, assigned by Voucherify.</p> |
+| start_date</br>`string` | <p>Activation timestamp defines when the loyalty tier starts to be active in ISO 8601 format. Loyalty tier is inactive before this date.</p> |
+| expiration_date</br>`string` | <p>Expiration timestamp defines when the loyalty tier expires in ISO 8601 format. Loyalty tier is inactive after this date.</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the loyalty tier was created in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the loyalty tier was updated in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
+
+## MappingPoints
+Any of:
+
+[MappingMultiply](#mappingmultiply), [MappingFixed](#mappingfixed)
+
+## MappingMultiply
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Type of calculation.</p> Available values: `MULTIPLY` |
-| multiplier</br>`integer` | <p>Multiplication factor used to multiply the points to obtain the mapped points.</p> |
+| multiplier</br>`number` | <p>Multiplication factor used to multiply the points to obtain the mapped points.</p> |
 
-## Fixed Points
+## MappingFixed
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Type of calculation.</p> Available values: `CUSTOM` |

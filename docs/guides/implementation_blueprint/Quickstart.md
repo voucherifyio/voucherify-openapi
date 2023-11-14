@@ -1,16 +1,18 @@
 ---
-title: Quickstart
+title: First steps in Voucherify
 excerpt: Get started with Voucherify API and dashboard by redeeming your first coupon code.
-categorySlug: getting-started
+categorySlug: implementation-blueprint
 slug: quickstart
 type: basic
 hidden: false
-order: 3
+order: 2
 ---
 
-Welcome to Voucherify! We’re excited to be your partner in building a future-proof Promotion Engine. Let’s start with a simple use case — applying a $10 off BLCKFRDY coupon to the cart — to learn how Voucherify works.
+With Voucherify, you can build a future-proof Promotion Engine. In this article, you will start with a simple use case — applying a $10 off BLCKFRDY coupon to the cart — to learn how Voucherify works.
 
-You must first create an [account](http://app.voucherify.io/#/signup) — Voucherify offers a **free tier** (“Sandbox project”) you can use to build a proof of concept and, further, test it in production. 
+> 👍 Creating an account
+> 
+> If you do not have a Voucherify account yet, go to [Getting started](doc:getting-started) to learn how to create one.
 
 [block:html]
 {
@@ -280,6 +282,7 @@ Try redeeming BLCKFRDY to go through the coupon flow end-to-end (make sure “ca
 <!-- ![Hot Beans Demo](../../assets/img/guides_getting_started_quickstart_hot_beans_demo_6.png "Hot Beans Demo") -->
 ![Hot Beans Demo](https://files.readme.io/16e5bf6-hot_beans.png "Hot Beans Demo")
 
-## What's next?
+<!-- ## What's next?
 
 The BLCKFRDY coupon redemption uses only the minimum business context (order amount). To enable advanced promotional rules, go to the [integration checklist](doc:welcome) and explore the Voucherify building blocks to learn what data you can share with Voucherify.
+-->

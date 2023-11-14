@@ -1,6 +1,6 @@
 ---
 title: Welcome to Voucherify
-excerpt: 
+excerpt: Learn about Voucherify and its possibilities
 categorySlug: getting-started
 slug: welcome-to-voucherify
 type: basic

@@ -5,7 +5,7 @@ categorySlug: implementation-blueprint
 slug: security
 type: basic
 hidden: false
-order: 1
+order: 3
 ---
 
 Security is one of the biggest concerns in every aspect of our product. So, we've taken several measures to keep your data safe. 
@@ -18,7 +18,7 @@ Security is one of the biggest concerns in every aspect of our product. So, we'v
 
 Voucherify provides two modes of API interaction. The first one (private) enables you to access all API endpoints with the use of Application ID and Application Token. To find out more, go to [Authentication](doc:authentication).
 
-The second (public) allows web or mobile clients to access only limited set of API endpoints using publishable keys e.g., ([validate voucher)](ref:validate-voucher) method. [voucherify.js](doc:client-side-api).
+The second (public) allows web or mobile clients to access only limited set of API endpoints using publishable keys e.g., [(validate voucher)](ref:validate-voucher) method. [voucherify.js](doc:client-side-api).
 
 ## API requests rate limit
 

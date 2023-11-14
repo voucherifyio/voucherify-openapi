@@ -1,5 +1,65 @@
 # Changelog
 
+## 20231113 - Removing Not Used Schemas
+
+**Removed schemas**
+
+- 3_res_list_promotion_stacks
+- 3_req_create_promotion_stack
+- 5_obj_publication_object
+- 5_req_create_publication_from_campaign_one_specific_voucher
+- 5_req_create_publication_from_campaign_multiple_vouchers
+- 5_req_create_publication_campaign_id
+- 5_req_create_publication_campaign_name
+- 5_req_create_publication_campaign
+- 5_res_create_publication_customer_id
+- 5_res_create_publication_customer_source_id
+- 5_req_create_publication_customer
+- 5_obj_publication_object_discount
+- 5_obj_publication_object_loyalty_card
+- 5_obj_publication_object_gift_card
+- 6_req_validate_voucher_discount_code
+- 6_req_validate_voucher_gift_card
+- 6_req_validate_voucher_loyalty_card
+- 19_req_session_lock
+- 19_res_session_lock
+- 19_obj_voucher_object_discount_amount
+- 19_obj_voucher_object_discount_amount_dynamic
+- 19_obj_voucher_object_discount_percentage
+- 19_obj_voucher_object_discount_percentage_dynamic
+- 19_obj_voucher_object_discount_fixed_order
+- 19_obj_voucher_object_discount_fixed_items
+- 19_obj_voucher_object_discount_unit_one
+- 19_obj_order_object_validation_res
+- 19_obj_order_object_validation_res_per_redeemable
+- 8_obj_loyalty_tier_object
+- 8_obj_mapping_multiply
+- 8_obj_mapping_fixed
+- 9_req_update_customer
+- 9_obj_customer_object
+- 9_obj_customer_object_email_parameter
+- 20_res_list_categories
+- 20_req_update_categories_categoryId
+- 20_req_create_category
+- 20_res_create_category
+- 23_obj_order_object
+- 23_req_create_qualification_customer_id
+- 23_req_create_qualification_customer_source_id
+- 23_req_create_qualification_order_id
+- 23_req_create_qualification_order_source_id
+
+## 20231114
+
+File changes:
+- Added `project-setup-guide.md` file: article titled `Getting started`
+- Fixed typo in `Qualifications.md`
+- Moved `integrations-checklist.md` to `Implementation blueprint`
+  - Changed the file name and title to `Implementation checklist`
+  - Cleaned the article from links to currently hidden pages
+- Moved `Quickstart.md` to `Implementation blueprint`
+  - Changed title to `First steps in Voucherify`
+- Changed the order of the files in the `Implementation blueprint` category
+
 ## 20231113 - Publications API
 
 **Added schemas**

@@ -5,7 +5,7 @@ categorySlug: implementation-blueprint
 slug: sdks
 type: basic
 hidden: false
-order: 5
+order: 7
 ---
 
 ## Get your library

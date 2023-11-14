@@ -5,7 +5,7 @@ categorySlug: implementation-blueprint
 slug: examples
 type: basic
 hidden: false
-order: 2
+order: 4
 ---
 
 ## Sample workflows
