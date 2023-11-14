@@ -5,7 +5,7 @@ categorySlug: implementation-blueprint
 slug: troubleshooting
 type: basic
 hidden: false
-order: 11
+order: 13
 ---
 
 ### Why does the API return prices multiplied by 100?

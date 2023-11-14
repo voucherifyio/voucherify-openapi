@@ -48,6 +48,18 @@
 - 23_req_create_qualification_order_id
 - 23_req_create_qualification_order_source_id
 
+## 20231114
+
+File changes:
+- Added `project-setup-guide.md` file: article titled `Getting started`
+- Fixed typo in `Qualifications.md`
+- Moved `integrations-checklist.md` to `Implementation blueprint`
+  - Changed the file name and title to `Implementation checklist`
+  - Cleaned the article from links to currently hidden pages
+- Moved `Quickstart.md` to `Implementation blueprint`
+  - Changed title to `First steps in Voucherify`
+- Changed the order of the files in the `Implementation blueprint` category
+
 ## 20231113 - Publications API
 
 **Added schemas**
