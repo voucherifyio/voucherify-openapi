@@ -7,7 +7,6 @@ export const mdTables: [string, string?][] = [
   ["PublicationsCreateResponseBody", "PUBLICATIONS-API-Publication-Object.md"],
   ["VouchersValidateResponseBody", "VALIDATIONS-API-Validation-Object.md"],
   ["Redemption", "REDEMPTIONS-API-Redemption-Object.md"],
-  ["RedemptionRollback", "REDEMPTIONS-API-Rollback-Redemption-Object.md"],
   [
     "RedemptionsRedeemResponseBody",
     "STACKABLE-DISCOUNTS-API-Stackable-Redemptions-Object.md",
