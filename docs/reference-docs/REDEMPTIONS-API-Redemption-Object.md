@@ -1,5 +1,5 @@
 ---
-title: Redemption AND Rollback Object
+title: Redemption Object
 type: basic
 categorySlug: voucherify-api
 parentDocSlug: redemptions-api
