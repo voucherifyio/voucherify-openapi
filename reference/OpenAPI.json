@@ -16581,9 +16581,9 @@
           }
         ]
       },
-      "RedemptionDTO": {
+      "Redemption": {
         "type": "object",
-        "title": "Redemption Base",
+        "title": "Redemption Or R.Rollback",
         "description": "This is an object representing a redemption.",
         "properties": {
           "id": {
@@ -16594,7 +16594,7 @@
           "object": {
             "type": "string",
             "description": "The type of object represented by the JSON",
-            "enum": ["redemption"],
+            "enum": ["redemption", "redemption_rollback"]
           },
           "date": {
             "type": "string",
@@ -16648,9 +16648,49 @@
             ],
             "description": "Redemption status."
           },
-          "related_redemptions": [
-
-          ],
+          "related_redemptions": {
+            "type": "object",
+            "properties": {
+              "rollbacks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "rr_0bc92f81a6801f9bca",
+                      "description": "Unique rollback redemption ID."
+                    },
+                    "date": {
+                      "type": "string",
+                      "example": "2021-12-22T10:13:06.487Z",
+                      "description": "Timestamp representing the date and time when the object was created in ISO 8601 format.",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              },
+              "redemptions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "r_0bc92f81a6801f9bca",
+                      "description": "Unique redemption ID."
+                    },
+                    "date": {
+                      "type": "string",
+                      "example": "2021-12-22T10:13:06.487Z",
+                      "description": "Timestamp representing the date and time when the object was created in ISO 8601 format.",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "failure_code": {
             "type": "string",
             "example": "customer_rules_violated",
@@ -16730,99 +16770,10 @@
           }
         }
       },
-      "Redemption": {
-        "title": "Redemption",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/RedemptionBase"
-          },
-          {
-            "type": "object",
-            "title": "Redemption Related Redemptions",
-            "properties": {
-              "related_redemptions": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/RedemptionBase"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "SimpleRedemption": {
+      "RedemptionInternal": {
+        "title": "Redemption Internal",
+        "description": "Model Used for internal communication",
         "type": "object",
-        "title": "Simple Redemption",
-        "description": "This is an object representing a simple redemption.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "r_0bc92f81a6801f9bca",
-            "description": "Unique redemption ID."
-          },
-          "customer_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "example": "cust_i8t5Tt6eiKG5K79KQlJ0Vs64",
-            "description": "Unique customer ID of the redeeming customer."
-          },
-          "tracking_id": {
-            "type": "string",
-            "description": "Hashed customer source ID."
-          },
-          "date": {
-            "type": "string",
-            "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the redemption was created in ISO 8601 format.",
-            "format": "date-time"
-          },
-          "amount": {
-            "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
-            "example": 10000
-          },
-          "order": {
-            "$ref": "#/components/schemas/SimpleOrder"
-          },
-          "reward": {
-            "$ref": "#/components/schemas/SimpleRedemptionRewardResult"
-          },
-          "customer": {
-            "$ref": "#/components/schemas/SimpleCustomer"
-          },
-          "result": {
-            "type": "string",
-            "enum": [
-              "SUCCESS",
-              "FAILURE"
-            ],
-            "description": "Redemption result."
-          },
-          "voucher": {
-            "$ref": "#/components/schemas/SimpleVoucher",
-            "description": "Defines the details of the voucher being redeemed."
-          },
-          "promotion_tier": {
-            "$ref": "#/components/schemas/SimplePromotionTier"
-          },
-          "redemption": {
-            "type": "string",
-            "description": "Unique redemption ID of the parent redemption.",
-            "example": "r_0c656311b5878a2031"
-          },
-          "object": {
-            "type": "string",
-            "description": "The type of object represented by the JSON. This object stores information about the `redemption`.",
-            "default": "redemption"
-          }
-        }
-      },
-      "RedemptionBase": {
-        "type": "object",
-        "title": "Redemption Base",
-        "description": "This is an object representing a redemption.",
         "properties": {
           "id": {
             "type": "string",
@@ -16896,6 +16847,57 @@
             ],
             "description": "Redemption result."
           },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SUCCEEDED",
+              "FAILED"
+            ],
+            "description": "Redemption status."
+          },
+          "related_redemptions": {
+            "type": "object",
+            "properties": {
+              "rollbacks": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "rr_0bc92f81a6801f9bca",
+                      "description": "Unique rollback redemption ID."
+                    },
+                    "date": {
+                      "type": "string",
+                      "example": "2021-12-22T10:13:06.487Z",
+                      "description": "Timestamp representing the date and time when the object was created in ISO 8601 format.",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              },
+              "redemptions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "r_0bc92f81a6801f9bca",
+                      "description": "Unique redemption ID."
+                    },
+                    "date": {
+                      "type": "string",
+                      "example": "2021-12-22T10:13:06.487Z",
+                      "description": "Timestamp representing the date and time when the object was created in ISO 8601 format.",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "parent_redemption_id": {
             "type": "string",
             "description": "Unique redemption ID of the parent redemption.",
@@ -16944,6 +16946,75 @@
           "promotion_tier": {
             "description": "Contains details of the promotion tier and the parent campaign.",
             "$ref": "#/components/schemas/PromotionTier"
+          }
+        }
+      },
+      "SimpleRedemption": {
+        "type": "object",
+        "title": "Simple Redemption",
+        "description": "This is an object representing a simple redemption.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "r_0bc92f81a6801f9bca",
+            "description": "Unique redemption ID."
+          },
+          "customer_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "example": "cust_i8t5Tt6eiKG5K79KQlJ0Vs64",
+            "description": "Unique customer ID of the redeeming customer."
+          },
+          "tracking_id": {
+            "type": "string",
+            "description": "Hashed customer source ID."
+          },
+          "date": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the redemption was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
+            "example": 10000
+          },
+          "order": {
+            "$ref": "#/components/schemas/SimpleOrder"
+          },
+          "reward": {
+            "$ref": "#/components/schemas/SimpleRedemptionRewardResult"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "SUCCESS",
+              "FAILURE"
+            ],
+            "description": "Redemption result."
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher",
+            "description": "Defines the details of the voucher being redeemed."
+          },
+          "promotion_tier": {
+            "$ref": "#/components/schemas/SimplePromotionTier"
+          },
+          "redemption": {
+            "type": "string",
+            "description": "Unique redemption ID of the parent redemption.",
+            "example": "r_0c656311b5878a2031"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by the JSON. This object stores information about the `redemption`.",
+            "default": "redemption"
           }
         }
       },
@@ -25997,7 +26068,7 @@
             "$ref": "#/components/schemas/CustomEvent"
           },
           "redemption": {
-            "$ref": "#/components/schemas/Redemption"
+            "$ref": "#/components/schemas/RedemptionInternal"
           }
         },
         "required": [
@@ -26316,7 +26387,7 @@
             "$ref": "#/components/schemas/SimpleCampaign"
           },
           "redemption": {
-            "$ref": "#/components/schemas/Redemption"
+            "$ref": "#/components/schemas/RedemptionInternal"
           },
           "reward": {
             "$ref": "#/components/schemas/SimpleRedemptionRewardResult"
@@ -26669,7 +26740,7 @@
             "$ref": "#/components/schemas/OrderResponse"
           },
           "redemption": {
-            "$ref": "#/components/schemas/Redemption"
+            "$ref": "#/components/schemas/RedemptionInternal"
           }
         }
       },
