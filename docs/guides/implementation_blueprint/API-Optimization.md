@@ -5,7 +5,7 @@ categorySlug: implementation-blueprint
 slug: api-optimization
 type: basic
 hidden: false
-order: 12
+order: 150
 ---
 
 ## API calls optimization

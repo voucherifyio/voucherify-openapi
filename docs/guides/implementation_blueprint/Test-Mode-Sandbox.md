@@ -5,43 +5,36 @@ categorySlug: implementation-blueprint
 slug: testing
 type: basic
 hidden: false
-order: 8
+order: 180
 ---
 
 Each Voucherify account has a Sandbox project which is not included in your project limit. You can use it to run your use cases and try out Voucherify capabilities. 
 
-Sandbox projects have their unique API keys for authorization and fixed API calls limit set to 100 calls/h. Sandbox API requests aren't counted into your account limits of API calls.
+Sandbox projects have their unique API keys for authorization.
 
-## How to use Sandbox project
+## How to use the Sandbox project
 
 Sandbox is the default project when you create a new Voucherify account. 
 
-If you upgrade to a paid plan, the Sandbox project will be visible in your projects list and it won't be counted to your limit.
+If you upgrade to a paid plan, Sandbox will be visible in your projects list and it won't be counted to your limit.
 
-<!-- ![Sandbox](../../assets/img/guides_development_test_mode_sandbox_sandbox_1.png "Sandbox") -->
-![Sandbox](https://files.readme.io/fba7745-Screenshot_2021-08-09_at_12.39.32_1.png "Sandbox")
-
-In **Project settings > Application keys** you can see API keys necessary to [authorize](doc:authentication) API requests. 
+In **Project settings > Application keys**, you can see API keys necessary to [authorize](doc:authentication) API requests. 
 
 > 📘 API calls limit
 > 
-> Note that while using the Sandbox project, you can call Voucherify API 100 times per hour.
+> Sandbox has a fixed API calls limit set to 100 calls per hour. Sandbox API requests are not counted into your account limits of API calls.
 
+### Demo shop
 
-### Showcase - test e-store
-
-Each Sandbox project is connected to the showcase store ("Hot Beans"). The showcase presents how the integration between Voucherify and customer touchpoints might look in practice. 
+Sandbox is connected to a showcase demo shop. The demo shop presents how the integration between Voucherify and customer touchpoints might look in practice. 
 
 With this setup, you can create campaigns and immediately see how they work at the checkout. For example, you can validate and redeem codes from created campaigns to test different promo scenarios and validation rules. Each redemption will be tracked in the dashboard.
 
-To access test store, go to your Sandbox project and click on the Showcase button in the top bar.
-
-<!-- ![Sandbox](../../assets/img/guides_development_test_mode_sandbox_sandbox_2.png "Sandbox") -->
-![Sandbox](https://files.readme.io/daa4c20-showcase.png "Sandbox")
+To access the demo shop, go to your Sandbox project and click the Demo Shop button in the top bar.
 
 ### Test data
 
-The Sandbox project is populated with test campaigns, **standalone** codes, customers and products, for example:
+Sandbox is populated with test campaigns, standalone codes, customers, and products. For example:
 
 | **Campaigns:** |  |
 |:---|:---|
@@ -58,27 +51,25 @@ The Sandbox project is populated with test campaigns, **standalone** codes, cust
 | Jane Doe |
 | John Doe |
 
-## [deprecated] Sandbox for accounts created before 09/08/2021  
-
-If your account was created before Voucherify [version v20210726](https://support.voucherify.io/article/23-whats-new-in-voucherify), released 09/08/2021 you won't see the Sandbox project in your projects list. If you'd like access a new Sandbox project, [send us a request](https://www.voucherify.io/contact-support).
+<!-- TO BE CHECKED ONCE THE NEW SHOP IS LIVE-->
 
 #### Sandbox Keys
 
-To use the Sandbox API you need to obtain Application Keys for the Sandbox Environment. Go to [configuration section](https://app.voucherify.io/#/app/configuration/proj_f1r5Tpr0J3Ct), then in the Application Keys section switch the Environment to Sandbox:
+To use the Sandbox API, you need to obtain Application Keys for the Sandbox Environment. Go to [configuration section](https://app.voucherify.io/#/app/configuration/proj_f1r5Tpr0J3Ct), then in the Application Keys section switch the Environment to Sandbox:
 
-<!-- ![Sandbox](../../assets/img/guides_development_test_mode_sandbox_sandbox_keys_3.png "Sandbox Keys") -->
-![Sandbox](https://files.readme.io/6086c81-Screenshot_2020-09-16_at_08.58.39.png "Sandbox Keys")
+#### Sandbox vs production environment
 
-#### Sandbox vs. Production
+The Sandbox API includes the same endpoints as the production API. However, note the following differences:
 
-The sandbox API includes the same endpoints as the production API, keep in mind these differences:
-❗  Vouchers created through the sandbox API are **not visible** in the [web application](https://app.voucherify.io).
-❗  Codes of vouchers created through the sandbox API are prefixed with `voucherify.io-`.
+❗  Vouchers created through the Sandbox API are **not visible** in the [web application](https://app.voucherify.io).
+
+❗  Codes of vouchers created through the Sandbox API are prefixed with `voucherify.io-`.
+
 ❗  Redemptions performed on sandbox vouchers don't count to the monthly [limits](doc:limits).
 
-#### Test data
+<!-- #### Test data
 
-We have prepared a starting set of test data. You get 5 different single vouchers and 10 vouchers in a campaign:
+Your account has a starting set of test data. You get 5 different single vouchers and 10 vouchers in a campaign:
 
 | **Code** | **Campaign** | **Discount** | **Redemptions** | **Expiration Date** |
 |---|---|---|---|---|
@@ -99,3 +90,4 @@ We have prepared a starting set of test data. You get 5 different single voucher
 | `voucherify.io-sandbox-10` | voucherify.io-sandbox | 50% off | unlimited | never |
 
 You can create more test vouchers using the [Create Voucher](ref:create-voucher) endpoint.
+-->

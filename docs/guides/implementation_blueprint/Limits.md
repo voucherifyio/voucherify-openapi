@@ -5,7 +5,7 @@ categorySlug: implementation-blueprint
 slug: limits
 type: basic
 hidden: false
-order: 10
+order: 140
 ---
 
 To understand the basic limits of your account, check out [Pricing](https://www.voucherify.io/pricing) and [Fair Use Policy](https://www.voucherify.io/legal/fair-use-policy). Now, let's navigate through what we limit and how to monitor your usage.
