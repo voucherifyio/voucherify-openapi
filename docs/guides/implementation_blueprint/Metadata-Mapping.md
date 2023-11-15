@@ -95,12 +95,14 @@ To extend the customization capabilities of Voucherify, you can also use nested 
 
 Example for a billing address:
 
-    "metadata": {
-      "billing_information": {
-              "billing_address": "Porcelanowa 23",
-              "billing_city": "Katowice",
-              "billing_country": "Poland",
-              "billing_postal_code": "40-246",
-              "billing_recipient": "John Smith",
+```json
+“metadata”: {
+      “billing_information”: {
+              “billing_address”: “Porcelanowa 23",
+              “billing_city”: “Katowice”,
+              “billing_country”: “Poland”,
+              “billing_postal_code”: “40-246",
+              “billing_recipient”: “John Smith”,
     }
   }
+```
