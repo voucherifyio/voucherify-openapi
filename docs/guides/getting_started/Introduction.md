@@ -10,15 +10,15 @@ order: 1
 
 ### Welcome to [Voucherify's](https://www.voucherify.io/) Developer Hub.
 
-The documentation is divided into categories – each recommended for a different user role.
+The documentation is divided into four main categories.
 
-1. **Getting started** - Learn more about Voucherify and what’s possible with our platform. Take your first steps to set up your account and start testing. Recommended for all users.
+1. **[Getting started](doc:welcome-to-voucherify)** - Learn more about Voucherify and what’s possible with our platform. Take your first steps to set up your account and start testing. Recommended for everyone.
 
-2. **Integration Blueprint** - Discover how to seamlessly plan your integration and learn how to build advanced promotion limits to personalize your campaigns and prevent fraud. Recommended for all users.
+2. **[Integration Blueprint](doc:integration-overview)** - Discover how to seamlessly plan your integration and learn how to build advanced promotion limits to personalize your campaigns and prevent fraud. Recommended for architects and readers who want to know how to plan out the integration.
 
-3. **Implementation Blueprint** - Explore endpoints and attributes with request/response examples and error messages. Connect Voucherify with client libraries in JavaScript, PHP, Ruby, Java, Python, .NET, Android and iOS. Recommended for developers.
+3. **[Implementation Blueprint](doc:implementation-checklist)** - Dive into detailed implementation options, including example data mapping, processes, and more. Recommended for developers and integrators.
 
-4. **Recipes** - Get inspired with sample campaigns, discounts, and distributions. Recommended for marketers.
+4. **[API Reference](doc:api-reference)** - Explore endpoints and attributes with request/response examples and error messages.
 
 
 > 📘 Help and support
