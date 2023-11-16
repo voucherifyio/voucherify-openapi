@@ -1,5 +1,13 @@
 # Changelog
 
+## 20231116
+
+- Changed the order of the articles in the `Implementation Blueprint` category
+- Moved `Authentication` and `API Endpoints` from the `Getting started` category to `Implementation Blueprint`
+- Split the `Modeling Voucherify integration` article and created a `Scenario discovery` article out of that in the `Integration Blueprint` category
+- Added `Integration connectors` and `Webhooks` articles to the `Implementation Blueprint`. The articles are actually links to respective articles on Help Scout
+- Updated `Metadata mapping` (formatting, links)
+
 ## 20231113 - Removing Not Used Schemas
 
 **Removed schemas**
