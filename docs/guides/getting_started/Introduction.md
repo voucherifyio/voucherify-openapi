@@ -20,6 +20,8 @@ The documentation is divided into four main categories.
 
 4. **[API Reference](doc:api-reference)** - Explore endpoints and attributes with request/response examples and error messages.
 
+&nbsp;
+&nbsp;
 
 > 📘 Help and support
 >
