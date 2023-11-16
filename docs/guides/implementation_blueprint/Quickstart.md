@@ -5,7 +5,7 @@ categorySlug: implementation-blueprint
 slug: quickstart
 type: basic
 hidden: false
-order: 2
+order: 20
 ---
 
 With Voucherify, you can build a future-proof Promotion Engine. In this article, you will start with a simple use case — applying a $10 off BLCKFRDY coupon to the cart — to learn how Voucherify works.

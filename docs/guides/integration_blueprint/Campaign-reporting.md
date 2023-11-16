@@ -5,7 +5,7 @@ categorySlug: integration-blueprint
 slug: campaign-reporting
 type: basic
 hidden: false
-order: 11
+order: 12
 ---
 
 ## Campaign reporting
