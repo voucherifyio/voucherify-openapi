@@ -66,7 +66,7 @@ If you are looking for a quick way to limit the number of API calls, you can cal
 
 Validation rules define the eligibility conditions for your incentives. It is possible to build them manually in the Dashboard or via API. We highly recommend creating validation rules using the Dashboard. The Rules Builder in the Dashboard helps you configure desired limits in a convenient way. The API should not be used as a preferable way to create and manage validation rules due to the bigger complexity and additional resources it would consume.
 
-For more information on validation rules, [go here](https://support.voucherify.io/article/529-validation-rules-campaign-limits).
+Learn more in [our validation rules article](https://support.voucherify.io/article/529-validation-rules-campaign-limits).
 
 Generally speaking, the more activities you perform via Dashboard the better as they do not consume your API calls limit this way.
 

@@ -29,7 +29,7 @@ Most likely, you will not have to send your keys manually. We provide [SDKs](doc
 
 > ❗ Security threat
 > 
-> It is essential that you keep your keys secure and not share them with others. Treat it as your *application's password* to Voucherify.
+> It is essential that you keep your keys secure and not share them with others. Treat it as your application's password to Voucherify.
 
 ## Client-side authentication
 

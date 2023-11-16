@@ -5,7 +5,7 @@ categorySlug: implementation-blueprint
 slug: api-endpoints
 type: basic
 hidden: false
-order: 8
+order: 70
 ---
 
 Voucherify is shipped from shared clusters located on three continents, as well as from dedicated clusters for enterprise customers.
