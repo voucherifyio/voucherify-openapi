@@ -7,6 +7,7 @@
 - Split the `Modeling Voucherify integration` article and created a `Scenario discovery` article out of that in the `Integration Blueprint` category
 - Added `Integration connectors` and `Webhooks` articles to the `Implementation Blueprint`. The articles are actually links to respective articles on Help Scout
 - Updated `Metadata mapping` (formatting, links)
+- Updated `Test mode (Sandbox)` – removed deprecated section
 
 ## 20231113 - Removing Not Used Schemas
 
