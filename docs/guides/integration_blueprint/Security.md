@@ -5,7 +5,7 @@ categorySlug: integration-blueprint
 slug: security-1
 type: basic
 hidden: false
-order: 15
+order: 16
 ---
 
 ## Security

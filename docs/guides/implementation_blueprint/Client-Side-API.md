@@ -5,7 +5,7 @@ categorySlug: implementation-blueprint
 slug: client-side-api
 type: basic
 hidden: false
-order: 9
+order: 190
 ---
 
 Sometimes it's important to validate a promo code or promotion on the client-side, e.g., you want to calculate and display a discounted price on the fly. That's why Voucherify comes with client-side features build in [Voucherify JS SDK](https://github.com/voucherifyio/voucherify-js-sdk) - an open-source JavaScript library which enables you to query the API. 

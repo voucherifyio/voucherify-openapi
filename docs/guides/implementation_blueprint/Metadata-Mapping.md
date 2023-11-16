@@ -15,7 +15,7 @@ Custom attributes can be added to your project as metadata. A metadata attribute
 Here are some exemplary scenarios that can be achieved by using metadata:
 
 - Validate redemptions based on custom attributes,
-- Filter out customers in segments (e.g., users who signed up for the newsletter before a given date) and use them for validation rules,
+- Filter out customers in segments (e.g., users who signed up for a newsletter before a given date) and use them for validation rules,
 - Run distributions based on custom customer attributes,
 - Enforce that new campaigns have proper identifiers provided for reporting.
 
@@ -48,9 +48,9 @@ You can reward your customers for certain behaviors that, in turn, will trigger 
 
 You can enhance your customer experience and control the custom attributes exposed to them directly from Voucherify:
 
-- Campaigns/vouchers - terms and conditions, link to a banner,
-- Rewards - reward details, how to retrieve the reward,
-- Earning Rules - terms and conditions.
+- Campaigns/vouchers – terms and conditions, link to a banner,
+- Rewards – reward details, how to retrieve the reward,
+- Earning Rules – terms and conditions.
 
 ## Metadata Library
 
@@ -66,24 +66,24 @@ Voucherify will take care of metadata integrity. This is achieved by a [metadata
 
 |   Object                |            Metadata              |
 | :---------------------: | :------------------------------: |
-| [Customer](https://docs.voucherify.io/reference/customer-object)                |   marital_status (string), subscribed (boolean), billing information (nested), acquisition_channel (string), braze_segment (string) |
-|      [Redemption](https://docs.voucherify.io/reference/redemption-object)         |     voucher_deep_linked (boolean) |
-|      [Product](https://docs.voucherify.io/reference/product-object)   | product_category, expiration_date (true/false), manufacturer_id, brand, flight_destination, booking_date_time|
-| [Order](https://docs.voucherify.io/reference/order-object)  | shipping_country, order_channel, payment_method, store_id, currency  |
-|[Publication](https://docs.voucherify.io/reference/publication-object) | request_source, trigger |
-| [Voucher](https://docs.voucherify.io/reference/voucher-object) | terms_and_conditions, success_banner_url, failure_banner_url, contentful_entities |
-| [Campaign](https://docs.voucherify.io/reference/campaign-object) | target_audience, location, market, campaign_owner
+| [Customer](ref:customer-object)                |   marital_status (string), subscribed (boolean), billing information (nested), acquisition_channel (string), braze_segment (string) |
+|      [Redemption](ref:redemption-object)         |     voucher_deep_linked (boolean) |
+|      [Product](ref:product-object)   | product_category, expiration_date (true/false), manufacturer_id, brand, flight_destination, booking_date_time|
+| [Order](ref:order-object)  | shipping_country, order_channel, payment_method, store_id, currency  |
+|[Publication](ref:publication-object) | request_source, trigger |
+| [Voucher](ref:voucher-object) | terms_and_conditions, success_banner_url, failure_banner_url, contentful_entities |
+| [Campaign](ref:campaign-object) | target_audience, location, market, campaign_owner
 | Order line item | category, manufacturer_id, origin, flight_number |
-| [Loyalty tier](https://docs.voucherify.io/reference/loyalty-tier-object) | exposed_tier_name, tier_banner_URL |
-| [Promotion tier](https://docs.voucherify.io/reference/promotion-tier-object) | exposed_tier_name, tier_banner_URL, location, market, campaign_owner |
-| [Earning rule](https://docs.voucherify.io/reference/earning-rule-object) | terms_and_conditions, earning_rule_splash_screen_url |
-| [Reward](https://docs.voucherify.io/reference/reward-object) | place_of_collection, terms_and_conditions |
+| [Loyalty tier](ref:loyalty-tier-object) | exposed_tier_name, tier_banner_URL |
+| [Promotion tier](ref:promotion-tier-object) | exposed_tier_name, tier_banner_URL, location, market, campaign_owner |
+| [Earning rule](ref:earning-rule-object) | terms_and_conditions, earning_rule_splash_screen_url |
+| [Reward](ref:reward-object) | place_of_collection, terms_and_conditions |
 
-## Customer PII information
+## Customer PII
 
-Sending any kind of PII information to Voucherify is not mandatory. However, passing such data enables additional features, but our promotion engine can be used without any PII information from your customers. You can just send the technical ID of the customer to enable some specific discounts to the customer. 
+Sending any kind of Personally Identifiable Information (PII) to Voucherify is not mandatory. However, passing such data enables additional features, but our promotion engine can be used without any PII from your customers. You can just send the technical ID of the customer to enable some specific discounts to the customer. 
 
-While using external tool segments, e.g., from Braze, Iterable, Salesforce, etc., segmentation is based on the PII information. During the send-out process, the tool sends a request to Voucherify to assign a voucher code to a specific customer ID, thus not passing any PII information. Such a solution enables the following scenarios:
+While using external tool segments, e.g., from Braze, Iterable, Salesforce, etc., segmentation is based on the PII. During the send-out process, the tool sends a request to Voucherify to assign a voucher code to a specific customer ID, thus not passing any PII. Such a solution enables the following scenarios:
 
 - Showing the list of vouchers for a customer (based on the customer’s ID alone),
 - Enabling the customer wallet scenario for qualification (targeted discounts based on the previous distribution),
@@ -96,13 +96,13 @@ To extend the customization capabilities of Voucherify, you can also use nested 
 Example for a billing address:
 
 ```json
-“metadata”: {
-      “billing_information”: {
-              “billing_address”: “Porcelanowa 23",
-              “billing_city”: “Katowice”,
-              “billing_country”: “Poland”,
-              “billing_postal_code”: “40-246",
-              “billing_recipient”: “John Smith”,
+"metadata": {
+      "billing_information": {
+              "billing_address": "Porcelanowa 23",
+              "billing_city": "Katowice",
+              "billing_country": "Poland",
+              "billing_postal_code": "40-246",
+              "billing_recipient": "John Smith",
     }
   }
 ```
