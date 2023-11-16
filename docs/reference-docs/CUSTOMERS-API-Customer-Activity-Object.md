@@ -849,8 +849,8 @@ Any of:
 | customer | See: [Customer Response](#customer-response) |
 | assignment_id</br>`string` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
 | voucher | <p>Defines of the voucher.</p> See: [Voucher](#voucher) |
-| product | <p>Defines of the product.</p> See: [Product](#product) |
-| sku | <p>Defines of the sku.</p> See: [Sku](#sku) |
+| product | <p>Defines of the product.</p> See: [Product Object](#product-object) |
+| sku | <p>Defines of the sku.</p> See: [SKU Object](#sku-object) |
 | loyalty_tier_id</br>`string` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 
 ## Voucher
@@ -1159,36 +1159,29 @@ One of:
 | updated_at</br>`string,null` | <p>Timestamp representing the date and time when the reward was updated in ISO 8601 format.</p> **Example:** <p>2022-08-11T16:01:34.885Z</p> |
 | object | <p>The type of object represented by the JSON. This object stores information about the reward.</p> Available values: `reward` |
 
-## Product
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique product ID.</p> |
-| source_id</br>`string` | <p>Product source id.</p> |
-| name</br>`string` | <p>Product name.</p> |
-| price</br>`integer` | <p>Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
-| attributes</br>`array` | <p>A list of product attributes whose values you can customize for given SKUs: <code>[&quot;color&quot;,&quot;size&quot;,&quot;ranking&quot;]</code>. Each child SKU can have a unique value for a given attribute.</p> |
-| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format.</p> |
-| image_url</br>`string` | <p>The HTTPS URL pointing to the .png or .jpg file.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the product was created in ISO 8601 format.</p> **Example:** <p>2021-12-01T08:00:50.038Z</p> |
-| updated_at</br>`string` | <p>Timestamp representing the date and time when the product was updated in ISO 8601 format.</p> **Example:** <p>2022-09-20T09:18:19.623Z</p> |
-| deleted</br>`boolean` | <p>Flag indicating whether this product is deleted.</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `product` |
+## Product Object
+<p>This is an object representing a product.</p><p>This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.</p>
 
-## Sku
+All of:
+
+1. [Product without Skus Object](#product-without-skus-object)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">skus</td><td style="text-align:left">See: <a href="#skus-object">SKUs object</a></td></tr></tbody></table>
+
+## SKU Object
 | Attributes |  Description |
 |:-----|:--------|
-| id</br>`string` | <p>Unique sku ID.</p> |
-| source_id</br>`string` | <p>Sku source id.</p> |
-| sku</br>`string` | <p>Sku name.</p> |
-| product_id</br>`string` | <p>A unique product ID assigned by Voucherify.</p> |
+| id</br>`string` | <p>A unique identifier that represents the SKU and is assigned by Voucherify.</p> **Example:** <p>sku_0b1621b319d248b79f</p> |
+| source_id</br>`string` | <p>A unique SKU identifier from your inventory system.</p> **Example:** <p>sku_source_id_4</p> |
+| product_id</br>`string` | <p>The parent product's unique ID.</p> **Example:** <p>prod_0b15f6b9f650c16990</p> |
+| sku</br>`string` | <p>Unique user-defined SKU name.</p> **Example:** <p>Large Pink Shirt</p> |
+| price</br>`integer` | <p>SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.</p> |
 | currency</br>`string` | <p>SKU price currency.</p> **Example:** <p>USD</p> |
-| price</br>`integer` | <p>Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
-| attributes</br>`array` | <p>A list of product attributes whose values you can customize for given SKUs: <code>[&quot;color&quot;,&quot;size&quot;,&quot;ranking&quot;]</code>. Each child SKU can have a unique value for a given attribute.</p> |
-| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format.</p> |
-| image_url</br>`string` | <p>The HTTPS URL pointing to the .png or .jpg file.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the sku was created in ISO 8601 format.</p> **Example:** <p>2021-12-01T08:00:50.038Z</p> |
-| updated_at</br>`string` | <p>Timestamp representing the date and time when the sku was updated in ISO 8601 format.</p> **Example:** <p>2022-09-20T09:18:19.623Z</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `sku` |
+| attributes</br>`object` | <p>The attributes object stores values for all custom attributes inherited by the SKU from the parent product. A set of key/value pairs that are attached to a SKU object and are unique to each SKU within a product family.</p> |
+| image_url</br>`string` | <p>The HTTPS URL pointing to the .png or .jpg file that will be used to render the SKU image.</p> |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the SKU. A set of key/value pairs that you can attach to a SKU object. It can be useful for storing additional information about the SKU in a structured format.</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the SKU was created in ISO 8601 format.</p> **Example:** <p>2022-05-17T10:36:30.187Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the SKU was updated in ISO 8601 format.</p> **Example:** <p>2022-05-17T10:55:09.137Z</p> |
+| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>SKU</code>.</p> Available values: `sku` |
 
 ## Category
 | Attributes |  Description |
@@ -1390,6 +1383,28 @@ Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
 One of:
 
 [Digital](#digital), [Pay with Points](#pay-with-points), [Material](#material)
+
+## Product without Skus Object
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique product ID assigned by Voucherify.</p> **Example:** <p>prod_0b1da8105693710357</p> |
+| source_id</br>`string` | <p>Unique product source ID.</p> **Example:** <p>productSourceID16</p> |
+| name</br>`string` | <p>Unique user-defined product name.</p> **Example:** <p>T-shirt</p> |
+| price</br>`integer` | <p>Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
+| attributes</br>`array` | <p>A list of product attributes whose values you can customize for given SKUs: <code>[&quot;color&quot;,&quot;size&quot;,&quot;ranking&quot;]</code>. Each child SKU can have a unique value for a given attribute.</p> |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format.</p> |
+| image_url</br>`string` | <p>The HTTPS URL pointing to the .png or .jpg file that will be used to render the product image.</p> **Example:** <p>https://images.com/original.jpg</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the product was created in ISO 8601 format.</p> **Example:** <p>2022-05-23T06:52:55.008Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the product was updated in ISO 8601 format.</p> **Example:** <p>2022-05-23T09:24:07.405Z</p> |
+| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the product.</p> Available values: `product` |
+
+## SKUs object
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>The type of object represented by JSON. This object stores information about SKUs.</p> |
+| data_ref</br>`string` | <p>Identifies the name of the JSON property that contains the array of SKUs.</p> |
+| data</br>`array` | <p>A dictionary that contains an array of SKUs.</p> Array of [SKU Object](#sku-object) |
+| total</br>`integer` | <p>Total number of SKUs in the product.</p> |
 
 ## Validation Rule Assignment
 | Attributes |  Description |

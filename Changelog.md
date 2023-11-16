@@ -13,7 +13,7 @@
 - RedemptionsRollbackResponseBody
 - RedemptionRewardResult
 - RedemptionsRollbackStackableResponseBody
-- RedemptionsRedeemRewardResponseBody
+- LoyaltiesRedeemRewardResponseBody
 
 - GET `v1/redemptions`
   - Response body schema was replaced with new one: `RedemptionsListResponseBody` (old one: `7_res_list_redemptions`)
@@ -28,9 +28,9 @@
   - Request body schema was added: `RedemptionsRollbackRequestBody`
   - Response body schema was replaced with new one: `RedemptionsRollbackStackableResponseBody` (old one: `19_res_redemptions_parentRedemptionId_rollbacks`)
 - GET `v1/loyalties/{campaignId}/members/{memberId}/redemption`
-  - Response body schema was replaced with new one: `RedemptionsRedeemRewardResponseBody` (old one: `8_res_redeem_reward`)
+  - Response body schema was replaced with new one: `LoyaltiesRedeemRewardResponseBody` (old one: `8_res_redeem_reward`)
 - GET `v1/vouchers/{code}/redemption`
-  - Response body schema was replaced with new one: `RedemptionsRedeemRewardResponseBody` (old one: `8_res_redeem_reward`)
+  - Response body schema was replaced with new one: `LoyaltiesRedeemRewardResponseBody` (old one: `8_res_redeem_reward`)
 
 ## 20231116
 
