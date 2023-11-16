@@ -12,8 +12,6 @@
 - RedemptionsRollbackRequestBody
 - RedemptionsRollbackResponseBody
 - RedemptionRewardResult
-- Sku
-- Product
 - RedemptionsRollbackStackableResponseBody
 - RedemptionsRedeemRewardResponseBody
 
