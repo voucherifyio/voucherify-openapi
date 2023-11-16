@@ -1,5 +1,7 @@
 # Changelog
 
+## 20231116 - Redemptions
+
 **Added schemas**
 
 - Redemption
