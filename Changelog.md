@@ -26,6 +26,7 @@
   - Request body schema was replaced with new one: `RedemptionsRollbackRequestBody` (old one: `7_req_rollback_redemption`)
   - Response body schema was replaced with new one: `RedemptionsRollbackResponseBody` (old one: `7_res_rollback_redemption`)
 - POST `/v1/redemptions/{parentRedemptionId}/rollbacks`
+  - Request body schema was added: `RedemptionsRollbackRequestBody`
   - Response body schema was replaced with new one: `RedemptionsRollbackStackableResponseBody` (old one: `19_res_redemptions_parentRedemptionId_rollbacks`)
 
 ## 20231113 - Removing Not Used Schemas

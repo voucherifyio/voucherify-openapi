@@ -20857,6 +20857,14 @@
         "title": "Rollback Redemption Request Body",
         "type": "object",
         "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Reason for the rollback."
+          },
+          "tracking_id": {
+            "type": "string",
+            "description": "Customer's `source_id`."
+          },
           "customer": {
             "$ref": "#/components/schemas/CustomerRequest"
           },
@@ -58866,24 +58874,6 @@
         ],
         "summary": "Rollback Redemption",
         "description": "Your business logic may include a case when you need to undo a redemption. You can revert a redemption by calling this API endpoint. \n\n ## Effect \nThe operation \n- creates a rollback entry in voucher's redemption history (`redemption.redemption_entries`) and \n- gives 1 redemption back to the pool (decreases `redeemed_quantity` by 1). \n## Returned funds \nIn case of *gift card vouchers*, this method returns funds back according to the source redemption. In case of *loyalty card vouchers*, this method returns points back according to the source redemption.",
-        "parameters": [
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "reason",
-            "description": "Reason for the rollback."
-          },
-          {
-            "schema": {
-              "type": "string"
-            },
-            "in": "query",
-            "name": "tracking_id",
-            "description": "Customer's `source_id`."
-          }
-        ],
         "security": [
           {
             "X-App-Id-1": [],
@@ -61122,6 +61112,49 @@
             "X-App-Token-1": []
           }
         ],
+        "requestBody": {
+          "description": "Add information about the original customer and order. Customer data and Redemption metadata can be updated in Voucherify when passing the customer data in the request body.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedemptionsRollbackRequestBody"
+              },
+              "examples": {
+                "Promotion": {
+                  "value": {
+                    "customer": {
+                      "id": "cust_SolpIN5N4oZbCnrxZ5NHrbVB",
+                      "name": "Annie Lemons",
+                      "email": "annie@lemon.com",
+                      "phone": "+1 933 222 3334",
+                      "birthday": "1900-12-02",
+                      "birthdate": "1900-12-01",
+                      "address": {
+                        "city": "New York",
+                        "state": "NY",
+                        "line_1": "123 Main St.",
+                        "line_2": "APT 3 BLG 5",
+                        "country": "United States",
+                        "postal_code": "100012"
+                      },
+                      "metadata": {
+                        "age": 23
+                      }
+                    },
+                    "order": {
+                      "source_id": "test_rollback_8"
+                    },
+                    "metadata": {
+                      "location_id": [
+                        "L2"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Returns an array with the individual redemption rollback results along with the parent rollback result and related order.",
