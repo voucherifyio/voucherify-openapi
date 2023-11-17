@@ -27245,7 +27245,7 @@
           }
         ]
       },
-      "10_req_create_order_export": {
+      "OrdersCreateExportRequestBody": {
         "type": "object",
         "title": "Create Order Export Request Body",
         "description": "Request body schema for **POST** `/orders/export`.",
@@ -29455,105 +29455,12 @@
           "loyalty"
         ]
       },
-      "16_obj_export_object": {
-        "title": "Export Object",
-        "type": "object",
-        "description": "This is an object representing an export. \n\nThe `/exports` endpoint allows you to retrieve Voucherify objects such as <!-- [vouchers](OpenAPI.json/components/schemas/Voucher) -->[vouchers](ref:get-voucher), <!-- [redemptions](OpenAPI.json/components/schemas/7_obj_redemption_object) -->[redemptions](ref:list-redemptions), <!-- [publications](OpenAPI.json/components/schemas/PublicationsCreateResponseBody) -->[publications](ref:list-publications), <!-- [customers](OpenAPI.json/components/schemas/CustomerResponse) -->[customers](ref:get-customer), and <!-- [orders](OpenAPI.json/components/schemas/OrdersUpdateResponseBody) -->[orders](ref:get-order) as a CSV file. This functionality works asynchronously and comes down to the following steps:  \n* create an export object and return its `id` so you can track its `status`\n* trigger a CSV file generation, change the status to `SCHEDULED`\n* when the generation is over, store the file in S3 and change the `status` to `DONE`\n* now you can <!-- [get](OpenAPI.json/paths/~1exports~1{exportId}/get) -->[get](ref:download-export) it\n\nWith `parameters` you can select which `fields` will be exported and `filter` out the relevant data\n\n<!--\ntitle: \"Request Body\"\nlineNumbers: true\n-->\n```json\n{\n    \"fields\": [\n        \"code\",\n        \"voucher_type\"\n    ],\n    \"filters\": {\n        \"categories\": {\n            \"conditions\": {\n                \"$in\": [\n                    \"postman\"\n                ]\n            }\n        }\n    }\n}\n```\n\n\n## Fields values\nHere is a list of the fields you can export for particular objects.  \n| **Object** | **Fields** |\n|:---|:---|\n| voucher | code<br>voucher_type<br>value<br>discount_type<br>campaign<br>category<br>start_date<br>expiration_date<br>gift_balance<br>loyalty_balance<br>redemption_quantity<br>redemption_count<br>active<br>qr_code<br>bar_code<br>id<br>is_referral_code<br>created_at<br>updated_at<br>validity_timeframe_interval<br>validity_timeframe_duration<br>validity_day_of_week<br>discount_amount_limit<br>campaign_id<br>additional_info<br>customer_id<br>discount_unit_type<br>discount_unit_effect<br>customer_source_id<br>metadata<br>metadata.X *where X is the name of a particular metadata property* |\n| redemption | object<br>date<br>voucher_code<br>campaign<br>promotion_tier_id<br>customer_id<br>customer_source_id<br>customer_name<br>tracking_id<br>order_amount<br>gift_amount<br>loyalty_points<br>result<br>failure_code<br>failure_message<br>metadata<br>metadata.X *where X is the name of a particular metadata property* |\n| publication | voucher_code<br>customer_id<br>customer_source_id<br>date<br>channel<br>campaign<br>is_winner<br>metadata<br>metadata.X *where X is the name of a particular metadata property* |\n| customer | name <br>id<br>description<br>email<br>source_id<br>created_at<br>address_city<br>address_state<br>address_line_1<br>address_line_2<br>address_country<br>address_postal_code<br>redemptions_total_redeemed<br>redemptions_total_failed<br>redemptions_total_succeeded<br>redemptions_total_rolled_back<br>redemptions_total_rollback_failed<br>redemptions_total_rollback_succeeded<br>orders_total_amount<br>orders_total_count<br>orders_average_amount<br>orders_last_order_amount<br>orders_last_order_date<br>loyalty_points<br>loyalty_referred_customers<br>updated_at<br>phone<br>birthdate<br>birthday<br>metadata<br>metadata.X *where X is the name of a particular metadata property* |\n| order | id<br>source_id<br>status<br>created_at<br>updated_at<br>amount<br>discount_amount<br>items_discount_amount<br>total_discount_amount<br>total_amount<br>customer_id<br>referrer_id<br>metadata<br>metadata.X *where X is the name of a particular metadata property* |\n| points expiration | id<br>campaign_id<br>voucher_id<br>expires_at<br>status<br>points |\n\n\n## Pagination and example request\nVoucherify allows you to specify the timeframe for the records you want to retrieve. Thanks to this mechanism it should be easy to implement a pagination mechanism. See the example of request body: \n\n<!--\ntitle: \"Request body\"\nlineNumbers: true\n-->\n```json Export Redemption Example\n{\n    \"exported_object\": \"redemption\",\n    \"parameters\": {\n        \"order\": \"-created_at\",\n        \"fields\": [\n            \"id\",\n            \"object\",\n            \"date\",\n            \"voucher_code\",\n            \"customer_id\",\n            \"result\"\n        ],\n        \"filters\": {\n            \"junction\": \"and\",\n            \"created_at\": {\n                \"conditions\": {\n                    \"$after\": [\n                        \"2018-05-30T22:00:00.000Z\"\n                    ],\n                    \"$before\": [\n                        \"2018-06-29T22:00:00.000Z\"\n                    ]\n                }\n            }\n        }\n    }\n}\n```\n\nAn export request will almost always result in a single file being generated by the system. However, when your volume of data is large, the system may split the results into multiple chunks.",
+      "OrdersCreateExportResponseBody": {
+        "description": "This is an object representing an export.",
         "x-tags": [
           "EXPORTS API"
         ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique export ID.",
-            "example": "exp_FFfp9o7daWuJqJCKp5xqqli4"
-          },
-          "object": {
-            "type": "string",
-            "default": "export",
-            "description": "The type of object being represented. This object stores information about the `export`."
-          },
-          "created_at": {
-            "type": "string",
-            "example": "2022-04-28T11:23:20.922Z",
-            "description": "Timestamp representing the date and time when the export was scheduled in ISO 8601 format.",
-            "format": "date-time"
-          },
-          "status": {
-            "type": "string",
-            "description": "Status of the export. Informs you whether the export has already been completed, i.e. indicates whether the file containing the exported data has been generated.",
-            "enum": [
-              "SCHEDULED",
-              "IN_PROGRESS",
-              "DONE",
-              "ERROR"
-            ]
-          },
-          "channel": {
-            "type": "string",
-            "description": "The channel through which the export was triggered.",
-            "enum": [
-              "API",
-              "WEBSITE"
-            ]
-          },
-          "exported_object": {
-            "type": "string",
-            "description": "The type of exported object.",
-            "enum": [
-              "order",
-              "voucher",
-              "publication",
-              "redemption",
-              "customer",
-              "points_expiration",
-              "voucher_transactions"
-            ]
-          },
-          "parameters": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/16_obj_export_order"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_voucher"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_publication"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_redemption"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_customer"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_points_expiration"
-              },
-              {
-                "$ref": "#/components/schemas/voucher_transactions_filters"
-              },
-              {
-                "$ref": "#/components/schemas/16_obj_export_loyalty_card_transactions"
-              }
-            ]
-          },
-          "result": {
-            "type": "object",
-            "description": "Contains the URL of the CSV file.",
-            "properties": {
-              "url": {
-                "type": "string",
-                "description": "URL of the CSV file location. It contains the `token` used for authorization in the <!-- [Download export](OpenAPI.json/paths/~1exports~1{export_Id}/get) -->[Download export](ref:download-export) method."
-              }
-            }
-          },
-          "user_id": {
-            "type": "string",
-            "description": "Identifies the specific user who initiated the export through the Voucherify Dashboard; returned when the `channel` value is `WEBSITE`.",
-            "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH"
-          }
-        }
+        "$ref": "#/components/schemas/ExportOrderRequest"
       },
       "16_obj_export_order": {
         "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data.",
@@ -36163,6 +36070,42 @@
           "NON_EXPIRING"
         ]
       },
+      "ExportOrderRequest": {
+        "title": "Export Order",
+        "properties": {
+          "exported_object": {
+            "type": "string",
+            "enum": [
+              "order"
+            ],
+            "description": "The type of object to be exported."
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order": {
+                "$ref": "#/components/schemas/ExportOrderOrder",
+                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
+              },
+              "fields": {
+                "type": "array",
+                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
+                "items": {
+                  "$ref": "#/components/schemas/ExportOrderFields"
+                }
+              },
+              "filters": {
+                "$ref": "#/components/schemas/ExportOrderFilters",
+                "description": "Filter conditions."
+              }
+            },
+            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
+          }
+        },
+        "required": [
+          "exported_object"
+        ]
+      },
       "ExportsCreateRequestBody": {
         "anyOf": [
           {
@@ -36310,40 +36253,7 @@
             ]
           },
           {
-            "title": "Export Order",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "order"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportOrderOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportOrderFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportOrderFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object"
-            ]
+            "$ref": "#/components/schemas/ExportOrderRequest"
           },
           {
             "title": "Export Points Expirations",
@@ -73358,7 +73268,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/10_req_create_order_export"
+                "$ref": "#/components/schemas/OrdersCreateExportRequestBody"
               },
               "examples": {
                 "Using fields": {
@@ -73421,7 +73331,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/16_obj_export_object"
+                  "$ref": "#/components/schemas/OrdersCreateExportResponseBody"
                 },
                 "examples": {
                   "Example": {
