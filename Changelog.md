@@ -1,5 +1,29 @@
 # Changelog
 
+## 20231117
+
+**Added schemas**
+
+- OrdersImportOrdersRequestBody
+- ValidationRulesListResponseBody
+- ValidationRulesCreateRequestBody
+- ValidationRuleResponse
+- ValidationRuleRequest
+- ValidationRulesUpdateRequestBody
+
+- POST `/v1/orders/import`
+  - Request body schema was replaced with new one: `OrdersImportOrdersRequestBody` (old one: `10_req_orders_import`)
+- GET `/v1/validation-rules`
+  - Response body schema was replaced with new one: `ValidationRulesListResponseBody` (old one: `13_res_list_validation_rules`)
+- POST `/v1/validation-rules`
+  - Request body schema was replaced with new one: `ValidationRulesCreateRequestBody` (old one: `13_req_create_validation_rule`)
+  - Response body schema was replaced with new one: `ValidationRulesCreateResponseBody` (old one: `13_obj_validation_rule_object`)
+- GET `/v1/validation-rules/{validationRuleId}`
+  - Response body schema was replaced with new one: `ValidationRulesGetResponseBody` (old one: `13_obj_validation_rule_object`)
+- GET `/v1/validation-rules/{validationRuleId}`
+  - Request body schema was replaced with new one: `ValidationRulesUpdateRequestBody` (old one: `13_req_create_validation_rule`)
+  - Response body schema was replaced with new one: `ValidationRulesUpdateResponseBody` (old one: `13_obj_validation_rule_object`)
+
 ## 20231116 - Redemptions
 
 **Added schemas**
