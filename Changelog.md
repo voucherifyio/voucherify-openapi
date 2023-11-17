@@ -1,5 +1,37 @@
 # Changelog
 
+## 20231116 - Redemptions
+
+**Added schemas**
+
+- Redemption
+- RedemptionRollback
+- RedemptionsGetResponseBody
+- RedemptionsListResponseBody
+- RedemptionsGetVoucherRedemptionResponseBody
+- RedemptionsRollbackRequestBody
+- RedemptionsRollbackResponseBody
+- RedemptionRewardResult
+- RedemptionsRollbackStackableResponseBody
+- RedemptionsRedeemRewardResponseBody
+
+- GET `v1/redemptions`
+  - Response body schema was replaced with new one: `RedemptionsListResponseBody` (old one: `7_res_list_redemptions`)
+- GET `v1/redemptions/{redemptionId}`
+  - Response body schema was replaced with new one: `RedemptionsGetResponseBody` (old one: `7_res_get_redemption`)
+- GET `v1/vouchers/{code}/redemption`
+  - Response body schema was replaced with new one: `RedemptionsGetVoucherRedemptionResponseBody` (old one: `7_res_get_vouchers_redemptions`)
+- POST `v1/redemptions/{redemptionId}/rollback`
+  - Request body schema was replaced with new one: `RedemptionsRollbackRequestBody` (old one: `7_req_rollback_redemption`)
+  - Response body schema was replaced with new one: `RedemptionsRollbackResponseBody` (old one: `7_res_rollback_redemption`)
+- POST `/v1/redemptions/{parentRedemptionId}/rollbacks`
+  - Request body schema was added: `RedemptionsRollbackRequestBody`
+  - Response body schema was replaced with new one: `RedemptionsRollbackStackableResponseBody` (old one: `19_res_redemptions_parentRedemptionId_rollbacks`)
+- GET `v1/loyalties/{campaignId}/members/{memberId}/redemption`
+  - Response body schema was replaced with new one: `RedemptionsRedeemRewardResponseBody` (old one: `8_res_redeem_reward`)
+- GET `v1/vouchers/{code}/redemption`
+  - Response body schema was replaced with new one: `RedemptionsRedeemRewardResponseBody` (old one: `8_res_redeem_reward`)
+
 ## 20231116
 
 - Changed the order of the articles in the `Implementation Blueprint` category
@@ -372,8 +404,7 @@ https://github.com/voucherifyio/voucherify-openapi/pull/535/files
 - RedeemableResultPromotionTier
 - RedeemableResultPromotionStack
 - RedemptionsRedeemResponseBody
-- RedemptionsRedemption
-- RedemptionsRedemptionBase
+- RedemptionInternal
 
 **REMOVED ALL DUMMY ENDPOINTS AS WE DON'T USE THEM ANYMORE!!!**
 
