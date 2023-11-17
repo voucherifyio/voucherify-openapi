@@ -27,7 +27,37 @@ order: 1
 | Attributes |  Description |
 |:-----|:--------|
 | logic</br>`string` | <p>Defines the logic between the rules.</p> **Example:** <p>(1 and 2) and (3)</p> |
-| [propertyName]</br>`object` | <p>Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Voucherify specific rule name.  The list of available names is provided below.</p><p><strong>Name</strong></td></tr><tr><td style="text-align:left">property</br><code>string,null</code></td><td style="text-align:left"><p>Custom name for a metadata property associated with the condition to be satisfied. <strong>Required</strong> if the property <code>name</code> is any of the following:<br>customer_metadata<br>custom_event_metadata<br>order_items_metadata<br>order_metadata<br>product_metadata<br>redemption_metadata</p></td></tr><tr><td style="text-align:left">conditions</br><code>object</code></td><td style="text-align:left"><p>A set of key value pairs representing the condition name and value. The list of available conditions is provided below:</p><table><thead><tr><th><strong>Condition (key)</strong></th><th><strong>Definition</strong></th><th><strong>Does not support Types</strong></th></tr></thead><tbody><tr><td>$is</td><td>A property is a predefined value.</td><td></td></tr><tr><td>$is_not</td><td>A property is not a predefined value.</td><td></td></tr><tr><td>$in</td><td>A property either one value in a predefined list of values.</td><td></td></tr><tr><td>$less_than</td><td>A property is less than a predefined value.</td><td>boolean</td></tr><tr><td>$less_than_or_equal</td><td>A property is less than or equal to a predefined value.</td><td>boolean</td></tr><tr><td>$more_than</td><td>A property is more than a predefined value.</td><td>boolean</td></tr><tr><td>$more_than_or_equal</td><td>A property is more than or equal to a predefined value.</td><td>boolean</td></tr><tr><td>$starts_with</td><td>A property starts with the predefined sequence of characters.</td><td>boolean, number</td></tr><tr><td>$ends_with</td><td>A property ends with the predefined sequence of characters.</td><td>boolean, number</td></tr><tr><td>$contains</td><td>A property contains the predefined sequence of characters.</td><td>boolean, number</td></tr><tr><td>$timeframe</td><td></td><td>boolean, number</td></tr><tr><td>$dow</td><td></td><td>boolean, string</td></tr><tr><td>$count</td><td></td><td>boolean, string</td></tr><tr><td>$count_more</td><td></td><td>boolean, string</td></tr><tr><td>$count_less</td><td></td><td>boolean, string</td></tr></tbody></table> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">$one_of_voucherify_conditions</br><code>array</code></td><td style="text-align:left"><p>Contains a set of conditions for the rule.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">rules</td><td style="text-align:left">See: <a href="#validation-rule-rules">Validation Rule Rules</a></td></tr><tr><td style="text-align:left">error</br><code>object</code></td><td style="text-align:left"><p>Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>The error message returned from API when validation / redemption fails to meet requirements of defined rule.</p></td></tr></tbody></table></td></tr></tbody></table> |
+| [propertyName]</br>`object` | <p>Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Voucherify specific rule name.  The list of available names is provided below.</p><p><strong>Name</strong></td></tr><tr><td style="text-align:left">property</br><code>string,null</code></td><td style="text-align:left"><p>Custom name for a metadata property associated with the condition to be satisfied. <strong>Required</strong> if the property <code>name</code> is any of the following:<br>customer_metadata<br>custom_event_metadata<br>order_items_metadata<br>order_metadata<br>product_metadata<br>redemption_metadata</p></td></tr><tr><td style="text-align:left">conditions</td><td style="text-align:left">See: <a href="#validation-rule-conditions">Validation Rule Conditions</a></td></tr><tr><td style="text-align:left">rules</td><td style="text-align:left">See: <a href="#validation-rule-rules">Validation Rule Rules</a></td></tr><tr><td style="text-align:left">error</br><code>object</code></td><td style="text-align:left"><p>Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>The error message returned from API when validation / redemption fails to meet requirements of defined rule.</p></td></tr></tbody></table></td></tr></tbody></table> |
+
+## Validation Rule Conditions
+| Attributes |  Description |
+|:-----|:--------|
+| $is | See: [Any](#any) |
+| $is_not | See: [Any](#any) |
+| $in | See: [Any](#any) |
+| $not_in | See: [Any](#any) |
+| $less_than | See: [Any](#any) |
+| $less_than_or_equal | See: [Any](#any) |
+| $more_than | See: [Any](#any) |
+| $more_than_or_equal | See: [Any](#any) |
+| $starts_with | See: [Any](#any) |
+| $ends_with | See: [Any](#any) |
+| $contains | See: [Any](#any) |
+| $timeframe | See: [Any](#any) |
+| $timeframe_absolute | See: [Any](#any) |
+| $dow | See: [Any](#any) |
+| $count | See: [Any](#any) |
+| $count_more | See: [Any](#any) |
+| $count_less | See: [Any](#any) |
+| $from | See: [Any](#any) |
+
+## Any
+Any of:
+
+ 1. Array any of: string, number, object
+ 2. string
+ 3. number
+ 4. object
 
 [block:html]
 {
