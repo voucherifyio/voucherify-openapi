@@ -1,5 +1,13 @@
 # Changelog
 
+## 20231117 - Quality Fixes
+
+**Changed schemas**
+- UpsertProductRequestBody to CreateProductRequestBody
+- BulkUpsertProductRequestBody to BulkUpdateProductRequestBody
+- Fixed wrong required properties in Products and Discounts responses
+- Using type null instead of nullable flag
+
 ## 20231113 - Removing Not Used Schemas
 
 **Removed schemas**
