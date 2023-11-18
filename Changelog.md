@@ -2,6 +2,19 @@
 
 ## 20231117
 
+*Renamed schemas**
+- OrdersCreateExportRequestBody (old `10_req_create_order_export`)
+- OrdersCreateExportResponseBody (old `16_obj_export_object`)
+
+**Added schemas**
+- ExportOrderRequest
+- ExportResponseBase
+
+- POST `/v1/orders/import`
+  - Request body schema was replaced with new one: `OrdersImportRequestBody` (old one: `10_req_orders_import`)
+
+## 20231117
+
 **Added schemas**
 
 - OrdersImportRequestBody
