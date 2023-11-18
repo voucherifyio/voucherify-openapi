@@ -4,7 +4,7 @@
 
 **Added schemas**
 
-- OrdersImportOrdersRequestBody
+- OrdersImportRequestBody
 - ValidationRulesListResponseBody
 - ValidationRulesCreateRequestBody
 - ValidationRuleResponse
@@ -12,7 +12,7 @@
 - ValidationRulesUpdateRequestBody
 
 - POST `/v1/orders/import`
-  - Request body schema was replaced with new one: `OrdersImportOrdersRequestBody` (old one: `10_req_orders_import`)
+  - Request body schema was replaced with new one: `OrdersImportRequestBody` (old one: `10_req_orders_import`)
 - GET `/v1/validation-rules`
   - Response body schema was replaced with new one: `ValidationRulesListResponseBody` (old one: `13_res_list_validation_rules`)
 - POST `/v1/validation-rules`
