@@ -28,10 +28,7 @@ export const mdTables: [string, string?][] = [
     "ProductCollectionsItemResponse",
     "PRODUCT-COLLECTIONS-API-Product-Collection-Object.md",
   ],
-  [
-    "13_obj_validation_rule_object",
-    "VALIDATION-RULES-API-Validation-Rule-Object.md",
-  ],
+  ["ValidationRuleResponse", "VALIDATION-RULES-API-Validation-Rule-Object.md"],
   [
     "validation_rule_assignment",
     "VALIDATION-RULES-API-Validation-Rule-Assignment-Object.md",
