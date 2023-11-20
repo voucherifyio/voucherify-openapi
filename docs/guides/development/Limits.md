@@ -1,7 +1,7 @@
 ---
 title: Limits
 excerpt: API calls limits and optimization
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: limits
 type: basic
 hidden: false

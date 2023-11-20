@@ -1,7 +1,7 @@
 ---
 title: Integration and connectors
 excerpt:
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: integration-connectors
 type: link
 hidden: false

@@ -1,7 +1,7 @@
 ---
 title: SDKs
 excerpt: 
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: sdks
 type: basic
 hidden: false

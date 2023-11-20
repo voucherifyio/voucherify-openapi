@@ -35,11 +35,7 @@ Voucherify is perfect for ecommerce brands transitioning to MACH and building a 
 
 Voucherify enhances store capabilities with advanced promotions, crucial for revenue. At the same time, Voucherify opens the door to loyalty and referral programs without the need to integrate any additional platform.
 
-<!-- Customer story – CASA 
-
-Discover the full story 
-
-DTC Ecommerce -->
+<!--
 
 > 👍 Customer story – Breville
 > 
@@ -63,9 +59,18 @@ DTC Ecommerce -->
 > 
 > </details>
 
+-->
+
+> 👍 Customer story – Breville
+> 
+> See how [Breville](https://www.voucherify.io/customers/breville "How Breville is Winning Digital Transformation with Voucherify and Friends") integrated Voucherify with commercetools.
+
+
 ## On-demand services
 
 Whether it’s fin-tech, ed-tech, mobility, or anything else, Voucherify is a driving force for customer engagement (especially in the context of recent changes in ad tracking). With a flexible data model and integrations with leading CDP and CRM platforms, mobile apps can make the most of the collected data in minimal time.
+
+<!--
 
 > 👍 Customer story – Taxfix 
 > <details>
@@ -94,6 +99,13 @@ Whether it’s fin-tech, ed-tech, mobility, or anything else, Voucherify is a dr
 >
 > </details>
 
+-->
+
+> 👍 Customer story – Taxfix 
+>
+> See how [Taxfix](https://www.voucherify.io/customers/taxfix "How Taxfix increased referral registrations by 95% with Voucherify and Braze?") doubles referrals with Voucherify.
+
+<!--
 ## QSRs
 
 
@@ -119,6 +131,16 @@ QSRs often need to handle a large volume of data in real-time. Voucherify provid
 > Read the [whole BAEMIN story](https://www.voucherify.io/customers/baemin "How BAEMIN Vietnam handled over 60 million redemptions in a coupon-hungry market")
 >
 > </details>
+
+-->
+
+## Software vendors
+
+Voucherify APIs can be effectively integrated into other software tools to drastically enhance the offer of technology vendors. Voucherify has already been successfully incorporated into mobility technologies, booking services, and ecommerce and marketplace engines.
+
+> 👍 Customer story – Grinta
+>
+> See how [Grinta](https://www.voucherify.io/customers/grinta "How Grinta uses Voucherify to increase AOV by 20%") boosts AOV by 20% with Voucherify.
 
 ## What problems does Voucherify solve?
 
