@@ -1,7 +1,7 @@
 ---
 title: Webhooks
 excerpt:
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: webhooks
 type: link
 hidden: false

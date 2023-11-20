@@ -1,7 +1,7 @@
 ---
 title: Error Codes
 excerpt: 
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: error-codes
 type: link
 hidden: false

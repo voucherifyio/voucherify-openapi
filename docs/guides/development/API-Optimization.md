@@ -1,7 +1,7 @@
 ---
 title: API Optimization
 excerpt: API calls optimization
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: api-optimization
 type: basic
 hidden: false
