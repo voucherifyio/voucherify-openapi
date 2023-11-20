@@ -18,7 +18,7 @@ Every integration is unique – however, at its core, the integration of Voucher
 
 As a [MACH-certified vendor](https://machalliance.org/), Voucherify follows the principles of **composability**, giving you flexibility and decreasing the time needed for integration.  
 
-![How Voucherify works with your system and our rules engine](https://files.readme.io/d362b66-guides_getting_started_welcome_to_voucherify_voucherify_workflow_scheme_01.png "How Voucherify works with your system and our rules engine")
+![How Voucherify works with your system and our rules engine](https://files.readme.io/494bc1a-guides_getting_started_welcome_to_voucherify_voucherify_workflow_scheme_01.png "How Voucherify works with your system and our rules engine")
 
 ## Who uses Voucherify and why?
 
@@ -26,7 +26,7 @@ Voucherify can be successfully adopted across industries in B2C and B2B contexts
 
 Leveraging targeted promotions at every stage of the customer lifecycle can help you maximize engagement. This way, you can acquire customers through social media promotion, convert them with a welcome offer, grow them as customers via referrals, and ultimately, build better retention tactics with smart loyalty campaigns and re-engage them with incentives tailored to their profiles. This is the perfect scenario that each brand should aspire to achieve. But to get there, you need proper technology. 
 
-![Promotion lifecycle](https://files.readme.io/205a42e-guides_getting_started_welcome_to_voucherify_acquisition_to_re-activation_diagram-02.png "Promotion lifecycle showing acquisition, conversion, growth, retention, and re-activation")
+![Promotion lifecycle](https://files.readme.io/bebe00d-guides_getting_started_welcome_to_voucherify_acquisition_to_re-activation_diagram-02.png "Promotion lifecycle showing acquisition, conversion, growth, retention, and re-activation")
 
 ## Retail – Ecommerce & POS
 
