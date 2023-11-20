@@ -7368,7 +7368,7 @@
           {}
         ]
       },
-      "Campaign": {
+      "CampaignResponse": {
         "type": "object",
         "title": "Campaign Object",
         "description": "This is an object representing a campaign.",
@@ -7410,17 +7410,7 @@
             ]
           },
           "voucher": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
-              },
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
-              },
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_LOYALTY_CARD"
-              }
-            ]
+            "$ref": "#/components/schemas/CampaignVoucher"
           },
           "auto_join": {
             "type": "boolean",
@@ -7608,6 +7598,135 @@
           },
           "validation_rules_assignments": {
             "$ref": "#/components/schemas/ValidationRulesAssignmentsList"
+          },
+          "loyalty_tiers_expiration":  {
+            "$ref": "#/components/schemas/LoyaltyTiersExpirationAll"
+          }
+        }
+      },
+      "CampaignVoucher": {
+        "type": "object",
+        "description": "Schema model for a campaign voucher.",
+        "title": "Campaign Discount Voucher",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "DISCOUNT_VOUCHER",
+            "description": "Type of voucher."
+          },
+          "discount": {
+            "$ref": "#/components/schemas/Discount",
+            "description": "Defines the voucher discount type and details."
+          },
+          "gift": {
+            "$ref": "#/components/schemas/Gift",
+            "description": "Defines the voucher gift details."
+          },
+          "loyalty_card": {
+            "$ref": "#/components/schemas/CampaignLoyaltyCard",
+            "description": "Defines the voucher loyalty card details."
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              }
+            }
+          },
+          "code_config": {
+            "type": "object",
+            "description": "Defines code's pattern (prefix, suffix, length, charset, etc).",
+            "properties": {
+              "length": {
+                "type": "string",
+                "description": "Number of characters in a generated code (excluding prefix and postfix)."
+              },
+              "charset": {
+                "type": "string",
+                "description": "Characters that can appear in the code.  \n\nExamples:\n\n- Alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic Lowercase: `abcdefghijklmnopqrstuvwxyz` \n- Alphabetic Uppercase: `ABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Numbers: `0123456789`  \n- Custom: a custom character set"
+              },
+              "prefix": {
+                "type": "string",
+                "description": "A text appended before the code."
+              },
+              "postfix": {
+                "type": "string",
+                "description": "A text appended after the code."
+              },
+              "pattern": {
+                "type": "string",
+                "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
+              },
+              "initial_count": {
+                "type": "integer",
+                "description": "The initial count"
+              }
+            }
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Indicates whether the voucher is a referral code; this is `true` for campaign type `REFERRAL_PROGRAM`."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
+            "example": "2022-09-20T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
+            "example": "2022-09-30T00:00:00.000Z"
+          },
+          "validity_timeframe": {
+            "type": "object",
+            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+            "properties": {
+              "interval": {
+                "type": "string",
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
+              },
+              "duration": {
+                "type": "string",
+                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
+              }
+            }
+          }
+        }
+      },
+      "CampaignLoyaltyCard": {
+        "type": "object",
+        "description": "Schema model for a campaign loyalty card.",
+        "title": "Campaign Loyalty Card",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card."
+          },
+          "expiration_rules": {
+            "type": "object",
+            "properties": {
+              "period_type": {
+                "type": "string",
+                "description": "Type of period"
+              },
+              "period_value": {
+                "type": "integer",
+                "description": "Value of the period"
+              },
+              "rounding_type": {
+                "type": "string",
+                "description": "Type of rounding"
+              },
+              "rounding_value": {
+                "type": "integer",
+                "description": "Value of rounding"
+              }
+            }
           }
         }
       },
@@ -9042,7 +9161,7 @@
             "type": "array",
             "description": "Contains array of campaign objects.",
             "items": {
-              "$ref": "#/components/schemas/2_obj_campaign_object"
+              "$ref": "#/components/schemas/CampaignResponse"
             }
           },
           "total": {
@@ -23912,6 +24031,100 @@
           }
         }
       },
+      "LoyaltyTiersExpirationAll": {
+        "title": "Loyalty Tiers Expiration",
+        "type": "object",
+        "description": "Defines the Loyalty Tiers Expiration.",
+        "properties": {
+          "qualification_type": {
+            "type": "string",
+            "enum": [
+              "BALANCE",
+              "POINTS_IN_PERIOD"
+            ],
+            "description": "Tier qualification.   \n\n`BALANCE`: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier. \n `POINTS_IN_PERIOD`: A customer qualifies for the tier only if the sum of the accumulated points in a **defined time interval** reaches the tier threshold."
+          },
+          "qualification_period": {
+            "type": "string",
+            "description": "Customers can qualify for the tier if they collected enough points in a given time period. So, in addition to the customer having to reach a points range, they also need to have collected the points within a set time period.    \n\n| **Period** | **Definition** |\n|:---|:---|\n| **Calendar Month** | Points collected in one calendar month<br>January, February, March, etc. |\n| **Calendar Quarter** | Points collected in the quarter<br>- January - March<br>- April - June<br>- July - September<br>- October - December |\n| **Calendar Half-year** | Points collected in the half-year<br>- January - June<br>- July - December |\n| **Calendar Year** | Points collected in one calendar year<br>January - December |",
+            "enum": [
+              "MONTH",
+              "QUARTER",
+              "HALF_YEAR",
+              "YEAR"
+            ]
+          },
+          "start_date": {
+            "type": "object",
+            "description": "Defines the conditions for the start date of the tier.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "IMMEDIATE",
+                  "NEXT_PERIOD"
+                ],
+                "description": "What triggers the tier to be valid for a customer.    \n`IMMEDIATE`: After reaching the minimum required points. \n`NEXT_PERIOD`: When the next qualification period starts."
+              }
+            }
+          },
+          "expiration_date": {
+            "type": "object",
+            "description": "Defines the conditions for the expiration date of a tier.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "END_OF_PERIOD",
+                  "END_OF_NEXT_PERIOD",
+                  "BALANCE_DROP",
+                  "CUSTOM"
+                ],
+                "description": "What triggers the tier to expire for a customer.    \n`END_OF_PERIOD`: Expire tier at the end of the period.    \n`END_OF_NEXT_PERIOD`:  Expire tier at the end of the next period. \n `BALANCE_DROP`: Tier expires when the points balance drops below the required range of the tier. \n `CUSTOM`: Tier expires after a certain time period passes following the instance the points balance drops below the required range of the tier."
+              },
+              "extend": {
+                "type": "string",
+                "description": "Extend the expiration by adding extra months or days in ISO 8601 format. The tier will remain active even though it reaches its expiration time period. For example, a tier with a duration of `P3M` will be valid for an additional duration of 3 months and a tier with a duration of `P1D` will be valid for an additional duration of 1 day."
+              },
+              "rounding": {
+                "description": "Defines the rounding mechanism for tier expiration.",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "MONTH",
+                      "QUARTER",
+                      "HALF_YEAR",
+                      "YEAR",
+                      "CUSTOM"
+                    ],
+                    "description": "This mechanism describes a custom rounding for the expiration date."
+                  },
+                  "strategy": {
+                    "type": "string",
+                    "enum": [
+                      "START",
+                      "END"
+                    ],
+                    "description": "This mechanism describes a rounding strategy for the expiration date."
+                  },
+                  "unit": {
+                    "type": "string",
+                    "description": "Defines the type of unit of time in which the rounding period is counted.",
+                    "enum": [
+                      "MONTH"
+                    ]
+                  },
+                  "value": {
+                    "type": "integer",
+                    "description": "Value for the unit of time that the rounding applies to. Units for this parameter are defined by the `rounding.unit` parameter.    \n- `0`: January\n- `1`: February\n- `2`: March\n- `3`: April\n- `4`: May\n- `5`: June\n- `6`: July\n- `7`: August\n- `8`: September\n- `9`: October\n- `10`: November\n- `11`: December"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "8_loyalty_tiers_expiration_balance_expiration_date_balance_drop": {
         "title": "Balance Drop",
         "type": "object",
@@ -28108,7 +28321,7 @@
       "13_obj_validation_rule_object": {
         "title": "Validation Rule Object",
         "type": "object",
-        "description": "This is an object representing a validation rule.  \n\nThis entity stores the rules used to limit resources in Voucherify. The validation rule can be assigned to resources such as a:  \n- <!-- [voucher](OpenAPI.json/components/schemas/Voucher) -->[voucher](ref:get-voucher)\n- <!-- [campaign](OpenAPI.json/components/schemas/2_obj_campaign_object) -->[campaign](ref:get-campaign)\n- <!-- [earning rule](OpenAPI.json/components/schemas/8_obj_earning_rule_object) -->[earning rule](ref:get-earning-rule)\n- <!-- [reward assignment](OpenAPI.json/components/schemas/4_obj_reward_assignment_object) -->[reward assignment](ref:get-reward-assignment)\n- <!-- [promotion tier](OpenAPI.json/components/schemas/PromotionTier) -->[promotion tier](ref:list-promotion-tiers)\n- <!-- [distribution](OpenAPI.json/components/schemas/PublicationsCreateResponseBody) -->[publication](ref:list-publications)\n\nYou can configure the Validation Rule to include your own custom error messages which are going to be returned from the API upon a validation / redemption failure. You can read more <!-- [here](../docs/introduction/Errors.md#custom-error-messages-with-Validation-Rules) -->[here](ref:errors#custom-error-messages-with-validation-rules).",
+        "description": "This is an object representing a validation rule.  \n\nThis entity stores the rules used to limit resources in Voucherify. The validation rule can be assigned to resources such as a:  \n- <!-- [voucher](OpenAPI.json/components/schemas/Voucher) -->[voucher](ref:get-voucher)\n- <!-- [campaign](OpenAPI.json/components/schemas/CampaignResponse) -->[campaign](ref:get-campaign)\n- <!-- [earning rule](OpenAPI.json/components/schemas/8_obj_earning_rule_object) -->[earning rule](ref:get-earning-rule)\n- <!-- [reward assignment](OpenAPI.json/components/schemas/4_obj_reward_assignment_object) -->[reward assignment](ref:get-reward-assignment)\n- <!-- [promotion tier](OpenAPI.json/components/schemas/PromotionTier) -->[promotion tier](ref:list-promotion-tiers)\n- <!-- [distribution](OpenAPI.json/components/schemas/PublicationsCreateResponseBody) -->[publication](ref:list-publications)\n\nYou can configure the Validation Rule to include your own custom error messages which are going to be returned from the API upon a validation / redemption failure. You can read more <!-- [here](../docs/introduction/Errors.md#custom-error-messages-with-Validation-Rules) -->[here](ref:errors#custom-error-messages-with-validation-rules).",
         "x-tags": [
           "VALIDATION RULES API"
         ],
@@ -44039,7 +44252,7 @@
           "PROMOTIONS API"
         ],
         "summary": "Create Campaign",
-        "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n<!-- theme: info -->\n\n> 📘 Global uniqueness\n>\n> All campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.  \n<!-- theme: warning -->\n> 🚧 Code generation status\n>\n> This is an asynchronous action; you can't read or modify a newly created campaign until the code generation is completed. See the `creation_status` field in the <!-- [campaign object](OpenAPI.json/components/schemas/2_obj_campaign_object) -->[campaign object](ref:get-campaign) description.",
+        "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n<!-- theme: info -->\n\n> 📘 Global uniqueness\n>\n> All campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.  \n<!-- theme: warning -->\n> 🚧 Code generation status\n>\n> This is an asynchronous action; you can't read or modify a newly created campaign until the code generation is completed. See the `creation_status` field in the <!-- [campaign object](OpenAPI.json/components/schemas/CampaignResponse) -->[campaign object](ref:get-campaign) description.",
         "parameters": [],
         "security": [
           {
@@ -44321,7 +44534,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/2_obj_campaign_object"
+                  "$ref": "#/components/schemas/CampaignResponse"
                 },
                 "examples": {
                   "Discount Campaign": {
@@ -45245,7 +45458,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/2_obj_campaign_object"
+                  "$ref": "#/components/schemas/CampaignResponse"
                 },
                 "examples": {
                   "Example": {
@@ -45358,7 +45571,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/2_obj_campaign_object"
+                  "$ref": "#/components/schemas/CampaignResponse"
                 },
                 "examples": {
                   "Example": {
@@ -45806,7 +46019,7 @@
           }
         ],
         "requestBody": {
-          "description": "Discount type, expiration date and the remaining attributes will be taken from the <!-- [Campaign](OpenAPI.json/components/schemas/2_obj_campaign_object) -->[Campaign](ref:get-campaign) settings.",
+          "description": "Discount type, expiration date and the remaining attributes will be taken from the <!-- [Campaign](OpenAPI.json/components/schemas/CampaignResponse) -->[Campaign](ref:get-campaign) settings.",
           "content": {
             "application/json": {
               "schema": {
@@ -46033,7 +46246,7 @@
           "CAMPAIGNS API"
         ],
         "summary": "Import Vouchers to Campaign by CSV",
-        "description": "Imports vouchers to an **existing** campaign.  \n\n\nThe CSV file has to include headers in the first line. \n\nCurl Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/campaigns/TEST-CAMPAIGN/importCSV \\\n  -F file=@/path/to/campaigns.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\nYou can import values for the following fields: `Code` (**required**), `Category`, `Active`. In a gift cards import, you can also include the current card balance using the `Gift Amount` header and the amount that was redeemed using the `Redeemed Amount` header. In a loyalty cards import, you can also include the current loyalty card score in points using the `Loyalty Points` header. Remaining CSV columns will be mapped to metadata properties. \n\nDiscount type, time limits, and validation rules will be taken from the <!-- [campaign object](OpenAPI.json/components/schemas/2_obj_campaign_object) -->[campaign object](ref:get-campaign) settings. \n\n\n| **Active** | **Code** | **Loyalty Points** | **Gift Amount** | **Redeemed Amount** | **Redeemed Quantity** | **Category** | **Custom_metadata_property** |\n|---|---|---|---|---|---|---|---|\n| Use `true` or `false` to enable or disable the voucher; this flag can be used to turn off the ability to redeem a voucher even though it is within the campaign's start/end validity timeframe. | The unique voucher code. | The number of points to be added to the loyalty card. If you leave this undefined, then the initial number of points will be set according to the campaign settings.<br>Context: `LOYALTY_PROGRAM` | The initial gift card balance.<br>Context: `GIFT_VOUCHERS` | The amount that was redeemed from the available balance on a gift card. | The number of times the voucher has been redeemed. | A custom tag for the voucher to help you filter codes; you can either import the category name or a unique Voucherify-assigned category ID. | Any additional data that you would like to store for the given loyalty card as a Custom attribute. Remember to define the metadata schema in the Dashboard prior to importing codes. |\n|<!-- theme: info -->\n\n> 📘 Active\n>\n> The CSV file is allowed in two versions; either with or without a column titled `Active`. It indicates whether the voucher is enabled after the import event.  \n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
+        "description": "Imports vouchers to an **existing** campaign.  \n\n\nThe CSV file has to include headers in the first line. \n\nCurl Example\n<!--\ntitle: \"Example Request\"\nlineNumbers: true\n-->\n```cURL\ncurl -X POST \\\n  https://api.voucherify.io/v1/campaigns/TEST-CAMPAIGN/importCSV \\\n  -F file=@/path/to/campaigns.csv \\\n  -H \"X-App-Id: c70a6f00-cf91-4756-9df5-47628850002b\" \\\n  -H \"X-App-Token: 3266b9f8-e246-4f79-bdf0-833929b1380c\"\n```\n\nYou can import values for the following fields: `Code` (**required**), `Category`, `Active`. In a gift cards import, you can also include the current card balance using the `Gift Amount` header and the amount that was redeemed using the `Redeemed Amount` header. In a loyalty cards import, you can also include the current loyalty card score in points using the `Loyalty Points` header. Remaining CSV columns will be mapped to metadata properties. \n\nDiscount type, time limits, and validation rules will be taken from the <!-- [campaign object](OpenAPI.json/components/schemas/CampaignResponse) -->[campaign object](ref:get-campaign) settings. \n\n\n| **Active** | **Code** | **Loyalty Points** | **Gift Amount** | **Redeemed Amount** | **Redeemed Quantity** | **Category** | **Custom_metadata_property** |\n|---|---|---|---|---|---|---|---|\n| Use `true` or `false` to enable or disable the voucher; this flag can be used to turn off the ability to redeem a voucher even though it is within the campaign's start/end validity timeframe. | The unique voucher code. | The number of points to be added to the loyalty card. If you leave this undefined, then the initial number of points will be set according to the campaign settings.<br>Context: `LOYALTY_PROGRAM` | The initial gift card balance.<br>Context: `GIFT_VOUCHERS` | The amount that was redeemed from the available balance on a gift card. | The number of times the voucher has been redeemed. | A custom tag for the voucher to help you filter codes; you can either import the category name or a unique Voucherify-assigned category ID. | Any additional data that you would like to store for the given loyalty card as a Custom attribute. Remember to define the metadata schema in the Dashboard prior to importing codes. |\n|<!-- theme: info -->\n\n> 📘 Active\n>\n> The CSV file is allowed in two versions; either with or without a column titled `Active`. It indicates whether the voucher is enabled after the import event.  \n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
         "parameters": [],
         "security": [
           {

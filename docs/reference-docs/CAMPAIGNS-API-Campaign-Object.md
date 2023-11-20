@@ -16,7 +16,7 @@ order: 1
 | description</br>`string` | <p>An optional field to keep any extra textual information about the campaign such as a campaign description and details.</p> |
 | campaign_type</br>`string` | <p>Type of campaign.</p> Available values: `LOYALTY_PROGRAM`, `GIFT_VOUCHERS`, `DISCOUNT_COUPONS`, `PROMOTION`, `REFERRAL_PROGRAM`, `LUCKY_DRAW` |
 | type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation.</p><ul><li><code>AUTO_UPDATE</code>: the campaign is dynamic, i.e. vouchers will generate based on set criteria</li><li><code>STATIC</code>: vouchers need to be manually published</li></ul> Available values: `AUTO_UPDATE`, `STATIC` |
-| voucher | Any of: [Discount Voucher](#discount-voucher), [Gift Card](#gift-card), [Loyalty Card](#loyalty-card) |
+| voucher | See: [Campaign Discount Voucher](#campaign-discount-voucher) |
 | auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled.</p> |
 | join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once.</p> |
 | use_voucher_metadata_schema</br>`boolean` | <p>Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema.</p> |
@@ -32,51 +32,40 @@ order: 1
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was updated in ISO 8601 format.</p> **Example:** <p>2022-09-20T09:18:19.623Z</p> |
 | category</br>`string` | <p>Unique category name.</p> |
 | creation_status</br>`string` | <p>Indicates the status of the campaign creation.</p> Available values: `DONE`, `IN_PROGRESS`, `FAILED`, `DRAFT`, `MODIFYING` |
-| vouchers_generation_status</br>`string` | <p>Indicates the status of the campaign's vouchers.</p> Available values: `DONE`, `IN_PROGRESS`, `FAILED`, `DRAFT` |
+| vouchers_generation_status</br>`string` | <p>Indicates the status of the campaign's vouchers.</p> Available values: `DONE`, `IN_PROGRESS`, `FAILED`, `DRAFT`, `MODIFYING` |
 | protected</br>`boolean` | <p>Indicates whether the resource can be deleted.</p> |
 | category_id</br>`string` | <p>Unique category ID that this campaign belongs to.</p> **Example:** <p>cat_0b688929a2476386a7</p> |
-| categories | See: [Category Object](#category-object) |
+| categories | See: [Category](#category) |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the campaign.</p> |
 | referral_program</br>`object` | <p>Defines the referee reward and the way a referral is triggered. Context: <code>REFERRAL_PROGRAM</code>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">conversion_event_type</br><code>string</code></td><td style="text-align:left"><p>How a referral is triggered.</p> Available values: <code>redemption</code>, <code>custom_event</code></td></tr><tr><td style="text-align:left">custom_event</br><code>object</code></td><td style="text-align:left"><p>Contains details about the custom event.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique custom event ID.</p> <strong>Example:</strong> <p>ms_fi47Dcu5T0m3v3nT5ch3ma</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Custom event name.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">referee_reward</br><code>object</code></td><td style="text-align:left"><p>Defines the referee reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">related_object_parent</br><code>object</code></td><td style="text-align:left"><p>Details of the resource from which the reward originates.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique ID of the reward source.</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Name of the reward source.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Type of resource represented by the source of the reward.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Type of reward.</p> Available values: <code>LOYALTY_CARD</code>, <code>GIFT_VOUCHER</code></td></tr><tr><td style="text-align:left">amount</br><code>string</code></td><td style="text-align:left"><p>The number of <code>points</code> to add to a loyalty card or <code>credits</code> to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p></td></tr></tbody></table></td></tr></tbody></table> |
 | promotion | See: [Promotion Tiers](#promotion-tiers) |
-| loyalty_tiers_expiration</br>`object` | <p>Defines the expiration mechanism for loyalty tiers.</p> Any of: [Balance](#balance), [Points in Period](#points-in-period) |
+| validation_rules_assignments | See: [Validation Rules Assignments List](#validation-rules-assignments-list) |
+| loyalty_tiers_expiration | See: [Loyalty Tiers Expiration](#loyalty-tiers-expiration) |
 
-## Discount Voucher
+## Campaign Discount Voucher
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Type of voucher.</p> |
-| discount | <p>Defines the voucher discount type and details.</p> One of: [Amount](#amount), [Percentage](#percentage), [Fixed](#fixed), [Unit, single item](#unit-single-item), [Unit, multiple items](#unit-multiple-items), [Shipping](#shipping) |
+| discount | <p>Defines the voucher discount type and details.</p> See: [Discount](#discount) |
+| gift | <p>Defines the voucher gift details.</p> See: [Gift](#gift) |
+| loyalty_card | <p>Defines the voucher loyalty card details.</p> See: [Campaign Loyalty Card](#campaign-loyalty-card) |
 | redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr></tbody></table> |
-| code_config</br>`object` | <p>Defines code's pattern (prefix, suffix, length, charset, etc).</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">length</br><code>string</code></td><td style="text-align:left"><p>Number of characters in a generated code (excluding prefix and postfix).</p></td></tr><tr><td style="text-align:left">charset</br><code>string</code></td><td style="text-align:left"><p>Characters that can appear in the code.</p><p>Examples:</p><ul><li>Alphanumeric: <code>0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic: <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic Lowercase: <code>abcdefghijklmnopqrstuvwxyz</code></li><li>Alphabetic Uppercase: <code>ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Numbers: <code>0123456789</code></li><li>Custom: a custom character set</li></ul></td></tr><tr><td style="text-align:left">prefix</br><code>string</code></td><td style="text-align:left"><p>A text appended before the code.</p></td></tr><tr><td style="text-align:left">postfix</br><code>string</code></td><td style="text-align:left"><p>A text appended after the code.</p></td></tr><tr><td style="text-align:left">pattern</br><code>string</code></td><td style="text-align:left"><p>A pattern for codes where hashes (#) will be replaced with random characters. Overrides <code>length</code>.</p></td></tr></tbody></table> |
+| code_config</br>`object` | <p>Defines code's pattern (prefix, suffix, length, charset, etc).</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">length</br><code>string</code></td><td style="text-align:left"><p>Number of characters in a generated code (excluding prefix and postfix).</p></td></tr><tr><td style="text-align:left">charset</br><code>string</code></td><td style="text-align:left"><p>Characters that can appear in the code.</p><p>Examples:</p><ul><li>Alphanumeric: <code>0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic: <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic Lowercase: <code>abcdefghijklmnopqrstuvwxyz</code></li><li>Alphabetic Uppercase: <code>ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Numbers: <code>0123456789</code></li><li>Custom: a custom character set</li></ul></td></tr><tr><td style="text-align:left">prefix</br><code>string</code></td><td style="text-align:left"><p>A text appended before the code.</p></td></tr><tr><td style="text-align:left">postfix</br><code>string</code></td><td style="text-align:left"><p>A text appended after the code.</p></td></tr><tr><td style="text-align:left">pattern</br><code>string</code></td><td style="text-align:left"><p>A pattern for codes where hashes (#) will be replaced with random characters. Overrides <code>length</code>.</p></td></tr><tr><td style="text-align:left">initial_count</br><code>integer</code></td><td style="text-align:left"><p>The initial count</p></td></tr></tbody></table> |
 | is_referral_code</br>`boolean` | <p>Indicates whether the voucher is a referral code; this is <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
+| start_date</br>`string` | <p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is <em>inactive before</em> this date.</p> **Example:** <p>2022-09-20T00:00:00.000Z</p> |
+| expiration_date</br>`string` | <p>Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is <em>inactive after</em> this date.</p> **Example:** <p>2022-09-30T00:00:00.000Z</p> |
+| validity_timeframe</br>`object` | <p>Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.<code>start_date</code> <strong>required</strong> when including the <code>validity_timeframe</code>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">interval</br><code>string</code></td><td style="text-align:left"><p>Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an <code>interval</code> of <code>P2D</code> will be active every other day.</p></td></tr><tr><td style="text-align:left">duration</br><code>string</code></td><td style="text-align:left"><p>Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a <code>duration</code> of <code>P1D</code> will be valid for a duration of one day.</p></td></tr></tbody></table> |
 
-## Gift Card
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>Type of voucher.</p> |
-| gift</br>`object` | <p>Defines the gift card details.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">amount</br><code>integer</code></td><td style="text-align:left"><p>Initial gift card income to be applied to the gift card at voucher generation. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p></td></tr><tr><td style="text-align:left">effect</br><code>string</code></td><td style="text-align:left"><p>Defines how the credits are applied to the customer's order.</p> Available values: <code>APPLY_TO_ORDER</code>, <code>APPLY_TO_ITEMS</code></td></tr></tbody></table> |
-| redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr></tbody></table> |
-| code_config</br>`object` | <p>Defines code's pattern (prefix, suffix, length, charset, etc).</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">length</br><code>string</code></td><td style="text-align:left"><p>Number of characters in a generated code (excluding prefix and postfix).</p></td></tr><tr><td style="text-align:left">charset</br><code>string</code></td><td style="text-align:left"><p>Characters that can appear in the code.</p><p>Examples:</p><ul><li>Alphanumeric: <code>0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic: <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic Lowercase: <code>abcdefghijklmnopqrstuvwxyz</code></li><li>Alphabetic Uppercase: <code>ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Numbers: <code>0123456789</code></li><li>Custom: a custom character set</li></ul></td></tr><tr><td style="text-align:left">prefix</br><code>string</code></td><td style="text-align:left"><p>A text appended before the code.</p></td></tr><tr><td style="text-align:left">postfix</br><code>string</code></td><td style="text-align:left"><p>A text appended after the code.</p></td></tr><tr><td style="text-align:left">pattern</br><code>string</code></td><td style="text-align:left"><p>A pattern for codes where hashes (#) will be replaced with random characters. Overrides <code>length</code>.</p></td></tr></tbody></table> |
-| is_referral_code</br>`boolean` | <p>Indicates whether the voucher is a referral code; this is <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
-
-## Loyalty Card
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>Type of voucher.</p> |
-| loyalty_card</br>`object` | <p>Defines the loyalty card details.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Initial loyalty card income in points to be applied to the loyalty card at voucher generation.</p></td></tr><tr><td style="text-align:left">expiration_rules</br><code>object</code></td><td style="text-align:left"><p>Defines point expiration rules.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">period_type</br><code>string</code></td><td style="text-align:left"><p>The expiration period.</p> Available values: <code>MONTH</code></td></tr><tr><td style="text-align:left">period_value</br><code>integer</code></td><td style="text-align:left"><p>How many periods should pass before the expiration occurs.</p></td></tr><tr><td style="text-align:left">rounding_type</br><code>string</code></td><td style="text-align:left"><p>Round up expiration till the end of the given period type.</p> Available values: <code>END_OF_MONTH</code>, <code>END_OF_QUARTER</code>, <code>END_OF_HALF_YEAR</code>, <code>END_OF_YEAR</code>, <code>PARTICULAR_MONTH</code></td></tr></tbody></table></td></tr></tbody></table> |
-| redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr></tbody></table> |
-| code_config</br>`object` | <p>Defines code's pattern (prefix, suffix, length, charset, etc).</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">length</br><code>string</code></td><td style="text-align:left"><p>Number of characters in a generated code (excluding prefix and postfix).</p></td></tr><tr><td style="text-align:left">charset</br><code>string</code></td><td style="text-align:left"><p>Characters that can appear in the code.</p><p>Examples:</p><ul><li>Alphanumeric: <code>0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic: <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic Lowercase: <code>abcdefghijklmnopqrstuvwxyz</code></li><li>Alphabetic Uppercase: <code>ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Numbers: <code>0123456789</code></li><li>Custom: a custom character set</li></ul></td></tr><tr><td style="text-align:left">prefix</br><code>string</code></td><td style="text-align:left"><p>A text appended before the code.</p></td></tr><tr><td style="text-align:left">postfix</br><code>string</code></td><td style="text-align:left"><p>A text appended after the code.</p></td></tr><tr><td style="text-align:left">pattern</br><code>string</code></td><td style="text-align:left"><p>A pattern for codes where hashes (#) will be replaced with random characters. Overrides <code>length</code>.</p></td></tr></tbody></table> |
-| is_referral_code</br>`boolean` | <p>Indicates whether the voucher is a referral code; this is <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
-
-## Category Object
+## Category
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
 | name</br>`string` | <p>Category name.</p> |
 | hierarchy</br>`integer` | <p>Category hierarchy.</p> |
+| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
-| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> |
+| stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Promotion Tiers
 | Attributes |  Description |
@@ -87,71 +76,41 @@ order: 1
 | total</br>`integer` | <p>Total number of promotion tiers.</p> |
 | has_more</br>`boolean` | <p>As query results are always limited (by the limit parameter), the <code>has_more</code> flag indicates whether there are more records for given filter parameters. This let's you know if you are able to run another request (with a different page or a different start date filter) to get more records returned in the results.</p> |
 
-## Balance
+## Validation Rules Assignments List
 | Attributes |  Description |
 |:-----|:--------|
-| qualification_type</br>`string` | <p>Tier qualification.</p><p><code>BALANCE</code>: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier.</p> Available values: `BALANCE` |
-| start_date</br>`object` | <p>Defines the conditions for the start date of the tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to be valid for a customer.<br><code>IMMEDIATE</code>: After reaching the minimum required points.</p> Available values: <code>IMMEDIATE</code></td></tr></tbody></table> |
-| expiration_date | <p>Defines the conditions for the expiration date of a tier.</p> Any of: [Balance Drop](#balance-drop), [Custom](#custom) |
+| object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rules assignments.</p> Available values: `list` |
+| data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of validation rules assignments.</p> Available values: `data` |
+| data</br>`array` | <p>Contains array of validation rules assignments.</p> Array of [Business Validation Rule Assignment](#business-validation-rule-assignment) |
+| total</br>`integer` | <p>Total number of validation rules assignments.</p> |
 
-## Points in Period
+## Loyalty Tiers Expiration
 | Attributes |  Description |
 |:-----|:--------|
-| qualification_type</br>`string` | <p>Tier qualification.</p><p><code>POINTS_IN_PERIOD</code>: A customer qualifies for the tier only if the sum of the accumulated points in a <strong>defined time interval</strong> reaches the tier threshold.</p> Available values: `POINTS_IN_PERIOD` |
+| qualification_type</br>`string` | <p>Tier qualification.</p><p><code>BALANCE</code>: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier.<br><code>POINTS_IN_PERIOD</code>: A customer qualifies for the tier only if the sum of the accumulated points in a <strong>defined time interval</strong> reaches the tier threshold.</p> Available values: `BALANCE`, `POINTS_IN_PERIOD` |
 | qualification_period</br>`string` | <p>Customers can qualify for the tier if they collected enough points in a given time period. So, in addition to the customer having to reach a points range, they also need to have collected the points within a set time period.</p><table><thead><tr><th style="text-align:left"><strong>Period</strong></th><th style="text-align:left"><strong>Definition</strong></th></tr></thead><tbody><tr><td style="text-align:left"><strong>Calendar Month</strong></td><td style="text-align:left">Points collected in one calendar month<br>January, February, March, etc.</td></tr><tr><td style="text-align:left"><strong>Calendar Quarter</strong></td><td style="text-align:left">Points collected in the quarter<br>- January - March<br>- April - June<br>- July - September<br>- October - December</td></tr><tr><td style="text-align:left"><strong>Calendar Half-year</strong></td><td style="text-align:left">Points collected in the half-year<br>- January - June<br>- July - December</td></tr><tr><td style="text-align:left"><strong>Calendar Year</strong></td><td style="text-align:left">Points collected in one calendar year<br>January - December</td></tr></tbody></table> Available values: `MONTH`, `QUARTER`, `HALF_YEAR`, `YEAR` |
 | start_date</br>`object` | <p>Defines the conditions for the start date of the tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to be valid for a customer.<br><code>IMMEDIATE</code>: After reaching the minimum required points.<br><code>NEXT_PERIOD</code>: When the next qualification period starts.</p> Available values: <code>IMMEDIATE</code>, <code>NEXT_PERIOD</code></td></tr></tbody></table> |
-| expiration_date</br>`object` | <p>Defines the conditions for the expiration date of a tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to expire for a customer.<br><code>END_OF_PERIOD</code>: Expire tier at the end of the period.<br><code>END_OF_NEXT_PERIOD</code>:  Expire tier at the end of the next period.</p> Available values: <code>END_OF_PERIOD</code>, <code>END_OF_NEXT_PERIOD</code></td></tr><tr><td style="text-align:left">extend</br><code>string</code></td><td style="text-align:left"><p>Extend the expiration by adding extra months or days in ISO 8601 format. The tier will remain active even though it reaches its expiration time period. For example, a tier with a duration of <code>P3M</code> will be valid for an additional duration of 3 months and a tier with a duration of <code>P1D</code> will be valid for an additional duration of 1 day.</p></td></tr></tbody></table> |
+| expiration_date</br>`object` | <p>Defines the conditions for the expiration date of a tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to expire for a customer.<br><code>END_OF_PERIOD</code>: Expire tier at the end of the period.<br><code>END_OF_NEXT_PERIOD</code>:  Expire tier at the end of the next period.<br><code>BALANCE_DROP</code>: Tier expires when the points balance drops below the required range of the tier.<br><code>CUSTOM</code>: Tier expires after a certain time period passes following the instance the points balance drops below the required range of the tier.</p> Available values: <code>END_OF_PERIOD</code>, <code>END_OF_NEXT_PERIOD</code>, <code>BALANCE_DROP</code>, <code>CUSTOM</code></td></tr><tr><td style="text-align:left">extend</br><code>string</code></td><td style="text-align:left"><p>Extend the expiration by adding extra months or days in ISO 8601 format. The tier will remain active even though it reaches its expiration time period. For example, a tier with a duration of <code>P3M</code> will be valid for an additional duration of 3 months and a tier with a duration of <code>P1D</code> will be valid for an additional duration of 1 day.</p></td></tr><tr><td style="text-align:left">rounding</td><td style="text-align:left"><p>Defines the rounding mechanism for tier expiration.</p></td></tr></tbody></table> |
 
-## Amount
+## Discount
+<p>Contains information about discount.</p>
+
+Any of:
+
+[Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
+
+## Gift
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Applies an amount discount.</p> |
-| amount_off</br>`integer` | <p>Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. In case of the amount being calculated by the formula, i.e. the <code>amount_off_formula</code> parameter is present in the amount definition, this value becomes the <strong>fallback value</strong>. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the amount off.</p> **Example:** <p>100</p> |
-| amount_off_formula</br>`string` | <p>Formula used to calculate the discount.</p> |
-| aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:</p><ul><li><code>APPLY_TO_ITEMS</code> (each item subtotal is discounted equally)</li><li><code>APPLY_TO_ITEMS_BY_QUANTITY</code> (each unit of matched products has the same discount value)</li></ul> |
-| effect</br>`string` | <p>Defines how the discount is applied to the customer's order. The discount effects are defined as follows:</p><ul><li><code>APPLY_TO_ORDER</code> (discount applies to the total order amount)</li><li><code>APPLY_TO_ITEMS</code> (each item subtotal is discounted equally)</li><li><code>APPLY_TO_ITEMS_PROPORTIONALLY</code> (split discount proportionally to amount)</li><li><code>APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY</code> (split discount proportionally to quantity)</li><li><code>APPLY_TO_ITEMS_BY_QUANTITY</code> (each unit of matched products has the same discount value)</li></ul> Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`, `APPLY_TO_ITEMS_PROPORTIONALLY`, `APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY`, `APPLY_TO_ITEMS_BY_QUANTITY` |
+| amount</br>`number` | <p>Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
+| balance</br>`number` | <p>Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
+| effect</br>`string` | <p>Defines how the credits are applied to the customer's order.</p> Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS` |
 
-## Percentage
+## Campaign Loyalty Card
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Applies a percentage discount.</p> |
-| amount_limit</br>`string` | <p>Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
-| aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order. This value is definable for the <code>APPLY_TO_ITEMS</code> discount effect. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600.</p> |
-| percent_off</br>`integer` | <p>Percent taken off the subtotal amount. In case of the percent being calculated by the formula, i.e. the <code>percent_off_formula</code> parameter is present in the percent definition, this value becomes the <strong>fallback value</strong>. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the percent off.</p> |
-| percent_off_formula</br>`string` | <p>Formula used to calculate the discount.</p> |
-| effect</br>`string` | <p>Defines how the discount is applied to the customer's order.</p> Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS` |
-
-## Fixed
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>Sets a fixed total on cart or item(s) and then calculates the discount to apply.</p> |
-| fixed_amount</br>`integer` | <p>Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the <code>fixed_amount_formula</code> parameter is present in the fixed amount definition, this value becomes the <strong>fallback value</strong>. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> **Example:** <p>1000</p> |
-| fixed_amount_formula</br>`string` | <p>Formula used to calculate the discounted price of an item or a new order total.</p> |
-| effect</br>`string` | <table><thead><tr><th style="text-align:left"><strong>Effect</strong></th><th style="text-align:left"><strong>Definition</strong></th></tr></thead><tbody><tr><td style="text-align:left"><strong>APPLY_TO_ORDER</strong></td><td style="text-align:left">Sets the order total amount to the value of the fixed amount. The discount value is calculated dynamically during the redemption as it's a difference between the total amount of the customer's order and the fixed amount. For example, if the fixed amount is set to equal $10 and the order amount equals $25, then the calculated discount will be $15.</td></tr><tr><td style="text-align:left"><strong>APPLY_TO_ITEMS</strong></td><td style="text-align:left">Sets a new price on items. The total discount amount is dynamically calculated during the redemption and it's a difference between the initial item price and the fixed amount. During the redemption, prices for items will change only if the new price is lower than the original price. If the new product price you set is different from the product price in a collection, then the new product price will be passed during the redemption. If a prodct is in more than one collection, the price is always changed to the lowest price. The new price for products with several SKUs will force the price change for SKUs if their original price is higher than the new price.</td></tr></tbody></table> Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS` |
-
-## Unit, single item
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>Applies a full value discount to item(s).</p> |
-| unit_off</br>`number` | <p>Number of units to be granted a full value discount. In case of the unit being calculated by the formula, i.e. the <code>unit_off_formula</code> parameter is present in the unit definition, this value becomes the <strong>fallback value</strong>. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the unit value.</p> **Example:** <p>1</p> |
-| unit_off_formula</br>`string` | <p>Formula used to calculate the number of units.</p> |
-| unit_type</br>`string` | <p>The product deemed as free, chosen from the product  inventory (e.g. time, items).</p> **Example:** <p>prod_f1r5Tpr0DuC7</p> |
-| effect</br>`string` | <p>Defines how the unit is added to the customer's order.</p> Available values: `ADD_NEW_ITEMS`, `ADD_MISSING_ITEMS` |
-
-## Unit, multiple items
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>Applies a full value discount to item(s).</p> |
-| effect</br>`string` | <p>Defines the effect for adding multiple item types.</p> |
-| units</br>`array` | <p>Array of objects defining items to be offered for free. Each item type can have a different discount effect assigned.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">unit_off</br><code>integer</code></td><td style="text-align:left"><p>Number of units to be granted a full value discount. In case of the unit being calculated by the formula, i.e. the <code>unit_off_formula</code> parameter is present in the unit definition, this value becomes the <strong>fallback value</strong>. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the unit value.</p> <strong>Example:</strong> <p>1</p></td></tr><tr><td style="text-align:left">unit_off_formula</br><code>string</code></td><td style="text-align:left"><p>Formula used to calculate the number of units.</p></td></tr><tr><td style="text-align:left">unit_type</br><code>string</code></td><td style="text-align:left"><p>The product deemed as free, chosen from the product  inventory (e.g. time, items).</p> <strong>Example:</strong> <p>prod_f1r5Tpr0DuC7</p></td></tr><tr><td style="text-align:left">effect</br><code>string</code></td><td style="text-align:left"><p>Defines how the unit is added to the customer's order.</p> Available values: <code>ADD_NEW_ITEMS</code>, <code>ADD_MISSING_ITEMS</code></td></tr></tbody></table> |
-
-## Shipping
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>Applies a full value discount to item(s).</p> |
-| unit_off</br>`number` | <p>Subtracts 1 shipping item from the subtotal.</p> |
-| unit_type</br>`string` | <p>The shipping product deemed as free.</p> |
-| effect</br>`string` | <p>Defines how the unit is added to the customer's order.</p> |
+| points</br>`integer` | <p>The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card.</p> |
+| expiration_rules</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">period_type</br><code>string</code></td><td style="text-align:left"><p>Type of period</p></td></tr><tr><td style="text-align:left">period_value</br><code>integer</code></td><td style="text-align:left"><p>Value of the period</p></td></tr><tr><td style="text-align:left">rounding_type</br><code>string</code></td><td style="text-align:left"><p>Type of rounding</p></td></tr><tr><td style="text-align:left">rounding_value</br><code>integer</code></td><td style="text-align:left"><p>Value of rounding</p></td></tr></tbody></table> |
 
 ## Promotion Tier
 | Attributes |  Description |
@@ -178,57 +137,18 @@ order: 1
 | category_id</br>`string` | <p>Promotion tier category ID.</p> **Example:** <p>cat_0c9da30e7116ba6bba</p> |
 | categories</br>`array` | Array of [Category](#category) |
 
-## Balance Drop
+## Business Validation Rule Assignment
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>What triggers the tier to expire for a customer.<br><code>BALANCE_DROP</code>: Tier expires when the points balance drops below the required range of the tier.</p> Available values: `BALANCE_DROP` |
-
-## Custom
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>What triggers the tier to expire for a customer.<br><code>CUSTOM</code>: Tier expires after a certain time period passes following the instance the points balance drops below the required range of the tier.</p> Available values: `CUSTOM` |
-| extend</br>`string` | <p>Defines the amount of time the tier will remain active in ISO 8601 format. The expiration date counter starts at the moment when the customer reaches the minimum required points that are required to be in the tier. For example, a tier with a duration of P3M will be valid for a duration of 3 months.</p> |
-| rounding | <p>Defines the rounding mechanism for tier expiration.</p> Any of: [Calendar Periods](#calendar-periods), [Specific Month](#specific-month) |
-
-## Discount
-<p>Contains information about discount.</p>
-
-Any of:
-
-[Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
-
-## Validation Rule Assignments
-| Attributes |  Description |
-|:-----|:--------|
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rule assignments.</p> |
-| data_ref</br>`string` | <p>Identifies the name of the JSON property that contains the array of validation rule assignments.</p> |
-| data</br>`array` | <p>A dictionary that contains an array of validation rule assignments.</p> Array of [Validation Rule Assignment](#validation-rule-assignment) |
-| total</br>`integer` | <p>Total number of validation rule assignments.</p> |
-
-## Category
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
-| name</br>`string` | <p>Category name.</p> |
-| hierarchy</br>`integer` | <p>Category hierarchy.</p> |
-| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
-| updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
-| stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
-
-## Calendar Periods
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>Period to which the expiration will be rounded to.</p><ul><li><code>MONTH</code>: The expiration date will be rounded to the end of the month.</li><li><code>QUARTER</code>: The expiration date will be rounded to the end of the quarter.</li><li><code>HALF_YEAR</code>: The expiration date will be rounded to the half year.</li><li><code>YEAR</code>: The expiration date will be rounded to the end of the year.</li></ul> Available values: `MONTH`, `QUARTER`, `HALF_YEAR`, `YEAR` |
-| strategy</br>`string` | <p>Which portion of the given period should the rounding be applied to.</p> Available values: `END` |
-
-## Specific Month
-| Attributes |  Description |
-|:-----|:--------|
-| type</br>`string` | <p>This mechanism describes a custom rounding for the expiration date.</p> Available values: `CUSTOM` |
-| strategy</br>`string` | <p>Which portion of the given period should the rounding be applied to.</p> Available values: `END` |
-| unit</br>`string` | <p>Defines the type of unit of time in which the rounding period is counted.</p> Available values: `MONTH` |
-| value</br>`integer` | <p>Value for the unit of time that the rounding applies to. Units for this parameter are defined by the <code>rounding.unit</code> parameter.</p><ul><li><code>0</code>: January</li><li><code>1</code>: February</li><li><code>2</code>: March</li><li><code>3</code>: April</li><li><code>4</code>: May</li><li><code>5</code>: June</li><li><code>6</code>: July</li><li><code>7</code>: August</li><li><code>8</code>: September</li><li><code>9</code>: October</li><li><code>10</code>: November</li><li><code>11</code>: December</li></ul> |
+| id</br>`string` | <p>The unique identifier for a assignment</p> |
+| rule_id</br>`string` | <p>The unique identifier for a rule</p> |
+| related_object_id</br>`string` | <p>The unique identifier for a related object</p> |
+| related_object_type</br>`string` | <p>The type of related object</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the object was created in ISO 8601 format.</p> **Example:** <p>2022-03-09T11:19:04.819Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the object was last updated in ISO 8601 format.</p> **Example:** <p>2022-03-09T11:19:04.819Z</p> |
+| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `validation_rules_assignment` |
+| validation_status</br>`string` | <p>The validation status of the assignment</p> Available values: `VALID`, `PARTIALLY_VALID`, `INVALID` |
+| validation_omitted_rules</br>`array` | <p>The list of omitted rules</p> |
 
 ## Amount
 | Attributes |  Description |
@@ -279,15 +199,13 @@ Any of:
 | effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
-## Validation Rule Assignment
+## Validation Rule Assignments
 | Attributes |  Description |
 |:-----|:--------|
-| id</br>`string` | <p>Validation rule assignment ID.</p> **Example:** <p>asgm_74F7QZoYbUoljwQO</p> |
-| rule_id</br>`string` | <p>Validation rule ID.</p> **Example:** <p>val_4j7DCRm2IS59</p> |
-| related_object_id</br>`string` | <p>The resource ID to which the validation rule was assigned.</p> **Example:** <p>v_JtWunK6jUo7X2qOFj0SyRHq4p9tgENlT</p> |
-| related_object_type</br>`string` | <p>The type of resource to which the validation rule was assigned.</p> Available values: `voucher`, `campaign`, `earning_rule`, `reward_assignment`, `promotion_tier`, `distribution` |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the validation rule assignment was created in ISO 8601 format.</p> **Example:** <p>2022-02-17T08:18:15.085Z</p> |
-| object</br>`string` | <p>The type of object represented by the ID.</p> Available values: `validation_rules_assignment` |
+| object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rule assignments.</p> |
+| data_ref</br>`string` | <p>Identifies the name of the JSON property that contains the array of validation rule assignments.</p> |
+| data</br>`array` | <p>A dictionary that contains an array of validation rule assignments.</p> Array of [Validation Rule Assignment](#validation-rule-assignment) |
+| total</br>`integer` | <p>Total number of validation rule assignments.</p> |
 
 ## Discount Amount Vouchers Effect Types
 Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`, `APPLY_TO_ITEMS_PROPORTIONALLY`, `APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY`, `APPLY_TO_ITEMS_BY_QUANTITY`
@@ -324,6 +242,16 @@ Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
 
 ## Discount Fixed Vouchers Effect Types
 Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
+
+## Validation Rule Assignment
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Validation rule assignment ID.</p> **Example:** <p>asgm_74F7QZoYbUoljwQO</p> |
+| rule_id</br>`string` | <p>Validation rule ID.</p> **Example:** <p>val_4j7DCRm2IS59</p> |
+| related_object_id</br>`string` | <p>The resource ID to which the validation rule was assigned.</p> **Example:** <p>v_JtWunK6jUo7X2qOFj0SyRHq4p9tgENlT</p> |
+| related_object_type</br>`string` | <p>The type of resource to which the validation rule was assigned.</p> Available values: `voucher`, `campaign`, `earning_rule`, `reward_assignment`, `promotion_tier`, `distribution` |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the validation rule assignment was created in ISO 8601 format.</p> **Example:** <p>2022-02-17T08:18:15.085Z</p> |
+| object</br>`string` | <p>The type of object represented by the ID.</p> Available values: `validation_rules_assignment` |
 
 [block:html]
 {
