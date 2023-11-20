@@ -1,5 +1,11 @@
 # Changelog
 
+## 20231120
+
+- Changed category `Implementation blueprint` to `Development` and made all relevant changes to headers
+- Changed images in `Welcome to Voucherify`
+- Minor fixes in `Welcome to Voucherify` as per the Marketing's feedback
+
 ## 20231116
 
 - Changed the order of the articles in the `Implementation Blueprint` category
