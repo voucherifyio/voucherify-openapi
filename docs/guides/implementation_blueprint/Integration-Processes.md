@@ -20,6 +20,6 @@ Typically, the customer journey unfolds through the following key steps:
 
 - **[Validation](ref:validation-object)** - verifies the eligibility of the selected discounts and calculates the final price.
 
-- **[Redemption](ref:redemption-object)** - redeems a voucher or a promotion tier once or multiple times depending on the selected limit.
+- **[Redemption](ref:redemption-object)** - redeems a combination of vouchers, promotion tiers, and promotion stacks.
 
 **The described process applies to any type of discount, regardless of voucher type or discount effect.**
