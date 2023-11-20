@@ -24,4 +24,13 @@ Typically, the customer journey unfolds through the following key steps:
 
 **The described process applies to any type of discount, regardless of voucher type or discount effect.**
 
-diagramy w miro scenariuszt
+## Use Cases
+
+We will guide you through the most commonly used scenarios that involve the API calls mentioned above:
+
+1. Redeeming voucher codes,
+2. Checking promotion eligibility during checkout,
+3. Publishing voucher code for a wandering customer,
+4. Rewarding customers with points for purchases.
+
+### Redeeming Voucher Codes
