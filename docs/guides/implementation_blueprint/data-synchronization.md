@@ -41,13 +41,11 @@ However, the customer data must exist in Voucherify before a distribution is mad
 
 <!-- this bit must be moved someplace
 
-Every customer has unique identification data in the `source_id` field. The `source_id` can be a customer ID or email from a CRM system, database, or a third-party service.  It can be imported into Voucherify from your [CRM database]() or a CSV file <!-- link when ready! -->.
+Every customer has unique identification data in the `source_id` field. The `source_id` can be a customer ID or email from a CRM system, database, or a third-party service.  It can be imported into Voucherify from your [CRM database]() or a CSV file <!-- link when ready! -->
 
--->
-
-> 🚧
+> 🚧 Customer data synchronization and `source_id`
 >
-> Note that if your data are to be synchronized based on the `source_id` of the customer, you need to import the `source_id` when the customer is uploaded for the first time. You will not be able to change or update `source_id` later on.
+> If your data is to be synchronized based on the `source_id` of the customer, you need to import the `source_id` when the customer is uploaded for the first time. You will not be able to change or update `source_id` later on.
 
 ### Synchronization options
 
@@ -65,27 +63,67 @@ You can integrate your CRM platform with Voucherify.
 
 #### Upserting customers
 
-If the customer does not exist in Voucherify, they are created (upserted) automatically in a request that includes the customer object. If the customer exists, their data will be updated. In this case, the response also includes the `created_at` and `updated_at` objects. <!-- these are objects, right? -->
+<!-- do we clarify what `upsert` means: `update` + `insert`? -->
+
+If the customer does not exist in Voucherify, they are created automatically in a request that includes the customer object. If the customer exists, their data will be upserted. In this case, the response also includes the `updated_at` object. <!-- these are objects, right? -->
 
 The following actions upsert customer data:
 - order creation
 - voucher publication
+- validation <!-- IMO should be here-->
 - redemption
 
+<!-- Redemption... but this is to be deprecated, right? so should we actually link/mention those
 
-<!-- Redemption... but this is to be deprecated, right? so should we actually link/mention those -->
+I need clarification – we want customers to use qualification endpoint or the stackable discounts endpoint, and these do redeem, so is this info `redemption` all right?
 
-##### Order creation
+Anything else that MUST be here? I don't mean everything
+
+-->
+
+<!-- ##### Order creation
 
 ##### Voucher publication
 
 ##### Redemption
 
+-->
+
 #### Importing customers
+
+You can import your customer database to Voucherify with a CSV file. If you use a CRM system, use its unique ID as a `source_id` field.
+
+Read our [customer import guide](https://support.voucherify.io/article/67-how-to-import-my-customers#csv-import "How to import my customers?") to learn more.
+
+<!-- Should I write a full step-by-step manual for this? -->
 
 #### Creating and updating customers via the API
 
+If you want to keep your customers database in up to date with Voucherify, create a customer in Voucherify every time a new user is added to your database. Use the [Create customer API method](ref:create-customer) to upsert customer data.
+
+<!-- Simply repeat the endpoints? -->
+
 #### Synchronizing with connectors
+
+Customer data can be upserted with integrated platforms that support outbound traffic:
+- Batch
+- Bloomreach Engagement
+- Intercom
+- Klaviyo
+- MoEngage
+- mParticle
+- Salesforce
+- Segment
+- ZOHO
+
+<!-- Again, clarification: do we want to add only those platforms that send customer 
+data to Voucherify, right? 
+
+I'll update the links once these get clarified
+
+Also: how to know which platform sends data to V% and which receives V% data?
+
+-->
 
 ### Customer API endpoints
 
