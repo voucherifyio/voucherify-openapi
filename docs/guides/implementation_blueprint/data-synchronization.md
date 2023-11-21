@@ -1,7 +1,7 @@
 ---
 title: Data synchronization
 excerpt: Learn what kind of data you can synchronize with Voucherify and how you can do this
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: data-synchronization
 type: basic
 hidden: false
@@ -21,13 +21,17 @@ When you have [created your Voucherify account](doc:getting-started), you can im
 > - Learn why data synchronization is important
 > - Learn how to synchronize your data through data import and updates
 
-**Outcome**:
-
-Your data is synchronized with Voucherify.
+> 👍 **Outcome**:
+> 
+> Your data is synchronized with Voucherify.
 
 <!-- Trying this approach for a test. If it's liked, we can add it throughout the docs. Otherwise, I'll delete it. -->
 
 ## Customer synchronization
+
+Voucherify can store and act on collected customer data. The most common customer data operation is to create customer groups that can be used to understand customer behavior, build promotion limits, or trigger automatic incentive delivery.
+
+<!-- ^ the WHY of importance -->
 
 Voucherify uses the [customer object](ref:customer-object) for [validation](ref:validation-object), [redemption](ref:redemption-object), and [distribution](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work "How does the distribution manager work?") purposes.
 
@@ -67,7 +71,7 @@ You can integrate your CRM platform with Voucherify.
 
 If the customer does not exist in Voucherify, they are created automatically in a request that includes the customer object. If the customer exists, their data will be upserted. In this case, the response also includes the `updated_at` object. <!-- these are objects, right? -->
 
-The following actions upsert customer data:
+The following actions <!-- or activities? --> upsert customer data:
 - order creation
 - voucher publication
 - validation <!-- IMO should be here-->
@@ -99,7 +103,9 @@ Read our [customer import guide](https://support.voucherify.io/article/67-how-to
 
 #### Creating and updating customers via the API
 
-If you want to keep your customers database in up to date with Voucherify, create a customer in Voucherify every time a new user is added to your database. Use the [Create customer API method](ref:create-customer) to upsert customer data.
+If you want to keep your customers database in up to date with Voucherify, create a customer in Voucherify every time a new user is added to your database. Use the [Create customer](ref:create-customer) API endpoint to create customer data.
+
+To update customer data, use [Update customer](ref:update-customer) API endpoint. The [Create customer](ref:create-customer) API endpoint can be also used to update customer data.
 
 <!-- Simply repeat the endpoints? -->
 
@@ -129,21 +135,31 @@ Also: how to know which platform sends data to V% and which receives V% data?
 
 <!-- TBChecked which are still supported and if this list is still up-to-date; taken from https://success.voucherify.io/article/430-crm-playbook -->
 
-Create Customer
-Get Customer
-Update Customer
-Delete Customer
-List Customers
-Delete Customer Permanently
-Update Customer’s Metadata in bulk
-Update Customers in bulk
-Update Customers’ consents
-Update Customers’ consents (client)
-List Customers Activities
+The following endpoints can be used to synchronize customer data:
+
+- [List Customers](ref:list-customers)
+- [Get Customer](ref:get-customer)
+- [List Customer Activities](ref:list-customer-activities)
+- [List Customer's Segments](ref:list-customer-segments)
+- [Create Customer](ref:create-customer)
+- [Import and Update Customers using CSV](ref:import-customers-using-csv)
+- [Update Customer](ref:update-customer)
+- [Update Customer's Consents](ref:update-customers-consents)
+- [Update Customer’s consents (client-sde)](ref:update-customers-consents-client-side)
+- [Update Customers in bulk](ref:update-customers-in-bulk)
+- [Update Customers' Metadata in bulk](ref:update-customers-metadata-in-bulk)
+- [Delete Customer](ref:delete-customer)
+- [Delete Customer Permanently](ref:delete-customer-permanently)
+
+For reference, see also [the customer object](ref:customer-object) and [customer activity object](ref:customer-activity-object).
 
 <!-- do we also list all other endpoints that have a customer object that can upsert data, e.g. redeem stackable discount, check eligibility? -->
 
 ## Product synchronization
+
+Products can be stored in Voucherify, but it is not required. The product validation takes place during the Qualification, Validation, and Redemption processes based on the API payload and the data stored in Voucherify's product catalog. However, if a product does not exist in Voucherify, the validation will take into consideration the payload alone.
+
+The products can be grouped into dynamic collections based on the parameters.
 
 ## Order synchronization
 
