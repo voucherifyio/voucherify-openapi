@@ -3,8 +3,7 @@
 ## 20231117 - Quality Fixes
 
 **Changed schemas**
-- UpsertProductRequestBody to CreateProductRequestBody
-- BulkUpsertProductRequestBody to BulkUpdateProductRequestBody
+- Fixed Products and ProductCollections schemas names (mostly `requestBody`) according to proper template.
 - Fixed wrong required properties in Products and Discounts responses
 - Using type null instead of nullable flag
 
