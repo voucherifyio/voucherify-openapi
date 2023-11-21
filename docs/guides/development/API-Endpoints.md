@@ -1,7 +1,7 @@
 ---
 title: API Endpoints
 excerpt: 
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: api-endpoints
 type: basic
 hidden: false

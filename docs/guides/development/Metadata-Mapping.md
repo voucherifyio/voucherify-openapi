@@ -1,7 +1,7 @@
 ---
 title: Metadata Mapping
 excerpt: Metadata mapping
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: metadata-mapping
 type: basic
 hidden: false
