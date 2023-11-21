@@ -103,7 +103,7 @@ Read our [customer import guide](https://support.voucherify.io/article/67-how-to
 
 #### Creating and updating customers via the API
 
-If you want to keep your customers database in up to date with Voucherify, create a customer in Voucherify every time a new user is added to your database. Use the [Create customer](ref:create-customer) API endpoint to create customer data.
+If you want to keep your customers database up to date with Voucherify, create a customer in Voucherify every time a new user is added to your database. Use the [Create customer](ref:create-customer) API endpoint to create customer data.
 
 To update customer data, use [Update customer](ref:update-customer) API endpoint. The [Create customer](ref:create-customer) API endpoint can be also used to update customer data.
 
@@ -168,9 +168,30 @@ The product validation is based on the API payload and the data stored in Vouche
 >
 > Unlike customer data, product data provided in the payload alone do not create a new product in Voucherify. Products need to be created or imported.
 
-The products in Voucherify can be grouped into static or dynamic collections based on their parameters. Collections can be used in validation rules to model product-specific limits.
+The products in Voucherify can be grouped into static or dynamic collections based on their parameters. Collections can be used in validation rules to model product-specific limits and loyalty-earning rules.
 
 ### Product synchronization options
+
+#### Importing products
+
+You can [import your product database](https://support.voucherify.io/article/515-products#import-products-skus "Import Products and SKUs by CSV") to Voucherify with a CSV file. This method can also be used to update the names of existing products.
+
+#### Creating and updating products via API
+
+You can create and update your products via the following API endpoints:
+- [Create product](ref:create-product)
+- [Update product](ref:update-product)
+
+#### Overriding product data
+
+The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a `source_id`. If the product does exist, the provided values for the name, price, and metadata will replace those already stored in Voucherify.
+
+<!-- I don't get it; how does it work? Why is it in response? Also, in the HS article on products, we read 
+
+> Override/Update products' names in Voucherify using this method. Data will be updated for each product included in the CSV file whose source_id matches a Source id in Voucherify. No other data can be updated other than the product name.
+
+How to understand the two?
+-->
 
 
 
