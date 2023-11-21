@@ -1,10 +1,10 @@
 ---
 title: Error Codes
 excerpt: 
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: error-codes
 type: link
 hidden: false
-order: 6
+order: 170
 link_url: https://docs.voucherify.io/reference/errors
 ---

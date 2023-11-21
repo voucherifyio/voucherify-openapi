@@ -1,11 +1,11 @@
 ---
 title: SDKs
 excerpt: 
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: sdks
 type: basic
 hidden: false
-order: 7
+order: 80
 ---
 
 ## Get your library

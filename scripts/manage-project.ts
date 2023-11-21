@@ -16,7 +16,7 @@ const version =
 const listOfGuideCategories = [
   "Getting started",
   "Integration Blueprint",
-  "Implementation Blueprint",
+  "Development",
   "Building blocks",
   "Campaigns Recipes",
   "Discounts Recipes",
@@ -44,7 +44,7 @@ const main = async ({
     await createNewVersion(version);
   }
   await cleanProject(version);
-  await uploadOpenApiFileWithMaxNumberOfAttempts(version, 2);
+  await uploadOpenApiFileWithMaxNumberOfAttempts(version, 1);
   await buildMdTables();
   await updateMdTablesInDocs();
   await uploadImagesUsedInMdFiles();

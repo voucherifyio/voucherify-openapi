@@ -7,6 +7,77 @@
 - Fixed wrong required properties in Products and Discounts responses
 - Using type null instead of nullable flag
 
+## 20231120
+
+- Changed category `Implementation blueprint` to `Development` and made all relevant changes to headers
+- Changed images in `Welcome to Voucherify`
+- Minor fixes in `Welcome to Voucherify` as per the Marketing's feedback
+
+## 20231117
+
+**Added schemas**
+
+- OrdersImportRequestBody
+- ValidationRulesListResponseBody
+- ValidationRulesCreateRequestBody
+- ValidationRuleResponse
+- ValidationRuleRequest
+- ValidationRulesUpdateRequestBody
+
+- POST `/v1/orders/import`
+  - Request body schema was replaced with new one: `OrdersImportRequestBody` (old one: `10_req_orders_import`)
+- GET `/v1/validation-rules`
+  - Response body schema was replaced with new one: `ValidationRulesListResponseBody` (old one: `13_res_list_validation_rules`)
+- POST `/v1/validation-rules`
+  - Request body schema was replaced with new one: `ValidationRulesCreateRequestBody` (old one: `13_req_create_validation_rule`)
+  - Response body schema was replaced with new one: `ValidationRulesCreateResponseBody` (old one: `13_obj_validation_rule_object`)
+- GET `/v1/validation-rules/{validationRuleId}`
+  - Response body schema was replaced with new one: `ValidationRulesGetResponseBody` (old one: `13_obj_validation_rule_object`)
+- GET `/v1/validation-rules/{validationRuleId}`
+  - Request body schema was replaced with new one: `ValidationRulesUpdateRequestBody` (old one: `13_req_create_validation_rule`)
+  - Response body schema was replaced with new one: `ValidationRulesUpdateResponseBody` (old one: `13_obj_validation_rule_object`)
+
+## 20231116 - Redemptions
+
+**Added schemas**
+
+- Redemption
+- RedemptionRollback
+- RedemptionsGetResponseBody
+- RedemptionsListResponseBody
+- RedemptionsGetVoucherRedemptionResponseBody
+- RedemptionsRollbackRequestBody
+- RedemptionsRollbackResponseBody
+- RedemptionRewardResult
+- RedemptionsRollbackStackableResponseBody
+- LoyaltiesRedeemRewardResponseBody
+
+- GET `v1/redemptions`
+  - Response body schema was replaced with new one: `RedemptionsListResponseBody` (old one: `7_res_list_redemptions`)
+- GET `v1/redemptions/{redemptionId}`
+  - Response body schema was replaced with new one: `RedemptionsGetResponseBody` (old one: `7_res_get_redemption`)
+- GET `v1/vouchers/{code}/redemption`
+  - Response body schema was replaced with new one: `RedemptionsGetVoucherRedemptionResponseBody` (old one: `7_res_get_vouchers_redemptions`)
+- POST `v1/redemptions/{redemptionId}/rollback`
+  - Request body schema was replaced with new one: `RedemptionsRollbackRequestBody` (old one: `7_req_rollback_redemption`)
+  - Response body schema was replaced with new one: `RedemptionsRollbackResponseBody` (old one: `7_res_rollback_redemption`)
+- POST `/v1/redemptions/{parentRedemptionId}/rollbacks`
+  - Request body schema was added: `RedemptionsRollbackRequestBody`
+  - Response body schema was replaced with new one: `RedemptionsRollbackStackableResponseBody` (old one: `19_res_redemptions_parentRedemptionId_rollbacks`)
+- GET `v1/loyalties/{campaignId}/members/{memberId}/redemption`
+  - Response body schema was replaced with new one: `LoyaltiesRedeemRewardResponseBody` (old one: `8_res_redeem_reward`)
+- GET `v1/vouchers/{code}/redemption`
+  - Response body schema was replaced with new one: `LoyaltiesRedeemRewardResponseBody` (old one: `8_res_redeem_reward`)
+
+## 20231116
+
+- Changed the order of the articles in the `Implementation Blueprint` category
+- Moved `Authentication` and `API Endpoints` from the `Getting started` category to `Implementation Blueprint`
+- Split the `Modeling Voucherify integration` article and created a `Scenario discovery` article out of that in the `Integration Blueprint` category
+- Added `Integration connectors` and `Webhooks` articles to the `Implementation Blueprint`. The articles are actually links to respective articles on Help Scout
+- Updated `Metadata mapping` (formatting, links)
+- Updated `Test mode (Sandbox)` – removed deprecated section
+
 ## 20231113 - Removing Not Used Schemas
 
 **Removed schemas**
@@ -370,8 +441,7 @@ https://github.com/voucherifyio/voucherify-openapi/pull/535/files
 - RedeemableResultPromotionTier
 - RedeemableResultPromotionStack
 - RedemptionsRedeemResponseBody
-- RedemptionsRedemption
-- RedemptionsRedemptionBase
+- RedemptionInternal
 
 **REMOVED ALL DUMMY ENDPOINTS AS WE DON'T USE THEM ANYMORE!!!**
 
