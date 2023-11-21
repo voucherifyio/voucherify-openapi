@@ -1,5 +1,12 @@
 # Changelog
 
+## 20231117 - Quality Fixes
+
+**Changed schemas**
+- Fixed Products and ProductCollections schemas names (mostly `requestBody`) according to proper template.
+- Fixed wrong required properties in Products and Discounts responses
+- Using type null instead of nullable flag
+
 ## 20231120
 
 - Changed category `Implementation blueprint` to `Development` and made all relevant changes to headers
