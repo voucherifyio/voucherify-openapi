@@ -1,7 +1,7 @@
 ---
 title: Data synchronization
 excerpt: Learn what kind of data you can synchronize with Voucherify and how you can do this
-categorySlug: development
+categorySlug: implementation-blueprint
 slug: data-synchronization
 type: basic
 hidden: false
@@ -51,7 +51,7 @@ Every customer has unique identification data in the `source_id` field. The `sou
 >
 > If your data is to be synchronized based on the `source_id` of the customer, you need to import the `source_id` when the customer is uploaded for the first time. You will not be able to change or update `source_id` later on.
 
-### Synchronization options
+### Customer synchronization options
 
 <!-- https://success.voucherify.io/article/430-crm-playbook
 Adding customers
@@ -157,9 +157,22 @@ For reference, see also [the customer object](ref:customer-object) and [customer
 
 ## Product synchronization
 
-Products can be stored in Voucherify, but it is not required. The product validation takes place during the Qualification, Validation, and Redemption processes based on the API payload and the data stored in Voucherify's product catalog. However, if a product does not exist in Voucherify, the validation will take into consideration the payload alone.
+Products can be stored in Voucherify but it is not required. The product validation <!-- validation? --> takes place during the following actions:
+- Qualification
+- Validation
+- Redemption
 
-The products can be grouped into dynamic collections based on the parameters.
+The product validation is based on the API payload and the data stored in Voucherify's product catalog. However, if a product does not exist in Voucherify, the validation will take into consideration the payload alone.
+
+> 🚧 Product data in the payload alone
+>
+> Unlike customer data, product data provided in the payload alone do not create a new product in Voucherify. Products need to be created or imported.
+
+The products in Voucherify can be grouped into static or dynamic collections based on their parameters. Collections can be used in validation rules to model product-specific limits.
+
+### Product synchronization options
+
+
 
 ## Order synchronization
 
