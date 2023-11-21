@@ -7657,39 +7657,7 @@
             }
           },
           "code_config": {
-            "type": "object",
-            "description": "Defines code's pattern (prefix, suffix, length, charset, etc).",
-            "properties": {
-              "length": {
-                "type": "string",
-                "description": "Number of characters in a generated code (excluding prefix and postfix)."
-              },
-              "charset": {
-                "type": "string",
-                "description": "Characters that can appear in the code.  \n\nExamples:\n\n- Alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic Lowercase: `abcdefghijklmnopqrstuvwxyz` \n- Alphabetic Uppercase: `ABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Numbers: `0123456789`  \n- Custom: a custom character set"
-              },
-              "prefix": {
-                "type": "string",
-                "description": "A text appended before the code."
-              },
-              "postfix": {
-                "type": "string",
-                "description": "A text appended after the code."
-              },
-              "pattern": {
-                "type": "string",
-                "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
-              },
-              "initial_count": {
-                "type": "integer",
-                "description": "The initial count"
-              }
-            },
-            "required": [
-              "length",
-              "charset",
-              "pattern"
-            ]
+            "$ref": "#/components/schemas/CodeConfig"
           },
           "is_referral_code": {
             "type": "boolean",
@@ -7727,6 +7695,41 @@
           "redemption",
           "code_config",
           "is_referral_code"
+        ]
+      },
+      "CodeConfig": {
+        "type": "object",
+        "description": "Defines code's pattern (prefix, suffix, length, charset, etc).",
+        "properties": {
+          "length": {
+            "type": "string",
+            "description": "Number of characters in a generated code (excluding prefix and postfix)."
+          },
+          "charset": {
+            "type": "string",
+            "description": "Characters that can appear in the code.  \n\nExamples:\n\n- Alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic Lowercase: `abcdefghijklmnopqrstuvwxyz` \n- Alphabetic Uppercase: `ABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Numbers: `0123456789`  \n- Custom: a custom character set"
+          },
+          "prefix": {
+            "type": "string",
+            "description": "A text appended before the code."
+          },
+          "postfix": {
+            "type": "string",
+            "description": "A text appended after the code."
+          },
+          "pattern": {
+            "type": "string",
+            "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
+          },
+          "initial_count": {
+            "type": "integer",
+            "description": "The initial count"
+          }
+        },
+        "required": [
+          "length",
+          "charset",
+          "pattern"
         ]
       },
       "CampaignLoyaltyCard": {
@@ -7964,31 +7967,10 @@
           }
         }
       },
-      "2_req_create_campaign": {
-        "title": "Create Campaign Request Body",
-        "description": "Request body schema for **POST** `/campaigns`.",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/2_req_create_campaign_discount_voucher"
-          },
-          {
-            "$ref": "#/components/schemas/2_req_create_campaign_loyalty"
-          },
-          {
-            "$ref": "#/components/schemas/2_req_create_campaign_gift"
-          },
-          {
-            "$ref": "#/components/schemas/2_req_create_campaign_promotion"
-          },
-          {
-            "$ref": "#/components/schemas/2_req_create_campaign_referral"
-          }
-        ]
-      },
-      "2_req_create_campaign_discount_voucher": {
+      "CampaignsCreateBase": {
         "type": "object",
-        "title": "Discount Campaign",
-        "description": "Request body schema for creating a discount voucher campaign using **POST** `/campaigns`.",
+        "title": "Campaign Create Schema Discount Campaign",
+        "description": "Base body schema for creating a campaign using **POST** `/campaigns`.",
         "properties": {
           "name": {
             "type": "string",
@@ -8014,6 +7996,10 @@
           "join_once": {
             "type": "boolean",
             "description": "If this value is set to `true`, customers will be able to join the campaign only once."
+          },
+          "auto_join": {
+            "type": "boolean",
+            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled."
           },
           "use_voucher_metadata_schema": {
             "type": "boolean",
@@ -8060,6 +8046,14 @@
             "type": "string",
             "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
           },
+          "validation_rules": {
+            "type": "array",
+            "description": "Array containing the ID of the validation rule associated with the promotion tier.",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 1
+          },
           "category_id": {
             "type": "string",
             "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
@@ -8072,11 +8066,46 @@
           "metadata": {
             "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
-          },
-          "voucher": {
-            "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
           }
         }
+      },
+      "CampaignsCreateRequestBody": {
+        "title": "Create Campaign Request Body",
+        "description": "Request body schema for **POST** `/campaigns`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsCreateDiscountType"
+          },
+          {
+            "$ref": "#/components/schemas/2_req_create_campaign_loyalty"
+          },
+          {
+            "$ref": "#/components/schemas/2_req_create_campaign_gift"
+          },
+          {
+            "$ref": "#/components/schemas/2_req_create_campaign_promotion"
+          },
+          {
+            "$ref": "#/components/schemas/2_req_create_campaign_referral"
+          }
+        ]
+      },
+      "CampaignsCreateDiscountType": {
+        "title": "",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsCreateBase"
+          },
+          {
+            "type": "object",
+            "title": "Loyalty Campaign",
+            "properties": {
+              "voucher": {
+                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
+              }
+            }
+          }
+        ]
       },
       "2_req_create_campaign_loyalty": {
         "type": "object",
@@ -9183,7 +9212,7 @@
           }
         }
       },
-      "2_res_list_campaigns": {
+      "CampaignsListResponseBody": {
         "type": "object",
         "description": "Schema model for **GET** `/campaigns`.",
         "title": "List Campaigns Response Body",
@@ -44319,7 +44348,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/2_req_create_campaign"
+                "$ref": "#/components/schemas/CampaignsCreateRequestBody"
               },
               "examples": {
                 "Discount Campaign": {
@@ -45213,7 +45242,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/2_res_list_campaigns"
+                  "$ref": "#/components/schemas/CampaignsListResponseBody"
                 },
                 "examples": {
                   "Example": {
