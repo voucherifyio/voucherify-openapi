@@ -7640,7 +7640,7 @@
             "description": "Defines the voucher gift details."
           },
           "loyalty_card": {
-            "$ref": "#/components/schemas/CampaignLoyaltyCard",
+            "$ref": "#/components/schemas/CampaignLoyaltyCardResponse",
             "description": "Defines the voucher loyalty card details."
           },
           "redemption": {
@@ -7650,14 +7650,14 @@
               "quantity": {
                 "type": [ "integer", "null" ],
                 "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
-              },
-              "required":  [
-                "quantity"
-              ]
-            }
+              }
+            },
+            "required":  [
+              "quantity"
+            ]
           },
           "code_config": {
-            "$ref": "#/components/schemas/CodeConfig"
+            "$ref": "#/components/schemas/CodeConfigResponse"
           },
           "is_referral_code": {
             "type": "boolean",
@@ -7698,6 +7698,7 @@
         ]
       },
       "CodeConfig": {
+        "title": "Schema containing information about config used for voucher",
         "type": "object",
         "description": "Defines code's pattern (prefix, suffix, length, charset, etc).",
         "properties": {
@@ -7725,14 +7726,22 @@
             "type": "integer",
             "description": "The initial count"
           }
-        },
+        }
+      },
+      "CodeConfigResponse": {
+        "title": "Schema containing information about config used for voucher",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CodeConfig"
+          }
+        ],
         "required": [
           "length",
           "charset",
           "pattern"
         ]
       },
-      "CampaignLoyaltyCard": {
+      "CampaignLoyaltyCardResponse": {
         "type": "object",
         "description": "Schema model for a campaign loyalty card.",
         "title": "Campaign Loyalty Card",
@@ -7769,10 +7778,47 @@
             ]
           }
         },
-        "required":  [
-          "points",
-          "expiration_rules"
+        "required": [
+          "points"
         ]
+      },
+      "CampaignLoyaltyCardRequestBody": {
+        "type": "object",
+        "description": "Schema representing request body model for a campaign loyalty card.",
+        "title": "Campaign Loyalty Card",
+        "properties": {
+          "points": {
+            "type": ["integer", "null" ],
+            "description": "The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card."
+          },
+          "expiration_rules": {
+            "type": "object",
+            "properties": {
+              "period_type": {
+                "type": "string",
+                "description": "Type of period"
+              },
+              "period_value": {
+                "type": "integer",
+                "description": "Value of the period"
+              },
+              "rounding_type": {
+                "type": "string",
+                "description": "Type of rounding"
+              },
+              "rounding_value": {
+                "type": "integer",
+                "description": "Value of rounding"
+              }
+            },
+            "required":  [
+              "period_type",
+              "period_value",
+              "rounding_type",
+              "rounding_value"
+            ]
+          }
+        }
       },
       "2_loyalty_tiers_expiration_balance": {
         "title": "Balance",
@@ -7967,9 +8013,29 @@
           }
         }
       },
+      "LuckyDraw": {
+        "type": "object",
+        "title": "Lucky Draw",
+        "description": "Object for defining detailed information about lucky draw should be applied",
+        "properties":  {
+          "winners_count": {
+            "description": "It represents the total number of winners in a lucky draw.",
+            "minimum": 1,
+            "type": ["string", "integer"]
+          },
+          "unique_winners_per_draw" : {
+            "description": "It indicates whether each winner in a draw is unique or not.",
+            "type": ["string", "boolean"]
+          },
+          "unique_winners": {
+            "description": "Specifies whether each participant can win only once across multiple draws.",
+            "type": ["string", "boolean"]
+          }
+        }
+      },
       "CampaignsCreateBase": {
         "type": "object",
-        "title": "Campaign Create Schema Discount Campaign",
+        "title": "Campaign Create Schema Base",
         "description": "Base body schema for creating a campaign using **POST** `/campaigns`.",
         "properties": {
           "name": {
@@ -8046,6 +8112,12 @@
             "type": "string",
             "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
           },
+          "referral_program": {
+            "$ref": "#/components/schemas/ReferralProgram"
+          },
+          "lucky_draw": {
+            "$ref": "#/components/schemas/LuckyDraw"
+          },
           "validation_rules": {
             "type": "array",
             "description": "Array containing the ID of the validation rule associated with the promotion tier.",
@@ -8074,502 +8146,129 @@
         "description": "Request body schema for **POST** `/campaigns`.",
         "oneOf": [
           {
-            "$ref": "#/components/schemas/CampaignsCreateDiscountType"
+            "$ref": "#/components/schemas/CampaignsCreateDiscountVoucherType"
           },
           {
-            "$ref": "#/components/schemas/2_req_create_campaign_loyalty"
+            "$ref": "#/components/schemas/CampaignsCreateReferralProgramType"
           },
           {
-            "$ref": "#/components/schemas/2_req_create_campaign_gift"
+            "$ref": "#/components/schemas/CampaignsCreateGiftType"
           },
           {
-            "$ref": "#/components/schemas/2_req_create_campaign_promotion"
+            "$ref": "#/components/schemas/CampaignsCreateLoyalty"
           },
           {
-            "$ref": "#/components/schemas/2_req_create_campaign_referral"
+            "$ref": "#/components/schemas/CampaignsCreatePromotion"
+          },
+          {
+            "$ref": "#/components/schemas/CampaignsCreateGiveawayType"
           }
         ]
       },
-      "CampaignsCreateDiscountType": {
-        "title": "",
+      "CampaignsCreateDiscountVoucherType": {
+        "title": "Campaign Create Schema for Discount Coupons Campaign",
         "allOf": [
           {
             "$ref": "#/components/schemas/CampaignsCreateBase"
           },
           {
             "type": "object",
-            "title": "Loyalty Campaign",
+            "title": "Schema that contains unique properties for Discount Coupons Campaign",
             "properties": {
               "voucher": {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
+                "$ref": "#/components/schemas/DiscountCouponsCampaignVoucher"
               }
             }
           }
         ]
       },
-      "2_req_create_campaign_loyalty": {
-        "type": "object",
-        "title": "Loyalty Campaign",
-        "description": "Request body schema for creating a loyalty campaign using **POST** `/campaigns`.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Campaign name."
+      "CampaignsCreateReferralProgramType": {
+        "title": "Campaign Create Schema for Referral Program",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsCreateBase"
           },
-          "description": {
-            "type": "string",
-            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
-          },
-          "campaign_type": {
-            "type": "string",
-            "default": "LOYALTY_PROGRAM",
-            "description": "Type of campaign."
-          },
-          "type": {
-            "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
-            "enum": [
-              "AUTO_UPDATE",
-              "STATIC"
-            ]
-          },
-          "auto_join": {
-            "type": "boolean",
-            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled. CONTEXT: `LOYALTY_PROGRAM`."
-          },
-          "join_once": {
-            "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
-          },
-          "use_voucher_metadata_schema": {
-            "type": "boolean",
-            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
-          },
-          "vouchers_count": {
-            "type": "integer",
-            "description": "Total number of unique vouchers in campaign (size of campaign)."
-          },
-          "start_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
-            "example": "2022-09-20T00:00:00.000Z"
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
-            "example": "2022-09-30T00:00:00.000Z"
-          },
-          "validity_timeframe": {
+          {
             "type": "object",
-            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+            "title": "Schema that contains unique properties for Referral Program",
             "properties": {
-              "interval": {
-                "type": "string",
-                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
-              },
-              "duration": {
-                "type": "string",
-                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
-              }
-            }
-          },
-          "validity_day_of_week": {
-            "type": "array",
-            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
-            "items": {
-              "type": "integer"
-            }
-          },
-          "activity_duration_after_publishing": {
-            "type": "string",
-            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
-          },
-          "category_id": {
-            "type": "string",
-            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
-            "example": "cat_0b688929a2476386a7"
-          },
-          "category": {
-            "type": "string",
-            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
-          },
-          "voucher": {
-            "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
-          }
-        }
-      },
-      "2_req_create_campaign_gift": {
-        "type": "object",
-        "title": "Gift Card campaign",
-        "description": "Request body schema for creating a gift card campaign using **POST** `/campaigns`.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Campaign name."
-          },
-          "description": {
-            "type": "string",
-            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
-          },
-          "campaign_type": {
-            "type": "string",
-            "default": "GIFT_VOUCHERS",
-            "description": "Type of campaign."
-          },
-          "type": {
-            "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
-            "enum": [
-              "AUTO_UPDATE",
-              "STATIC"
-            ]
-          },
-          "join_once": {
-            "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
-          },
-          "use_voucher_metadata_schema": {
-            "type": "boolean",
-            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
-          },
-          "vouchers_count": {
-            "type": "integer",
-            "description": "Total number of unique vouchers in campaign (size of campaign)."
-          },
-          "start_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
-            "example": "2022-09-20T00:00:00.000Z"
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
-            "example": "2022-09-30T00:00:00.000Z"
-          },
-          "validity_timeframe": {
-            "type": "object",
-            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
-            "properties": {
-              "interval": {
-                "type": "string",
-                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
-              },
-              "duration": {
-                "type": "string",
-                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
-              }
-            }
-          },
-          "validity_day_of_week": {
-            "type": "array",
-            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
-            "items": {
-              "type": "integer"
-            }
-          },
-          "activity_duration_after_publishing": {
-            "type": "string",
-            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
-          },
-          "category_id": {
-            "type": "string",
-            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
-            "example": "cat_0b688929a2476386a7"
-          },
-          "category": {
-            "type": "string",
-            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
-          },
-          "voucher": {
-            "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
-          }
-        }
-      },
-      "2_req_create_campaign_referral": {
-        "type": "object",
-        "title": "Referral Campaign",
-        "description": "Request body schema for creating a referral campaign using **POST** `/campaigns`.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Campaign name."
-          },
-          "description": {
-            "type": "string",
-            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
-          },
-          "campaign_type": {
-            "type": "string",
-            "default": "REFERRAL_PROGRAM",
-            "description": "Type of campaign."
-          },
-          "type": {
-            "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
-            "enum": [
-              "AUTO_UPDATE",
-              "STATIC"
-            ]
-          },
-          "join_once": {
-            "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
-          },
-          "use_voucher_metadata_schema": {
-            "type": "boolean",
-            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
-          },
-          "vouchers_count": {
-            "type": "integer",
-            "description": "Total number of unique vouchers in campaign (size of campaign)."
-          },
-          "start_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
-            "example": "2022-09-20T00:00:00.000Z"
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
-            "example": "2022-09-30T00:00:00.000Z"
-          },
-          "validity_timeframe": {
-            "type": "object",
-            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
-            "properties": {
-              "interval": {
-                "type": "string",
-                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
-              },
-              "duration": {
-                "type": "string",
-                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
-              }
-            }
-          },
-          "validity_day_of_week": {
-            "type": "array",
-            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
-            "items": {
-              "type": "integer"
-            }
-          },
-          "activity_duration_after_publishing": {
-            "type": "string",
-            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
-          },
-          "category_id": {
-            "type": "string",
-            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
-            "example": "cat_0b688929a2476386a7"
-          },
-          "category": {
-            "type": "string",
-            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
-          },
-          "voucher": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_DISCOUNT"
-              },
-              {
-                "$ref": "#/components/schemas/2_obj_campaign_object_voucher_object_GIFT_CARD"
-              },
-              {
-                "$ref": "#/components/schemas/2_req_campaign_object_voucher_object_LOYALTY_CARD"
-              }
-            ]
-          },
-          "referral_program": {
-            "description": "Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.",
-            "type": "object",
-            "properties": {
-              "conversion_event_type": {
-                "type": "string",
-                "enum": [
-                  "redemption",
-                  "custom_event"
-                ],
-                "description": "Define how a referral is triggered."
-              },
-              "custom_event": {
-                "type": "object",
-                "description": "Contains details about the custom event.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "example": "ms_Ll9enAm2BCN0M1s4VxWobLFM",
-                    "description": "Unique custom event ID."
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Custom event name."
-                  }
-                }
-              },
-              "referee_reward": {
-                "type": "object",
-                "description": "Defines the referee reward.",
-                "properties": {
-                  "related_object_parent": {
-                    "type": "object",
-                    "description": "Details of the resource from which the reward originates.",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "example": "camp_kdxp3vf1clQ9CFs1jpqv3tZe",
-                        "description": "Unique ID of the reward source."
-                      },
-                      "name": {
-                        "type": "string",
-                        "description": "Name of the reward source."
-                      },
-                      "object": {
-                        "type": "string",
-                        "enum": [
-                          "CAMPAIGN"
-                        ],
-                        "description": "Type of resource represented by the source of the reward."
-                      }
-                    }
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": [
-                      "LOYALTY_CARD",
-                      "GIFT_VOUCHER"
-                    ],
-                    "description": "Type of reward."
-                  },
-                  "amount": {
-                    "type": "string",
-                    "description": "Define the number of `points` to add to a loyalty card or `credits` to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  }
-                }
+              "voucher": {
+                "$ref": "#/components/schemas/ReferralProgramVoucher"
               }
             }
           }
-        }
+        ]
       },
-      "2_req_create_campaign_promotion": {
-        "type": "object",
-        "title": "Promotion",
-        "description": "Request body schema for creating a promotions campaign using **POST** `/campaigns`.",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Campaign name."
+      "CampaignsCreateGiftType": {
+        "title": "Campaign Create Schema for Gift Campaign",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsCreateBase"
           },
-          "description": {
-            "type": "string",
-            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details."
-          },
-          "campaign_type": {
-            "type": "string",
-            "default": "PROMOTION",
-            "description": "Type of campaign."
-          },
-          "type": {
-            "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
-            "enum": [
-              "AUTO_UPDATE",
-              "STATIC"
-            ]
-          },
-          "join_once": {
-            "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once."
-          },
-          "use_voucher_metadata_schema": {
-            "type": "boolean",
-            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema."
-          },
-          "vouchers_count": {
-            "type": "integer",
-            "description": "Total number of unique vouchers in campaign (size of campaign)."
-          },
-          "start_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
-            "example": "2022-09-20T00:00:00.000Z"
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
-            "example": "2022-09-30T00:00:00.000Z"
-          },
-          "validity_timeframe": {
+          {
             "type": "object",
-            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+            "title": "Schema that contains unique properties for Gift Campaign",
             "properties": {
-              "interval": {
-                "type": "string",
-                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
-              },
-              "duration": {
-                "type": "string",
-                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
+              "voucher": {
+                "$ref": "#/components/schemas/GiftCampaignVoucher"
               }
             }
+          }
+        ]
+      },
+      "CampaignsCreateLoyalty": {
+        "title": "Campaign Create Schema for Loyalty Campaign",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsCreateBase"
           },
-          "validity_day_of_week": {
-            "type": "array",
-            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
-            "items": {
-              "type": "integer"
-            }
-          },
-          "activity_duration_after_publishing": {
-            "type": "string",
-            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days."
-          },
-          "category_id": {
-            "type": "string",
-            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
-            "example": "cat_0b688929a2476386a7"
-          },
-          "category": {
-            "type": "string",
-            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
-          },
-          "metadata": {
+          {
             "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
-          },
-          "promotion": {
-            "type": "object",
-            "description": "Define the promotion tiers within the campaign.",
+            "title": "Schema that contains unique properties for Loyalty Campaign",
             "properties": {
-              "tiers": {
-                "type": "array",
+              "voucher": {
+                "$ref": "#/components/schemas/LoyaltyCampaignVoucher"
+              }
+            }
+          }
+        ]
+      },
+      "CampaignsCreatePromotion": {
+        "title": "Campaign Create Schema for Promotion Campaign",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsCreateBase"
+          },
+          {
+            "type": "object",
+            "title": "Schema that contains unique properties for Promotion Campaign",
+            "properties": {
+              "promotion": {
+                "type": [ "array", "null" ],
                 "items": {
-                  "$ref": "#/components/schemas/3_req_add_promotion_tier_to_campaign"
+                  "$ref": "#/components/schemas/PromotionTierCreateParams"
                 }
               }
             }
           }
-        }
+        ]
+      },
+      "CampaignsCreateGiveawayType": {
+        "title": "Campaign Create Schema for Giveaway Campaign",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsCreateBase"
+          },
+          {
+            "type": "object",
+            "title": "Schema that contains unique properties for Giveaway Campaign",
+            "properties": {
+              "voucher": {
+                "$ref": "#/components/schemas/GiveawayCampaignVoucher"
+              }
+            }
+          }
+        ]
       },
       "2_req_update_campaign": {
         "type": "object",
@@ -9240,6 +8939,184 @@
           }
         }
       },
+      "DiscountCouponsCampaignVoucher": {
+        "title": "Object representing voucher property for Discount Coupons Campaign",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "DISCOUNT_VOUCHER",
+            "description": "Type of voucher.",
+            "enum": [
+              "DISCOUNT_VOUCHER"
+            ]
+          },
+          "discount": {
+            "$ref": "#/components/schemas/Discount"
+          },
+          "code_config": {
+            "$ref": "#/components/schemas/CodeConfig"
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": [ "integer", "null" ],
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "discount"
+        ]
+      },
+      "ReferralProgramVoucher": {
+        "title": "Object representing voucher property for Referal Program",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "DISCOUNT_VOUCHER",
+            "description": "Type of voucher.",
+            "enum": [
+              "DISCOUNT_VOUCHER"
+            ]
+          },
+          "discount": {
+            "$ref": "#/components/schemas/Discount"
+          },
+          "code_config": {
+            "$ref": "#/components/schemas/CodeConfig"
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": [ "integer", "null" ],
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              }
+            }
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Indicates whether the voucher is a referral code; this is `true` for campaign type `REFERRAL_PROGRAM`."
+          }
+        },
+        "required": [
+          "type",
+          "discount",
+          "is_referral_code"
+        ]
+      },
+      "GiveawayCampaignVoucher": {
+        "title": "Object representing voucher property for Giveaway Campaign",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "DISCOUNT_VOUCHER",
+            "description": "Type of voucher.",
+            "enum": [
+              "DISCOUNT_VOUCHER"
+            ]
+          },
+          "discount": {
+            "$ref": "#/components/schemas/Discount"
+          },
+          "code_config": {
+            "$ref": "#/components/schemas/CodeConfig"
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": [ "integer", "null" ],
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              }
+            }
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "description": "Indicates whether the voucher is a referral code; this is `true` for campaign type `REFERRAL_PROGRAM`."
+          }
+        },
+        "required": [
+          "type",
+          "discount"
+        ]
+      },
+      "GiftCampaignVoucher": {
+        "type": "object",
+        "description": "Schema model for a discount voucher.",
+        "title": "Discount Voucher",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "GIFT_VOUCHER",
+            "description": "Type of voucher.",
+            "enum": [
+              "GIFT_VOUCHER"
+            ]
+          },
+          "gift": {
+            "$ref": "#/components/schemas/Gift"
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": [ "integer", "null" ],
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              }
+            }
+          },
+          "code_config": {
+            "$ref": "#/components/schemas/CodeConfig"
+          }
+        },
+        "required":  [
+          "type",
+          "gift"
+        ]
+      },
+      "LoyaltyCampaignVoucher": {
+        "type": "object",
+        "description": "Schema model for a discount voucher.",
+        "title": "Discount Voucher",
+        "properties": {
+          "type": {
+            "type": "string",
+            "default": "LOYALTY_CARD",
+            "description": "Type of voucher.",
+            "enum": [
+              "LOYALTY_CARD"
+            ]
+          },
+          "loyalty_card": {
+            "$ref": "#/components/schemas/CampaignLoyaltyCardRequestBody"
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": [ "integer", "null" ],
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              }
+            }
+          },
+          "code_config": {
+            "$ref": "#/components/schemas/CodeConfig"
+          }
+        },
+        "required":  [
+          "type",
+          "loyalty_card"
+        ]
+      },
       "2_obj_campaign_object_voucher_object_DISCOUNT": {
         "type": "object",
         "description": "Schema model for a discount voucher.",
@@ -9797,6 +9674,98 @@
             }
           }
         }
+      },
+      "PromotionTierCreateParams": {
+        "type": "object",
+        "description": "This is an object representing a promotion tier create params. Promotion tiers are always assigned to a campaign and cannot be used standalone.",
+        "title": "Promotion Tier",
+        "x-tags": [
+          "PROMOTIONS API",
+          "CAMPAIGNS API"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the promotion tier."
+          },
+          "banner": {
+            "type": "string",
+            "description": "Text to be displayed to your customers on your website."
+          },
+          "action": {
+            "type": "object",
+            "description": "Contains details about the discount applied by the promotion tier.",
+            "properties": {
+              "discount": {
+                "$ref": "#/components/schemas/Discount"
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the promotion tier. A set of key/value pairs that you can attach to a promotion tier object. It can be useful for storing additional information about the promotion tier in a structured format."
+          },
+          "validation_rules": {
+            "type": "array",
+            "description": "Array containing the ID of the validation rule associated with the promotion tier.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "active": {
+            "type": "boolean",
+            "description": "A flag to toggle the promotion tier on or off. You can disable a promotion tier even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* promotion tier\n- `false` indicates an *inactive* promotion tier"
+          },
+          "hierarchy": {
+            "type": "integer",
+            "description": "The promotions hierarchy defines the order in which the discounts from different tiers will be applied to a customer's order. If a customer qualifies for discounts from more than one tier, discounts will be applied in the order defined in the hierarchy."
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Activation timestamp defines when the promotion tier starts to be active in ISO 8601 format. Promotion tier is *inactive before* this date. ",
+            "format": "date-time",
+            "example": "2022-09-23T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "description": "Activation timestamp defines when the promotion tier expires in ISO 8601 format. Promotion tier is *inactive after* this date. ",
+            "format": "date-time",
+            "example": "2022-09-26T00:00:00.000Z"
+          },
+          "validity_timeframe": {
+            "type": "object",
+            "description": "Set recurrent time periods when the promotion tier is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
+            "properties": {
+              "interval": {
+                "type": "string",
+                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a promotion tier with an `interval` of `P2D` will be active every other day."
+              },
+              "duration": {
+                "type": "string",
+                "description": "Defines the amount of time the promotion tier will be active in ISO 8601 format. For example, a promotion tier with a `duration` of `P1D` will be valid for a duration of one day."
+              }
+            }
+          },
+          "validity_day_of_week": {
+            "type": "array",
+            "description": "Integer array corresponding to the particular days of the week in which the promotion tier is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "category": {
+            "type": "string",
+            "description": "Assign category to the promotion tier."
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Instead of using the category name, you can alternatively assign a new category to a promotion tier using a unique category ID, i.e. `cat_0c9da30e7116ba6bba`.",
+            "example": "cat_0c9da30e7116ba6bba"
+          }
+        },
+        "required":  [
+          "name"
+        ]
       },
       "3_req_add_promotion_tier_to_campaign": {
         "type": "object",
@@ -25356,8 +25325,10 @@
               "type": {
                 "type": "string",
                 "enum": [
+                  "DISCOUNT_VOUCHER",
                   "LOYALTY_CARD",
-                  "GIFT_VOUCHER"
+                  "GIFT_VOUCHER",
+                  "LUCKY_DRAW_CODE"
                 ],
                 "description": "Type of reward."
               },
