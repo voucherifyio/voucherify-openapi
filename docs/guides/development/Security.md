@@ -1,11 +1,11 @@
 ---
 title: Security
 excerpt: 
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: security
 type: basic
 hidden: false
-order: 3
+order: 130
 ---
 
 Security is one of the biggest concerns in every aspect of our product. So, we've taken several measures to keep your data safe. 
@@ -47,5 +47,6 @@ To increase the security of public client operations, Voucherify will accept onl
 * yourdomain.com – this covers any instances of your site called without www and all paths within that domain.
 * \* – this allows requests from any domain.
 
-<!-- ![Domain Settings](../../assets/img/guides_development_security_domain_settings_1.png "Domain Settings") -->
+<!-- ![Domain Settings](https://files.readme.io/d48595e-guides_development_security_domain_settings_1.png "Domain Settings") 
 ![Domain Settings](https://files.readme.io/2d9c6c4-Screenshot_2020-09-16_at_09.45.20.png "Domain Settings")
+-->

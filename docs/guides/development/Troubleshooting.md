@@ -1,11 +1,11 @@
 ---
 title: Troubleshooting
 excerpt: 
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: troubleshooting
 type: basic
 hidden: false
-order: 13
+order: 210
 ---
 
 ### Why does the API return prices multiplied by 100?

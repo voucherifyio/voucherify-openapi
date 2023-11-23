@@ -1,11 +1,11 @@
 ---
 title: Examples
 excerpt: Here are some exemplary integrations and third-party guides for you to learn more about Voucherify.
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: examples
 type: basic
 hidden: false
-order: 4
+order: 160
 ---
 
 ## Sample workflows

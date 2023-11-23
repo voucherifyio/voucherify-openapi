@@ -1,34 +1,34 @@
 ---
 title: API Endpoints
 excerpt: 
-categorySlug: getting-started
+categorySlug: development
 slug: api-endpoints
 type: basic
 hidden: false
-order: 8
+order: 70
 ---
 
 Voucherify is shipped from shared clusters located on three continents, as well as from dedicated clusters for enterprise customers.
 
-If you want to get the best performance from Voucherify, it is advised to create a project in the region (cluster) closest to your customers.
+If you want to get the best performance from Voucherify, it is recommended to create a project in the region (cluster) closest to your customers.
 
-When creating the project you can choose where it should be located. It is possible to have projects located in different regions within one organization.
+When your create a project, you can choose a preferred region. You can have projects located in different regions within one organization.
 
 If your project is not created in Europe and your organization has a dedicated cluster, you must configure your application to use the appropriate API endpoint. Otherwise, your HTTP requests will be rejected.
 
-The default API endpoint for the shared cluster in Europe is [https://api.voucherify.io](https://api.voucherify.io). Other API endpoints are created by the following pattern: [https://<region>.api.voucherify.io](https://<region>.api.voucherify.io).
+The default API endpoint for the shared cluster in Europe is `https://api.voucherify.io`. Other API endpoints are created with the `https://<region>.api.voucherify.io` pattern.
 
 ## Shared Clusters
 
 | **Shared Cluster** | **Endpoint** |
 |:---|:---|
-| Europe (default) | https://api.voucherify.io |
-| United States | https://us1.api.voucherify.io |
-| Asia (Singapore) | https://as1.api.voucherify.io |
+| Europe (default) | `https://api.voucherify.io` |
+| United States | `https://us1.api.voucherify.io` |
+| Asia (Singapore) | `https://as1.api.voucherify.io` |
 
 ## SDK
 
-Each SDK provided by Voucherify has a method to override the default API endpoint:
+Each [SDK](doc:sdks) provided by Voucherify has a method to override the default API endpoint.
   * [https://github.com/rspective/voucherify.js#api-endpoint](https://github.com/rspective/voucherify.js#api-endpoint)
   * [https://github.com/voucherifyio/voucherify-nodejs-sdk#api-endpoint](https://github.com/voucherifyio/voucherify-nodejs-sdk#api-endpoint)
   * [https://github.com/voucherifyio/voucherify-java-sdk#api-endpoint](https://github.com/voucherifyio/voucherify-java-sdk#api-endpoint)

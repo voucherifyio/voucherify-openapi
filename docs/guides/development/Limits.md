@@ -1,11 +1,11 @@
 ---
 title: Limits
 excerpt: API calls limits and optimization
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: limits
 type: basic
 hidden: false
-order: 10
+order: 140
 ---
 
 To understand the basic limits of your account, check out [Pricing](https://www.voucherify.io/pricing) and [Fair Use Policy](https://www.voucherify.io/legal/fair-use-policy). Now, let's navigate through what we limit and how to monitor your usage.
@@ -16,7 +16,7 @@ To understand the basic limits of your account, check out [Pricing](https://www.
 |:---|:---|
 | API requests per hour | Free plan: 100,<br>Startup plan: 1000,<br>Growth plan: 2000,<br>Professional plan: 5000 |
 | Bulk API requests per hour | Free plan: 1,<br>Startup plan: 10,<br>Growth plan: 20,<br>Professional plan: 50 |
-| Billing cycle API requests<br><br>Bulk API requests are not added to the billing cycle limit. | Free plan: 500,<br>Startup plan: 10000,<br>Growth plan: 30000,<br>Professional plan: 100000 |
+| Billing cycle API requests<br><br>Bulk API requests are not added to the billing cycle limit. | Free plan: 500,<br>Startup plan: 10,000,<br>Growth plan: 30,000,<br>Professional plan: 100,000 |
 | Client-side requests (e.g., validate) from a single IP address | 5 requests per 5 seconds |
 
 > 📘 What happens if you exceed your limits?
@@ -33,10 +33,10 @@ Webhook calls coming from integrations are counted in separate daily buckets.
 The size of the daily bucket is derived from the API request limit. 
 
 **Webhooks used per day:**
-  * Free: 7 200
-  * Startup: 21 600
-  * Growth: 50 400
-  * Professional: 122 400
+  * Free: 7200
+  * Startup: 21,600
+  * Growth: 50,400
+  * Professional: 122,400
 
 Webhook calls are gathered in a queue, so their number per hour can exceed the API hourly limit, and they will still be processed. However, if their number exceeds the daily limit, they will get rejected. 
 

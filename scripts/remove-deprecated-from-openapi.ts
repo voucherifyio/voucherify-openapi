@@ -16,6 +16,72 @@ const removeStoplightTag = (node: object): object => {
   return node;
 };
 
+const skipList: { endpoint: string; methods: string[] | true }[] = [
+  { endpoint: "/v1/locations", methods: ["get"] },
+  { endpoint: "/v1/locations/{locationId}", methods: ["get"] },
+  { endpoint: "/v1/async-actions/{asyncActionId}", methods: ["get"] },
+  { endpoint: "/v1/async-actions", methods: ["get"] },
+  { endpoint: "/v1/consents", methods: ["get"] },
+  { endpoint: "/client/v1/consents#", methods: ["get"] },
+  { endpoint: "/v1/vouchers/{code}", methods: ["post", "put"] },
+  { endpoint: "/v1/vouchers", methods: ["post", "get"] },
+  { endpoint: "/v1/promotions/{campaignId}/tiers", methods: ["post"] },
+  { endpoint: "/v1/promotions/tiers/{promotionTierId}", methods: ["put"] },
+  { endpoint: "/v1/campaigns", methods: ["get", "post"] },
+  { endpoint: "/v1/campaigns/{campaignId}", methods: ["get", "put"] },
+  { endpoint: "/v1/vouchers/import", methods: ["post"] },
+  { endpoint: "/v1/vouchers/bulk/async", methods: ["post"] },
+  { endpoint: "/v1/loyalties", methods: ["post", "get"] },
+  { endpoint: "/v1/loyalties/{campaignId}", methods: ["get", "put"] },
+  { endpoint: "/v1/campaigns/{campaignId}/import", methods: ["post"] },
+  { endpoint: "/v1/campaigns/{campaignId}/vouchers", methods: ["post"] },
+  { endpoint: "/v1/campaigns/{campaignId}/vouchers/{code}", methods: ["post"] },
+  {
+    endpoint: "/v1/loyalties/{campaignId}/rewards/{assignmentId}",
+    methods: ["put"],
+  },
+  {
+    endpoint: "/v1/loyalties/{campaignId}/rewards",
+    methods: ["post", "get"],
+  },
+  {
+    endpoint: "/v1/loyalties/{campaignId}/reward-assignments",
+    methods: ["get"],
+  },
+  {
+    endpoint: "/v1/loyalties/{campaignId}/members",
+    methods: ["get", "post"],
+  },
+  {
+    endpoint: "/v1/loyalties/members/{memberId}",
+    methods: ["get"],
+  },
+  {
+    endpoint: "/v1/rewards",
+    methods: ["get", "post"],
+  },
+  {
+    endpoint: "/v1/rewards/{rewardId}",
+    methods: ["get", "put"],
+  },
+  {
+    endpoint: "/v1/loyalties/{campaignId}/earning-rules",
+    methods: ["get", "post"],
+  },
+  {
+    endpoint: "/v1/loyalties/{campaignId}/earning-rules/{earningRuleId}",
+    methods: ["put"],
+  },
+  {
+    endpoint: "/v1/loyalties/{campaignId}/points-expiration/export",
+    methods: ["post"],
+  },
+  {
+    endpoint: "/v1/loyalties/{campaignId}/members/{memberId}",
+    methods: ["get"],
+  },
+];
+
 const main = async () => {
   const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
   const openAPIContent = JSON.parse(
@@ -27,10 +93,15 @@ const main = async () => {
   const paths = {};
   const pathsKeys = Object.keys(openAPIContent.paths);
   for (const pathKey of pathsKeys) {
+    const skip = skipList.find((skip) => skip.endpoint === pathKey);
     const path = {};
     const methods = Object.keys(openAPIContent.paths[pathKey]);
     for (const method of methods) {
-      if (openAPIContent.paths[pathKey][method]?.deprecated) {
+      if (
+        openAPIContent.paths[pathKey][method]?.deprecated ||
+        skip?.methods === true ||
+        (skip?.methods && skip.methods.includes(method))
+      ) {
         continue;
       }
       path[method] = openAPIContent.paths[pathKey][method];
@@ -109,7 +180,7 @@ const main = async () => {
   }
   await fsPromises.writeFile(
     path.join(__dirname, "../tmp/reference/OpenAPI.json"),
-    JSON.stringify(openAPIContent, null, 2)
+    JSON.stringify(newOpenApiFile, null, 2)
   );
 };
 

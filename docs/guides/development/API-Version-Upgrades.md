@@ -1,11 +1,11 @@
 ---
 title: API Version Upgrades
 excerpt: Keep track of changes and upgrades to the Voucherify API.
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: api-version-upgrades
 type: basic
 hidden: false
-order: 12
+order: 200
 ---
 
 Your API version controls the API and webhook behavior you see (e.g., what properties you see in responses, what parameters you’re permitted to send in requests, etc.). Your version is set the first time you make an API request. When we change the API in a backwards-incompatible way, we release a new dated version, but to avoid breaking your code, we don’t change your version until you’re ready to upgrade.
