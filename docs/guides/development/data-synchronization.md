@@ -1,7 +1,7 @@
 ---
 title: Data synchronization
 excerpt: Learn what kind of data you can synchronize with Voucherify and how you can do this
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: data-synchronization
 type: basic
 hidden: false
@@ -145,5 +145,25 @@ In a request payload, you can add an attribute `override` with value `true` to t
 The `override` attribute is used to enable storing the product data in Voucherify. If the product does not exist, it will be created with a `source_id`. If the product does exist, the provided values for the name, price, and metadata will replace those already stored in Voucherify.
 
 ## Order synchronization
+
+Orders are synchronized with Voucherify automatically during redemption. They can be viewed through the [Orders view](https://support.voucherify.io/article/263-how-can-i-track-customer-orders "How can I track customer orders?") in the dashboard.
+
+If you want to synchronize the orders that have not been included in any redemption, you need to use the [import order](#import-orders) method.
+
+### Order synchronization options
+
+#### Create order
+
+The [create order](ref:create-order) endpoint creates an order object and triggers an order creation event.
+
+The endpoint can be also used to upsert order data if the order `id` or `source_id` are provided.
+
+#### Update order
+
+The [update order](ref:update-order) endpoint updates the specified order with the values of the parameters in the payload.
+
+#### Import orders
+
+The [import orders](ref:import-orders) endpoint is used to import only historical orders into Voucherify. For on-going synchronization, the [Create order](ref:create-order) and  [update order](ref:update-order) endpoints should be used.
 
 <!-- ## Campaigns and vouchers -->
