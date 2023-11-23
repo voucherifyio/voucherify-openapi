@@ -106,7 +106,7 @@ Visit our API reference to see the list of [customer endpoints](ref:customer-obj
 
 ## Product synchronization
 
-Products can be stored in Voucherify but it is not required. The product validation <!-- validation? --> takes place during the following actions:
+Products can be stored in Voucherify but it is not required. The product validation<!-- validation? --> takes place during the following actions:
 - Create order
 - Qualification
 - Redemption
@@ -114,13 +114,13 @@ Products can be stored in Voucherify but it is not required. The product validat
 
 The product validation is based on the API payload and the data stored in Voucherify's product inventory.
 
-However, if a product does not exist in Voucherify, the validation will use the product data included in the payload. Even if the product does exist in Voucherify, the payload data are used in the request. This way, frequent API calls can be avoided to keep the product inventory up to date.
+However, if a product does not exist in Voucherify, the validation will use the product data included in the payload. Even if the product does exist in Voucherify, the payload data are used instead of those stored in the system. This method can be used to avoid frequent API calls to keep the product inventory up to date.
 
 > 🚧 Product data in the request
 >
-> Unlike customer data, product data provided in the request payload alone do not create a new product in Voucherify. If you want to store products in Voucherify, they need to be created or imported.
+> Unlike customer data, product data provided in the request payload alone do not create a new product in Voucherify. If you want to store products in Voucherify, they need to be created manually in the dashboard or imported with a CSV file.
 > 
-> Also, the product data is not upserted through requests. Product updates are also carried out through product edit function in Voucherify or through a CSV file import.
+> Also, even though Voucherify uses the payload data instead of the data stored in the system, the product data is not upserted through requests. Products can be updated through product edit function or by importing a CSV file.
 >
 > To enable product updates through the payload, use the [override attribute](#overriding-product-data).
 
@@ -141,8 +141,6 @@ You can create and update your products via the following API endpoints:
 #### Overriding product data
 
 In a request payload, you can add an attribute `override` with value `true` to the product object.
-
-<!-- I was considering a sample payload here, but decided against it to keep the doc neat -->
 
 The `override` attribute is used to enable storing the product data in Voucherify. If the product does not exist, it will be created with a `source_id`. If the product does exist, the provided values for the name, price, and metadata will replace those already stored in Voucherify.
 
