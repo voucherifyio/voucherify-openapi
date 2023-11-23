@@ -34,3 +34,11 @@ We will guide you through the most commonly used scenarios that involve the API 
 4. Rewarding customers with points for purchases.
 
 ### Redeeming Voucher Codes
+
+1. You provide customers with voucher codes. If a customer didn't receive a code directly, they should be able to enter a code themselves.
+
+2. A customer is at the checkout and wants to use some discount coupons. A request is sent to Voucherify (Qualification API) and information regarding the available discount coupons are returned. Depending on your flow, you can skip this step as it is optional.
+
+3. After a customer chooses discount coupons that interest them, a validation request is sent to Voucherify to check whether codes are applicable and appropriate results are returned.
+
+4. When a customer pays for the order, Voucherify receives a redemption request and uses the discount coupons.
