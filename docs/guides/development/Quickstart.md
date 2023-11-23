@@ -1,7 +1,7 @@
 ---
 title: First steps in Voucherify
 excerpt: Get started with Voucherify API and dashboard by redeeming your first coupon code.
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: quickstart
 type: basic
 hidden: false

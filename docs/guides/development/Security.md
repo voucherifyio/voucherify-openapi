@@ -1,7 +1,7 @@
 ---
 title: Security
 excerpt: 
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: security
 type: basic
 hidden: false

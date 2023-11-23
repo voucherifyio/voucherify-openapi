@@ -1,7 +1,7 @@
 ---
 title: Client-side API
 excerpt: 
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: client-side-api
 type: basic
 hidden: false
