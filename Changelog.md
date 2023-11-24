@@ -1,5 +1,65 @@
 # Changelog
 
+## 20231123 - Campaigns API
+
+**Added schemas**
+- CampaignResponse
+- CampaignVoucher
+- CodeConfig
+- CodeConfigResponse
+- CampaignsImportVoucherLoyaltyCard
+- CampaignLoyaltyCardResponse 
+- CampaignLoyaltyCardResponse
+- CampaignLoyaltyCardRequestBody
+- LuckyDraw
+- CampaignsCreateBase
+- CampaignsUpdateBase
+- CampaignsUpdateCouponCampaignBase
+- CampaignsUpdateDiscountCouponsCampaign
+- CampaignsUpdateGiftCampaign
+- CampaignsUpdateReferralCampaign
+- CampaignsUpdateLoyaltyCampaign
+- CampaignsUpdateGiveawayCampaign
+- CampaignsUpdatePromotionCampaign
+- CampaignsCreateRequestBody
+- CampaignsUpdateRequestBody
+- CampaignsCreateDiscountCouponsCampaign
+- CampaignsCreateReferralCampaign
+- CampaignsCreateGiftCampaign
+- CampaignsCreateLoyaltyCampaign
+- CampaignsCreatePromotionCampaign
+- CampaignsCreateGiveawayCampaign
+- CampaignsCreateCampaignVoucherWithCodeRequestBody
+- CampaignsCreateCampaignVoucherRequestBody
+- CampaignsImportVoucherRequestBody
+- CampaignsImportVoucherItem
+- CampaignsListResponseBody
+- DiscountCouponsCampaignVoucher
+- ReferralCampaignVoucher
+- GiveawayCampaignVoucher
+- GiftCampaignVoucher
+- LoyaltyCampaignVoucher
+- PromotionTierCreateParams
+- PromotionTiersList
+- LoyaltyTiersExpirationAll
+
+**Deleted schemas**
+- 2_obj_campaign_object
+- 2_req_create_campaign
+- 2_req_create_campaign_discount_voucher
+- 2_req_create_campaign_loyalty
+- 2_req_create_campaign_gift
+- 2_req_create_campaign_referral
+- 2_req_create_campaign_promotion
+- 2_req_update_campaign
+- 2_req_add_vouchers_to_campaign
+- 2_req_import_vouchers_to_campaign
+- 2_obj_import_vouchers_to_campaign_object
+- 2_res_list_campaigns
+- 3_res_list_promotion_tiers_from_campaign
+- 20_obj_category_object
+- e_409_duplicate_found
+
 ## 20231117 - Quality Fixes
 
 **Changed schemas**
