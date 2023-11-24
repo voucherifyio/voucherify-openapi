@@ -14,7 +14,7 @@ To integrate Voucherify into your system, you need to incorporate Voucherify's A
 
 Typically, the customer journey unfolds through the following key steps:
 
-- **[Qualification](ref:check-eligibility)** - occasionally, you may wish to display to a customer the coupons they qualify for, considering their attributes and the current contents of their shopping cart. Voucherify's Qualifications API assists in suggesting relevant promotions and coupons within the specific customer and order context, offering filtering options based on campaign category and hierarchy.
+- **[Qualification](ref:check-eligibility)** - occasionally, you may wish to display to a customer vouchers, promotions, and campaigns they qualify for, considering customer attributes and the current contents of their shopping cart. Voucherify's Qualifications API assists in suggesting relevant promotions and coupons within the specific customer and order context, offering filtering options based on campaign category and hierarchy.
 
 - **[Publication](ref:create-publication)** - it involves associating a code with a specific customer. Typically, code distribution occurs through publications to your customers. Once the code is delivered to a customer, it becomes visible in their profile in Voucherify.
 
@@ -30,15 +30,37 @@ We will guide you through the most commonly used scenarios that involve the API 
 
 1. Redeeming voucher codes,
 2. Checking promotion eligibility during checkout,
-3. Publishing voucher code for a wandering customer,
+3. Publishing a voucher code in a wandering customer scenario,
 4. Rewarding customers with points for purchases.
 
-### Redeeming Voucher Codes
+### Redeeming voucher codes
 
-1. You provide customers with voucher codes. If a customer didn't receive a code directly, they should be able to enter a code themselves.
+In this scenario a customer will be reedeming voucher codes that they received via one of the distribution methods. The codes can be chosen from the list by the customer or added manually. After this step, validity of codes is checked by the validation API. When a customer is happy with the result he pays for the order and codes are consumed during redemption API.
 
-2. A customer is at the checkout and wants to use some discount coupons. A request is sent to Voucherify (Qualification API) and information regarding the available discount coupons are returned. Depending on your flow, you can skip this step as it is optional.
+1. Distribution - A customer can acquire voucher codes by various means. Codes can come from a distribution, be part of a referral program (code from a friend), be bought as a gift voucher, or acquired offline (standaone code printed out on a shopping window). Codes that are assigned to the customer's profile will be returned by the Qualification endpoint. If codes are not assigned to the customer's profile then it is best to let a customer input codes themselves.
 
-3. After a customer chooses discount coupons that interest them, a validation request is sent to Voucherify to check whether codes are applicable and appropriate results are returned.
+2. Shopping experience - A customer is at the checkout and wants to use some discount coupons. A request is sent to Voucherify (Qualification API) and information regarding the available discount coupons are returned. Depending on your flow, you can skip this step as it is optional. After a customer chooses or manually adds discount coupons that interest them, a validation request is sent to Voucherify to check whether codes are applicable and appropriate results are returned. When a customer pays for the order, Voucherify receives a redemption request and consumes the discount coupons.
 
-4. When a customer pays for the order, Voucherify receives a redemption request and uses the discount coupons.
+>During the shopping process there is no need to send any API requests to Voucherify when a customer adds or removes any products from their cart. API requests are only needed if you want to verify whether a customer qualifies for the discount or to calculate the discount itself.
+
+### Checking promotion eligibility during checkout
+
+In this scenario promotion eligibility is going to be verified during the checkout step. A customer did not receive any voucher codes beforehand, instead all discounts and promotions will be displayed at the checkout screen. 
+
+1. Shopping experience - A customer is at the checkout and you want to inform them about all the discounts and promotions they are eligible for. A request is sent to Voucherify (Qualification API) and information regarding the available discount coupons and promotions are returned. You can decide whether discounts and promotions are applied automatically or let the customer choose themselves. In this case this step is mandatory. After discount coupons and promotions are applied, a validation request is sent to Voucherify to check whether they are applicable and appropriate results are returned. When a customer pays for the order, Voucherify receives a redemption request and consumes the discount coupons and promotions.
+
+### Publishing a voucher code in a wandering customer scenario
+
+In this scenario a customer is going to receive a voucher code during their visit in the store. The distribution will trigger after the specific action takes place.
+
+1. Distribution - When a customer visits your store, adds products to the cart but does not go to checkout for a while, the distribution is triggered to give a customer the coupon code to encourage them to finish the purchase.
+
+2. Shopping experience - After a customer types the discount code, a validation request is sent to Voucherify to check whether code is applicable and appropriate result is returned. When a customer pays for the order, Voucherify receives a redemption request and consumes the discount coupon.
+
+### Rewarding customers with points for purchases.
+
+In this scenario a customer is going to receive points for their purchase. We can decide whether we want a customer to apply any discount codes or not. This will slightly change our API requests. Distribution will have slighlty different purposes compared to previous scenarios as it will inform a customer about points they have received for the transaction.
+
+1. Distribution - After the purchase is complete, a customer is informed via a distribution about the points they received. Sources of the distribution can vary between mail, webhook, or one of our integrations.
+
+2. Shopping experience - When a customer is at the checkout you can decide if you want any discounts to be applied or not. If yes, redemptions API will be used. If not, create order API will be used. Regardless of your choice, the following step is exactly the same as the customer is going to be rewarded with points according to earning rules. 
