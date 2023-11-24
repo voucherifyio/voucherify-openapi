@@ -74,15 +74,11 @@ You can import your customer database to Voucherify with a CSV file. If you use 
 
 Read our [customer import guide](https://support.voucherify.io/article/67-how-to-import-my-customers#csv-import "How to import my customers?") to learn more.
 
-<!-- Should I write a full step-by-step manual for this? -->
-
-#### Creating and updating customers via the API
+#### Creating and updating customers with the API
 
 If you want to keep your customers database up to date with Voucherify, create a customer in Voucherify every time a new user is added to your database. Use the [Create customer](ref:create-customer) API endpoint to create customer data.
 
 To update customer data, use [Update customer](ref:update-customer) API endpoint. The [Create customer](ref:create-customer) API endpoint can be also used to update customer data.
-
-<!-- Simply repeat the endpoints? -->
 
 #### Synchronizing with connectors
 
@@ -96,18 +92,11 @@ Customer data can be upserted with integrated platforms that support outbound tr
 
 ### Customer API endpoints
 
-Visit our API reference to see the list of [customer endpoints](ref:customer-object) that can be used to synchronize customer data.
-
-> 📘 Upserting customer data through API
->
-> All endpoints that have a customer object can be used to upsert customer data.
-
-<!-- ^ Kasjan, please verify -->
+Go to our API reference to see the list of [customer endpoints](ref:customer-object) that can be used to synchronize customer data.
 
 ## Product synchronization
 
-Products can be stored in Voucherify but it is not required. The product validation<!-- validation? --> takes place during the following actions:
-- Create order
+Products can be stored in Voucherify but it is not required. The product validation takes place during the following actions:
 - Qualification
 - Redemption
 - Validation
@@ -132,9 +121,9 @@ The products in Voucherify can be grouped into static or dynamic collections bas
 
 You can [import your product database](https://support.voucherify.io/article/515-products#import-products-skus "Import Products and SKUs by CSV") to Voucherify with a CSV file. This method can be also used to update the names of existing products.
 
-#### Creating and updating products via API
+#### Creating and updating products with the API
 
-You can create and update your products via the following API endpoints:
+You can create and update your products with the following API endpoints:
 - [Create product](ref:create-product)
 - [Update product](ref:update-product)
 
@@ -164,6 +153,6 @@ The [update order](ref:update-order) endpoint updates the specified order with t
 
 #### Import orders
 
-The [import orders](ref:import-orders) endpoint is used to import only historical orders into Voucherify. For on-going synchronization, the [Create order](ref:create-order) and  [update order](ref:update-order) endpoints should be used.
+The [import orders](ref:import-orders) endpoint is used to import only historical orders into Voucherify. For on-going synchronization, the [Create order](ref:create-order) and  [update order](ref:update-order) endpoints should be used. Importing orders in bulk does not trigger distributions or earning rules.
 
 <!-- ## Campaigns and vouchers -->
