@@ -1,5 +1,9 @@
 # Changelog
 
+## 20231127
+
+- Data synchronization article added
+
 ## 20231117 - Quality Fixes
 
 **Changed schemas**

@@ -76,9 +76,9 @@ Read our [customer import guide](https://support.voucherify.io/article/67-how-to
 
 #### Creating and updating customers with the API
 
-If you want to keep your customers database up to date with Voucherify, create a customer in Voucherify every time a new user is added to your database. Use the [Create customer](ref:create-customer) API endpoint to create customer data.
+If you want to keep your customers database up to date with Voucherify, create a customer in Voucherify every time a new user is added to your database. Use the [create customer](ref:create-customer) API endpoint to create customer data.
 
-To update customer data, use [Update customer](ref:update-customer) API endpoint. The [Create customer](ref:create-customer) API endpoint can be also used to update customer data.
+To update customer data, use [update customer](ref:update-customer) API endpoint. The [create customer](ref:create-customer) API endpoint can be also used to update customer data.
 
 #### Synchronizing with connectors
 
@@ -92,18 +92,20 @@ Customer data can be upserted with integrated platforms that support outbound tr
 
 ### Customer API endpoints
 
-Go to our API reference to see the list of [customer endpoints](ref:customer-object) that can be used to synchronize customer data.
+Go to the API reference to see the [customer endpoints](ref:customer-object) that can be used to synchronize customer data.
 
 ## Product synchronization
 
 Products can be stored in Voucherify but it is not required. The product validation takes place during the following actions:
 - Qualification
-- Redemption
 - Validation
+- Redemption
+
+<!-- Links to key concepts once they're done  -->
 
 The product validation is based on the API payload and the data stored in Voucherify's product inventory.
 
-However, if a product does not exist in Voucherify, the validation will use the product data included in the payload. Even if the product does exist in Voucherify, the payload data are used instead of those stored in the system. This method can be used to avoid frequent API calls to keep the product inventory up to date.
+However, if a product does not exist in Voucherify, the validation will use the product data included in the payload. Even if the product does exist in Voucherify, the payload data is used instead of those stored in the system. This method can be used to avoid frequent API calls to keep the product inventory up to date.
 
 > 🚧 Product data in the request
 >
@@ -143,7 +145,7 @@ If you want to synchronize the orders that have not been included in any redempt
 
 #### Create order
 
-The [create order](ref:create-order) endpoint creates an order object and triggers an order creation event.
+The [create order](ref:create-order) endpoint creates an [order object](ref:order-object) and triggers an order creation event.
 
 The endpoint can be also used to upsert order data if the order `id` or `source_id` are provided.
 
@@ -153,6 +155,6 @@ The [update order](ref:update-order) endpoint updates the specified order with t
 
 #### Import orders
 
-The [import orders](ref:import-orders) endpoint is used to import only historical orders into Voucherify. For on-going synchronization, the [Create order](ref:create-order) and  [update order](ref:update-order) endpoints should be used. Importing orders in bulk does not trigger distributions or earning rules.
+The [import orders](ref:import-orders) endpoint is used to import only historical orders into Voucherify. For on-going synchronization, the [create order](ref:create-order) and  [update order](ref:update-order) endpoints should be used. Importing orders in bulk does not trigger distributions or earning rules.
 
 <!-- ## Campaigns and vouchers -->
