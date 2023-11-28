@@ -59,7 +59,7 @@ const removeAdditionalProperties = (
   return e;
 };
 
-const main = async () => {
+const main = async (keepIfPropertiesNotPresent) => {
   const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
   const openAPIContent = JSON.parse(
     (await fsPromises.readFile(openApiPath)).toString()
@@ -106,7 +106,8 @@ const main = async () => {
       continue;
     }
     parameters[parameterName] = removeAdditionalProperties(
-      openAPIContent.components.parameters[parameterName]
+      openAPIContent.components.parameters[parameterName],
+      keepIfPropertiesNotPresent
     );
   }
 
@@ -123,7 +124,8 @@ const main = async () => {
       continue;
     }
     schemas[schemaName] = removeAdditionalProperties(
-      openAPIContent.components.schemas[schemaName]
+      openAPIContent.components.schemas[schemaName],
+      keepIfPropertiesNotPresent
     );
   }
 
@@ -186,5 +188,5 @@ if (!always && !usedWithStandardProperties) {
     )
   );
 } else {
-  main();
+  main(!!usedWithStandardProperties);
 }
