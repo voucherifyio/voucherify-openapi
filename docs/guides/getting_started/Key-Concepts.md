@@ -1,12 +1,61 @@
 ---
 title: Key concepts
-excerpt: Voucherify offers several building blocks to help you implement promotional campaigns and integrate it with your stack. 
+excerpt: Learn the key concepts to help you implement promotional campaigns and integrate Voucherify with your stack.
 categorySlug: getting-started
 slug: key-concepts
 type: basic
 hidden: false
 order: 6
 ---
+
+Voucherify operates on fundamental building blocks which you can use to create your promotional campaigns and integrate them with your system.
+
+## Campaigns and vouchers
+
+### Campaign
+
+A campaign is a basic entity in Voucherify that is used to carry out promotional activities. 
+
+[Campaign object reference](ref:get-campaign)
+
+Voucherify supports five basic campaign types:
+- [discount coupons](doc:discount-effects),
+- [gift vouchers](doc:prepaid-gift-cards),
+- [referral codes](doc:referral-program),
+- [promotion](doc:stacking-promotion-tiers),
+- [loyalty program](doc:loyalty-program).
+
+<!-- Fix links here -->
+
+### Voucher
+
+### Promotions and promotion tiers
+
+### Standalone voucher
+
+## Incentivization
+
+### Validation rules
+
+### Qualificaiton
+
+### Validation
+
+<!-- Add info that many incentives can be validated (stacking but don't mention the name?)-->
+
+### Redemption
+
+<!-- Add info that many incentives can be validated (stacking but don't mention the name?)-->
+
+## Distribution and communication
+
+### Publication
+
+### Webhooks
+
+## Metadata
+
+<!--
 
 Voucherify splits each campaign into 5 stages:
 
@@ -126,3 +175,4 @@ Distribution triggers a publication request behind the scenes. [Publication](doc
 
 [Distribution](doc:distribution) reference
 [Distribution in dashboard](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work)
+-->
