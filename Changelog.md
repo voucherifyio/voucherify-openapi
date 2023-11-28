@@ -1,5 +1,9 @@
 # Changelog
 
+## 20231128
+
+- Data synchronization article added
+
 ## 20231123 - Campaigns API
 
 **Added schemas**
