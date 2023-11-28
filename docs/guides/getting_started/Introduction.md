@@ -1,6 +1,6 @@
 ---
 title: Introduction
-excerpt: Welcome to [Voucherify's](https://www.voucherify.io) Developer Hub.
+excerpt: Welcome to [Voucherify's](https://www.voucherify.io) developer hub.
 categorySlug: getting-started
 slug: introduction
 type: basic

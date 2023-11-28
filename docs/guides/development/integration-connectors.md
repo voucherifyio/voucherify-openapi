@@ -1,5 +1,5 @@
 ---
-title: Integration and connectors
+title: Integration And Connectors
 excerpt:
 categorySlug: development
 slug: integration-connectors

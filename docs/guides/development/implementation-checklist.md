@@ -1,5 +1,5 @@
 ---
-title: Development checklist
+title: Development Checklist
 excerpt: Get the documentation, sample code, and developer tools — everything you need to build digital promotions faster
 categorySlug: development
 slug: welcome

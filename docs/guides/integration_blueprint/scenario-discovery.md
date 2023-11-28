@@ -1,5 +1,5 @@
 ---
-title: Scenario discovery
+title: Scenario Discovery
 excerpt: Discover various Voucherify scenarios
 categorySlug: integration-blueprint
 slug: scenario-discovery
@@ -16,9 +16,9 @@ order: 4
 > - Learn key capabilities for each campaign type.
 > - Uncover roadblocks and 3rd-party integrations.
 
-**Outcome**:
-
-Creation of an initial POC for Voucherify integration.
+> 👍 **Outcome**:
+>
+> Creation of an initial POC for Voucherify integration.
 
 ---
 

@@ -1,5 +1,5 @@
 ---
-title: First steps in Voucherify
+title: First Steps in Voucherify
 excerpt: Get started with Voucherify API and dashboard by redeeming your first coupon code.
 categorySlug: development
 slug: quickstart
@@ -128,7 +128,7 @@ Voucherify should reply with the [redemption](ref:get-redemption) details as in 
             "customer": {
                 "id": "cust_ANjd4MFsUPXDoHeoCQXmqgCJ",
                 "name": "Jack Jack",
-                "email": "maciej.krzak+Jack@voucherify.io",
+                "email": "jack.jack@somedomain.com",
                 "source_id": "16102023",
                 "metadata": {
                     "metadata_key": "metadata_value",
