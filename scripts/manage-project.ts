@@ -49,7 +49,7 @@ const main = async ({
   await updateMdTablesInDocs();
   await uploadImagesUsedInMdFiles();
   await uploadGuideFiles(version);
-  await uploadReferenceDocsWithMaxNumberOfAttempts(version, 4);
+  await uploadReferenceDocsWithMaxNumberOfAttempts(version, 2);
   console.log(
     colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`)
   );
@@ -117,8 +117,8 @@ const uploadReferenceDocsWithMaxNumberOfAttempts = async (
   maxNumberOfUploadingAttempts = 3
 ) => {
   console.log(colors.green("UPLOADING REFERENCE DOC FILES..."));
+  await new Promise((r) => setTimeout(r, 60000));
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
-    await new Promise((r) => setTimeout(r, 10000));
     const { success, error } = await runCliProcess({
       command: `rdme docs ./docs/reference-docs --version=${version}`,
       stdoutIncludes: "successfully created",
@@ -132,6 +132,7 @@ const uploadReferenceDocsWithMaxNumberOfAttempts = async (
       console.log(error);
       throw new Error("REFERENCE DOC FILES WERE NOT UPLOADED!");
     }
+    await new Promise((r) => setTimeout(r, 10000));
   }
   return;
 };

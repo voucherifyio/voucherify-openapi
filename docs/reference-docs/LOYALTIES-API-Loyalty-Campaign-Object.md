@@ -34,7 +34,7 @@ order: 1
 | vouchers_generation_status</br>`string` | <p>Indicates the status of the campaign's vouchers.</p> Available values: `DONE`, `IN_PROGRESS`, `FAILED`, `DRAFT` |
 | protected</br>`boolean` | <p>Indicates whether the resource can be deleted.</p> |
 | category_id</br>`string` | <p>Unique category ID that this campaign belongs to.</p> **Example:** <p>cat_0b688929a2476386a7</p> |
-| categories | See: [Category Object](#category-object) |
+| categories | See: [Category](#category) |
 | loyalty_tiers_expiration</br>`object` | <p>Defines the expiration mechanism for loyalty tiers.</p> Any of: [Balance](#balance), [Points in Period](#points-in-period) |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the campaign.</p> |
 
@@ -47,15 +47,16 @@ order: 1
 | code_config</br>`object` | <p>Defines code's pattern (prefix, suffix, length, charset, etc).</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">length</br><code>string</code></td><td style="text-align:left"><p>Number of characters in a generated code (excluding prefix and postfix).</p></td></tr><tr><td style="text-align:left">charset</br><code>string</code></td><td style="text-align:left"><p>Characters that can appear in the code.</p><p>Examples:</p><ul><li>Alphanumeric: <code>0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic: <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic Lowercase: <code>abcdefghijklmnopqrstuvwxyz</code></li><li>Alphabetic Uppercase: <code>ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Numbers: <code>0123456789</code></li><li>Custom: a custom character set</li></ul></td></tr><tr><td style="text-align:left">prefix</br><code>string</code></td><td style="text-align:left"><p>A text appended before the code.</p></td></tr><tr><td style="text-align:left">postfix</br><code>string</code></td><td style="text-align:left"><p>A text appended after the code.</p></td></tr><tr><td style="text-align:left">pattern</br><code>string</code></td><td style="text-align:left"><p>A pattern for codes where hashes (#) will be replaced with random characters. Overrides <code>length</code>.</p></td></tr></tbody></table> |
 | is_referral_code</br>`boolean` | <p>Indicates whether the voucher is a referral code; this is <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 
-## Category Object
+## Category
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
 | name</br>`string` | <p>Category name.</p> |
 | hierarchy</br>`integer` | <p>Category hierarchy.</p> |
+| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
-| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> |
+| stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Balance
 | Attributes |  Description |
