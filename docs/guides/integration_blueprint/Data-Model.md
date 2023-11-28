@@ -8,8 +8,6 @@ hidden: false
 order: 8
 ---
 
-## Data model
-
 > 📘 **Goals**
 > 
 > * Learn more about metadata. 

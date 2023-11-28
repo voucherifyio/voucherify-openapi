@@ -8,8 +8,6 @@ hidden: false
 order: 4
 ---
 
-## Scenarios discovery
-
 > 📘 **Goals**:
 >
 > - Identify a campaign for your pilot project. 

@@ -8,8 +8,6 @@ hidden: false
 order: 11
 ---
 
-## Distributions
-
 > 📘 **Goals**
 > 
 > * Identify which channels should be used for distribution.

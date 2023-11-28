@@ -8,8 +8,6 @@ hidden: false
 order: 15
 ---
 
-## Data volume estimation
-
 > 📘 **Goals**
 > 
 > * Understand what API endpoints will be used to map your scenarios.

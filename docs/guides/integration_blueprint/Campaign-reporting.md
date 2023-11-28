@@ -8,8 +8,6 @@ hidden: false
 order: 12
 ---
 
-## Campaign reporting
-
 > 📘 **Goals**
 > 
 > * Identify key metrics of promotion effectiveness.

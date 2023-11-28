@@ -8,8 +8,6 @@ hidden: false
 order: 16
 ---
 
-## Security
-
 > 📘 **Goals**
 > 
 > * Learn how Voucherify guarantees campaign security.

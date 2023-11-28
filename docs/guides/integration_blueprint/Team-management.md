@@ -8,8 +8,6 @@ hidden: false
 order: 13
 ---
 
-## Team management
-
 > 📘 **Goals**
 > 
 > * Identify how you want to structure teams working with Voucherify.
