@@ -1,6 +1,15 @@
+// to run it:
+// npm run generate-open-api-with-specific-endpoints-remove-additionalProperties-if -- --always
+// or
+// npm run generate-open-api-with-specific-endpoints-remove-additionalProperties-if -- --usedWithStandardProperties
+
 import fsPromises from "fs/promises";
 import fs from "fs";
 import path from "path";
+import { omit } from "lodash";
+import minimist from "minimist";
+import colors from "colors";
+const options = minimist(process.argv.slice(2));
 
 function isObject(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -19,6 +28,36 @@ const removeStoplightTag = (node: object): object => {
 const grabList: { endpoint: string; methods: string[] | true }[] = [
   { endpoint: "/v1/customers/{customerId}/consents", methods: ["put"] },
 ];
+
+const removeAdditionalProperties = (
+  e: any,
+  keepIfPropertiesNotPresent = false
+) => {
+  const simplifyObjectModel = (o) =>
+    omit(o, ["additionalProperties", "properties"]);
+
+  if (e instanceof Object) {
+    if (
+      !keepIfPropertiesNotPresent &&
+      "additionalProperties" in e &&
+      e.additionalProperties instanceof Object
+    ) {
+      return simplifyObjectModel(e);
+    } else if (
+      "additionalProperties" in e &&
+      e.additionalProperties instanceof Object &&
+      "properties" in e
+    ) {
+      return simplifyObjectModel(e);
+    }
+    for (const f of Object.keys(e)) {
+      if (typeof e[f] === "object") {
+        e[f] = removeAdditionalProperties(e[f]);
+      }
+    }
+  }
+  return e;
+};
 
 const main = async () => {
   const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
@@ -66,8 +105,9 @@ const main = async () => {
       console.log(`not found ${parameterName} in parameters`);
       continue;
     }
-    parameters[parameterName] =
-      openAPIContent.components.parameters[parameterName];
+    parameters[parameterName] = removeAdditionalProperties(
+      openAPIContent.components.parameters[parameterName]
+    );
   }
 
   // Removing not used schemas
@@ -82,7 +122,9 @@ const main = async () => {
       console.log(`not found ${schemaName} in schemas`);
       continue;
     }
-    schemas[schemaName] = openAPIContent.components.schemas[schemaName];
+    schemas[schemaName] = removeAdditionalProperties(
+      openAPIContent.components.schemas[schemaName]
+    );
   }
 
   // Finding other schemas uses
@@ -130,4 +172,19 @@ const main = async () => {
   );
 };
 
-main();
+const { always, usedWithStandardProperties } = options;
+if (!always && !usedWithStandardProperties) {
+  console.log(
+    colors.red(
+      "invalid arguments, missing `always` or `usedWithStandardProperties`"
+    )
+  );
+} else if (always && usedWithStandardProperties) {
+  console.log(
+    colors.red(
+      "invalid arguments, provided `always` and `usedWithStandardProperties`, please provide one argument"
+    )
+  );
+} else {
+  main();
+}
