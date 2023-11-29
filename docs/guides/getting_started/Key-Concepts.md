@@ -23,7 +23,7 @@ There are five basic campaign types, which create:
 - [promotions](doc:stacking-promotion-tiers),
 - [loyalty cards](doc:loyalty-program).
 
-Go to [campaign API reference](ref:campaign-object) to learn more about the campaign object.
+Go to [campaign API reference](ref:campaign-object) to learn more about this object.
 
 ### Voucher
 
@@ -35,7 +35,7 @@ A voucher is used in the following types of campaigns as:
 - [referral codes](doc:referral-program),
 - [loyalty cards](doc:loyalty-program).
 
-Go to [voucher API reference](ref:voucher-object) to learn more about the voucher object.
+Go to [voucher API reference](ref:voucher-object) to learn more about this object.
 
 <!-- TBD: how much more info? code format? qr/barcodes? other info from building blocks? -->
 
@@ -45,17 +45,35 @@ A standalone voucher is an entity in Voucherify that is used as an incentive for
 
 Unlike regular [vouchers](#voucher), standalone vouchers are represented by a single code and cannot be assigned to individual customers. Standalone vouchers are designed for multiple use by many customers.
 
-Go to [voucher API reference](ref:voucher-object) to learn more about the voucher object.
+Go to [voucher API reference](ref:voucher-object) to learn more about this object.
 
 ### Promotions and promotion tiers
 
-A promotion is a campaign in which a discounts to a customer's cart without promo codes. Once a customer qualifies for a promotion, the discount is automatically added to their cart. 
+A promotion is a campaign in which a discount is applied to a customer's cart without a voucher. When a customer qualifies for a promotion, the discount is automatically added to their cart.
+
+A [promotion tier](ref:list-promotion-tiers) is a specific discount with conditions. The discount is automatically applied to the customers who meet the conditions.
+
+Promotion tiers can be applied together as a promotion stack or arranged in a hierarchy of application in one promotion campaign.
+
+Go to [promotion tier API reference](ref:promotion-tier-object) to learn more about this object.
 
 ## Incentivization
 
 ### Validation rules
 
-### Qualificaiton
+Validation rules are conditions that are applied to campaigns or standalone vouchers. 
+
+Go to [ API reference](ref:) to learn more about this object.
+
+> ❗ Important note
+> 
+> We highly recommend creating validation rules using the dashboard. The Rules Builder in the dashboard helps you configure desired limits in a convenient way. The API should not be used as a preferable way to create and manage validation rules.
+
+<!-- change colour to yellow? 
+
+also, add link to HS documentation about Val-rules -->
+
+### Qualification
 
 ### Validation
 
