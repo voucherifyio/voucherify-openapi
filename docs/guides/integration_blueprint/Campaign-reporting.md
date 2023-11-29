@@ -1,6 +1,6 @@
 ---
-title: Campaign reporting
-excerpt:
+title: Campaign Reporting
+excerpt: Gain insights into campaigns with reports
 categorySlug: integration-blueprint
 slug: campaign-reporting
 type: basic
@@ -8,17 +8,15 @@ hidden: false
 order: 12
 ---
 
-## Campaign reporting
-
 > 📘 **Goals**
 > 
 > * Identify key metrics of promotion effectiveness.
 > * Learn Voucherify API and Dashboard reporting capabilities. 
 
 
-**Outcome**:
-
-Connect Voucherify to external BI tools or prepare reports using built-in campaign analytics.
+> 👍 **Outcome**:
+> 
+> Connect Voucherify to external BI tools or prepare reports using built-in campaign analytics.
 
 ---
 

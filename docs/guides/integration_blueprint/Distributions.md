@@ -1,6 +1,6 @@
 ---
 title: Distributions
-excerpt:
+excerpt: Distribute incentives through preferred channels
 categorySlug: integration-blueprint
 slug: distributions
 type: basic
@@ -8,17 +8,15 @@ hidden: false
 order: 11
 ---
 
-## Distributions
-
 > 📘 **Goals**
 > 
 > * Identify which channels should be used for distribution.
 > * Learn how Voucherify publication works.
 > * Discover Voucherify integrations for messaging.
 
-**Outcome**: 
-
-Connect Voucherify with your preferred communication channels.
+> 👍 **Outcome**: 
+>
+> Connect Voucherify with your preferred communication channels.
 
 ---
 
@@ -35,7 +33,7 @@ Both push and pull modes can be used with third party platforms:
 - [Iterable](https://support.voucherify.io/article/594-iterable-integration "Voucherify and Iterable integration article")
 - Airship
 - [ActiveCampaign](https://support.voucherify.io/article/165-activecampaign "Voucherify and ActiveCampaign integration article")
-- Batch
+- [Batch](https://support.voucherify.io/article/614-batch-integration "Voucherify and Batch integration article")
 
 <!--- ![3rd party platforms](https://files.readme.io/341f152-guides_integration_blueprint_distributions_3rd_party_platforms.png) -->
 
