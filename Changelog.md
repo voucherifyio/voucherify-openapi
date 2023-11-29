@@ -1,5 +1,9 @@
 # Changelog
 
+## 20231128
+
+- Data synchronization article added
+
 ## 20231128 – Fixes and minor updates
 
 - Fixed to consistent title format (capital letters)
