@@ -805,7 +805,7 @@ Endpoint change:
 - VoucherTransactionsExportFilterConditions (old `16_obj_filter_gift_card_transactions_voucher_id`)
 
 - validation_rules_list_rules_assignments_response_body (old `13_res_validation-rules_validationRuleId_assignments`)
-- validation_rule_assignment (old `13_obj_validation_rule_assignment_object`)
+- ValidationRuleAssignment (old `13_obj_validation_rule_assignment_object`)
 
 **Removed models**
 - `8_obj_export_loyalty_card_transactions` - used only in one place, replaced with: `VoucherTransactionsExportParameters` in `8_req_create_loyalty_card_transactions_export` schema
