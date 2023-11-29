@@ -261,7 +261,9 @@ Available values: `id`, `campaign_id`, `voucher_id`, `type`, `source_id`, `reaso
 | details | See: [Field Conditions](#field-conditions) |
 
 ## Junction
-Available values: `and`, `AND`, `or`, `OR`
+<p>Logical Operator Between Filters. Filter by conditions set on the <code>junction</code> parameter indicating how the <code>conditions</code> should be accounted for in the query. An <code>AND</code> is an all-inclusive logical operator, meaning the <code>AND</code> operator displays a record if <strong>ALL</strong> the conditions separated by AND are TRUE, while  an <code>OR</code> operator displays a record if <strong>ANY</strong> of the conditions separated by OR is TRUE.</p>
+
+Available values: `and`, `or`
 
 ## Field Conditions
 | Attributes |  Description |

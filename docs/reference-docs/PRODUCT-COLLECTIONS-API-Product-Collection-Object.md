@@ -20,7 +20,9 @@ order: 1
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the static product collection.</p> Available values: `products_collection` |
 
 ## Junction
-Available values: `and`, `AND`, `or`, `OR`
+<p>Logical Operator Between Filters. Filter by conditions set on the <code>junction</code> parameter indicating how the <code>conditions</code> should be accounted for in the query. An <code>AND</code> is an all-inclusive logical operator, meaning the <code>AND</code> operator displays a record if <strong>ALL</strong> the conditions separated by AND are TRUE, while  an <code>OR</code> operator displays a record if <strong>ANY</strong> of the conditions separated by OR is TRUE.</p>
+
+Available values: `and`, `or`
 
 ## Field Conditions
 | Attributes |  Description |
