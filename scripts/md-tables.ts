@@ -2,7 +2,7 @@ export const mdTables: [string, string?][] = [
   ["Voucher", "VOUCHERS-API-Voucher-Object.md"],
   ["CampaignResponse", "CAMPAIGNS-API-Campaign-Object.md"],
   ["PromotionTier", "PROMOTIONS-API-Promotion-Tier-Object.md"],
-  ["reward", "REWARDS-API-Reward-Object.md"],
+  ["Reward", "REWARDS-API-Reward-Object.md"],
   ["RewardAssignment", "REWARDS-API-Reward-Assignment-Object.md"],
   ["PublicationsCreateResponseBody", "PUBLICATIONS-API-Publication-Object.md"],
   ["VouchersValidateResponseBody", "VALIDATIONS-API-Validation-Object.md"],
