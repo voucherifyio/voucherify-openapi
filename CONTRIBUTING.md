@@ -85,7 +85,7 @@ How to edit OpenAPI file:
   "GiftCardTransaction": {
     "title": "Gift Card Transaction",
     "description": "List of gift card transactions",
-    "anyOf": [
+    "oneOf": [
       {
         "title": "Redemption",
         "allOf": [
@@ -123,7 +123,7 @@ For example:
 
 Good practices:
 - for literal unions use `enum`
-- for types unions, use `anyOf`,
+- for types unions, use `oneOf`,
 - for attributes that may contain `null`, add `"nullable": true` 
 - for dates use `"type": "string", "format": "date-time"` or `"type": "string", "format": "date"`
 - for the object, add the "required" attribute which should contain a list of required attributes in the object

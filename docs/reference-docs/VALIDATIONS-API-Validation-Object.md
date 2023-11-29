@@ -9,7 +9,7 @@ order: 3
 ---
 
 ## Vouchers Validate Response Body
-Any of:
+One of:
 
 [Valid Voucher](#valid-voucher), [Invalid Voucher](#invalid-voucher)
 
@@ -63,7 +63,7 @@ Any of:
 ## Discount
 <p>Contains information about discount.</p>
 
-Any of:
+One of:
 
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
@@ -78,7 +78,7 @@ Any of:
 All of:
 
 1. [Order Response Base](#order-response-base)
-2. <h3>Order Response</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left">Any of: <a href="#customer-response">Customer Response</a>, <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">Any of: <a href="#referrer-response">Referrer Response</a>, <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
+2. <h3>Order Response</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left">One of: <a href="#customer-response">Customer Response</a>, <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">One of: <a href="#referrer-response">Referrer Response</a>, <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
 
 ## Session
 | Attributes |  Description |

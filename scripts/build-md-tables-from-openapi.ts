@@ -4,8 +4,8 @@ import "./globals.t";
 import * as openApi from "../reference/OpenAPI.json";
 import { mdTables } from "./md-tables";
 import SchemaToMarkdownTable, {
-  RenderMode,
   ExamplesRenderedAs,
+  RenderMode,
 } from "./src/schema-to-md-table";
 
 const PATH_TO_GERENATED_TABLES = [__dirname, "./output"];

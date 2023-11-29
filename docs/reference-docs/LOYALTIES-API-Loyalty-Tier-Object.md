@@ -34,7 +34,7 @@ All of:
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the loyalty tier was updated in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 
 ## MappingPoints
-Any of:
+One of:
 
 [MappingMultiply](#mappingmultiply), [MappingFixed](#mappingfixed)
 

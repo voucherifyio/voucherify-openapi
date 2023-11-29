@@ -144,7 +144,7 @@ All of:
 ## Discount
 <p>Contains information about discount.</p>
 
-Any of:
+One of:
 
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 

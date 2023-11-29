@@ -52,7 +52,7 @@ order: 1
 | $from | See: [Any](#any) |
 
 ## Any
-Any of:
+One of:
 
  1. Array any of: string, number, object
  2. string

@@ -12,7 +12,7 @@ order: 1
 All of:
 
 1. [Export Base](#export-base)
-2. Any of: [Export Vouchers](#export-vouchers), [Export Redemptions](#export-redemptions), [Export Customers](#export-customers), [Export Publications](#export-publications), [Export Orders](#export-orders), [Export Points Expirations](#export-points-expirations), [Export Vouchers Transactions Expiration](#export-vouchers-transactions-expiration)
+2. One of: [Export Vouchers](#export-vouchers), [Export Redemptions](#export-redemptions), [Export Customers](#export-customers), [Export Publications](#export-publications), [Export Orders](#export-orders), [Export Points Expirations](#export-points-expirations), [Export Vouchers Transactions Expiration](#export-vouchers-transactions-expiration)
 
 ## Export Base
 | Attributes |  Description |
@@ -298,7 +298,7 @@ Available values: `and`, `AND`, `or`, `OR`
 | $count_more | See: [Any](#any) |
 
 ## Any
-Any of:
+One of:
 
  1. Array any of: string, number, object
  2. string

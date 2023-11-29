@@ -14,7 +14,7 @@ order: 1
 | id</br>`string` | <p>Unique location ID, assigned by the Voucherify API.</p> **Example:** <p>loc_NoMGXmHO9OUs7iz9mGWpamma</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about a <code>location</code>.</p> |
 | name</br>`string` | <p>Location name.</p> |
-| shape</br>`object` | <p>Defines the shape and boundaries of the location.</p> Any of: [Circle](#circle), [Polygon](#polygon) |
+| shape</br>`object` | <p>Defines the shape and boundaries of the location.</p> One of: [Circle](#circle), [Polygon](#polygon) |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the location was created in ISO 8601 format.</p> **Example:** <p>2022-02-14T15:12:06.817Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the location was updated in ISO 8601 format.</p> **Example:** <p>2022-03-14T15:12:06.817Z</p> |
 

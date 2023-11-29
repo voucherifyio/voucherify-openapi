@@ -35,7 +35,7 @@ order: 1
 | protected</br>`boolean` | <p>Indicates whether the resource can be deleted.</p> |
 | category_id</br>`string` | <p>Unique category ID that this campaign belongs to.</p> **Example:** <p>cat_0b688929a2476386a7</p> |
 | categories | See: [Category](#category) |
-| loyalty_tiers_expiration</br>`object` | <p>Defines the expiration mechanism for loyalty tiers.</p> Any of: [Balance](#balance), [Points in Period](#points-in-period) |
+| loyalty_tiers_expiration</br>`object` | <p>Defines the expiration mechanism for loyalty tiers.</p> One of: [Balance](#balance), [Points in Period](#points-in-period) |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the campaign.</p> |
 
 ## Loyalty Card
@@ -63,7 +63,7 @@ order: 1
 |:-----|:--------|
 | qualification_type</br>`string` | <p>Tier qualification.</p><p><code>BALANCE</code>: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier.</p> Available values: `BALANCE` |
 | start_date</br>`object` | <p>Defines the conditions for the start date of the tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to be valid for a customer.<br><code>IMMEDIATE</code>: After reaching the minimum required points.</p> Available values: <code>IMMEDIATE</code></td></tr></tbody></table> |
-| expiration_date | <p>Defines the conditions for the expiration date of a tier.</p> Any of: [Balance Drop](#balance-drop), [Custom](#custom) |
+| expiration_date | <p>Defines the conditions for the expiration date of a tier.</p> One of: [Balance Drop](#balance-drop), [Custom](#custom) |
 
 ## Points in Period
 | Attributes |  Description |
@@ -83,7 +83,7 @@ order: 1
 |:-----|:--------|
 | type</br>`string` | <p>What triggers the tier to expire for a customer.<br><code>CUSTOM</code>: Tier expires after a certain time period passes following the instance the points balance drops below the required range of the tier.</p> Available values: `CUSTOM` |
 | extend</br>`string` | <p>Defines the amount of time the tier will remain active in ISO 8601 format. The expiration date counter starts at the moment when the customer reaches the minimum required points that are required to be in the tier. For example, a tier with a duration of P3M will be valid for a duration of 3 months.</p> |
-| rounding | <p>Defines the rounding mechanism for tier expiration.</p> Any of: [Calendar Periods](#calendar-periods), [Specific Month](#specific-month) |
+| rounding | <p>Defines the rounding mechanism for tier expiration.</p> One of: [Calendar Periods](#calendar-periods), [Specific Month](#specific-month) |
 
 ## Calendar Periods
 | Attributes |  Description |

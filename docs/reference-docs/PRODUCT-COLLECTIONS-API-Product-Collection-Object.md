@@ -57,7 +57,7 @@ Available values: `and`, `AND`, `or`, `OR`
 | $count_more | See: [Any](#any) |
 
 ## Any
-Any of:
+One of:
 
  1. Array any of: string, number, object
  2. string
