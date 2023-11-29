@@ -5852,639 +5852,6 @@
           "has_more"
         ]
       },
-      "VoucherTransaction": {
-        "title": "Voucher Transaction",
-        "description": "Voucher Transaction",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/GiftCardTransaction"
-          },
-          {
-            "$ref": "#/components/schemas/LoyaltyCardTransaction"
-          }
-        ]
-      },
-      "GiftCardTransaction": {
-        "title": "Gift Card Transaction",
-        "description": "List of gift card transactions",
-        "oneOf": [
-          {
-            "title": "Redemption",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/GiftCardTransactionBase"
-              },
-              {
-                "$ref": "#/components/schemas/GiftCardTransactionRedemptionDetails"
-              }
-            ]
-          },
-          {
-            "title": "Refund",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/GiftCardTransactionBase"
-              },
-              {
-                "$ref": "#/components/schemas/GiftCardTransactionRefundDetails"
-              }
-            ]
-          },
-          {
-            "title": "Addition",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/GiftCardTransactionBase"
-              },
-              {
-                "$ref": "#/components/schemas/GiftCardTransactionAdditionDetails"
-              }
-            ]
-          },
-          {
-            "title": "Removal",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/GiftCardTransactionBase"
-              },
-              {
-                "$ref": "#/components/schemas/GiftCardTransactionRemovalDetails"
-              }
-            ]
-          }
-        ]
-      },
-      "GiftCardTransactionBase": {
-        "type": "object",
-        "title": "Gift Card Transaction Base",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique transaction ID.",
-            "example": "vtx_0c9dccc4d5813e71bd"
-          },
-          "source_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "The merchant’s transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service. In case of a redemption, this value is `null`."
-          },
-          "voucher_id": {
-            "type": "string",
-            "description": "Unique voucher ID.",
-            "example": "v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp"
-          },
-          "campaign_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Unqiue campaign ID of the voucher's parent campaign if it is part of campaing that generates bulk codes.",
-            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV"
-          },
-          "reason": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Reason why the transaction occurred. In case of a redemption, this value is `null`."
-          },
-          "related_transaction_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "This field is `null` in the case of gift voucher transactions."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2022-02-25T13:32:08.734Z",
-            "description": "Timestamp representing the date and time when the transaction was created in ISO 8601 format."
-          }
-        },
-        "required": [
-          "id",
-          "source_id",
-          "voucher_id",
-          "campaign_id",
-          "reason",
-          "related_transaction_id",
-          "created_at"
-        ]
-      },
-      "GiftCardTransactionRedemptionDetails": {
-        "title": "Redemption",
-        "description": "When credits are used to pay for an order.",
-        "type": "object",
-        "properties": {
-          "source": {
-            "description": "The channel through which the transaction took place, whether through the API or the the Dashboard. In case of a redemption, this value is `null`.",
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "type": {
-            "type": "string",
-            "description": "Type of transaction.",
-            "default": "CREDITS_REDEMPTION",
-            "enum": [
-              "CREDITS_REDEMPTION"
-            ]
-          },
-          "details": {
-            "type": "object",
-            "description": "Contains the detailed information about the transaction.",
-            "required": [
-              "balance",
-              "order",
-              "redemption"
-            ],
-            "properties": {
-              "balance": {
-                "type": "object",
-                "description": "Contains information on how the balance was affected by the transaction.",
-                "required": [
-                  "type",
-                  "total",
-                  "amount",
-                  "object",
-                  "balance",
-                  "related_object"
-                ],
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "description": "The type of voucher whose balance is being adjusted due to the transaction.",
-                    "default": "gift_voucher",
-                    "enum": [
-                      "gift_voucher"
-                    ]
-                  },
-                  "total": {
-                    "type": "integer",
-                    "description": "Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  },
-                  "amount": {
-                    "type": "integer",
-                    "description": "The amount being used up by the redemption. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  },
-                  "object": {
-                    "type": "string",
-                    "description": "The type of object represented by the JSON.",
-                    "default": "balance",
-                    "enum": [
-                      "balance"
-                    ]
-                  },
-                  "balance": {
-                    "type": "integer",
-                    "description": "The credit balance on the gift card after the amount is subtracted from the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  },
-                  "related_object": {
-                    "type": "object",
-                    "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
-                    "required": [
-                      "id",
-                      "type"
-                    ],
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
-                        "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
-                      },
-                      "type": {
-                        "type": "string",
-                        "description": "The object being modified, i.e. `voucher`.",
-                        "default": "voucher",
-                        "enum": [
-                          "voucher"
-                        ]
-                      }
-                    }
-                  }
-                }
-              },
-              "order": {
-                "type": "object",
-                "description": "Contains information about the original order.",
-                "required": [
-                  "id",
-                  "source_id"
-                ],
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique order ID.",
-                    "example": "ord_jj5EzDxDOd2xFPsAJJ18IaZK"
-                  },
-                  "source_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "The merchant’s order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
-                  }
-                }
-              },
-              "redemption": {
-                "type": "object",
-                "description": "Contains information about the original redemption.",
-                "required": [
-                  "id"
-                ],
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique redemption ID.",
-                    "example": "r_0c94ed583fcafc31c1"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "required": [
-          "source",
-          "type",
-          "details"
-        ]
-      },
-      "GiftCardTransactionRefundDetails": {
-        "title": "Refund",
-        "description": "When funds are credited back to a card through a redemption rollback.",
-        "type": "object",
-        "properties": {
-          "source": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "The channel through which the transaction took place, whether through the API or the the Dashboard. In case of a redemption rollback, this value is `null`."
-          },
-          "type": {
-            "type": "string",
-            "description": "Type of transaction.",
-            "default": "CREDITS_REFUND",
-            "enum": [
-              "CREDITS_REFUND"
-            ]
-          },
-          "details": {
-            "type": "object",
-            "description": "Contains the detailed information about the transaction.",
-            "required": [
-              "balance",
-              "order",
-              "redemption",
-              "rollback"
-            ],
-            "properties": {
-              "balance": {
-                "type": "object",
-                "description": "Contains information on how the balance was affected by the transaction.",
-                "required": [
-                  "type",
-                  "total",
-                  "amount",
-                  "object",
-                  "balance",
-                  "related_object"
-                ],
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "description": "The type of voucher whose balance is being adjusted due to the transaction.",
-                    "default": "gift_voucher",
-                    "enum": [
-                      "gift_voucher"
-                    ]
-                  },
-                  "total": {
-                    "type": "integer",
-                    "description": "Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  },
-                  "amount": {
-                    "type": "integer",
-                    "description": "The amount being returned. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  },
-                  "object": {
-                    "type": "string",
-                    "description": "The type of object represented by the JSON.",
-                    "default": "balance",
-                    "enum": [
-                      "balance"
-                    ]
-                  },
-                  "balance": {
-                    "type": "integer",
-                    "description": "The credit balance on the gift card after the amount is added back to the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  },
-                  "related_object": {
-                    "type": "object",
-                    "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
-                    "required": [
-                      "id",
-                      "type"
-                    ],
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
-                        "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
-                      },
-                      "type": {
-                        "type": "string",
-                        "description": "The object being modified, i.e. `voucher`.",
-                        "default": "voucher",
-                        "enum": [
-                          "voucher"
-                        ]
-                      }
-                    }
-                  }
-                }
-              },
-              "order": {
-                "type": "object",
-                "description": "Contains information about the original order.",
-                "required": [
-                  "id",
-                  "source_id"
-                ],
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique order ID.",
-                    "example": "ord_jj5EzDxDOd2xFPsAJJ18IaZK"
-                  },
-                  "source_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "The merchant’s order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
-                  }
-                }
-              },
-              "redemption": {
-                "type": "object",
-                "description": "Contains information about the original redemption.",
-                "required": [
-                  "id"
-                ],
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique redemption ID.",
-                    "example": "r_0c94ed583fcafc31c1"
-                  }
-                }
-              },
-              "rollback": {
-                "type": "object",
-                "description": "Contains information about the redemption rollback.",
-                "required": [
-                  "id"
-                ],
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique redemption rollback ID.",
-                    "example": "rr_0c94edbb8d0bef5d9e"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "required": [
-          "source",
-          "type",
-          "details"
-        ]
-      },
-      "GiftCardTransactionAdditionDetails": {
-        "title": "Addition",
-        "description": "When funds are deposited to a gift card.",
-        "type": "object",
-        "properties": {
-          "source": {
-            "type": "string",
-            "description": "The channel through which the transaction took place, whether through the API or the the Dashboard.",
-            "enum": [
-              "voucherify-web-ui",
-              "API"
-            ]
-          },
-          "type": {
-            "type": "string",
-            "description": "Type of transaction.",
-            "default": "CREDITS_ADDITION",
-            "enum": [
-              "CREDITS_ADDITION"
-            ]
-          },
-          "details": {
-            "type": "object",
-            "description": "Contains the detailed information about the transaction.",
-            "required": [
-              "balance"
-            ],
-            "properties": {
-              "balance": {
-                "type": "object",
-                "description": "Contains information on how the balance was affected by the transaction.",
-                "required": [
-                  "type",
-                  "total",
-                  "amount",
-                  "object",
-                  "balance",
-                  "related_object",
-                  "operation_type"
-                ],
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "description": "The type of voucher whose balance is being adjusted due to the transaction.",
-                    "default": "gift_voucher",
-                    "enum": [
-                      "gift_voucher"
-                    ]
-                  },
-                  "total": {
-                    "type": "integer",
-                    "description": "Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  },
-                  "amount": {
-                    "type": "integer",
-                    "description": "The amount being added. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  },
-                  "object": {
-                    "type": "string",
-                    "description": "The type of object represented by the JSON.",
-                    "default": "balance",
-                    "enum": [
-                      "balance"
-                    ]
-                  },
-                  "balance": {
-                    "type": "integer",
-                    "description": "The credit balance on the gift card after the amount is added to the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  },
-                  "related_object": {
-                    "type": "object",
-                    "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
-                    "required": [
-                      "id",
-                      "type"
-                    ],
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
-                        "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
-                      },
-                      "type": {
-                        "type": "string",
-                        "description": "The object being modified, i.e. `voucher`.",
-                        "default": "voucher",
-                        "enum": [
-                          "voucher"
-                        ]
-                      }
-                    }
-                  },
-                  "operation_type": {
-                    "enum": [
-                      "MANUAL",
-                      "AUTOMATIC"
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "required": [
-          "source",
-          "type",
-          "details"
-        ]
-      },
-      "GiftCardTransactionRemovalDetails": {
-        "title": "Removal",
-        "description": "When funds are removed from a gift card.",
-        "type": "object",
-        "properties": {
-          "source": {
-            "type": "string",
-            "description": "The channel through which the transaction took place, whether through the API or the the Dashboard.",
-            "enum": [
-              "voucherify-web-ui",
-              "API"
-            ]
-          },
-          "type": {
-            "type": "string",
-            "description": "Type of transaction.",
-            "default": "CREDITS_REMOVAL",
-            "enum": [
-              "CREDITS_REMOVAL"
-            ]
-          },
-          "details": {
-            "type": "object",
-            "description": "Contains the detailed information about the transaction.",
-            "required": [
-              "balance"
-            ],
-            "properties": {
-              "balance": {
-                "type": "object",
-                "description": "Contains information on how the balance was affected by the transaction.",
-                "required": [
-                  "type",
-                  "total",
-                  "amount",
-                  "object",
-                  "balance",
-                  "related_object",
-                  "operation_type"
-                ],
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "description": "The type of voucher whose balance is being adjusted due to the transaction.",
-                    "default": "gift_voucher",
-                    "enum": [
-                      "gift_voucher"
-                    ]
-                  },
-                  "total": {
-                    "type": "integer",
-                    "description": "Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  },
-                  "amount": {
-                    "type": "integer",
-                    "description": "The amount being subtracted. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  },
-                  "object": {
-                    "type": "string",
-                    "description": "The type of object represented by the JSON.",
-                    "default": "balance",
-                    "enum": [
-                      "balance"
-                    ]
-                  },
-                  "balance": {
-                    "type": "integer",
-                    "description": "The credit balance on the gift card after the amount is subtracted from the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-                  },
-                  "related_object": {
-                    "type": "object",
-                    "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
-                    "required": [
-                      "id",
-                      "type"
-                    ],
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
-                        "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
-                      },
-                      "type": {
-                        "type": "string",
-                        "description": "The object being modified, i.e. `voucher`.",
-                        "default": "voucher",
-                        "enum": [
-                          "voucher"
-                        ]
-                      }
-                    }
-                  },
-                  "operation_type": {
-                    "enum": [
-                      "MANUAL",
-                      "AUTOMATIC"
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "required": [
-          "source",
-          "type",
-          "details"
-        ]
-      },
       "VouchersExportTransactionsRequestBody": {
         "type": "object",
         "title": "Create Gift Card Transactions Export Request Body",
@@ -32106,90 +31473,86 @@
             ]
           },
           "properties": {
+            "type": "object",
             "description": "Contains the metadata definitions. There can be many properties within this object.",
-            "oneOf": [
-              {
+            "properties": {
+              "custom_property_name": {
+                "type": "object",
+                "description": "Custom property name. This is defined in **Project Settings** > **Metadata Schema** in the Dashboard.",
                 "properties": {
-                  "custom_property_name": {
-                    "type": "object",
-                    "description": "Custom property name. This is defined in **Project Settings** > **Metadata Schema** in the Dashboard.",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "enum": [
-                          "string",
-                          "number",
-                          "object",
-                          "date",
-                          "datetime",
-                          "geopoint",
-                          "boolean",
-                          "image_url"
-                        ]
-                      },
-                      "array": {
-                        "type": "boolean",
-                        "description": "Indicates whether the definition is an array."
-                      },
-                      "optional": {
-                        "type": "boolean",
-                        "description": "Indicates whether this definition is optional or not optional for the resource."
-                      },
-                      "objectType": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Returns the name of the custom resource if the resource was previously defined in the Dashboard as a custom (non-standard) Nested object."
-                      },
-                      "eq": {
-                        "type": "array",
-                        "description": "Array of possible values when the setting for `is equal to any of` in the Dashboard is defined explicitly.",
-                        "items": {}
-                      },
-                      "ne": {
-                        "type": "array",
-                        "description": "Array of values that are not allowed when the setting for `is not equal to any of` in the Dashboard is defined explicitly.",
-                        "items": {}
-                      },
-                      "lt": {
-                        "type": "integer",
-                        "description": "A property of `number` type must have `less than` this value."
-                      },
-                      "lte": {
-                        "type": "integer",
-                        "description": "A property of `number` type must be `less than or equal` to this value."
-                      },
-                      "gt": {
-                        "type": "integer",
-                        "description": "A property of `number` type must be `greater than` this value."
-                      },
-                      "gte": {
-                        "type": "integer",
-                        "description": "A property of `number` type must be `greater than or equal` to this value."
-                      },
-                      "deleted": {
-                        "type": "boolean",
-                        "description": "Indicates whether the definition was deleted from the schema."
-                      },
-                      "maxLength": {
-                        "type": "integer",
-                        "description": "Value for maximum length when the setting for `has maximum length of` in the Dashboard is defined explicitly."
-                      },
-                      "minLength": {
-                        "type": "integer",
-                        "description": "Value indicating minimum length when the setting for `has minimum length of` in the Dashboard is defined explicitly."
-                      },
-                      "exactLength": {
-                        "type": "integer",
-                        "description": "Value indicating exact length when the setting for `has exact length of` in the Dashboard is defined explicitly."
-                      }
-                    }
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "string",
+                      "number",
+                      "object",
+                      "date",
+                      "datetime",
+                      "geopoint",
+                      "boolean",
+                      "image_url"
+                    ]
+                  },
+                  "array": {
+                    "type": "boolean",
+                    "description": "Indicates whether the definition is an array."
+                  },
+                  "optional": {
+                    "type": "boolean",
+                    "description": "Indicates whether this definition is optional or not optional for the resource."
+                  },
+                  "objectType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Returns the name of the custom resource if the resource was previously defined in the Dashboard as a custom (non-standard) Nested object."
+                  },
+                  "eq": {
+                    "type": "array",
+                    "description": "Array of possible values when the setting for `is equal to any of` in the Dashboard is defined explicitly.",
+                    "items": {}
+                  },
+                  "ne": {
+                    "type": "array",
+                    "description": "Array of values that are not allowed when the setting for `is not equal to any of` in the Dashboard is defined explicitly.",
+                    "items": {}
+                  },
+                  "lt": {
+                    "type": "integer",
+                    "description": "A property of `number` type must have `less than` this value."
+                  },
+                  "lte": {
+                    "type": "integer",
+                    "description": "A property of `number` type must be `less than or equal` to this value."
+                  },
+                  "gt": {
+                    "type": "integer",
+                    "description": "A property of `number` type must be `greater than` this value."
+                  },
+                  "gte": {
+                    "type": "integer",
+                    "description": "A property of `number` type must be `greater than or equal` to this value."
+                  },
+                  "deleted": {
+                    "type": "boolean",
+                    "description": "Indicates whether the definition was deleted from the schema."
+                  },
+                  "maxLength": {
+                    "type": "integer",
+                    "description": "Value for maximum length when the setting for `has maximum length of` in the Dashboard is defined explicitly."
+                  },
+                  "minLength": {
+                    "type": "integer",
+                    "description": "Value indicating minimum length when the setting for `has minimum length of` in the Dashboard is defined explicitly."
+                  },
+                  "exactLength": {
+                    "type": "integer",
+                    "description": "Value indicating exact length when the setting for `has exact length of` in the Dashboard is defined explicitly."
                   }
                 }
               }
-            ],
-            "type": "object"
+            }
           },
           "allow_defined_only": {
             "type": "boolean",
