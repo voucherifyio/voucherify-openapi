@@ -1,6 +1,6 @@
 ---
-title: Integration overview
-excerpt:
+title: Integration Overview
+excerpt: What does the integration entail?
 categorySlug: integration-blueprint
 slug: integration-overview
 type: basic
@@ -14,7 +14,7 @@ Voucherify offers **a business-agnostic API to model any promotion case**. You c
 
 A pivotal factor for evaluating the total cost of integration is to understand how Voucherify can be connected to your e-commerce and marketing infrastructure that runs your business. There are three angles to consider.
 
-![Voucherify as an ecommerce engine](https://files.readme.io/fce4ab0-guides_integration_blueprint_how_voucherify_helps-01.png "Voucherify as an ecommerce engine")
+![How Voucherify works with your system and our rules engine](https://files.readme.io/494bc1a-guides_getting_started_welcome_to_voucherify_voucherify_workflow_scheme_01.png "How Voucherify works with your system and our rules engine")
 
 ## Ecommerce engine
 

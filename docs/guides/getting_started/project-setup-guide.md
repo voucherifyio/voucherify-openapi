@@ -1,5 +1,5 @@
 ---
-title: Getting started
+title: Getting Started
 excerpt: Set up your Voucherify project 
 categorySlug: getting-started
 slug: getting-started

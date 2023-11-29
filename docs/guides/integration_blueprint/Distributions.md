@@ -1,6 +1,6 @@
 ---
 title: Distributions
-excerpt:
+excerpt: Distribute incentives through preferred channels
 categorySlug: integration-blueprint
 slug: distributions
 type: basic
@@ -8,17 +8,15 @@ hidden: false
 order: 11
 ---
 
-## Distributions
-
 > 📘 **Goals**
 > 
 > * Identify which channels should be used for distribution.
 > * Learn how Voucherify publication works.
 > * Discover Voucherify integrations for messaging.
 
-**Outcome**: 
-
-Connect Voucherify with your preferred communication channels.
+> 👍 **Outcome**: 
+>
+> Connect Voucherify with your preferred communication channels.
 
 ---
 

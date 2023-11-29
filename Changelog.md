@@ -4,6 +4,15 @@
 
 - Data synchronization article added
 
+## 20231128 – Fixes and minor updates
+
+- Fixed to consistent title format (capital letters)
+- Added excerpts
+- Added green callouts in the Integration blueprint section
+- Fixed an example email address in First Steps in Voucherify article
+- Fixed image in the Integration Overview article
+- Added link to the new article – Data Synchronization – in the Data Model article
+
 ## 20231123 - Campaigns API
 
 **Added schemas**
