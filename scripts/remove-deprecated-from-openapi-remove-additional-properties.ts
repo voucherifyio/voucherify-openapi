@@ -1,6 +1,10 @@
 import fsPromises from "fs/promises";
 import fs from "fs";
 import path from "path";
+import { omit } from "lodash";
+import minimist from "minimist";
+import colors from "colors";
+const options = minimist(process.argv.slice(2));
 
 function isObject(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -14,6 +18,36 @@ const removeStoplightTag = (node: object): object => {
     }
   }
   return node;
+};
+
+const removeAdditionalProperties = (
+  e: any,
+  keepIfPropertiesNotPresent = false
+) => {
+  const simplifyObjectModel = (o) =>
+    omit(o, ["additionalProperties", "properties"]);
+
+  if (e instanceof Object) {
+    if (
+      !keepIfPropertiesNotPresent &&
+      "additionalProperties" in e &&
+      e.additionalProperties instanceof Object
+    ) {
+      return simplifyObjectModel(e);
+    } else if (
+      "additionalProperties" in e &&
+      e.additionalProperties instanceof Object &&
+      "properties" in e
+    ) {
+      return simplifyObjectModel(e);
+    }
+    for (const f of Object.keys(e)) {
+      if (typeof e[f] === "object") {
+        e[f] = removeAdditionalProperties(e[f]);
+      }
+    }
+  }
+  return e;
 };
 
 const skipList: { endpoint: string; methods: string[] | true }[] = [
@@ -80,9 +114,25 @@ const skipList: { endpoint: string; methods: string[] | true }[] = [
     endpoint: "/v1/loyalties/{campaignId}/members/{memberId}",
     methods: ["get"],
   },
+  {
+    endpoint: "/v1/loyalties/members/{memberId}/activities",
+    methods: true,
+  },
+  {
+    endpoint: "/v1/loyalties/{campaignId}/members/{memberId}/activities",
+    methods: true,
+  },
+  {
+    endpoint: "/v1/metadata-schemas/{resource}",
+    methods: true,
+  },
+  {
+    endpoint: "/v1/metadata-schemas",
+    methods: true,
+  },
 ];
 
-const main = async () => {
+const main = async (keepIfPropertiesNotPresent) => {
   const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
   const openAPIContent = JSON.parse(
     (await fsPromises.readFile(openApiPath)).toString()
@@ -124,8 +174,10 @@ const main = async () => {
       console.log(`not found ${parameterName} in parameters`);
       continue;
     }
-    parameters[parameterName] =
-      openAPIContent.components.parameters[parameterName];
+    parameters[parameterName] = removeAdditionalProperties(
+      openAPIContent.components.parameters[parameterName],
+      keepIfPropertiesNotPresent
+    );
   }
 
   // Removing not used schemas
@@ -139,7 +191,10 @@ const main = async () => {
       console.log(`not found ${schemaName} in schemas`);
       continue;
     }
-    schemas[schemaName] = openAPIContent.components.schemas[schemaName];
+    schemas[schemaName] = removeAdditionalProperties(
+      openAPIContent.components.schemas[schemaName],
+      keepIfPropertiesNotPresent
+    );
   }
 
   // Finding other schemas uses
@@ -159,7 +214,10 @@ const main = async () => {
         console.log(`not found ${schemaName} in schemas`);
         continue;
       }
-      schemas[schemaName] = openAPIContent.components.schemas[schemaName];
+      schemas[schemaName] = removeAdditionalProperties(
+        openAPIContent.components.schemas[schemaName],
+        keepIfPropertiesNotPresent
+      );
     }
   }
 
@@ -184,4 +242,19 @@ const main = async () => {
   );
 };
 
-main();
+const { always, usedWithStandardProperties } = options;
+if (!always && !usedWithStandardProperties) {
+  console.log(
+    colors.red(
+      "invalid arguments, missing `always` or `usedWithStandardProperties`"
+    )
+  );
+} else if (always && usedWithStandardProperties) {
+  console.log(
+    colors.red(
+      "invalid arguments, provided `always` and `usedWithStandardProperties`, please provide one argument"
+    )
+  );
+} else {
+  main(!!usedWithStandardProperties);
+}
