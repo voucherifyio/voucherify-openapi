@@ -1,5 +1,5 @@
 ---
-title: Key concepts
+title: Key Concepts
 excerpt: Learn the key concepts to help you implement promotional campaigns and integrate Voucherify with your stack.
 categorySlug: getting-started
 slug: key-concepts
@@ -61,31 +61,65 @@ Go to [promotion tier API reference](ref:promotion-tier-object) to learn more ab
 
 ### Validation rules
 
-Validation rules are conditions that are applied to campaigns or standalone vouchers. 
+Validation rules are conditions that are applied to campaigns or standalone vouchers. The conditions must be met for the campaign incentive to be applied to a customer.
 
-Go to [ API reference](ref:) to learn more about this object.
+A validation rule object can be attached to or detached from a campaign, standalone voucher, or promotion tier.
 
-> ❗ Important note
+> 🚧 Managing validation rules
 > 
-> We highly recommend creating validation rules using the dashboard. The Rules Builder in the dashboard helps you configure desired limits in a convenient way. The API should not be used as a preferable way to create and manage validation rules.
+> It is recommended to create validation rules in the Voucherify dashboard. The rule builder in the dashboard helps configuring the desired conditions in a convenient way. The API should not be used as a preferable way to create and manage validation rules.
 
-<!-- change colour to yellow? 
-
-also, add link to HS documentation about Val-rules -->
+Go to [validation rule API reference](ref:validation-rule-object) to learn more about this object. Read the [Validation Rules And Campaign Limits article](https://support.voucherify.io/article/529-validation-rules-campaign-limits#reference) to learn more about the rules.
 
 ### Qualification
 
+Qualification is the process that creates a list of incentives (e.g. products, vouchers, or promotions) that the customer is eligible for.
+
+Go to [qualification API reference](ref:check-eligibility) to learn more about this object. Read the [Qualification – Checking Eligibility article](doc:checking-eligibility) to learn more about the qualification feature.
+
 ### Validation
 
-<!-- Add info that many incentives can be validated (stacking but don't mention the name?)-->
+Validation is the process that checks if a voucher or promotion tier together with applied validation rules are valid to the customer. Validation checks up to 30 vouchers or promotion tiers.
+
+<!--
+Validation can be successful or unsuccessful.
+-->
+
+<!--
+ TBD: do we link the validation object just for information with regard to other endpoints? The API for validation lists deprecated endpoints so we need to be careful how much we want to show
+
+Proposed link: https://docs.voucherify.io/reference/validate-stacked-discounts
+
+https://docs.voucherify.io/reference/validate-stacked-discounts-client-side
+
+
+
+Another thing: how to place validation in context of redemption/other endpoints because (to be checked) clients don't use validation only? clarification needed from Kasjan
+ -->
 
 ### Redemption
 
-<!-- Add info that many incentives can be validated (stacking but don't mention the name?)-->
+Redemption is the process of applying a voucher or promotion tier to the customer's order. Redemption checks if a voucher or promotion tier together with applied validation rules are valid to the customer. Redemption checks up to 30 vouchers or promotion tiers.
+
+<!--
+TBD: do we link the redemption object just for information with regard to other endpoints? The API for redemption lists deprecated endpoints so we need to be careful how much we want to show
+
+Proposed link: https://docs.voucherify.io/reference/redeem-stacked-discounts
+
+https://docs.voucherify.io/reference/redeem-stacked-discounts-client-side
+
+
+
+Another thing: how to place redemption in context of redemption/other endpoints because (to be checked) clients don't use redemption only? clarification needed from Kasjan
+ -->
+
+<!-- ### Rollback -->
 
 ## Distribution and communication
 
 ### Publication
+
+
 
 ### Webhooks
 
