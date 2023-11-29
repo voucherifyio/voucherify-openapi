@@ -1,5 +1,5 @@
 ---
-title: Campaign limits
+title: Campaign Limits
 excerpt:
 categorySlug: integration-blueprint
 slug: campaign-limits
@@ -14,9 +14,9 @@ order: 10
 > - Learn the built-in validation rules of Voucherify.
 > - Discover how to extend your campaigns with custom limits built on top of business-specific restrictions. 
 
-**Outcome**:
-
-Ability to build advanced promotion limits to personalize your campaigns and prevent fraud.
+> 👍 **Outcome**:
+> 
+> Ability to build advanced promotion limits to personalize your campaigns and prevent fraud.
 
 ---
 

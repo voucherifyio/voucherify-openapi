@@ -1,6 +1,6 @@
 ---
-title: Modeling Voucherify integration
-excerpt:
+title: Modeling Voucherify Integration
+excerpt: Elements in Voucherify integrations
 categorySlug: integration-blueprint
 slug: modeling-voucherify-integration
 type: basic
@@ -14,7 +14,6 @@ As a developer-first tool, Voucherify exposes several integration paths:
 
 - **REST API** – a rich set of **granular REST APIs** that help you deliver personalized incentives to any channel, device, and commerce solution while keeping your data in secure, highly available environments in a multi-tenant or dedicated cluster near you.
 
-
     [Check our interactive API Reference](https://docs.voucherify.io/reference/introduction-1 "Voucherify interactive API reference") 
 
 - **Webhooks** – allow Voucherify to send instant updates to your app or URL endpoints when specific events occur. Rather than constantly checking endpoints for new data, you can **set up webhooks to receive notifications** about critical campaign-related events. 
@@ -26,8 +25,6 @@ As a developer-first tool, Voucherify exposes several integration paths:
 - **CDP integrations** – Voucherify integrates with popular Customer Data Platforms, such as [Twilio Segment](https://www.voucherify.io/integrations/segment "Make customer data easy to manage and a pleasure to use with Segment"), [mParticle](https://www.voucherify.io/integrations/mparticle "Use granular customer data to build better promotions"), allowing you to stream data.
 
 - **CEP integrations** – Voucherify provides ready connectors with Customer Engagement Platforms, such as [Bloomreach Engagement](https://support.voucherify.io/article/613-bloomreach-engagement-integration "Bloomreach Engagement Integration with Voucherify"), [Braze](https://www.voucherify.io/integrations/braze "Omnichannel incentives to grow customer engagement"), [Klaviyo](https://www.voucherify.io/integrations/klaviyo "Maximize customer engagement"), or [MoEngage](https://www.voucherify.io/integrations/moengage "Engage customers with cross-channel promotions"). 
-
-<!-- Bloomreach Engagement link to be changed to marketingese once they do their duty -->
 
 - **Accelerators** – to accelerate time to value, Voucherify offers pre-built accelerators with** the most popular commerce and marketing tools**, such as [commercetools](https://www.voucherify.io/integrations/commercetools "Next-gen promotions for modern commerce"), [BigCommerce](https://www.voucherify.io/integrations/bigcommerce "Supercharge your online store with personalized promotions"), or [Braze](https://www.voucherify.io/integrations/braze "Omnichannel incentives to grow customer engagement").
 
