@@ -57,7 +57,7 @@ Promotion tiers can be applied together as a promotion stack or arranged in a hi
 
 Go to [promotion tier API reference](ref:promotion-tier-object) to learn more about this object.
 
-## Incentivization
+## Incentivization <!-- TBD -->
 
 ### Validation rules
 
@@ -115,13 +115,42 @@ Another thing: how to place redemption in context of redemption/other endpoints 
 
 <!-- ### Rollback -->
 
-## Distribution and communication
+## Communication <!-- TBD -->
+
+### Distribution
+
+Distribution is a process of sending vouchers and other promotional messages to end-customers.
+
+Distribution can be automatic, which means it is triggered by an event, or manual, which means the message is sent to all end-customers or a specified group.
+
+<!-- Examples of automatic distribution events?
+(e.g., somebody signs up for your newsletter or abandons a cart or it's the 10th time they make a purchase in your store)
+-->
+
+Distribution channels include, among others:
+- emails,
+- text messages,
+- live chat,
+- push notifications. <!-- anything else worth mentioning?-->
+
+Go to the [Getting Started with Distributions](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work) article to learn more about distributions.
 
 ### Publication
 
+Publication is the process of assigning a voucher to an end-customer. Distribution triggers a publication API request.
 
+Go to [publication API reference](ref:ref:publication-object) to learn more about this object.
 
 ### Webhooks
+
+A webhook is an HTTP callback that is triggered by an event rather than a request. Webhooks can be used to notify external systems about any events or relevant actions performed with Voucherify.
+
+The events can be [custom](ref:track-custom-event). Custom events are objects that can be used to track end-customer interactions with a system. 
+
+Read the [Webhook Notifications article](https://support.voucherify.io/article/68-webhooks-notifications) to learn more about the webhook notifications.
+
+Read the [Custom Events article](https://support.voucherify.io/article/111-custom-events) to learn more about custom events.
+
 
 ## Metadata
 
