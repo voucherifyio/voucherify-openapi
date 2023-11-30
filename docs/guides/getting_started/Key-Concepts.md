@@ -27,21 +27,24 @@ Go to [campaign API reference](ref:campaign-object) to learn more about this obj
 
 ### Voucher
 
-A voucher is an entity in Voucherify that is used as an incentive for end-customers to make a purchase. Every voucher has a unique code and id. <!-- Vouchers are assigned to customers. -->
+A voucher is an entity in Voucherify that is used as an incentive for end-customers. Every voucher has a unique code. <!-- Vouchers are assigned to customers. -->
+
+<!-- Codes can be a part of a campaign, grouping coupons that have the same purpose (example), or a code can be a standalone one, that's meant to be shared with a large group of customers or to be public example-  BlackFriday -->
 
 A voucher is used in the following types of campaigns as:
 - [discount coupons](doc:discount-effects),
 - [gift vouchers](doc:prepaid-gift-cards),
 - [referral codes](doc:referral-program),
-- [loyalty cards](doc:loyalty-program).
+- [loyalty cards](doc:loyalty-program),
+- [giveaways](doc:giveaway). <!-- Add giveaway link -->
 
 Go to [voucher API reference](ref:voucher-object) to learn more about this object.
 
-<!-- TBD: how much more info? code format? qr/barcodes? other info from building blocks? -->
+<!-- TBD: how much more info? code format? qr/barcodes? other info from building blocks? KK: Let's leave it as is -->
 
-### Standalone voucher
-
-A standalone voucher is an entity in Voucherify that is used as an incentive for end-customers to make a purchase. Every standalone voucher has a unique code and id. 
+### Standalone voucher 
+<!-- Merge with voucher -->
+A standalone voucher is an entity in Voucherify that is used as an incentive for end-customers. Every standalone voucher has a unique code. 
 
 Unlike regular [vouchers](#voucher), standalone vouchers are represented by a single code and cannot be assigned to individual customers. Standalone vouchers are designed for multiple use by many customers.
 
@@ -49,9 +52,9 @@ Go to [voucher API reference](ref:voucher-object) to learn more about this objec
 
 ### Promotions and promotion tiers
 
-A promotion is a campaign in which a discount is applied to a customer's cart without a voucher. When a customer qualifies for a promotion, the discount is automatically added to their cart.
+A promotion is a campaign <!-- A promotion is a campaign that groups discounts that have a similar purpose and do not require a voucher code to enable the discount --> in which a discount is applied to a customer's cart without a voucher. When a customer qualifies for a promotion, the discount is automatically applied to their cart, or can be shown to the customer as a part of the Qualification process.
 
-A [promotion tier](ref:list-promotion-tiers) is a specific discount with conditions. The discount is automatically applied to the customers who meet the conditions.
+A [promotion tier](ref:list-promotion-tiers) is a specific discount with conditions. The discount is automatically applied to the customers and carts that meet the conditions.
 
 Promotion tiers can be applied together as a promotion stack or arranged in a hierarchy of application in one promotion campaign.
 
@@ -61,9 +64,9 @@ Go to [promotion tier API reference](ref:promotion-tier-object) to learn more ab
 
 ### Validation rules
 
-Validation rules are conditions that are applied to campaigns or standalone vouchers. The conditions must be met for the campaign incentive to be applied to a customer.
+Validation rules are conditions that are applied to campaigns or standalone vouchers <!-- Earning Rules, Distributions -->. The conditions must be met for the campaign incentive to be applied to a customer.
 
-A validation rule object can be attached to or detached from a campaign, standalone voucher, or promotion tier.
+A validation rule object can be attached to or detached from a campaign, standalone voucher, or promotion tier. <!-- Validation rules can be created in advance and can be attached to multiple incentives -->
 
 > 🚧 Managing validation rules
 > 
@@ -73,17 +76,13 @@ Go to [validation rule API reference](ref:validation-rule-object) to learn more 
 
 ### Qualification
 
-Qualification is the process that creates a list of incentives (e.g. products, vouchers, or promotions) that the customer is eligible for.
+Qualification is the process that creates <!-- validates which incentives can be used on the customer's cart --> a list of incentives (e.g. products, vouchers, or promotions) that the customer is eligible for.
 
 Go to [qualification API reference](ref:check-eligibility) to learn more about this object. Read the [Qualification – Checking Eligibility article](doc:checking-eligibility) to learn more about the qualification feature.
 
 ### Validation
 
-Validation is the process that checks if a voucher or promotion tier together with applied validation rules are valid to the customer. Validation checks up to 30 vouchers or promotion tiers.
-
-<!--
-Validation can be successful or unsuccessful.
--->
+Validation is the process that checks if a combination of voucher codes and/or promotion tiers together with applied validation rules are valid to the customer. <!-- and calculates the final price --> Validation checks up to 30 vouchers or promotion tiers.
 
 <!--
  TBD: do we link the validation object just for information with regard to other endpoints? The API for validation lists deprecated endpoints so we need to be careful how much we want to show
