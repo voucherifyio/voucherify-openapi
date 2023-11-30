@@ -130,6 +130,34 @@ const skipList: { endpoint: string; methods: string[] | true }[] = [
     endpoint: "/v1/metadata-schemas",
     methods: true,
   },
+  {
+    endpoint: "/v1/vouchers/metadata/async",
+    methods: ["post"],
+  },
+  {
+    endpoint: "/v1/validation-rules/{validationRuleId}/assignments",
+    methods: ["post"],
+  },
+  {
+    endpoint: "/v1/segments",
+    methods: ["post"],
+  },
+  {
+    endpoint: "/v1/promotions/tiers",
+    methods: ["get"],
+  },
+  {
+    endpoint: "/client/v1/promotions/tiers",
+    methods: ["get"],
+  },
+  {
+    endpoint: "/v1/segments/{segmentId}",
+    methods: ["get"],
+  },
+  {
+    endpoint: "/v1/segments",
+    methods: ["post"],
+  },
 ];
 
 const main = async (keepIfPropertiesNotPresent) => {
