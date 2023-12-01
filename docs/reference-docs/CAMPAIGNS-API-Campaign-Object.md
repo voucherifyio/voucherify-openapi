@@ -162,9 +162,7 @@ One of:
 | expiration_rules</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">period_type</br><code>string</code></td><td style="text-align:left"><p>Type of period</p></td></tr><tr><td style="text-align:left">period_value</br><code>integer</code></td><td style="text-align:left"><p>Value of the period</p></td></tr><tr><td style="text-align:left">rounding_type</br><code>string</code></td><td style="text-align:left"><p>Type of rounding</p></td></tr><tr><td style="text-align:left">rounding_value</br><code>integer</code></td><td style="text-align:left"><p>Value of rounding</p></td></tr></tbody></table> |
 
 ## Code Config Response
-All of:
-
-1. [Code Config](#code-config)
+[Code Config](#code-config)
 
 ## Validation Rule Assignments List
 | Attributes |  Description |
