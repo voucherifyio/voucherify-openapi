@@ -845,13 +845,13 @@ One of:
 ## Redemption Reward Result
 | Attributes |  Description |
 |:-----|:--------|
-| reward | See: [Reward](#reward) |
-| customer | See: [Customer Response](#customer-response) |
-| assignment_id</br>`string` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
-| voucher | <p>Defines of the voucher.</p> See: [Voucher](#voucher) |
-| product | <p>Defines of the product.</p> See: [Product Object](#product-object) |
-| sku | <p>Defines of the sku.</p> See: [SKU Object](#sku-object) |
-| loyalty_tier_id</br>`string` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
+| reward</br>`object,null` | All of: 1. [Reward](#reward) |
+| customer</br>`object,null` | All of: 1. [Customer Response](#customer-response) |
+| assignment_id</br>`string,null` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
+| voucher</br>`object,null` | <p>Defines of the voucher.</p> All of: 1. [Voucher](#voucher) |
+| product</br>`object,null` | <p>Defines of the product.</p> All of: 1. [Product Object](#product-object) |
+| sku</br>`object,null` | <p>Defines of the sku.</p> All of: 1. [SKU Object](#sku-object) |
+| loyalty_tier_id</br>`string,null` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 
 ## Voucher
 | Attributes |  Description |
