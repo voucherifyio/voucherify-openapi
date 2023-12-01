@@ -74,191 +74,137 @@ One of:
 ## Event Customer SMS Sent
 <p>Event data object schema for <code>customer.sms.sent</code>.</p>
 
-All of:
-
-1. [Event Customer Sent](#event-customer-sent)
+[Event Customer Sent](#event-customer-sent)
 
 ## Event Customer SMS Recovered
 <p>Event data object schema for <code>customer.sms.recovered</code>.</p>
 
-All of:
-
-1. [Event Customer Recovered](#event-customer-recovered)
+[Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer SMS Failed
 <p>Event data object schema for <code>customer.sms.failed</code>.</p>
 
-All of:
-
-1. [Event Customer Failed](#event-customer-failed)
+[Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Email Sent
 <p>Event data object schema for <code>customer.email.sent</code>.</p>
 
-All of:
-
-1. [Event Customer Sent](#event-customer-sent)
+[Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Email Recovered
 <p>Event data object schema for <code>customer.email.recovered</code>.</p>
 
-All of:
-
-1. [Event Customer Recovered](#event-customer-recovered)
+[Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Email Failed
 <p>Event data object schema for <code>customer.email.failed</code>.</p>
 
-All of:
-
-1. [Event Customer Failed](#event-customer-failed)
+[Event Customer Failed](#event-customer-failed)
 
 ## Event Customer ActiveCampaign Sent
 <p>Event data object schema for <code>customer.activecampaign.sent</code>.</p>
 
-All of:
-
-1. [Event Customer Sent](#event-customer-sent)
+[Event Customer Sent](#event-customer-sent)
 
 ## Event Customer ActiveCampaign Recovered
 <p>Event data object schema for <code>customer.activecampaign.recovered</code>.</p>
 
-All of:
-
-1. [Event Customer Recovered](#event-customer-recovered)
+[Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer ActiveCampaign Failed
 <p>Event data object schema for <code>customer.activecampaign.failed</code>.</p>
 
-All of:
-
-1. [Event Customer Failed](#event-customer-failed)
+[Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Braze Sent
 <p>Event data object schema for <code>customer.braze.sent</code>.</p>
 
-All of:
-
-1. [Event Customer Sent](#event-customer-sent)
+[Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Braze Recovered
 <p>Event data object schema for <code>customer.braze.recovered</code>.</p>
 
-All of:
-
-1. [Event Customer Recovered](#event-customer-recovered)
+[Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Braze Failed
 <p>Event data object schema for <code>customer.braze.failed</code>.</p>
 
-All of:
-
-1. [Event Customer Failed](#event-customer-failed)
+[Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Mailchimp Sent
 <p>Event data object schema for <code>customer.mailchimp.sent</code>.</p>
 
-All of:
-
-1. [Event Customer Sent](#event-customer-sent)
+[Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Mailchimp Recovered
 <p>Event data object schema for <code>customer.mailchimp.recovered</code>.</p>
 
-All of:
-
-1. [Event Customer Recovered](#event-customer-recovered)
+[Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Mailchimp Failed
 <p>Event data object schema for <code>customer.mailchimp.failed</code>.</p>
 
-All of:
-
-1. [Event Customer Failed](#event-customer-failed)
+[Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Intercom Sent
 <p>Event data object schema for <code>customer.intercom.sent</code>.</p>
 
-All of:
-
-1. [Event Customer Sent](#event-customer-sent)
+[Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Intercom Recovered
 <p>Event data object schema for <code>customer.intercom.recovered</code>.</p>
 
-All of:
-
-1. [Event Customer Recovered](#event-customer-recovered)
+[Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Intercom Failed
 <p>Event data object schema for <code>customer.intercom.failed</code>.</p>
 
-All of:
-
-1. [Event Customer Failed](#event-customer-failed)
+[Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Shopify Sent
 <p>Event data object schema for <code>customer.shopify.sent</code>.</p>
 
-All of:
-
-1. [Event Customer Sent](#event-customer-sent)
+[Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Shopify Recovered
 <p>Event data object schema for <code>customer.shopify.recovered</code>.</p>
 
-All of:
-
-1. [Event Customer Recovered](#event-customer-recovered)
+[Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Shopify Failed
 <p>Event data object schema for <code>customer.shopify.failed</code>.</p>
 
-All of:
-
-1. [Event Customer Failed](#event-customer-failed)
+[Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Klaviyo Sent
 <p>Event data object schema for <code>customer.klaviyo.sent</code>.</p>
 
-All of:
-
-1. [Event Customer Sent](#event-customer-sent)
+[Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Klaviyo Recovered
 <p>Event data object schema for <code>customer.klaviyo.recovered</code>.</p>
 
-All of:
-
-1. [Event Customer Recovered](#event-customer-recovered)
+[Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Klaviyo Failed
 <p>Event data object schema for <code>customer.klaviyo.failed</code>.</p>
 
-All of:
-
-1. [Event Customer Failed](#event-customer-failed)
+[Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Batch Sent
 <p>Event data object schema for <code>customer.batch.sent</code>.</p>
 
-All of:
-
-1. [Event Customer Sent](#event-customer-sent)
+[Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Batch Recovered
 <p>Event data object schema for <code>customer.batch.recovered</code>.</p>
 
-All of:
-
-1. [Event Customer Recovered](#event-customer-recovered)
+[Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Batch Failed
 <p>Event data object schema for <code>customer.batch.failed</code>.</p>
 
-All of:
-
-1. [Event Customer Failed](#event-customer-failed)
+[Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Rewarded
 | Attributes |  Description |
@@ -362,16 +308,12 @@ All of:
 ## Event Customer Redemption Succeeded
 <p>Event data object schema for <code>customer.redemption.succeeded</code>.</p>
 
-All of:
-
-1. [Event Customer Redemption](#event-customer-redemption)
+[Event Customer Redemption](#event-customer-redemption)
 
 ## Event Customer Redemption Failed
 <p>Event data object schema for <code>customer.redemption.failed</code>.</p>
 
-All of:
-
-1. [Event Customer Redemption](#event-customer-redemption)
+[Event Customer Redemption](#event-customer-redemption)
 
 ## Event Customer Redemption Rollback Succeeded
 <p>Event data object schema for <code>customer.redemption.rollback.succeeded</code>.</p>
@@ -392,86 +334,62 @@ All of:
 ## Event Customer Consents Given
 <p>Event data object schema for <code>customer.consents.given</code>.</p>
 
-All of:
-
-1. [Event Customer Consents](#event-customer-consents)
+[Event Customer Consents](#event-customer-consents)
 
 ## Event Customer Consents Revoked
 <p>Event data object schema for <code>customer.consents.revoked</code>.</p>
 
-All of:
-
-1. [Event Customer Consents](#event-customer-consents)
+[Event Customer Consents](#event-customer-consents)
 
 ## Event Customer Order Canceled
 <p>Event data object schema for <code>customer.order.canceled</code>.</p>
 
-All of:
-
-1. [Event Customer Order](#event-customer-order)
+[Event Customer Order](#event-customer-order)
 
 ## Event Customer Order Created
 <p>Event data object schema for <code>customer.order.created</code>.</p>
 
-All of:
-
-1. [Event Customer Order](#event-customer-order)
+[Event Customer Order](#event-customer-order)
 
 ## Event Customer Order Fulfilled
 <p>Event data object schema for <code>customer.order.fulfilled</code>.</p>
 
-All of:
-
-1. [Event Customer Order](#event-customer-order)
+[Event Customer Order](#event-customer-order)
 
 ## Event Customer Order Paid
 <p>Event data object schema for <code>customer.order.paid</code>.</p>
 
-All of:
-
-1. [Event Customer Order](#event-customer-order)
+[Event Customer Order](#event-customer-order)
 
 ## Event Customer Order Processing
 <p>Event data object schema for <code>customer.order.processing</code>.</p>
 
-All of:
-
-1. [Event Customer Order](#event-customer-order)
+[Event Customer Order](#event-customer-order)
 
 ## Event Customer Order Updated
 <p>Event data object schema for <code>customer.order.updated</code>.</p>
 
-All of:
-
-1. [Event Customer Order](#event-customer-order)
+[Event Customer Order](#event-customer-order)
 
 ## Event Customer Reward Redemptions Created
 <p>Event data object schema for <code>customer.reward_redemptions.created</code>.</p>
 
-All of:
-
-1. [Event Customer Reward Redemptions](#event-customer-reward-redemptions)
+[Event Customer Reward Redemptions](#event-customer-reward-redemptions)
 
 ## Event Customer Reward Redemptions Pending
 <p>Event data object schema for <code>customer.reward_redemptions.pending</code>.</p>
 
-All of:
-
-1. [Event Customer Reward Redemptions](#event-customer-reward-redemptions)
+[Event Customer Reward Redemptions](#event-customer-reward-redemptions)
 
 ## Event Customer Reward Redemptions Completed
 <p>Event data object schema for <code>customer.reward_redemptions.completed</code>.</p>
 
-All of:
-
-1. [Event Customer Reward Redemptions](#event-customer-reward-redemptions)
+[Event Customer Reward Redemptions](#event-customer-reward-redemptions)
 
 ## Event Customer Reward Redemptions Rolled Back
 <p>Event data object schema for <code>customer.reward_redemptions.rolledback</code>.</p>
 
-All of:
-
-1. [Event Customer Reward Redemptions](#event-customer-reward-redemptions)
+[Event Customer Reward Redemptions](#event-customer-reward-redemptions)
 
 ## Event Customer Loyalty Updated
 | Attributes |  Description |
@@ -532,7 +450,7 @@ All of:
 ## Customer Response
 All of:
 
-1. <h3>Customer Response Data</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>The ID of an existing customer that will be linked to redemption in this request.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.</p></td></tr><tr><td style="text-align:left">summary</br><code>object,null</code></td><td style="text-align:left">All of: 1. <a href="#customer-summary">Customer Summary</a></td></tr><tr><td style="text-align:left">loyalty</br><code>object,null</code></td><td style="text-align:left">All of: 1. <a href="#customer-loyalty">Customer Loyalty</a></td></tr><tr><td style="text-align:left">referrals</br><code>object,null</code></td><td style="text-align:left">All of: 1. <a href="#customer-referrals">Customer Referrals</a></td></tr><tr><td style="text-align:left">system_metadata</br><code>object</code></td><td style="text-align:left"><p>Object used to store system metadata information.</p></td></tr><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the customer was created in ISO 8601 format.</p> <strong>Example:</strong> <p>2022-08-30T06:32:07.380Z</p></td></tr><tr><td style="text-align:left">updated_at</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the customer was updated in ISO 8601 format.</p> <strong>Example:</strong> <p>2022-08-31T06:32:07.380Z</p></td></tr><tr><td style="text-align:left">assets</br><code>object</code></td><td style="text-align:left"><p>Contains information about the customer's cockpit.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">cockpit_url</br><code>string</code></td><td style="text-align:left"><p>Customer's cockpit URL address.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of object represented by JSON.</p> Available values: <code>customer</code></td></tr></tbody></table>
+1. <h3>Customer Response Data</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>The ID of an existing customer that will be linked to redemption in this request.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.</p></td></tr><tr><td style="text-align:left">summary</br><code>object,null</code></td><td style="text-align:left"><a href="#customer-summary">Customer Summary</a></td></tr><tr><td style="text-align:left">loyalty</br><code>object,null</code></td><td style="text-align:left"><a href="#customer-loyalty">Customer Loyalty</a></td></tr><tr><td style="text-align:left">referrals</br><code>object,null</code></td><td style="text-align:left"><a href="#customer-referrals">Customer Referrals</a></td></tr><tr><td style="text-align:left">system_metadata</br><code>object</code></td><td style="text-align:left"><p>Object used to store system metadata information.</p></td></tr><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the customer was created in ISO 8601 format.</p> <strong>Example:</strong> <p>2022-08-30T06:32:07.380Z</p></td></tr><tr><td style="text-align:left">updated_at</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the customer was updated in ISO 8601 format.</p> <strong>Example:</strong> <p>2022-08-31T06:32:07.380Z</p></td></tr><tr><td style="text-align:left">assets</br><code>object</code></td><td style="text-align:left"><p>Contains information about the customer's cockpit.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">cockpit_url</br><code>string</code></td><td style="text-align:left"><p>Customer's cockpit URL address.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of object represented by JSON.</p> Available values: <code>customer</code></td></tr></tbody></table>
 2. [Customer Base](#customer-base)
 
 ## Simple Customer
@@ -845,12 +763,12 @@ One of:
 ## Redemption Reward Result
 | Attributes |  Description |
 |:-----|:--------|
-| reward</br>`object,null` | All of: 1. [Reward](#reward) |
-| customer</br>`object,null` | All of: 1. [Customer Response](#customer-response) |
+| reward</br>`object,null` | [Reward](#reward) |
+| customer</br>`object,null` | [Customer Response](#customer-response) |
 | assignment_id</br>`string,null` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
-| voucher</br>`object,null` | <p>Defines of the voucher.</p> All of: 1. [Voucher](#voucher) |
-| product</br>`object,null` | <p>Defines of the product.</p> All of: 1. [Product Object](#product-object) |
-| sku</br>`object,null` | <p>Defines of the sku.</p> All of: 1. [SKU Object](#sku-object) |
+| voucher</br>`object,null` | <p>Defines of the voucher.</p> [Voucher](#voucher) |
+| product</br>`object,null` | <p>Defines of the product.</p> [Product Object](#product-object) |
+| sku</br>`object,null` | <p>Defines of the sku.</p> [SKU Object](#sku-object) |
 | loyalty_tier_id</br>`string,null` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 
 ## Voucher
@@ -993,14 +911,10 @@ One of:
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `customer` |
 
 ## Referrer Response
-All of:
-
-1. [Customer Response](#customer-response)
+[Customer Response](#customer-response)
 
 ## Referrer Id
-All of:
-
-1. [Customer Id](#customer-id)
+[Customer Id](#customer-id)
 
 ## LoyaltyCardTransactionsType
 Available values: `POINTS_ACCRUAL`, `POINTS_CANCELLATION`, `POINTS_REDEMPTION`, `POINTS_REFUND`, `POINTS_ADDITION`, `POINTS_REMOVAL`, `POINTS_EXPIRATION`, `POINTS_TRANSFER_IN`, `POINTS_TRANSFER_OUT`
@@ -1279,9 +1193,7 @@ Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `cus
 | order_item_indices</br>`array` |  |
 
 ## Inapplicable To
-All of:
-
-1. [Applicable To](#applicable-to)
+[Applicable To](#applicable-to)
 
 ## Coupon Code
 | Attributes |  Description |

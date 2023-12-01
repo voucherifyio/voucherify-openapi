@@ -237,7 +237,9 @@ export default class SchemaToMarkdownTable {
   private renderAllOfDescription(allOf: OneOf, level: number) {
     const descriptionArr = [];
     const relatedObjectsNames = [];
-    descriptionArr.push(`All of:`);
+    if (allOf.length > 1) {
+      descriptionArr.push(`All of:`);
+    }
     const nestedObjectsHtml = allOf
       .map((item) => {
         if (
@@ -278,7 +280,9 @@ export default class SchemaToMarkdownTable {
       .filter((i) => !!i);
     descriptionArr.push(
       nestedObjectsHtml
-        .map((row, index) => `${index + 1}. ${row}`)
+        .map(
+          (row, index) => `${allOf.length > 1 ? `${index + 1}. ` : ""}${row}`
+        )
         .join(this.redenderMode === RenderMode.List ? `${EOL}` : "")
     );
     return { descriptionArr, relatedObjectsNames };
