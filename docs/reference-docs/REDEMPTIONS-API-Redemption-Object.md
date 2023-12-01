@@ -24,9 +24,9 @@ order: 1
 | related_redemptions</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">rollbacks</br><code>array</code></td><td style="text-align:left">Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique rollback redemption ID.</p> <strong>Example:</strong> <p>rr_0bc92f81a6801f9bca</p></td></tr><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the object was created in ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:13:06.487Z</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">redemptions</br><code>array</code></td><td style="text-align:left">Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique redemption ID.</p> <strong>Example:</strong> <p>r_0bc92f81a6801f9bca</p></td></tr><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the object was created in ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:13:06.487Z</p></td></tr></tbody></table></td></tr></tbody></table> |
 | failure_code</br>`string` | <p>If the result is <code>FAILURE</code>, this parameter will provide a generic reason as to why the redemption failed.</p> **Example:** <p>customer_rules_violated</p> |
 | failure_message</br>`string` | <p>If the result is <code>FAILURE</code>, this parameter will provide a more expanded reason as to why the redemption failed.</p> |
-| order | See: [Order Response No Customer Data](#order-response-no-customer-data) |
+| order</br>`object,null` | All of: 1. [Order Response No Customer Data](#order-response-no-customer-data) |
 | channel</br>`object` | <p>Defines the details of the channel through which the redemption was issued.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">channel_id</br><code>string</code></td><td style="text-align:left"><p>Unique channel ID of the user performing the redemption. This is either a user ID from a user using the Voucherify Dashboard or an X-APP-Id of a user using the API.</p> <strong>Example:</strong> <p>user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH</p></td></tr><tr><td style="text-align:left">channel_type</br><code>string</code></td><td style="text-align:left"><p>The source of the channel for the redemption. A <code>USER</code> corresponds to the Voucherify Dashboard and an <code>API</code> corresponds to the API.</p> Available values: <code>USER</code>, <code>API</code></td></tr></tbody></table> |
-| customer | See: [Simple Customer](#simple-customer) |
+| customer</br>`object,null` | All of: 1. [Simple Customer](#simple-customer) |
 | related_object_type</br>`string` | <p>Defines the related object.</p> Available values: `voucher`, `promotion_tier`, `redemption` |
 | related_object_id</br>`string` | <p>Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher.</p> |
 | voucher | <p>Defines the details of the voucher being redeemed.</p> See: [Voucher](#voucher) |
@@ -112,13 +112,13 @@ All of:
 ## Redemption Reward Result
 | Attributes |  Description |
 |:-----|:--------|
-| reward | See: [Reward](#reward) |
-| customer | See: [Customer Response](#customer-response) |
-| assignment_id</br>`string` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
-| voucher | <p>Defines of the voucher.</p> See: [Voucher](#voucher) |
-| product | <p>Defines of the product.</p> See: [Product Object](#product-object) |
-| sku | <p>Defines of the sku.</p> See: [SKU Object](#sku-object) |
-| loyalty_tier_id</br>`string` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
+| reward</br>`object,null` | All of: 1. [Reward](#reward) |
+| customer</br>`object,null` | All of: 1. [Customer Response](#customer-response) |
+| assignment_id</br>`string,null` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
+| voucher</br>`object,null` | <p>Defines of the voucher.</p> All of: 1. [Voucher](#voucher) |
+| product</br>`object,null` | <p>Defines of the product.</p> All of: 1. [Product Object](#product-object) |
+| sku</br>`object,null` | <p>Defines of the sku.</p> All of: 1. [SKU Object](#sku-object) |
+| loyalty_tier_id</br>`string,null` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 
 ## Order Response Base
 | Attributes |  Description |
