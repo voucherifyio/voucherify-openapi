@@ -8,11 +8,11 @@ hidden: false
 order: 6
 ---
 
-Voucherify operates on fundamental building blocks which you can use to create your promotional campaigns and integrate them with your system.
+Voucherify operates on fundamental building blocks that you can use to create your promotional campaigns and integrate them with your system.
 
 ## Project
 
-A project is an environment for managing promotion activities in Voucherify. A project can be used to run those activities with regard to a brand, region, or currency or for development or staging purposes.
+A project is an environment for managing promotion activities in Voucherify. A project can be used to run those activities concerning a brand, region, or currency or for development or staging purposes.
 
 Each project has a set of different API keys.
 
@@ -48,13 +48,13 @@ There are five basic campaign types, which create:
 
 ### Voucher
 
-A voucher is an entity in Voucherify that is used as an incentive for end-customers. Every voucher has a unique code.
+A voucher is an entity in Voucherify that is used as an incentive for end customers. Every voucher has a unique code.
 
 Vouchers can be grouped under one campaign to serve the same purpose, e.g. a campaign that assigns vouchers to customers who have a birthday.
 
 A voucher can be also used outside of a campaign as a **standalone voucher**. Standalone vouchers can be shared with a large group of customers or made public for big promotional activities, e.g. Black Friday.
 
-A voucher is used in the following types of campaigns as:
+A voucher is used in the following types of campaigns:
 - [discount coupons](doc:discount-effects),
 - [gift vouchers](doc:prepaid-gift-cards),
 - [referral codes](doc:referral-program),
@@ -70,14 +70,14 @@ A promotion is a campaign that groups specific discounts and it does not require
 
 A promotion tier is a specific discount with conditions. The discount is automatically applied to the customers and carts that meet the conditions.
 
-Promotion tiers can be applied together as a promotion stack or arranged in a hierarchy of application in one promotion campaign.
+Promotion tiers can be applied together as a promotion stack or arranged in a hierarchy of an application in one promotion campaign.
 
 > 📘 Learn more
 > - [Promotion tier](ref:promotion-tier-object) API reference
 
 ## Customer
 
-A customer is an entity in Voucherify that represents an end-customer of a store. A customer can be assigned vouchers or be eligible to promotions.
+A customer is an entity in Voucherify that represents an end customer of a store. A customer can be assigned vouchers or be eligible for promotions.
 
 A customer object can have many parameters, e.g.:
 - name,
@@ -90,7 +90,7 @@ A customer object can have many parameters, e.g.:
 
 ### Customer segments
 
-A segment is a customer group that share the same parameters.
+A segment is a customer group that shares the same parameters.
 
 There are two types of segments in Voucherify:
 - **static**: it contains the same group of customers,
@@ -105,7 +105,7 @@ There are two types of segments in Voucherify:
 
 Validation rules are conditions that are applied to campaigns, standalone vouchers<!--, Earning Rules – but then we need to define what earning rules are -->, promotion tiers, or distributions. For example, the customer or their cart must meet the conditions for the incentive to be applied.
 
-A validation rule can be created in advance. It is an independent object which can be attached to or detached from the above mentioned objects to be reused in the future.
+A validation rule can be created in advance. It is an independent object which can be attached to or detached from the above-mentioned objects to be reused in the future.
 
 > 🚧 Managing validation rules
 > 
@@ -134,7 +134,7 @@ Validation is the process that checks if a combination of vouchers or promotion 
 
 ### Redemption
 
-Redemption is the process of applying vouchers or promotion tiers to the customer's order. Redemption checks if a voucher or promotion tier together with the applied validation rules are valid to the customer. Redemption checks up to 30 vouchers or promotion tiers.
+Redemption is the process of applying vouchers or promotion tiers to the customer's order. Redemption checks if a voucher or promotion tier together with the applied validation rules is valid to the customer. Redemption checks up to 30 vouchers or promotion tiers.
 
 > 📘 Learn more
 > - [Redeem stackable discounts](ref:redeem-stacked-discounts) API reference
@@ -152,11 +152,11 @@ Rollback is the process in which redemption is reverted. Rollback withdraws the 
 
 ### Distribution
 
-Distribution is a process of sending vouchers and other promotional messages to end-customers.
+Distribution is a process of sending vouchers and other promotional messages to end customers.
 
 There are two types of distributions:
 - **automatic**: it is triggered by an event,
-- **manual**: the message is sent to all end-customers or a specified group.
+- **manual**: the message is sent to all end customers or a specified group.
 
 <!-- Examples of automatic distribution events?
 (e.g., somebody signs up for your newsletter or abandons a cart or it's the 10th time they make a purchase in your store)
@@ -173,7 +173,7 @@ Distribution channels include, among others:
 
 ### Publication
 
-Publication is the process of assigning a voucher to an end-customer. Distribution triggers a publication API request.
+Publication is the process of assigning a voucher to an end customer. Distribution triggers a publication API request.
 
 > 📘 Learn more
 > - [Publication](ref:publication-object) API reference
