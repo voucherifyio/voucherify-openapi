@@ -1,5 +1,9 @@
 import path from "path";
 import fsPromises from "fs/promises";
+import colors from "colors";
+
+const wrapColor = (ok: boolean, message: any) =>
+  ok ? colors.green(message) : colors.red(message);
 
 const main = async () => {
   const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
@@ -30,8 +34,7 @@ const countParametersWithoutRefs = (openAPIContent) => {
   );
 
   console.log(
-    "Parameters without refs = ",
-    parametersWithoutRefs.length,
+    wrapColor(parametersWithoutRefs.length === 0, "Parameters without refs ="),
     parametersWithoutRefs
   );
 };
@@ -69,7 +72,10 @@ const countEndpointsWithParametersThatNotUsingRefs = (openAPIContent) => {
   });
 
   console.log(
-    "Schema and methods that contains parameters without refs = ",
+    wrapColor(
+      Object.keys(result).length === 0,
+      "Schema and methods that contains parameters without refs ="
+    ),
     result
   );
 };
