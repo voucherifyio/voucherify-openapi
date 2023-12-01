@@ -17,13 +17,33 @@ const main = async () => {
 };
 
 const countResponsesSchemasWithOneOf = (openAPIContent) => {
+  const countSchemasWithOneOf = (schemas, mainSchemaName = null) => {
+    const elements = [];
+
+    for (const schemaName in schemas) {
+      if (schemas[schemaName].oneOf || schemas[schemaName].items?.oneOf) {
+        elements.push(mainSchemaName ?? schemaName);
+      }
+
+      if (schemas[schemaName].properties) {
+        const nestedSchemas = countSchemasWithOneOf(schemas[schemaName].properties, mainSchemaName ?? schemaName);
+        elements.push(...nestedSchemas);
+      }
+    }
+
+    return elements;
+  };
+
   const schemas = openAPIContent.components.schemas;
 
-  const schemasWithOneOf = Object.keys(schemas)
-    .filter((schemaName) => schemaName.includes("ResponseBody"))
-    .filter((schemaName) => schemas[schemaName].oneOf);
+  const responseSchemas = Object.fromEntries(
+      Object.entries(schemas)
+          .filter(([key]) => key.includes("ResponseBody"))
+  );
 
-  console.log("Responses schemas with oneOf = ", schemasWithOneOf);
+  const schemasWithOneOf = new Set(countSchemasWithOneOf(responseSchemas));
+
+  console.log("Top level responses schemas with oneOf =", schemasWithOneOf);
 };
 
 const countParametersWithoutRefs = (openAPIContent) => {
