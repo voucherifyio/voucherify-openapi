@@ -16,6 +16,31 @@ const main = async () => {
   countEndpointsWithParametersThatNotUsingRefs(openAPIContent);
 };
 
+const getPathsResponsesNames = (openAPIContent) => {
+  const schemas = openAPIContent.components.schemas;
+
+  const pathsResponsesNames = Object.keys(openAPIContent.paths).map((path) => {
+    const methods = Object.keys(openAPIContent.paths[path]);
+
+    return methods.map((method) => {
+      const responses = openAPIContent.paths[path][method].responses;
+
+      return Object.keys(responses ?? [])
+          .map((responseName) => responses[responseName].content?.["application/json"]?.schema?.$ref)
+          .filter((e) => e)
+    })
+  }).flat(3);
+
+  const responseSchemas = {};
+
+  pathsResponsesNames.forEach((schemaName) => {
+    const splitName = schemaName.split('/').pop();
+    responseSchemas[splitName] = schemas[splitName];
+  });
+
+  return responseSchemas
+}
+
 const countResponsesSchemasWithOneOf = (openAPIContent) => {
   const countSchemasWithOneOf = (schemas, mainSchemaName = null) => {
     const elements = [];
@@ -34,12 +59,7 @@ const countResponsesSchemasWithOneOf = (openAPIContent) => {
     return elements;
   };
 
-  const schemas = openAPIContent.components.schemas;
-
-  const responseSchemas = Object.fromEntries(
-      Object.entries(schemas)
-          .filter(([key]) => key.includes("ResponseBody"))
-  );
+  const responseSchemas = getPathsResponsesNames(openAPIContent);
 
   const schemasWithOneOf = new Set(countSchemasWithOneOf(responseSchemas));
 
