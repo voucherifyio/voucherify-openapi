@@ -52,13 +52,13 @@ const countEndpointsWithParametersThatNotUsingRefs = (openAPIContent) => {
       const parameters = paths[path][method].parameters;
       if (parameters) {
         const parametersWithoutRefs = parameters.filter(
-          (parameter) => !parameter.$ref
+          (parameter) => !parameter.$ref && !parameter.schema?.$ref
         );
 
         if (parametersWithoutRefs.length) {
           result[path][method] = parametersWithoutRefs
             .map((parameter) => parameter.name)
-            .join(", ");
+            .filter((e) => e);
         }
       }
     });
