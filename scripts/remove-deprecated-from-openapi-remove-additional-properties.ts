@@ -196,6 +196,7 @@ const main = async (keepIfPropertiesNotPresent) => {
     .match(/"#\/components\/parameters\/.*?"/g)
     .map((match) => match.replace('"#/components/parameters/', "").slice(0, -1))
     .sort();
+
   const parameters = {};
   for (const parameterName of parametersNames) {
     if (!openAPIContent.components.parameters?.[parameterName]) {
@@ -214,7 +215,12 @@ const main = async (keepIfPropertiesNotPresent) => {
     .match(/"#\/components\/schemas\/.*?"/g)
     .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1))
     .sort();
-  for (const schemaName of schemasNames) {
+
+  const parameterSchemaNames = Object.keys(openAPIContent.components.schemas).filter((parameter) => parameter.startsWith("Parameter"));
+
+  const allSchemasNames = [...schemasNames, ...parameterSchemaNames];
+
+  for (const schemaName of allSchemasNames) {
     if (!openAPIContent.components.schemas?.[schemaName]) {
       console.log(`not found ${schemaName} in schemas`);
       continue;
