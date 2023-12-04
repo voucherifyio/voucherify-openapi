@@ -22,16 +22,15 @@ As a [MACH-certified vendor](https://machalliance.org/), Voucherify follows the 
 
 ## Who uses Voucherify and why?
 
-Voucherify can be successfully adopted across industries in B2C and B2B contexts – from ecommerce to travel and mobile on-demand services.
+Voucherify can be successfully adopted across industries in B2C and B2B contexts – from e-commerce to travel and mobile on-demand services.
 
 Leveraging targeted promotions at every stage of the customer lifecycle can help you maximize engagement. This way, you can acquire customers through social media promotion, convert them with a welcome offer, grow them as customers via referrals, and ultimately, build better retention tactics with smart loyalty campaigns and re-engage them with incentives tailored to their profiles. This is the perfect scenario that each brand should aspire to achieve. But to get there, you need proper technology. 
 
 ![Promotion lifecycle](https://files.readme.io/bebe00d-guides_getting_started_welcome_to_voucherify_acquisition_to_re-activation_diagram-02.png "Promotion lifecycle showing acquisition, conversion, growth, retention, and re-activation")
 
-## Retail – Ecommerce & POS
+## Retail – e-commerce and POS
 
-
-Voucherify is perfect for ecommerce brands transitioning to MACH and building a standard tech stack for their brands. We work great with commercetools and other MACH tools when it comes to scaling across multiple countries/brands, including integrating various business models (DTC, B2B, marketplace).
+Voucherify is perfect for e-commerce brands transitioning to MACH and building a standard tech stack for their brands. We work great with commercetools and other MACH tools when it comes to scaling across multiple countries/brands, including integrating various business models (DTC, B2B, marketplace).
 
 Voucherify enhances store capabilities with advanced promotions, crucial for revenue. At the same time, Voucherify opens the door to loyalty and referral programs without the need to integrate any additional platform.
 
@@ -136,7 +135,7 @@ QSRs often need to handle a large volume of data in real-time. Voucherify provid
 
 ## Software vendors
 
-Voucherify APIs can be effectively integrated into other software tools to drastically enhance the offer of technology vendors. Voucherify has already been successfully incorporated into mobility technologies, booking services, and ecommerce and marketplace engines.
+Voucherify APIs can be effectively integrated into other software tools to drastically enhance the offer of technology vendors. Voucherify has already been successfully incorporated into mobility technologies, booking services, and e-commerce and marketplace engines.
 
 > 👍 Customer story – Grinta
 >

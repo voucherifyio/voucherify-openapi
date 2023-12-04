@@ -14,7 +14,7 @@ order: 13
 > * Think of roles and permissions necessary to manage campaigns.
 > * Learn more about user management and approval workflows.
 
-> 👍 **Outcome**: 
+> 👍 **Outcome**
 >
 > Invite team members with specific roles and set up approval workflows to keep your campaigns safe.
 

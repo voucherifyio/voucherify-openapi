@@ -97,9 +97,11 @@ There are two types of segments in Voucherify:
 - **auto-update**: customers are dynamically added to or removed from the segment if they match a given filter, e.g., the customer's birthday is today.
 
 > 📘 Learn more
-> - [Customer segments](https://support.voucherify.io/article/51-customer-segments)
+> - [Customer segments](https://support.voucherify.io/article/51-customer-segments) article
 
-## Incentivization <!-- TBD -->
+## Incentivization rules and processes <!-- TBD -->
+
+In Voucherify, you can set rules that govern how incentives, such as vouchers or discounts, are applied. Also, the incentives can be managed under several processes related to their application. 
 
 ### Validation rules
 

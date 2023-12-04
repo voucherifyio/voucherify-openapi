@@ -8,13 +8,13 @@ hidden: false
 order: 4
 ---
 
-> 📘 **Goals**:
+> 📘 **Goals**
 >
 > - Identify a campaign for your pilot project. 
 > - Learn key capabilities for each campaign type.
 > - Uncover roadblocks and 3rd-party integrations.
 
-> 👍 **Outcome**:
+> 👍 **Outcome**
 >
 > Creation of an initial POC for Voucherify integration.
 
