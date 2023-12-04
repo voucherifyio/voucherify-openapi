@@ -144,7 +144,7 @@ All of:
 | Attributes |  Description |
 |:-----|:--------|
 | reward</br>`object,null` | [Reward](#reward) |
-| customer</br>`object,null` | [Customer Response](#customer-response) |
+| customer</br>`object,null` | [Simple Customer](#simple-customer) |
 | assignment_id</br>`string,null` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
 | voucher</br>`object,null` | <p>Defines of the voucher.</p> [Voucher](#voucher) |
 | product</br>`object,null` | <p>Defines of the product.</p> [Product Object](#product-object) |
