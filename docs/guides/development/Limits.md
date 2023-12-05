@@ -25,7 +25,7 @@ To understand the basic limits of your account, check out [Pricing](https://www.
 
 ## Enterprise plan
 
-Users with an Enterprise plan have custom API requests limits. Depending on the case, it can be counted per hour or per minute. Bulk API requests are counted in hour periods in both cases.
+Users with an Enterprise plan have custom API request limits. Depending on the case, it can be counted per hour or per minute. Bulk API requests are counted in hour periods in both cases.
 
 ## Webhooks
 
@@ -73,7 +73,7 @@ These headers are:
 - `X-Rate-Limit-Remaining` - number of API requests that can still be made in a current period
 - `X-Rate-Limit-Retry` - the time when the next API request can be made, in Unix epoch format (in seconds)
 - `Retry-After` - (optional) number of seconds left before the next API request can be made, shown after a limit is reached
-- `X-Rate-Limit-Type` -  (optional) type of API limit that was reached, possible values: api_calls / bulk_api_calls / api_calls_cycle / webhook_calls
+- `X-Rate-Limit-Type` - (optional) type of API limit that was reached, possible values: api_calls / bulk_api_calls / api_calls_cycle / webhook_calls
 
 ## Notifications
 

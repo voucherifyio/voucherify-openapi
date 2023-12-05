@@ -14,7 +14,7 @@ order: 16
 > * Identify PII data to be shared with Voucherify.
 > * Analyze your distribution processes in relation to GDPR and Data Privacy laws. 				
 
-> 👍 **Outcome**:
+> 👍 **Outcome**
 >
 > Data security assessment of integration.
 

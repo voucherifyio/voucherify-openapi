@@ -1,5 +1,10 @@
 # Changelog
 
+## 20231204
+
+- Key concepts article added
+- Minor fixes to a number of articles
+
 ## 20231128
 
 - Data synchronization article added

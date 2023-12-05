@@ -1,12 +1,206 @@
 ---
-title: Key concepts
-excerpt: Voucherify offers several building blocks to help you implement promotional campaigns and integrate it with your stack. 
+title: Key Concepts
+excerpt: Learn the key concepts to help you implement promotional campaigns and integrate Voucherify with your stack.
 categorySlug: getting-started
 slug: key-concepts
 type: basic
 hidden: false
 order: 6
 ---
+
+Voucherify operates on fundamental building blocks that you can use to create your promotional campaigns and integrate them with your system.
+
+## Project
+
+A project is an environment for managing promotion activities in Voucherify. A project can be used to run those activities concerning a brand, region, or currency or for development or staging purposes.
+
+Each project has a set of different API keys.
+
+<!--I think this is too detailed at this stage:
+
+Here are some project-specific settings:
+- unique API keys
+- currency
+- time zone
+- case sensitive or insensitive voucher codes
+- team structure
+- email domain and webhooks
+- metadata and event schema  -->
+
+> 📘 Learn more
+> - [Team and project settings](https://support.voucherify.io/article/120-account-settings#project-settings) article
+
+## Campaigns and vouchers
+
+### Campaign
+
+A campaign is a basic entity in Voucherify that is used to carry out promotional activities. 
+
+There are five basic campaign types, which create:
+- [discount coupons](doc:discount-effects),
+- [gift vouchers](doc:prepaid-gift-cards),
+- [referral codes](doc:referral-program),
+- [promotions](doc:stacking-promotion-tiers),
+- [loyalty cards](doc:loyalty-program).
+
+> 📘 Learn more
+> - [Campaign](ref:campaign-object) API reference
+
+### Voucher
+
+A voucher is an entity in Voucherify that is used as an incentive for end customers. Every voucher has a unique code.
+
+Vouchers can be grouped under one campaign to serve the same purpose, e.g. a campaign that assigns vouchers to customers who have a birthday.
+
+A voucher can be also used outside of a campaign as a **standalone voucher**. Standalone vouchers can be shared with a large group of customers or made public for big promotional activities, e.g. Black Friday.
+
+A voucher is used in the following types of campaigns:
+- [discount coupons](doc:discount-effects),
+- [gift vouchers](doc:prepaid-gift-cards),
+- [referral codes](doc:referral-program),
+- [loyalty cards](doc:loyalty-program),
+- [giveaways](https://support.voucherify.io/article/187-how-to-create-a-giveaways-program).
+
+> 📘 Learn more
+> - [Voucher](ref:voucher-object) API reference
+
+### Promotions and promotion tiers
+
+A promotion is a campaign that groups specific discounts and it does not require a voucher to be applied to a customer's cart. When a customer or their cart qualifies for a promotion, the discount is automatically applied to the cart or it can be shown to the customer as a part of the [qualification](#qualification) process.
+
+A promotion tier is a specific discount with conditions. The discount is automatically applied to the customers and carts that meet the conditions.
+
+Promotion tiers can be applied together as a promotion stack or arranged in a hierarchy of an application in one promotion campaign.
+
+> 📘 Learn more
+> - [Promotion tier](ref:promotion-tier-object) API reference
+
+## Customer
+
+A customer is an entity in Voucherify that represents an end customer of a store. A customer can be assigned vouchers or be eligible for promotions.
+
+A customer object can have many parameters, e.g.:
+- name,
+- email,
+- birthdate,
+- metadata.
+
+> 📘 Learn more
+> - [Customer object](ref:customer-object) API reference
+
+### Customer segments
+
+A segment is a customer group that shares the same parameters.
+
+There are two types of segments in Voucherify:
+- **static**: it contains the same group of customers,
+- **auto-update**: customers are dynamically added to or removed from the segment if they match a given filter, e.g., the customer's birthday is today.
+
+> 📘 Learn more
+> - [Customer segments](https://support.voucherify.io/article/51-customer-segments) article
+
+## Incentivization rules and processes <!-- TBD -->
+
+In Voucherify, you can set rules that govern how incentives, such as vouchers or discounts, are applied. Also, the incentives can be managed under several processes related to their application. 
+
+### Validation rules
+
+Validation rules are conditions that are applied to campaigns, standalone vouchers<!--, Earning Rules – but then we need to define what earning rules are -->, promotion tiers, or distributions. For example, the customer or their cart must meet the conditions for the incentive to be applied.
+
+A validation rule can be created in advance. It is an independent object which can be attached to or detached from the above-mentioned objects to be reused in the future.
+
+> 🚧 Managing validation rules
+> 
+> It is recommended to create validation rules in the Voucherify dashboard. The rule builder in the dashboard helps configuring the desired conditions in a convenient way. The API should not be used as a preferable way to create and manage validation rules.
+
+> 📘 Learn more
+> - [Validation rule](ref:validation-rule-object) API reference
+> - [Validation rules and campaign limits](https://support.voucherify.io/article/529-validation-rules-campaign-limits#reference) article
+
+### Qualification
+
+Qualification is the process that validates which incentives (e.g. products, vouchers, or promotions) can be used in the customer's cart.
+
+> 📘 Learn more
+> - [Qualification](ref:check-eligibility) API reference
+> - [Qualification – checking eligibility](doc:checking-eligibility) article
+
+### Validation
+
+Validation is the process that checks if a combination of vouchers or promotion tiers together with the applied validation rules are valid to the customer. On the basis of validation, the final price is calculated. Validation checks up to 30 vouchers or promotion tiers.
+
+> 📘 Learn more
+> - [Validate stackable discounts](ref:validate-stacked-discounts) API reference
+
+<!-- https://docs.voucherify.io/reference/validate-stacked-discounts-client-side -->
+
+### Redemption
+
+Redemption is the process of applying vouchers or promotion tiers to the customer's order. Redemption checks if a voucher or promotion tier together with the applied validation rules is valid to the customer. Redemption checks up to 30 vouchers or promotion tiers.
+
+> 📘 Learn more
+> - [Redeem stackable discounts](ref:redeem-stacked-discounts) API reference
+
+<!-- https://docs.voucherify.io/reference/redeem-stacked-discounts-client-side -->
+
+### Rollback
+
+Rollback is the process in which redemption is reverted. Rollback withdraws the incentive from the customer's order and updates its status.
+
+> 📘 Learn more
+> - [Rollback stackable discounts](ref:rollback-stacked-redemptions) API reference
+
+## Communication <!-- TBD -->
+
+### Distribution
+
+Distribution is a process of sending vouchers and other promotional messages to end customers.
+
+There are two types of distributions:
+- **automatic**: it is triggered by an event,
+- **manual**: the message is sent to all end customers or a specified group.
+
+<!-- Examples of automatic distribution events?
+(e.g., somebody signs up for your newsletter or abandons a cart or it's the 10th time they make a purchase in your store)
+-->
+
+Distribution channels include, among others:
+- emails,
+- text messages,
+- live chat,
+- push notifications. <!-- anything else worth mentioning?-->
+
+> 📘 Learn more
+> - [Getting started with distributions](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work) article
+
+### Publication
+
+Publication is the process of assigning a voucher to an end customer. Distribution triggers a publication API request.
+
+> 📘 Learn more
+> - [Publication](ref:publication-object) API reference
+
+### Webhooks
+
+A webhook is an HTTP callback that is triggered by an event rather than a request. Webhooks can be used to notify external systems about any events or relevant actions performed with Voucherify.
+
+The events can be custom. Custom events are objects that can be used to track end-customer interactions with a system.
+
+> 📘 Learn more
+> - [Custom event](ref:custom-event-object) API reference
+> - [Webhook notifications](https://support.voucherify.io/article/68-webhooks-notifications) article
+> - [Custom events](https://support.voucherify.io/article/111-custom-events) article
+
+## Custom attributes (metadata)
+
+Custom attributes (metadata) are customizable data that can be added to default Voucherify objects. A custom attribute consists of a key and value pair.
+
+> 📘 Learn more
+> - [Metadata schema](ref:metadata-schema-object) API reference
+> - [Metadata mapping](doc:metadata-mapping) article
+> - [Getting started with metadata](https://support.voucherify.io/article/99-schema-validation-metadata) article
+
+<!--
 
 Voucherify splits each campaign into 5 stages:
 
@@ -126,3 +320,4 @@ Distribution triggers a publication request behind the scenes. [Publication](doc
 
 [Distribution](doc:distribution) reference
 [Distribution in dashboard](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work)
+-->
