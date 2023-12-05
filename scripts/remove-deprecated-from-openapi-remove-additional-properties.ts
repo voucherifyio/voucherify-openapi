@@ -216,7 +216,9 @@ const main = async (keepIfPropertiesNotPresent) => {
     .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1))
     .sort();
 
-  const parameterSchemaNames = Object.keys(openAPIContent.components.schemas).filter((parameter) => parameter.startsWith("Parameter"));
+  const parameterSchemaNames = Object.keys(
+    openAPIContent.components.schemas
+  ).filter((parameter) => parameter.startsWith("Parameter"));
 
   const allSchemasNames = [...schemasNames, ...parameterSchemaNames];
 
@@ -253,6 +255,17 @@ const main = async (keepIfPropertiesNotPresent) => {
         keepIfPropertiesNotPresent
       );
     }
+  }
+
+  //custom instructions
+  if (
+    schemas?.["ExportResponseBase"]?.properties instanceof Object &&
+    Array.isArray(schemas?.["ExportResponseBase"]?.required)
+  ) {
+    delete schemas["ExportResponseBase"].properties.result;
+    schemas["ExportResponseBase"].required = schemas[
+      "ExportResponseBase"
+    ].required.filter((fieldName) => fieldName !== "result");
   }
 
   // Building all together
