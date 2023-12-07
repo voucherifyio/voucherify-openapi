@@ -15,7 +15,7 @@ order: 1
 | name</br>`string` | <p>Custom, unique name for set of validation rules.</p> **Example:** <p>Business Validation Rule</p> |
 | rules | See: [Validation Rule Rules](#validation-rule-rules) |
 | error</br>`object` | <p>Contains the error message returned from API when validation / redemption fails to meet requirements of defined rules.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>The error message returned from API when validation / redemption fails to meet requirements of defined rules.</p></td></tr></tbody></table> |
-| applicable_to</br>`object,null` |  |
+| applicable_to</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">excluded</br><code>array</code></td><td style="text-align:left"><p>Defines which items are excluded from a discount.</p> Array of <a href="#applicable-to">Applicable To</a></td></tr><tr><td style="text-align:left">included</br><code>array</code></td><td style="text-align:left"><p>Defines which items are included in a discount.</p> Array of <a href="#applicable-to">Applicable To</a></td></tr><tr><td style="text-align:left">included_all</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether all items are included in the discount.</p></td></tr></tbody></table> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the validation rule was created in ISO 8601 format.</p> **Example:** <p>2022-03-23T07:44:00.444Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the validation rule was updated in ISO 8601 format.</p> **Example:** <p>2022-04-26T08:35:54.960Z</p> |
 | type</br>`string` | <p>Type of validation rule.</p> Available values: `expression`, `basic`, `advanced`, `complex` |
@@ -27,7 +27,25 @@ order: 1
 | Attributes |  Description |
 |:-----|:--------|
 | logic</br>`string` | <p>Defines the logic between the rules.</p> **Example:** <p>(1 and 2) and (3)</p> |
-| [propertyName]</br>`object` | <p>Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Voucherify specific rule name.  The list of available names is provided below.</p><p><strong>Name</strong></td></tr><tr><td style="text-align:left">property</br><code>string,null</code></td><td style="text-align:left"><p>Custom name for a metadata property associated with the condition to be satisfied. <strong>Required</strong> if the property <code>name</code> is any of the following:<br>customer_metadata<br>custom_event_metadata<br>order_items_metadata<br>order_metadata<br>product_metadata<br>redemption_metadata</p></td></tr><tr><td style="text-align:left">conditions</td><td style="text-align:left">See: <a href="#validation-rule-conditions">Validation Rule Conditions</a></td></tr><tr><td style="text-align:left">rules</td><td style="text-align:left">See: <a href="#validation-rule-rules">Validation Rule Rules</a></td></tr><tr><td style="text-align:left">error</br><code>object</code></td><td style="text-align:left"><p>Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>The error message returned from API when validation / redemption fails to meet requirements of defined rule.</p></td></tr></tbody></table></td></tr></tbody></table> |
+| [propertyName]</br>`object` | <p>Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Voucherify specific rule name.  The list of available names is provided below.</p><p><strong>Name</strong></td></tr><tr><td style="text-align:left">property</br><code>string</code></td><td style="text-align:left"><p>Custom name for a metadata property associated with the condition to be satisfied. <strong>Required</strong> if the property <code>name</code> is any of the following:<br>customer_metadata<br>custom_event_metadata<br>order_items_metadata<br>order_metadata<br>product_metadata<br>redemption_metadata</p></td></tr><tr><td style="text-align:left">conditions</td><td style="text-align:left">See: <a href="#validation-rule-conditions">Validation Rule Conditions</a></td></tr><tr><td style="text-align:left">rules</td><td style="text-align:left">See: <a href="#validation-rule-rules">Validation Rule Rules</a></td></tr><tr><td style="text-align:left">error</br><code>object</code></td><td style="text-align:left"><p>Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>The error message returned from API when validation / redemption fails to meet requirements of defined rule.</p></td></tr></tbody></table></td></tr></tbody></table> |
+
+## Applicable To
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>This object stores information about the product collection.</p> Available values: `product`, `sku`, `products_collection` |
+| id</br>`string` | <p>Unique product collection ID assigned by Voucherify.</p> |
+| source_id</br>`string` | <p>The source ID from your inventory system.</p> |
+| product_id</br>`string` | <p>Parent product's unique ID assigned by Voucherify.</p> |
+| product_source_id</br>`string` | <p>Parent product's source ID from your inventory system.</p> |
+| strict</br>`boolean` |  |
+| price</br>`number` | <p>New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the price_formula parameter is present in the fixed price definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price.</p> |
+| price_formula</br>`number` | <p>Formula used to calculate the discounted price of an item.</p> |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Applicable To Effect](#applicable-to-effect) |
+| quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted per order line item.</p> |
+| aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
+| amount_limit</br>`integer` | <p>Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
+| aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:</p><ul><li><code>APPLY_TO_ITEMS</code> (each item subtotal is discounted equally)</li><li><code>APPLY_TO_ITEMS_BY_QUANTITY</code> (each unit of matched products has the same discount value)</li></ul> |
+| order_item_indices</br>`array` |  |
 
 ## Validation Rule Conditions
 | Attributes |  Description |
@@ -50,6 +68,9 @@ order: 1
 | $count_more | See: [Any](#any) |
 | $count_less | See: [Any](#any) |
 | $from | See: [Any](#any) |
+
+## Applicable To Effect
+Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`
 
 ## Any
 One of:
