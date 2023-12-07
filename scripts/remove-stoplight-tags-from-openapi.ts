@@ -23,23 +23,22 @@ const main = async () => {
 
   removeKey(openAPIContent, "x-stoplight");
 
-  const keysToDeleteFromSchemas = ["examples", "example", "x-tags"];
-
-  console.log(Object.keys(openAPIContent.components));
-  console.log(
-    Object.fromEntries(
-      Object.entries(openAPIContent.components.schemas)
-        .map((entry) => {
-          const [name, object] = entry;
-          keysToDeleteFromSchemas.forEach((key) => delete object[key]);
-          return [name, object];
-        })
-        .sort(
-          (a: [name: string, schema: any], b: [name: string, schema: any]) => {
-            return a[0].localeCompare(b[0]);
-          }
-        )
-    )
+  Object.fromEntries(
+    Object.entries(openAPIContent.components.schemas)
+      .map((entry) => {
+        const [name, object] = entry;
+        delete object["x-tags"];
+        if ((object as any).type === "object") {
+          delete object["examples"];
+          delete object["example"];
+        }
+        return [name, object];
+      })
+      .sort(
+        (a: [name: string, schema: any], b: [name: string, schema: any]) => {
+          return a[0].localeCompare(b[0]);
+        }
+      )
   );
 
   await fs.writeFile(openApiPath, JSON.stringify(openAPIContent, null, 2));
