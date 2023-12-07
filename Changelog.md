@@ -1,5 +1,9 @@
 # Changelog
 
+## 20231207
+
+- Key concepts article updated after feedback
+
 ## 20231204
 
 - Key concepts article added
