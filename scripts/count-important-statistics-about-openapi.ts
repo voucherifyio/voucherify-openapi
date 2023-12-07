@@ -1,6 +1,7 @@
 import path from "path";
 import fsPromises from "fs/promises";
 import colors from "colors";
+import _ from "lodash";
 
 const wrapColor = (ok: boolean, message: any) =>
   ok ? colors.green(message) : colors.red(message);
@@ -61,9 +62,32 @@ const countResponsesSchemasWithOneOf = (openAPIContent) => {
 
   const responseSchemas = getPathsResponsesNames(openAPIContent);
 
-  const schemasWithOneOf = new Set(countSchemasWithOneOf(responseSchemas));
+  const schemasWithOneOf: Set<string> = new Set(countSchemasWithOneOf(responseSchemas));
 
-  console.log("Top level responses schemas with oneOf =", schemasWithOneOf);
+  const validSchemasWithOneOf = [
+      "ExportsCreateResponseBody",
+      "ValidationsValidateResponseBody", //fixed after main repo PR merged
+      "PublicationsCreateResponseBody",
+      "PublicationsListResponseBody",
+      "ProductCollectionsProductsListResponse",
+      "RedemptionsListResponseBody", //fixed by fixing in python template, has problems with required
+      "RedemptionsGetResponseBody",
+      "RedemptionsGetVoucherRedemptionResponseBody",
+      "RewardAssignment",
+      "VouchersValidateResponseBody", //deprecated
+  ]
+
+  const obsoleteSchemasWithOneOf = [
+      "4_obj_reward_object",
+      "6_res_validate_promotion_tier",
+      "8_obj_loyalty_campaign_object",
+      "8_obj_export_object_points_expiration",
+      "8_obj_earning_rule_object",
+      "17_obj_async_action_object",
+      "22_obj_location_object"
+  ]
+
+  console.log("Top level responses schemas with oneOf =", _.difference(_.toArray(schemasWithOneOf), [...validSchemasWithOneOf, ...obsoleteSchemasWithOneOf]));
 };
 
 const countParametersWithoutRefs = (openAPIContent) => {

@@ -17,7 +17,7 @@ const removeStoplightTag = (node: object): object => {
 };
 
 const grabList: { endpoint: string; methods: string[] | true }[] = [
-  { endpoint: "/v1/customers/{customerId}/consents", methods: ["put"] },
+  { endpoint: "/v1/customers", methods: ["get", "post"] },
 ];
 
 const main = async () => {
@@ -77,7 +77,14 @@ const main = async () => {
       .match(/"#\/components\/schemas\/.*?"/g)
       ?.map((match) => match.replace('"#/components/schemas/', "").slice(0, -1))
       .sort() || [];
-  for (const schemaName of schemasNames) {
+
+  const parameterSchemaNames = Object.keys(
+    openAPIContent.components.schemas
+  ).filter((parameter) => parameter.startsWith("Parameter"));
+
+  const allSchemasNames = [...schemasNames, ...parameterSchemaNames];
+
+  for (const schemaName of allSchemasNames) {
     if (!openAPIContent.components.schemas?.[schemaName]) {
       console.log(`not found ${schemaName} in schemas`);
       continue;

@@ -9,14 +9,6 @@ order: 2
 ---
 
 ## Reward Assignment
-One of:
-
-[Pay with Points Reward](#pay-with-points-reward), [Digital or Material Reward](#digital-or-material-reward)
-
-## Pay with Points Reward
-See: [Reward Assignment Base](#reward-assignment-base)
-
-## Digital or Material Reward
 All of:
 
 1. [Reward Assignment Base](#reward-assignment-base)
