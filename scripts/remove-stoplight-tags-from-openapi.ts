@@ -1,31 +1,48 @@
-import fs from 'fs/promises';
-import path from 'path';
+import fs from "fs/promises";
+import path from "path";
 
 function isObject(value) {
-    return (
-      typeof value === 'object' &&
-      value !== null &&
-      !Array.isArray(value)
-    );
-  }
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
-const removeStoplightTag = (node: object): object => {
-    delete node['x-stoplight'];
-    for(const attr in node){
-        if(isObject(node[attr])){
-            removeStoplightTag(node[attr])
-        }
+const removeKey = (node: object, key: string): object => {
+  delete node[key];
+  for (const attr in node) {
+    if (isObject(node[attr])) {
+      removeKey(node[attr], key);
     }
-    return node;
-}
+  }
+  return node;
+};
 
-const main = async() => {
-    const openApiPath = path.join(__dirname, '../reference/OpenAPI.json');
-    const openAPIContent = JSON.parse((await fs.readFile(openApiPath)).toString())
+const main = async () => {
+  const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
+  const openAPIContent = JSON.parse(
+    (await fs.readFile(openApiPath)).toString()
+  );
 
-    removeStoplightTag(openAPIContent)
+  removeKey(openAPIContent, "x-stoplight");
 
-    await fs.writeFile(openApiPath, JSON.stringify(openAPIContent, null, 2) )
-}
+  const keysToDeleteFromSchemas = ["examples", "example", "x-tags"];
 
-main()
+  console.log(Object.keys(openAPIContent.components));
+  console.log(
+    Object.fromEntries(
+      Object.entries(openAPIContent.components.schemas)
+        .map((entry) => {
+          const [name, object] = entry;
+          keysToDeleteFromSchemas.forEach((key) => delete object[key]);
+          return [name, object];
+        })
+        .sort(
+          (a: [name: string, schema: any], b: [name: string, schema: any]) => {
+            return a[0].localeCompare(b[0]);
+          }
+        )
+    )
+  );
+
+  await fs.writeFile(openApiPath, JSON.stringify(openAPIContent, null, 2));
+};
+
+main();
