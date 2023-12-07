@@ -16,12 +16,12 @@ In Voucherify, you can synchronize the following data:
 
 When you have [created your Voucherify account](doc:getting-started), you can import your existing data and then synchronize it for future use in campaigns.
 
-> 📘 **Goals**:
+> 📘 **Goals**
 >
 > - Learn why data synchronization is important
 > - Learn how to synchronize your data through data import and updates
 
-> 👍 **Outcome**:
+> 👍 **Outcome**
 > 
 > Your data is synchronized with Voucherify.
 
