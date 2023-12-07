@@ -23,7 +23,7 @@ const main = async () => {
 
   removeKey(openAPIContent, "x-stoplight");
 
-  Object.fromEntries(
+  openAPIContent.components.schemas = Object.fromEntries(
     Object.entries(openAPIContent.components.schemas)
       .map((entry) => {
         const [name, object] = entry;
