@@ -35,9 +35,29 @@ We will guide you through the most commonly used scenarios that involve the API 
 
 ### Redeeming voucher codes
 
-In this scenario a customer will be reedeming voucher codes that they received via one of the distribution methods. The codes can be chosen from the list by the customer or added manually. After this step, validity of codes is checked by the validation API. When a customer is happy with the result he pays for the order and codes are consumed during redemption API.
+In this scenario a customer will be reedeming voucher codes.
 
-1. Distribution - A customer can acquire voucher codes by various means. Codes can come from a distribution, be part of a referral program (code from a friend), be bought as a gift voucher, or acquired offline (standaone code printed out on a shopping window). Codes that are assigned to the customer's profile will be returned by the Qualification endpoint. If codes are not assigned to the customer's profile then it is best to let a customer input codes themselves.
+The customer is given a voucher codes using different methods. You can use Voucherify's Distributions // link // or a standalone voucher that the customer received in many different ways.
+
+// Add the distribution visualization from Miro //
+
+The process of applying the codes can be different depending on the customer experience that you designed. This image shows the proposition of a customer experience:
+
+// Image of the customer experience from Miro //
+
+Step 1: // A short explanation that this is just the usual customer who is adding items to the cart and goes to the checkout.
+
+Step 2: // Optional step - you can choose to get from Voucherify a list of applicable discounts for the customer. If you don't choose this route, the customer has to input the codes by himself
+
+Step 3: // Apply the coupon codes. If you used the qualification request you can choose to show the discounts to the customer for the customer to choose, or to apply some discounts automatically. You can also allow the customer to input any code as they desire.
+
+Step 4: // Validations
+
+Step 5: // Exposing the combination of coupon codes to the customer. Expecting the customer to pay
+
+Step 6: Redemption - consuming the discounts
+
+The codes can be chosen from the list by the customer or added manually. After this step, validity of codes is checked by the validation API. When a customer is happy with the result he pays for the order and codes are consumed during redemption API.
 
 2. Shopping experience - A customer is at the checkout and wants to use some discount coupons. A request is sent to Voucherify (Qualification API) and information regarding the available discount coupons are returned. Depending on your flow, you can skip this step as it is optional. After a customer chooses or manually adds discount coupons that interest them, a validation request is sent to Voucherify to check whether codes are applicable and appropriate results are returned. When a customer pays for the order, Voucherify receives a redemption request and consumes the discount coupons.
 
