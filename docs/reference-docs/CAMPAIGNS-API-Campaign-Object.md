@@ -40,7 +40,7 @@ All of:
 | creation_status</br>`string` | <p>Indicates the status of the campaign creation.</p> Available values: `DONE`, `IN_PROGRESS`, `FAILED`, `DRAFT`, `MODIFYING` |
 | vouchers_generation_status</br>`string` | <p>Indicates the status of the campaign's vouchers.</p> Available values: `DONE`, `IN_PROGRESS`, `FAILED`, `DRAFT`, `MODIFYING` |
 | protected</br>`boolean` | <p>Indicates whether the resource can be deleted.</p> |
-| category_id</br>`string` | <p>Unique category ID that this campaign belongs to.</p> **Example:** <p>cat_0b688929a2476386a7</p> |
+| category_id</br>`string`, `null` | <p>Unique category ID that this campaign belongs to.</p> **Example:** <p>cat_0b688929a2476386a7</p> |
 | categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the campaign.</p> |
 | referral_program | See: [Referral Program](#referral-program) |
@@ -70,7 +70,7 @@ All of:
 | discount | <p>Defines the voucher discount type and details.</p> See: [Discount](#discount) |
 | gift | <p>Defines the voucher gift details.</p> See: [Gift](#gift) |
 | loyalty_card | <p>Defines the voucher loyalty card details.</p> See: [Campaign Loyalty Card](#campaign-loyalty-card) |
-| redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr></tbody></table> |
+| redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code>, <code>null</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr></tbody></table> |
 | code_config | See: [Code Config Response](#code-config-response) |
 | is_referral_code</br>`boolean` | <p>Indicates whether the voucher is a referral code; this is <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 | start_date</br>`string` | <p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is <em>inactive before</em> this date.</p> **Example:** <p>2022-09-20T00:00:00.000Z</p> |
