@@ -48,8 +48,7 @@ const main = async ({
   }
   await cleanProject(version);
   await uploadOpenApiFileWithMaxNumberOfAttempts(version, 1);
-  await buildMdTables();
-  await updateMdTablesInDocs();
+  await buildAndUpdateMdTables();
   await uploadImagesUsedInMdFiles();
   await uploadGuideFiles(version);
   await uploadReferenceDocsWithMaxNumberOfAttempts(version, 2);
@@ -215,14 +214,7 @@ const uploadGuideFiles = async (version) => {
   console.log(colors.green("GUIDES DOC FILES WERE UPLOADED!"));
 };
 
-const updateMdTablesInDocs = async () => {
-  console.log(colors.green("UPDATING MD TABLES IN DOCS..."));
-  await runCliProcess({
-    command: `npm run build-update-md-tables-from-openapi`,
-  });
-  console.log(colors.green("MD TABLES WERE UPDATED IN DOCS SUCCESSFULLY!"));
-};
-const buildMdTables = async () => {
+const buildAndUpdateMdTables = async () => {
   console.log(colors.green("BUILDING MD TABLES FROM OPEN API..."));
   await runCliProcess({
     command: `npm run build-update-md-tables-from-openapi`,
