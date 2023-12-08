@@ -81,14 +81,36 @@ Step 6: Redemption - when the customer pays for the order, Voucherify receives a
 
 In this scenario a customer is going to receive a voucher code during their visit in the store. The distribution will trigger after the specific action takes place.
 
-1. Distribution - When a customer visits your store, adds products to the cart but does not go to checkout for a while, the distribution is triggered to give a customer the coupon code to encourage them to finish the purchase.
+![Customer experience in Voucherify case 3](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/integration-processes/docs/assets/img/guides_implementation_blueprint_integration_processes_customer_experience_case_3.png "Customer experience in Voucherify case 3")
 
-2. Shopping experience - After a customer types the discount code, a validation request is sent to Voucherify to check whether code is applicable and appropriate result is returned. When a customer pays for the order, Voucherify receives a redemption request and consumes the discount coupon.
+Step 1: The customer visits your store, adds products to the cart but does not go to checkout for a while.
+
+Step 2: The distribution is triggered to give a customer the coupon code to encourage them to finish the purchase.
+
+Step 3: The customer uses the discount code that they have just received.
+
+Step 4: Validations - a validation request is sent to Voucherify to check whether the code is applicable and appropriate results are returned.
+
+Step 5: Exposing the effect of the coupon code to the customer. Expecting the customer to pay for the order.
+
+Step 6: Redemption - when the customer pays for the order, Voucherify receives a redemption request and consumes the discount coupons.
 
 ### Rewarding customers with points for purchases.
 
 In this scenario a customer is going to receive points for their purchase. We can decide whether we want a customer to apply any discount codes or not. This will slightly change our API requests. Distribution will have slighlty different purposes compared to previous scenarios as it will inform a customer about points they have received for the transaction.
 
-1. Distribution - After the purchase is complete, a customer is informed via a distribution about the points they received. Sources of the distribution can vary between mail, webhook, or one of our integrations.
+![Customer experience in Voucherify case 4](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/integration-processes/docs/assets/img/guides_implementation_blueprint_integration_processes_customer_experience_case_4.png "Customer experience in Voucherify case 4")
 
-2. Shopping experience - When a customer is at the checkout you can decide if you want any discounts to be applied or not. If yes, redemptions API will be used. If not, create order API will be used. Regardless of your choice, the following step is exactly the same as the customer is going to be rewarded with points according to earning rules. 
+Step 1: A typical scenario is presented where the customer browses products, adds them to their cart, and proceeds to checkout.
+
+Step 2: Decide whether you want to apply discounts or not.
+
+Step 3: This step has two possible outcomes depending on your previous choice:
+
+- If you decided to add discounts the Redemptions API is used
+
+- If you decided not to add any discounts the Create order API is used
+
+Step 4: The customer is rewarded with points.
+
+Step 5: After the purchase is complete, the customer is informed via a distribution about the points they received. Sources of the distribution can vary between mail, webhook, or one of our integrations.
