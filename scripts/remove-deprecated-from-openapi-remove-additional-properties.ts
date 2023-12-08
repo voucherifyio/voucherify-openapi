@@ -25,8 +25,8 @@ const parseNullToNullable = (schemas) => {
   const parseNullToNullableInSchema = (schema) => {
     if (schema instanceof Object) {
       if (schema.type === "null") {
-        console.log({...schema, nullable: true, type: "string"});
-        return {...schema, nullable: true, type: "string"};
+        counter++;
+        return {...schema, nullable: true, type: "object"};
       }
 
       if(schema.properties){
@@ -43,7 +43,7 @@ const parseNullToNullable = (schemas) => {
     schemas[schemaName] = parseNullToNullableInSchema(schemas[schemaName]);
   }
 
-  console.log(schemas['ExportResponseBase']);
+  console.log(`Replaced ${counter} nulls to nullable`);
 
   return schemas;
 }
