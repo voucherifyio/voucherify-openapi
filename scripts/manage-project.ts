@@ -2,6 +2,9 @@ import dotenv from "dotenv";
 import minimist from "minimist";
 import colors from "colors";
 import { exec } from "child_process";
+import path from "path";
+import fs from "fs";
+import fsPromises from "fs/promises";
 
 dotenv.config();
 const options = minimist(process.argv.slice(2));
@@ -45,8 +48,7 @@ const main = async ({
   }
   await cleanProject(version);
   await uploadOpenApiFileWithMaxNumberOfAttempts(version, 1);
-  await buildMdTables();
-  await updateMdTablesInDocs();
+  await buildAndUpdateMdTables();
   await uploadImagesUsedInMdFiles();
   await uploadGuideFiles(version);
   await uploadReferenceDocsWithMaxNumberOfAttempts(version, 2);
@@ -84,18 +86,52 @@ const isVersionExists = async (version: string) => {
   );
 };
 
+const createOpenAPIVersionToUpload = async () => {
+  console.log(
+      colors.green(
+          "CREATING OPEN API FILE TO UPLOAD... PLEASE WAIT..."
+      )
+  );
+
+  const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
+  const openAPIContent = JSON.parse(
+      (await fsPromises.readFile(openApiPath)).toString()
+  );
+
+  const pathToTmp = path.join(__dirname, "../tmp");
+  if (!fs.existsSync(pathToTmp)) {
+    fs.mkdirSync(pathToTmp);
+  }
+
+  const pathToTmpReferenceToUpload = path.join(__dirname, "../tmp/referenceToUpload");
+  if (!fs.existsSync(pathToTmpReferenceToUpload)) {
+    fs.mkdirSync(pathToTmpReferenceToUpload);
+  }
+
+  const newOpenApiFile = { ...openAPIContent };
+  newOpenApiFile.openapi = "3.1.0";
+
+  await fsPromises.writeFile(
+      path.join(__dirname, "../tmp/referenceToUpload/OpenAPI.json"),
+      JSON.stringify(newOpenApiFile, null, 2)
+  );
+}
+
 const uploadOpenApiFileWithMaxNumberOfAttempts = async (
   version,
   maxNumberOfUploadingAttempts = 3
 ) => {
+  await createOpenAPIVersionToUpload();
+
   console.log(
     colors.green(
       "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE"
     )
   );
+
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
     const { success, error } = await runCliProcess({
-      command: `rdme openapi ./reference/OpenAPI.json --version=${version} --create`,
+      command: `rdme openapi ./tmp/referenceToUpload/OpenAPI.json --version=${version} --create`,
       stderrIncludes: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`,
       stdoutIncludes: `You've successfully uploaded a new OpenAPI file to your ReadMe project!`,
       resolveErrorAsFalse: true,
@@ -178,17 +214,10 @@ const uploadGuideFiles = async (version) => {
   console.log(colors.green("GUIDES DOC FILES WERE UPLOADED!"));
 };
 
-const updateMdTablesInDocs = async () => {
-  console.log(colors.green("UPDATING MD TABLES IN DOCS..."));
-  await runCliProcess({
-    command: `npm run update-md-tables-in-doc`,
-  });
-  console.log(colors.green("MD TABLES WERE UPDATED IN DOCS SUCCESSFULLY!"));
-};
-const buildMdTables = async () => {
+const buildAndUpdateMdTables = async () => {
   console.log(colors.green("BUILDING MD TABLES FROM OPEN API..."));
   await runCliProcess({
-    command: `npm run build-md-tables-from-openapi`,
+    command: `npm run build-update-md-tables-from-openapi`,
   });
   console.log(colors.green("MD TABLES WERE BUILDED SUCCESSFULLY!"));
 };
