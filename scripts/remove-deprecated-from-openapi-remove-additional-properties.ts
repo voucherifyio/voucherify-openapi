@@ -20,6 +20,34 @@ const removeStoplightTag = (node: object): object => {
   return node;
 };
 
+const parseNullToNullable = (schemas) => {
+  let counter = 0;
+  const parseNullToNullableInSchema = (schema) => {
+    if (schema instanceof Object) {
+      if (schema.type === "null") {
+        console.log({...schema, nullable: true, type: "string"});
+        return {...schema, nullable: true, type: "string"};
+      }
+
+      if(schema.properties){
+        for (const propertyKey of Object.keys(schema.properties)) {
+          schema.properties[propertyKey] = parseNullToNullableInSchema(schema.properties[propertyKey]);
+        }
+      }
+    }
+
+    return schema;
+  }
+
+  for (const schemaName of Object.keys(schemas)) {
+    schemas[schemaName] = parseNullToNullableInSchema(schemas[schemaName]);
+  }
+
+  console.log(schemas['ExportResponseBase']);
+
+  return schemas;
+}
+
 const removeAdditionalProperties = (
   e: any,
   keepIfPropertiesNotPresent = false
@@ -257,21 +285,26 @@ const main = async (keepIfPropertiesNotPresent) => {
     }
   }
 
-  //custom instructions
-  if (
-    schemas?.["ExportResponseBase"]?.properties instanceof Object &&
-    Array.isArray(schemas?.["ExportResponseBase"]?.required)
-  ) {
-    delete schemas["ExportResponseBase"].properties.result;
-    schemas["ExportResponseBase"].required = schemas[
-      "ExportResponseBase"
-    ].required.filter((fieldName) => fieldName !== "result");
-  }
+  // //custom instructions
+  // if (
+  //   schemas?.["ExportResponseBase"]?.properties instanceof Object &&
+  //   Array.isArray(schemas?.["ExportResponseBase"]?.required)
+  // ) {
+  //   delete schemas["ExportResponseBase"].properties.result;
+  //   schemas["ExportResponseBase"].required = schemas[
+  //     "ExportResponseBase"
+  //   ].required.filter((fieldName) => fieldName !== "result");
+  // }
+  //
+
+
+
 
   // Building all together
   const newOpenApiFile = { ...openAPIContent };
   newOpenApiFile.components.parameters = parameters;
-  newOpenApiFile.components.schemas = schemas;
+  // newOpenApiFile.components.schemas = schemas;
+  newOpenApiFile.components.schemas = parseNullToNullable(schemas)
   newOpenApiFile.paths = paths;
 
   //write the new OpenApiFile

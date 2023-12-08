@@ -36,7 +36,7 @@ Data model pages like: https://docs.voucherify.io/reference/voucher-object descr
 1. using readme.io expandable object exploration widget, like on the page: https://docs.voucherify.io/reference/validation-object
 2. displaying schema of the object wit all attributes in a table like on the page: https://docs.voucherify.io/reference/voucher-object
 
-We believe that displaying object details in a table is more intuitive for developers. Unfortunately, readme.io does not have the feature to display building block objects defined in OpenAPI in a table format, so we have built custom JS scripts (`build-md-tables-from-openapi` and `update-md-tables-in-doc`) that generate markdown tables automatically using an OpenAPI file and put them inside the markdown inside the `reference-docs` folder, e.g.:  https://github.com/voucherifyio/voucherify-openapi/blob/master/docs/reference-docs/VOUCHERS-API-Voucher-Object.md. Once we generate the markdown files we can upload them to readme.io using the readme.io CLI. 
+We believe that displaying object details in a table is more intuitive for developers. Unfortunately, readme.io does not have the feature to display building block objects defined in OpenAPI in a table format, so we have built custom JS script (`build-update-md-tables-from-openapi`) that generate markdown tables automatically using an OpenAPI file and put them inside the markdown inside the `reference-docs` folder, e.g.:  https://github.com/voucherifyio/voucherify-openapi/blob/master/docs/reference-docs/VOUCHERS-API-Voucher-Object.md. Once we generate the markdown files we can upload them to readme.io using the readme.io CLI. 
 
 ## API Reference - Introduction pages
 
