@@ -183,7 +183,7 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
         console.log(
           wrapColor(
             false,
-            `${path}/${methodName} [request] - ${requestSchemaName}`
+            `${path} [${methodName}/request] - ${requestSchemaName}`
           )
         );
       }
@@ -205,7 +205,7 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
           console.log(
             wrapColor(
               false,
-              `${path}/${methodName} [response/${statusCode}] - ${responseSchemaName}`
+              `${path} [${methodName}/response/${statusCode}] - ${responseSchemaName}`
             )
           );
         }
