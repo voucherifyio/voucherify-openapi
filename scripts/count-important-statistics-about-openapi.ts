@@ -1,6 +1,6 @@
 import path from "path";
 import fsPromises from "fs/promises";
-import colors from "colors";
+import colors, { bgYellow } from "colors";
 import _ from "lodash";
 
 const wrapColor = (ok: boolean, message: any) =>
@@ -165,6 +165,24 @@ const countEndpointsWithParametersThatNotUsingRefs = (openAPIContent) => {
 };
 
 const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
+  let skipList = [];
+  const addToSkipList = (path, method) => {
+    const existingItemWithCurrentPath = skipList.find(
+      (item) => item.endpoint === path
+    );
+    if (existingItemWithCurrentPath) {
+      skipList = [
+        ...skipList.filter((item) => item.endpoint !== path),
+        {
+          ...existingItemWithCurrentPath,
+          methods: [...existingItemWithCurrentPath.methods, method],
+        },
+      ];
+    } else {
+      skipList.push({ endpoint: path, methods: [method] });
+    }
+  };
+
   console.log(wrapColor(true, "\nchecking request/response schema names.."));
   Object.entries(openAPIContent.paths).map((pathAndPathData) => {
     const [path, pathData] = pathAndPathData;
@@ -179,6 +197,11 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
       ]?.schema?.$ref
         ?.split?.("/")
         ?.pop?.();
+
+      let old = false;
+      if (requestSchemaName?.includes?.("_")) {
+        old = true;
+      }
       if (requestSchemaName && !requestSchemaName?.endsWith?.("RequestBody")) {
         console.log(
           wrapColor(
@@ -193,25 +216,44 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
         if (statusCodeNumber >= 300) {
           return [statusCode, responseData];
         }
-        const responseSchemaName = (responseData as any)?.content?.[
+        const responseSchema = (responseData as any)?.content?.[
           "application/json"
-        ]?.schema?.$ref
-          ?.split?.("/")
-          ?.pop?.();
-        if (
-          responseSchemaName &&
-          !responseSchemaName?.endsWith?.("ResponseBody")
-        ) {
-          console.log(
-            wrapColor(
-              false,
-              `${path} [${methodName}/response/${statusCode}] - ${responseSchemaName}`
-            )
-          );
+        ]?.schema;
+        const responseSchemasNames =
+          responseSchema instanceof Object
+            ? JSON.stringify(responseSchema)
+                .match(/"#\/components\/schemas\/.*?"/g)
+                ?.map((match) =>
+                  match.replace('"#/components/schemas/', "").slice(0, -1)
+                )
+                .sort() || []
+            : [];
+
+        for (const responseSchemaName of responseSchemasNames) {
+          if (responseSchemaName?.includes?.("_")) {
+            old = true;
+          }
+          if (
+            responseSchemaName &&
+            !responseSchemaName?.endsWith?.("ResponseBody")
+          ) {
+            console.log(
+              wrapColor(
+                false,
+                `${path} [${methodName}/response/${statusCode}] - ${responseSchemaName}`
+              )
+            );
+          }
         }
       });
+
+      if (old) {
+        addToSkipList(path, methodName);
+      }
     });
   });
+
+  console.log(colors.yellow("skipList:"), JSON.stringify(skipList));
 };
 
 main();
