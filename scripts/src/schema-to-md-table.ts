@@ -18,6 +18,7 @@ yup.addMethod(
 const nodeWithTitleAndPropertiesSchema = yup.object({
   title: yup.string().optional(),
   type: yup.string().oneOf(["object", "string", "array", "number"]),
+  nullable: yup.boolean().optional(),
   properties: yup.object({}).optional(),
   additionalProperties: yup
     .mixed()
@@ -50,6 +51,7 @@ const allOfSchema = oneOfSchema;
 
 const propertySchema = yup.object({
   type: yup.mixed().oneOfSchemas([yup.string(), yup.array().of(yup.string())]),
+  nullable: yup.boolean().optional(),
   properties: yup.object({}).optional(),
   additionalProperties: yup
     .mixed()
@@ -80,7 +82,12 @@ interface AllOf extends yup.InferType<typeof oneOfSchema> {}
 interface OneOf extends yup.InferType<typeof oneOfSchema> {}
 
 export type Properties = Record<string, Property>;
-type Property = { description?: string; example?: string; type?: string };
+type Property = {
+  description?: string;
+  example?: string;
+  type?: string;
+  nullable?: boolean;
+};
 
 const md = new MarkdownIt({ breaks: true, html: true });
 const renderMarkdown = (markdown) =>
@@ -182,7 +189,8 @@ export default class SchemaToMarkdownTable {
           typeof item.type === "string" &&
           ["string", "number", "object"].includes(item.type)
         ) {
-          return level ? item.type : renderMarkdown(item.type);
+          const type = "nullable" in item ? `${item.type}, null` : item.type;
+          return level ? type : renderMarkdown(type);
         }
       })
       .filter((i) => !!i);
@@ -443,7 +451,9 @@ export default class SchemaToMarkdownTable {
 
         const propertyLabel = [
           propertyId,
-          property.type ? `\`${property.type}\`` : false,
+          property.type
+            ? `\`${property.type}\`${property.nullable ? `, \`null\`` : ""}`
+            : false,
         ]
           .filter((e) => !!e)
           .join("</br>");
