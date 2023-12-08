@@ -1,6 +1,6 @@
 import path from "path";
 import fsPromises from "fs/promises";
-import colors, { bgYellow } from "colors";
+import colors from "colors";
 import _ from "lodash";
 
 const wrapColor = (ok: boolean, message: any) =>
