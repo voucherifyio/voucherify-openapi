@@ -268,8 +268,6 @@ const main = async (keepIfPropertiesNotPresent) => {
   // }
   //
 
-  console.log(JSON.stringify(Object.keys(schemas)));
-
   // Building all together
   const newOpenApiFile = { ...openAPIContent };
   newOpenApiFile.components.parameters = parameters;
