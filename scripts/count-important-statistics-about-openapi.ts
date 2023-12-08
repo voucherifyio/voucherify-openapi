@@ -184,9 +184,12 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
   };
 
   console.log(wrapColor(true, "\nchecking request/response schema names.."));
+
   Object.entries(openAPIContent.paths).map((pathAndPathData) => {
     const [path, pathData] = pathAndPathData;
     Object.entries(pathData).map((methodNameAndMethodData) => {
+      const messages = [];
+
       const [methodName, methodData] = methodNameAndMethodData;
       if (methodName === "parameters") {
         return [methodName, methodData];
@@ -211,15 +214,8 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
           requestSchemaName &&
           !requestSchemaName?.endsWith?.("RequestBody")
         ) {
-          console.log(
-            wrapColor(
-              false,
-              `${path} [${methodName}/request] - ${requestSchemaName}`
-            )
-          );
-        } else if (!requestSchemaName) {
-          console.log(
-            methodData?.requestBody?.content?.["application/json"]?.schema
+          messages.push(
+            `${path} [${methodName}/request] - ${requestSchemaName}`
           );
         }
       }
@@ -251,11 +247,8 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
             responseSchemaName &&
             !responseSchemaName?.endsWith?.("ResponseBody")
           ) {
-            console.log(
-              wrapColor(
-                false,
-                `${path} [${methodName}/response/${statusCode}] - ${responseSchemaName}`
-              )
+            messages.push(
+              `${path} [${methodName}/response/${statusCode}] - ${responseSchemaName}`
             );
           }
         }
@@ -263,6 +256,13 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
 
       if (old) {
         addToSkipList(path, methodName);
+      }
+      if (messages.length > 0) {
+        if (old) {
+          console.log(colors.yellow(messages.join("\n")));
+        } else {
+          console.log(colors.red(messages.join("\n")));
+        }
       }
     });
   });
