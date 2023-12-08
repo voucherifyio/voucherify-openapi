@@ -49,6 +49,8 @@ const parseNullToNullable = (schemas) => {
     })
   );
 
+  console.log(colors.green(`Replaced ${counter} nulls to nullable`));
+
   return result;
 };
 
