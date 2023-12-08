@@ -192,24 +192,38 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
         return [methodName, methodData];
       }
       const { responses } = methodData;
-      const requestSchemaName = methodData?.requestBody?.content?.[
-        "application/json"
-      ]?.schema?.$ref
-        ?.split?.("/")
-        ?.pop?.();
+      const requestSchemasNames =
+        methodData?.requestBody instanceof Object
+          ? JSON.stringify(methodData?.requestBody)
+              .match(/"#\/components\/schemas\/.*?"/g)
+              ?.map((match) =>
+                match.replace('"#/components/schemas/', "").slice(0, -1)
+              )
+              .sort() || []
+          : [];
 
       let old = false;
-      if (requestSchemaName?.includes?.("_")) {
-        old = true;
+      for (const requestSchemaName of requestSchemasNames) {
+        if (requestSchemaName?.includes?.("_")) {
+          old = true;
+        }
+        if (
+          requestSchemaName &&
+          !requestSchemaName?.endsWith?.("RequestBody")
+        ) {
+          console.log(
+            wrapColor(
+              false,
+              `${path} [${methodName}/request] - ${requestSchemaName}`
+            )
+          );
+        } else if (!requestSchemaName) {
+          console.log(
+            methodData?.requestBody?.content?.["application/json"]?.schema
+          );
+        }
       }
-      if (requestSchemaName && !requestSchemaName?.endsWith?.("RequestBody")) {
-        console.log(
-          wrapColor(
-            false,
-            `${path} [${methodName}/request] - ${requestSchemaName}`
-          )
-        );
-      }
+
       Object.entries(responses || {}).map((statusCodeAndResponseData) => {
         const [statusCode, responseData] = statusCodeAndResponseData;
         const statusCodeNumber = parseInt(statusCode);
