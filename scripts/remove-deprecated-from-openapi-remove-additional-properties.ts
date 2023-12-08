@@ -26,29 +26,29 @@ const parseNullToNullable = (schemas) => {
     if (schema instanceof Object) {
       if (schema.type === "null") {
         counter++;
-        return {...schema, nullable: true, type: "object"};
+        return { ...schema, nullable: true, type: "object" };
       }
 
-      if(schema.properties){
+      if (schema.properties) {
         for (const propertyKey of Object.keys(schema.properties)) {
-          schema.properties[propertyKey] = parseNullToNullableInSchema(schema.properties[propertyKey]);
+          schema.properties[propertyKey] = parseNullToNullableInSchema(
+            schema.properties[propertyKey]
+          );
         }
       }
     }
 
     return schema;
-  }
+  };
 
   for (const schemaName of Object.keys(schemas)) {
     schemas[schemaName] = parseNullToNullableInSchema(schemas[schemaName]);
   }
 
-  console.log(
-      colors.green(
-          `Replaced ${counter} nulls to nullable`
-      )
-  );
-}
+  console.log(colors.green(`Replaced ${counter} nulls to nullable`));
+
+  return schemas;
+};
 
 const removeAdditionalProperties = (
   e: any,
@@ -264,14 +264,11 @@ const main = async (keepIfPropertiesNotPresent) => {
   // }
   //
 
-
-
-
   // Building all together
   const newOpenApiFile = { ...openAPIContent };
   newOpenApiFile.components.parameters = parameters;
   // newOpenApiFile.components.schemas = schemas;
-  newOpenApiFile.components.schemas = parseNullToNullable(schemas)
+  newOpenApiFile.components.schemas = parseNullToNullable(schemas);
   newOpenApiFile.paths = paths;
 
   //write the new OpenApiFile
