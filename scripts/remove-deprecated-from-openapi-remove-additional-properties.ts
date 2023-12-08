@@ -43,9 +43,11 @@ const parseNullToNullable = (schemas) => {
     schemas[schemaName] = parseNullToNullableInSchema(schemas[schemaName]);
   }
 
-  console.log(`Replaced ${counter} nulls to nullable`);
-
-  return schemas;
+  console.log(
+      colors.green(
+          `Replaced ${counter} nulls to nullable`
+      )
+  );
 }
 
 const removeAdditionalProperties = (
