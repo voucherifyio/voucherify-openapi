@@ -81,52 +81,44 @@ const removeAdditionalProperties = (
 };
 
 const skipList: { endpoint: string; methods: string[] | true }[] = [
-  { endpoint: "/v1/locations", methods: ["get"] },
-  { endpoint: "/v1/locations/{locationId}", methods: ["get"] },
-  { endpoint: "/v1/async-actions/{asyncActionId}", methods: ["get"] },
-  { endpoint: "/v1/async-actions", methods: ["get"] },
-  { endpoint: "/v1/consents", methods: ["get"] },
-  { endpoint: "/client/v1/consents#", methods: ["get"] },
-  { endpoint: "/v1/vouchers/{code}", methods: ["post", "put"] },
-  { endpoint: "/v1/vouchers", methods: ["post", "get"] },
+  { endpoint: "/v1/vouchers", methods: ["get", "post"] },
+  { endpoint: "/v1/vouchers/{code}", methods: ["put", "post"] },
+  { endpoint: "/v1/vouchers/import", methods: ["post"] },
+  { endpoint: "/v1/vouchers/qualification", methods: ["post"] },
+  { endpoint: "/v1/vouchers/bulk/async", methods: ["post"] },
+  { endpoint: "/v1/vouchers/metadata/async", methods: ["post"] },
+  { endpoint: "/v1/campaigns/qualification", methods: ["post"] },
+  { endpoint: "/v1/promotions/tiers", methods: ["get"] },
+  { endpoint: "/client/v1/promotions/tiers", methods: ["get"] },
   { endpoint: "/v1/promotions/{campaignId}/tiers", methods: ["post"] },
   { endpoint: "/v1/promotions/tiers/{promotionTierId}", methods: ["put"] },
-  { endpoint: "/v1/campaigns", methods: ["get", "post"] },
-  { endpoint: "/v1/campaigns/{campaignId}", methods: ["get", "put"] },
-  { endpoint: "/v1/vouchers/import", methods: ["post"] },
-  { endpoint: "/v1/vouchers/bulk/async", methods: ["post"] },
-  { endpoint: "/v1/loyalties", methods: ["post", "get"] },
+  { endpoint: "/v1/rewards", methods: ["get", "post"] },
+  { endpoint: "/v1/rewards/{rewardId}", methods: ["get", "put"] },
+  { endpoint: "/client/v1/validate", methods: ["get"] },
+  { endpoint: "/v1/promotions/validation", methods: ["post"] },
+  { endpoint: "/v1/promotions/tiers/{tierId}/validation", methods: ["post"] },
+  { endpoint: "/v1/vouchers/{code}/redemption", methods: ["post"] },
+  { endpoint: "/client/v1/redeem", methods: ["post"] },
+  {
+    endpoint: "/v1/promotions/tiers/{promotionTierId}/redemption",
+    methods: ["post"],
+  },
+  { endpoint: "/v1/loyalties", methods: ["get", "post"] },
   { endpoint: "/v1/loyalties/{campaignId}", methods: ["get", "put"] },
-  { endpoint: "/v1/campaigns/{campaignId}/import", methods: ["post"] },
-  { endpoint: "/v1/campaigns/{campaignId}/vouchers", methods: ["post"] },
-  { endpoint: "/v1/campaigns/{campaignId}/vouchers/{code}", methods: ["post"] },
+  { endpoint: "/v1/loyalties/{campaignId}/members", methods: ["get", "post"] },
   {
-    endpoint: "/v1/loyalties/{campaignId}/rewards/{assignmentId}",
-    methods: ["put"],
-  },
-  {
-    endpoint: "/v1/loyalties/{campaignId}/rewards",
-    methods: ["post", "get"],
-  },
-  {
-    endpoint: "/v1/loyalties/{campaignId}/reward-assignments",
+    endpoint: "/v1/loyalties/{campaignId}/members/{memberId}",
     methods: ["get"],
   },
+  { endpoint: "/v1/loyalties/members/{memberId}", methods: ["get"] },
   {
-    endpoint: "/v1/loyalties/{campaignId}/members",
-    methods: ["get", "post"],
-  },
-  {
-    endpoint: "/v1/loyalties/members/{memberId}",
+    endpoint: "/v1/loyalties/{campaignId}/members/{memberId}/activities",
     methods: ["get"],
   },
+  { endpoint: "/v1/loyalties/members/{memberId}/activities", methods: ["get"] },
   {
-    endpoint: "/v1/rewards",
-    methods: ["get", "post"],
-  },
-  {
-    endpoint: "/v1/rewards/{rewardId}",
-    methods: ["get", "put"],
+    endpoint: "/v1/loyalties/{campaignId}/points-expiration/export",
+    methods: ["post"],
   },
   {
     endpoint: "/v1/loyalties/{campaignId}/earning-rules",
@@ -137,58 +129,31 @@ const skipList: { endpoint: string; methods: string[] | true }[] = [
     methods: ["put"],
   },
   {
-    endpoint: "/v1/loyalties/{campaignId}/points-expiration/export",
-    methods: ["post"],
-  },
-  {
-    endpoint: "/v1/loyalties/{campaignId}/members/{memberId}",
+    endpoint: "/v1/loyalties/{campaignId}/reward-assignments",
     methods: ["get"],
   },
+  { endpoint: "/v1/loyalties/{campaignId}/rewards", methods: ["get", "post"] },
   {
-    endpoint: "/v1/loyalties/members/{memberId}/activities",
-    methods: true,
-  },
-  {
-    endpoint: "/v1/loyalties/{campaignId}/members/{memberId}/activities",
-    methods: true,
-  },
-  {
-    endpoint: "/v1/metadata-schemas/{resource}",
-    methods: true,
-  },
-  {
-    endpoint: "/v1/metadata-schemas",
-    methods: true,
-  },
-  {
-    endpoint: "/v1/vouchers/metadata/async",
-    methods: ["post"],
+    endpoint: "/v1/loyalties/{campaignId}/rewards/{assignmentId}",
+    methods: ["put"],
   },
   {
     endpoint: "/v1/validation-rules/{validationRuleId}/assignments",
     methods: ["post"],
   },
-  {
-    endpoint: "/v1/segments",
-    methods: ["post"],
-  },
-  {
-    endpoint: "/v1/promotions/tiers",
-    methods: ["get"],
-  },
-  {
-    endpoint: "/client/v1/promotions/tiers",
-    methods: ["get"],
-  },
-  {
-    endpoint: "/v1/segments/{segmentId}",
-    methods: ["get"],
-  },
-  {
-    endpoint: "/v1/segments",
-    methods: ["post"],
-  },
+  { endpoint: "/v1/segments/{segmentId}", methods: ["get"] },
+  { endpoint: "/v1/segments", methods: ["post"] },
+  { endpoint: "/v1/consents", methods: ["get"] },
+  { endpoint: "/client/v1/consents#", methods: ["get"] },
+  { endpoint: "/v1/async-actions", methods: ["get"] },
+  { endpoint: "/v1/async-actions/{asyncActionId}", methods: ["get"] },
+  { endpoint: "/v1/metadata-schemas", methods: ["get"] },
+  { endpoint: "/v1/metadata-schemas/{resource}", methods: ["get"] },
+  { endpoint: "/v1/locations", methods: ["get"] },
+  { endpoint: "/v1/locations/{locationId}", methods: ["get"] },
 ];
+
+///v1/loyalties/{campaignId}/members
 
 const main = async (keepIfPropertiesNotPresent) => {
   const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
