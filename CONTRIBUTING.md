@@ -55,19 +55,18 @@ h1::after {\n content: \"BETA\";\n background-color: rgb(237, 117, 71);\n color:
 ## OpenAPI
 
 OpenAPI syntax documentation can be found here: https://swagger.io/specification/v3/.
-Voucherify OpenAPI is located here: https://github.com/voucherifyio/voucherify-openapi/blob/master/reference/OpenAPI.json.
+Voucherify OpenAPI is located here: https://github.com/voucherifyio/voucherify-openapi/blob/master/production/readOnly-openAPI.json.
 We use stoplight to edit the OpenAPI file as it gives a nice UI that helps to edit this 80k+ line of code json file. Everyone can create a free account on the Stoplight platform. 
 
 How to edit OpenAPI file:
-1. upload OpenAPI to the Stoplight platform
+1. upload `./reference/OpenAPI.json` file to the Stoplight platform
 2. make changes in OpenAPI using Stoplight UI
 3. export modified OpenAPI content and update the OpenAPI file in the repository
-4. run `npm run remove-stoplight-tags-from-openapi` command to remove from OpenAPI unwanted Stoplight tags `x-stoplight` (that makes it hard to review changes)
-5. ensure that OpenAPI has only expected modifications
+4. ensure that OpenAPI has only expected modifications
 
 > [!WARNING] Each OpenAPI change should be tested by reviewing documentation on readme.io after the full documentation update process.
 
- Building  new models, we should follow the following name convention: 
+ Building new models, we should follow the following name convention: 
 - Use pascal case casing.
 - If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{Resource}{Action}{Request|Response}{Body|Query}`, where:
 	- `Resource`: plural name taken from API path, e.g. `Vouchers`, `Customers`, `Products`
@@ -124,9 +123,10 @@ For example:
 Good practices:
 - for literal unions use `enum`
 - for types unions, use `oneOf`,
-- for attributes that may contain `null`, add `"nullable": true` 
+- for attributes that may contain `null`, add `"nullable": true`
+- if attribute is always `null`, set type: `null`
 - for dates use `"type": "string", "format": "date-time"` or `"type": "string", "format": "date"`
-- for the object, add the "required" attribute which should contain a list of required attributes in the object
+- for the object type `object`, add the `required` attribute which should contain a list of required attributes in the object
 
 ## Contribution to documentation
 
