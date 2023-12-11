@@ -71,7 +71,7 @@ How to edit OpenAPI file:
 - Use pascal case casing.
 - If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{Resource}{Action}{Request|Response}{Body|Query}`, where:
 	- `Resource`: plural name taken from API path, e.g. `Vouchers`, `Customers`, `Products`
-	- `Action` : `Get`(single record), `List`, `Update`, `Delete`, `Create` (etc.)
+	- `Action` : `Get`(single record), `List`(multiple record), `Update`(single record), `UpdateInBulk` (multiple record), `Delete`(single record), `Create`(single record), `CreateInBulk`(multiple record)
 - If a 0-level model has dedicated sub-models, then those model's names should follow the pattern:
    `{Resource}{Action}{Differentiator}{Request|Response}{Body|Query}`
    where the  `Differentiator` describes the child model, e.g.:
