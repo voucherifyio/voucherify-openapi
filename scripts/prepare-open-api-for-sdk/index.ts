@@ -7,6 +7,7 @@ import { skipList } from "./skipList";
 import {
   parseNullToNullable,
   removeAdditionalProperties,
+  removeRequiredOnNullable,
   removeStoplightTag,
 } from "./utils";
 import { pick } from "lodash";
@@ -85,6 +86,11 @@ const main = async (languageOptions: LanguageOptions) => {
       openAPIContent.components.parameters[parameterName],
       !languageOptions.simplifyAllObjectsThatHaveAdditionalProperties
     );
+    if (languageOptions.removeRequiredOnNullable) {
+      parameters[parameterName] = removeRequiredOnNullable(
+        parameters[parameterName]
+      );
+    }
   }
 
   // Removing not used schemas
@@ -126,6 +132,9 @@ const main = async (languageOptions: LanguageOptions) => {
       openAPIContent.components.schemas[schemaName],
       !languageOptions.simplifyAllObjectsThatHaveAdditionalProperties
     );
+    if (languageOptions.removeRequiredOnNullable) {
+      schemas[schemaName] = removeRequiredOnNullable(schemas[schemaName]);
+    }
   }
 
   // Finding other schemas uses
@@ -149,6 +158,9 @@ const main = async (languageOptions: LanguageOptions) => {
         openAPIContent.components.schemas[schemaName],
         !languageOptions.simplifyAllObjectsThatHaveAdditionalProperties
       );
+      if (languageOptions.removeRequiredOnNullable) {
+        schemas[schemaName] = removeRequiredOnNullable(schemas[schemaName]);
+      }
     }
   }
 

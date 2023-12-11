@@ -74,3 +74,52 @@ export const removeAdditionalProperties = (
   }
   return e;
 };
+
+export const removeRequiredOnNullable = (e: any) => {
+  if (
+    e instanceof Object &&
+    "properties" in e &&
+    e.properties instanceof Object &&
+    "required" in e &&
+    Array.isArray(e.required)
+  ) {
+    let required: string[] = e.required;
+    return {
+      ...Object.fromEntries(
+        Object.entries(e)
+          .filter((keyValue) => {
+            const [key] = keyValue;
+            return key !== "required";
+          })
+          .map((keyValue) => {
+            const [key, value] = keyValue;
+            if (key === "properties") {
+              return [
+                key,
+                Object.fromEntries(
+                  Object.entries(value).map((keyPropertyAndPropertyData) => {
+                    const [keyProperty, propertyData] =
+                      keyPropertyAndPropertyData;
+                    if (propertyData?.nullable) {
+                      required = required.filter(
+                        (requiredKey) => requiredKey !== keyProperty
+                      );
+                    }
+                    return [
+                      keyProperty,
+                      removeRequiredOnNullable(propertyData),
+                    ];
+                  })
+                ),
+              ];
+            }
+            if (key !== "properties" && key !== "required") {
+              return [key, removeRequiredOnNullable(value)];
+            }
+          })
+      ),
+      required,
+    };
+  }
+  return e;
+};
