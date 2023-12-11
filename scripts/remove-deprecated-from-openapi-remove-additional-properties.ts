@@ -206,16 +206,21 @@ const main = async (keepIfPropertiesNotPresent) => {
 
   // Removing not used schemas
   const schemas = {};
-  const schemasNames = pathsStringify
+  const schemasNamesFoundInPaths = pathsStringify
+    .match(/"#\/components\/schemas\/.*?"/g)
+    .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1))
+    .sort();
+  const schemasNamesFoundInParameters = JSON.stringify(
+    openAPIContent.components.parameters
+  )
     .match(/"#\/components\/schemas\/.*?"/g)
     .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1))
     .sort();
 
-  const parameterSchemaNames = Object.keys(
-    openAPIContent.components.schemas
-  ).filter((parameter) => parameter.startsWith("Parameter"));
-
-  const allSchemasNames = [...schemasNames, ...parameterSchemaNames];
+  const allSchemasNames = [
+    ...schemasNamesFoundInPaths,
+    ...schemasNamesFoundInParameters,
+  ];
 
   for (const schemaName of allSchemasNames) {
     if (!openAPIContent.components.schemas?.[schemaName]) {
