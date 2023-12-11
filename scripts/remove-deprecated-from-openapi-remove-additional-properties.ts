@@ -184,10 +184,8 @@ const main = async (keepIfPropertiesNotPresent) => {
     }
   }
 
-  const pathsStringify = JSON.stringify(paths);
-
   // Removing not used parameters
-  const parametersNames = pathsStringify
+  const parametersNames = JSON.stringify(paths)
     .match(/"#\/components\/parameters\/.*?"/g)
     .map((match) => match.replace('"#/components/parameters/', "").slice(0, -1))
     .sort();
@@ -206,20 +204,38 @@ const main = async (keepIfPropertiesNotPresent) => {
 
   // Removing not used schemas
   const schemas = {};
-  const schemasNamesFoundInPaths = pathsStringify
+  const schemasNamesFoundInPaths = JSON.stringify(paths)
     .match(/"#\/components\/schemas\/.*?"/g)
     .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1))
     .sort();
-  const schemasNamesFoundInParameters = JSON.stringify(
-    openAPIContent.components.parameters
-  )
-    .match(/"#\/components\/schemas\/.*?"/g)
-    .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1))
-    .sort();
+  // const schemasNamesFoundInParameters = JSON.stringify(
+  //   openAPIContent.components.parameters
+  // )
+  //   .match(/"#\/components\/schemas\/.*?"/g)
+  //   .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1))
+  //   .sort();
+
+  const usedParameters = JSON.stringify(paths)
+    .match(/"#\/components\/parameters\/.*?"/g)
+    .map((match) =>
+      match.replace('"#/components/parameters/', "").slice(0, -1)
+    );
+  const schemasNamesFoundInPathsParameters: string[] = [];
+  for (const parameter of usedParameters) {
+    if (!openAPIContent.components.parameters?.[parameter]) {
+      continue;
+    }
+    const schemasNamesFoundInParameter = JSON.stringify(
+      openAPIContent.components.parameters[parameter]
+    )
+      .match(/"#\/components\/schemas\/.*?"/g)
+      .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1));
+    schemasNamesFoundInPathsParameters.push(...schemasNamesFoundInParameter);
+  }
 
   const allSchemasNames = [
     ...schemasNamesFoundInPaths,
-    ...schemasNamesFoundInParameters,
+    ...schemasNamesFoundInPathsParameters,
   ];
 
   for (const schemaName of allSchemasNames) {
