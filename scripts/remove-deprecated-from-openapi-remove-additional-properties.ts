@@ -178,6 +178,14 @@ const main = async (keepIfPropertiesNotPresent) => {
         continue;
       }
       path[method] = openAPIContent.paths[pathKey][method];
+      if (path[method].responses instanceof Object) {
+        path[method].responses = Object.fromEntries(
+          Object.entries(path[method].responses).filter((httpCodeAndSchema) => {
+            const [httpCode, schema] = httpCodeAndSchema;
+            return !isNaN(parseInt(httpCode)) && parseInt(httpCode) < 300;
+          })
+        );
+      }
     }
     if (Object.keys(path).length > 0) {
       paths[pathKey] = path;
