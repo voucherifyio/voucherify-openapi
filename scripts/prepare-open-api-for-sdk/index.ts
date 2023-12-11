@@ -10,7 +10,6 @@ import {
   removeRequiredOnNullable,
   removeStoplightTag,
 } from "./utils";
-import { pick } from "lodash";
 const options = minimist(process.argv.slice(2));
 
 type LanguageOptions = {
