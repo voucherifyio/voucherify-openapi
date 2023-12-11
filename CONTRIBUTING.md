@@ -54,7 +54,7 @@ h1::after {\n content: \"BETA\";\n background-color: rgb(237, 117, 71);\n color:
 
 ## OpenAPI
 
-OpenAPI syntax documentation can be found here: https://swagger.io/specification/.
+OpenAPI syntax documentation can be found here: https://swagger.io/specification/v3/.
 Voucherify OpenAPI is located here: https://github.com/voucherifyio/voucherify-openapi/blob/master/reference/OpenAPI.json.
 We use stoplight to edit the OpenAPI file as it gives a nice UI that helps to edit this 80k+ line of code json file. Everyone can create a free account on the Stoplight platform. 
 
