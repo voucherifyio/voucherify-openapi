@@ -14,3 +14,8 @@ Please refer to the following guides:
 - [Recipes](https://docs.voucherify.io/recipes)
 - [API Reference](https://docs.voucherify.io/reference/introduction-1)
 - [Support Documentation](https://support.voucherify.io/)
+
+### Sdk generation
+
+We use [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) with version 7.0.1 
+to generate SDKs for different languages with our custom changes.
