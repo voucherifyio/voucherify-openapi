@@ -1,6 +1,6 @@
 export const mdTables: [string, string?][] = [
   ["Voucher", "VOUCHERS-API-Voucher-Object.md"],
-  ["CampaignResponse", "CAMPAIGNS-API-Campaign-Object.md"],
+  ["Campaign", "CAMPAIGNS-API-Campaign-Object.md"],
   ["PromotionTier", "PROMOTIONS-API-Promotion-Tier-Object.md"],
   ["Reward", "REWARDS-API-Reward-Object.md"],
   ["RewardAssignment", "REWARDS-API-Reward-Assignment-Object.md"],
@@ -22,10 +22,10 @@ export const mdTables: [string, string?][] = [
   ["CustomerResponse", "CUSTOMERS-API-Customer-Object.md"],
   ["CustomerActivity", "CUSTOMERS-API-Customer-Activity-Object.md"],
   ["OrderResponse", "ORDERS-API-Order-Object.md"],
-  ["ProductResponse", "PRODUCTS-API-Product-Object.md"],
-  ["SkuResponse", "PRODUCTS-API-SKU-Object.md"],
+  ["Product", "PRODUCTS-API-Product-Object.md"],
+  ["Sku", "PRODUCTS-API-SKU-Object.md"],
   [
-    "ProductCollectionsItemResponse",
+    "ProductCollectionsItem",
     "PRODUCT-COLLECTIONS-API-Product-Collection-Object.md",
   ],
   ["ValidationRuleResponse", "VALIDATION-RULES-API-Validation-Rule-Object.md"],
