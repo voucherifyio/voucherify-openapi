@@ -164,7 +164,7 @@ const countEndpointsWithParametersThatNotUsingRefs = (openAPIContent) => {
   );
 };
 
-export const checkRequestResponseSchemaNamesCorrectness = (openAPIContent, enableLogs = true) => {
+export const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
   let skipList = [];
   const redResponses: Response[] = [];
 
