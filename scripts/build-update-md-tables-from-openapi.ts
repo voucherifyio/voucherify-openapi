@@ -1,13 +1,13 @@
 import * as fs from "fs/promises";
 import path from "path";
-import "./globals.t";
+import "./types/globals.t";
 import * as openApi from "../reference/OpenAPI.json";
 import { mdTables } from "./md-tables";
 import SchemaToMarkdownTable, {
   ExamplesRenderedAs,
   RenderMode,
 } from "./src/schema-to-md-table";
-import {EOL} from "os";
+import { EOL } from "os";
 
 const PATH_TO_GERENATED_TABLES = [__dirname, "./output"];
 const PATH_TO_DOCS_REFERENCE = [__dirname, "../docs/reference-docs"];
@@ -47,37 +47,37 @@ export const updateMdTablesInDoc = async () => {
       const docPath = path.join(...PATH_TO_DOCS_REFERENCE, docFile);
       const fileContent = await fs.readFile(docPath);
       const fileContentBlocks = fileContent
-          .toString()
-          .split(/(^---$)|(^\[block\:html\]$)/m) // Split by `---` and [block:html] that surrounds the table
-          .filter((e) => !!e);
+        .toString()
+        .split(/(^---$)|(^\[block\:html\]$)/m) // Split by `---` and [block:html] that surrounds the table
+        .filter((e) => !!e);
 
       // Find block with table by part of the markdown table syntax
       const contentBlockIndexWithTableToReplace = fileContentBlocks.findIndex(
-          (block) => block.indexOf("|:-----") >= 0
+        (block) => block.indexOf("|:-----") >= 0
       );
 
       if (contentBlockIndexWithTableToReplace < 0) {
         throw new Error(
-            `Could not find table to replace in file ${docFile} (object: ${objectName}) `
+          `Could not find table to replace in file ${docFile} (object: ${objectName}) `
         );
       }
 
       const additionalBlockquotes =
-          fileContentBlocks[contentBlockIndexWithTableToReplace].match(
-              /^\>.*$/gm
-          );
+        fileContentBlocks[contentBlockIndexWithTableToReplace].match(
+          /^\>.*$/gm
+        );
 
       const contentBeforeTable = fileContentBlocks
-          .slice(0, contentBlockIndexWithTableToReplace)
-          .join("");
+        .slice(0, contentBlockIndexWithTableToReplace)
+        .join("");
       const contentAfterTable = fileContentBlocks
-          .slice(contentBlockIndexWithTableToReplace + 1)
-          .join("");
+        .slice(contentBlockIndexWithTableToReplace + 1)
+        .join("");
 
       const newTable = (
-          await fs.readFile(
-              path.join(...PATH_TO_GENERATED_TABLES, `${objectName}.md`)
-          )
+        await fs.readFile(
+          path.join(...PATH_TO_GENERATED_TABLES, `${objectName}.md`)
+        )
       ).toString();
       // .replace((/^\# .*$/m), ''); // Remove first header as in readme.io it already exists
 
@@ -87,8 +87,8 @@ export const updateMdTablesInDoc = async () => {
         newTable,
         contentAfterTable,
       ]
-          .filter((e) => !!e)
-          .join(`${EOL}${EOL}`);
+        .filter((e) => !!e)
+        .join(`${EOL}${EOL}`);
 
       await fs.writeFile(docPath, newFileContent);
       console.log(`Updated table in ${docFile} `);
@@ -102,11 +102,10 @@ export const updateMdTablesInDoc = async () => {
 (async () => {
   const doneSuccessfully = await buildUpdateMdTablesFromOpenapi();
 
-  if(!doneSuccessfully) {
+  if (!doneSuccessfully) {
     console.log("Failed to build md tables from openapi");
     return;
   }
 
   await updateMdTablesInDoc();
 })();
-
