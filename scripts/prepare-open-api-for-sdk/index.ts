@@ -149,8 +149,9 @@ const main = async (languageOptions: LanguageOptions) => {
     lastSchemaStringify = schemaStringify;
     const schemasNames = schemaStringify
       .match(/"#\/components\/schemas\/.*?"/g)
-      .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1));
-    for (const schemaName of schemasNames.slice().sort()) {
+      .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1))
+      .sort();
+    for (const schemaName of schemasNames) {
       if (!openAPIContent.components.schemas?.[schemaName]) {
         console.log(`not found ${schemaName} in schemas`);
         continue;
