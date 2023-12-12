@@ -25,7 +25,7 @@ export const mdTables: [string, string?][] = [
   ["Product", "PRODUCTS-API-Product-Object.md"],
   ["Sku", "PRODUCTS-API-SKU-Object.md"],
   [
-    "ProductCollectionsItem",
+    "ProductsCollectionsItem",
     "PRODUCT-COLLECTIONS-API-Product-Collection-Object.md",
   ],
   ["ValidationRuleResponse", "VALIDATION-RULES-API-Validation-Rule-Object.md"],
