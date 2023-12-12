@@ -6,15 +6,15 @@ require 'json/ext'
 # setup authorization
 OpenapiClient.configure do |config|
   # Configure API key authorization: X-App-Id-1
-  config.api_key['X-App-Id-1'] = '20de9788-4fd6-4a1e-908b-a1a235460f64'
+  config.api_key['X-App-Id-1'] = ''
   # Uncomment the following line to set a prefix for the API key, e.g. 'Bearer' (defaults to nil)
   # config.api_key_prefix['X-App-Id-1'] = 'Bearer'
 
   # Configure API key authorization: X-App-Token-1
-  config.api_key['X-App-Token-1'] = 'c84991a3-19be-4682-b597-7ba31efa3bd3'
+  config.api_key['X-App-Token-1'] = ''
   # Uncomment the following line to set a prefix for the API key, e.g. 'Bearer' (defaults to nil)
   # config.api_key_prefix['X-App-Token-1'] = 'Bearer'
-  config.host = 'https://dev.api.voucherify.io'
+  config.host = 'https://api.voucherify.io'
 end
 
 customers_api_instance = OpenapiClient::CUSTOMERSAPIApi.new
