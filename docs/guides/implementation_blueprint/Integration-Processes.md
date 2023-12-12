@@ -39,7 +39,7 @@ In this scenario a customer will be reedeming voucher codes.
 
 The customer is given voucher codes using different methods. You can use [Voucherify's Distributions](doc:distributions) or a standalone voucher that the customer received in many different ways.
 
-![Distributions in Voucherify](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/integration-processes/docs/assets/img/guides_implementation_blueprint_integration_processes_distributions.png "Distributions in Voucherify") <!-- Obrazek do poprawy -->
+![Distributions in Voucherify](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/integration-processes/docs/assets/img/guides_implementation_blueprint_integration_processes_distributions.png "Distributions in Voucherify")
 
 The process of applying the codes can be different depending on the customer experience that you designed. This image shows the proposition of a customer experience:
 
@@ -49,7 +49,9 @@ Step 1: A typical scenario is presented where the customer browses products, add
 
 >During the shopping process there is no need to send any API requests to Voucherify when a customer adds or removes any products from their cart. API requests are only needed if you want to verify whether a customer qualifies for the discount or to calculate the discount itself.
 
-Step 2: Qualifications - Optional step - you can choose to get a list of applicable discounts for the customer from Voucherify. If you don't choose this option, the customer has to input the codes by themselves.
+Step 2: Qualifications (optional) - you can choose to get a list of applicable discounts for the customer from Voucherify. If you don't choose this option, the customer has to input the codes by themselves.
+
+>The Qualifications request can return just the promotions or a combination of discount codes, campaigns, and promotion tiers according to the "options" from the Qualifications request.
 
 Step 3: Apply the coupon codes. If you use the qualification request you can show the discounts for the customer to choose from, or apply some discounts automatically. You can also allow the customer to input code acquired from a different source.
 
@@ -59,17 +61,19 @@ Step 5: Exposing the calculated discount based on the combination of coupon code
 
 Step 6: Redemptions - when the customer pays for the order, Voucherify receives a redemption request and consumes the discount coupons.
 
+>The Validations and Redemptions requests can validate and redeem a combination of different discount types and redeemables. With one request you can verify how promotion tiers and voucher codes affect the customer's cart.
+
 ### Checking promotion (discount without a code) eligibility during checkout
 
 In this scenario promotion eligibility is going to be verified during the checkout step. A customer did not receive any voucher codes beforehand, instead all discounts and promotions will be displayed at the checkout screen. 
 
-![Customer experience in Voucherify case 2](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/integration-processes/docs/assets/img/guides_implementation_blueprint_integration_processes_customer_experience_case_2.png "Customer experience in Voucherify case 2")
+![Customer experience in Voucherify case 2](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/integration-processes/docs/assets/img/guides_implementation_blueprint_integration_processes_customer_experience_case_2.png     "Customer experience in Voucherify case 2")
 
 Step 1: A typical scenario is presented where the customer browses products, adds them to their cart, and proceeds to checkout.
 
 >During the shopping process there is no need to send any API requests to Voucherify when a customer adds or removes any products from their cart. API requests are only needed if you want to verify whether a customer qualifies for the discount or to calculate the discount itself.
 
-Step 2: Qualifications - List applicable discounts for the customer from Voucherify. In this scenario this step is mandatory.
+Step 2: Qualifications (mandatory) - List applicable discounts for the customer from Voucherify.
 
 >The Qualifications request can return just the promotions or a combination of discount codes, campaigns, and promotion tiers according to the "options" from the Qualifications request.
 
@@ -79,7 +83,7 @@ Step 4: Validations - a validation request is sent to Voucherify to check whethe
 
 Step 5: Exposing the calculated discount based on the combination of promotions validated on the order. Expecting the customer to pay for the order.
 
-Step 6: Redemption - when the customer pays for the order, Voucherify receives a redemption request and consumes the discount coupons.
+Step 6: Redemptions - when the customer pays for the order, Voucherify receives a redemption request and consumes the discount coupons.
 
 >The Validations and Redemptions requests can validate and redeem a combination of different discount types and redeemables. With one request you can verify how promotion tiers and voucher codes affect the customer's cart.
 
@@ -90,6 +94,8 @@ In this scenario a customer is going to receive a voucher code during their visi
 ![Customer experience in Voucherify case 3](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/integration-processes/docs/assets/img/guides_implementation_blueprint_integration_processes_customer_experience_case_3.png "Customer experience in Voucherify case 3")
 
 Step 1: The customer visits your store, adds products to the cart but does not go to checkout for a while.
+
+>During the shopping process there is no need to send any API requests to Voucherify when a customer adds or removes any products from their cart. API requests are only needed if you want to verify whether a customer qualifies for the discount or to calculate the discount itself.
 
 Step 2: Publications - The publication is triggered to give a customer the coupon code to encourage them to finish the purchase.
 
@@ -103,6 +109,8 @@ Step 5: Exposing the effect of the coupon code to the customer. Expecting the cu
 
 Step 6: Redemptions - when the customer pays for the order, Voucherify receives a redemption request and consumes the discount coupon.
 
+>The Validations and Redemptions requests can validate and redeem a combination of different discount types and redeemables. With one request you can verify how promotion tiers and voucher codes affect the customer's cart.
+
 ### Rewarding customers with points for purchases.
 
 In this scenario a customer is going to receive points for their purchase. The customer may or may not use discounts during the purchase. The redemption request will create an order in Voucherify, but if the customer does not have any eligible discounts, you have to send an API request to synchronize the new order so that Voucherify can reward the customer with points. Voucherify can inform the customer how many points the customer earned.
@@ -110,6 +118,8 @@ In this scenario a customer is going to receive points for their purchase. The c
 ![Customer experience in Voucherify case 4](https://raw.githubusercontent.com/voucherifyio/voucherify-openapi/mk/integration-processes/docs/assets/img/guides_implementation_blueprint_integration_processes_customer_experience_case_4.png "Customer experience in Voucherify case 4")
 
 Step 1: A typical scenario is presented where the customer browses products, adds them to their cart, and proceeds to checkout.
+
+>During the shopping process there is no need to send any API requests to Voucherify when a customer adds or removes any products from their cart. API requests are only needed if you want to verify whether a customer qualifies for the discount or to calculate the discount itself.
 
 Step 2: The customer can be eligible for a discount.
 
