@@ -52,6 +52,24 @@ To label the API endpoint as a beta in readme.io, you should make the following 
 h1::after {\n content: \"BETA\";\n background-color: rgb(237, 117, 71);\n color: rgb(255, 255, 255);\n border-radius: 2rem;padding: 8px 13px 8px;\n white-space: nowrap;font-size:12px;\n}
 ```
 
+## OpenAPI files
+
+Please be notified that openAPI files slightly differ depending on where we use them.
+
+- **[production/readOnly-openAPI.json]** - Spec version 3.0.1 for all external viewers.
+- **[reference/OpenAPI.json]** - Spec version 3.0.1 with `"type": "null"` usages.
+- **[tmp/referenceToUpload/OpenAPI.json]** - Used for readme.io spec version 3.0.1, but marked as 3.1.0 to skip validation check by readme.io.
+  Uses `"type": "null"`.
+- **[tmp/reference/{language}/OpenAPI.json]** - Used to generate sdk.
+
+When you want to make a change i openAPI you MUST do it in **[reference/OpenAPI.json]** file, because all other OpenAPI files are generated from this file!
+
+To update **[production/readOnly-openAPI.json]** of recent changes in parent OpenAPI file run `npm run build-production-openapi` or `npm run manage-project -- (parameters)`
+
+File **[tmp/referenceToUpload/OpenAPI.json]** is generated while running `npm run manage-project -- (parameters)`
+
+Files **[tmp/reference/{language}/OpenAPI.json]** are generated while running `npm run prepare-open-api-for-sdk -- --language=(language)` - available languages are: `ruby` and `python`
+
 ## OpenAPI
 
 OpenAPI syntax documentation can be found here: https://swagger.io/specification/v3/.
