@@ -62,9 +62,9 @@ Please be notified that openAPI files slightly differ depending on where we use 
   Uses `"type": "null"`.
 - **[tmp/reference/{language}/OpenAPI.json]** - Used to generate sdk.
 
-When you want to make a change i openAPI you MUST do it in **[reference/OpenAPI.json]** file, because all other OpenAPI files are generated from this file!
+When you want to make a change in openAPI you MUST do it in **[reference/OpenAPI.json]** file, because all other OpenAPI files are generated from this file!
 
-To update **[production/readOnly-openAPI.json]** of recent changes in parent OpenAPI file run `npm run build-production-openapi` or `npm run manage-project -- (parameters)`
+To update **[production/readOnly-openAPI.json]** file run `npm run build-production-openapi` or `npm run manage-project -- (parameters)`
 
 File **[tmp/referenceToUpload/OpenAPI.json]** is generated while running `npm run manage-project -- (parameters)`
 
