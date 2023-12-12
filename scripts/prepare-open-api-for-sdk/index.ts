@@ -5,9 +5,9 @@ import minimist from "minimist";
 import colors from "colors";
 import { skipList } from "./skipList";
 import {
-  parseNullToNullable,
+  parseNullsToNullableObjects,
   removeAdditionalProperties,
-  removeRequiredOnNullable,
+  removeRequiredOnNullableAttributes,
   removeStoplightTag,
 } from "./utils";
 import { pick } from "lodash";
@@ -87,7 +87,7 @@ const main = async (languageOptions: LanguageOptions) => {
       !languageOptions.simplifyAllObjectsThatHaveAdditionalProperties
     );
     if (languageOptions.removeRequiredOnNullable) {
-      parameters[parameterName] = removeRequiredOnNullable(
+      parameters[parameterName] = removeRequiredOnNullableAttributes(
         parameters[parameterName]
       );
     }
@@ -133,7 +133,9 @@ const main = async (languageOptions: LanguageOptions) => {
       !languageOptions.simplifyAllObjectsThatHaveAdditionalProperties
     );
     if (languageOptions.removeRequiredOnNullable) {
-      schemas[schemaName] = removeRequiredOnNullable(schemas[schemaName]);
+      schemas[schemaName] = removeRequiredOnNullableAttributes(
+        schemas[schemaName]
+      );
     }
   }
 
@@ -159,7 +161,9 @@ const main = async (languageOptions: LanguageOptions) => {
         !languageOptions.simplifyAllObjectsThatHaveAdditionalProperties
       );
       if (languageOptions.removeRequiredOnNullable) {
-        schemas[schemaName] = removeRequiredOnNullable(schemas[schemaName]);
+        schemas[schemaName] = removeRequiredOnNullableAttributes(
+          schemas[schemaName]
+        );
       }
     }
   }
@@ -167,7 +171,7 @@ const main = async (languageOptions: LanguageOptions) => {
   // Building all together
   const newOpenApiFile = { ...openAPIContent };
   newOpenApiFile.components.parameters = parameters;
-  newOpenApiFile.components.schemas = parseNullToNullable(schemas);
+  newOpenApiFile.components.schemas = parseNullsToNullableObjects(schemas);
   newOpenApiFile.paths = paths;
 
   //write the new OpenApiFile

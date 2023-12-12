@@ -1,8 +1,13 @@
 import colors from "colors";
-import { omit } from "lodash";
+import { difference, omit } from "lodash";
 
 export const isObject = (value) => {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    value instanceof Object
+  );
 };
 
 export const removeStoplightTag = (node: object): object => {
@@ -15,7 +20,7 @@ export const removeStoplightTag = (node: object): object => {
   return node;
 };
 
-export const parseNullToNullable = (schemas) => {
+export const parseNullsToNullableObjects = (schemas) => {
   let counter = 0;
   const parseNullToNullableInSchema = (schema) => {
     if (schema instanceof Object) {
@@ -46,80 +51,59 @@ export const parseNullToNullable = (schemas) => {
 };
 
 export const removeAdditionalProperties = (
-  e: any,
+  schemaPartial: any,
   keepIfPropertiesNotPresent: boolean
 ) => {
-  const simplifyObjectModel = (o) =>
-    omit(o, ["additionalProperties", "properties"]);
+  const simplifyObjectModel = (schemaPartialTypeObject: object) =>
+    omit(schemaPartialTypeObject, ["additionalProperties", "properties"]);
 
-  if (e instanceof Object) {
-    if (
-      !keepIfPropertiesNotPresent &&
-      "additionalProperties" in e &&
-      e.additionalProperties instanceof Object
-    ) {
-      return simplifyObjectModel(e);
-    } else if (
-      "additionalProperties" in e &&
-      e.additionalProperties instanceof Object &&
-      "properties" in e
-    ) {
-      return simplifyObjectModel(e);
-    }
-    for (const f of Object.keys(e)) {
-      if (typeof e[f] === "object") {
-        e[f] = removeAdditionalProperties(e[f], keepIfPropertiesNotPresent);
-      }
+  if (!isObject(schemaPartial)) {
+    return schemaPartial;
+  }
+  if (
+    !keepIfPropertiesNotPresent &&
+    "additionalProperties" in schemaPartial &&
+    isObject(schemaPartial.additionalProperties)
+  ) {
+    return simplifyObjectModel(schemaPartial);
+  } else if (
+    "additionalProperties" in schemaPartial &&
+    isObject(schemaPartial.additionalProperties) &&
+    "properties" in schemaPartial
+  ) {
+    return simplifyObjectModel(schemaPartial);
+  }
+  for (const f of Object.keys(schemaPartial)) {
+    if (typeof schemaPartial[f] === "object") {
+      schemaPartial[f] = removeAdditionalProperties(
+        schemaPartial[f],
+        keepIfPropertiesNotPresent
+      );
     }
   }
-  return e;
+  return schemaPartial;
 };
 
-export const removeRequiredOnNullable = (e: any) => {
-  if (
-    e instanceof Object &&
-    "properties" in e &&
-    e.properties instanceof Object &&
-    "required" in e &&
-    Array.isArray(e.required)
-  ) {
-    let required: string[] = e.required;
-    return {
-      ...Object.fromEntries(
-        Object.entries(e)
-          .filter((keyValue) => {
-            const [key] = keyValue;
-            return key !== "required";
-          })
-          .map((keyValue) => {
-            const [key, value] = keyValue;
-            if (key === "properties") {
-              return [
-                key,
-                Object.fromEntries(
-                  Object.entries(value).map((keyPropertyAndPropertyData) => {
-                    const [keyProperty, propertyData] =
-                      keyPropertyAndPropertyData;
-                    if (propertyData?.nullable) {
-                      required = required.filter(
-                        (requiredKey) => requiredKey !== keyProperty
-                      );
-                    }
-                    return [
-                      keyProperty,
-                      removeRequiredOnNullable(propertyData),
-                    ];
-                  })
-                ),
-              ];
-            }
-            if (key !== "properties" && key !== "required") {
-              return [key, removeRequiredOnNullable(value)];
-            }
-          })
-      ),
-      required,
-    };
+export const removeRequiredOnNullableAttributes = (schemaPartial: any) => {
+  if (isObject(schemaPartial?.properties)) {
+    Object.keys(schemaPartial.properties).forEach((key) => {
+      schemaPartial.properties[key] = removeRequiredOnNullableAttributes(
+        schemaPartial.properties[key]
+      );
+    });
+
+    const nullables = Object.keys(schemaPartial.properties).filter((key) => {
+      return schemaPartial.properties[key].nullable ?? false;
+    });
+
+    const required = schemaPartial.required ?? [];
+
+    const newRequired = difference(required, nullables);
+
+    if (newRequired.length > 0) {
+      schemaPartial.required = difference(required, nullables);
+    }
   }
-  return e;
+
+  return schemaPartial;
 };
