@@ -1,5 +1,9 @@
 # Changelog
 
+## 20231213
+
+- Integration processes article added
+
 ## 20231207
 
 - Key concepts article updated after feedback
