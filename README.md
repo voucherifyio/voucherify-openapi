@@ -2,9 +2,9 @@
 ---
 This repository contains OpenAPI specification for Voucherify's API.
 
- - **Version supported**: `3.1.0`  
- - **Spec location**: `/reference`
- - **Changelog**: `Changelog.md`  
+ - **Version supported**: `3.0.1`
+ - **Spec location**: `/production/readOnly-openAPI.json`
+ - **Changelog**: `Changelog.md`
  - **Status**: _Released_
 
 This OpenAPI specfication is live. 
@@ -12,7 +12,7 @@ This OpenAPI specfication is live.
 Please refer to the following guides:
 - [Guides](https://docs.voucherify.io/docs)
 - [Recipes](https://docs.voucherify.io/recipes)
-- [API Reference](https://docs.voucherify.io/reference/introduction-1)
+- [API Reference](https://docs.voucherify.io/reference/)
 - [Support Documentation](https://support.voucherify.io/)
 
 ### Sdk generation
