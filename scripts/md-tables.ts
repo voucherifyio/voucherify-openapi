@@ -25,7 +25,7 @@ export const mdTables: [string, string?][] = [
   ["Product", "PRODUCTS-API-Product-Object.md"],
   ["Sku", "PRODUCTS-API-SKU-Object.md"],
   [
-    "ProductsCollectionsItem",
+    "ProductCollectionsItem",
     "PRODUCT-COLLECTIONS-API-Product-Collection-Object.md",
   ],
   ["ValidationRuleResponse", "VALIDATION-RULES-API-Validation-Rule-Object.md"],
@@ -34,7 +34,7 @@ export const mdTables: [string, string?][] = [
     "VALIDATION-RULES-API-Validation-Rule-Assignment-Object.md",
   ],
   ["14_obj_segment_object", "SEGMENTS-API-Customer-Segment-Object.md"],
-  ["TrackCustomEventRequestBody", "EVENTS-API-Custom-Event-Object.md"],
+  ["EventsTrackRequestBody", "EVENTS-API-Custom-Event-Object.md"],
   ["18_res_list_consents_GET", "CONSENTS-API-Consents-Object.md"],
   ["17_obj_async_action_object", "ASYNC-ACTIONS-API-Async-Action-Object.md"],
   ["Export", "EXPORTS-API-Export-Object.md"],

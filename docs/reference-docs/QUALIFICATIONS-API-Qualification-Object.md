@@ -12,7 +12,7 @@ order: 1
 >
 > Read our dedicated guide to learn about some use cases these endpoints can cover [here](doc:checking-eligibility).
 
-## Qualification object
+## Qualifications Check Eligibility Response Body
 | Attributes |  Description |
 |:-----|:--------|
 | redeemables | See: [Redeemables](#redeemables) |
