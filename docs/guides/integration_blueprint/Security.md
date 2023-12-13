@@ -1,6 +1,6 @@
 ---
 title: Security
-excerpt:
+excerpt: Voucherify data security
 categorySlug: integration-blueprint
 slug: security-1
 type: basic
@@ -8,17 +8,15 @@ hidden: false
 order: 16
 ---
 
-## Security
-
 > 📘 **Goals**
 > 
 > * Learn how Voucherify guarantees campaign security.
 > * Identify PII data to be shared with Voucherify.
 > * Analyze your distribution processes in relation to GDPR and Data Privacy laws. 				
 
-**Outcome**:
-
-Data security assessment of integration.
+> 👍 **Outcome**
+>
+> Data security assessment of integration.
 
 ---
 

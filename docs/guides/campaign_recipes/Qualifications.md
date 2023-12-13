@@ -1,5 +1,5 @@
 ---
-title: Qualification - Checking eligibility
+title: Qualification – Checking Eligibility
 excerpt: null
 categorySlug: campaigns-recipes
 slug: checking-eligibility

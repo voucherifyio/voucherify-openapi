@@ -1,6 +1,6 @@
 ---
 title: Data Volume Estimation
-excerpt:
+excerpt: Estimate data volume used with Voucherify
 categorySlug: integration-blueprint
 slug: data-volume-estimation
 type: basic
@@ -8,17 +8,15 @@ hidden: false
 order: 15
 ---
 
-## Data volume estimation
-
 > 📘 **Goals**
 > 
 > * Understand what API endpoints will be used to map your scenarios.
 > * Estimate how many customers will be included in promotions and how often their data should be synced with Voucherify.
 > * Think of what it takes to migrate promotions from your current system. 
 
-**Outcome**: 
-
-API usage forecast, including monthly and hourly API calls number and a Voucheify deployment plan.
+> 👍 **Outcome** 
+>
+> API usage forecast, including monthly and hourly API calls number and a Voucheify deployment plan.
 
 ---
 

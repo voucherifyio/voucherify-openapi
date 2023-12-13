@@ -1,5 +1,5 @@
 ---
-title: Add Vouchers to Campaign
+title: Add Voucher to Campaign
 type: endpoint
 categorySlug: voucherify-api
 slug: add-vouchers-to-campaign

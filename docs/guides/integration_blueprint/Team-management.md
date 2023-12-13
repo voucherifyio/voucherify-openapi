@@ -1,6 +1,6 @@
 ---
 title: Team Management
-excerpt:
+excerpt: Managing your team in Voucherify
 categorySlug: integration-blueprint
 slug: team-management
 type: basic
@@ -8,17 +8,15 @@ hidden: false
 order: 13
 ---
 
-## Team management
-
 > 📘 **Goals**
 > 
 > * Identify how you want to structure teams working with Voucherify.
 > * Think of roles and permissions necessary to manage campaigns.
 > * Learn more about user management and approval workflows.
 
-**Outcome**: 
-
-Invite team members with specific roles and set up approval workflows to keep your campaigns safe.
+> 👍 **Outcome**
+>
+> Invite team members with specific roles and set up approval workflows to keep your campaigns safe.
 
 ---
 

@@ -1,7 +1,7 @@
 ---
-title: Implementation checklist
+title: Development Checklist
 excerpt: Get the documentation, sample code, and developer tools — everything you need to build digital promotions faster
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: welcome
 type: basic
 hidden: false

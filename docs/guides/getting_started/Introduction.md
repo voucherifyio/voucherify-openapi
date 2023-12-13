@@ -1,6 +1,6 @@
 ---
-title: Home
-excerpt: Welcome to [Voucherify's](https://www.voucherify.io) Developer Hub.
+title: Introduction
+excerpt: Welcome to [Voucherify's](https://www.voucherify.io) developer hub.
 categorySlug: getting-started
 slug: introduction
 type: basic
@@ -8,10 +8,21 @@ hidden: false
 order: 1
 ---
 
-:star: **[Quickstart](doc:quickstart)** — Learn the API basics: redeem your first promo code.    
-:bookmark-tabs: **[API reference](ref:introduction-1)** — Explore endpoints and attributes with request/response examples and error messages.    
-:computer: **[SDKs](doc:sdks)** — Connect Voucherify with client libraries in JavaScript, PHP, Ruby, Java, Python, .NET, Android and iOS.    
-:rocket: **[Examples](doc:examples)** — Get inspired with sample projects and 3rd party integrations built on top of Voucherify API.
+### Welcome to [Voucherify's](https://www.voucherify.io/) Developer Hub.
+
+The documentation is divided into four main categories.
+
+1. **[Getting started](doc:welcome-to-voucherify)** – Learn more about Voucherify and what’s possible with our platform. Take your first steps to set up your account and start testing. Recommended for everyone.
+
+2. **[Integration Blueprint](doc:integration-overview)** – Discover how to seamlessly plan your integration and learn how to build advanced promotion limits to personalize your campaigns and prevent fraud. Recommended for architects and readers who want to know how to plan out the integration.
+
+
+3. **[Development](doc:welcome)** - Dive into detailed development options, including example data mapping, processes, and more. Recommended for developers and integrators.
+
+4. **[API Reference](doc:api-reference)** – Explore endpoints and attributes with request/response examples and error messages.
+
+&nbsp;
+&nbsp;
 
 > 📘 Help and support
 >

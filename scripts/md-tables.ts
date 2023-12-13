@@ -1,16 +1,13 @@
 export const mdTables: [string, string?][] = [
   ["Voucher", "VOUCHERS-API-Voucher-Object.md"],
-  ["2_obj_campaign_object", "CAMPAIGNS-API-Campaign-Object.md"],
+  ["CampaignResponse", "CAMPAIGNS-API-Campaign-Object.md"],
   ["PromotionTier", "PROMOTIONS-API-Promotion-Tier-Object.md"],
   ["reward", "REWARDS-API-Reward-Object.md"],
   ["RewardAssignment", "REWARDS-API-Reward-Assignment-Object.md"],
   ["PublicationsCreateResponseBody", "PUBLICATIONS-API-Publication-Object.md"],
   ["VouchersValidateResponseBody", "VALIDATIONS-API-Validation-Object.md"],
-  ["7_obj_redemption_object", "REDEMPTIONS-API-Redemption-Object.md"],
-  [
-    "7_obj_rollback_redemption_object_extended",
-    "REDEMPTIONS-API-Rollback-Redemption-Object.md",
-  ],
+  ["Redemption", "REDEMPTIONS-API-Redemption-Object.md"],
+  ["RedemptionRollback", "REDEMPTIONS-API-Rollback-Redemption-Object.md"],
   [
     "RedemptionsRedeemResponseBody",
     "STACKABLE-DISCOUNTS-API-Stackable-Redemptions-Object.md",
@@ -31,10 +28,7 @@ export const mdTables: [string, string?][] = [
     "ProductCollectionsItemResponse",
     "PRODUCT-COLLECTIONS-API-Product-Collection-Object.md",
   ],
-  [
-    "13_obj_validation_rule_object",
-    "VALIDATION-RULES-API-Validation-Rule-Object.md",
-  ],
+  ["ValidationRuleResponse", "VALIDATION-RULES-API-Validation-Rule-Object.md"],
   [
     "validation_rule_assignment",
     "VALIDATION-RULES-API-Validation-Rule-Assignment-Object.md",

@@ -1,5 +1,168 @@
 # Changelog
 
+## 20231207
+
+- Key concepts article updated after feedback
+
+## 20231204
+
+- Key concepts article added
+- Minor fixes to a number of articles
+
+## 20231128
+
+- Data synchronization article added
+
+## 20231128 – Fixes and minor updates
+
+- Fixed to consistent title format (capital letters)
+- Added excerpts
+- Added green callouts in the Integration blueprint section
+- Fixed an example email address in First Steps in Voucherify article
+- Fixed image in the Integration Overview article
+- Added link to the new article – Data Synchronization – in the Data Model article
+
+## 20231123 - Campaigns API
+
+**Added schemas**
+- CampaignResponse
+- CampaignVoucher
+- CodeConfig
+- CodeConfigResponse
+- CampaignsImportVoucherLoyaltyCard
+- CampaignLoyaltyCardResponse 
+- CampaignLoyaltyCardResponse
+- CampaignLoyaltyCardRequestBody
+- LuckyDraw
+- CampaignsCreateBase
+- CampaignsUpdateBase
+- CampaignsUpdateCouponCampaignBase
+- CampaignsUpdateDiscountCouponsCampaign
+- CampaignsUpdateGiftCampaign
+- CampaignsUpdateReferralCampaign
+- CampaignsUpdateLoyaltyCampaign
+- CampaignsUpdateGiveawayCampaign
+- CampaignsUpdatePromotionCampaign
+- CampaignsCreateRequestBody
+- CampaignsUpdateRequestBody
+- CampaignsCreateDiscountCouponsCampaign
+- CampaignsCreateReferralCampaign
+- CampaignsCreateGiftCampaign
+- CampaignsCreateLoyaltyCampaign
+- CampaignsCreatePromotionCampaign
+- CampaignsCreateGiveawayCampaign
+- CampaignsCreateCampaignVoucherWithCodeRequestBody
+- CampaignsCreateCampaignVoucherRequestBody
+- CampaignsImportVoucherRequestBody
+- CampaignsImportVoucherItem
+- CampaignsListResponseBody
+- DiscountCouponsCampaignVoucher
+- ReferralCampaignVoucher
+- GiveawayCampaignVoucher
+- GiftCampaignVoucher
+- LoyaltyCampaignVoucher
+- PromotionTierCreateParams
+- PromotionTiersList
+- LoyaltyTiersExpirationAll
+
+**Deleted schemas**
+- 2_obj_campaign_object
+- 2_req_create_campaign
+- 2_req_create_campaign_discount_voucher
+- 2_req_create_campaign_loyalty
+- 2_req_create_campaign_gift
+- 2_req_create_campaign_referral
+- 2_req_create_campaign_promotion
+- 2_req_update_campaign
+- 2_req_add_vouchers_to_campaign
+- 2_req_import_vouchers_to_campaign
+- 2_obj_import_vouchers_to_campaign_object
+- 2_res_list_campaigns
+- 3_res_list_promotion_tiers_from_campaign
+- 20_obj_category_object
+- e_409_duplicate_found
+
+## 20231117 - Quality Fixes
+
+**Changed schemas**
+- Fixed Products and ProductCollections schemas names (mostly `requestBody`) according to proper template.
+- Fixed wrong required properties in Products and Discounts responses
+- Using type null instead of nullable flag
+
+## 20231120
+
+- Changed category `Implementation blueprint` to `Development` and made all relevant changes to headers
+- Changed images in `Welcome to Voucherify`
+- Minor fixes in `Welcome to Voucherify` as per the Marketing's feedback
+
+## 20231117
+
+*Renamed schemas**
+- OrdersCreateExportRequestBody (old `10_req_create_order_export`)
+- OrdersCreateExportResponseBody (old `16_obj_export_object`)
+
+**Added schemas**
+- ExportOrderRequest
+
+- POST `/v1/orders/import`
+  - Request body schema was replaced with new one: `OrdersImportRequestBody` (old one: `10_req_orders_import`)
+
+## 20231117
+
+**Added schemas**
+
+- OrdersImportRequestBody
+- ValidationRulesListResponseBody
+- ValidationRulesCreateRequestBody
+- ValidationRuleResponse
+- ValidationRuleRequest
+- ValidationRulesUpdateRequestBody
+
+- POST `/v1/orders/import`
+  - Request body schema was replaced with new one: `OrdersImportRequestBody` (old one: `10_req_orders_import`)
+- GET `/v1/validation-rules`
+  - Response body schema was replaced with new one: `ValidationRulesListResponseBody` (old one: `13_res_list_validation_rules`)
+- POST `/v1/validation-rules`
+  - Request body schema was replaced with new one: `ValidationRulesCreateRequestBody` (old one: `13_req_create_validation_rule`)
+  - Response body schema was replaced with new one: `ValidationRulesCreateResponseBody` (old one: `13_obj_validation_rule_object`)
+- GET `/v1/validation-rules/{validationRuleId}`
+  - Response body schema was replaced with new one: `ValidationRulesGetResponseBody` (old one: `13_obj_validation_rule_object`)
+- GET `/v1/validation-rules/{validationRuleId}`
+  - Request body schema was replaced with new one: `ValidationRulesUpdateRequestBody` (old one: `13_req_create_validation_rule`)
+  - Response body schema was replaced with new one: `ValidationRulesUpdateResponseBody` (old one: `13_obj_validation_rule_object`)
+
+## 20231116 - Redemptions
+
+**Added schemas**
+
+- Redemption
+- RedemptionRollback
+- RedemptionsGetResponseBody
+- RedemptionsListResponseBody
+- RedemptionsGetVoucherRedemptionResponseBody
+- RedemptionsRollbackRequestBody
+- RedemptionsRollbackResponseBody
+- RedemptionRewardResult
+- RedemptionsRollbackStackableResponseBody
+- LoyaltiesRedeemRewardResponseBody
+
+- GET `v1/redemptions`
+  - Response body schema was replaced with new one: `RedemptionsListResponseBody` (old one: `7_res_list_redemptions`)
+- GET `v1/redemptions/{redemptionId}`
+  - Response body schema was replaced with new one: `RedemptionsGetResponseBody` (old one: `7_res_get_redemption`)
+- GET `v1/vouchers/{code}/redemption`
+  - Response body schema was replaced with new one: `RedemptionsGetVoucherRedemptionResponseBody` (old one: `7_res_get_vouchers_redemptions`)
+- POST `v1/redemptions/{redemptionId}/rollback`
+  - Request body schema was replaced with new one: `RedemptionsRollbackRequestBody` (old one: `7_req_rollback_redemption`)
+  - Response body schema was replaced with new one: `RedemptionsRollbackResponseBody` (old one: `7_res_rollback_redemption`)
+- POST `/v1/redemptions/{parentRedemptionId}/rollbacks`
+  - Request body schema was added: `RedemptionsRollbackRequestBody`
+  - Response body schema was replaced with new one: `RedemptionsRollbackStackableResponseBody` (old one: `19_res_redemptions_parentRedemptionId_rollbacks`)
+- GET `v1/loyalties/{campaignId}/members/{memberId}/redemption`
+  - Response body schema was replaced with new one: `LoyaltiesRedeemRewardResponseBody` (old one: `8_res_redeem_reward`)
+- GET `v1/vouchers/{code}/redemption`
+  - Response body schema was replaced with new one: `LoyaltiesRedeemRewardResponseBody` (old one: `8_res_redeem_reward`)
+
 ## 20231116
 
 - Changed the order of the articles in the `Implementation Blueprint` category
@@ -372,8 +535,7 @@ https://github.com/voucherifyio/voucherify-openapi/pull/535/files
 - RedeemableResultPromotionTier
 - RedeemableResultPromotionStack
 - RedemptionsRedeemResponseBody
-- RedemptionsRedemption
-- RedemptionsRedemptionBase
+- RedemptionInternal
 
 **REMOVED ALL DUMMY ENDPOINTS AS WE DON'T USE THEM ANYMORE!!!**
 

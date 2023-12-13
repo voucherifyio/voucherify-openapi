@@ -1,14 +1,14 @@
 ---
 title: Metadata Mapping
-excerpt: Metadata mapping
-categorySlug: implementation-blueprint
+excerpt: Custom attributes (metadata) and their use in Voucherify
+categorySlug: development
 slug: metadata-mapping
 type: basic
 hidden: false
 order: 50
 ---
 
-## Metadata (custom attributes)
+##  Custom attributes (metadata)
 
 Custom attributes can be added to your project as metadata. A metadata attribute is a set of key/value pairs that you can use to customize your campaigns, vouchers, customers, SKUs, products, redemptions, publications, loyalty tiers, promotion tiers, and orders.
 

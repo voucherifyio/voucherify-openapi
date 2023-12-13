@@ -8,16 +8,14 @@ hidden: false
 order: 8
 ---
 
-## Data model
-
 > 📘 **Goals**
 > 
 > * Learn more about metadata. 
 > * Choose which attributes and events you would like to share with Voucherify.
 
-**Outcome**:
-
-Data model PoC that is based on your use cases and business model.
+> 👍 **Outcome**
+>
+> Data model PoC that is based on your use cases and business model.
 
 ---
 
@@ -41,11 +39,11 @@ For the initial data migration, use asynchronous bulk API import endpoints or up
 
 > 📘 Data synchronization with Voucherify
 > 
-> Voucherify gives you complete control over **how and when to sync data** needed for incentive validation and redemption. You can sync the data before the final stage of the checkout process or send us relevant customer, product, order, and other data right in the validation and redemption requests on the fly. 
+> Voucherify gives you complete control over **how and when to [synchronize data](doc:data-synchronization)** needed for incentive validation and redemption. You can sync the data before the final stage of the checkout process or send us relevant customer, product, order, and other data right in the validation and redemption requests on the fly. 
 
 ### Customer story – TIER Mobility
 
-TIER Mobility uses free unlocks and free  minutes as incentives. The custom attributes 
+TIER Mobility uses free unlocks and free minutes as incentives. The custom attributes 
 (metadata) let TIER attach minutes and unlocks to a given customer for a predefined period of time.
 
 [Discover the full story](https://voucherify.io/ebooks/tier-mobility-case-study "Tier mobility case study")

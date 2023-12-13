@@ -1,16 +1,16 @@
 ---
 title: Client-side API
 excerpt: 
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: client-side-api
 type: basic
 hidden: false
 order: 190
 ---
 
-Sometimes it's important to validate a promo code or promotion on the client-side, e.g., you want to calculate and display a discounted price on the fly. That's why Voucherify comes with client-side features build in [Voucherify JS SDK](https://github.com/voucherifyio/voucherify-js-sdk) - an open-source JavaScript library which enables you to query the API. 
+Sometimes it's important to validate a promo code or promotion on the client side, e.g., you want to calculate and display a discounted price on the fly. That's why Voucherify comes with client-side features built into [Voucherify JS SDK](https://github.com/voucherifyio/voucherify-js-sdk) - an open-source JavaScript library that enables you to query the API. 
 
-Among other features it delivers [Voucherify React Widgets](https://github.com/voucherifyio/voucherify-js-sdk#-voucherify-react-widget)
+Among other features, it delivers [Voucherify React Widgets](https://github.com/voucherifyio/voucherify-js-sdk#-voucherify-react-widget)
 
 <!-- ![React Widget](../../assets/img/guides_development_client_side_api_widget_1.gif "React Widget") -->
 ![React Widget](https://files.readme.io/0427b12-widget.gif "React Widget")
@@ -24,7 +24,7 @@ Voucherify JS SDK offers many client-side features:
 
 ## Installation & reference
 
-Visit :fa-github-alt: [Github repository](https://github.com/voucherifyio/voucherify-js-sdk) to get the up-to-date documentation.
+Visit :fa-github-alt: [Github repository](https://github.com/voucherifyio/voucherify-js-sdk) to get the current documentation.
 
 > 🚧 Domain white list
 > 

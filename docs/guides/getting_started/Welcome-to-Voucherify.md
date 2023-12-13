@@ -18,28 +18,23 @@ Every integration is unique – however, at its core, the integration of Voucher
 
 As a [MACH-certified vendor](https://machalliance.org/), Voucherify follows the principles of **composability**, giving you flexibility and decreasing the time needed for integration.  
 
-![How Voucherify works with your system and our rules engine](https://files.readme.io/d362b66-guides_getting_started_welcome_to_voucherify_voucherify_workflow_scheme_01.png "How Voucherify works with your system and our rules engine")
+![How Voucherify works with your system and our rules engine](https://files.readme.io/494bc1a-guides_getting_started_welcome_to_voucherify_voucherify_workflow_scheme_01.png "How Voucherify works with your system and our rules engine")
 
 ## Who uses Voucherify and why?
 
-Voucherify can be successfully adopted across industries in B2C and B2B contexts – from ecommerce to travel and mobile on-demand services.
+Voucherify can be successfully adopted across industries in B2C and B2B contexts – from e-commerce to travel and mobile on-demand services.
 
 Leveraging targeted promotions at every stage of the customer lifecycle can help you maximize engagement. This way, you can acquire customers through social media promotion, convert them with a welcome offer, grow them as customers via referrals, and ultimately, build better retention tactics with smart loyalty campaigns and re-engage them with incentives tailored to their profiles. This is the perfect scenario that each brand should aspire to achieve. But to get there, you need proper technology. 
 
-![Promotion lifecycle](https://files.readme.io/205a42e-guides_getting_started_welcome_to_voucherify_acquisition_to_re-activation_diagram-02.png "Promotion lifecycle showing acquisition, conversion, growth, retention, and re-activation")
+![Promotion lifecycle](https://files.readme.io/bebe00d-guides_getting_started_welcome_to_voucherify_acquisition_to_re-activation_diagram-02.png "Promotion lifecycle showing acquisition, conversion, growth, retention, and re-activation")
 
-## Retail – Ecommerce & POS
+## Retail – e-commerce and POS
 
-
-Voucherify is perfect for ecommerce brands transitioning to MACH and building a standard tech stack for their brands. We work great with commercetools and other MACH tools when it comes to scaling across multiple countries/brands, including integrating various business models (DTC, B2B, marketplace).
+Voucherify is perfect for e-commerce brands transitioning to MACH and building a standard tech stack for their brands. We work great with commercetools and other MACH tools when it comes to scaling across multiple countries/brands, including integrating various business models (DTC, B2B, marketplace).
 
 Voucherify enhances store capabilities with advanced promotions, crucial for revenue. At the same time, Voucherify opens the door to loyalty and referral programs without the need to integrate any additional platform.
 
-<!-- Customer story – CASA 
-
-Discover the full story 
-
-DTC Ecommerce -->
+<!--
 
 > 👍 Customer story – Breville
 > 
@@ -63,9 +58,18 @@ DTC Ecommerce -->
 > 
 > </details>
 
+-->
+
+> 👍 Customer story – Breville
+> 
+> See how [Breville](https://www.voucherify.io/customers/breville "How Breville is Winning Digital Transformation with Voucherify and Friends") integrated Voucherify with commercetools.
+
+
 ## On-demand services
 
 Whether it’s fin-tech, ed-tech, mobility, or anything else, Voucherify is a driving force for customer engagement (especially in the context of recent changes in ad tracking). With a flexible data model and integrations with leading CDP and CRM platforms, mobile apps can make the most of the collected data in minimal time.
+
+<!--
 
 > 👍 Customer story – Taxfix 
 > <details>
@@ -94,6 +98,13 @@ Whether it’s fin-tech, ed-tech, mobility, or anything else, Voucherify is a dr
 >
 > </details>
 
+-->
+
+> 👍 Customer story – Taxfix 
+>
+> See how [Taxfix](https://www.voucherify.io/customers/taxfix "How Taxfix increased referral registrations by 95% with Voucherify and Braze?") doubles referrals with Voucherify.
+
+<!--
 ## QSRs
 
 
@@ -119,6 +130,16 @@ QSRs often need to handle a large volume of data in real-time. Voucherify provid
 > Read the [whole BAEMIN story](https://www.voucherify.io/customers/baemin "How BAEMIN Vietnam handled over 60 million redemptions in a coupon-hungry market")
 >
 > </details>
+
+-->
+
+## Software vendors
+
+Voucherify APIs can be effectively integrated into other software tools to drastically enhance the offer of technology vendors. Voucherify has already been successfully incorporated into mobility technologies, booking services, and e-commerce and marketplace engines.
+
+> 👍 Customer story – Grinta
+>
+> See how [Grinta](https://www.voucherify.io/customers/grinta "How Grinta uses Voucherify to increase AOV by 20%") boosts AOV by 20% with Voucherify.
 
 ## What problems does Voucherify solve?
 

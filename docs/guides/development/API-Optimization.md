@@ -1,7 +1,7 @@
 ---
 title: API Optimization
 excerpt: API calls optimization
-categorySlug: implementation-blueprint
+categorySlug: development
 slug: api-optimization
 type: basic
 hidden: false
@@ -20,7 +20,7 @@ Voucherify API for stackable discounts lets you validate and redeem multiple obj
 
 In the redemption request, you need to provide a list of redeemables that define what discounts or codes will be redeemed/validated. By integrating stackable discount API into your app, you can make a single call with multiple redeemables, instead of separate redemption calls for each of them.
 
-Read more about the [Stackable Discounts API.](doc:manage-stackable-discounts)
+Read more about the [Stackable Discounts API](doc:manage-stackable-discounts).
 
 ### Data import
 
