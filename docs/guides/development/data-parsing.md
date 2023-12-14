@@ -325,11 +325,14 @@ See the comments in the code to learn which data are worth showing to an end-cus
 
 ### Discounts <!-- COMMENTS TO BE ADDED TOMORROW -->
 
-In the case of discounts, the end-customer can be shown the data as commented in the code. This example covers any redeemed discount applied to the end-customer, whether it is applied from a discount coupon, cart promotion, or a gift card.
+In the case of discounts, the end-customer can be shown the data as commented in the code. This example covers any redeemed discount applied to the end-customer, whether it is applied from a discount coupon, cart promotion, or gift card.
 
 In this example, two discounts are applied:
-- discount that covers products with an `Adventure` metadata
-- discount that reduces the cart total by $20 
+- discount that covers products with `"brand": "Adventure"` metadata
+- discount that reduces the cart's total price by $25
+
+> 📘
+> Note that the amount values are multiplied by 100 to represent two decimal places, e.g. $100 is `10000`.
 
 ```json Response
 "order": {
@@ -338,25 +341,25 @@ In this example, two discounts are applied:
         "created_at": "2023-12-13T14:29:20.533Z",
         "updated_at": null,
         "status": "PAID",
-        "amount": 13000, // This is the initial amount of the cart, before any discounts have been applied 
-        "discount_amount": 2500,
-        "items_discount_amount": 4000,
-        "total_discount_amount": 6500,
-        "total_amount": 6500,
-        "applied_discount_amount": 2500,
-        "items_applied_discount_amount": 4000,
-        "total_applied_discount_amount": 6500,
+        "amount": 13000, // The order amount before applying any discount
+        "discount_amount": 2500, // The sum of all discount amounts which are applied to only the whole order
+        "items_discount_amount": 4000, // The sum of all discount amounts which are applied to specific products
+        "total_discount_amount": 6500, // The sum of all order-level and all product-specific discounts
+        "total_amount": 6500, // The order amount after applying all the discounts
+        "applied_discount_amount": 2500, // The order-level discount applied in this particular request
+        "items_applied_discount_amount": 4000, // The sum up of all product-specific discounts applied in this particular request
+        "total_applied_discount_amount": 6500, // The sum of all order-level and all product-specific discounts applied in this particular request
         "items": [
             {
                 "object": "order_item",
                 "source_id": "adv-mug",
                 "related_object": "product",
-                "quantity": 2,
-                "amount": 2000,
-                "discount_amount": 2000,
-                "applied_discount_amount": 2000,
-                "price": 1000,
-                "subtotal_amount": 0,
+                "quantity": 2, // The quantity of the particular item in the cart
+                "amount": 2000, // The total amount of the order item, i.e. price * quantity
+                "discount_amount": 2000, // The sum of all order-item-level discounts applied to the order
+                "applied_discount_amount": 2000, // The order-item-level discount applied in this particular request
+                "price": 1000, // Unit price of an item
+                "subtotal_amount": 0, // Final order item amount after the applied item-level discount
                 "product": {
                     "id": "prod_0df14b3a6ad8f282a8",
                     "source_id": "adv-mug",
@@ -392,7 +395,7 @@ In this example, two discounts are applied:
                 "quantity": 2,
                 "amount": 5000,
                 "price": 2500,
-                "subtotal_amount": 5000,
+                "subtotal_amount": 5000, // Here "subtotal_amount" equals "amount" because this product is not covered by the Adventure brand discount
                 "product": {
                     "id": "prod_0df14b7e7d8975079d",
                     "source_id": "star-th-bottle",
