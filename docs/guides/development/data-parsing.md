@@ -18,7 +18,7 @@ Voucherify API sends much data in a validation or redemption response and only s
 
 > 👍 Outcome
 > 
-> You know which data to display to end-customers
+> You know which data to show to end-customers
 
 ## Response analysis
 
@@ -317,44 +317,50 @@ Code plus description, plus link to API reference
 
  -->
 
-## Data to be displayed
+## Data to be shown
 
-Depending on a use case, different response data can be displayed to an end-customer. The following sections contain snippets of JSON responses from Voucherify API [redemption](ref:redeem-stacked-discounts) endpoint.
+Depending on a use case, different response data can be shown to an end-customer. The following sections contain snippets of JSON responses from Voucherify API [redemption](ref:redeem-stacked-discounts) endpoint.
 
-See the comments in the code to learn which data could be displayed to an end-customer.
+See the comments in the code to learn which data are worth showing to an end-customer.
 
 ### Discounts <!-- COMMENTS TO BE ADDED TOMORROW -->
 
-In the case of discounts, the end-customer could be displayed the data as commented in the code. This example covers any redeemed discount applied to the end-customer, whether it is applied from a discount coupon, cart promotion, or a gift card.
+In the case of discounts, the end-customer can be shown the data as commented in the code. This example covers any redeemed discount applied to the end-customer, whether it is applied from a discount coupon, cart promotion, or a gift card.
+
+In this example, two discounts are applied:
+- discount that covers products with an `Adventure` metadata
+- discount that reduces the cart total by $20 
 
 ```json Response
 "order": {
-        "id": "ord_Xh0fbqG16bQVlo3hCDMlA31b",
+        "id": "ord_tc4yusJRqAY87ybmvhnPkJ6u",
         "source_id": null,
-        "created_at": "2023-12-12T14:18:41.451Z",
+        "created_at": "2023-12-13T14:29:20.533Z",
         "updated_at": null,
         "status": "PAID",
-        "amount": 15500,
+        "amount": 13000, // This is the initial amount of the cart, before any discounts have been applied 
+        "discount_amount": 2500,
         "items_discount_amount": 4000,
-        "total_discount_amount": 4000,
-        "total_amount": 11500,
+        "total_discount_amount": 6500,
+        "total_amount": 6500,
+        "applied_discount_amount": 2500,
         "items_applied_discount_amount": 4000,
-        "total_applied_discount_amount": 4000,
+        "total_applied_discount_amount": 6500,
         "items": [
             {
                 "object": "order_item",
-                "source_id": "adv-poster",
+                "source_id": "adv-mug",
                 "related_object": "product",
-                "quantity": 3,
-                "amount": 4500,
+                "quantity": 2,
+                "amount": 2000,
                 "discount_amount": 2000,
                 "applied_discount_amount": 2000,
-                "price": 1500,
-                "subtotal_amount": 2500,
+                "price": 1000,
+                "subtotal_amount": 0,
                 "product": {
-                    "id": "prod_0df14b548e58f282c0",
-                    "source_id": "adv-poster",
-                    "name": "Adventure Poster",
+                    "id": "prod_0df14b3a6ad8f282a8",
+                    "source_id": "adv-mug",
+                    "name": "Adventure Mug",
                     "metadata": {
                         "brand": "Adventure"
                     }
@@ -396,12 +402,10 @@ In the case of discounts, the end-customer could be displayed the data as commen
                     }
                 }
             }
-        ]
+        ],
     }
 ```
 
 <!--
 
-### Free items
-
-### Gift card -->
+### Free items -->
