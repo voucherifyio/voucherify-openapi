@@ -8,7 +8,7 @@ hidden: false
 order: 3
 ---
 
-## Stackable Redemptions Response Body
+## Redemptions Redeem Response Body
 | Attributes |  Description |
 |:-----|:--------|
 | redemptions</br>`array` | Array of [Redemption](#redemption) |
