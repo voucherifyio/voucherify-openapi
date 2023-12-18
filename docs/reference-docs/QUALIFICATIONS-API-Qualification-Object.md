@@ -180,8 +180,8 @@ All of:
 | Attributes |  Description |
 |:-----|:--------|
 | discount | See: [Discount](#discount) |
-| gift | See: [Gift](#gift) |
-| loyalty_card | <p>Loyalty Card object response</p> See: [Loyalty Card](#loyalty-card) |
+| gift | See: [Redeemable Gift](#redeemable-gift) |
+| loyalty_card | <p>Loyalty Card object response</p> See: [Redeemable Loyalty Card](#redeemable-loyalty-card) |
 | error | <p>Error in result</p> See: [Error Object](#error-object) |
 
 ## Applicable To Result List
@@ -247,13 +247,13 @@ One of:
 
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
-## Gift
+## Redeemable Gift
 | Attributes |  Description |
 |:-----|:--------|
 | balance</br>`number` | <p>Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
 | credits</br>`number` | <p>The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
 
-## Loyalty Card
+## Redeemable Loyalty Card
 | Attributes |  Description |
 |:-----|:--------|
 | points</br>`integer` | <p>Total points incurred over lifespan of loyalty card.</p> **Example:** <p>7000</p> |

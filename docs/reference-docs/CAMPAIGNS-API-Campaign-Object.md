@@ -11,10 +11,10 @@ order: 1
 ## Campaign
 All of:
 
-1. [Campaign](#campaign)
+1. [Campaign Base](#campaign-base)
 2. <h3>Campaign Additional Data</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">promotion</td><td style="text-align:left">See: <a href="#promotion-tiers">Promotion Tiers</a></td></tr><tr><td style="text-align:left">validation_rules_assignments</td><td style="text-align:left">See: <a href="#validation-rules-assignments-list">Validation Rules Assignments List</a></td></tr></tbody></table>
 
-## Campaign
+## Campaign Base
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_f7fBbQxUuTN7dI7tGOo5XMDA</p> |

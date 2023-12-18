@@ -767,7 +767,7 @@ One of:
 | customer | See: [Simple Customer](#simple-customer) |
 | assignment_id</br>`string`, `null` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
 | voucher | <p>Defines of the voucher.</p> See: [Voucher](#voucher) |
-| product | <p>Defines of the product.</p> See: [Product Object](#product-object) |
+| product | <p>Defines of the product.</p> See: [Product](#product) |
 | sku | <p>Defines of the sku.</p> See: [SKU Object](#sku-object) |
 | loyalty_tier_id</br>`string`, `null` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 
@@ -928,7 +928,7 @@ Available values: `POINTS_ACCRUAL`, `POINTS_CANCELLATION`, `POINTS_REDEMPTION`, 
 | order | See: [Order Response](#order-response) |
 | applicable_to | See: [Applicable To](#applicable-to) |
 | inapplicable_to | See: [Inapplicable To](#inapplicable-to) |
-| result | <p>Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.</p> One of: [Coupon Code](#coupon-code), [Gift Card](#gift-card), [Loyalty Card](#loyalty-card), [Promotion Tier](#promotion-tier), [Promotion Stack](#promotion-stack) |
+| result | <p>Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.</p> One of: [Coupon Code](#coupon-code), [Gift Card](#gift-card), [Loyalty Card](#loyalty-card), [Redeemable Result Promotion Tier](#redeemable-result-promotion-tier), [Promotion Stack](#promotion-stack) |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
 | categories</br>`array` | Array of [Category](#category) |
 
@@ -1074,13 +1074,13 @@ All of:
 | updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the reward was updated in ISO 8601 format.</p> **Example:** <p>2022-08-11T16:01:34.885Z</p> |
 | object | <p>The type of object represented by the JSON. This object stores information about the reward.</p> Available values: `reward` |
 
-## Product Object
+## Product
 <p>This is an object representing a product.</p><p>This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.</p>
 
 All of:
 
 1. [Product without Skus Object](#product-without-skus-object)
-2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">skus</td><td style="text-align:left">See: <a href="#skus-object">SKUs object</a></td></tr></tbody></table>
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">skus</td><td style="text-align:left">See: <a href="#skus-list-for-product">Skus List For Product</a></td></tr></tbody></table>
 
 ## SKU Object
 | Attributes |  Description |
@@ -1137,7 +1137,7 @@ One of:
 ## Calculate points proportionally
 One of:
 
-[Order](#order), [Order Items](#order-items), [Customer Metadata](#customer-metadata), [Custom Event](#custom-event)
+[Order](#order), [Order Items](#order-items), [Customer Metadata](#customer-metadata), [Earning Rule Proportional Custom Event](#earning-rule-proportional-custom-event)
 
 ## Earning Rule Event
 Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `customer.loyalty.tier.upgraded`, `customer.loyalty.tier.downgraded`, `customer.loyalty.tier.prolonged`, `customer.loyalty.tier.joined`, `customer.loyalty.tier.left`
@@ -1211,7 +1211,7 @@ Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `cus
 |:-----|:--------|
 | loyalty_card</br>`object` | <p>Stores the amount of loyalty card points to be applied in the redemption.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Total number of loyalty points to be applied in the redemption.</p></td></tr></tbody></table> |
 
-## Promotion Tier
+## Redeemable Result Promotion Tier
 | Attributes |  Description |
 |:-----|:--------|
 | discount | <p>Discount details about the type of discount to be applied for the redeemable.</p> One of: [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed) |
@@ -1318,7 +1318,7 @@ One of:
 | updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the product was updated in ISO 8601 format.</p> **Example:** <p>2022-05-23T09:24:07.405Z</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the product.</p> Available values: `product` |
 
-## SKUs object
+## Skus List For Product
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about SKUs.</p> |
@@ -1365,7 +1365,7 @@ One of:
 | calculation_type</br>`string` | <p>CUSTOMER_METADATA: Customer Metadata (X points for every Y in metadata attribute, defined in the property key under the customer.metadata object)</p> Available values: `CUSTOMER_METADATA` |
 | customer</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">metadata</br><code>object</code></td><td style="text-align:left"><p>Defines the ratio based on the property defined in the calculation_type parameter. For every given increment of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every order metadata property value, give points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">every</br><code>integer</code></td><td style="text-align:left"><p>For how many increments of the customer metadata property to grant points for.</p></td></tr><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points to be awarded, i.e. how many points to be added to the loyalty card.</p></td></tr><tr><td style="text-align:left">property</br><code>string</code></td><td style="text-align:left"><p>Customer metadata property.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
-## Custom Event
+## Earning Rule Proportional Custom Event
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio.</p> Available values: `PROPORTIONAL` |
