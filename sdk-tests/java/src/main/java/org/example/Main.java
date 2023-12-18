@@ -6,8 +6,7 @@ import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
 import org.openapitools.client.api.CampaignsApiApi;
 import org.openapitools.client.auth.ApiKeyAuth;
-import org.openapitools.client.model.CampaignsAddVoucherWithSpecificCodeRequestBody;
-import org.openapitools.client.model.CampaignsAddVoucherWithSpecificCodeResponseBody;
+import org.openapitools.client.model.*;
 
 
 public class Main {
@@ -16,7 +15,7 @@ public class Main {
         Dotenv dotenv = Dotenv.load();
 
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://dev.api.voucherify.io");
+        defaultClient.setBasePath("https://api.voucherify.io");
 
         ApiKeyAuth id = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Id-1");
         id.setApiKey(dotenv.get("APPLICATION_ID"));
@@ -26,13 +25,10 @@ public class Main {
 
         CampaignsApiApi apiInstance = new CampaignsApiApi(defaultClient);
 
-        String campaignId = "camp_vI2UgSzd7yamAFrFYe4vEik4";
-        String code = "5ad31sf";
-
-        CampaignsAddVoucherWithSpecificCodeRequestBody campaignsAddVoucherWithSpecificCodeRequestBody = new CampaignsAddVoucherWithSpecificCodeRequestBody();
+        String campaignId = "camp_IY0bKXqQ1eX98xBPeoeUwnn4";
 
         try {
-            CampaignsAddVoucherWithSpecificCodeResponseBody result = apiInstance.addVoucherWithSpecificCodeToCampaign(campaignId, code, campaignsAddVoucherWithSpecificCodeRequestBody);
+            CampaignsGetResponseBody result = apiInstance.getCampaign(campaignId);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling CampaignsApiApi#addVoucherWithSpecificCodeToCampaign");
