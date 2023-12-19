@@ -1,5 +1,5 @@
 ---
-title: Data parsing
+title: Data Parsing
 excerpt: Learn how to read and use data sent by Voucherify
 categorySlug: development
 slug: data-parsing
@@ -411,7 +411,7 @@ In this example, two discounts are applied:
 
 The image below shows an example of an order summary for the purchase shown in the response above. The order summary includes the data recommended in the comments.
 
-![](../../assets/img/guides_development_data_parsing_order_summary_01.png)
+![](https://files.readme.io/c2b6a88-guides_development_data_parsing_order_summary_01.png)
 
 ### Free items
 
