@@ -147,6 +147,7 @@ Good practices:
 - if attribute is always `null`, set type: `null`
 - for dates use `"type": "string", "format": "date-time"` or `"type": "string", "format": "date"`
 - for the object type `object`, add the `required` attribute which should contain a list of required attributes in the object
+- `nullable` cannot be next to the `$ref`. Please run `npm run fix-schemas-with-refs` to fix it.
 
 ## Contribution to documentation
 
