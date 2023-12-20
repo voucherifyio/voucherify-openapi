@@ -41,7 +41,7 @@ All of:
 ## Calculate points proportionally
 One of:
 
-[Order](#order), [Order Items](#order-items), [Customer Metadata](#customer-metadata), [Custom Event](#custom-event)
+[Order](#order), [Order Items](#order-items), [Customer Metadata](#customer-metadata), [Earning Rule Proportional Custom Event](#earning-rule-proportional-custom-event)
 
 ## Earning Rule Event
 Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `customer.loyalty.tier.upgraded`, `customer.loyalty.tier.downgraded`, `customer.loyalty.tier.prolonged`, `customer.loyalty.tier.joined`, `customer.loyalty.tier.left`
@@ -63,7 +63,7 @@ One of:
 | calculation_type</br>`string` | <p>CUSTOMER_METADATA: Customer Metadata (X points for every Y in metadata attribute, defined in the property key under the customer.metadata object)</p> Available values: `CUSTOMER_METADATA` |
 | customer</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">metadata</br><code>object</code></td><td style="text-align:left"><p>Defines the ratio based on the property defined in the calculation_type parameter. For every given increment of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every order metadata property value, give points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">every</br><code>integer</code></td><td style="text-align:left"><p>For how many increments of the customer metadata property to grant points for.</p></td></tr><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points to be awarded, i.e. how many points to be added to the loyalty card.</p></td></tr><tr><td style="text-align:left">property</br><code>string</code></td><td style="text-align:left"><p>Customer metadata property.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
-## Custom Event
+## Earning Rule Proportional Custom Event
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio.</p> Available values: `PROPORTIONAL` |

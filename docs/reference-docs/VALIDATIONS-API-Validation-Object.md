@@ -9,11 +9,13 @@ order: 3
 ---
 
 ## Vouchers Validate Response Body
+<p>Response body schema for <strong>POST</strong> <code>/vouchers/{code}/validate</code>.</p>
+
 One of:
 
-[Valid Voucher](#valid-voucher), [Invalid Voucher](#invalid-voucher)
+[Vouchers Validate Valid Response Body](#vouchers-validate-valid-response-body), [Vouchers Validate Invalid Response Body](#vouchers-validate-invalid-response-body)
 
-## Valid Voucher
+## Vouchers Validate Valid Response Body
 | Attributes |  Description |
 |:-----|:--------|
 | valid</br>`boolean` | <p>Indicates whether the voucher is valid within the context of the parameters provided in the request body.</p> |
@@ -33,7 +35,7 @@ One of:
 | expiration_date</br>`string` | <p>Expiration timestamp defines when the voucher expires in ISO 8601 format. Voucher is inactive after this date.</p> |
 | tracking_id</br>`string` | <p>Hashed order source ID.</p> |
 
-## Invalid Voucher
+## Vouchers Validate Invalid Response Body
 | Attributes |  Description |
 |:-----|:--------|
 | valid</br>`boolean` | <p>Indicates whether the voucher is valid within the context of the parameters provided in the request body.</p> |
