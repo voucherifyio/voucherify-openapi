@@ -69,11 +69,8 @@ How to edit OpenAPI file:
 
  Building new models, we should follow the following name convention: 
 - Use pascal case casing.
-- If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{ApiCollection}{Resource}{Action}{Request|Response}{Body|Query}`, where:
-  - `ApiCollection`: always plural and taken from collection name, e.g. `Vouchers`, `Customers`, `Products`, `Loyalities`
-    - If two parts should be grammatically correct, e.g. `ProductCollections`.
-  - `Resource`: plural name taken from API path, e.g. `Rewards`, `Products`, `Metadata`
-    - If two parts should be grammatically correct, e.g `EarningRules`, `PromotionTiers`
+- If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{PathNameResult}{Action}{Request|Response}{Body|Query}`, where:
+  - `PathNameResult`: `location.pathname` WITHOUT `v1` and `path parameters` written in PascalCase. 
   - `Action`: either taken from HTTP method, e.g. `List`, `Get`, `Update`, `Delete`, `Create` or what the endpoint does, e.g. `Track`, `Validate`, `Import`, `Export`
     - `Get`(single record), 
     - `List`(multiple record)
