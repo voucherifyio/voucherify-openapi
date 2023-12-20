@@ -12,7 +12,7 @@ type OpenAPIResponse = {
 };
 
 const fixNames = (openApi) => {
-    const redResponses: OpenAPIResponse[] = checkRequestResponseSchemaNamesCorrectness(openApi, false);
+    const redResponses: OpenAPIResponse[] = checkRequestResponseSchemaNamesCorrectness(openApi);
 
     const createSchemasFromResponsesAndChangeInPaths = (responses: OpenAPIResponse[]) => {
         const schemas = {};
