@@ -39,4 +39,6 @@ Voucherify is using openAPI definition to generate sdks.
 
 - install python3 and pip (if you have not already installed)
 - install requirement python packages using pip -> **tmp/python/requirements.txt**
+- install using pip `responses 0.24.0` and `Urllib3 2.0.5`
+- run in terminal `/Applications/Python\ 3.XXXXXX/Install\ Certificates.command`, where `XXXXXX` is the version of your Python3. For example `3.12` for `3.12.0`.
 - run `python3 sdk-tests/python.py` (fails...)
