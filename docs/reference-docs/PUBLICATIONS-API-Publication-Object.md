@@ -8,23 +8,23 @@ hidden: false
 order: 1
 ---
 
-## Create Publication Response Body
-<p>Response schema model for publishing vouchers to a specific customer.</p>
+## Publications Create Response Body
+<p>Response body schema for <strong>POST</strong> <code>/publication</code> and <strong>GET</strong> <code>/publications/create</code>.</p>
 
 One of:
 
-[Publications Create Response Single Voucher Body](#publications-create-response-single-voucher-body), [Publications Create Response Multiple Vouchers Body](#publications-create-response-multiple-vouchers-body)
+[Publications Create Voucher Response Body](#publications-create-voucher-response-body), [Publications Create Vouchers Response Body](#publications-create-vouchers-response-body)
 
-## Publications Create Response Single Voucher Body
-<p>Response schema model for publishing a single voucher to a specific customer.</p>
+## Publications Create Voucher Response Body
+<p>Response body schema for <strong>POST</strong> <code>/publication</code> and <strong>GET</strong> <code>/publications/create</code>.</p>
 
 All of:
 
 1. [Publications Create Response Base Body](#publications-create-response-base-body)
 2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">voucher</td><td style="text-align:left">See: <a href="#voucher">Voucher</a></td></tr></tbody></table>
 
-## Publications Create Response Multiple Vouchers Body
-<p>Response schema model for publishing a multiple vouchers to a specific customer.</p>
+## Publications Create Vouchers Response Body
+<p>Response body schema for <strong>POST</strong> <code>/publication</code> and <strong>GET</strong> <code>/publications/create</code>.</p>
 
 All of:
 

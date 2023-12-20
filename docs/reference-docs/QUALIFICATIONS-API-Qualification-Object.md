@@ -99,7 +99,7 @@ All of:
 | id</br>`string` | <p>Id of the redeemable.</p> |
 | object</br>`string` | <p>Object type of the redeemable.</p> Available values: `campaign`, `promotion_tier`, `promotion_stack`, `voucher` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the object was created in ISO 8601 format.</p> **Example:** <p>2022-03-09T11:19:04.819Z</p> |
-| result | See: [Redeemable Single Result](#redeemable-single-result) |
+| result | See: [Redeemable Result](#redeemable-result) |
 | order | See: [Order Response](#order-response) |
 | validation_rule_id</br>`string` | <p>A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance.</p> |
 | applicable_to | <p>Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted.</p> See: [Applicable To Result List](#applicable-to-result-list) |
@@ -176,12 +176,12 @@ All of:
 | address</br>`object`, `null` | <p>Customer's address.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">city</br><code>string</code></td><td style="text-align:left"><p>City</p></td></tr><tr><td style="text-align:left">state</br><code>string</code></td><td style="text-align:left"><p>State</p></td></tr><tr><td style="text-align:left">line_1</br><code>string</code></td><td style="text-align:left"><p>First line of address.</p></td></tr><tr><td style="text-align:left">line_2</br><code>string</code></td><td style="text-align:left"><p>Second line of address.</p></td></tr><tr><td style="text-align:left">country</br><code>string</code></td><td style="text-align:left"><p>Country.</p></td></tr><tr><td style="text-align:left">postal_code</br><code>string</code></td><td style="text-align:left"><p>Postal code.</p></td></tr></tbody></table> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.</p> |
 
-## Redeemable Single Result
+## Redeemable Result
 | Attributes |  Description |
 |:-----|:--------|
 | discount | See: [Discount](#discount) |
-| gift | See: [Gift](#gift) |
-| loyalty_card | <p>Loyalty Card object response</p> See: [Loyalty Card](#loyalty-card) |
+| gift | See: [Redeemable Gift](#redeemable-gift) |
+| loyalty_card | <p>Loyalty Card object response</p> See: [Redeemable Loyalty Card](#redeemable-loyalty-card) |
 | error | <p>Error in result</p> See: [Error Object](#error-object) |
 
 ## Applicable To Result List
@@ -247,13 +247,13 @@ One of:
 
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
-## Gift
+## Redeemable Gift
 | Attributes |  Description |
 |:-----|:--------|
 | balance</br>`number` | <p>Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
 | credits</br>`number` | <p>The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
 
-## Loyalty Card
+## Redeemable Loyalty Card
 | Attributes |  Description |
 |:-----|:--------|
 | points</br>`integer` | <p>Total points incurred over lifespan of loyalty card.</p> **Example:** <p>7000</p> |
