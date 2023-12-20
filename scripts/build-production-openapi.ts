@@ -1,7 +1,7 @@
 import fsPromises from "fs/promises";
 import fs from "fs";
 import path from "path";
-import { parseNullToNullable } from "./prepare-open-api-for-sdk/utils";
+import { parseNullsToNullableObjects } from "./prepare-open-api-for-sdk/utils";
 
 function isObject(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -25,7 +25,7 @@ const main = async () => {
 
   removeKey(openAPIContent, "x-stoplight");
 
-  openAPIContent.components.schemas = parseNullToNullable(
+  openAPIContent.components.schemas = parseNullsToNullableObjects(
     Object.fromEntries(
       Object.entries(openAPIContent.components.schemas)
         .map((entry) => {
