@@ -1,6 +1,6 @@
 import path from "path";
 import fsPromises from "fs/promises";
-import { omit } from "lodash";
+import { omit, pick } from "lodash";
 
 const fixSchemasWithRefs = (object: any) => {
   if (Array.isArray(object)) {
@@ -8,6 +8,17 @@ const fixSchemasWithRefs = (object: any) => {
   }
   if (object instanceof Object) {
     const keys = Object.keys(object);
+    if (keys.includes("oneOf") && object.oneOf instanceof Object) {
+      return {
+        ...object,
+        oneOf: object.oneOf.map((oneOf: any) => {
+          if (!(oneOf instanceof Object) || !oneOf?.["$ref"]) {
+            return oneOf;
+          }
+          return pick(oneOf, "$ref");
+        }),
+      };
+    }
     if (!keys.includes("$ref")) {
       return Object.fromEntries(
         Object.entries(object).map((keyAndEntry) => {
