@@ -182,7 +182,7 @@ const createSchemas = (openApi, namesFromTo: NameFromTo[]) => {
 
         //NEW SCHEMAS
         if(!lowerCase(schema.description).includes(lowerCase(endpointPath))){
-            console.log(colors.red("SKIP" + " " + endpointPath + " " + nameFromTo.newName));
+            console.log(colors.red("NEW SCHEMA - " + " " + endpointPath + " " + nameFromTo.newName));
 
             const suffix = nameFromTo.currentName.includes("RequestBody") ?
                 "RequestBody" : (nameFromTo.currentName.includes("ResponseBody") ? "ResponseBody" : "");
@@ -291,11 +291,15 @@ const fix = async (openApi) => {
                     skip = true;
                 }
 
+                if(skip){
+                    console.log(colors.yellow("SKIP" + " " + pathName + " " + method))
+                }
+
                 return {
                     method,
                     operationId: path[method].operationId,
                     currentName: ref ? ref.split("/").slice(-1).pop() : null,
-                    newName: (isClient ? "Client" : "") + skip ? null : endpointName + "RequestBody",
+                    newName: skip ? null : ((isClient ? "Client" : "") + endpointName + "RequestBody"),
                     responses: responses.filter(e => e),
                 }
             })
@@ -304,9 +308,9 @@ const fix = async (openApi) => {
             name: nameElements.join(""),
             path: pathName,
             isClient: pathName.includes("client"),
-            methods: methods.filter(e => e),
+            methods: methods
         }
-    }).filter(e => e);
+    })
 
     const endpointsRequiredChanges = endpoints
         .map(endpoint =>
@@ -331,9 +335,6 @@ const fix = async (openApi) => {
 
     createSchemas(openApi, nameFromTo);
 }
-
-
-
 
 
 main();
