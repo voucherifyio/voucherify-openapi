@@ -86,8 +86,13 @@ How to edit OpenAPI file:
 
  Building new models, we should follow the following name convention: 
 - Use pascal case casing.
-- If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{PathNameResult}{Action}{Request|Response}{Body|Query}`, where:
-  - `PathNameResult`: `location.pathname` WITHOUT `v1` and `path parameters` written in PascalCase. 
+- If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{Client}{PathNameResult}{Action}{Request|Response}{Body|Query}`, where:
+  - (optional) `Client`: Use for all client schemas.
+  - `PathNameResult`: `location.pathname` WITHOUT `v1` and `path parameters` written in PascalCase.
+    - `/v1/rewards/{rewardId}/assignments` => `RewardsAssignments`
+    - `/v1/rewards/{rewardId}/assignments/{assignmentId}` => `RewardsAssignments`
+    - `/v1/rewards/{rewardId}/assignments/{assignmentId}/redemptions` => `RewardsAssignmentsRedemptions`
+    - `/client/v1/rewards/{rewardId}/assignments/{assignmentId}/redemptions` => `ClientRewardsAssignmentsRedemptions`
   - `Action`: either taken from HTTP method, e.g. `List`, `Get`, `Update`, `Delete`, `Create` or what the endpoint does, e.g. `Track`, `Validate`, `Import`, `Export`
     - `Get`(single record), 
     - `List`(multiple record)
@@ -96,12 +101,6 @@ How to edit OpenAPI file:
     - `Delete`(single record), 
     - `Create`(single record), 
     - `CreateInBulk`(multiple record)
-- If a 0-level model has dedicated sub-models, then those model's names should follow the pattern:
-   `{Resource}{Action}{Differentiator}{Request|Response}{Body|Query}`
-   where the  `Differentiator` describes the child model, e.g.:
-  - `Discount [VouchersValidateDiscountRequestBody]`
-  - `Gift [VouchersValidateGiftRequestBody]`
-  - `Loyalty [VouchersValidateLoyaltyRequestBody]` 
 - If a model is used by more than one API endpoint (general model), we use simple domain language, e.g. `Customer`, `Category`, `Discount`, `DiscountUnit`
 - If a portion of a model is used by more than one schema, we can save this portion under a new schema and use it with `allOf` operator:
 
