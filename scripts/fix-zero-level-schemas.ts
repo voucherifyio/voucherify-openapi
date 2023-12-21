@@ -1,7 +1,8 @@
 import path from "path";
 import fsPromises from "fs/promises";
-import _ from "lodash";
+import _, {lowerCase} from "lodash";
 import fs from "fs";
+import colors from "colors";
 
 interface Response {
     code: string;
@@ -20,7 +21,16 @@ interface Method {
 interface Endpoint {
     name: string;
     path: string;
+    isClient: boolean;
     methods: Method[];
+}
+
+interface NameFromTo {
+    currentName: string;
+    newName: string;
+    endpointPath: string;
+    method: string;
+    responseCode?: string;
 }
 
 const allKeyWords = [
@@ -31,11 +41,12 @@ const allKeyWords = [
     "update",
     "delete",
     "in-bulk",
-    "generate-random-code",
+    "generate",
     "enable",
     "disable",
-    "validate-stacked",
-    "redeem-stacked"
+    "validate",
+    "redeem",
+    "check-eligibility"
 ]
 
 const methodToActionMap = {
@@ -53,7 +64,7 @@ const main = async () => {
     fix(await getOpenAPI());
 };
 
-const saveToJson = async (newOpenApiFile) => {
+const saveToJson = async (file, name) => {
     const pathToTmp = path.join(__dirname, "../tmp");
     if (!fs.existsSync(pathToTmp)) {
         fs.mkdirSync(pathToTmp);
@@ -68,14 +79,13 @@ const saveToJson = async (newOpenApiFile) => {
     }
 
     await fsPromises.writeFile(
-        path.join(__dirname, "../tmp/script-results/new-names.json"),
-        JSON.stringify(newOpenApiFile, null, 2)
+        path.join(__dirname, `../tmp/script-results/${name}`),
+        JSON.stringify(file, null, 2)
     );
 }
 
 
 const createResourceName = (operatorId: string, method: string, nameElements) => {
-
     const result = allKeyWords.map(element => {
         let occurred = false;
         let position = -1;
@@ -97,6 +107,128 @@ const createResourceName = (operatorId: string, method: string, nameElements) =>
     }
 }
 
+const displayNameFromToNamesToChange = (namesFromTo: NameFromTo[]) => {
+    let counter = 0;
+    const writeLine = (nameFromTo: NameFromTo) => {
+        console.log(colors.red(nameFromTo.currentName), " => ", colors.green(nameFromTo.newName))
+    }
+
+    namesFromTo.forEach(nameFromTo => {
+        counter++;
+        writeLine(nameFromTo);
+    })
+
+    console.log("COUNTER = ", counter);
+}
+
+const transformEndpointsToNameFromTo = (endpoints: Endpoint[]): NameFromTo[] => {
+    return endpoints.map(endpoint => {
+        return endpoint.methods.map(method => {
+            const responsesMapped = method.responses.map(response => {
+                return {
+                    currentName: response.currentName,
+                    newName: response.newName,
+                    endpointPath: endpoint.path,
+                    method: method.method,
+                    responseCode: response.code,
+                }
+            })
+
+            return [
+                ...responsesMapped,
+                {
+                    currentName: method.currentName,
+                    newName: method.newName,
+                    endpointPath: endpoint.path,
+                    method: method.method,
+                }
+            ]
+        })
+    })
+        .flat(2)
+        .filter(element => element.newName)
+        .filter(element => element.currentName !== element.newName);
+}
+
+const createSchemas = (openApi, namesFromTo: NameFromTo[]) => {
+    const newComponents = {};
+    const schemasToDelete = [];
+
+    const linkRefForNewSchema = (nameFromTo: NameFromTo) => {
+        if(nameFromTo.responseCode){
+            openApi
+                .paths[nameFromTo.endpointPath][nameFromTo.method]
+                .responses[nameFromTo.responseCode]
+                .content["application/json"]
+                .schema.$ref = `#/components/schemas/${nameFromTo.newName}`;
+        } else {
+            openApi
+                .paths[nameFromTo.endpointPath][nameFromTo.method]
+                .requestBody
+                .content["application/json"]
+                .schema.$ref = `#/components/schemas/${nameFromTo.newName}`;
+        }
+
+    }
+
+    namesFromTo.forEach(nameFromTo => {
+        const schema = openApi.components.schemas[nameFromTo.currentName];
+
+        const endpointPath = nameFromTo.endpointPath.split("/").slice(2).join("/");
+
+        //NEW SCHEMAS
+        if(!lowerCase(schema.description).includes(lowerCase(endpointPath))){
+            console.log(colors.red("SKIP" + " " + endpointPath + " " + nameFromTo.newName));
+
+            const suffix = nameFromTo.currentName.includes("RequestBody") ?
+                "RequestBody" : (nameFromTo.currentName.includes("ResponseBody") ? "ResponseBody" : "");
+
+            if(suffix){
+                newComponents[nameFromTo.newName] = {
+                    description: _.startCase(suffix) + " schema for " + `**${nameFromTo.method}**` + " " + "`/" + endpointPath + "`.",
+                    ...schema,
+                    title: _.startCase(_.camelCase(nameFromTo.newName)),
+                }
+            } else {
+                newComponents[nameFromTo.newName] = {
+                    title: _.startCase(_.camelCase(nameFromTo.newName)),
+                    description: (nameFromTo.responseCode ? "Response body" : "Request body") + " schema for " + `**${nameFromTo.method}**` + " " + "`/" + endpointPath + "`.",
+                    allOf: [{
+                       "$ref": `#/components/schemas/${nameFromTo.currentName}`
+                    }],
+                }
+            }
+
+            linkRefForNewSchema(nameFromTo);
+
+            return
+        }
+
+        if(lowerCase(schema.description).includes(lowerCase(endpointPath))){
+            newComponents[nameFromTo.newName] = {
+                ...schema,
+                title: _.startCase(_.camelCase(nameFromTo.newName)),
+            };
+            schemasToDelete.push(nameFromTo.currentName);
+            linkRefForNewSchema(nameFromTo);
+        }
+    })
+
+    const schemasToRemove = _.difference(schemasToDelete, Object.keys(newComponents));
+
+    schemasToRemove.forEach(schemaToRemove => {
+        delete openApi.components.schemas[schemaToRemove];
+    })
+
+    Object.keys(newComponents).forEach(newComponent => {
+        openApi.components.schemas[newComponent] = newComponents[newComponent];
+    })
+
+
+    saveToJson(openApi, "new-schemas.json");
+}
+
+
 const fix = async (openApi) => {
     const paths = openApi.paths;
 
@@ -111,6 +243,8 @@ const fix = async (openApi) => {
             .filter(name => name !== "bulk")
             .map(name => _.camelCase(name))
             .map(name => _.upperFirst(name));
+
+        const isClient = pathName.includes("client")
 
         const methods = Object.keys(path)
             .filter(method => method !== "parameters")
@@ -137,7 +271,7 @@ const fix = async (openApi) => {
                         return {
                             code,
                             currentName: ref.split("/").slice(-1).pop(),
-                            newName: endpointName + "ResponseBody",
+                            newName: (isClient ? "Client" : "") + endpointName + "ResponseBody",
                         }
                     })
 
@@ -157,7 +291,7 @@ const fix = async (openApi) => {
                     method,
                     operationId: path[method].operationId,
                     currentName: ref ? ref.split("/").slice(-1).pop() : null,
-                    newName: skip ? null : endpointName + "RequestBody",
+                    newName: (isClient ? "Client" : "") + skip ? null : endpointName + "RequestBody",
                     responses: responses.filter(e => e),
                 }
             })
@@ -165,11 +299,12 @@ const fix = async (openApi) => {
         return {
             name: nameElements.join(""),
             path: pathName,
+            isClient: pathName.includes("client"),
             methods: methods.filter(e => e),
         }
     }).filter(e => e);
 
-    const filtered = endpoints
+    const endpointsRequiredChanges = endpoints
         .map(endpoint =>
             {
                 const methods = endpoint.methods
@@ -182,8 +317,16 @@ const fix = async (openApi) => {
             }
         );
 
-    await saveToJson(filtered);
+    await saveToJson(endpointsRequiredChanges, "new-names.json");
+
+    const nameFromTo = transformEndpointsToNameFromTo(endpointsRequiredChanges);
+
+    // displayNameFromToNamesToChange(nameFromTo);
+    createSchemas(openApi, nameFromTo);
 }
+
+
+
 
 
 main();
