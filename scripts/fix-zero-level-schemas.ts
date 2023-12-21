@@ -113,12 +113,14 @@ const displayNameFromToNamesToChange = (namesFromTo: NameFromTo[]) => {
         console.log(colors.red(nameFromTo.currentName), " => ", colors.green(nameFromTo.newName))
     }
 
+    console.log("NAMES TO CHANGE: ")
     namesFromTo.forEach(nameFromTo => {
         counter++;
         writeLine(nameFromTo);
     })
 
-    console.log("COUNTER = ", counter);
+    console.log("COUNTER NAMES TO CHANGE = ", counter);
+    console.log();
 }
 
 const transformEndpointsToNameFromTo = (endpoints: Endpoint[]): NameFromTo[] => {
@@ -153,6 +155,8 @@ const transformEndpointsToNameFromTo = (endpoints: Endpoint[]): NameFromTo[] => 
 const createSchemas = (openApi, namesFromTo: NameFromTo[]) => {
     const newComponents = {};
     const schemasToDelete = [];
+
+    console.log("GENERATING NEW SCHEMAS");
 
     const linkRefForNewSchema = (nameFromTo: NameFromTo) => {
         if(nameFromTo.responseCode){
@@ -224,8 +228,8 @@ const createSchemas = (openApi, namesFromTo: NameFromTo[]) => {
         openApi.components.schemas[newComponent] = newComponents[newComponent];
     })
 
-
     saveToJson(openApi, "new-schemas.json");
+    console.log("NEW SCHEMAS SAVED IN new-schemas.json");
 }
 
 
@@ -317,11 +321,14 @@ const fix = async (openApi) => {
             }
         );
 
+
     await saveToJson(endpointsRequiredChanges, "new-names.json");
+    console.log("ENDPOINTS REQUIRED CHANGES SAVED IN new-names.json\n")
 
     const nameFromTo = transformEndpointsToNameFromTo(endpointsRequiredChanges);
 
-    // displayNameFromToNamesToChange(nameFromTo);
+    displayNameFromToNamesToChange(nameFromTo);
+
     createSchemas(openApi, nameFromTo);
 }
 
