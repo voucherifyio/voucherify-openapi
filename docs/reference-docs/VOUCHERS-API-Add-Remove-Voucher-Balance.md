@@ -2,7 +2,7 @@
 title: Add or Remove Voucher Balance
 type: endpoint
 categorySlug: voucherify-api
-slug: add-remove-voucher-balance
+slug: update-voucher-balance
 parentDocSlug: vouchers-api
 hidden: false
 order: 10

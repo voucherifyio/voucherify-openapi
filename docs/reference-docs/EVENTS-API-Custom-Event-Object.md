@@ -8,16 +8,16 @@ hidden: false
 order: 1
 ---
 
-## Events Track Request Body
+## Events Create Request Body
 | Attributes |  Description |
 |:-----|:--------|
 | event</br>`string` | <p>Event name. This is the same name that you used to define a custom event in the <strong>Dashboard</strong> &gt; <strong>Project Settings</strong> &gt; <strong>Event Schema</strong>.</p> |
-| customer | <p>Customer's information.</p> See: [Customer Request](#customer-request) |
+| customer | <p>Customer's information.</p> [Customer](#customer) |
 | referral</br>`object` | <p>If a <strong>conversion event</strong> for a referral program is set to a custom event, then you need to send the referral code in the payload to make a record of the conversion event.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>A code through which a new visitor has been referred to a service.</p></td></tr><tr><td style="text-align:left">referrer_id</br><code>string</code></td><td style="text-align:left"><p>Unique ID of the referring person - it is optional and not required if the referral <strong>code</strong> is provided.</p> <strong>Example:</strong> <p>cust_Vzck5i8U3OhcEUFY6MKhN9Rv</p></td></tr></tbody></table> |
 | loyalty</br>`object` | <p>If an earning rule in a loyalty program is based on a custom event. This objects let's you specify the loyalty card to which the custom event should be attributed to.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Code of the loyalty card to receive points based on the calculation method defined in the related earning rule. An earning rule is triggered for the loyalty card when the event passed in the <code>event</code> parameter of the request payload gets sent along with this loyalty card code.</p> <strong>Example:</strong> <p>L-CARD-BUHuH6g</p></td></tr></tbody></table> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the event. A set of key/value pairs that you can attach to an event object. It can be useful for storing additional information about the event in a structured format. Event metadata schema is defined in the <strong>Dashboard</strong> &gt; <strong>Project Settings</strong> &gt; <strong>Event Schema</strong> &gt; <strong>Edit particular event</strong> &gt; <strong>Metadata property definition</strong>.</p> |
 
-## Customer Request
+## Customer
 All of:
 
 1. <h3>Customer Id And Source Id</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>The ID of an existing customer.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.</p></td></tr></tbody></table>

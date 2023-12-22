@@ -2,7 +2,7 @@
 title: Add or Remove Loyalty Card Balance
 type: endpoint
 categorySlug: voucherify-api
-slug: add-remove-loyalty-card-balance-1
+slug: update-loyalty-card-balance-1
 parentDocSlug: loyalties-api
 hidden: false
 order: 17

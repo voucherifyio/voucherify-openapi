@@ -2,7 +2,7 @@
 title: List Member's Loyalty Tiers
 type: endpoint
 categorySlug: voucherify-api
-slug: get-member-loyalty-tier
+slug: list-member-loyalty-tier
 parentDocSlug: loyalties-api
 hidden: false
 order: 45
