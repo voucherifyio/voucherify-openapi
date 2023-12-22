@@ -101,6 +101,27 @@ How to edit OpenAPI file:
     - `Delete`(single record), 
     - `Create`(single record), 
     - `CreateInBulk`(multiple record)
+- If a 0-level model has dedicated sub-models (contains only `oneOf`), then those model's names should follow the pattern:
+  `{Resource}{Action}{Differentiator}{Request|Response}{Body|Query}`
+  where the  `Differentiator` describes the child model. Title of those models shall be like schema name but in `Title Case` and description shall follow the pattern: `{Response/Request} {Body/Query} schema for **{Method}** {Path} {OPTIONALLY: and **{Method}** {Path}}`, e.g.:
+    - `Base [PublicationsCreateBaseResponseBody]` (common part of other child models)
+    - `Vouchers [PublicationsCreateVouchersResponseBody]`
+    - `Voucher [PublicationsCreateVoucherResponseBody]`
+```json
+"PublicationsCreateResponseBody": {
+    "title": "Publications Create Response Body",
+    "type": "object",
+    "description": "Response body schema for **POST** `/publication` and **GET** `/publications/create`.",
+    "oneOf": [
+        {
+            "$ref": "#/components/schemas/PublicationsCreateVoucherResponseBody"
+        },
+        {
+            "$ref": "#/components/schemas/PublicationsCreateVouchersResponseBody"
+        }
+    ]
+},
+```
 - If a model is used by more than one API endpoint (general model), we use simple domain language, e.g. `Customer`, `Category`, `Discount`, `DiscountUnit`
 - If a portion of a model is used by more than one schema, we can save this portion under a new schema and use it with `allOf` operator:
 
