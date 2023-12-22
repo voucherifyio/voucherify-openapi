@@ -1,4 +1,8 @@
-# Changelog
+### This file is closed! PLease check [OPEN-API.md](OPEN-API.md) or [ARTICLES.md](ARTICLES.md) for newer changes
+
+----------------------------------------------------------------
+
+# Changelog - DEPRECATED
 
 ## 20231128
 
