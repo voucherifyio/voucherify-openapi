@@ -973,8 +973,8 @@
           }
         ]
       },
-      "OrderRequestBase": {
-        "title": "Order Request Base",
+      "OrderBase": {
+        "title": "Order Base",
         "type": "object",
         "properties": {
           "status": {
@@ -1003,12 +1003,16 @@
             "type": "array",
             "description": "Array of items applied to the order.",
             "items": {
-              "$ref": "#/components/schemas/OrderItemRequest"
+              "$ref": "#/components/schemas/OrderItem"
             }
           },
           "customer": {
-            "$ref": "#/components/schemas/CustomerRequest",
-            "description": "This is an object containing information about the customer."
+            "description": "This is an object containing information about the customer.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
           },
           "customer_id": {
             "type": "string",
@@ -1016,8 +1020,12 @@
             "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
           },
           "referrer": {
-            "$ref": "#/components/schemas/ReferrerRequest",
-            "description": "This is an object containing information about the referrer."
+            "description": "This is an object containing information about the referrer.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Referrer"
+              }
+            ]
           },
           "referrer_id": {
             "type": "string",
@@ -1121,8 +1129,8 @@
           "object"
         ]
       },
-      "OrderRequest": {
-        "title": "Order Request",
+      "Order": {
+        "title": "Order",
         "allOf": [
           {
             "title": "Order Ids",
@@ -1139,11 +1147,11 @@
             }
           },
           {
-            "$ref": "#/components/schemas/OrderRequestBase"
+            "$ref": "#/components/schemas/OrderBase"
           }
         ]
       },
-      "OrderResponseBase": {
+      "OrderCalculatedBase": {
         "title": "Order Response Base",
         "type": "object",
         "additionalProperties": false,
@@ -1221,7 +1229,7 @@
             "type": "array",
             "description": "Array of items applied to the order.",
             "items": {
-              "$ref": "#/components/schemas/OrderItemResponse"
+              "$ref": "#/components/schemas/OrderItemCalculated"
             }
           },
           "metadata": {
@@ -1262,14 +1270,14 @@
           "object"
         ]
       },
-      "OrderResponse": {
-        "title": "Order Response",
+      "OrderCalculated": {
+        "title": "Order Calculated",
         "allOf": [
           {
-            "$ref": "#/components/schemas/OrderResponseBase"
+            "$ref": "#/components/schemas/OrderCalculatedBase"
           },
           {
-            "title": "Order Response",
+            "title": "Order Calculated",
             "type": "object",
             "additionalProperties": false,
             "description": "Order information.",
@@ -1277,24 +1285,20 @@
               "customer": {
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/CustomerResponse",
-                    "description": "This is an object containing information about the customer."
+                    "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
                   },
                   {
-                    "$ref": "#/components/schemas/CustomerIdResponse",
-                    "description": "If only `customer_id` was provided, customer return data will be limited."
+                    "$ref": "#/components/schemas/CustomerId"
                   }
                 ]
               },
               "referrer": {
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/ReferrerResponse",
-                    "description": "This is an object containing information about the referrer."
+                    "$ref": "#/components/schemas/ReferrerWithSummaryLoyaltyReferrals"
                   },
                   {
-                    "$ref": "#/components/schemas/ReferrerId",
-                    "description": "If only `referrer_id` was provided, referrer return data will be limited."
+                    "$ref": "#/components/schemas/ReferrerId"
                   }
                 ]
               }
@@ -1302,11 +1306,11 @@
           }
         ]
       },
-      "OrderResponseNoCustomerData": {
-        "title": "Order Response No Customer Data",
+      "OrderCalculatedNoCustomerData": {
+        "title": "Order Calculated No Customer Data",
         "allOf": [
           {
-            "$ref": "#/components/schemas/OrderResponseBase"
+            "$ref": "#/components/schemas/OrderCalculatedBase"
           },
           {
             "title": "Order Customer And Referrer Ids Objects",
@@ -1315,12 +1319,20 @@
             "description": "Order information.",
             "properties": {
               "customer": {
-                "$ref": "#/components/schemas/CustomerIdResponse",
-                "description": "If only `customer_id` was provided, customer return data will be limited."
+                "description": "If only `customer_id` was provided, customer return data will be limited.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerId"
+                  }
+                ]
               },
               "referrer": {
-                "$ref": "#/components/schemas/ReferrerId",
-                "description": "If only `referrer_id` was provided, referrer return data will be limited."
+                "description": "If only `referrer_id` was provided, referrer return data will be limited.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ReferrerId"
+                  }
+                ]
               }
             }
           }
@@ -1331,7 +1343,7 @@
         "description": "Response body schema for **GET** `/orders/{orderId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/OrderResponseNoCustomerData"
+            "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
           }
         ]
       },
@@ -1392,16 +1404,28 @@
         "description": "Request schema model for validating a voucher using **POST** `/vouchers/{code}/validate`.",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/CustomerRequest",
-            "description": "Customer's information."
+            "description": "Customer's information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
           },
           "order": {
-            "$ref": "#/components/schemas/OrderRequest",
-            "description": "Order information."
+            "description": "Order information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Order"
+              }
+            ]
           },
           "session": {
-            "$ref": "#/components/schemas/Session",
-            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session."
+            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Session"
+              }
+            ]
           },
           "tracking_id": {
             "type": "string"
@@ -1431,8 +1455,12 @@
         "description": "Request schema model for **POST** `/vouchers/{code}/validate`.",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/CustomerRequest",
-            "description": "Customer's information."
+            "description": "Customer's information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
           },
           "order": {
             "type": "object",
@@ -1465,19 +1493,27 @@
                 "type": "array",
                 "description": "Array of items applied to the order.",
                 "items": {
-                  "$ref": "#/components/schemas/OrderItemRequest"
+                  "$ref": "#/components/schemas/OrderItem"
                 }
               },
               "customer": {
-                "$ref": "#/components/schemas/CustomerRequest",
-                "description": "This is an object containing information about the customer."
+                "description": "This is an object containing information about the customer.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Customer"
+                  }
+                ]
               },
               "customer_id": {
                 "type": "string"
               },
               "referrer": {
-                "$ref": "#/components/schemas/ReferrerRequest",
-                "description": "This is an ojbect containing information about the referrer."
+                "description": "This is an ojbect containing information about the referrer.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Referrer"
+                  }
+                ]
               },
               "referrer_id": {
                 "type": "string"
@@ -1504,8 +1540,12 @@
             ]
           },
           "session": {
-            "$ref": "#/components/schemas/Session",
-            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session."
+            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Session"
+              }
+            ]
           },
           "tracking_id": {
             "type": "string"
@@ -1538,8 +1578,12 @@
         "description": "Request schema model for **POST** `/vouchers/{code}/validate`.",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/CustomerRequest",
-            "description": "Customer's information."
+            "description": "Customer's information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
           },
           "order": {
             "type": "object",
@@ -1572,19 +1616,27 @@
                 "type": "array",
                 "description": "Array of items applied to the order.",
                 "items": {
-                  "$ref": "#/components/schemas/OrderItemRequest"
+                  "$ref": "#/components/schemas/OrderItem"
                 }
               },
               "customer": {
-                "$ref": "#/components/schemas/CustomerRequest",
-                "description": "This is an object containing information about the customer."
+                "description": "This is an object containing information about the customer.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Customer"
+                  }
+                ]
               },
               "customer_id": {
                 "type": "string"
               },
               "referrer": {
-                "$ref": "#/components/schemas/ReferrerRequest",
-                "description": "This is an ojbect containing information about the referrer."
+                "description": "This is an ojbect containing information about the referrer.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Referrer"
+                  }
+                ]
               },
               "referrer_id": {
                 "type": "string"
@@ -1617,8 +1669,12 @@
             ]
           },
           "session": {
-            "$ref": "#/components/schemas/Session",
-            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session."
+            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Session"
+              }
+            ]
           },
           "tracking_id": {
             "type": "string"
@@ -1645,19 +1701,19 @@
           "reward"
         ]
       },
-      "ReferrerRequest": {
-        "title": "Referrer Request",
+      "Referrer": {
+        "title": "Referrer",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CustomerRequest"
+            "$ref": "#/components/schemas/Customer"
           }
         ]
       },
-      "ReferrerResponse": {
-        "title": "Referrer Response",
+      "ReferrerWithSummaryLoyaltyReferrals": {
+        "title": "Referrer With Summary Loyalty Referrals",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           }
         ]
       },
@@ -1665,7 +1721,7 @@
         "title": "Referrer Id",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CustomerIdResponse"
+            "$ref": "#/components/schemas/CustomerId"
           }
         ]
       },
@@ -1741,7 +1797,7 @@
         "description": "Request body schema for **POST** `/customers`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CustomerRequest"
+            "$ref": "#/components/schemas/Customer"
           }
         ]
       },
@@ -1759,12 +1815,12 @@
         "description": "Response body schema for **PUT** `/customers/{customerId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           }
         ]
       },
-      "CustomerRequest": {
-        "title": "Customer Request",
+      "Customer": {
+        "title": "Customer",
         "allOf": [
           {
             "type": "object",
@@ -1785,7 +1841,7 @@
           }
         ]
       },
-      "CustomerIdResponse": {
+      "CustomerId": {
         "title": "Customer Id",
         "type": "object",
         "properties": {
@@ -1812,12 +1868,12 @@
         "title": "Customers Create Response Body",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           }
         ]
       },
-      "CustomerResponse": {
-        "title": "Customer Response",
+      "CustomerWithSummaryLoyaltyReferrals": {
+        "title": "Customer With Summary Loyalty Referrals",
         "allOf": [
           {
             "type": "object",
@@ -1833,15 +1889,27 @@
               },
               "summary": {
                 "nullable": true,
-                "$ref": "#/components/schemas/CustomerSummary"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerSummary"
+                  }
+                ]
               },
               "loyalty": {
                 "nullable": true,
-                "$ref": "#/components/schemas/CustomerLoyalty"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerLoyalty"
+                  }
+                ]
               },
               "referrals": {
                 "nullable": true,
-                "$ref": "#/components/schemas/CustomerReferrals"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CustomerReferrals"
+                  }
+                ]
               },
               "system_metadata": {
                 "type": "object",
@@ -2151,9 +2219,9 @@
           }
         }
       },
-      "OrderItemRequest": {
+      "OrderItem": {
         "type": "object",
-        "title": "Order Item Request",
+        "title": "Order Item",
         "properties": {
           "sku_id": {
             "type": "string",
@@ -2324,9 +2392,9 @@
           }
         }
       },
-      "OrderItemResponse": {
+      "OrderItemCalculated": {
         "type": "object",
-        "title": "Order Item Response",
+        "title": "Order Item Calculated",
         "properties": {
           "sku_id": {
             "type": "string",
@@ -2510,12 +2578,20 @@
             "description": "Voucher code."
           },
           "applicable_to": {
-            "$ref": "#/components/schemas/ApplicableToResultList",
-            "description": "Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted."
+            "description": "Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ApplicableToResultList"
+              }
+            ]
           },
           "inapplicable_to": {
-            "$ref": "#/components/schemas/InapplicableToResultList",
-            "description": "Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted."
+            "description": "Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InapplicableToResultList"
+              }
+            ]
           },
           "campaign": {
             "type": "string",
@@ -2534,7 +2610,11 @@
           },
           "gift": {
             "description": "Gift object response",
-            "$ref": "#/components/schemas/Gift"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Gift"
+              }
+            ]
           },
           "loyalty": {
             "type": "object",
@@ -2575,11 +2655,15 @@
             ]
           },
           "order": {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "session": {
-            "$ref": "#/components/schemas/Session",
-            "description": "Schema model for session lock object. The session object contains information about the session key that was used to establish a session between multiple parallel validation and redemption requests.\n\n\n"
+            "description": "Schema model for session lock object. The session object contains information about the session key that was used to establish a session between multiple parallel validation and redemption requests.\n\n\n",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Session"
+              }
+            ]
           },
           "start_date": {
             "type": "string",
@@ -2737,16 +2821,24 @@
             "type": "string"
           },
           "effect": {
-            "$ref": "#/components/schemas/DiscountUnitVouchersEffectTypes",
-            "description": "Defines how the unit is added to the customer's order."
+            "description": "Defines how the unit is added to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DiscountUnitVouchersEffectTypes"
+              }
+            ]
           },
           "unit_type": {
             "type": "string",
             "description": "The product deemed as free, chosen from product inventory (e.g. time, items)."
           },
           "product": {
-            "$ref": "#/components/schemas/SimpleProductDiscountUnit",
-            "description": "Contains information about the product."
+            "description": "Contains information about the product.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleProductDiscountUnit"
+              }
+            ]
           },
           "sku": {
             "$ref": "#/components/schemas/SimpleSkuDiscountUnit"
@@ -2815,12 +2907,20 @@
             "description": "The product deemed as free, chosen from product inventory (e.g. time, items)."
           },
           "product": {
-            "$ref": "#/components/schemas/SimpleProductDiscountUnit",
-            "description": "Contains information about the product."
+            "description": "Contains information about the product.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleProductDiscountUnit"
+              }
+            ]
           },
           "sku": {
-            "$ref": "#/components/schemas/SimpleSkuDiscountUnit",
-            "description": "Contains information about the sku."
+            "description": "Contains information about the sku.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleSkuDiscountUnit"
+              }
+            ]
           }
         },
         "required": [
@@ -2851,8 +2951,12 @@
             "description": "Maximum discount amount per order."
           },
           "effect": {
-            "$ref": "#/components/schemas/DiscountAmountVouchersEffectTypes",
-            "description": "Defines how the discount is applied to the customer's order."
+            "description": "Defines how the discount is applied to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DiscountAmountVouchersEffectTypes"
+              }
+            ]
           },
           "is_dynamic": {
             "type": "boolean",
@@ -2891,8 +2995,12 @@
             "description": "Maximum discount amount per order."
           },
           "effect": {
-            "$ref": "#/components/schemas/DiscountPercentVouchersEffectTypes",
-            "description": "Defines how the discount is applied to the customer's order."
+            "description": "Defines how the discount is applied to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DiscountPercentVouchersEffectTypes"
+              }
+            ]
           },
           "is_dynamic": {
             "type": "boolean",
@@ -2923,8 +3031,12 @@
             "type": "string"
           },
           "effect": {
-            "$ref": "#/components/schemas/DiscountFixedVouchersEffectTypes",
-            "description": "Defines how the discount is applied to the customer's order."
+            "description": "Defines how the discount is applied to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DiscountFixedVouchersEffectTypes"
+              }
+            ]
           },
           "is_dynamic": {
             "type": "boolean",
@@ -5123,7 +5235,9 @@
           },
           "data": {
             "type": "array",
-            "$ref": "#/components/schemas/VoucherTransaction",
+            "items": {
+              "$ref": "#/components/schemas/VoucherTransaction"
+            },
             "description": "A dictionary that contains an array of transactions. Each entry in the array is a separate transaction object."
           },
           "has_more": {
@@ -5144,8 +5258,12 @@
         "description": "Request body schema for **POST** `/vouchers/transactions/export`.",
         "properties": {
           "parameters": {
-            "$ref": "#/components/schemas/VoucherTransactionsExportParameters",
-            "description": "Contains the parameters that define the data to be exported."
+            "description": "Contains the parameters that define the data to be exported.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VoucherTransactionsExportParameters"
+              }
+            ]
           }
         }
       },
@@ -6232,16 +6350,28 @@
             "description": "Type of voucher."
           },
           "discount": {
-            "$ref": "#/components/schemas/Discount",
-            "description": "Defines the voucher discount type and details."
+            "description": "Defines the voucher discount type and details.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Discount"
+              }
+            ]
           },
           "gift": {
-            "$ref": "#/components/schemas/Gift",
-            "description": "Defines the voucher gift details."
+            "description": "Defines the voucher gift details.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Gift"
+              }
+            ]
           },
           "loyalty_card": {
-            "$ref": "#/components/schemas/CampaignLoyaltyCard",
-            "description": "Defines the voucher loyalty card details."
+            "description": "Defines the voucher loyalty card details.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CampaignLoyaltyCard"
+              }
+            ]
           },
           "redemption": {
             "type": "object",
@@ -6258,7 +6388,7 @@
             ]
           },
           "code_config": {
-            "$ref": "#/components/schemas/CodeConfigResponse"
+            "$ref": "#/components/schemas/CodeConfigRequiredLengthCharsetPattern"
           },
           "is_referral_code": {
             "type": "boolean",
@@ -6329,8 +6459,8 @@
           }
         }
       },
-      "CodeConfigResponse": {
-        "title": "Code Config Response",
+      "CodeConfigRequiredLengthCharsetPattern": {
+        "title": "Code Config Required Length Charset Pattern",
         "allOf": [
           {
             "$ref": "#/components/schemas/CodeConfig"
@@ -6829,8 +6959,12 @@
             "description": "Body schema for update a campaign of discount coupons type using **PUT** `/campaigns`.",
             "properties": {
               "discount": {
-                "$ref": "#/components/schemas/Discount",
-                "description": "Defines the voucher discount type and details."
+                "description": "Defines the voucher discount type and details.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Discount"
+                  }
+                ]
               }
             }
           }
@@ -6849,8 +6983,12 @@
             "description": "Body schema for update a campaign of give type using **PUT** `/campaigns`.",
             "properties": {
               "gift": {
-                "$ref": "#/components/schemas/Gift",
-                "description": "Defines the voucher gift details."
+                "description": "Defines the voucher gift details.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Gift"
+                  }
+                ]
               }
             }
           }
@@ -6869,8 +7007,12 @@
             "description": "Body schema for update a campaign of referral type using **PUT** `/campaigns`.",
             "properties": {
               "discount": {
-                "$ref": "#/components/schemas/Discount",
-                "description": "Defines the voucher discount type and details."
+                "description": "Defines the voucher discount type and details.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Discount"
+                  }
+                ]
               },
               "referral_program": {
                 "$ref": "#/components/schemas/ReferralProgram"
@@ -6915,10 +7057,13 @@
             "$ref": "#/components/schemas/CampaignsUpdateCouponCampaignBase"
           },
           {
-            "type": "object",
             "title": "Properties For Giveaway Campaign",
             "description": "Body schema for update a campaign of giveaway type using **PUT** `/campaigns`.",
-            "$ref": "#/components/schemas/LuckyDraw"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LuckyDraw"
+              }
+            ]
           }
         ]
       },
@@ -7215,16 +7360,28 @@
             "description": "An optional field to keep any extra textual information about the code such as a code description and details."
           },
           "discount": {
-            "$ref": "#/components/schemas/Discount",
-            "description": "Defines the voucher discount type and details."
+            "description": "Defines the voucher discount type and details.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Discount"
+              }
+            ]
           },
           "gift": {
-            "$ref": "#/components/schemas/Gift",
-            "description": "Defines the voucher gift details."
+            "description": "Defines the voucher gift details.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Gift"
+              }
+            ]
           },
           "loyalty_card": {
-            "$ref": "#/components/schemas/CampaignsImportVoucherLoyaltyCard",
-            "description": "Defines the voucher loyalty card details."
+            "description": "Defines the voucher loyalty card details.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CampaignsImportVoucherLoyaltyCard"
+              }
+            ]
           }
         },
         "required": [
@@ -9481,7 +9638,11 @@
           },
           "customer": {
             "description": "Contains information about the customer to whom the publication was directed.",
-            "$ref": "#/components/schemas/CustomerRequest"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
           },
           "metadata": {
             "type": "object",
@@ -9636,7 +9797,7 @@
             "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service. "
           },
           "customer": {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           },
           "vouchers_id": {
             "type": "array",
@@ -9708,7 +9869,11 @@
           },
           "gift": {
             "description": "Gift object response",
-            "$ref": "#/components/schemas/Gift"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Gift"
+              }
+            ]
           },
           "loyalty_card": {
             "description": "Defines the loyalty card details.",
@@ -9849,7 +10014,7 @@
             "description": "Status of the publication attempt."
           },
           "customer": {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           },
           "vouchers_id": {
             "type": "array",
@@ -12176,8 +12341,12 @@
             "example": "cat_0c9da30e7116ba6bba"
           },
           "categories": {
-            "$ref": "#/components/schemas/Category",
-            "description": "Details about the category assigned to the promotion tier."
+            "description": "Details about the category assigned to the promotion tier.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Category"
+              }
+            ]
           }
         }
       },
@@ -13009,16 +13178,28 @@
             }
           },
           "order": {
-            "$ref": "#/components/schemas/OrderRequest",
-            "description": "Order information."
+            "description": "Order information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Order"
+              }
+            ]
           },
           "customer": {
-            "$ref": "#/components/schemas/CustomerRequest",
-            "description": "Customer's information."
+            "description": "Customer's information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
           },
           "session": {
-            "$ref": "#/components/schemas/Session",
-            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session."
+            "description": "Schema model for session lock object. The session object is required to establish a session between multiple parallel validation and redemption requests. If you only send the type parameter in the request, then by default the session lock will be established for 7 days. Read more on establishing a validation session.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Session"
+              }
+            ]
           },
           "tracking_id": {
             "description": "Is correspondent to Customer's source_id",
@@ -13136,7 +13317,7 @@
             ]
           },
           "order": {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "applicable_to": {
             "$ref": "#/components/schemas/ApplicableTo"
@@ -13266,7 +13447,7 @@
             }
           },
           "order": {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "tracking_id": {
             "type": "string",
@@ -13321,7 +13502,7 @@
             }
           },
           "order": {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "tracking_id": {
             "type": "string",
@@ -14018,7 +14199,11 @@
           },
           "order": {
             "description": "Contains the order details associated with the redemption.",
-            "$ref": "#/components/schemas/OrderResponse"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              }
+            ]
           },
           "inapplicable_redeemables": {
             "type": "array",
@@ -14476,7 +14661,11 @@
           },
           "redemptions": {
             "description": "Lists details related to the redemption.",
-            "$ref": "#/components/schemas/10_obj_order_object_unstacked_redemptions"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/10_obj_order_object_unstacked_redemptions"
+              }
+            ]
           }
         }
       },
@@ -14690,7 +14879,11 @@
           },
           "redemptions": {
             "description": "Lists details related to the redemption.",
-            "$ref": "#/components/schemas/10_obj_order_object_unstacked_redemptions"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/10_obj_order_object_unstacked_redemptions"
+              }
+            ]
           }
         }
       },
@@ -14912,7 +15105,11 @@
           },
           "redemptions": {
             "description": "Lists details related to the redemption",
-            "$ref": "#/components/schemas/10_obj_order_object_stacked_redemptions"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/10_obj_order_object_stacked_redemptions"
+              }
+            ]
           }
         }
       },
@@ -14976,7 +15173,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption.",
-            "$ref": "#/components/schemas/7_obj_order_object"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -15041,8 +15242,12 @@
             "description": "Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher."
           },
           "voucher": {
-            "$ref": "#/components/schemas/Voucher",
-            "description": "Defines the details of the voucher being redeemed."
+            "description": "Defines the details of the voucher being redeemed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Voucher"
+              }
+            ]
           }
         }
       },
@@ -15169,7 +15374,11 @@
           },
           "order": {
             "nullable": true,
-            "$ref": "#/components/schemas/OrderResponseNoCustomerData"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -15192,7 +15401,11 @@
           },
           "customer": {
             "nullable": true,
-            "$ref": "#/components/schemas/SimpleCustomer"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleCustomer"
+              }
+            ]
           },
           "related_object_type": {
             "type": "string",
@@ -15208,12 +15421,20 @@
             "description": "Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher."
           },
           "voucher": {
-            "$ref": "#/components/schemas/Voucher",
-            "description": "Defines the details of the voucher being redeemed."
+            "description": "Defines the details of the voucher being redeemed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Voucher"
+              }
+            ]
           },
           "promotion_tier": {
             "description": "Contains details of the promotion tier and the parent campaign.",
-            "$ref": "#/components/schemas/PromotionTier"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PromotionTier"
+              }
+            ]
           },
           "reward": {
             "$ref": "#/components/schemas/RedemptionRewardResult"
@@ -15375,8 +15596,12 @@
             "description": "If the result is `FAILURE`, this parameter will provide a more expanded reason as to why the redemption failed."
           },
           "order": {
-            "$ref": "#/components/schemas/OrderResponseNoCustomerData",
-            "nullable": true
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -15398,8 +15623,12 @@
             }
           },
           "customer": {
-            "$ref": "#/components/schemas/SimpleCustomer",
-            "nullable": true
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleCustomer"
+              }
+            ]
           },
           "related_object_type": {
             "type": "string",
@@ -15415,12 +15644,20 @@
             "description": "Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher."
           },
           "voucher": {
-            "$ref": "#/components/schemas/Voucher",
-            "description": "Defines the details of the voucher being redeemed."
+            "description": "Defines the details of the voucher being redeemed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Voucher"
+              }
+            ]
           },
           "promotion_tier": {
             "description": "Contains details of the promotion tier and the parent campaign.",
-            "$ref": "#/components/schemas/PromotionTier"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PromotionTier"
+              }
+            ]
           },
           "reward": {
             "$ref": "#/components/schemas/RedemptionRewardResult"
@@ -15515,10 +15752,10 @@
             "description": "If the result is `FAILURE`, this parameter will provide a more expanded reason as to why the redemption failed."
           },
           "order": {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "previous_order": {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "reward": {
             "$ref": "#/components/schemas/RedemptionRewardResult"
@@ -15631,12 +15868,20 @@
             "description": "Campaign name"
           },
           "voucher": {
-            "$ref": "#/components/schemas/Voucher",
-            "description": "Defines the details of the voucher being redeemed."
+            "description": "Defines the details of the voucher being redeemed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Voucher"
+              }
+            ]
           },
           "promotion_tier": {
             "description": "Contains details of the promotion tier and the parent campaign.",
-            "$ref": "#/components/schemas/PromotionTier"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PromotionTier"
+              }
+            ]
           }
         }
       },
@@ -15689,8 +15934,12 @@
             "description": "Redemption result."
           },
           "voucher": {
-            "$ref": "#/components/schemas/SimpleVoucher",
-            "description": "Defines the details of the voucher being redeemed."
+            "description": "Defines the details of the voucher being redeemed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleVoucher"
+              }
+            ]
           },
           "promotion_tier": {
             "$ref": "#/components/schemas/SimplePromotionTier"
@@ -15756,7 +16005,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption.",
-            "$ref": "#/components/schemas/7_obj_order_object"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -15821,8 +16074,12 @@
             "description": "Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher."
           },
           "voucher": {
-            "$ref": "#/components/schemas/Voucher",
-            "description": "Defines the details of the voucher being redeemed."
+            "description": "Defines the details of the voucher being redeemed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Voucher"
+              }
+            ]
           },
           "reward": {
             "description": "Defines the reward being redeemed.",
@@ -15902,7 +16159,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption.",
-            "$ref": "#/components/schemas/7_obj_order_object"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -15967,8 +16228,12 @@
             "description": "Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher."
           },
           "voucher": {
-            "$ref": "#/components/schemas/Voucher",
-            "description": "Defines the details of the voucher being redeemed."
+            "description": "Defines the details of the voucher being redeemed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Voucher"
+              }
+            ]
           },
           "gift": {
             "type": "object",
@@ -16031,7 +16296,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption.",
-            "$ref": "#/components/schemas/7_obj_order_object"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -16174,7 +16443,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption rollback.",
-            "$ref": "#/components/schemas/7_obj_order_object_rollback"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object_rollback"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -16317,7 +16590,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption rollback.",
-            "$ref": "#/components/schemas/7_obj_order_object_rollback"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object_rollback"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -16487,7 +16764,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption.",
-            "$ref": "#/components/schemas/7_obj_order_object"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -16744,7 +17025,11 @@
           },
           "product": {
             "description": "Details of the product redeemed as a reward.",
-            "$ref": "#/components/schemas/Product"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Product"
+              }
+            ]
           },
           "id": {
             "type": "string",
@@ -16846,11 +17131,19 @@
           },
           "product": {
             "description": "Details of the SKU's parent product redeemed as a reward.",
-            "$ref": "#/components/schemas/Product"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Product"
+              }
+            ]
           },
           "sku": {
             "description": "Details of the SKU redeemed as a reward.",
-            "$ref": "#/components/schemas/Sku"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Sku"
+              }
+            ]
           },
           "id": {
             "type": "string",
@@ -16950,8 +17243,12 @@
             "description": "Unique reward assginment ID assigned by Voucherify."
           },
           "voucher": {
-            "$ref": "#/components/schemas/Voucher",
-            "description": "Voucher object."
+            "description": "Voucher object.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Voucher"
+              }
+            ]
           },
           "id": {
             "type": "string",
@@ -17132,7 +17429,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption rollback.",
-            "$ref": "#/components/schemas/7_obj_order_object_rollback"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object_rollback"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -17285,7 +17586,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption.",
-            "$ref": "#/components/schemas/7_obj_order_object"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -18133,7 +18438,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption rollback.",
-            "$ref": "#/components/schemas/7_obj_order_object_rollback"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object_rollback"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -18274,7 +18583,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption.",
-            "$ref": "#/components/schemas/7_obj_order_object"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -18411,7 +18724,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption.",
-            "$ref": "#/components/schemas/7_obj_order_object"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -18481,7 +18798,11 @@
           },
           "promotion_tier": {
             "description": "Contains details of the promotion tier and the parent campaign.",
-            "$ref": "#/components/schemas/PromotionTier"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PromotionTier"
+              }
+            ]
           }
         }
       },
@@ -18530,7 +18851,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption.",
-            "$ref": "#/components/schemas/7_obj_order_object_stacked_redemptions"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object_stacked_redemptions"
+              }
+            ]
           },
           "channel": {
             "type": "object",
@@ -18714,8 +19039,12 @@
       },
       "7_res_redeem_voucher": {
         "title": "Redeem Voucher Response Body",
-        "$ref": "#/components/schemas/7_obj_redemption_object_voucher_extended",
-        "description": "Response body schema for **POST** `/vouchers/{code}/redemption`."
+        "description": "Response body schema for **POST** `/vouchers/{code}/redemption`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/7_obj_redemption_object_voucher_extended"
+          }
+        ]
       },
       "7_req_redeem_promotion_tier": {
         "title": "Redeem Promotion Tier",
@@ -22110,7 +22439,11 @@
           },
           "order": {
             "description": "Defines the details of the order that is related to the redemption.",
-            "$ref": "#/components/schemas/7_obj_order_object"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/7_obj_order_object"
+              }
+            ]
           },
           "customer": {
             "type": "object",
@@ -22156,8 +22489,12 @@
             "description": "Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher."
           },
           "voucher": {
-            "$ref": "#/components/schemas/Voucher",
-            "description": "Defines the details of the voucher being redeemed."
+            "description": "Defines the details of the voucher being redeemed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Voucher"
+              }
+            ]
           },
           "reward": {
             "description": "Defines the reward being redeemed.",
@@ -22700,7 +23037,7 @@
             "type": "array",
             "description": "Contains array of customer objects.",
             "items": {
-              "$ref": "#/components/schemas/CustomerResponse"
+              "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
             }
           },
           "total": {
@@ -22720,7 +23057,7 @@
         "description": "Response body schema for **GET** `/customers/{customerId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           }
         ]
       },
@@ -22810,7 +23147,11 @@
           },
           "gift": {
             "description": "Gift object response",
-            "$ref": "#/components/schemas/Gift"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Gift"
+              }
+            ]
           },
           "discount": {
             "$ref": "#/components/schemas/Discount"
@@ -23374,7 +23715,7 @@
         "type": "object",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           },
           "unconfirmed_customer": {
             "type": "object",
@@ -23393,7 +23734,7 @@
         "type": "object",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           }
         }
       },
@@ -23403,7 +23744,7 @@
         "type": "object",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           }
         }
       },
@@ -23413,7 +23754,7 @@
         "type": "object",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           }
         }
       },
@@ -23454,7 +23795,7 @@
         "type": "object",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           }
         },
         "additionalProperties": true,
@@ -23468,7 +23809,7 @@
         "type": "object",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           },
           "segment": {
             "$ref": "#/components/schemas/SimpleSegment"
@@ -23485,7 +23826,7 @@
         "type": "object",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/CustomerResponse"
+            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           },
           "segment": {
             "$ref": "#/components/schemas/SimpleSegment"
@@ -23803,7 +24144,7 @@
             "type": "integer"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "event": {
             "type": "object"
@@ -24107,7 +24448,7 @@
             "$ref": "#/components/schemas/SimpleCustomer"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "redemption": {
             "$ref": "#/components/schemas/RedemptionInternal"
@@ -24501,7 +24842,7 @@
         "description": "Response body schema for **PUT** `/orders/{orderId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           }
         ]
       },
@@ -24511,7 +24852,7 @@
         "description": "Response body schema for **POST** `/orders`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           }
         ]
       },
@@ -24609,7 +24950,7 @@
             "type": "array",
             "description": "Contains array of order objects.",
             "items": {
-              "$ref": "#/components/schemas/OrderResponseNoCustomerData"
+              "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
             }
           },
           "total": {
@@ -24630,7 +24971,7 @@
         "description": "Request body schema for **POST** `/orders`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/OrderRequest"
+            "$ref": "#/components/schemas/Order"
           }
         ]
       },
@@ -24640,7 +24981,7 @@
         "description": "Request body schema for **PUT** `/orders/{orderId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/OrderRequestBase"
+            "$ref": "#/components/schemas/OrderBase"
           }
         ]
       },
@@ -25650,167 +25991,59 @@
           }
         }
       },
-      "ValidationRuleResponse": {
-        "title": "Validation Rule Response",
-        "type": "object",
-        "description": "This is an object representing a response validation rule.",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "val_eR1c41hu0vUU",
-            "description": "Unique validation rule ID."
+      "ValidationRule": {
+        "title": "Validation Rule",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ValidationRuleBase"
           },
-          "name": {
-            "type": "string",
-            "description": "Custom, unique name for set of validation rules.",
-            "example": "Business Validation Rule"
-          },
-          "rules": {
-            "$ref": "#/components/schemas/ValidationRuleRules"
-          },
-          "error": {
+          {
+            "title": "Validation Rule",
             "type": "object",
-            "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rules.",
+            "description": "This is an object representing a response validation rule.",
             "properties": {
-              "message": {
+              "id": {
                 "type": "string",
-                "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rules."
-              }
-            }
-          },
-          "applicable_to": {
-            "type": "object",
-            "nullable": true,
-            "properties": {
-              "excluded": {
-                "type": "array",
-                "description": "Defines which items are excluded from a discount.",
-                "items": {
-                  "$ref": "#/components/schemas/ApplicableTo"
-                }
+                "example": "val_eR1c41hu0vUU",
+                "description": "Unique validation rule ID."
               },
-              "included": {
-                "type": "array",
-                "description": "Defines which items are included in a discount.",
-                "items": {
-                  "$ref": "#/components/schemas/ApplicableTo"
-                }
+              "created_at": {
+                "type": "string",
+                "example": "2022-03-23T07:44:00.444Z",
+                "description": "Timestamp representing the date and time when the validation rule was created in ISO 8601 format.",
+                "format": "date-time"
               },
-              "included_all": {
-                "type": "boolean",
-                "description": "Indicates whether all items are included in the discount."
+              "updated_at": {
+                "type": "string",
+                "example": "2022-04-26T08:35:54.960Z",
+                "description": "Timestamp representing the date and time when the validation rule was updated in ISO 8601 format.",
+                "format": "date-time"
+              },
+              "assignments_count": {
+                "description": "The number of instances the validation rule has been assigned to different types of redeemables.",
+                "type": "integer"
+              },
+              "object": {
+                "type": "string",
+                "default": "validation_rules",
+                "description": "The type of object represented by JSON. This object stores information about the validation rule."
               }
-            }
-          },
-          "created_at": {
-            "type": "string",
-            "example": "2022-03-23T07:44:00.444Z",
-            "description": "Timestamp representing the date and time when the validation rule was created in ISO 8601 format.",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "example": "2022-04-26T08:35:54.960Z",
-            "description": "Timestamp representing the date and time when the validation rule was updated in ISO 8601 format.",
-            "format": "date-time"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "expression",
-              "basic",
-              "advanced",
-              "complex"
-            ],
-            "description": "Type of validation rule."
-          },
-          "context_type": {
-            "type": "string",
-            "default": "global",
-            "enum": [
-              "earning_rule.order.paid",
-              "earning_rule.custom_event",
-              "earning_rule.customer.segment.entered",
-              "earning_rule.customer.tier.joined",
-              "earning_rule.customer.tier.left",
-              "earning_rule.customer.tier.upgraded",
-              "earning_rule.customer.tier.downgraded",
-              "earning_rule.customer.tier.prolonged",
-              "campaign.discount_coupons",
-              "campaign.discount_coupons.discount.apply_to_order",
-              "campaign.discount_coupons.discount.apply_to_items",
-              "campaign.discount_coupons.discount.apply_to_items_proportionally",
-              "campaign.discount_coupons.discount.apply_to_items_proportionally_by_quantity",
-              "campaign.discount_coupons.discount.apply_to_items_by_quantity",
-              "campaign.discount_coupons.discount.fixed.apply_to_items",
-              "campaign.discount_coupons.discount.percent.apply_to_items",
-              "campaign.gift_vouchers",
-              "campaign.gift_vouchers.gift.apply_to_order",
-              "campaign.gift_vouchers.gift.apply_to_items",
-              "campaign.referral_program",
-              "campaign.referral_program.discount.apply_to_order",
-              "campaign.referral_program.discount.apply_to_items",
-              "campaign.referral_program.discount.apply_to_items_proportionally",
-              "campaign.referral_program.discount.apply_to_items_proportionally_by_quantity",
-              "campaign.referral_program.discount.apply_to_items_by_quantity",
-              "campaign.referral_program.discount.fixed.apply_to_items",
-              "campaign.referral_program.discount.percent.apply_to_items",
-              "campaign.promotion",
-              "campaign.promotion.discount.apply_to_order",
-              "campaign.promotion.discount.apply_to_items",
-              "campaign.promotion.discount.apply_to_items_proportionally",
-              "campaign.promotion.discount.apply_to_items_proportionally_by_quantity",
-              "campaign.promotion.discount.apply_to_items_by_quantity",
-              "campaign.promotion.discount.fixed.apply_to_items",
-              "campaign.promotion.discount.percent.apply_to_items",
-              "campaign.loyalty_program",
-              "campaign.lucky_draw",
-              "voucher.discount_voucher",
-              "voucher.discount_voucher.discount.apply_to_order",
-              "voucher.discount_voucher.discount.apply_to_items",
-              "voucher.discount_voucher.discount.apply_to_items_proportionally",
-              "voucher.discount_voucher.discount.apply_to_items_proportionally_by_quantity",
-              "voucher.discount_voucher.discount.apply_to_items_by_quantity",
-              "voucher.discount_voucher.discount.fixed.apply_to_items",
-              "voucher.discount_voucher.discount.percent.apply_to_items",
-              "voucher.gift_voucher",
-              "voucher.gift_voucher.gift.apply_to_order",
-              "voucher.gift_voucher.gift.apply_to_items",
-              "voucher.loyalty_card",
-              "voucher.lucky_draw_code",
-              "distribution.custom_event",
-              "distribution.order.paid",
-              "distribution.order.created",
-              "distribution.order.canceled",
-              "distribution.order.updated",
-              "reward_assignment.pay_with_points",
-              "global"
-            ],
-            "description": "Validation rule context type.  \n\n| **Context Type** | **Definition** |\n|:---|:---|\n| earning_rule.order.paid |  |\n| earning_rule.custom_event |  |\n| earning_rule.customer.segment.entered |  |\n| campaign.discount_coupons |  |\n| campaign.discount_coupons.discount.apply_to_order |  |\n| campaign.discount_coupons.discount.apply_to_items |  |\n| campaign.discount_coupons.discount.apply_to_items_proportionally |  |\n| campaign.discount_coupons.discount.apply_to_items_proportionally_by_quantity |  |\n| campaign.discount_coupons.discount.fixed.apply_to_items |  |\n| campaign.gift_vouchers |  |\n| campaign.gift_vouchers.gift.apply_to_order |  |\n| campaign.gift_vouchers.gift.apply_to_items |  |\n| campaign.referral_program |  |\n| campaign.referral_program.discount.apply_to_order |  |\n| campaign.referral_program.discount.apply_to_items |  |\n| campaign.referral_program.discount.apply_to_items_proportionally |  |\n| campaign.referral_program.discount.apply_to_items_proportionally_by_quantity |  |\n| campaign.referral_program.discount.fixed.apply_to_items |  |\n| campaign.promotion |  |\n| campaign.promotion.discount.apply_to_order |  |\n| campaign.promotion.discount.apply_to_items |  |\n| campaign.promotion.discount.apply_to_items_proportionally |  |\n| campaign.promotion.discount.apply_to_items_proportionally_by_quantity |  |\n| campaign.promotion.discount.fixed.apply_to_items |  |\n| campaign.loyalty_program |  |\n| campaign.lucky_draw |  |\n| voucher.discount_voucher |  |\n| voucher.discount_voucher.discount.apply_to_order |  |\n| voucher.discount_voucher.discount.apply_to_items |  |\n| voucher.discount_voucher.discount.apply_to_items_proportionally |  |\n| voucher.discount_voucher.discount.apply_to_items_proportionally_by_quantity |  |\n| voucher.discount_voucher.discount.fixed.apply_to_items |  |\n| voucher.gift_voucher |  |\n| voucher.gift_voucher.gift.apply_to_order |  |\n| voucher.gift_voucher.gift.apply_to_items |  |\n| voucher.loyalty_card |  |\n| voucher.lucky_draw_code |  |\n| distribution.custom_event |  |\n| reward_assignment.pay_with_points |  |\n| global |  |"
-          },
-          "assignments_count": {
-            "description": "The number of instances the validation rule has been assigned to different types of redeemables.",
-            "type": "integer"
-          },
-          "object": {
-            "type": "string",
-            "default": "validation_rules",
-            "description": "The type of object represented by JSON. This object stores information about the validation rule."
+            },
+            "required": [
+              "id",
+              "name",
+              "rules",
+              "applicable_to",
+              "created_at",
+              "type",
+              "context_type",
+              "object"
+            ]
           }
-        },
-        "required": [
-          "id",
-          "name",
-          "rules",
-          "applicable_to",
-          "created_at",
-          "type",
-          "context_type",
-          "object"
         ]
       },
-      "ValidationRuleRequest": {
-        "title": "Validation Rule Request",
+      "ValidationRuleBase": {
+        "title": "Validation Rule Base",
         "type": "object",
         "description": "This is an object representing a request validation rule.",
         "properties": {
@@ -25938,7 +26171,7 @@
         "description": "Response body schema for **POST** `/validation-rules`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ValidationRuleResponse"
+            "$ref": "#/components/schemas/ValidationRule"
           }
         ]
       },
@@ -25948,7 +26181,7 @@
         "description": "Response body schema for **GET** `/validation-rules/{validationRuleId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ValidationRuleResponse"
+            "$ref": "#/components/schemas/ValidationRule"
           }
         ]
       },
@@ -25958,7 +26191,7 @@
         "description": "Response body schema for **PUT** `/validation-rules/{validationRuleId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ValidationRuleResponse"
+            "$ref": "#/components/schemas/ValidationRule"
           }
         ]
       },
@@ -25967,7 +26200,7 @@
         "description": "Request body schema for **POST** `/validation-rules`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ValidationRuleRequest"
+            "$ref": "#/components/schemas/ValidationRuleBase"
           },
           {
             "type": "object",
@@ -25982,7 +26215,7 @@
         "description": "Response body schema for **PUT** `/validation-rules/{validationRuleId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ValidationRuleRequest"
+            "$ref": "#/components/schemas/ValidationRuleBase"
           }
         ]
       },
@@ -26005,7 +26238,7 @@
             "type": "array",
             "description": "An array of validation rules.",
             "items": {
-              "$ref": "#/components/schemas/ValidationRuleResponse"
+              "$ref": "#/components/schemas/ValidationRule"
             }
           },
           "total": {
@@ -26415,9 +26648,12 @@
             "description": "The event name."
           },
           "customer": {
-            "type": "object",
             "description": "A simple customer object",
-            "$ref": "#/components/schemas/SimpleCustomerResponse"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleCustomerRequiredObjectType"
+              }
+            ]
           },
           "referral": {
             "type": "object",
@@ -26466,11 +26702,19 @@
         "properties": {
           "reward": {
             "nullable": true,
-            "$ref": "#/components/schemas/Reward"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Reward"
+              }
+            ]
           },
           "customer": {
             "nullable": true,
-            "$ref": "#/components/schemas/SimpleCustomer"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleCustomer"
+              }
+            ]
           },
           "assignment_id": {
             "type": "string",
@@ -26479,18 +26723,30 @@
           },
           "voucher": {
             "nullable": true,
-            "$ref": "#/components/schemas/Voucher",
-            "description": "Defines of the voucher."
+            "description": "Defines of the voucher.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Voucher"
+              }
+            ]
           },
           "product": {
             "nullable": true,
-            "$ref": "#/components/schemas/Product",
-            "description": "Defines of the product."
+            "description": "Defines of the product.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Product"
+              }
+            ]
           },
           "sku": {
             "nullable": true,
-            "$ref": "#/components/schemas/Sku",
-            "description": "Defines of the sku."
+            "description": "Defines of the sku.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Sku"
+              }
+            ]
           },
           "loyalty_tier_id": {
             "type": "string",
@@ -26521,15 +26777,27 @@
           },
           "voucher": {
             "description": "Defines of the voucher.",
-            "$ref": "#/components/schemas/SimpleVoucher"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleVoucher"
+              }
+            ]
           },
           "product": {
             "description": "Defines of the product.",
-            "$ref": "#/components/schemas/SimpleProduct"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleProduct"
+              }
+            ]
           },
           "sku": {
             "description": "Defines of the sku.",
-            "$ref": "#/components/schemas/SimpleSku"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleSku"
+              }
+            ]
           },
           "loyalty_tier_id": {
             "type": "string",
@@ -29162,7 +29430,7 @@
             "description": "This identifier is generated during voucher qualification based on your internal id (e.g., email, database ID). This is a hashed customer source ID."
           },
           "order": {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "stacking_rules": {
             "$ref": "#/components/schemas/QualificationsStackingRules"
@@ -29226,12 +29494,20 @@
         "description": "Request body schema for **POST** `/qualifications`.",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/CustomerRequest",
-            "description": "Customer's information."
+            "description": "Customer's information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
           },
           "order": {
-            "$ref": "#/components/schemas/OrderRequest",
-            "description": "Order information."
+            "description": "Order information.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Order"
+              }
+            ]
           },
           "mode": {
             "type": "string",
@@ -29337,8 +29613,12 @@
         "type": "object",
         "properties": {
           "conditions": {
-            "$ref": "#/components/schemas/QualificationsFiltersCondition",
-            "description": "Data filters used to narrow the data records to be returned in the result."
+            "description": "Data filters used to narrow the data records to be returned in the result.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QualificationsFiltersCondition"
+              }
+            ]
           }
         }
       },
@@ -29447,19 +29727,27 @@
             "$ref": "#/components/schemas/RedeemableResult"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "validation_rule_id": {
             "type": "string",
             "description": "A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance."
           },
           "applicable_to": {
-            "$ref": "#/components/schemas/ApplicableToResultList",
-            "description": "Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted."
+            "description": "Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ApplicableToResultList"
+              }
+            ]
           },
           "inapplicable_to": {
-            "$ref": "#/components/schemas/InapplicableToResultList",
-            "description": "Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted."
+            "description": "Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InapplicableToResultList"
+              }
+            ]
           },
           "metadata": {
             "type": "object",
@@ -29645,11 +29933,19 @@
           },
           "loyalty_card": {
             "description": "Loyalty Card object response",
-            "$ref": "#/components/schemas/RedeemableLoyaltyCard"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RedeemableLoyaltyCard"
+              }
+            ]
           },
           "error": {
             "description": "Error in result",
-            "$ref": "#/components/schemas/Error"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Error"
+              }
+            ]
           }
         }
       },
@@ -29965,8 +30261,12 @@
             ]
           },
           "event": {
-            "$ref": "#/components/schemas/EarningRuleEvent",
-            "description": "Defines the event which triggers the earning rule to add points to a loyalty card."
+            "description": "Defines the event which triggers the earning rule to add points to a loyalty card.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleEvent"
+              }
+            ]
           },
           "custom_event": {
             "type": "object",
@@ -30713,8 +31013,12 @@
             "description": "Reason why the transaction occurred. In case of a redemption, this value is null."
           },
           "type": {
-            "$ref": "#/components/schemas/LoyaltyCardTransactionsType",
-            "description": "Type of transaction."
+            "description": "Type of transaction.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LoyaltyCardTransactionsType"
+              }
+            ]
           },
           "details": {
             "type": "object",
@@ -30960,12 +31264,20 @@
                 ]
               },
               "source_voucher": {
-                "$ref": "#/components/schemas/SimpleVoucher",
-                "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction."
+                "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/SimpleVoucher"
+                  }
+                ]
               },
               "destination_voucher": {
-                "$ref": "#/components/schemas/SimpleVoucher",
-                "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction."
+                "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/SimpleVoucher"
+                  }
+                ]
               }
             }
           },
@@ -31069,8 +31381,12 @@
             "description": "Reward type."
           },
           "parameters": {
-            "$ref": "#/components/schemas/RewardType",
-            "description": "Defines how the reward is generated."
+            "description": "Defines how the reward is generated.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RewardType"
+              }
+            ]
           },
           "created_at": {
             "type": "string",
@@ -31248,8 +31564,12 @@
             "description": "Incremental balance to be added to/subtracted from the loyalty card.\n\n- To add points: 100\n- To subtract points, add a minus: -100"
           },
           "expiration_type": {
-            "$ref": "#/components/schemas/PointsExpirationTypes",
-            "description": "Set the type of expiration for added points.\n\n`PROGRAM_RULES`: Inherit rules from campaign.\n`NON_EXPIRING`: Points never expire.\n`CUSTOM_DATE`: Points expire on a particular date. Requires expiration_date parameter."
+            "description": "Set the type of expiration for added points.\n\n`PROGRAM_RULES`: Inherit rules from campaign.\n`NON_EXPIRING`: Points never expire.\n`CUSTOM_DATE`: Points expire on a particular date. Requires expiration_date parameter.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PointsExpirationTypes"
+              }
+            ]
           },
           "expiration_date": {
             "type": "string",
@@ -31278,252 +31598,30 @@
           "NON_EXPIRING"
         ]
       },
-      "ExportVouchersRequest": {
-        "title": "Export Vouchers",
-        "type": "object",
-        "properties": {
-          "exported_object": {
-            "type": "string",
-            "enum": [
-              "voucher"
-            ],
-            "description": "The type of object to be exported."
-          },
-          "parameters": {
-            "type": "object",
-            "properties": {
-              "order": {
-                "$ref": "#/components/schemas/ExportVoucherOrder",
-                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-              },
-              "fields": {
-                "type": "array",
-                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                "items": {
-                  "$ref": "#/components/schemas/ExportVoucherFields"
-                }
-              },
-              "filters": {
-                "$ref": "#/components/schemas/ExportVoucherFilters",
-                "description": "Filter conditions."
-              }
-            },
-            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-          }
-        },
-        "required": [
-          "exported_object"
-        ]
-      },
-      "ExportRedemptionsRequest": {
-        "title": "Export Redemptions",
-        "type": "object",
-        "properties": {
-          "exported_object": {
-            "type": "string",
-            "enum": [
-              "redemption"
-            ],
-            "description": "The type of object to be exported."
-          },
-          "parameters": {
-            "type": "object",
-            "properties": {
-              "order": {
-                "$ref": "#/components/schemas/ExportRedemptionOrder",
-                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-              },
-              "fields": {
-                "type": "array",
-                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                "items": {
-                  "$ref": "#/components/schemas/ExportRedemptionFields"
-                }
-              },
-              "filters": {
-                "$ref": "#/components/schemas/ExportRedemptionFilters",
-                "description": "Filter conditions."
-              }
-            },
-            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-          }
-        },
-        "required": [
-          "exported_object"
-        ]
-      },
-      "ExportCustomersRequest": {
-        "title": "Export Customers Request",
-        "type": "object",
-        "properties": {
-          "exported_object": {
-            "type": "string",
-            "enum": [
-              "customer"
-            ],
-            "description": "The type of object to be exported."
-          },
-          "parameters": {
-            "type": "object",
-            "properties": {
-              "order": {
-                "$ref": "#/components/schemas/ExportCustomerOrder",
-                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-              },
-              "fields": {
-                "type": "array",
-                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                "items": {
-                  "$ref": "#/components/schemas/ExportCustomerFields"
-                }
-              },
-              "filters": {
-                "$ref": "#/components/schemas/ExportCustomerFilters",
-                "description": "Filter conditions."
-              }
-            },
-            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-          }
-        },
-        "required": [
-          "exported_object"
-        ]
-      },
-      "ExportPublicationsRequest": {
-        "title": "Export Publications Request",
-        "type": "object",
-        "properties": {
-          "exported_object": {
-            "type": "string",
-            "enum": [
-              "publication"
-            ],
-            "description": "The type of object to be exported."
-          },
-          "parameters": {
-            "type": "object",
-            "properties": {
-              "order": {
-                "$ref": "#/components/schemas/ExportPublicationOrder",
-                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-              },
-              "fields": {
-                "type": "array",
-                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                "items": {
-                  "$ref": "#/components/schemas/ExportPublicationFields"
-                }
-              },
-              "filters": {
-                "$ref": "#/components/schemas/ExportPublicationFilters",
-                "description": "Filter conditions."
-              }
-            },
-            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-          }
-        },
-        "required": [
-          "exported_object"
-        ]
-      },
-      "ExportPointsExpirationsRequest": {
-        "title": "Export Points Expirations Request",
-        "type": "object",
-        "properties": {
-          "exported_object": {
-            "type": "string",
-            "enum": [
-              "points_expiration"
-            ],
-            "description": "The type of object to be exported."
-          },
-          "parameters": {
-            "type": "object",
-            "properties": {
-              "order": {
-                "$ref": "#/components/schemas/ExportPointsExpirationOrder",
-                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-              },
-              "fields": {
-                "type": "array",
-                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                "items": {
-                  "$ref": "#/components/schemas/ExportPointsExpirationFields"
-                }
-              },
-              "filters": {
-                "$ref": "#/components/schemas/ExportPointsExpirationFilters",
-                "description": "Filter conditions."
-              }
-            },
-            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-          }
-        },
-        "required": [
-          "exported_object"
-        ]
-      },
-      "ExportVouchersTransactionsExpirationRequest": {
-        "title": "ExportVouchersTransactionsExpirationRequest",
-        "type": "object",
-        "properties": {
-          "exported_object": {
-            "type": "string",
-            "enum": [
-              "voucher_transactions"
-            ],
-            "description": "The type of object to be exported."
-          },
-          "parameters": {
-            "type": "object",
-            "properties": {
-              "order": {
-                "$ref": "#/components/schemas/ExportVoucherTransactionsOrder",
-                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-              },
-              "fields": {
-                "type": "array",
-                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                "items": {
-                  "$ref": "#/components/schemas/ExportVoucherTransactionsFields"
-                }
-              },
-              "filters": {
-                "$ref": "#/components/schemas/ExportVoucherTransactionsFilters",
-                "description": "Filter conditions."
-              }
-            },
-            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-          }
-        },
-        "required": [
-          "exported_object"
-        ]
-      },
       "ExportsCreateRequestBody": {
         "description": "Request body schema for **POST** `/exports`.",
         "title": "Exports Create Request Body",
         "oneOf": [
           {
-            "$ref": "#/components/schemas/ExportVouchersRequest"
+            "$ref": "#/components/schemas/ExportVoucherBase"
           },
           {
-            "$ref": "#/components/schemas/ExportRedemptionsRequest"
+            "$ref": "#/components/schemas/ExportRedemptionBase"
           },
           {
-            "$ref": "#/components/schemas/ExportCustomersRequest"
+            "$ref": "#/components/schemas/ExportCustomerBase"
           },
           {
-            "$ref": "#/components/schemas/ExportPublicationsRequest"
+            "$ref": "#/components/schemas/ExportPublicationBase"
           },
           {
-            "$ref": "#/components/schemas/ExportOrderRequest"
+            "$ref": "#/components/schemas/ExportOrderBase"
           },
           {
-            "$ref": "#/components/schemas/ExportPointsExpirationsRequest"
+            "$ref": "#/components/schemas/ExportPointsExpirationBase"
           },
           {
-            "$ref": "#/components/schemas/ExportVouchersTransactionsExpirationRequest"
+            "$ref": "#/components/schemas/ExportVoucherTransactionsExpirationBase"
           }
         ],
         "type": "object"
@@ -31596,30 +31694,30 @@
         "title": "Export",
         "oneOf": [
           {
-            "$ref": "#/components/schemas/ExportVoucherRequest"
+            "$ref": "#/components/schemas/ExportVoucher"
           },
           {
-            "$ref": "#/components/schemas/ExportRedemptionRequest"
+            "$ref": "#/components/schemas/ExportRedemption"
           },
           {
-            "$ref": "#/components/schemas/ExportCustomerRequest"
+            "$ref": "#/components/schemas/ExportCustomer"
           },
           {
-            "$ref": "#/components/schemas/ExportPublicationRequest"
+            "$ref": "#/components/schemas/ExportPublication"
           },
           {
-            "$ref": "#/components/schemas/ExportOrderRequest"
+            "$ref": "#/components/schemas/ExportOrder"
           },
           {
-            "$ref": "#/components/schemas/ExportPointsExpirationRequest"
+            "$ref": "#/components/schemas/ExportPointsExpiration"
           },
           {
-            "$ref": "#/components/schemas/ExportVoucherTransactionsExpirationRequest"
+            "$ref": "#/components/schemas/ExportVoucherTransactionsExpiration"
           }
         ]
       },
-      "ExportResponseBase": {
-        "title": "Export Response Base",
+      "ExportScheduledBase": {
+        "title": "Export Scheduled Base",
         "type": "object",
         "properties": {
           "id": {
@@ -31672,71 +31770,81 @@
         "description": "Response body schema for **POST** `/exports`.",
         "oneOf": [
           {
-            "$ref": "#/components/schemas/ExportVoucher"
+            "$ref": "#/components/schemas/ExportVoucherScheduled"
           },
           {
-            "$ref": "#/components/schemas/ExportRedemption"
+            "$ref": "#/components/schemas/ExportRedemptionScheduled"
           },
           {
-            "$ref": "#/components/schemas/ExportCustomer"
+            "$ref": "#/components/schemas/ExportCustomerScheduled"
           },
           {
-            "$ref": "#/components/schemas/ExportPublication"
+            "$ref": "#/components/schemas/ExportPublicationScheduled"
           },
           {
-            "$ref": "#/components/schemas/ExportOrder"
+            "$ref": "#/components/schemas/ExportOrderScheduled"
           },
           {
-            "$ref": "#/components/schemas/ExportPointsExpiration"
+            "$ref": "#/components/schemas/ExportPointsExpirationScheduled"
           },
           {
-            "$ref": "#/components/schemas/ExportVoucherTransactionsExpiration"
+            "$ref": "#/components/schemas/ExportVoucherTransactionsExpirationScheduled"
           }
         ]
       },
-      "ExportVoucherRequest": {
-        "title": "Export Voucher Request",
+      "ExportVoucherBase": {
+        "title": "Export Voucher Base",
+        "type": "object",
+        "properties": {
+          "exported_object": {
+            "type": "string",
+            "enum": [
+              "voucher"
+            ],
+            "description": "The type of object to be exported."
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order": {
+                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportVoucherOrder"
+                  }
+                ]
+              },
+              "fields": {
+                "type": "array",
+                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
+                "items": {
+                  "$ref": "#/components/schemas/ExportVoucherFields"
+                }
+              },
+              "filters": {
+                "description": "Filter conditions.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportVoucherFilters"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "exported_object"
+        ]
+      },
+      "ExportVoucherScheduled": {
+        "title": "Export Voucher Scheduled",
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportBase"
+            "$ref": "#/components/schemas/ExportScheduledBase"
           },
           {
-            "title": "Export Vouchers Request",
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "voucher"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportVoucherOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportVoucherFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportVoucherFilters",
-                    "description": "Filter conditions."
-                  }
-                }
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportVoucherBase"
           }
         ]
       },
@@ -31745,44 +31853,10 @@
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportResponseBase"
+            "$ref": "#/components/schemas/ExportBase"
           },
           {
-            "title": "Export Vouchers",
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "voucher"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportVoucherOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportVoucherFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportVoucherFilters",
-                    "description": "Filter conditions."
-                  }
-                }
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportVoucherBase"
           }
         ]
       },
@@ -31791,8 +31865,12 @@
         "type": "object",
         "properties": {
           "conditions": {
-            "$ref": "#/components/schemas/FiltersCondition",
-            "description": "Data filters used to narrow the data records to be returned in the result."
+            "description": "Data filters used to narrow the data records to be returned in the result.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FiltersCondition"
+              }
+            ]
           }
         }
       },
@@ -31882,8 +31960,12 @@
         "type": "object",
         "properties": {
           "junction": {
-            "$ref": "#/components/schemas/Junction",
-            "description": "Filter by conditions set on the junction parameter indicating how the conditions should be accounted for in the query. An AND is an all-inclusive logical operator, meaning the AND operator displays a record if ALL the conditions separated by AND are TRUE, while an OR operator displays a record if ANY of the conditions separated by OR is TRUE."
+            "description": "Filter by conditions set on the junction parameter indicating how the conditions should be accounted for in the query. An AND is an all-inclusive logical operator, meaning the AND operator displays a record if ALL the conditions separated by AND are TRUE, while an OR operator displays a record if ANY of the conditions separated by OR is TRUE.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Junction"
+              }
+            ]
           },
           "code": {
             "$ref": "#/components/schemas/FieldConditions"
@@ -31986,50 +32068,60 @@
         ],
         "type": "string"
       },
-      "ExportRedemptionRequest": {
-        "title": "Export Redemption Request",
+      "ExportRedemptionBase": {
+        "title": "Export Redemption Base",
+        "type": "object",
+        "properties": {
+          "exported_object": {
+            "type": "string",
+            "enum": [
+              "redemption"
+            ],
+            "description": "The type of object to be exported."
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order": {
+                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportRedemptionOrder"
+                  }
+                ]
+              },
+              "fields": {
+                "type": "array",
+                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
+                "items": {
+                  "$ref": "#/components/schemas/ExportRedemptionFields"
+                }
+              },
+              "filters": {
+                "description": "Filter conditions.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportRedemptionFilters"
+                  }
+                ]
+              }
+            },
+            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
+          }
+        },
+        "required": [
+          "exported_object"
+        ]
+      },
+      "ExportRedemptionScheduled": {
+        "title": "Export Redemption Scheduled",
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportBase"
+            "$ref": "#/components/schemas/ExportScheduledBase"
           },
           {
-            "title": "Export Redemptions Request",
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "redemption"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportRedemptionOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportRedemptionFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportRedemptionFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportRedemptionBase"
           }
         ]
       },
@@ -32038,45 +32130,10 @@
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportResponseBase"
+            "$ref": "#/components/schemas/ExportBase"
           },
           {
-            "title": "Export Redemptions",
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "redemption"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportRedemptionOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportRedemptionFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportRedemptionFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportRedemptionBase"
           }
         ]
       },
@@ -32141,50 +32198,60 @@
           }
         }
       },
-      "ExportCustomerRequest": {
-        "title": "Export Customer Request",
+      "ExportCustomerBase": {
+        "title": "Export Customer Base",
+        "type": "object",
+        "properties": {
+          "exported_object": {
+            "type": "string",
+            "enum": [
+              "customer"
+            ],
+            "description": "The type of object to be exported."
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order": {
+                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportCustomerOrder"
+                  }
+                ]
+              },
+              "fields": {
+                "type": "array",
+                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
+                "items": {
+                  "$ref": "#/components/schemas/ExportCustomerFields"
+                }
+              },
+              "filters": {
+                "description": "Filter conditions.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportCustomerFilters"
+                  }
+                ]
+              }
+            },
+            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
+          }
+        },
+        "required": [
+          "exported_object"
+        ]
+      },
+      "ExportCustomerScheduled": {
+        "title": "Export Customer Scheduled",
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportBase"
+            "$ref": "#/components/schemas/ExportScheduledBase"
           },
           {
-            "title": "Export Customer Request",
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "customer"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportCustomerOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportCustomerFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportCustomerFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportCustomerBase"
           }
         ]
       },
@@ -32193,44 +32260,10 @@
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportResponseBase"
+            "$ref": "#/components/schemas/ExportBase"
           },
           {
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "customer"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportCustomerOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportCustomerFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportCustomerFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportCustomerBase"
           }
         ]
       },
@@ -32333,49 +32366,60 @@
           }
         }
       },
-      "ExportPublicationRequest": {
-        "title": "Export Publication Request",
+      "ExportPublicationBase": {
+        "title": "Export Publication Base",
+        "type": "object",
+        "properties": {
+          "exported_object": {
+            "type": "string",
+            "enum": [
+              "publication"
+            ],
+            "description": "The type of object to be exported."
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order": {
+                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportPublicationOrder"
+                  }
+                ]
+              },
+              "fields": {
+                "type": "array",
+                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
+                "items": {
+                  "$ref": "#/components/schemas/ExportPublicationFields"
+                }
+              },
+              "filters": {
+                "description": "Filter conditions.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportPublicationFilters"
+                  }
+                ]
+              }
+            },
+            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
+          }
+        },
+        "required": [
+          "exported_object"
+        ]
+      },
+      "ExportPublicationScheduled": {
+        "title": "Export Publication Scheduled",
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportBase"
+            "$ref": "#/components/schemas/ExportScheduledBase"
           },
           {
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "publication"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportPublicationOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportPublicationFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportPublicationFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportPublicationBase"
           }
         ]
       },
@@ -32384,44 +32428,10 @@
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportResponseBase"
+            "$ref": "#/components/schemas/ExportBase"
           },
           {
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "publication"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportPublicationOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportPublicationFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportPublicationFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportPublicationBase"
           }
         ]
       },
@@ -32458,50 +32468,60 @@
           }
         }
       },
-      "ExportOrderRequest": {
-        "title": "Export Orders Request",
+      "ExportOrderBase": {
+        "title": "Export Order Base",
+        "type": "object",
+        "properties": {
+          "exported_object": {
+            "type": "string",
+            "enum": [
+              "order"
+            ],
+            "description": "The type of object to be exported."
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order": {
+                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportOrderOrder"
+                  }
+                ]
+              },
+              "fields": {
+                "type": "array",
+                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
+                "items": {
+                  "$ref": "#/components/schemas/ExportOrderFields"
+                }
+              },
+              "filters": {
+                "description": "Filter conditions.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportOrderFilters"
+                  }
+                ]
+              }
+            },
+            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
+          }
+        },
+        "required": [
+          "exported_object"
+        ]
+      },
+      "ExportOrderScheduled": {
+        "title": "Export Orders Scheduled",
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportBase"
+            "$ref": "#/components/schemas/ExportScheduledBase"
           },
           {
-            "title": "Export Orders Request",
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "order"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportOrderOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportOrderFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportOrderFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportOrderBase"
           }
         ]
       },
@@ -32510,45 +32530,10 @@
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportResponseBase"
+            "$ref": "#/components/schemas/ExportBase"
           },
           {
-            "title": "Export Orders",
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "order"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportOrderOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportOrderFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportOrderFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportOrderBase"
           }
         ]
       },
@@ -32601,95 +32586,73 @@
           }
         }
       },
-      "ExportPointsExpirationRequest": {
-        "title": "Export Points Expiration Request",
+      "ExportPointsExpirationBase": {
+        "title": "Export Points Expiration Base",
+        "type": "object",
+        "properties": {
+          "exported_object": {
+            "type": "string",
+            "enum": [
+              "points_expiration"
+            ],
+            "description": "The type of object to be exported."
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order": {
+                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportPointsExpirationOrder"
+                  }
+                ]
+              },
+              "fields": {
+                "type": "array",
+                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
+                "items": {
+                  "$ref": "#/components/schemas/ExportPointsExpirationFields"
+                }
+              },
+              "filters": {
+                "description": "Filter conditions.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportPointsExpirationFilters"
+                  }
+                ]
+              }
+            },
+            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
+          }
+        },
+        "required": [
+          "exported_object"
+        ]
+      },
+      "ExportPointsExpirationScheduled": {
+        "title": "Export Points Expiration Scheduled",
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportBase"
+            "$ref": "#/components/schemas/ExportScheduledBase"
           },
           {
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "points_expiration"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportPointsExpirationOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportPointsExpirationFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportPointsExpirationFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportPointsExpirationBase"
           }
         ]
       },
       "ExportPointsExpiration": {
         "title": "Export Points Expiration",
         "type": "object",
+        "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportResponseBase"
+            "$ref": "#/components/schemas/ExportBase"
           },
           {
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "points_expiration"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportPointsExpirationOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportPointsExpirationFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportPointsExpirationFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportPointsExpirationBase"
           }
         ]
       },
@@ -32720,49 +32683,60 @@
           }
         }
       },
-      "ExportVoucherTransactionsExpirationRequest": {
-        "title": "Export Vouchers Transactions Expiration Request",
+      "ExportVoucherTransactionsExpirationBase": {
+        "title": "Export Voucher Transactions Expiration Base",
+        "type": "object",
+        "properties": {
+          "exported_object": {
+            "type": "string",
+            "enum": [
+              "voucher_transactions"
+            ],
+            "description": "The type of object to be exported."
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "order": {
+                "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportVoucherTransactionsOrder"
+                  }
+                ]
+              },
+              "fields": {
+                "type": "array",
+                "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
+                "items": {
+                  "$ref": "#/components/schemas/ExportVoucherTransactionsFields"
+                }
+              },
+              "filters": {
+                "description": "Filter conditions.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ExportVoucherTransactionsFilters"
+                  }
+                ]
+              }
+            },
+            "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
+          }
+        },
+        "required": [
+          "exported_object"
+        ]
+      },
+      "ExportVoucherTransactionsExpirationScheduled": {
+        "title": "Export Vouchers Transactions Expiration Scheduled",
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportBase"
+            "$ref": "#/components/schemas/ExportScheduledBase"
           },
           {
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "voucher_transactions"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportVoucherTransactionsOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportVoucherTransactionsFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportVoucherTransactionsFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportVoucherTransactionsExpirationBase"
           }
         ]
       },
@@ -32771,45 +32745,10 @@
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportResponseBase"
+            "$ref": "#/components/schemas/ExportBase"
           },
           {
-            "title": "Export Vouchers Transactions Expiration",
-            "type": "object",
-            "properties": {
-              "exported_object": {
-                "type": "string",
-                "enum": [
-                  "voucher_transactions"
-                ],
-                "description": "The type of object to be exported."
-              },
-              "parameters": {
-                "type": "object",
-                "properties": {
-                  "order": {
-                    "$ref": "#/components/schemas/ExportVoucherTransactionsOrder",
-                    "description": "How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order."
-                  },
-                  "fields": {
-                    "type": "array",
-                    "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file.",
-                    "items": {
-                      "$ref": "#/components/schemas/ExportVoucherTransactionsFields"
-                    }
-                  },
-                  "filters": {
-                    "$ref": "#/components/schemas/ExportVoucherTransactionsFilters",
-                    "description": "Filter conditions."
-                  }
-                },
-                "description": "List of available fields and filters that can be exported with an order along with the sorting order of the returned data."
-              }
-            },
-            "required": [
-              "exported_object",
-              "parameters"
-            ]
+            "$ref": "#/components/schemas/ExportVoucherTransactionsExpirationBase"
           }
         ]
       },
@@ -34786,10 +34725,10 @@
           "filter"
         ]
       },
-      "SimpleCustomerResponse": {
+      "SimpleCustomerRequiredObjectType": {
         "type": "object",
         "description": "This is an object representing a customer with limited properties used in Event Tracking endpoints.",
-        "title": "Customer Object",
+        "title": "Customer Object Required Object Type",
         "properties": {
           "id": {
             "type": "string",
@@ -34948,8 +34887,12 @@
             "description": "Formula used to calculate the discounted price of an item."
           },
           "effect": {
-            "$ref": "#/components/schemas/ApplicableToEffect",
-            "description": "Defines how the discount is applied to the customer's order."
+            "description": "Defines how the discount is applied to the customer's order.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ApplicableToEffect"
+              }
+            ]
           },
           "quantity_limit": {
             "type": "integer",
@@ -47048,7 +46991,7 @@
             "style": "deepObject",
             "explode": true,
             "schema": {
-              "$ref": "#/components/schemas/CustomerRequest"
+              "$ref": "#/components/schemas/Customer"
             }
           },
           {
