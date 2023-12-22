@@ -164,8 +164,18 @@ const countEndpointsWithParametersThatNotUsingRefs = (openAPIContent) => {
   );
 };
 
-const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
+export const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
   let skipList = [];
+  const redResponses: Response[] = [];
+
+  type Response = {
+    endpoint: string;
+    method: string;
+    statusCode: string;
+    schemaName: string;
+    red?: boolean;
+  };
+
   const addToSkipList = (path, method) => {
     const existingItemWithCurrentPath = skipList.find(
       (item) => item.endpoint === path
@@ -188,7 +198,7 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
   Object.entries(openAPIContent.paths).map((pathAndPathData) => {
     const [path, pathData] = pathAndPathData;
     Object.entries(pathData).map((methodNameAndMethodData) => {
-      const messages = [];
+      const messages: Response[] = [];
 
       const [methodName, methodData] = methodNameAndMethodData;
       if (methodName === "parameters") {
@@ -214,9 +224,12 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
           requestSchemaName &&
           !requestSchemaName?.endsWith?.("RequestBody")
         ) {
-          messages.push(
-            `${path} [${methodName}/request] - ${requestSchemaName}`
-          );
+          messages.push({
+              endpoint: path,
+              method: methodName,
+              statusCode: null,
+              schemaName: requestSchemaName,
+          })
         }
       }
 
@@ -247,9 +260,14 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
             responseSchemaName &&
             !responseSchemaName?.endsWith?.("ResponseBody")
           ) {
-            messages.push(
-              `${path} [${methodName}/response/${statusCode}] - ${responseSchemaName}`
-            );
+            // `${path} [${methodName}/request] - ${requestSchemaName}`
+            // `${path} [${methodName}/response/${statusCode}] - ${responseSchemaName}`
+            messages.push({
+              endpoint: path,
+              method: methodName,
+              statusCode: statusCode,
+              schemaName: responseSchemaName,
+            });
           }
         }
       });
@@ -259,15 +277,26 @@ const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
       }
       if (messages.length > 0) {
         if (old) {
-          console.log(colors.yellow(messages.join("\n")));
+          console.log(colors.yellow(messages
+              .map((message) => `${message.endpoint} [${message.method}/${message.statusCode}] - ${message.schemaName}`)
+              .join("\n"))
+          );
         } else {
-          console.log(colors.red(messages.join("\n")));
+          console.log(colors.red(messages
+              .map((message) => `${message.endpoint} [${message.method}/${message.statusCode}] - ${message.schemaName}`)
+              .join("\n"))
+          );
+          redResponses.push(...messages.map(message => {
+            return ({...message, red: true});
+          }));
         }
       }
     });
   });
 
   console.log(colors.yellow("skipList:"), JSON.stringify(skipList));
+
+  return redResponses;
 };
 
 main();

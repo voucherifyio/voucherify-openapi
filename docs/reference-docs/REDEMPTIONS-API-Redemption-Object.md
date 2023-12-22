@@ -24,22 +24,22 @@ order: 1
 | related_redemptions</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">rollbacks</br><code>array</code></td><td style="text-align:left">Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique rollback redemption ID.</p> <strong>Example:</strong> <p>rr_0bc92f81a6801f9bca</p></td></tr><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the object was created in ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:13:06.487Z</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">redemptions</br><code>array</code></td><td style="text-align:left">Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique redemption ID.</p> <strong>Example:</strong> <p>r_0bc92f81a6801f9bca</p></td></tr><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the object was created in ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:13:06.487Z</p></td></tr></tbody></table></td></tr></tbody></table> |
 | failure_code</br>`string` | <p>If the result is <code>FAILURE</code>, this parameter will provide a generic reason as to why the redemption failed.</p> **Example:** <p>customer_rules_violated</p> |
 | failure_message</br>`string` | <p>If the result is <code>FAILURE</code>, this parameter will provide a more expanded reason as to why the redemption failed.</p> |
-| order | See: [Order Response No Customer Data](#order-response-no-customer-data) |
+| order | [Order Calculated No Customer Data](#order-calculated-no-customer-data) |
 | channel</br>`object` | <p>Defines the details of the channel through which the redemption was issued.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">channel_id</br><code>string</code></td><td style="text-align:left"><p>Unique channel ID of the user performing the redemption. This is either a user ID from a user using the Voucherify Dashboard or an X-APP-Id of a user using the API.</p> <strong>Example:</strong> <p>user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH</p></td></tr><tr><td style="text-align:left">channel_type</br><code>string</code></td><td style="text-align:left"><p>The source of the channel for the redemption. A <code>USER</code> corresponds to the Voucherify Dashboard and an <code>API</code> corresponds to the API.</p> Available values: <code>USER</code>, <code>API</code></td></tr></tbody></table> |
-| customer | See: [Simple Customer](#simple-customer) |
+| customer | [Simple Customer](#simple-customer) |
 | related_object_type</br>`string` | <p>Defines the related object.</p> Available values: `voucher`, `promotion_tier`, `redemption` |
 | related_object_id</br>`string` | <p>Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher.</p> |
-| voucher | <p>Defines the details of the voucher being redeemed.</p> See: [Voucher](#voucher) |
-| promotion_tier | <p>Contains details of the promotion tier and the parent campaign.</p> See: [Promotion Tier](#promotion-tier) |
+| voucher | <p>Defines the details of the voucher being redeemed.</p> [Voucher](#voucher) |
+| promotion_tier | <p>Contains details of the promotion tier and the parent campaign.</p> [Promotion Tier](#promotion-tier) |
 | reward | See: [Redemption Reward Result](#redemption-reward-result) |
 | gift</br>`object` | <p>Contains the amount being subtracted from the gift card for the redemption.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">amount</br><code>integer</code></td><td style="text-align:left"><p>The amount subtracted from the gift card expressed as the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
 | loyalty_card</br>`object` | <p>Stores the number of points being added back to the loyalty card for the reward redemption rollback.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points being added back to the loyalty card for the reward redemption rollback.</p></td></tr></tbody></table> |
 
-## Order Response No Customer Data
+## Order Calculated No Customer Data
 All of:
 
 1. [Order Response Base](#order-response-base)
-2. <h3>Order Customer And Referrer Ids Objects</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left"><p>If only <code>customer_id</code> was provided, customer return data will be limited.</p> See: <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left"><p>If only <code>referrer_id</code> was provided, referrer return data will be limited.</p> See: <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
+2. <h3>Order Customer And Referrer Ids Objects</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left"><p>If only <code>customer_id</code> was provided, customer return data will be limited.</p> <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left"><p>If only <code>referrer_id</code> was provided, referrer return data will be limited.</p> <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
 
 ## Simple Customer
 | Attributes |  Description |
@@ -112,12 +112,12 @@ All of:
 ## Redemption Reward Result
 | Attributes |  Description |
 |:-----|:--------|
-| reward | See: [Reward](#reward) |
-| customer | See: [Simple Customer](#simple-customer) |
+| reward | [Reward](#reward) |
+| customer | [Simple Customer](#simple-customer) |
 | assignment_id</br>`string`, `null` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
-| voucher | <p>Defines of the voucher.</p> See: [Voucher](#voucher) |
-| product | <p>Defines of the product.</p> See: [Product Object](#product-object) |
-| sku | <p>Defines of the sku.</p> See: [SKU Object](#sku-object) |
+| voucher | <p>Defines of the voucher.</p> [Voucher](#voucher) |
+| product | <p>Defines of the product.</p> [Product](#product) |
+| sku | <p>Defines of the sku.</p> [SKU Object](#sku-object) |
 | loyalty_tier_id</br>`string`, `null` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 
 ## Order Response Base
@@ -137,7 +137,7 @@ All of:
 | applied_discount_amount</br>`integer` | <p>This field shows the order-level discount applied.</p> |
 | items_applied_discount_amount</br>`integer` | <p>Sum of all product-specific discounts applied in a particular request.<br><code>sum(items, i =&gt; i.applied_discount_amount)</code></p> |
 | total_applied_discount_amount</br>`integer` | <p>Sum of all order-level AND all product-specific discounts applied in a particular request.<br><code>total_applied_discount_amount</code> = <code>applied_discount_amount</code> + <code>items_applied_discount_amount</code></p> |
-| items</br>`array` | <p>Array of items applied to the order.</p> Array of [Order Item Response](#order-item-response) |
+| items</br>`array` | <p>Array of items applied to the order.</p> Array of [Order Item Calculated](#order-item-calculated) |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.</p> |
 | customer_id</br>`string`, `null` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
 | referrer_id</br>`string`, `null` | <p>Unique referrer ID.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
@@ -195,18 +195,18 @@ One of:
 | attributes</br>`object` | <p>These properties are configurable for <strong>material rewards</strong>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">image_url</br><code>string</code></td><td style="text-align:left"><p>The HTTPS URL pointing to the .png or .jpg file.</p></td></tr><tr><td style="text-align:left">description</br><code>string</code></td><td style="text-align:left"><p>An arbitrary string that you can attach to a material reward.</p></td></tr></tbody></table> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format.</p> |
 | type</br>`string` | <p>Reward type.</p> Available values: `CAMPAIGN`, `COIN`, `MATERIAL` |
-| parameters | <p>Defines how the reward is generated.</p> See: [Reward type](#reward-type) |
+| parameters | <p>Defines how the reward is generated.</p> [Reward type](#reward-type) |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the reward was created in ISO 8601 format.</p> **Example:** <p>2022-08-11T14:49:22.586Z</p> |
 | updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the reward was updated in ISO 8601 format.</p> **Example:** <p>2022-08-11T16:01:34.885Z</p> |
 | object | <p>The type of object represented by the JSON. This object stores information about the reward.</p> Available values: `reward` |
 
-## Product Object
+## Product
 <p>This is an object representing a product.</p><p>This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.</p>
 
 All of:
 
 1. [Product without Skus Object](#product-without-skus-object)
-2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">skus</td><td style="text-align:left">See: <a href="#skus-object">SKUs object</a></td></tr></tbody></table>
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">skus</td><td style="text-align:left">See: <a href="#skus-list-for-product">Skus List For Product</a></td></tr></tbody></table>
 
 ## SKU Object
 | Attributes |  Description |
@@ -224,7 +224,7 @@ All of:
 | updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the SKU was updated in ISO 8601 format.</p> **Example:** <p>2022-05-17T10:55:09.137Z</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>SKU</code>.</p> Available values: `sku` |
 
-## Order Item Response
+## Order Item Calculated
 | Attributes |  Description |
 |:-----|:--------|
 | sku_id</br>`string` | <p>A unique SKU ID assigned by Voucherify.</p> |
@@ -264,7 +264,7 @@ All of:
 | amount_off</br>`number` | <p>Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000.</p> |
 | amount_off_formula</br>`string` |  |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order.</p> |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Amount Vouchers Effect Types](#discount-amount-vouchers-effect-types) |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Amount Vouchers Effect Types](#discount-amount-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
 ## Unit
@@ -273,9 +273,9 @@ All of:
 | type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
 | unit_off</br>`integer` | <p>Number of units to be granted a full value discount.</p> |
 | unit_off_formula</br>`string` |  |
-| effect | <p>Defines how the unit is added to the customer's order.</p> See: [Discount Unit Vouchers Effect Types](#discount-unit-vouchers-effect-types) |
+| effect | <p>Defines how the unit is added to the customer's order.</p> [Discount Unit Vouchers Effect Types](#discount-unit-vouchers-effect-types) |
 | unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
-| product | <p>Contains information about the product.</p> See: [Simple Product Discount Unit](#simple-product-discount-unit) |
+| product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |
 | sku | See: [Simple Sku Discount Unit](#simple-sku-discount-unit) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
@@ -294,7 +294,7 @@ All of:
 | percent_off_formula</br>`string` |  |
 | amount_limit</br>`number` | <p>Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order.</p> |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Percent Vouchers Effect Types](#discount-percent-vouchers-effect-types) |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Percent Vouchers Effect Types](#discount-percent-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
 ## Fixed
@@ -303,7 +303,7 @@ All of:
 | type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `FIXED` |
 | fixed_amount</br>`number` | <p>Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the <code>fixed_amount_formula</code> parameter is present in the fixed amount definition, this value becomes the <strong>fallback value</strong>. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
 | fixed_amount_formula</br>`string` |  |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
 ## Validation Rule Assignment
@@ -335,7 +335,7 @@ One of:
 | updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the product was updated in ISO 8601 format.</p> **Example:** <p>2022-05-23T09:24:07.405Z</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the product.</p> Available values: `product` |
 
-## SKUs object
+## Skus List For Product
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about SKUs.</p> |
@@ -370,8 +370,8 @@ Available values: `ADD_MISSING_ITEMS`, `ADD_NEW_ITEMS`, `ADD_MANY_ITEMS`
 | unit_off_formula</br>`string` |  |
 | effect</br>`string` | <p>Defines how the unit is added to the customer's order.</p> Available values: `ADD_NEW_ITEMS`, `ADD_MISSING_ITEMS` |
 | unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
-| product | <p>Contains information about the product.</p> See: [Simple Product Discount Unit](#simple-product-discount-unit) |
-| sku | <p>Contains information about the sku.</p> See: [Simple Sku Discount Unit](#simple-sku-discount-unit) |
+| product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |
+| sku | <p>Contains information about the sku.</p> [Simple Sku Discount Unit](#simple-sku-discount-unit) |
 
 ## Discount Percent Vouchers Effect Types
 Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`

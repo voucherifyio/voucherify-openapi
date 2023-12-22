@@ -20,7 +20,7 @@ All of:
 | id</br>`string` | <p>Assigned by the Voucherify API, identifies the earning rule object.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the earning rule was created in ISO 8601 format.</p> |
 | loyalty | One of: [Define fixed amount of points](#define-fixed-amount-of-points), [Calculate points proportionally](#calculate-points-proportionally) |
-| event | <p>Defines the event which triggers the earning rule to add points to a loyalty card.</p> See: [Earning Rule Event](#earning-rule-event) |
+| event | <p>Defines the event which triggers the earning rule to add points to a loyalty card.</p> [Earning Rule Event](#earning-rule-event) |
 | custom_event</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">schema_id</br><code>string</code></td><td style="text-align:left"></td></tr></tbody></table> |
 | segment</br>`object` | <p>Contains the id of a customer segment. Required for the customer.segment.entered option in event.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Contains a unique identifier of a customer segment. Assigned by the Voucherify API.</p></td></tr></tbody></table> |
 | source</br>`object` | <p>Contains the custom earning rule name and parent campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">banner</br><code>string</code></td><td style="text-align:left"><p>Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard.</p></td></tr><tr><td style="text-align:left">object_id</br><code>string</code></td><td style="text-align:left"><p>A unique campaign identifier assigned by the Voucherify API.</p></td></tr><tr><td style="text-align:left">object_type</br><code>string</code></td><td style="text-align:left"><p>Defines the object associated with the earning rule. Defaults to <code>campaign</code>.</p> Available values: <code>campaign</code></td></tr></tbody></table> |
@@ -41,7 +41,7 @@ All of:
 ## Calculate points proportionally
 One of:
 
-[Order](#order), [Order Items](#order-items), [Customer Metadata](#customer-metadata), [Custom Event](#custom-event)
+[Order](#order), [Order Items](#order-items), [Customer Metadata](#customer-metadata), [Earning Rule Proportional Custom Event](#earning-rule-proportional-custom-event)
 
 ## Earning Rule Event
 Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `customer.loyalty.tier.upgraded`, `customer.loyalty.tier.downgraded`, `customer.loyalty.tier.prolonged`, `customer.loyalty.tier.joined`, `customer.loyalty.tier.left`
@@ -63,7 +63,7 @@ One of:
 | calculation_type</br>`string` | <p>CUSTOMER_METADATA: Customer Metadata (X points for every Y in metadata attribute, defined in the property key under the customer.metadata object)</p> Available values: `CUSTOMER_METADATA` |
 | customer</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">metadata</br><code>object</code></td><td style="text-align:left"><p>Defines the ratio based on the property defined in the calculation_type parameter. For every given increment of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every order metadata property value, give points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">every</br><code>integer</code></td><td style="text-align:left"><p>For how many increments of the customer metadata property to grant points for.</p></td></tr><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points to be awarded, i.e. how many points to be added to the loyalty card.</p></td></tr><tr><td style="text-align:left">property</br><code>string</code></td><td style="text-align:left"><p>Customer metadata property.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
-## Custom Event
+## Earning Rule Proportional Custom Event
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio.</p> Available values: `PROPORTIONAL` |

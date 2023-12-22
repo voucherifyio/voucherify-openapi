@@ -2,7 +2,7 @@
 title: Get Points Expiration
 type: endpoint
 categorySlug: voucherify-api
-slug: get-points-expiration
+slug: list-points-expiration
 parentDocSlug: loyalties-api
 hidden: false
 order: 23
