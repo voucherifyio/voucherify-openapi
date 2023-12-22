@@ -172,6 +172,17 @@ const main = async (languageOptions: LanguageOptions) => {
   newOpenApiFile.components.parameters = parameters;
   newOpenApiFile.components.schemas = parseNullsToNullableObjects(schemas);
   newOpenApiFile.paths = paths;
+  console.log(
+      Object.keys(newOpenApiFile.components.schemas)
+          .filter(
+              (schemaName) =>
+                  !schemaName.endsWith("RequestBody") &&
+                  !schemaName.endsWith("ResponseBody") &&
+                  (schemaName.includes("Response") || schemaName.includes("Request"))
+          )
+          .sort()
+  );
+
 
   //write the new OpenApiFile
   const pathToTmp = path.join(__dirname, "../../tmp");

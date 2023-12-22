@@ -35683,7 +35683,7 @@
           },
           "order": {
             "description": "Contains the order details associated with the redemption.",
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "inapplicable_redeemables": {
             "type": "array",
@@ -35729,7 +35729,7 @@
             "$ref": "#/components/schemas/RedemptionRollback"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderResponseNoCustomerData"
+            "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
           }
         }
       },
@@ -36578,10 +36578,10 @@
         "description": "Response body schema for **POST** `/orders/export`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ExportResponseBase"
+            "$ref": "#/components/schemas/ExportScheduledBase"
           },
           {
-            "$ref": "#/components/schemas/ExportOrder"
+            "$ref": "#/components/schemas/ExportOrderBase"
           }
         ]
       },
@@ -36655,7 +36655,7 @@
           "customer": {
             "type": "object",
             "description": "A simple customer object",
-            "$ref": "#/components/schemas/SimpleCustomerResponse"
+            "$ref": "#/components/schemas/SimpleCustomerRequiredObjectType"
           },
           "referral": {
             "type": "null",
@@ -36694,7 +36694,7 @@
           "customer": {
             "type": "object",
             "description": "A simple customer object",
-            "$ref": "#/components/schemas/SimpleCustomerResponse"
+            "$ref": "#/components/schemas/SimpleCustomerRequiredObjectType"
           },
           "referral": {
             "type": "null",
@@ -36726,7 +36726,7 @@
             "description": "This identifier is generated during voucher qualification based on your internal id (e.g., email, database ID). This is a hashed customer source ID."
           },
           "order": {
-            "$ref": "#/components/schemas/OrderResponse"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "stacking_rules": {
             "$ref": "#/components/schemas/QualificationsStackingRules"
@@ -36919,10 +36919,10 @@
             "description": "Customer's `source_id`."
           },
           "customer": {
-            "$ref": "#/components/schemas/CustomerRequest"
+            "$ref": "#/components/schemas/Customer"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderRequest"
+            "$ref": "#/components/schemas/Order"
           },
           "metadata": {
             "type": "object",
@@ -37011,10 +37011,10 @@
             "description": "Customer's `source_id`."
           },
           "customer": {
-            "$ref": "#/components/schemas/CustomerRequest"
+            "$ref": "#/components/schemas/Customer"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderRequest"
+            "$ref": "#/components/schemas/Order"
           },
           "metadata": {
             "type": "object",
@@ -37128,7 +37128,7 @@
             }
           },
           "order": {
-            "$ref": "#/components/schemas/OrderRequest",
+            "$ref": "#/components/schemas/Order",
             "description": "Order object that is **required** when redeeming a pay with points reward."
           },
           "metadata": {
@@ -37185,7 +37185,7 @@
               }
             },
             {
-              "$ref": "#/components/schemas/OrderRequestBase"
+              "$ref": "#/components/schemas/OrderBase"
             }
           ]
         }
@@ -37295,7 +37295,7 @@
             "maxLength": 300
           },
           "customer": {
-            "$ref": "#/components/schemas/CustomerRequest",
+            "$ref": "#/components/schemas/Customer",
             "description": "Customer's information."
           },
           "referral": {
@@ -37352,7 +37352,7 @@
             "maxLength": 300
           },
           "customer": {
-            "$ref": "#/components/schemas/CustomerRequest",
+            "$ref": "#/components/schemas/Customer",
             "description": "Customer's information."
           },
           "referral": {
@@ -37403,11 +37403,11 @@
         "title": "Client Qualifications Check Eligibility Request Body",
         "properties": {
           "customer": {
-            "$ref": "#/components/schemas/CustomerRequest",
+            "$ref": "#/components/schemas/Customer",
             "description": "Customer's information."
           },
           "order": {
-            "$ref": "#/components/schemas/OrderRequest",
+            "$ref": "#/components/schemas/Order",
             "description": "Order information."
           },
           "mode": {
@@ -49217,7 +49217,7 @@
           "VALIDATIONS API"
         ],
         "summary": "Validate Voucher (client-side) [Deprecated]",
-        "description": "<!-- theme: danger -->\n> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for voucher validation, and we do not recommend using it. The new [Stackable Discounts API](ref:validate-stacked-discounts-client-side) introduces additional features and improvements while maintaining backward compatibility, including applying a combination of coupon codes and promotion tiers. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint. \n\nTo verify a voucher code given by customer, you can use this method. It is designed for client side integration which means that is accessible only through public keys. This method is designed to be run directly either in web browsers or mobile apps.\n\n> ❗️ Specifying gift credits and loyalty points\n>\n> This endpoint does not support specifying the specific amount of gift credits to apply to an order nor the specific amount of loyalty points to an order. It calculates the amount that is available on the card and applies as much credits or points as possible to cover the total amount. \n\n### Set customer identity (optional)\n\nVoucherify can help you track anonymous customers. Once you integrate Voucherify into your web app and call the validate method, Voucherify will return a tracking ID and the script will store it in a cookie. Each subsequent validate call will use the same tracking ID.\n\nVoucherify tracks a user using a tracking ID to see if the user who is validating vouchers is the same as the one who consuming them. Voucherify does this by setting up an identity for the user. A `tracking_id` will be generated on the server side, unless you specify your own `tracking_id`. In both cases, you will receive the `tracking_id` in the validation response.\n\nThe returned `tracking_id` field should be used as the customer `source_id` in subsequent redemption requests. Moreover, the `tracking_id` returned from Validation API is encoded. Voucherify will recognize both values for identifying customer - the one before encryption sent as a query parameter to the **GET** `/validate` request, and the version encrypted and returned as part of the validation request.\n\n### Sample workflow\n\nCustomer tracking workflow in a nutshell:\n\n**Client-side:**\n  * A customer visits your website.\n  * A customer validates a voucher code. That triggers a validate request to be sent to Voucherify. In the request, you pass the tracking_id or customer.source_id. As a result, the API call to this endpoint returns an **encoded** `tracking_id`.\n\n**Backend:**\n  * Once the customer finishes the checkout process, your website passes the `tracking_id` to your backend during a redemption call. The `tracking_id` is sent as a value assigned to the property *source_id* in a customer object.\n  * A customer object is created and within the redemption response, you get a customer `id`.\n  * You can use the customer `id` or the customer `source_id` to fetch or modify the customer details.\n  \nA customer is created (upserted) automatically with a redemption call. Alternatively, you can create a new profile by creating a customer via a dedicated API method. Take a look at the customer object to understand the <!-- [entity's structure](OpenAPI.json/components/schemas/CustomerResponse) -->[entity's structure](ref:get-customer). \n\n<!-- theme: info -->\n\n> 📘 Customer identifier\n>\n> The source id of the customer may either be an already hashed version of the `tracking_id`, which you received in a response from a validation request or a custom ID you predefined (i.e. an email address). Nevertheless, we recommend using identifiers delivered by Voucherify API.\n\n<!--\ntitle: \"Validate Discount Voucher\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=PAYINEUROS&session_type=LOCK&session_key=A&session_ttl=1&session_ttl_unit=NANOSECONDS&customer=cust_4vMj8Twr5nBzvTrNCgipMb6M&[order][metadata][currency]=EUR&[metadata][location_id][0]=L1&[item][0][source_id]=webinar_BF_sweater_pink_sweater&[item][0][quantity]=2&[item][0][related_object]=product'\n```\n<!--\ntitle: \"Validate Loyalty Card\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=LOYALTY-CARD-ng3Kb9tM&session_type=LOCK&session_key=A&session_ttl=1&session_ttl_unit=NANOSECONDS&customer[source_id]=286401dc-6f4c-4ebb-8ca2-9f78b3e84c7d&[order][metadata][currency]=EUR&[customer][metadata][age]=24&[customer][metadata][acquisition_channel]=Facebook&[metadata][location_id][0]=L1&[item][0][source_id]=webinar_BF_sweater_pink_sweater&[item][0][quantity]=2&[item][0][related_object]=product&[item][1][source_id]=webinar_BF_pants_gray_sweat_pants&[item][1][quantity]=2&[item][1][related_object]=product&[item][2][product_id]=prod_0bd76bb4aa003890cb&[item][2][quantity]=2&[item][3][source_id]=M0E20000000ELDH&[item][3][quantity]=3&[item][3][related_object]=sku'\n```\n<!--\ntitle: \"Validate Gift Card\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=GIFT-CARD-kW4aEsfB&session_type=LOCK&session_key=A&session_ttl=1&session_ttl_unit=NANOSECONDS&customer[source_id]=286401dc-6f4c-4ebb-8ca2-9f78b3e84c7d&[order][metadata][currency]=EUR&[customer][metadata][age]=24&[customer][metadata][acquisition_channel]=Facebook&[metadata][location_id][0]=L1&[item][0][source_id]=webinar_BF_sweater_pink_sweater&[item][0][quantity]=2&[item][0][related_object]=product&[item][1][source_id]=webinar_BF_pants_gray_sweat_pants&[item][1][quantity]=2&[item][1][related_object]=product&[item][2][product_id]=prod_0bd76bb4aa003890cb&[item][2][quantity]=2&[item][3][source_id]=M0E20000000ELDH&[item][3][quantity]=3&[item][3][related_object]=sku&[item][4][sku_id]=sku_0b661e41fc0d35a8f1&[item][4][quantity]=4'\n```\n<!--\ntitle: \"Validate Referral Card\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=REFERRAL-CODE-OxBakPYf&amount=10000'\n```\n\n### [JSFiddle Example](https://jsfiddle.net/voucherify/gfu2bgn5/)\n<!--\ntitle: \"Example Code - Voucherify.js\"\nlineNumbers: true\n-->\n```javascript\n<script type=\"text/javascript\" src=\"https://cdn.rawgit.com/rspective/voucherify.js/v1.4.5/dist/voucherify-1.4.5.js\"></script>\n\n<script type=\"text/javascript\">\n  function init() {\n    Voucherify.initialize(\n      \"011240bf-d5fc-4ef1-9e82-11eb68c43bf5\", //YOUR-CLIENT-APPLICATION-ID-FROM-SETTINGS\n      \"9e2230c5-71fb-460a-91c6-fbee64707a20\" //YOUR-CLIENT-TOKEN-FROM-SETTINGS\n    );\n  };\n  init();\n  \n  //-- [Optional] If you want us to track your customers' activity, then you should invoke the following function to set identity. You have to do it only once. If the identity parameter is not passed, then we will generate it for you.\n  Voucherify.setIdentity(\"your-customer-uniq-id\");\n  Voucherify.validate(\"Testing7fjWdr\", function callback (response) {\n    console.log(response);\n  });\n</script>\n```\n\n### Examples with Query Parameters\n\n| **Query Parameters** | **Example URL** |\n|:---|:---|\n| Shortcut - `customer` query param instead of `customer[source_id]` | `https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=customer_id` |\n| Pass `customer`'s and `redemption`'s context `metadata` in query parameters | `https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=sure_he_is_new&metadata[shop]=1&customer[metadata][propsy]=2&metadata[test]=true` |\n| Use `tracking_id` instead of `source_id` | `https://api.voucherify.io/client/v1/validate?code=IKU-mvS-JOG&amount=10100&tracking_id=sure_he_is_new_5&metadata[shop]=1&metadata[test]=true` |\n\n### Reasons why a validation might fail\n\nVoucher validation might fail because of one of these reasons:\n\n* `voucher not found` - voucher doesn't exist or was <!-- [deleted](OpenAPI.json/paths/~1vouchers~1{code}/delete) -->[deleted](ref:delete-voucher)\n* `voucher expired` - voucher is out of [start date - expiration date] timeframe\n* `voucher is disabled` - learn more about <!-- [disabled vouchers](OpenAPI.json/paths/~1vouchers~1{code}~1disable) -->[disabled vouchers](ref:disable-voucher)\n* `customer does not match segment rules` - learn more customer tracking LINK\n* `order does not match validation rules` - learn more about validation rules LINK",
+        "description": "<!-- theme: danger -->\n> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for voucher validation, and we do not recommend using it. The new [Stackable Discounts API](ref:validate-stacked-discounts-client-side) introduces additional features and improvements while maintaining backward compatibility, including applying a combination of coupon codes and promotion tiers. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint. \n\nTo verify a voucher code given by customer, you can use this method. It is designed for client side integration which means that is accessible only through public keys. This method is designed to be run directly either in web browsers or mobile apps.\n\n> ❗️ Specifying gift credits and loyalty points\n>\n> This endpoint does not support specifying the specific amount of gift credits to apply to an order nor the specific amount of loyalty points to an order. It calculates the amount that is available on the card and applies as much credits or points as possible to cover the total amount. \n\n### Set customer identity (optional)\n\nVoucherify can help you track anonymous customers. Once you integrate Voucherify into your web app and call the validate method, Voucherify will return a tracking ID and the script will store it in a cookie. Each subsequent validate call will use the same tracking ID.\n\nVoucherify tracks a user using a tracking ID to see if the user who is validating vouchers is the same as the one who consuming them. Voucherify does this by setting up an identity for the user. A `tracking_id` will be generated on the server side, unless you specify your own `tracking_id`. In both cases, you will receive the `tracking_id` in the validation response.\n\nThe returned `tracking_id` field should be used as the customer `source_id` in subsequent redemption requests. Moreover, the `tracking_id` returned from Validation API is encoded. Voucherify will recognize both values for identifying customer - the one before encryption sent as a query parameter to the **GET** `/validate` request, and the version encrypted and returned as part of the validation request.\n\n### Sample workflow\n\nCustomer tracking workflow in a nutshell:\n\n**Client-side:**\n  * A customer visits your website.\n  * A customer validates a voucher code. That triggers a validate request to be sent to Voucherify. In the request, you pass the tracking_id or customer.source_id. As a result, the API call to this endpoint returns an **encoded** `tracking_id`.\n\n**Backend:**\n  * Once the customer finishes the checkout process, your website passes the `tracking_id` to your backend during a redemption call. The `tracking_id` is sent as a value assigned to the property *source_id* in a customer object.\n  * A customer object is created and within the redemption response, you get a customer `id`.\n  * You can use the customer `id` or the customer `source_id` to fetch or modify the customer details.\n  \nA customer is created (upserted) automatically with a redemption call. Alternatively, you can create a new profile by creating a customer via a dedicated API method. Take a look at the customer object to understand the <!-- [entity's structure](OpenAPI.json/components/schemas/CustomerWithSummaryLoyaltyReferrals) -->[entity's structure](ref:get-customer). \n\n<!-- theme: info -->\n\n> 📘 Customer identifier\n>\n> The source id of the customer may either be an already hashed version of the `tracking_id`, which you received in a response from a validation request or a custom ID you predefined (i.e. an email address). Nevertheless, we recommend using identifiers delivered by Voucherify API.\n\n<!--\ntitle: \"Validate Discount Voucher\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=PAYINEUROS&session_type=LOCK&session_key=A&session_ttl=1&session_ttl_unit=NANOSECONDS&customer=cust_4vMj8Twr5nBzvTrNCgipMb6M&[order][metadata][currency]=EUR&[metadata][location_id][0]=L1&[item][0][source_id]=webinar_BF_sweater_pink_sweater&[item][0][quantity]=2&[item][0][related_object]=product'\n```\n<!--\ntitle: \"Validate Loyalty Card\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=LOYALTY-CARD-ng3Kb9tM&session_type=LOCK&session_key=A&session_ttl=1&session_ttl_unit=NANOSECONDS&customer[source_id]=286401dc-6f4c-4ebb-8ca2-9f78b3e84c7d&[order][metadata][currency]=EUR&[customer][metadata][age]=24&[customer][metadata][acquisition_channel]=Facebook&[metadata][location_id][0]=L1&[item][0][source_id]=webinar_BF_sweater_pink_sweater&[item][0][quantity]=2&[item][0][related_object]=product&[item][1][source_id]=webinar_BF_pants_gray_sweat_pants&[item][1][quantity]=2&[item][1][related_object]=product&[item][2][product_id]=prod_0bd76bb4aa003890cb&[item][2][quantity]=2&[item][3][source_id]=M0E20000000ELDH&[item][3][quantity]=3&[item][3][related_object]=sku'\n```\n<!--\ntitle: \"Validate Gift Card\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=GIFT-CARD-kW4aEsfB&session_type=LOCK&session_key=A&session_ttl=1&session_ttl_unit=NANOSECONDS&customer[source_id]=286401dc-6f4c-4ebb-8ca2-9f78b3e84c7d&[order][metadata][currency]=EUR&[customer][metadata][age]=24&[customer][metadata][acquisition_channel]=Facebook&[metadata][location_id][0]=L1&[item][0][source_id]=webinar_BF_sweater_pink_sweater&[item][0][quantity]=2&[item][0][related_object]=product&[item][1][source_id]=webinar_BF_pants_gray_sweat_pants&[item][1][quantity]=2&[item][1][related_object]=product&[item][2][product_id]=prod_0bd76bb4aa003890cb&[item][2][quantity]=2&[item][3][source_id]=M0E20000000ELDH&[item][3][quantity]=3&[item][3][related_object]=sku&[item][4][sku_id]=sku_0b661e41fc0d35a8f1&[item][4][quantity]=4'\n```\n<!--\ntitle: \"Validate Referral Card\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -H \"origin: yourdomain.com\" \\\n  'https://api.voucherify.io/client/v1/validate?code=REFERRAL-CODE-OxBakPYf&amount=10000'\n```\n\n### [JSFiddle Example](https://jsfiddle.net/voucherify/gfu2bgn5/)\n<!--\ntitle: \"Example Code - Voucherify.js\"\nlineNumbers: true\n-->\n```javascript\n<script type=\"text/javascript\" src=\"https://cdn.rawgit.com/rspective/voucherify.js/v1.4.5/dist/voucherify-1.4.5.js\"></script>\n\n<script type=\"text/javascript\">\n  function init() {\n    Voucherify.initialize(\n      \"011240bf-d5fc-4ef1-9e82-11eb68c43bf5\", //YOUR-CLIENT-APPLICATION-ID-FROM-SETTINGS\n      \"9e2230c5-71fb-460a-91c6-fbee64707a20\" //YOUR-CLIENT-TOKEN-FROM-SETTINGS\n    );\n  };\n  init();\n  \n  //-- [Optional] If you want us to track your customers' activity, then you should invoke the following function to set identity. You have to do it only once. If the identity parameter is not passed, then we will generate it for you.\n  Voucherify.setIdentity(\"your-customer-uniq-id\");\n  Voucherify.validate(\"Testing7fjWdr\", function callback (response) {\n    console.log(response);\n  });\n</script>\n```\n\n### Examples with Query Parameters\n\n| **Query Parameters** | **Example URL** |\n|:---|:---|\n| Shortcut - `customer` query param instead of `customer[source_id]` | `https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=customer_id` |\n| Pass `customer`'s and `redemption`'s context `metadata` in query parameters | `https://api.voucherify.io/client/v1/validate?code=sKKFCKLZ&amount=10100&customer=sure_he_is_new&metadata[shop]=1&customer[metadata][propsy]=2&metadata[test]=true` |\n| Use `tracking_id` instead of `source_id` | `https://api.voucherify.io/client/v1/validate?code=IKU-mvS-JOG&amount=10100&tracking_id=sure_he_is_new_5&metadata[shop]=1&metadata[test]=true` |\n\n### Reasons why a validation might fail\n\nVoucher validation might fail because of one of these reasons:\n\n* `voucher not found` - voucher doesn't exist or was <!-- [deleted](OpenAPI.json/paths/~1vouchers~1{code}/delete) -->[deleted](ref:delete-voucher)\n* `voucher expired` - voucher is out of [start date - expiration date] timeframe\n* `voucher is disabled` - learn more about <!-- [disabled vouchers](OpenAPI.json/paths/~1vouchers~1{code}~1disable) -->[disabled vouchers](ref:disable-voucher)\n* `customer does not match segment rules` - learn more customer tracking LINK\n* `order does not match validation rules` - learn more about validation rules LINK",
         "parameters": [
           {
             "$ref": "#/components/parameters/origin"
@@ -64661,7 +64661,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/LoyaltiesRewardAssignmentsGetResponseBody"
+                  "$ref": "#/components/schemas/LoyaltiesRewardsGetResponseBody"
                 },
                 "examples": {
                   "Example": {
