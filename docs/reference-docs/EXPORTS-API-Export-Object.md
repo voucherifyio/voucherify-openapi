@@ -17,43 +17,43 @@ One of:
 All of:
 
 1. [Export Base](#export-base)
-2. [Export Voucher Base](#export-voucher-base)
+2. [Export Vouchers](#export-vouchers)
 
 ## Export Redemption
 All of:
 
 1. [Export Base](#export-base)
-2. [Export Redemption Base](#export-redemption-base)
+2. [Export Redemptions](#export-redemptions)
 
 ## Export Customers
 All of:
 
 1. [Export Base](#export-base)
-2. [Export Customer Base](#export-customer-base)
+2. [Export Customers](#export-customers)
 
 ## Export Publication
 All of:
 
 1. [Export Base](#export-base)
-2. [Export Publication Base](#export-publication-base)
+2. [Export Publications](#export-publications)
 
 ## Export Orders
 All of:
 
 1. [Export Base](#export-base)
-2. [Export Order Base](#export-order-base)
+2. [Export Orders](#export-orders)
 
 ## Export Points Expiration
 All of:
 
 1. [Export Base](#export-base)
-2. [Export Points Expiration Base](#export-points-expiration-base)
+2. [Export Points Expiration](#export-points-expiration)
 
 ## Export Vouchers Transactions Expiration
 All of:
 
 1. [Export Base](#export-base)
-2. [Export Voucher Transactions Expiration Base](#export-voucher-transactions-expiration-base)
+2. [Export Vouchers Transactions Expiration](#export-vouchers-transactions-expiration)
 
 ## Export Base
 | Attributes |  Description |
@@ -66,43 +66,43 @@ All of:
 | result</br>`object`, `null` | <p>Contains the URL of the CSV file.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>URL of the CSV file location. It contains the token used for authorization in the Download export method.</p></td></tr></tbody></table> |
 | user_id</br>`string`, `null` | <p>Identifies the specific user who initiated the export through the Voucherify Dashboard; returned when the channel value is WEBSITE.</p> |
 
-## Export Voucher Base
+## Export Vouchers
 | Attributes |  Description |
 |:-----|:--------|
 | exported_object</br>`string` | <p>The type of object to be exported.</p> Available values: `voucher` |
 | parameters</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">order</td><td style="text-align:left"><p>How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.</p> <a href="#export-voucher-order">Export Voucher Order</a></td></tr><tr><td style="text-align:left">fields</br><code>array</code></td><td style="text-align:left"><p>Array of strings containing the data in the export. These fields define the headers in the CSV file.</p> Array of <a href="#export-voucher-fields">Export Voucher Fields</a></td></tr><tr><td style="text-align:left">filters</td><td style="text-align:left"><p>Filter conditions.</p> <a href="#export-voucher-filters">Export Voucher Filters</a></td></tr></tbody></table> |
 
-## Export Redemption Base
+## Export Redemptions
 | Attributes |  Description |
 |:-----|:--------|
 | exported_object</br>`string` | <p>The type of object to be exported.</p> Available values: `redemption` |
 | parameters</br>`object` | <p>List of available fields and filters that can be exported with an order along with the sorting order of the returned data.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">order</td><td style="text-align:left"><p>How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.</p> <a href="#export-redemption-order">Export Redemption Order</a></td></tr><tr><td style="text-align:left">fields</br><code>array</code></td><td style="text-align:left"><p>Array of strings containing the data in the export. These fields define the headers in the CSV file.</p> Array of <a href="#export-redemption-fields">Export Redemption Fields</a></td></tr><tr><td style="text-align:left">filters</td><td style="text-align:left"><p>Filter conditions.</p> <a href="#export-redemption-filters">Export Redemption Filters</a></td></tr></tbody></table> |
 
-## Export Customer Base
+## Export Customers
 | Attributes |  Description |
 |:-----|:--------|
 | exported_object</br>`string` | <p>The type of object to be exported.</p> Available values: `customer` |
 | parameters</br>`object` | <p>List of available fields and filters that can be exported with an order along with the sorting order of the returned data.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">order</td><td style="text-align:left"><p>How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.</p> <a href="#export-customer-order">Export Customer Order</a></td></tr><tr><td style="text-align:left">fields</br><code>array</code></td><td style="text-align:left"><p>Array of strings containing the data in the export. These fields define the headers in the CSV file.</p> Array of <a href="#export-customer-fields">Export Customer Fields</a></td></tr><tr><td style="text-align:left">filters</td><td style="text-align:left"><p>Filter conditions.</p> <a href="#export-customer-filters">Export Customer Filters</a></td></tr></tbody></table> |
 
-## Export Publication Base
+## Export Publications
 | Attributes |  Description |
 |:-----|:--------|
 | exported_object</br>`string` | <p>The type of object to be exported.</p> Available values: `publication` |
 | parameters</br>`object` | <p>List of available fields and filters that can be exported with an order along with the sorting order of the returned data.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">order</td><td style="text-align:left"><p>How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.</p> <a href="#export-publication-order">Export Publication Order</a></td></tr><tr><td style="text-align:left">fields</br><code>array</code></td><td style="text-align:left"><p>Array of strings containing the data in the export. These fields define the headers in the CSV file.</p> Array of <a href="#export-publication-fields">Export Publication Fields</a></td></tr><tr><td style="text-align:left">filters</td><td style="text-align:left"><p>Filter conditions.</p> <a href="#export-publication-filters">Export Publication Filters</a></td></tr></tbody></table> |
 
-## Export Order Base
+## Export Orders
 | Attributes |  Description |
 |:-----|:--------|
 | exported_object</br>`string` | <p>The type of object to be exported.</p> Available values: `order` |
 | parameters</br>`object` | <p>List of available fields and filters that can be exported with an order along with the sorting order of the returned data.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">order</td><td style="text-align:left"><p>How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.</p> <a href="#export-order-order">Export Order Order</a></td></tr><tr><td style="text-align:left">fields</br><code>array</code></td><td style="text-align:left"><p>Array of strings containing the data in the export. These fields define the headers in the CSV file.</p> Array of <a href="#export-order-fields">Export Order Fields</a></td></tr><tr><td style="text-align:left">filters</td><td style="text-align:left"><p>Filter conditions.</p> <a href="#export-order-filters">Export Order Filters</a></td></tr></tbody></table> |
 
-## Export Points Expiration Base
+## Export Points Expiration
 | Attributes |  Description |
 |:-----|:--------|
 | exported_object</br>`string` | <p>The type of object to be exported.</p> Available values: `points_expiration` |
 | parameters</br>`object` | <p>List of available fields and filters that can be exported with an order along with the sorting order of the returned data.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">order</td><td style="text-align:left"><p>How the export is filtered, where the dash - preceding a sorting option means sorting in a descending order.</p> <a href="#export-points-expiration-order">Export Points Expiration Order</a></td></tr><tr><td style="text-align:left">fields</br><code>array</code></td><td style="text-align:left"><p>Array of strings containing the data in the export. These fields define the headers in the CSV file.</p> Array of <a href="#export-points-expiration-fields">Export Points Expiration Fields</a></td></tr><tr><td style="text-align:left">filters</td><td style="text-align:left"><p>Filter conditions.</p> <a href="#export-points-expiration-filters">Export Points Expiration Filters</a></td></tr></tbody></table> |
 
-## Export Voucher Transactions Expiration Base
+## Export Vouchers Transactions Expiration
 | Attributes |  Description |
 |:-----|:--------|
 | exported_object</br>`string` | <p>The type of object to be exported.</p> Available values: `voucher_transactions` |
