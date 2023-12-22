@@ -103,7 +103,7 @@ How to edit OpenAPI file:
     - `CreateInBulk`(multiple record)
 - If a 0-level model has dedicated sub-models (contains only `oneOf`), then those model's names should follow the pattern:
   `{Resource}{Action}{Differentiator}{Request|Response}{Body|Query}`
-  where the  `Differentiator` describes the child model, e.g.:
+  where the  `Differentiator` describes the child model. Title of those models shall be like schema name but in `Title Case` and description shall follow the pattern: `{Response/Request} {Body/Query} schema for **{Method}** {Path} {OPTIONALLY: and **{Method}** {Path}}`, e.g.:
     - `Base [PublicationsCreateBaseResponseBody]` (common part of other child models)
     - `Vouchers [PublicationsCreateVouchersResponseBody]`
     - `Voucher [PublicationsCreateVoucherResponseBody]`
