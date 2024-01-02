@@ -19,6 +19,20 @@ Voucherify is using openAPI definition to generate sdks.
 
 ## For testing purposes you need to export environment variables by running
 
+#### For python
+
+1. Use `pip3 install python-dotenv` or `pip install python-dotenv`.
+2. Add `.env` file inside `sdk-tests` folder with following content:
+```dotenv
+VOUCHERIFY_HOST=https://api.voucherify.io #optional
+X_APP_ID=4xxx17d6-xxxx-xxxx-xxxx-ce24381228ab
+X_APP_TOKEN=3xxx165i-xxxx-xxxx-xxxx-cb5327024ce4
+```
+
+**NOTE** If You have problem with wrong reading of `.env` file variables You probably need to use unset command for removing aforementioned variables from OS ENV.
+
+#### Deprecated
+
 - required:
   - export X_APP_ID=UUID...
   - export X_APP_TOKEN=UUID...
