@@ -2,7 +2,7 @@
 title: Create Loyalty Tiers
 type: endpoint
 categorySlug: voucherify-api
-slug: create-loyalty-tiers
+slug: create-in-bulk-loyalty-tiers
 parentDocSlug: loyalties-api
 hidden: false
 order: 44

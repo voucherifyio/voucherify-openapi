@@ -86,44 +86,66 @@ How to edit OpenAPI file:
 
  Building new models, we should follow the following name convention: 
 - Use pascal case casing.
-- If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{Resource}{Action}{Request|Response}{Body|Query}`, where:
-	- `Resource`: plural name taken from API path, e.g. `Vouchers`, `Customers`, `Products`
-	- `Action` : `Get`(single record), `List`, `Update`, `Delete`, `Create` (etc.)
-- If a 0-level model has dedicated sub-models, then those model's names should follow the pattern:
-   `{Resource}{Action}{Differentiator}{Request|Response}{Body|Query}`
-   where the  `Differentiator` describes the child model, e.g.:
-  - `Discount [VouchersValidateDiscountRequestBody]`
-  - `Gift [VouchersValidateGiftRequestBody]`
-  - `Loyalty [VouchersValidateLoyaltyRequestBody]` 
+- If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{Client}{PathNameResult}{Action}{Request|Response}{Body|Query}`, where:
+  - (optional) `Client`: Use for all client schemas.
+  - `PathNameResult`: `location.pathname` WITHOUT `v1` and `path parameters` written in PascalCase.
+    - `/v1/rewards/{rewardId}/assignments` => `RewardsAssignments`
+    - `/v1/rewards/{rewardId}/assignments/{assignmentId}` => `RewardsAssignments`
+    - `/v1/rewards/{rewardId}/assignments/{assignmentId}/redemptions` => `RewardsAssignmentsRedemptions`
+    - `/client/v1/rewards/{rewardId}/assignments/{assignmentId}/redemptions` => `ClientRewardsAssignmentsRedemptions`
+  - `Action`: either taken from HTTP method, e.g. `List`, `Get`, `Update`, `Delete`, `Create` or what the endpoint does, e.g. `Track`, `Validate`, `Import`, `Export`
+    - `Get`(single record), 
+    - `List`(multiple record)
+    - `Update`(single record), 
+    - `UpdateInBulk` (multiple record), 
+    - `Delete`(single record), 
+    - `Create`(single record), 
+    - `CreateInBulk`(multiple record)
+- If a 0-level model has dedicated sub-models (contains only `oneOf`), then those model's names should follow the pattern:
+  `{Resource}{Action}{Differentiator}{Request|Response}{Body|Query}`
+  where the  `Differentiator` describes the child model. Title of those models shall be like schema name but in `Title Case` and description shall follow the pattern: `{Response/Request} {Body/Query} schema for **{Method}** {Path} {OPTIONALLY: and **{Method}** {Path}}`, e.g.:
+    - `Base [PublicationsCreateBaseResponseBody]` (common part of other child models)
+    - `Vouchers [PublicationsCreateVouchersResponseBody]`
+    - `Voucher [PublicationsCreateVoucherResponseBody]`
+```json
+"PublicationsCreateResponseBody": {
+    "title": "Publications Create Response Body",
+    "type": "object",
+    "description": "Response body schema for **POST** `/publication` and **GET** `/publications/create`.",
+    "oneOf": [
+        {
+            "$ref": "#/components/schemas/PublicationsCreateVoucherResponseBody"
+        },
+        {
+            "$ref": "#/components/schemas/PublicationsCreateVouchersResponseBody"
+        }
+    ]
+},
+```
 - If a model is used by more than one API endpoint (general model), we use simple domain language, e.g. `Customer`, `Category`, `Discount`, `DiscountUnit`
 - If a portion of a model is used by more than one schema, we can save this portion under a new schema and use it with `allOf` operator:
+
+**If You want schema with wrong name don't hesitate to correct it.**
+
+### Correct 0-level model example:
+
+- `type` - should be `object` or `array` mostly but in some cases could be optional
+- `title` - should be the same as the name of the model
+- `description` - should point to the API endpoint that uses this model e.g. `{type} body schema for **{method}** {path}`
+- `properties / onyOf / allOf` - should contain all attributes that are used in the API endpoint or ref to another schema
+
 ```json
 {
-  "GiftCardTransaction": {
-    "title": "Gift Card Transaction",
-    "description": "List of gift card transactions",
+  "RedemptionsGetResponseBody": {
+    "type": "object",
+    "title": "Redemptions Get Response Body",
+    "description": "Response body schema for **GET** `/redemptions/{redemptionId}`",
     "oneOf": [
       {
-        "title": "Redemption",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/GiftCardTransactionBase"
-          },
-          {
-            "$ref": "#/components/schemas/GiftCardTransactionRedemptionDetails"
-          }
-        ]
+        "$ref": "#/components/schemas/Redemption"
       },
       {
-        "title": "Refund",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/GiftCardTransactionBase"
-          },
-          {
-            "$ref": "#/components/schemas/GiftCardTransactionRefundDetails"
-          }
-        ]
+        "$ref": "#/components/schemas/RedemptionRollback"
       }
     ]
   }
@@ -133,7 +155,7 @@ How to edit OpenAPI file:
 For example:
 - The general voucher model, used in many different API endpoints, should have the name `Voucher` (currently, it has a name: `Voucher`)
 - for path `GET /v1/vouchers` (list vouchers), we have a `1_res_vouchers_GET` 0-level model, that should be named: `VouchersListResponseBody`.
-- for path `GET /v1/vouchers` (list vouchers), we have a `1_res_vouchers_GET` 0-level model which has sub-model `Voucher_list_vouchers` that should be named: `VouchersListItemResponseBody` 
+- for path `GET /v1/vouchers` (list vouchers), we have a `1_res_vouchers_GET` 0-level model which has sub-model `Voucher_list_vouchers` that should be named: `VouchersListResponseBody` 
 - General model `Voucher` is used in many paths (`GET /v1/vouchers/{code}`, `POST /v1/vouchers/qualification`, `GET /v1/publications/create`); therefore, we should rename the model to `Voucher`.
 
 > [!NOTE] Most likely general model will be same as used in GET method. For example `CategoriesGetResponseBody` is equal by ref to `Category`. This model most likely will not be used in `PUT` requests because, response in `PUT` request always returns value in `updated_at`, so you will need to create a duplicated model just for update response.
@@ -145,6 +167,7 @@ Good practices:
 - if attribute is always `null`, set type: `null`
 - for dates use `"type": "string", "format": "date-time"` or `"type": "string", "format": "date"`
 - for the object type `object`, add the `required` attribute which should contain a list of required attributes in the object
+- `nullable` cannot be next to the `$ref`. Please run `npm run fix-schemas-with-refs` to fix it.
 
 ## Contribution to documentation
 
