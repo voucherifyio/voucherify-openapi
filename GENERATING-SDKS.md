@@ -13,9 +13,7 @@ Voucherify is using openAPI definition to generate sdks.
 
 - `npm i` (if you have not already installed)
 - `npm install @openapitools/openapi-generator-cli -g` (if you have not already installed)
-- `openapi-generator-cli version-manager set 7.0.1`
-- `npm run prepare-open-api-for-sdk -- --language={language}` (available languages are `python`, `ruby`)
-- `npx @openapitools/openapi-generator-cli generate -i ./tmp/reference/{language}/OpenAPI.json -g {language} -o ./tmp/{language} -t ./mustache-templates/${language-template}` (available languages are `python`, `ruby`; available language templates are `python`, `ruby-client`)
+- `generate-sdk-ruby`/`generate-sdk-python`
 
 ## For testing purposes you need to export environment variables by running
 
