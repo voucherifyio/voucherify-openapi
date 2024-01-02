@@ -312,26 +312,26 @@ I'd consider only the order and/or item.
 
 <!-- ### Order object – response analysis
 
-Code plus description, plus link to API reference
+Code plus description, plus a link to the API reference
 
 ### Item object – response analysis
 
-Code plus description, plus link to API reference
+Code plus description, plus a link to the API reference
 
  -->
 
 ## Data to be shown
 
-Depending on the use case, different response data can be shown to an end-customer. The following sections contain snippets of JSON responses from Voucherify API [redemption](ref:redeem-stacked-discounts) endpoint.
+Voucherify supports many different use cases. Once the data are mapped correctly, the data can be shown to end-customers in various contexts. The following sections contain snippets of JSON responses from the Voucherify API [redemption](ref:redeem-stacked-discounts) endpoint.
 
 See the comments in the code to find suggestions as to which data are worth showing to an end-customer.
 
 ### Discounts
 
-In the case of discounts, the end-customer can be shown the data as commented in the code. This example covers any redeemed discount applied to the end-customer, whether it is applied from a discount coupon, cart promotion, or gift card.
+In the case of discounts, the end-customer can be shown the data as commented in the code. This example covers any redeemed discount applied to the end-customer, whether it is applied from a discount coupon, cart promotion, gift card, or pay with points.
 
 In this example, two discounts are applied:
-- a discount that covers products with `"brand": "Adventure"` metadata,
+- a discount that reduces each item subtotal by $20 and covers only the products with `"brand": "Adventure"` metadata,
 - a discount that reduces the cart's total price by $25.
 
 ```json Response
@@ -341,25 +341,25 @@ In this example, two discounts are applied:
         "created_at": "2023-12-13T14:29:20.533Z",
         "updated_at": null,
         "status": "PAID",
-        "amount": 13000, // The order amount before applying any discount. This should be shown to the end-customer
-        "discount_amount": 2500, // The sum of all discount amounts which are applied to the whole order only. This should be shown to the end-customer
+        "amount": 14000, // The order amount before applying any discount. This should be shown to the end-customer
+        "discount_amount": 2500, // The sum of all discount amounts which are applied to the whole cart only. This should be shown to the end-customer
+        "applied_discount_amount": 2500, // The order-level discount applied in this particular request        
         "items_discount_amount": 4000, // The sum of all discount amounts which are applied to specific products
         "total_discount_amount": 6500, // The sum of all order-level and all product-specific discounts. This should be shown to the end-customer
-        "total_amount": 6500, // The order amount after applying all the discounts. This should be shown to the end-customer
-        "applied_discount_amount": 2500, // The order-level discount applied in this particular request
         "items_applied_discount_amount": 4000, // The sum up of all product-specific discounts applied in this particular request
         "total_applied_discount_amount": 6500, // The sum of all order-level and all product-specific discounts applied in this particular request.
+        "total_amount": 7500, // The order amount after applying all the discounts. This should be shown to the end-customer
         "items": [
             {
                 "object": "order_item",
                 "source_id": "adv-mug",
                 "related_object": "product",
-                "quantity": 2, // The quantity of the particular item in the cart. This should be shown to the end-customer
-                "amount": 2000, // The total amount of the order item, i.e. price * quantity. This should be shown to the end-customer
+                "quantity": 3, // The quantity of the particular item in the cart. This should be shown to the end-customer
+                "amount": 3000, // The total amount of the order item, i.e. price * quantity. This should be shown to the end-customer
                 "discount_amount": 2000, // The sum of all item-level discounts applied to this item.
                 "applied_discount_amount": 2000, // The item-level discount applied by this particular redeemable. This should be shown to the end-customer
                 "price": 1000, // Unit price of an item. This should be shown to the end-customer
-                "subtotal_amount": 0, // Final order item amount after the applied item-level discount. In this case, the discount amount equals the product amount, making the subtotal amount equal 0. This should be shown to the end-customer
+                "subtotal_amount": 1000, // Final order item amount after the applied item-level discount. In this case, the discount amount equals the product amount, making the subtotal amount equal 0. This should be shown to the end-customer
                 "product": {
                     "id": "prod_0df14b3a6ad8f282a8",
                     "source_id": "adv-mug",
@@ -370,7 +370,7 @@ In this example, two discounts are applied:
                 }
             },
             {
-                "object": "order_item", // The comments are analogical like for the item above
+                "object": "order_item", // The comments are the same as in the `adv-mug` item above
                 "source_id": "adv-tshirt",
                 "related_object": "product",
                 "quantity": 3,
@@ -395,7 +395,7 @@ In this example, two discounts are applied:
                 "quantity": 2,
                 "amount": 5000,
                 "price": 2500,
-                "subtotal_amount": 5000, // Here "subtotal_amount" equals "amount" because this product is not covered by the Adventure brand discount
+                "subtotal_amount": 5000, // Here, "subtotal_amount" equals "amount" because this product is not covered by the Adventure brand discount
                 "product": {
                     "id": "prod_0df14b7e7d8975079d",
                     "source_id": "star-th-bottle",
