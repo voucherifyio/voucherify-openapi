@@ -425,6 +425,8 @@ In this section, two cases are covered:
 
 In this example, the cart includes an Adventure Mug and one mug is added for free.
 
+
+
 <!-- Make the terminology consistent:
 - order items
 - items
