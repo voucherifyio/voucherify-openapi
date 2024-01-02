@@ -15,7 +15,7 @@ import {exec} from 'child_process' ;
 
 // please update `scripts/prepare-open-api-for-sdk/__snapshots__/index.test.ts.snap`
 // before you start refactoring!
-// to run this test uncomment `// "<rootDir>/scripts/prepare-open-api-for-sdk/index.test.ts"` in `jest.config.js`
+// to run this test comment line with `"<rootDir>/scripts/prepare-open-api-for-sdk/index.test.ts"` in `jest.config.js`
 // and run `jest --findRelatedTests ./scripts/prepare-open-api-for-sdk/index.test.ts`
 
 function execShellCommand(cmd) {
