@@ -86,14 +86,14 @@ How to edit OpenAPI file:
 
  Building new models, we should follow the following name convention: 
 - Use pascal case casing.
-- If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{Client}{PathNameResult}{Action}{Request|Response}{Body|Query}`, where:
+- If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{Client?}{PathNameResult}{Action}{Differentiator?}{Request|Response}{Body|Query}`, where:
   - (optional) `Client`: Use for all client schemas.
   - `PathNameResult`: `location.pathname` WITHOUT `v1` and `path parameters` written in PascalCase.
     - `/v1/rewards/{rewardId}/assignments` => `RewardsAssignments`
     - `/v1/rewards/{rewardId}/assignments/{assignmentId}` => `RewardsAssignments`
     - `/v1/rewards/{rewardId}/assignments/{assignmentId}/redemptions` => `RewardsAssignmentsRedemptions`
     - `/client/v1/rewards/{rewardId}/assignments/{assignmentId}/redemptions` => `ClientRewardsAssignmentsRedemptions`
-  - `Action`: either taken from HTTP method, e.g. `List`, `Get`, `Update`, `Delete`, `Create` or what the endpoint does, e.g. `Track`, `Validate`, `Import`, `Export`
+  - `Action`: Either taken from HTTP method, e.g. `List`, `Get`, `Update`, `Delete`, `Create` or what the endpoint does, e.g. `Track`, `Validate`, `Import`, `Export`
     - `Get`(single record), 
     - `List`(multiple record)
     - `Update`(single record), 
@@ -101,12 +101,14 @@ How to edit OpenAPI file:
     - `Delete`(single record), 
     - `Create`(single record), 
     - `CreateInBulk`(multiple record)
-- If a 0-level model has dedicated sub-models (contains only `oneOf`), then those model's names should follow the pattern:
-  `{Resource}{Action}{Differentiator}{Request|Response}{Body|Query}`
-  where the  `Differentiator` describes the child model. Title of those models shall be like schema name but in `Title Case` and description shall follow the pattern: `{Response/Request} {Body/Query} schema for **{Method}** {Path} {OPTIONALLY: and **{Method}** {Path}}`, e.g.:
+  - (optional) `Differentiator`: Sub-model title when 0-level model contains only `oneOf`. Title of those models shall be like schema name but in `Title Case` and description shall follow the pattern: `{Response/Request} {Body/Query} schema for **{Method}** {Path} {OPTIONALLY: and **{Method}** {Path}}`, e.g.:
     - `Base [PublicationsCreateBaseResponseBody]` (common part of other child models)
     - `Vouchers [PublicationsCreateVouchersResponseBody]`
     - `Voucher [PublicationsCreateVoucherResponseBody]`
+  - `Request` or `Response`
+  - `Body` or `Query`
+
+Example of model that need a `Differentiator`:
 ```json
 "PublicationsCreateResponseBody": {
     "title": "Publications Create Response Body",
