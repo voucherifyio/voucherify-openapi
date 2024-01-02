@@ -17,15 +17,6 @@ configuration = openapi_client.Configuration(
 configuration.api_key['X-App-Id-1'] = os.environ['X_APP_ID']
 configuration.api_key['X-App-Token-1'] = os.environ['X_APP_TOKEN']
 
-
-#main
-# configuration.api_key['X-App-Id-1'] = "3f9717d5-0214-42e5-bf2d-ce23891228ea"
-# configuration.api_key['X-App-Token-1'] = "2f0b10b4-71f8-4fe5-b59e-7eb8ff1c0edd"
-
-#localhost
-# configuration.api_key['X-App-Id-1'] = "af1742f9-28de-45e0-be50-71b6dfeb21fe"
-# configuration.api_key['X-App-Token-1'] = "798b7287-0f5f-48e0-aa73-a754aff62fec"
-
 class TestYourSDK(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):

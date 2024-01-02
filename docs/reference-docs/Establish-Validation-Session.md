@@ -1,7 +1,7 @@
 ---
 title: Establish Validation Session
 categorySlug: voucherify-api
-parentDocSlug: stackable-discounts-api
+parentDocSlug: stackable-discounts
 slug: establish-validation-session
 type: link
 hidden: false

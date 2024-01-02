@@ -20,23 +20,22 @@ Guides and API Reference pages are hosted on readme.io, the platform for creatin
 
 ## API Reference - Endpoint Pages
 
-API Endpoint Pages like https://docs.voucherify.io/reference/get-voucher describe REST API endpoint, including details like path, HTTP method, path params, body params, response schema and response statuses. On the right side of those pages, we have a `Playground Widget` that allows developers to make test API calls. Readme.io builds those pages using information about the REST API from the uploaded OpenAPI file and displays a UI that allows the exploration of all details. For each endpoint page, we have a corresponding dummy markdown file like https://github.com/voucherifyio/voucherify-openapi/blob/master/docs/reference-docs/VOUCHERS-API-Get-Voucher.md that allows us to control visual aspect of the page displayed in the readme, in particular:
+API Endpoint Pages like https://docs.voucherify.io/reference/get-voucher describe REST API endpoint, including details like path, HTTP method, path params, body params, response schema and response statuses. On the right side of those pages, we have a `Playground Widget` that allows developers to make test API calls. Readme.io builds those pages using information about the REST API from the uploaded OpenAPI file and displays a UI that allows the exploration of all details. For each endpoint page, we have a corresponding dummy markdown file like https://github.com/voucherifyio/voucherify-openapi/blob/master/docs/reference-docs/VOUCHERS-Get-Voucher.md that allows us to control visual aspect of the page displayed in the readme, in particular:
 - The markdown attributes section at the beginning of the file wrapped by `---` describes the page title, type, slug, order, and visibility.
 - `[block:html]` section that adds custom styles to the page that hides unnecessary UI elements like Playground language selector or expandable readme object exploration widget. It also can be used to display the "Beta" tag next to the title. 
 
 Reamde.io platform compares the `operationId` endpoint details attribute from the OpenAPI file with the `slug` from the markdown attributes to combine it and display the final version of the API Endpoint Page.
 
-As you can notice, all API Endpoint pages are grouped by sections like `Vouchers API`, `Campaigns API` or `Promotions API`. Those sections are built by reamde.io based on the `tags` endpoint details attribute from the OpenAPI file and must be repeated in the `parentDocSlug` attribute of the dummy markdown file. 
+As you can notice, all API Endpoint pages are grouped by sections like `Vouchers`, `Campaigns` or `Promotions`. Those sections are built by reamde.io based on the `tags` endpoint details attribute from the OpenAPI file and must be repeated in the `parentDocSlug` attribute of the dummy markdown file. 
 
 
 ## API Reference - Data Model Pages
-
 
 Data model pages like: https://docs.voucherify.io/reference/voucher-object describe the schema of the main building blocks used in specific sections. There are two types of Data Model Pages:
 1. using readme.io expandable object exploration widget, like on the page: https://docs.voucherify.io/reference/validation-object
 2. displaying schema of the object wit all attributes in a table like on the page: https://docs.voucherify.io/reference/voucher-object
 
-We believe that displaying object details in a table is more intuitive for developers. Unfortunately, readme.io does not have the feature to display building block objects defined in OpenAPI in a table format, so we have built custom JS script (`build-update-md-tables-from-openapi`) that generate markdown tables automatically using an OpenAPI file and put them inside the markdown inside the `reference-docs` folder, e.g.:  https://github.com/voucherifyio/voucherify-openapi/blob/master/docs/reference-docs/VOUCHERS-API-Voucher-Object.md. Once we generate the markdown files we can upload them to readme.io using the readme.io CLI. 
+We believe that displaying object details in a table is more intuitive for developers. Unfortunately, readme.io does not have the feature to display building block objects defined in OpenAPI in a table format, so we have built custom JS script (`build-update-md-tables-from-openapi`) that generate markdown tables automatically using an OpenAPI file and put them inside the markdown inside the `reference-docs` folder, e.g.:  https://github.com/voucherifyio/voucherify-openapi/blob/master/docs/reference-docs/VOUCHERS-Voucher-Object.md. Once we generate the markdown files we can upload them to readme.io using the readme.io CLI. 
 
 ## API Reference - Introduction pages
 
