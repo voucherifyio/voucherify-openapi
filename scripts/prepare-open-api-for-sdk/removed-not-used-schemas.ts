@@ -4,17 +4,21 @@ import {
 } from "./utils";
 
 type Components = {
-  parameters: {}
-  schemas: {}
-}
+  parameters: {};
+  schemas: {};
+};
 
 type LanguageOptions = {
   removeRequiredOnNullable?: boolean;
-  simplifyAllObjectsThatHaveAdditionalProperties: boolean;
+  simplifyAllObjectsThatHaveAdditionalProperties?: boolean;
 };
 
-export const removedNotUsedSchemas = (components: Components, paths: {}, languageOptions: LanguageOptions) => {
-  const schemas = {};
+export const removedNotUsedSchemas = (
+  components: Components,
+  paths: {},
+  languageOptions: LanguageOptions,
+  schemas: Record<string, any>
+) => {
   const schemasNamesFoundInPaths = JSON.stringify(paths)
     .match(/"#\/components\/schemas\/.*?"/g)
     .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1))
@@ -89,4 +93,4 @@ export const removedNotUsedSchemas = (components: Components, paths: {}, languag
   }
 
   return schemas;
-}
+};
