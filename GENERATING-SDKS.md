@@ -43,7 +43,7 @@ X_APP_ID=4xxx17d6-xxxx-xxxx-xxxx-ce24381228ab
 X_APP_TOKEN=3xxx165i-xxxx-xxxx-xxxx-cb5327024ce4
 ```
 
-#### For python
+#### For ruby
 
 - Use `gem install dotenv`.
 - If you create new test remember to add `require 'dotenv/load'`
