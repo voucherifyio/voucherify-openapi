@@ -334,6 +334,8 @@ In this example, two discounts are applied:
 - a discount that reduces each item subtotal by $20 and covers only the products with `"brand": "Adventure"` metadata,
 - a discount that reduces the cart's total price by $25.
 
+A Star thermal bottle is added as a reference item that is not covered by any discounts.
+
 ```json Response
 "order": {
         "id": "ord_tc4yusJRqAY87ybmvhnPkJ6u",
@@ -341,25 +343,25 @@ In this example, two discounts are applied:
         "created_at": "2023-12-13T14:29:20.533Z",
         "updated_at": null,
         "status": "PAID",
-        "amount": 14000, // The order amount before applying any discount. This should be shown to the end-customer
-        "discount_amount": 2500, // The sum of all discount amounts which are applied to the whole cart only. This should be shown to the end-customer
-        "applied_discount_amount": 2500, // The order-level discount applied in this particular request        
-        "items_discount_amount": 4000, // The sum of all discount amounts which are applied to specific products
-        "total_discount_amount": 6500, // The sum of all order-level and all product-specific discounts. This should be shown to the end-customer
-        "items_applied_discount_amount": 4000, // The sum up of all product-specific discounts applied in this particular request
+        "amount": 14000, // The order amount before applying any discount. This should be shown to the end-customer.
+        "discount_amount": 2500, // The sum of all discount amounts which are applied to the whole cart only. This should be shown to the end-customer.
+        "applied_discount_amount": 2500, // The order-level discount applied in this particular request.
+        "items_discount_amount": 4000, // The sum of all discount amounts which are applied to specific products.
+        "total_discount_amount": 6500, // The sum of all order-level and all product-specific discounts. This should be shown to the end-customer.
+        "items_applied_discount_amount": 4000, // The sum up of all product-specific discounts applied in this particular request.
         "total_applied_discount_amount": 6500, // The sum of all order-level and all product-specific discounts applied in this particular request.
-        "total_amount": 7500, // The order amount after applying all the discounts. This should be shown to the end-customer
+        "total_amount": 7500, // The order amount after applying all the discounts. This should be shown to the end-customer.
         "items": [
             {
                 "object": "order_item",
                 "source_id": "adv-mug",
                 "related_object": "product",
-                "quantity": 3, // The quantity of the particular item in the cart. This should be shown to the end-customer
-                "amount": 3000, // The total amount of the order item, i.e. price * quantity. This should be shown to the end-customer
+                "quantity": 3, // The quantity of the particular item in the cart. This should be shown to the end-customer.
+                "amount": 3000, // The total amount of the order item, i.e. price * quantity. This should be shown to the end-customer.
                 "discount_amount": 2000, // The sum of all item-level discounts applied to this item.
-                "applied_discount_amount": 2000, // The item-level discount applied by this particular redeemable. This should be shown to the end-customer
+                "applied_discount_amount": 2000, // The item-level discount applied by all applicable redeemables. In this case, it is the $20 discount. This should be shown to the end-customer.
                 "price": 1000, // Unit price of an item. This should be shown to the end-customer
-                "subtotal_amount": 1000, // Final order item amount after the applied item-level discount. In this case, the discount amount equals the product amount, making the subtotal amount equal 0. This should be shown to the end-customer
+                "subtotal_amount": 1000, // Final order item amount after the applied item-level discount. In this case, the discount amount equals the product amount, making the subtotal amount equal 0. This should be shown to the end-customer.
                 "product": {
                     "id": "prod_0df14b3a6ad8f282a8",
                     "source_id": "adv-mug",
@@ -370,7 +372,7 @@ In this example, two discounts are applied:
                 }
             },
             {
-                "object": "order_item", // The comments are the same as in the `adv-mug` item above
+                "object": "order_item", // The comments are the same as in the `adv-mug` item above.
                 "source_id": "adv-tshirt",
                 "related_object": "product",
                 "quantity": 3,
@@ -395,7 +397,7 @@ In this example, two discounts are applied:
                 "quantity": 2,
                 "amount": 5000,
                 "price": 2500,
-                "subtotal_amount": 5000, // Here, "subtotal_amount" equals "amount" because this product is not covered by the Adventure brand discount
+                "subtotal_amount": 5000, // Here, "subtotal_amount" equals "amount" because this product is not covered by the Adventure brand discount.
                 "product": {
                     "id": "prod_0df14b7e7d8975079d",
                     "source_id": "star-th-bottle",
@@ -411,11 +413,11 @@ In this example, two discounts are applied:
 
 The image below shows an example of an order summary for the purchase shown in the response above. The order summary includes the data recommended in the comments.
 
-![](https://files.readme.io/c2b6a88-guides_development_data_parsing_order_summary_01.png)
+![](https://files.readme.io/c2b6a88-guides_development_data_parsing_order_summary_01.png "An order summary showing the cart representing the example described in the response.")
 
 ### Free items
 
-In the case of free item campaigns, there is additional data in the response which also can be shown to the end-customer, as commented in the code. This example covers any type of campaign in which an item (here, an Adventure Mug product) is added to the cart for free, whether it is applied from a voucher, cart promotion, gift card, or otherwise.
+In the case of free item campaigns, there is additional data in the response which also can be shown to the end-customer, as commented in the code. This example covers any type of campaign in which an item (here, an Adventure mug product) is added to the cart for free, whether it is applied from a voucher, cart promotion, gift card, or otherwise.
 
 In this section, two cases are covered:
 - the free item is already in the cart,
@@ -423,9 +425,7 @@ In this section, two cases are covered:
 
 #### Free item already in the cart
 
-In this example, the cart includes an Adventure Mug and one mug is added for free.
-
-
+In this example, the cart includes an Adventure mug and one mug is added for free. A Star thermal bottle is added as a reference item that is not covered by any discounts.
 
 <!-- Make the terminology consistent:
 - order items
@@ -441,26 +441,26 @@ Pick one for the code comments! -->
         "created_at": "2023-12-15T11:13:13.576Z",
         "updated_at": null,
         "status": "PAID",
-        "amount": 7000, // The order amount before applying any discount, including the free item.
-        "items_discount_amount": 1000, // The sum of all discount amounts which are applied to specific products. In this case, this is the full price for the free item
-        "total_discount_amount": 1000, // The sum of all order-level and all product-specific discounts. In this case, this is this the full price for the free item. This should be shown to the end-customer
-        "total_amount": 6000, // The order amount after applying all the discounts. This should be shown to the end-customer
-        "items_applied_discount_amount": 1000, // The sum up of all product-specific discounts applied in this particular request
+        "amount": 7000, // The order amount before applying any discount, including the free item. This should be shown to the end-customer.
+        "items_discount_amount": 1000, // The sum of all discount amounts which are applied to specific products. In this case, this is the full price for the free item.
+        "total_discount_amount": 1000, // The sum of all order-level and all product-specific discounts. In this case, this is this the full price for the free item. This should be shown to the end-customer.
+        "total_amount": 6000, // The order amount after applying all the discounts. This should be shown to the end-customer.
+        "items_applied_discount_amount": 1000, // The sum up of all product-specific discounts applied in this particular request.
         "total_applied_discount_amount": 1000, // The sum of all order-level and all product-specific discounts applied in this particular request.
         "items": [
             {
                 "object": "order_item",
                 "source_id": "adv-mug",
                 "related_object": "product",
-                "quantity": 2, // The quantity of the particular item in the cart. This includes the free item. This should be shown to the end-customer
-                "discount_quantity": 1, // Number of dicounted items. In this case, only one free mug is added. This should be shown to the end-customer
-                "initial_quantity": 1, // Number of items the end-customer placed in the cart. This can be shown to the end-customer
-                "amount": 2000, // The total amount of the order item, i.e. price * quantity. This should be shown to the end-customer
+                "quantity": 2, // The quantity of the particular item in the cart. This includes the free item. This should be shown to the end-customer.
+                "discount_quantity": 1, // Number of dicounted items. In this case, only one free mug is added. This should be shown to the end-customer.
+                "initial_quantity": 1, // Number of the items which the end-customer placed in the cart. This can be shown to the end-customer.
+                "amount": 2000, // The total amount of the order item, i.e. price * quantity. This should be shown to the end-customer.
                 "discount_amount": 1000, // The sum of all item-level discounts applied to this item. This equals the price of the free item.
-                "initial_amount": 1000, // This is the sum of amounts for the order items which the end-customer added to the cart
-                "applied_discount_amount": 1000, // The item-level discount applied by this particular redeemable. This equals the price of the free item. This should be shown to the end-customer
-                "price": 1000, // Unit price of an item. This should be shown to the end-customer
-                "subtotal_amount": 1000, // Final order item amount after the applied item-level discount. In this case, this equals the initial amount as no other discounts are applied. This should be shown to the end-customer
+                "initial_amount": 1000, // This is the sum of amounts for the order items which the end-customer added to the cart.
+                "applied_discount_amount": 1000, // The item-level discount applied by all applicable redeemables. In this case, it equals the price of the free item. This should be shown to the end-customer.
+                "price": 1000, // Unit price of an item. This should be shown to the end-customer.
+                "subtotal_amount": 1000, // Final order item amount after the applied item-level discount. In this case, this equals the initial amount as no other discounts are applied. This should be shown to the end-customer.
                 "product": {
                     "id": "prod_0df14b3a6ad8f282a8",
                     "source_id": "adv-mug",
@@ -490,5 +490,9 @@ Pick one for the code comments! -->
         ],
     }
 ```
+
+The image below shows an example of an order summary for the purchase shown in the response above. The order summary includes the data recommended in the comments.
+
+![](../../assets/img/guides_development_data_parsing_order_summary_02.png "An order summary showing the cart representing the example described in the response.")
 
 #### Free item not in the cart
