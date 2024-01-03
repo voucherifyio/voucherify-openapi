@@ -3,6 +3,7 @@ import _ from "lodash";
 const allKeyWords = [
   "get",
   "list",
+  "create-specific",
   "create",
   "upsert",
   "update",
