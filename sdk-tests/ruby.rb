@@ -19,9 +19,9 @@ OpenapiClient.configure do |config|
   config.host = ENV['VOUCHERIFY_HOST'] || 'https://api.voucherify.io'
 end
 
-customers_api_instance = OpenapiClient::CUSTOMERSApi.new
-exports_api_instance = OpenapiClient::EXPORTSApi.new
-redemptions_api_instance = OpenapiClient::REDEMPTIONSApi.new
+customers_api_instance = OpenapiClient::CustomersApi.new
+exports_api_instance = OpenapiClient::ExportsApi.new
+redemptions_api_instance = OpenapiClient::RedemptionsApi.new
 
 
 begin
