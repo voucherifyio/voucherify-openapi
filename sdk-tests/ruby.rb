@@ -3,6 +3,8 @@
 require 'time'
 require 'openapi_client'
 require 'json/ext'
+require 'dotenv/load'
+
 # setup authorization
 OpenapiClient.configure do |config|
   # Configure API key authorization: X-App-Id-1
@@ -17,9 +19,9 @@ OpenapiClient.configure do |config|
   config.host = ENV['VOUCHERIFY_HOST'] || 'https://api.voucherify.io'
 end
 
-customers_api_instance = OpenapiClient::CUSTOMERSAPIApi.new
-exports_api_instance = OpenapiClient::EXPORTSAPIApi.new
-redemptions_api_instance = OpenapiClient::REDEMPTIONSAPIApi.new
+customers_api_instance = OpenapiClient::CustomersApi.new
+exports_api_instance = OpenapiClient::ExportsApi.new
+redemptions_api_instance = OpenapiClient::RedemptionsApi.new
 
 
 begin
