@@ -1,5 +1,6 @@
 import path from "path";
 import fsPromises from "fs/promises";
+import colors from "colors";
 
 const fixSchemasPropertiesWithSingleEnum = (object: any) => {
   if (Array.isArray(object)) {
@@ -11,6 +12,12 @@ const fixSchemasPropertiesWithSingleEnum = (object: any) => {
         (value) => value === "enum"
       );
       const enumEntries = Object.entries(object);
+
+      if (typeof object["enum"][0] !== "string") {
+        console.log(
+          colors.red('"DEFAULT" IS NOT A STRING, ERROR, CHECK DIF!!!')
+        );
+      }
 
       return Object.fromEntries([
         ...enumEntries.slice(0, indexOfEnum),
@@ -41,6 +48,7 @@ const main = async () => {
       2
     )
   );
+  console.log("done");
 };
 
 main();
