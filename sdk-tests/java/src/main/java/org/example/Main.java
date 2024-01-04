@@ -25,13 +25,26 @@ public class Main {
 
         CampaignsApi apiInstance = new CampaignsApi(defaultClient);
 
-        String campaignId = "camp_IY0bKXqQ1eX98xBPeoeUwnn4";
+        String campaignId = "camp_dMnwEX60drFdQPoNHevJbvM9";
 
         try {
             CampaignsGetResponseBody result = apiInstance.getCampaign(campaignId);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling CampaignsApiApi#addVoucherWithSpecificCodeToCampaign");
+            System.err.println("Status code: " + e.getCode());
+            System.err.println("Reason: " + e.getResponseBody());
+            System.err.println("Response headers: " + e.getResponseHeaders());
+            e.printStackTrace();
+        }
+
+        Integer vouchersCount = 1; // Integer | Number of vouchers that should be added.
+        CampaignsVouchersCreateInBulkRequestBody campaignsVouchersCreateInBulkRequestBody = new CampaignsVouchersCreateInBulkRequestBody(); // CampaignsVouchersCreateInBulkRequestBody | Specify the voucher parameters that you would like to overwrite.
+        try {
+            CampaignsVouchersCreateCombinedResponseBody result = apiInstance.addVouchersToCampaign(campaignId, vouchersCount, campaignsVouchersCreateInBulkRequestBody);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling CampaignsApi#addVouchersToCampaign");
             System.err.println("Status code: " + e.getCode());
             System.err.println("Reason: " + e.getResponseBody());
             System.err.println("Response headers: " + e.getResponseHeaders());
