@@ -4,7 +4,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
-import org.openapitools.client.api.CampaignsApiApi;
+import org.openapitools.client.api.CampaignsApi;
 import org.openapitools.client.auth.ApiKeyAuth;
 import org.openapitools.client.model.*;
 
@@ -15,15 +15,15 @@ public class Main {
         Dotenv dotenv = Dotenv.load();
 
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.voucherify.io");
+        defaultClient.setBasePath(dotenv.get("VOUCHERIFY_HOST"));
 
         ApiKeyAuth id = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Id-1");
-        id.setApiKey(dotenv.get("APPLICATION_ID"));
+        id.setApiKey(dotenv.get("X_APP_ID"));
 
         ApiKeyAuth token = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Token-1");
-        token.setApiKey(dotenv.get("SECRET_KEY"));
+        token.setApiKey(dotenv.get("X_APP_TOKEN"));
 
-        CampaignsApiApi apiInstance = new CampaignsApiApi(defaultClient);
+        CampaignsApi apiInstance = new CampaignsApi(defaultClient);
 
         String campaignId = "camp_IY0bKXqQ1eX98xBPeoeUwnn4";
 

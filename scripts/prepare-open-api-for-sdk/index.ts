@@ -3,21 +3,20 @@ import fs from "fs";
 import path from "path";
 import minimist from "minimist";
 import colors from "colors";
-import { removedDepreceatedPaths } from './removed-depreceated-paths'
-import {
-  parseNullsToNullableObjects,
-  removeStoplightTag,
-} from "./utils";
+import { removedDeprecatedPaths } from "./removed-deprecated-paths";
+import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 import openAPIContent from "../../reference/OpenAPI.json";
-import {removedNotUsedParameters} from './removed-not-used-parameters'
-import {removedNotUsedSchemas} from './removed-not-used-schemas'
+import { removedNotUsedParameters } from "./removed-not-used-parameters";
+import { removedNotUsedSchemas } from "./removed-not-used-schemas";
+import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
 
 const options = minimist(process.argv.slice(2));
 
 type LanguageOptions = {
   name: string;
-  removeRequiredOnNullable?: boolean;
-  simplifyAllObjectsThatHaveAdditionalProperties: boolean;
+  removeRequiredOnNullable?: true; //default: false
+  simplifyAllObjectsThatHaveAdditionalProperties?: true; //default: false
+  okResponseMustBeOnlyOne?: true; //default: false
 };
 
 const supportedLanguages: {
@@ -30,12 +29,14 @@ const supportedLanguages: {
   },
   ruby: {
     name: "ruby",
-    simplifyAllObjectsThatHaveAdditionalProperties: false, //Will keep additional properties if regular properties are not present
+  },
+  java: {
+    name: "java",
+    okResponseMustBeOnlyOne: true,
   },
 };
 
 const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
-  
   const pathToTmp = path.join(__dirname, "../../tmp");
   if (!fs.existsSync(pathToTmp)) {
     fs.mkdirSync(pathToTmp);
@@ -52,34 +53,42 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
     fs.mkdirSync(pathToTmpReferenceLanguage);
   }
   await fsPromises.writeFile(
-    path.join(
-      __dirname,
-      `../../tmp/reference/${lang}/OpenAPI.json`
-    ),
+    path.join(__dirname, `../../tmp/reference/${lang}/OpenAPI.json`),
     JSON.stringify(openAPI, null, 2)
   );
-}
-
+};
 
 const main = async (languageOptions: LanguageOptions) => {
-
   removeStoplightTag(openAPIContent);
-  const paths = removedDepreceatedPaths(openAPIContent.paths)
-  const parameters = removedNotUsedParameters(openAPIContent.components.parameters, paths, languageOptions)
-  const schemas = removedNotUsedSchemas(openAPIContent.components, paths, languageOptions)
-  
+  const { paths, newSchemas } = getPathsWithoutDeprecated(
+    removedDeprecatedPaths(openAPIContent.paths),
+    languageOptions.okResponseMustBeOnlyOne
+  );
+
+  const parameters = removedNotUsedParameters(
+    openAPIContent.components.parameters,
+    paths,
+    languageOptions
+  );
+  const schemas = removedNotUsedSchemas(
+    openAPIContent.components,
+    paths,
+    languageOptions,
+    newSchemas
+  );
+
   // Building all together
-  const newOpenApiFile = { 
+  const newOpenApiFile = {
     ...openAPIContent,
     components: {
-      ...openAPIContent.components, 
+      ...openAPIContent.components,
       schemas: parseNullsToNullableObjects(schemas),
-      parameters
+      parameters,
     },
-    paths
-  };``
+    paths,
+  };
 
-  await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile)
+  await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
 };
 
 if (!("language" in options)) {
