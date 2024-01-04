@@ -8,7 +8,7 @@ hidden: false
 order: 140
 ---
 
-Navigate to Team Settings > Subscription to view a summary of API calls for each of your projects. Note, however, that team settings can be viewed and managed only by an Account Administrator. 
+Navigate to `Team Settings > Subscription` to view a summary of API calls for each of your projects. Note, however, that team settings can be viewed and managed only by an Account Administrator. 
 
 To understand the basic limits of your account, check out [Pricing](https://www.voucherify.io/pricing) and [Fair Use Policy](https://www.voucherify.io/legal/fair-use-policy). Now, let's navigate through what we limit and how to monitor your usage.
 
