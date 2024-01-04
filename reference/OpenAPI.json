@@ -3354,6 +3354,9 @@
             "type": "boolean",
             "description": "Flag indicating whether this voucher is deleted."
           },
+          "validation_rules_assignments": {
+            "$ref": "#/components/schemas/ValidationRulesAssignmentsList"
+          },
           "publish": {
             "type": "object",
             "description": "This object stores a summary of publish events: an events counter and an endpoint which can be called to return details of each event.  A publication is required for loyalty cards and referral codes. This object gets updated whenever a voucher has been published. Publication means assigning a code to a particular customer. Typically, a publication is made by distributing your codes to your customers, e.g. through Export to MailChimp or <!-- [publish voucher](OpenAPI.json/paths/~1publications/post) -->[publish voucher](ref:create-publication) API method. \n\n<!-- title: My Table Title -->\n\n| Required | Optional |\n| -------- | :------: |\n| `type`:`LOYALTY_CARD` |  `type`:`DISCOUNT_VOUCHER`   | \n| `is_referral_code`:`true`      |    `type`:`GIFT_VOUCHER`   |\n",
@@ -6213,8 +6216,7 @@
           "protected",
           "category_id",
           "categories",
-          "object",
-          "metadata"
+          "object"
         ]
       },
       "Campaign": {
@@ -36475,10 +36477,9 @@
           }
         }
       },
-      "CampaignsVouchersCreateRequestBody": {
+      "CampaignsVouchersCreateBaseRequestBody": {
         "type": "object",
-        "title": "Campaigns Vouchers Create Request Body",
-        "description": "Request body schema for **POST** `/campaigns/{campaignId}/vouchers/{code}` and **POST** `/campaigns/{campaignId}/vouchers`.",
+        "title": "Campaigns Vouchers Create Base Request Body",
         "properties": {
           "category": {
             "type": "string",
@@ -36498,9 +36499,6 @@
               }
             }
           },
-          "code_config": {
-            "$ref": "#/components/schemas/CodeConfig"
-          },
           "additional_info": {
             "type": "string",
             "description": "An optional field to keep any extra textual information about the code such as a code description and details."
@@ -36518,6 +36516,38 @@
             "example": "2022-09-30T00:00:00.000Z"
           }
         }
+      },
+      "CampaignsVouchersCreateInBulkRequestBody": {
+        "type": "object",
+        "title": "Campaigns Vouchers Create In Bulk Request Body",
+        "description": "Request body schema for **POST** `/campaigns/{campaignId}/vouchers`.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Unique voucher code."
+              },
+              "code_config": {
+                "$ref": "#/components/schemas/CodeConfig"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/CampaignsVouchersCreateBaseRequestBody"
+          }
+        ]
+      },
+      "CampaignsVouchersCreateRequestBody": {
+        "type": "object",
+        "title": "Campaigns Vouchers Create Request Body",
+        "description": "Request body schema for **POST** `/campaigns/{campaignId}/vouchers/{code}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsVouchersCreateBaseRequestBody"
+          }
+        ]
       },
       "CampaignsImportCreateRequestBody": {
         "type": "array",
@@ -43046,7 +43076,7 @@
         "tags": [
           "Campaigns"
         ],
-        "summary": "Add Voucher to Campaign",
+        "summary": "Add Vouchers to Campaign",
         "description": "This method gives the possibility to push new vouchers to an existing campaign. New vouchers will inherit properties from the campaign profile. However, it is possible to overwrite some of them in the request body. If you provide an optional `code_config` parameter with a voucher code configuration, then it will be used to generate new voucher codes. Otherwise, the voucher code configuration from the campaign will be used.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
         "parameters": [
           {
@@ -43069,7 +43099,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CampaignsVouchersCreateRequestBody"
+                "$ref": "#/components/schemas/CampaignsVouchersCreateInBulkRequestBody"
               },
               "examples": {
                 "Example": {
