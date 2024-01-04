@@ -110,7 +110,7 @@ I'd consider only the order and/or item.
             "id": "r_0df92df74824167835",
             "customer_id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
             "tracking_id": "track_Pw6r3ejnml43kIwNS4Zj09KZ67xOfLUy",
-            "date": "2023-12-12T11:27:36.224Z",
+            "date": "2024-01-01T01:11:11.224Z",
             "order": {
                 "id": "ord_iB08cMWm3sM3mWRJW17h62Pf",
                 "source_id": null,
@@ -191,7 +191,7 @@ I'd consider only the order and/or item.
                 "campaign": "Basic discount-2",
                 "campaign_id": "camp_BiFtRVJHJ8moAUe75NzspHNO",
                 "is_referral_code": false,
-                "created_at": "2023-12-06T15:34:57.264Z",
+                "created_at": "2024-01-01T01:11:11.264Z",
                 "object": "voucher"
             },
             "object": "redemption"
@@ -200,7 +200,7 @@ I'd consider only the order and/or item.
     "order": {
         "id": "ord_iB08cMWm3sM3mWRJW17h62Pf",
         "source_id": null,
-        "created_at": "2023-12-12T11:27:36.184Z",
+        "created_at": "2024-01-01T11:11:11.184Z",
         "updated_at": null,
         "status": "PAID",
         "amount": 17500,
@@ -340,7 +340,7 @@ A Star thermal bottle is added as a reference item that is not covered by any di
 "order": {
         "id": "ord_tc4yusJRqAY87ybmvhnPkJ6u",
         "source_id": null,
-        "created_at": "2023-12-13T14:29:20.533Z",
+        "created_at": "2024-01-01T11:11:11.533Z",
         "updated_at": null,
         "status": "PAID",
         "amount": 14000, // The order amount before applying any discount. This should be shown to the end-customer.
@@ -360,8 +360,8 @@ A Star thermal bottle is added as a reference item that is not covered by any di
                 "amount": 3000, // The total amount of the order item, i.e. price * quantity. This should be shown to the end-customer.
                 "discount_amount": 2000, // The sum of all item-level discounts applied to this item.
                 "applied_discount_amount": 2000, // The item-level discount applied by all applicable redeemables. In this case, it is the $20 discount. This should be shown to the end-customer.
-                "price": 1000, // Unit price of an item. This should be shown to the end-customer
-                "subtotal_amount": 1000, // Final order item amount after the applied item-level discount. In this case, the discount amount equals the product amount, making the subtotal amount equal 0. This should be shown to the end-customer.
+                "price": 1000, // Unit price of an item. This should be shown to the end-customer.
+                "subtotal_amount": 1000, // Final order item amount after the applied item-level discount. This should be shown to the end-customer.
                 "product": {
                     "id": "prod_0df14b3a6ad8f282a8",
                     "source_id": "adv-mug",
@@ -391,12 +391,12 @@ A Star thermal bottle is added as a reference item that is not covered by any di
                 }
             },
             {
-                "object": "order_item",
+                "object": "order_item", // This order item is not covered by any discount. The response shows details for a typical order item.
                 "source_id": "star-th-bottle",
                 "related_object": "product",
-                "quantity": 2,
-                "amount": 5000,
-                "price": 2500,
+                "quantity": 2, // The quantity of the particular item in the cart. This should be shown to the end-customer.
+                "amount": 5000, // The total amount of the order item, i.e. price * quantity. This should be shown to the end-customer.
+                "price": 2500, // Unit price of an item. This should be shown to the end-customer.
                 "subtotal_amount": 5000, // Here, "subtotal_amount" equals "amount" because this product is not covered by the Adventure brand discount.
                 "product": {
                     "id": "prod_0df14b7e7d8975079d",
@@ -413,7 +413,7 @@ A Star thermal bottle is added as a reference item that is not covered by any di
 
 The image below shows an example of an order summary for the purchase shown in the response above. The order summary includes the data recommended in the comments.
 
-![](https://files.readme.io/c2b6a88-guides_development_data_parsing_order_summary_01.png "An order summary showing the cart representing the example described in the response.")
+![](https://files.readme.io/84830b5-guides_development_data_parsing_order_summary_01.png "An order summary showing the cart representing the example described in the response.")
 
 ### Free items
 
@@ -427,6 +427,8 @@ In this section, two cases are covered:
 
 In this example, the cart includes an Adventure mug and one mug is added for free. A Star thermal bottle is added as a reference item that is not covered by any discounts.
 
+Check the request tab for reference.
+
 <!-- Make the terminology consistent:
 - order items
 - items
@@ -438,7 +440,7 @@ Pick one for the code comments! -->
 "order": {
         "id": "ord_OJXfKGdC2pCpKVYm2BsSTgZ0",
         "source_id": null,
-        "created_at": "2023-12-15T11:13:13.576Z",
+        "created_at": "2024-01-01T11:11:11.576Z",
         "updated_at": null,
         "status": "PAID",
         "amount": 7000, // The order amount before applying any discount, including the free item. This should be shown to the end-customer.
@@ -490,9 +492,132 @@ Pick one for the code comments! -->
         ],
     }
 ```
+```json Request
+{
+    "customer": {
+        "source_id": "test_customer_id_2"
+    },
+    "redeemables": [ // In this case, the free mug is added with a voucher.
+        {
+            "object": "voucher",
+            "id": "Always-add-prods-5"
+        }
+    ],
+    "order": { // The end-customer ordered one Adventure mug and two Start thermal bottles.
+        "items": [
+            {
+                "source_id": "adv-mug",
+                "related_object": "product",
+                "price": 1000,
+                "quantity": 1,
+                "product": {
+                    "metadata": {
+                        "brand": "Adventure"
+                    }
+                }
+            },
+            {
+                "source_id": "star-th-bottle",
+                "related_object": "product",
+                "price": 2500,
+                "quantity": 2,
+                "product": {
+                    "metadata": {
+                        "brand": "Star"
+                    }
+                }
+            }
+        ],
+        "metadata": {}
+    },
+    "metadata": {}
+}
+```
 
-The image below shows an example of an order summary for the purchase shown in the response above. The order summary includes the data recommended in the comments.
+The image below shows an example of an order summary for the purchase shown in the response above.
 
-![](../../assets/img/guides_development_data_parsing_order_summary_02.png "An order summary showing the cart representing the example described in the response.")
+![](https://files.readme.io/da280ae-guides_development_data_parsing_order_summary_02.png "An order summary showing the cart representing the example described in the response.")
 
 #### Free item not in the cart
+
+In this example, the cart does not include an Adventure mug, so one mug is added for free. A Star thermal bottle is added as a reference item that is not covered by any discounts.
+
+Check the request tab for reference.
+
+```json Response
+"order": {
+        "id": "ord_nVg612IxXYkTmoFJuk5d1nyZ",
+        "source_id": null,
+        "created_at": "2024-01-01T11:11:11.111111Z",
+        "updated_at": null,
+        "status": "PAID",
+        "amount": 5000, // The order amount before applying any discount. This should be shown to the end-customer.
+        "total_amount": 5000, // The order amount after applying all the discounts. This should be shown to the end-customer.
+        "items": [
+            {
+                "object": "order_item", // This order item is not covered by any discount. The response shows details for a typical order item.
+                "source_id": "star-th-bottle",
+                "related_object": "product",
+                "quantity": 2, // The quantity of the particular item in the cart. This should be shown to the end-customer.
+                "amount": 5000, // The total amount of the order item, i.e. price * quantity. This should be shown to the end-customer.
+                "price": 2500, // Unit price of an item. This should be shown to the end-customer.
+                "subtotal_amount": 5000, // Here, "subtotal_amount" equals "amount" because this product is not covered by any discount.
+                "product": {
+                    "id": "prod_0df14b7e7d8975079d",
+                    "source_id": "star-th-bottle",
+                    "name": "Star Thermal Bottle",
+                    "metadata": {
+                        "brand": "Star"
+                    },
+                    "price": 2500
+                }
+            },
+            {
+                "object": "order_item", // This is the item added for free.
+                "product_id": "prod_0df14b3a6ad8f282a8",
+                "quantity": 1, // The quantity of the particular item in the cart. In this case, it is the quantity of items added for free. This should be shown to the end-customer.
+                "discount_quantity": 1, // Number of dicounted items. In this case, only one free mug is added. This should be shown to the end-customer.
+                "initial_quantity": 0, // Number of the items which the end-customer placed in the cart. In this case, it is 0 because the end-customer did not have any mugs in the cart. This can be shown to the end-customer.
+                "product": {
+                    "id": "prod_0df14b3a6ad8f282a8",
+                    "source_id": "adv-mug",
+                    "name": "Adventure Mug"
+                }
+            }
+        ]
+}
+```
+```json Request
+{
+    "customer": {
+        "source_id": "test_customer_id_2"
+    },
+    "redeemables": [ // In this case, the free mug is added with a voucher.
+        {
+            "object": "voucher",
+            "id": "Always-add-prods-5"
+        }
+    ],
+    "order": { // The end-customer ordered only two Start thermal bottles. That is why there is no object for the Adventure mug in the request.
+        "items": [
+            {
+                "source_id": "star-th-bottle",
+                "related_object": "product",
+                "price": 2500,
+                "quantity": 2,
+                "product": {
+                    "metadata": {
+                        "brand": "Star"
+                    }
+                }
+            }
+        ],
+        "metadata": {}
+    },
+    "metadata": {}
+}
+```
+
+The image below shows an example of an order summary for the purchase shown in the response above.
+
+<!-- https://staging.app.voucherify.io/#/app/core/orders/ord_nVg612IxXYkTmoFJuk5d1nyZ/dashboard -->

@@ -19,7 +19,7 @@ The documentation is divided into four main categories.
 
 3. **[Development](doc:welcome)** - Dive into detailed development options, including example data mapping, processes, and more. Recommended for developers and integrators.
 
-4. **[API Reference](doc:api-reference)** – Explore endpoints and attributes with request/response examples and error messages.
+4. **[API Reference](https://docs.voucherify.io/reference/introduction-1)** – Explore endpoints and attributes with request/response examples and error messages.
 
 &nbsp;
 &nbsp;
