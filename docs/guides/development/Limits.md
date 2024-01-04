@@ -8,6 +8,8 @@ hidden: false
 order: 140
 ---
 
+Navigate to Team Settings > Subscription to view a summary of API calls for each of your projects. Note, however, that team settings can be viewed and managed only by an Account Administrator. 
+
 To understand the basic limits of your account, check out [Pricing](https://www.voucherify.io/pricing) and [Fair Use Policy](https://www.voucherify.io/legal/fair-use-policy). Now, let's navigate through what we limit and how to monitor your usage.
 
 ## API Limits
@@ -19,9 +21,42 @@ To understand the basic limits of your account, check out [Pricing](https://www.
 | Billing cycle API requests<br><br>Bulk API requests are not added to the billing cycle limit. | Free plan: 500,<br>Startup plan: 10,000,<br>Growth plan: 30,000,<br>Professional plan: 100,000 |
 | Client-side requests (e.g., validate) from a single IP address | 5 requests per 5 seconds |
 
+## Notifications
+
+You can receive notifications in your app and through email when you use a certain percentage of your redemptions, API calls, or bulk API calls. The project owner can configure these thresholds and notifications in the `Project settings > API Usage` tab.
+To set this up, the account admin has two options:
+
+1. Go to the Bell Icon at the top of your Dashboard, then click on Notifications Center and select Account Settings.
+
+2. Alternatively, click the pencil icon under one of the charts. This will take you directly to the API usage notification settings.
+
+To get email notifications, follow these steps:
+
+1. Visit Notifications Center > Account Settings.
+
+2. Click on Show details next to the notifications you want to activate.
+
+3. Turn on the switch next to Email.
+
+4. Set the percentage usage limit that will trigger the notification.
+
+5. Click Add email to specify the email address where you want to receive notifications.
+
+6. Save your settings.
+
+For in-app notifications, simply toggle the switch next to "In app."
+
+Notifications for webhooks usage will be sent if the usage exceeds the limit for an hour, even though they are counted in daily periods. It is a measure to inform you in advance about any suspicious user activity.
+
 > 📘 What happens if you exceed your limits?
 >
 > You can't exceed the number of API calls (both hourly and monthly) defined in your pricing plan. Exceeding this limit will block your access to the API immediately.
+
+## Buying additional API packages
+
+If you think you'll use more API calls than your usual limit, you can [purchase extra packages](https://support.voucherify.io/article/583-how-to-buy-extra-api-calls-packages) to raise those limits. This lets you temporarily increase the number of API calls you can make per hour, per minute, or per cycle, providing a boost when needed.
+
+> 📘 Important: Buying additional API packages won't raise the API call limits for the Sandbox project. The Sandbox project is set to a fixed limit of 100 API calls per hour.
 
 ## Enterprise plan
 
@@ -73,11 +108,4 @@ These headers are:
 - `X-Rate-Limit-Remaining` - number of API requests that can still be made in a current period
 - `X-Rate-Limit-Retry` - the time when the next API request can be made, in Unix epoch format (in seconds)
 - `Retry-After` - (optional) number of seconds left before the next API request can be made, shown after a limit is reached
-- `X-Rate-Limit-Type` - (optional) type of API limit that was reached, possible values: api_calls / bulk_api_calls / api_calls_cycle / webhook_calls
-
-## Notifications
-
-Voucherify will send an email with the notification whenever the number of API calls reaches a safety threshold.
-The project owner can configure these thresholds and notifications in the `Project settings > API Usage` tab.
-
-Notifications for webhooks usage will be sent if the usage exceeds the limit for an hour, even though they are counted in daily periods. It is a measure to inform you in advance about any suspicious user activity.
+- `X-Rate-Limit-Type` - (optional) type of API limit that was reached, possible values: api_calls / bulk_api_calls/ api_calls_cycle / webhook_calls
