@@ -9,6 +9,7 @@ import openAPIContent from "../../reference/OpenAPI.json";
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
 import { removedNotUsedSchemas } from "./removed-not-used-schemas";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
+import { removeAllOneOfs } from "./removeOneOfs";
 
 const options = minimist(process.argv.slice(2));
 
@@ -17,6 +18,7 @@ type LanguageOptions = {
   removeRequiredOnNullable?: true; //default: false
   simplifyAllObjectsThatHaveAdditionalProperties?: true; //default: false
   okResponseMustBeOnlyOne?: true; //default: false
+  mergeOneOfs?: true; //default: false
 };
 
 const supportedLanguages: {
@@ -29,6 +31,10 @@ const supportedLanguages: {
   },
   ruby: {
     name: "ruby",
+  },
+  php: {
+    name: "php",
+    mergeOneOfs: true,
   },
   java: {
     name: "java",
@@ -70,11 +76,14 @@ const main = async (languageOptions: LanguageOptions) => {
     paths,
     languageOptions
   );
-  const schemas = removedNotUsedSchemas(
-    openAPIContent.components,
-    paths,
-    languageOptions,
-    newSchemas
+  console.log(languageOptions?.mergeOneOfs);
+  const schemas = removeAllOneOfs(
+    removedNotUsedSchemas(
+      openAPIContent.components,
+      paths,
+      languageOptions,
+      newSchemas
+    )
   );
 
   // Building all together
