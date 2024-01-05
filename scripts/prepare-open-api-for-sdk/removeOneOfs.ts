@@ -21,7 +21,7 @@ const checkProperties = (properties, title, schemas) => {
             entry,
             schemas,
             title + upperFirst(camelCase(propertyName))
-          ),
+          ).schema,
         ];
       }
       if (entry?.properties) {
@@ -46,7 +46,7 @@ const checkProperties = (properties, title, schemas) => {
               entry.items,
               schemas,
               title + upperFirst(camelCase(propertyName)) + "Item"
-            ),
+            ).schema,
           },
         ];
       }
@@ -115,7 +115,7 @@ const removeOneOf = (schema, schemas, title) => {
     data.$ref ? schemas[data.$ref?.split("/")?.at(-1)] : "any"
   );
   if (oneOf.find((item) => item === "any")) {
-    return { removed: true, schema: { title: "Any", type: "any" } };
+    return { removed: true, schema: { title: title } };
   }
   if (
     !oneOf ||
@@ -142,7 +142,10 @@ const removeOneOf = (schema, schemas, title) => {
       });
       if (
         allOf.reduce((accumulator, currentValue) => {
-          return !!currentValue?.oneOf;
+          if (!currentValue?.oneOf) {
+            return false;
+          }
+          return accumulator;
         }, false)
       ) {
         console.log("error");
@@ -161,7 +164,7 @@ const removeOneOf = (schema, schemas, title) => {
     return { type: "any" };
   }
   if (oneOfWithNoRefs.find((a) => a?.break)) {
-    console.log(66);
+    console.log("break!");
     return { removed: false, schema };
   }
   return {
