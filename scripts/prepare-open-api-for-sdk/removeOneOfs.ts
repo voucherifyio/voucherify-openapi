@@ -9,6 +9,8 @@ import {
 } from "lodash";
 import { isDeepStrictEqual } from "util";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
+import { ChatGPTUnofficialProxyAPI } from "chatgpt";
+import { ChatGPTAuthTokenService } from "chat-gpt-authenticator";
 
 const addSpacesInTitle = (title: string) =>
   title
@@ -327,14 +329,18 @@ const typeIntersection = (p1, p2, title, schemas) => {
     );
   }
   const nullable = p1Local?.nullable || p2Local?.nullable;
-  const description = [p1Local?.description, p2Local?.description].join(
-    " and "
-  );
+  const descriptions = compact([
+    ...(p1Local?.descriptions || []),
+    ...(p1Local?.descriptions || []),
+    p1Local?.description,
+    p2Local?.description,
+  ]);
+
   if (p1Local.type === "array") {
     return omit(
       {
         nullable,
-        description,
+        descriptions,
         type: "array",
         items: typeIntersection(
           p1Local.items,
@@ -343,18 +349,12 @@ const typeIntersection = (p1, p2, title, schemas) => {
           schemas
         ),
       },
-      compact([
-        nullable ? "nullable" : undefined,
-        description ? "description" : undefined,
-      ])
+      compact([nullable ? "nullable" : undefined])
     );
   }
   return omit(
-    { nullable, description, type: p1Local.type },
-    compact([
-      nullable ? "nullable" : undefined,
-      description ? "description" : undefined,
-    ])
+    { nullable, descriptions, type: p1Local.type },
+    compact([nullable ? "nullable" : undefined])
   );
 };
 
@@ -413,7 +413,7 @@ const mergeAllOfObjects = (allAreObjects, schemas, title) => {
     );
 };
 
-export const removeAllOneOfs = (
+export const removeAllOneOfs = async (
   schemas,
   paths,
   parameters,
@@ -427,10 +427,59 @@ export const removeAllOneOfs = (
     }
     localSchemas = result.schemas;
   } while (true);
-  return removeNotUsedSchemas(
-    { schemas: localSchemas, parameters },
-    paths,
-    languageOptions,
-    {}
+  return await cleanUpDescriptions(
+    removeNotUsedSchemas(
+      { schemas: localSchemas, parameters },
+      paths,
+      languageOptions,
+      {}
+    )
   );
+};
+
+const cleanUpDescriptions = async (object: any) => {
+  const chatGptAuthTokenService = new ChatGPTAuthTokenService(
+    process.env["OPEN_AI_EMAIL"],
+    process.env["OPEN_AI_PASSWORD"]
+  );
+  const chatGptApi = new ChatGPTUnofficialProxyAPI({
+    accessToken: await chatGptAuthTokenService.getToken(),
+  });
+  if (Array.isArray(object)) {
+    return object.map((value) => cleanUpDescriptions(value));
+  }
+  if (object instanceof Object) {
+    if ("descriptions" in object) {
+      const descriptions = uniq(object["descriptions"]);
+      if (descriptions.length === 0) {
+        return omit(object, "descriptions");
+      }
+      if (descriptions.length === 1) {
+        return omit(
+          { ...object, description: descriptions[0] },
+          "descriptions"
+        );
+      }
+      const createdDescription = await chatGptApi.sendMessage(
+        `Out of provided descriptions, please give me a description in 1 sentence: [${descriptions
+          .map((value) => `"${value}"`)
+          .join(", ")}]`
+      );
+      console.log(createdDescription);
+      return omit(
+        {
+          ...object,
+          description: createdDescription,
+        },
+        "descriptions"
+      );
+    }
+    return Object.fromEntries(
+      Object.entries(object).map((keyAndEntry) => {
+        const [key, entry] = keyAndEntry;
+        return [key, cleanUpDescriptions(entry)];
+      })
+    );
+  }
+  return object;
 };
