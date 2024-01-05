@@ -326,18 +326,36 @@ const typeIntersection = (p1, p2, title, schemas) => {
         : []
     );
   }
+  const nullable = p1Local?.nullable || p2Local?.nullable;
+  const description = [p1Local?.description, p2Local?.description].join(
+    " and "
+  );
   if (p1Local.type === "array") {
-    return {
-      type: "array",
-      items: typeIntersection(
-        p1Local.items,
-        p2Local.items,
-        title + "Item",
-        schemas
-      ),
-    };
+    return omit(
+      {
+        nullable,
+        description,
+        type: "array",
+        items: typeIntersection(
+          p1Local.items,
+          p2Local.items,
+          title + "Item",
+          schemas
+        ),
+      },
+      compact([
+        nullable ? "nullable" : undefined,
+        description ? "description" : undefined,
+      ])
+    );
   }
-  return { type: p1Local.type };
+  return omit(
+    { nullable, description, type: p1Local.type },
+    compact([
+      nullable ? "nullable" : undefined,
+      description ? "description" : undefined,
+    ])
+  );
 };
 
 const mergeAllOfObjects = (allAreObjects, schemas, title) => {
