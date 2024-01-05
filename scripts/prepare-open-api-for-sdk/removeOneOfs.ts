@@ -8,10 +8,8 @@ import {
 } from "lodash";
 import { isDeepStrictEqual } from "util";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
-import { ChatGPTAuthTokenService } from "chat-gpt-authenticator";
 import dotenv from "dotenv";
 dotenv.config();
-
 const addSpacesInTitle = (title: string) =>
   title
     .replaceAll(" ", "")
@@ -437,28 +435,11 @@ export const removeAllOneOfs = async (
   );
 };
 
-const getChatGptApiToken = async (): Promise<string | undefined> => {
-  if (!process.env["OPEN_AI_EMAIL"] || !process.env["OPEN_AI_PASSWORD"]) {
-    return undefined;
-  }
-  try {
-    const chatGptAuthTokenService = new ChatGPTAuthTokenService(
-      process.env["OPEN_AI_EMAIL"],
-      process.env["OPEN_AI_PASSWORD"]
-    );
-    return await chatGptAuthTokenService.getToken();
-  } catch (e) {
-    return undefined;
-  }
-};
-
 const cleanUpDescriptionsInEntireObject = async (object: any) => {
-  const chatGptApiToken = await getChatGptApiToken();
-  const { ChatGPTUnofficialProxyAPI } = await import("chatgpt");
-  const chatGptApi = chatGptApiToken
-    ? new ChatGPTUnofficialProxyAPI({
-        accessToken: chatGptApiToken,
-        apiReverseProxyUrl: "https://api.pawan.krd/backend-api/conversation",
+  const { ChatGPTAPI } = await import("chatgpt");
+  const chatGptApi = process.env.OPENAI_API_KEY
+    ? new ChatGPTAPI({
+        apiKey: process.env.OPENAI_API_KEY,
       })
     : undefined;
   const cleanUpDescriptions = async (object: any) => {
@@ -514,4 +495,6 @@ const cleanUpDescriptionsInEntireObject = async (object: any) => {
     }
     return object;
   };
+
+  return await cleanUpDescriptions(object);
 };

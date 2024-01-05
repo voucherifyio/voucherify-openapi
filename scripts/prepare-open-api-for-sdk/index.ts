@@ -105,17 +105,19 @@ const main = async (languageOptions: LanguageOptions) => {
 };
 
 if (!("language" in options)) {
-  console.log("invalid arguments, missing language parameter");
+  console.log(colors.red("invalid arguments, missing language parameter"));
 } else if (
   typeof options.language !== "string" ||
   !Object.keys(supportedLanguages).includes(options.language)
 ) {
   console.log(
-    `invalid language arguments, supported languages are ${Object.keys(
-      supportedLanguages
+    colors.red(
+      `invalid language arguments, supported languages are ${Object.keys(
+        supportedLanguages
+      )
+        .map((language) => `"${language}"`)
+        .join(", ")}`
     )
-      .map((language) => `"${language}"`)
-      .join(", ")}`
   );
 } else {
   main(supportedLanguages[options.language]);
