@@ -10,6 +10,11 @@ import {
 import { isDeepStrictEqual } from "util";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 
+const addSpacesInTitle = (title: string) =>
+  title
+    .replaceAll(" ", "")
+    .replace(/([A-Z])/g, " $1")
+    .trim();
 const checkProperties = (properties, title, schemas) => {
   return Object.fromEntries(
     Object.entries(properties).map((propertyNameAndEntry) => {
@@ -20,7 +25,7 @@ const checkProperties = (properties, title, schemas) => {
           removeOneOf(
             entry,
             schemas,
-            title + upperFirst(camelCase(propertyName))
+            addSpacesInTitle(title + upperFirst(camelCase(propertyName)))
           ).schema,
         ];
       }
@@ -31,7 +36,7 @@ const checkProperties = (properties, title, schemas) => {
             type: "object",
             properties: checkProperties(
               (entry as any).properties,
-              title,
+              addSpacesInTitle(title),
               schemas
             ),
           },
@@ -45,7 +50,9 @@ const checkProperties = (properties, title, schemas) => {
             items: removeOneOf(
               entry.items,
               schemas,
-              title + upperFirst(camelCase(propertyName)) + "Item"
+              addSpacesInTitle(
+                title + upperFirst(camelCase(propertyName)) + "Item"
+              )
             ).schema,
           },
         ];
@@ -67,7 +74,7 @@ const removeOneOf = (schema, schemas, title) => {
         const { removed: _removed, schema } = removeOneOf(
           schemaItem,
           schemas,
-          title
+          addSpacesInTitle(title)
         );
         if (_removed) {
           removed = true;
@@ -82,6 +89,7 @@ const removeOneOf = (schema, schemas, title) => {
       removed,
       schema: {
         ...schema,
+        title: addSpacesInTitle(title),
         allOf: schema.allOf.map((schemaItem) => {
           if (removed) {
             return schemaItem;
@@ -104,6 +112,7 @@ const removeOneOf = (schema, schemas, title) => {
       return {
         removed: false,
         schema: {
+          title: addSpacesInTitle(title),
           type: "object",
           properties: checkProperties(schema.properties, title, schemas),
         },
@@ -115,7 +124,7 @@ const removeOneOf = (schema, schemas, title) => {
     data.$ref ? schemas[data.$ref?.split("/")?.at(-1)] : "any"
   );
   if (oneOf.find((item) => item === "any")) {
-    return { removed: true, schema: { title: title } };
+    return { removed: true, schema: { title: addSpacesInTitle(title) } };
   }
   if (
     !oneOf ||
