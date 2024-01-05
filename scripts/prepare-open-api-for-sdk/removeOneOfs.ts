@@ -15,9 +15,9 @@ const addSpacesInTitle = (title: string) =>
     .replaceAll(" ", "")
     .replace(/([A-Z])/g, " $1")
     .trim();
-const checkProperties = (properties, title, schemas) => {
-  return Object.fromEntries(
-    Object.entries(properties).map((propertyNameAndEntry) => {
+const checkProperties = (schema, title, schemas) => {
+  const properties = Object.fromEntries(
+    Object.entries(schema.properties).map((propertyNameAndEntry) => {
       const [propertyName, entry] = propertyNameAndEntry as any;
       if (entry?.oneOf) {
         return [
@@ -30,22 +30,13 @@ const checkProperties = (properties, title, schemas) => {
         ];
       }
       if (entry?.properties) {
-        return [
-          propertyName,
-          {
-            type: "object",
-            properties: checkProperties(
-              (entry as any).properties,
-              addSpacesInTitle(title),
-              schemas
-            ),
-          },
-        ];
+        return [propertyName, checkProperties(entry, title, schemas)];
       }
       if (entry.items?.oneOf) {
         return [
           propertyName,
           {
+            ...omit(entry.items, "oneOf"),
             type: "array",
             items: removeOneOf(
               entry.items,
@@ -60,6 +51,7 @@ const checkProperties = (properties, title, schemas) => {
       return [propertyName, entry];
     })
   );
+  return { ...schema, properties };
 };
 
 const removeOneOf = (schema, schemas, title) => {
@@ -111,11 +103,7 @@ const removeOneOf = (schema, schemas, title) => {
     if (schema.properties) {
       return {
         removed: false,
-        schema: {
-          title: addSpacesInTitle(title),
-          type: "object",
-          properties: checkProperties(schema.properties, title, schemas),
-        },
+        schema: checkProperties(schema, title, schemas),
       };
     }
     return { removed: false, schema };
