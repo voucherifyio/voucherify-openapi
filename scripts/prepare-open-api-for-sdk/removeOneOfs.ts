@@ -2,15 +2,15 @@ import {
   camelCase,
   compact,
   intersection,
-  isEqual,
   omit,
   uniq,
   upperFirst,
 } from "lodash";
 import { isDeepStrictEqual } from "util";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
-import { ChatGPTUnofficialProxyAPI } from "chatgpt";
 import { ChatGPTAuthTokenService } from "chat-gpt-authenticator";
+import dotenv from "dotenv";
+dotenv.config();
 
 const addSpacesInTitle = (title: string) =>
   title
@@ -427,7 +427,7 @@ export const removeAllOneOfs = async (
     }
     localSchemas = result.schemas;
   } while (true);
-  return await cleanUpDescriptions(
+  return await cleanUpDescriptionsInEntireObject(
     removeNotUsedSchemas(
       { schemas: localSchemas, parameters },
       paths,
@@ -437,49 +437,81 @@ export const removeAllOneOfs = async (
   );
 };
 
-const cleanUpDescriptions = async (object: any) => {
-  const chatGptAuthTokenService = new ChatGPTAuthTokenService(
-    process.env["OPEN_AI_EMAIL"],
-    process.env["OPEN_AI_PASSWORD"]
-  );
-  const chatGptApi = new ChatGPTUnofficialProxyAPI({
-    accessToken: await chatGptAuthTokenService.getToken(),
-  });
-  if (Array.isArray(object)) {
-    return object.map((value) => cleanUpDescriptions(value));
+const getChatGptApiToken = async (): Promise<string | undefined> => {
+  if (!process.env["OPEN_AI_EMAIL"] || !process.env["OPEN_AI_PASSWORD"]) {
+    return undefined;
   }
-  if (object instanceof Object) {
-    if ("descriptions" in object) {
-      const descriptions = uniq(object["descriptions"]);
-      if (descriptions.length === 0) {
-        return omit(object, "descriptions");
-      }
-      if (descriptions.length === 1) {
+  try {
+    const chatGptAuthTokenService = new ChatGPTAuthTokenService(
+      process.env["OPEN_AI_EMAIL"],
+      process.env["OPEN_AI_PASSWORD"]
+    );
+    return await chatGptAuthTokenService.getToken();
+  } catch (e) {
+    return undefined;
+  }
+};
+
+const cleanUpDescriptionsInEntireObject = async (object: any) => {
+  const chatGptApiToken = await getChatGptApiToken();
+  const { ChatGPTUnofficialProxyAPI } = await import("chatgpt");
+  const chatGptApi = chatGptApiToken
+    ? new ChatGPTUnofficialProxyAPI({
+        accessToken: chatGptApiToken,
+        apiReverseProxyUrl: "https://api.pawan.krd/backend-api/conversation",
+      })
+    : undefined;
+  const cleanUpDescriptions = async (object: any) => {
+    if (Array.isArray(object)) {
+      return object.map((value) => cleanUpDescriptions(value));
+    }
+    if (object instanceof Object) {
+      if ("descriptions" in object) {
+        const descriptions = uniq(object["descriptions"]);
+        if (descriptions.length === 0) {
+          return omit(object, "descriptions");
+        }
+        if (descriptions.length === 1) {
+          return omit(
+            { ...object, description: descriptions[0] },
+            "descriptions"
+          );
+        }
+        if (!chatGptApi) {
+          return omit(
+            { ...object, description: descriptions.join(" and ") },
+            "descriptions"
+          );
+        }
+        try {
+          const createdDescription = await chatGptApi.sendMessage(
+            `Out of provided descriptions, please give me a description in 1 sentence: [${descriptions
+              .map((value) => `"${value}"`)
+              .join(", ")}]`
+          );
+          console.log(createdDescription);
+          return omit(
+            {
+              ...object,
+              description: createdDescription,
+            },
+            "descriptions"
+          );
+        } catch (e) {
+          console.log(e);
+        }
         return omit(
-          { ...object, description: descriptions[0] },
+          { ...object, description: descriptions.join(" and ") },
           "descriptions"
         );
       }
-      const createdDescription = await chatGptApi.sendMessage(
-        `Out of provided descriptions, please give me a description in 1 sentence: [${descriptions
-          .map((value) => `"${value}"`)
-          .join(", ")}]`
-      );
-      console.log(createdDescription);
-      return omit(
-        {
-          ...object,
-          description: createdDescription,
-        },
-        "descriptions"
+      return Object.fromEntries(
+        Object.entries(object).map((keyAndEntry) => {
+          const [key, entry] = keyAndEntry;
+          return [key, cleanUpDescriptions(entry)];
+        })
       );
     }
-    return Object.fromEntries(
-      Object.entries(object).map((keyAndEntry) => {
-        const [key, entry] = keyAndEntry;
-        return [key, cleanUpDescriptions(entry)];
-      })
-    );
-  }
-  return object;
+    return object;
+  };
 };
