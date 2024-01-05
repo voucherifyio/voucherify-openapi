@@ -33,6 +33,7 @@ const supportedLanguages: {
   java: {
     name: "java",
     okResponseMustBeOnlyOne: true,
+    removeRequiredOnNullable: true,
   },
 };
 
