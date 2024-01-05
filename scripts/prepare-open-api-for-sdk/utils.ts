@@ -85,24 +85,44 @@ export const removeAdditionalProperties = (
 };
 
 export const removeRequiredOnNullableAttributes = (schemaPartial: any) => {
-  if (isObject(schemaPartial?.properties)) {
-    Object.keys(schemaPartial.properties).forEach((key) => {
-      schemaPartial.properties[key] = removeRequiredOnNullableAttributes(
-        schemaPartial.properties[key]
+  const changeRequiredToNullable = (schemaPartialTypeObject: any) => {
+    Object.keys(schemaPartialTypeObject.properties).forEach((key) => {
+      schemaPartialTypeObject.properties[key] = removeRequiredOnNullableAttributes(
+          schemaPartialTypeObject.properties[key]
       );
     });
 
-    const nullables = Object.keys(schemaPartial.properties).filter((key) => {
-      return schemaPartial.properties[key].nullable ?? false;
+    const nullables = Object.keys(schemaPartialTypeObject.properties).filter((key) => {
+      return schemaPartialTypeObject.properties[key].nullable ?? false;
     });
 
-    const required = schemaPartial.required ?? [];
+    if(nullables.length > 0) {
+      console.log(nullables)
+    }
+
+    const required = schemaPartialTypeObject.required ?? [];
 
     const newRequired = difference(required, nullables);
 
     if (newRequired.length > 0) {
-      schemaPartial.required = difference(required, nullables);
+      schemaPartialTypeObject.required = difference(required, nullables);
     }
+
+    return schemaPartialTypeObject
+  }
+
+  if (isObject(schemaPartial?.properties)) {
+    schemaPartial = changeRequiredToNullable(schemaPartial);
+  }
+
+  //ONLY FOR ALL OF BECAUSE WE ENSURE ALL ONE OF CONTAINS LIST OF REFS
+  if(schemaPartial.allOf) {
+    schemaPartial.allOf = schemaPartial.allOf.map((item: any) => {
+      if (isObject(item?.properties)) {
+        item = changeRequiredToNullable(item);
+      }
+      return item;
+    });
   }
 
   return schemaPartial;
