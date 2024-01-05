@@ -386,17 +386,6 @@ const mergeAllOfObjects = (allAreObjects, schemas, title) => {
       ])
     );
   }
-  if (
-    !allAreObjectsLocal
-      .slice(1)
-      .reduce(
-        (accumulator, currentValue) =>
-          typeIntersection(accumulator, currentValue, title, schemas),
-        allAreObjectsLocal[0]
-      )
-  ) {
-    console.log(123, allAreObjectsLocal);
-  }
   return allAreObjectsLocal
     .slice(1)
     .reduce(
