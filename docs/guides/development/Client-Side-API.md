@@ -22,6 +22,25 @@ Voucherify JS SDK offers many client-side features:
 - `subscribe widget` which adds a [customer](ref:get-customer) to Voucherify. You can then use one of the [automatic delivery](doc:automatic-delivery) channels to send him/her a coupon.
 [Read more here](https://voucherifyio.github.io/voucherify-js-sdk/#client-side-methods).
 
+## API requests rate limit
+
+To keep your vouchers and promotions safe from fraudulent customer behavior, Voucherify limits the rate of public client requests coming from a single IP address. The current limit can be found at [Limits](doc:limits) section.
+
+When the limit is exceeded, Voucherify returns:
+
+```json JSON
+{  
+   "type": "error",
+   "message": "XHR error happened.",
+   "context": {  
+      "readyState": 4,
+      "responseText": "API calls limit exceeded.",
+      "status": 429,
+      "statusText": "Too Many Requests"
+   }
+}
+```
+
 ## Installation & reference
 
 Visit :fa-github-alt: [Github repository](https://github.com/voucherifyio/voucherify-js-sdk) to get the current documentation.

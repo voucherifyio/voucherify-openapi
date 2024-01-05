@@ -8,9 +8,13 @@ hidden: false
 order: 140
 ---
 
-Navigate to `Team Settings > Subscription` to view a summary of API calls for each of your projects. Note, however, that team settings can be viewed and managed only by an Account Administrator. 
+## Accessing the API Use Summary
 
-To understand the basic limits of your account, check out [Pricing](https://www.voucherify.io/pricing) and [Fair Use Policy](https://www.voucherify.io/legal/fair-use-policy). Now, let's navigate through what we limit and how to monitor your usage.
+Navigate to `Team Settings > Subscription` to view a summary of API calls for each of your projects. 
+
+Navigate to `Project Settings > API Usage` to view a summary of API calls connected with a specific project.
+
+Note, however, that team settings can be viewed and managed only by an account owner, and project settings can be managed by the account owner or users with proper access granted by the owner.
 
 ## API Limits
 
@@ -21,10 +25,12 @@ To understand the basic limits of your account, check out [Pricing](https://www.
 | Billing cycle API requests<br><br>Bulk API requests are not added to the billing cycle limit. | Free plan: 500,<br>Startup plan: 10,000,<br>Growth plan: 30,000,<br>Professional plan: 100,000 |
 | Client-side requests (e.g., validate) from a single IP address | 5 requests per 5 seconds |
 
+To understand the basic limits of your account, check out [Pricing](https://www.voucherify.io/pricing) and [Fair Use Policy](https://www.voucherify.io/legal/fair-use-policy).
+
 ## Notifications
 
-You can receive notifications in your app and through email when you use a certain percentage of your redemptions, API calls, or bulk API calls. The project owner can configure these thresholds and notifications in the `Project settings > API Usage` tab.
-To set this up, the account admin has two options:
+You can receive notifications in your app and through email when you use a certain percentage of your redemptions, API calls, or bulk API calls. The account owner can configure these thresholds and notifications in the `Project settings > API Usage` tab.
+To set this up, the account owner has two options:
 
 1. Go to the Bell Icon at the top of your Dashboard, then click on Notifications Center and select Account Settings.
 
