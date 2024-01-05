@@ -8,6 +8,7 @@ import {
   upperFirst,
 } from "lodash";
 import { isDeepStrictEqual } from "util";
+import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 
 const checkProperties = (properties, title, schemas) => {
   return Object.fromEntries(
@@ -75,9 +76,31 @@ const removeOneOf = (schema, schemas, title) => {
       }),
     };
   }
+  if (schema.allOf) {
+    let removed = false;
+    return {
+      removed,
+      schema: {
+        ...schema,
+        allOf: schema.allOf.map((schemaItem) => {
+          if (removed) {
+            return schemaItem;
+          }
+          const { removed: _removed, schema } = removeOneOf(
+            schemaItem,
+            schemas,
+            title
+          );
+          if (_removed) {
+            removed = true;
+          }
+          return schema;
+        }),
+      },
+    };
+  }
   if (!(schema instanceof Object) || !("oneOf" in schema)) {
     if (schema.properties) {
-      console.log(88);
       return {
         removed: false,
         schema: {
@@ -383,19 +406,24 @@ const mergeAllOfObjects = (allAreObjects, schemas, title) => {
     );
 };
 
-export const removeAllOneOfs = (schemas) => {
+export const removeAllOneOfs = (
+  schemas,
+  paths,
+  parameters,
+  languageOptions
+) => {
   let localSchemas = { ...schemas };
-  let result;
-  let index = 0;
   do {
-    result = removeSingleOneOf({ ...localSchemas });
+    const result = removeSingleOneOf({ ...localSchemas });
     if (JSON.stringify(localSchemas) === JSON.stringify(result.schemas)) {
       break;
     }
-
     localSchemas = result.schemas;
-    index += 1;
-    console.log(index);
   } while (true);
-  return localSchemas;
+  return removeNotUsedSchemas(
+    { schemas: localSchemas, parameters },
+    paths,
+    languageOptions,
+    {}
+  );
 };

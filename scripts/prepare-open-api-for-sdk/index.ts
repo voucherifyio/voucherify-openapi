@@ -7,7 +7,7 @@ import { removedDeprecatedPaths } from "./removed-deprecated-paths";
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 import openAPIContent from "../../reference/OpenAPI.json";
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
-import { removedNotUsedSchemas } from "./removed-not-used-schemas";
+import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
 import { removeAllOneOfs } from "./removeOneOfs";
 
@@ -70,21 +70,25 @@ const main = async (languageOptions: LanguageOptions) => {
     removedDeprecatedPaths(openAPIContent.paths),
     languageOptions.okResponseMustBeOnlyOne
   );
-
   const parameters = removedNotUsedParameters(
     openAPIContent.components.parameters,
     paths,
     languageOptions
   );
-  console.log(languageOptions?.mergeOneOfs);
-  const schemas = removeAllOneOfs(
-    removedNotUsedSchemas(
-      openAPIContent.components,
-      paths,
-      languageOptions,
-      newSchemas
-    )
+  const schemasWithoutNotUsed = removeNotUsedSchemas(
+    openAPIContent.components,
+    paths,
+    languageOptions,
+    newSchemas
   );
+  const schemas = languageOptions?.mergeOneOfs
+    ? removeAllOneOfs(
+        schemasWithoutNotUsed,
+        paths,
+        openAPIContent.components.parameters,
+        languageOptions
+      )
+    : schemasWithoutNotUsed;
 
   // Building all together
   const newOpenApiFile = {
