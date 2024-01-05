@@ -5,7 +5,7 @@ categorySlug: development
 slug: data-parsing
 type: basic
 hidden: false
-order: 205
+order: 45
 ---
 
 Voucherify API sends much data in a validation or redemption response and only some of the data is relevant to end-customers.
@@ -473,13 +473,13 @@ Pick one for the code comments! -->
                 }
             },
             {
-                "object": "order_item",
+                "object": "order_item", // This order item is not covered by any discount. The response shows details for a typical order item.
                 "source_id": "star-th-bottle",
                 "related_object": "product",
-                "quantity": 2,
-                "amount": 5000,
-                "price": 2500,
-                "subtotal_amount": 5000,
+                "quantity": 2, // The quantity of the particular item in the cart. This should be shown to the end-customer.
+                "amount": 5000, // The total amount of the order item, i.e. price * quantity. This should be shown to the end-customer.
+                "price": 2500, // Unit price of an item. This should be shown to the end-customer.
+                "subtotal_amount": 5000, // Here, "subtotal_amount" equals "amount" because this product is not covered by any discount.
                 "product": {
                     "id": "prod_0df14b7e7d8975079d",
                     "source_id": "star-th-bottle",
@@ -569,7 +569,6 @@ Check the request tab for reference.
                     "metadata": {
                         "brand": "Star"
                     },
-                    "price": 2500
                 }
             },
             {
@@ -620,4 +619,4 @@ Check the request tab for reference.
 
 The image below shows an example of an order summary for the purchase shown in the response above.
 
-<!-- https://staging.app.voucherify.io/#/app/core/orders/ord_nVg612IxXYkTmoFJuk5d1nyZ/dashboard -->
+![](https://files.readme.io/d4a65de-guides_development_data_parsing_order_summary_03.png)
