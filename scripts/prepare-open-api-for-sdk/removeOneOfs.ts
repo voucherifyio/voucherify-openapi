@@ -10,6 +10,11 @@ import { isDeepStrictEqual } from "util";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import dotenv from "dotenv";
 dotenv.config();
+import colors from "colors";
+
+const sleep = async (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
 const addSpacesInTitle = (title: string) =>
   title
     .replaceAll(" ", "")
@@ -440,6 +445,11 @@ const cleanUpDescriptionsInEntireObject = async (object: any) => {
   const chatGptApi = process.env.OPENAI_API_KEY
     ? new ChatGPTAPI({
         apiKey: process.env.OPENAI_API_KEY,
+        completionParams: {
+          model: "gpt-3.5-turbo",
+          temperature: 0.5,
+          top_p: 0.8,
+        },
       })
     : undefined;
   const cleanUpDescriptions = async (object: any) => {
@@ -465,12 +475,25 @@ const cleanUpDescriptionsInEntireObject = async (object: any) => {
           );
         }
         try {
-          const createdDescription = await chatGptApi.sendMessage(
-            `Out of provided descriptions, please give me a description in 1 sentence: [${descriptions
-              .map((value) => `"${value}"`)
-              .join(", ")}]`
+          const createdDescription = (
+            await chatGptApi.sendMessage(
+              `Please out of those descriptions create a single description\n [${descriptions
+                .map((value) => `"${value}"`)
+                .join(
+                  ", "
+                )}]\n Response ONLY with description! DO NOT START WITH ANY PRESENTATION! PLEASE DO NOT START WITH "This description"`
+            )
+          ).text;
+          //sleep to not reach the rate limiter limit
+          await sleep(200);
+          console.log(
+            colors.green("DESCRIPTION HAVE BEEN CREATED:\n"),
+            {
+              descriptions,
+              createdDescription,
+            },
+            "\n"
           );
-          console.log(createdDescription);
           return omit(
             {
               ...object,
