@@ -481,7 +481,7 @@ const cleanUpDescriptionsInEntireObject = async (object: any) => {
                 .map((value) => `"${value}"`)
                 .join(
                   ", "
-                )}]\n Response ONLY with description! DO NOT START WITH ANY PRESENTATION! PLEASE DO NOT START WITH "This description"`
+                )}]\n Response ONLY with description! DO NOT START WITH ANY PRESENTATION! DO NOT USE WORD "DESCRIPTION" OR A SYNONYM OF A WORD "DESCRIPTION"`
             )
           ).text;
           //sleep to not reach the rate limiter limit
