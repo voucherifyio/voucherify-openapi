@@ -11,6 +11,7 @@ import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import dotenv from "dotenv";
 dotenv.config();
 import colors from "colors";
+import { asyncMap } from "../helpers/asyncMap";
 
 const sleep = async (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -454,7 +455,10 @@ const cleanUpDescriptionsInEntireObject = async (object: any) => {
     : undefined;
   const cleanUpDescriptions = async (object: any) => {
     if (Array.isArray(object)) {
-      return object.map((value) => cleanUpDescriptions(value));
+      return await asyncMap(
+        object,
+        async (value) => await cleanUpDescriptions(value)
+      );
     }
     if (object instanceof Object) {
       if ("descriptions" in object) {
@@ -510,9 +514,9 @@ const cleanUpDescriptionsInEntireObject = async (object: any) => {
         );
       }
       return Object.fromEntries(
-        Object.entries(object).map((keyAndEntry) => {
+        await asyncMap(Object.entries(object), async (keyAndEntry) => {
           const [key, entry] = keyAndEntry;
-          return [key, cleanUpDescriptions(entry)];
+          return [key, await cleanUpDescriptions(entry)];
         })
       );
     }
