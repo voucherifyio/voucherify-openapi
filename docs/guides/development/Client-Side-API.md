@@ -28,7 +28,7 @@ To keep your vouchers and promotions safe from fraudulent customer behavior, Vou
 
 When the limit is exceeded, Voucherify returns:
 
-```json JSON
+```json Response
 {  
    "type": "error",
    "message": "XHR error happened.",

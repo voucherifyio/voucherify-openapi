@@ -52,7 +52,7 @@ To get email notifications, follow these steps:
 
 For in-app notifications, simply toggle the switch next to "In app."
 
-Notifications for webhooks usage will be sent if the usage exceeds the limit for an hour, even though they are counted in daily periods. It is a measure to inform you in advance about any suspicious user activity.
+Notifications for webhooks usage will be sent if the usage exceeds the limit for an hour, even though they are counted in daily periods. As a result, you will be informed in advance about any suspicious user activity.
 
 > 📘 What happens if you exceed your limits?
 >
@@ -62,7 +62,9 @@ Notifications for webhooks usage will be sent if the usage exceeds the limit for
 
 If you think you'll use more API calls than your usual limit, you can [purchase extra packages](https://support.voucherify.io/article/583-how-to-buy-extra-api-calls-packages) to raise those limits. This lets you temporarily increase the number of API calls you can make per hour, per minute, or per cycle, providing a boost when needed.
 
-> 📘 Important: Buying additional API packages won't raise the API call limits for the Sandbox project. The Sandbox project is set to a fixed limit of 100 API calls per hour.
+> 🚧 Important
+>
+> Buying additional API packages will not raise the API call limits for the Sandbox project. The Sandbox project is set to a fixed limit of 100 API calls per hour.
 
 ## Enterprise plan
 
