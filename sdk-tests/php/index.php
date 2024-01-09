@@ -32,6 +32,7 @@ $campaignsApiInstance = new OpenAPI\Client\Api\CustomersApi(
 );
 
 $customersCreateRequestBody = new \OpenAPI\Client\Model\CustomersCreateRequestBody(); // CustomersCreateRequestBody
+$customersCreateRequestBody->setSourceId('test123');
 
 try {
     $result = $campaignsApiInstance->createCustomer($customersCreateRequestBody);
