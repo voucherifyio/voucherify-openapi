@@ -20,18 +20,13 @@ public class StackableDiscounts {
 
         //THIS TEST NOT WORKING YET. DUE TO MISSING `application_mode` IN API RESPONSE
         try {
-            ValidationsValidateResponseBody result = apiInstance.validateStackedDiscounts(validationsValidateRequestBody);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling StackableDiscountsApi#validateStackedDiscounts");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (JsonSyntaxException e){
-            System.err.println("Exception when calling StackableDiscountsApi#validateStackedDiscounts");
+            apiInstance.validateStackedDiscounts(validationsValidateRequestBody);
+
+            System.out.println("Calling StackableDiscountsApi#validateStackedDiscounts OK");
+        } catch (ApiException | JsonSyntaxException e) {
+            System.err.println("Exception when calling StackableDiscountsApi#validateStackedDiscounts OK");
             System.err.println("Status message: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

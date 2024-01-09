@@ -1,6 +1,7 @@
 package org.example;
 
 import com.google.gson.JsonSyntaxException;
+import org.example.data.Voucherify;
 import org.openapitools.client.ApiClient;
 import org.openapitools.client.ApiException;
 import org.openapitools.client.api.CampaignsApi;
@@ -8,7 +9,7 @@ import org.openapitools.client.model.*;
 
 import java.math.BigDecimal;
 
-public class Campaign {
+public class Campaigns {
     public void test(ApiClient defaultClient) {
         CampaignsApi apiInstance = new CampaignsApi(defaultClient);
 
@@ -35,64 +36,62 @@ public class Campaign {
 
         try {
             CampaignsCreateResponseBody result = apiInstance.createCampaign(campaignsCreateRequestBody);
+
             campaignId = result.getId();
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CampaignsApi#createCampaign");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (JsonSyntaxException e){
-            System.err.println("Exception when calling StackableDiscountsApi#validateStackedDiscounts");
+            String campaignName = result.getName();
+
+            Voucherify.getInstance().getCampaign().setId(campaignId);
+            Voucherify.getInstance().getCampaign().setName(campaignName);
+
+            System.out.println("Calling CampaignsApi#createCampaign OK");
+        } catch (ApiException | JsonSyntaxException e) {
+            System.err.println("Exception when calling CampaignsApi#createCampaign OK");
             System.err.println("Status message: " + e.getMessage());
+            e.printStackTrace();
         }
 
         try {
             CampaignsGetResponseBody result = apiInstance.getCampaign(campaignId);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CampaignsApiApi#addVoucherWithSpecificCodeToCampaign");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        } catch (JsonSyntaxException e){
-            System.err.println("Exception when calling StackableDiscountsApi#validateStackedDiscounts");
+
+            System.out.println("Calling CampaignsApi#getCampaign OK");
+        } catch (ApiException | JsonSyntaxException e) {
+            System.err.println("Exception when calling CampaignsApi#getCampaign OK");
             System.err.println("Status message: " + e.getMessage());
+            e.printStackTrace();
         }
 
         try {
             Integer vouchersCount = 1; // Integer | Number of vouchers that should be added.
             CampaignsVouchersCreateInBulkRequestBody campaignsVouchersCreateInBulkRequestBody = new CampaignsVouchersCreateInBulkRequestBody(); // CampaignsVouchersCreateInBulkRequestBody | Specify the voucher parameters that you would like to overwrite.
+
             CampaignsVouchersCreateCombinedResponseBody result = apiInstance.addVouchersToCampaign(campaignId, vouchersCount, campaignsVouchersCreateInBulkRequestBody);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CampaignsApi#addVouchersToCampaign");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        } catch (JsonSyntaxException e){
-            System.err.println("Exception when calling StackableDiscountsApi#validateStackedDiscounts");
+            Voucherify.getInstance().getCampaign().addVoucherId(
+                ((CampaignsVouchersCreateResponseBody) result.getActualInstance()).getId()
+            );
+
+            //NEED TWO VOUCHERS FOR PUBLICATION
+            CampaignsVouchersCreateCombinedResponseBody result2 = apiInstance.addVouchersToCampaign(campaignId, vouchersCount, campaignsVouchersCreateInBulkRequestBody);
+            Voucherify.getInstance().getCampaign().addVoucherId(
+                ((CampaignsVouchersCreateResponseBody) result2.getActualInstance()).getId()
+            );
+
+            System.out.println("Calling CampaignsApi#addVouchersToCampaign OK");
+        } catch (ApiException | JsonSyntaxException e) {
+            System.err.println("Exception when calling CampaignsApi#addVouchersToCampaign OK");
             System.err.println("Status message: " + e.getMessage());
+            e.printStackTrace();
         }
 
         try {
             Integer vouchersCount = 2; // Integer | Number of vouchers that should be added.
             CampaignsVouchersCreateInBulkRequestBody campaignsVouchersCreateInBulkRequestBody = new CampaignsVouchersCreateInBulkRequestBody(); // CampaignsVouchersCreateInBulkRequestBody | Specify the voucher parameters that you would like to overwrite.
-            CampaignsVouchersCreateCombinedResponseBody result = apiInstance.addVouchersToCampaign(campaignId, vouchersCount, campaignsVouchersCreateInBulkRequestBody);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CampaignsApi#addVouchersToCampaign");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        } catch (JsonSyntaxException e){
-            System.err.println("Exception when calling StackableDiscountsApi#validateStackedDiscounts");
+            apiInstance.addVouchersToCampaign(campaignId, vouchersCount, campaignsVouchersCreateInBulkRequestBody);
+
+            System.out.println("Calling CampaignsApi#addVouchersToCampaign OK");
+        } catch (ApiException | JsonSyntaxException e) {
+            System.err.println("Exception when calling CampaignsApi#addVouchersToCampaign OK");
             System.err.println("Status message: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
