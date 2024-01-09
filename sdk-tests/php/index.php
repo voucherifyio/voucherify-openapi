@@ -26,7 +26,7 @@ try {
     echo 'Exception when calling CampaignsApi->listCampaigns: ', $e->getMessage(), PHP_EOL;
 }
 
-$campaignsApiInstance = new OpenAPI\Client\Api\CustomersApi(
+$customersApiInstance = new OpenAPI\Client\Api\CustomersApi(
     new GuzzleHttp\Client(),
     $config
 );
@@ -35,7 +35,20 @@ $customersCreateRequestBody = new \OpenAPI\Client\Model\CustomersCreateRequestBo
 $customersCreateRequestBody->setSourceId('test123');
 
 try {
-    $result = $campaignsApiInstance->createCustomer($customersCreateRequestBody);
+    $result = $customersApiInstance->createCustomer($customersCreateRequestBody);
+     echo '<pre>' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
+} catch (Exception $e) {
+    echo 'Exception when calling CampaignsApi->listCampaigns: ', $e->getMessage(), PHP_EOL;
+}
+
+
+$redemptionsApiInstance = new OpenAPI\Client\Api\RedemptionsApi(
+    new GuzzleHttp\Client(),
+    $config
+);
+
+try {
+    $result = $redemptionsApiInstance->listRedemptions();
      echo '<pre>' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CampaignsApi->listCampaigns: ', $e->getMessage(), PHP_EOL;
