@@ -429,13 +429,11 @@ Voucherify supports many different use cases. Once the data are mapped correctly
 
 The data to be shown is taken from the `order` object in a response. However, the response can have several `order` objects.
  
-The `order` object to be used is under the `redemptions` object, which is usually towards the end of the response. See the response example in the [Response analysis](#response-analysis).
+The `order` object to be used is in the root of the response. This `order` object shows the final order and it includes all the applied discounts. It is usually located towards the end of the response. See the response example in the [Response analysis](#response-analysis).
 
-The `order` object used in the examples in the following sections is taken from the `redemptions` object. See the comments in the code to find suggestions as to which data to show to an end-customer.
+The `order` objects within the `redemptions` array show how the order changed when the discounts have been applied one by one. As a result, they can include only some of the applied discounts.
 
-> 🚧
->
-> It is **not** recommended to use `order` object which can be found in the object within the array under the `redemptions` object or the `order` object. The data displayed in such `order` objects can have only some of all the applied discounts.
+The `order` object used in the examples in the following sections is taken from the `redemptions` object. See the comments in the code below to find suggestions as to which data should be shown to an end-customer.
 
 ### Discounts
 
@@ -539,13 +537,6 @@ In this section, two cases are covered:
 In this example, the cart includes an Adventure mug and one mug is added for free. A Star thermal bottle is added as a reference item that is not covered by any discount.
 
 Check the request tab for reference.
-
-<!-- Make the terminology consistent:
-- order items
-- items
-- products
-
-Pick one for the code comments! -->
 
 ```json Response
 "order": {
