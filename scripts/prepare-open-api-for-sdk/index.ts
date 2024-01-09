@@ -10,6 +10,7 @@ import { removedNotUsedParameters } from "./removed-not-used-parameters";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
 import { removeAllOneOfs } from "./removeOneOfs";
+import { addNullablesOnNotRequired } from "./addNullablesOnNotRequired";
 
 const options = minimist(process.argv.slice(2));
 
@@ -19,6 +20,7 @@ type LanguageOptions = {
   simplifyAllObjectsThatHaveAdditionalProperties?: true; //default: false
   okResponseMustBeOnlyOne?: true; //default: false
   mergeOneOfs?: true; //default: false
+  addNullablesOnNotRequired?: true; //default: false
 };
 
 const supportedLanguages: {
@@ -35,6 +37,7 @@ const supportedLanguages: {
   php: {
     name: "php",
     mergeOneOfs: true,
+    addNullablesOnNotRequired: true,
   },
   java: {
     name: "java",
@@ -81,7 +84,7 @@ const main = async (languageOptions: LanguageOptions) => {
     languageOptions,
     newSchemas
   );
-  const schemas = languageOptions?.mergeOneOfs
+  const schemas = languageOptions.mergeOneOfs
     ? await removeAllOneOfs(
         schemasWithoutNotUsed,
         paths,
@@ -95,7 +98,11 @@ const main = async (languageOptions: LanguageOptions) => {
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
-      schemas: parseNullsToNullableObjects(schemas),
+      schemas: parseNullsToNullableObjects(
+        languageOptions.addNullablesOnNotRequired
+          ? addNullablesOnNotRequired(schemas)
+          : schemas
+      ),
       parameters,
     },
     paths,

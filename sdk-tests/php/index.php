@@ -13,8 +13,8 @@ $campaignsApiInstance = new OpenAPI\Client\Api\CampaignsApi(
     $config
 );
 
-$limit = 56; // int | A limit on the number of objects to be returned. Limit can range between 1 and 100 items.
-$page = 56; // int | Which page of results to return.
+$limit = 1; // int | A limit on the number of objects to be returned. Limit can range between 1 and 100 items.
+$page = 1; // int | Which page of results to return.
 $campaign_type = \OpenAPI\Client\Model\ParameterCampaignType::DISCOUNT_COUPONS->value; // ParameterCampaignType
 $expand = \OpenAPI\Client\Model\ParameterExpandListCampaigns::CATEGORY->value; // ParameterExpandListCampaigns
 $order = \OpenAPI\Client\Model\ParameterOrderListCampaigns::CREATED_AT->value; // ParameterOrderListCampaigns
@@ -35,7 +35,7 @@ $customersCreateRequestBody = new \OpenAPI\Client\Model\CustomersCreateRequestBo
 
 try {
     $result = $campaignsApiInstance->createCustomer($customersCreateRequestBody);
-    print_r(json_encode($result));
+    print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling CampaignsApi->listCampaigns: ', $e->getMessage(), PHP_EOL;
 }

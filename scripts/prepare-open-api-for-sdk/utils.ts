@@ -103,6 +103,16 @@ export const removeRequiredOnNullableAttributes = (schemaPartial: any) => {
     if (newRequired.length > 0) {
       schemaPartial.required = difference(required, nullables);
     }
+  } else if (isObject(schemaPartial)) {
+    Object.keys(schemaPartial).forEach((key) => {
+      schemaPartial[key] = removeRequiredOnNullableAttributes(
+        schemaPartial[key]
+      );
+    });
+  } else if (Array.isArray(schemaPartial)) {
+    schemaPartial = schemaPartial.map((schemaPartial) =>
+      removeRequiredOnNullableAttributes(schemaPartial)
+    );
   }
 
   return schemaPartial;
