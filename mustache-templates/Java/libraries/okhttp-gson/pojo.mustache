@@ -540,6 +540,21 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
         throw new IllegalArgumentException(String.format("Expected the field `{{{baseName}}}` to be a primitive type in the JSON string but got `%s`", jsonObj.get("{{{baseName}}}").toString()));
       }
       {{/isString}}
+      {{#isEnum}}
+      {{#required}}
+      try {
+        JsonElement objectElement = jsonObj.get("{{{baseName}}}");
+
+        if (objectElement != null && !objectElement.isJsonNull()) {
+          {{datatypeWithEnum}}.fromValue(objectElement.getAsString());
+        } else {
+          throw new IllegalArgumentException("Expected the field `{{{baseName}}}` to be not null");
+        }
+      } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException("Expected the field `{{{baseName}}}` to be a valid element of {{datatypeWithEnum}} enum got instead");
+      }
+      {{/required}}
+      {{/isEnum}}
       {{#isModel}}
       {{#required}}
       // validate the required field `{{{baseName}}}`
