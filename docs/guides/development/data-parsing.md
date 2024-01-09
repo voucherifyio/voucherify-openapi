@@ -8,7 +8,7 @@ hidden: false
 order: 45
 ---
 
-Voucherify API sends much data in a validation or redemption response and only some of the data is relevant to end-customers.
+Voucherify API sends much data in a validation or redemption response but only some of the data is relevant to end-customers, who use your store or services.
 
 > 📘 Goals
 >
@@ -28,16 +28,11 @@ A complete API response for [validation](ref:validate-stacked-discounts) or [red
 - voucher – a discount coupon redeemed in the order
 - item – an item in the cart
 
-<!-- ^ Should we go into detail and describe the sample response for all those objects?
-
-I'd consider only the order and/or item.
- -->
-
 > 📘
 > The amount values in the request and response are multiplied by 100 to represent two decimal places, e.g. $100 is `10000`.
 
 <details>
-<summary>Unroll a full redemption API request and response for a discount coupon</summary>
+<summary><strong>Unroll a full redemption API request and response for a discount coupon</strong></summary>
 <p>
 
 ```json Request
@@ -48,7 +43,11 @@ I'd consider only the order and/or item.
     "redeemables": [
         {
             "object": "voucher",
-            "id": "Basic-discount-1"
+            "id": "Discount-Coupon-Adventure"
+        },
+        {
+            "object": "voucher",
+            "id": "Discount-whole-cart"
         }
     ],
     "order": {
@@ -57,17 +56,6 @@ I'd consider only the order and/or item.
                 "source_id": "adv-mug",
                 "related_object": "product",
                 "price": 1000,
-                "quantity": 2,
-                "product": {
-                    "metadata": {
-                        "brand": "Adventure"
-                    }
-                }
-            },
-            {
-                "source_id": "adv-poster",
-                "related_object": "product",
-                "price": 1500,
                 "quantity": 3,
                 "product": {
                     "metadata": {
@@ -107,42 +95,29 @@ I'd consider only the order and/or item.
 {
     "redemptions": [
         {
-            "id": "r_0df92df74824167835",
+            "id": "r_0e141f80896e43c0d6",
             "customer_id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
             "tracking_id": "track_Pw6r3ejnml43kIwNS4Zj09KZ67xOfLUy",
-            "date": "2024-01-01T01:11:11.224Z",
+            "date": "2024-01-02T09:43:23.941000Z",
             "order": {
-                "id": "ord_iB08cMWm3sM3mWRJW17h62Pf",
+                "id": "ord_pNW0emWxtkL83evBp7bhYqe7",
                 "source_id": null,
-                "status": "PAID",
-                "customer_id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
-                "referrer_id": null,
-                "amount": 17500,
-                "items_discount_amount": 5000,
-                "items_applied_discount_amount": 5000,
-                "total_discount_amount": 5000,
-                "total_applied_discount_amount": 5000,
-                "total_amount": 12500,
+                "amount": 14000,
+                "items_discount_amount": 4000,
+                "items_applied_discount_amount": 4000,
+                "total_discount_amount": 4000,
+                "total_applied_discount_amount": 4000,
+                "total_amount": 10000,
                 "items": [
                     {
                         "object": "order_item",
                         "source_id": "adv-mug",
                         "related_object": "product",
-                        "quantity": 2,
-                        "amount": 2000,
+                        "quantity": 3,
+                        "amount": 3000,
                         "discount_amount": 2000,
                         "applied_discount_amount": 2000,
                         "price": 1000
-                    },
-                    {
-                        "object": "order_item",
-                        "source_id": "adv-poster",
-                        "related_object": "product",
-                        "quantity": 3,
-                        "amount": 4500,
-                        "discount_amount": 2000,
-                        "applied_discount_amount": 2000,
-                        "price": 1500
                     },
                     {
                         "object": "order_item",
@@ -150,8 +125,8 @@ I'd consider only the order and/or item.
                         "related_object": "product",
                         "quantity": 3,
                         "amount": 6000,
-                        "discount_amount": 1000,
-                        "applied_discount_amount": 1000,
+                        "discount_amount": 2000,
+                        "applied_discount_amount": 2000,
                         "price": 2000
                     },
                     {
@@ -169,18 +144,19 @@ I'd consider only the order and/or item.
             "customer": {
                 "id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
                 "name": "Jane Doe",
-                "email": "jane-doe@jane.doe",
+                "email": "jane.doe@doejane.com",
                 "source_id": "test_customer_id_2",
                 "metadata": {
                     "lang": "en",
-                    "test": true
+                    "test": true,
+                    "region": "EMEA"
                 },
                 "object": "customer"
             },
             "result": "SUCCESS",
             "voucher": {
                 "id": "v_NhxOlxSaoeK13zf949Q3u0CRQ0ag0L3o",
-                "code": "Basic-discount-1",
+                "code": "Discount-Coupon-Adventure",
                 "discount": {
                     "type": "AMOUNT",
                     "amount_off": 2000,
@@ -191,35 +167,185 @@ I'd consider only the order and/or item.
                 "campaign": "Basic discount-2",
                 "campaign_id": "camp_BiFtRVJHJ8moAUe75NzspHNO",
                 "is_referral_code": false,
-                "created_at": "2024-01-01T01:11:11.264Z",
+                "created_at": "2023-12-06T15:34:57.264+00:00",
                 "object": "voucher"
             },
+            "redemption": "r_0e141f8085ee43c0d5",
+            "metadata": {},
+            "object": "redemption"
+        },
+        {
+            "id": "r_0e141f80896e43c0d7",
+            "customer_id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+            "tracking_id": "track_Pw6r3ejnml43kIwNS4Zj09KZ67xOfLUy",
+            "date": "2024-01-02T09:43:23.941000Z",
+            "order": {
+                "id": "ord_pNW0emWxtkL83evBp7bhYqe7",
+                "source_id": null,
+                "amount": 14000,
+                "discount_amount": 2500,
+                "applied_discount_amount": 2500,
+                "items_discount_amount": 4000,
+                "total_discount_amount": 6500,
+                "total_applied_discount_amount": 2500,
+                "total_amount": 7500,
+                "items": [
+                    {
+                        "object": "order_item",
+                        "source_id": "adv-mug",
+                        "related_object": "product",
+                        "quantity": 3,
+                        "amount": 3000,
+                        "discount_amount": 2000,
+                        "price": 1000
+                    },
+                    {
+                        "object": "order_item",
+                        "source_id": "adv-tshirt",
+                        "related_object": "product",
+                        "quantity": 3,
+                        "amount": 6000,
+                        "discount_amount": 2000,
+                        "price": 2000
+                    },
+                    {
+                        "object": "order_item",
+                        "source_id": "star-th-bottle",
+                        "related_object": "product",
+                        "quantity": 2,
+                        "amount": 5000,
+                        "price": 2500
+                    }
+                ],
+                "metadata": {},
+                "object": "order"
+            },
+            "customer": {
+                "id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+                "name": "Jane Doe",
+                "email": "jane.doe@doejane.com",
+                "source_id": "test_customer_id_2",
+                "metadata": {
+                    "lang": "en",
+                    "test": true,
+                    "region": "EMEA"
+                },
+                "object": "customer"
+            },
+            "result": "SUCCESS",
+            "voucher": {
+                "id": "v_B6Dp1HuhX7em7zvgkHUElfrGU3UctHei",
+                "code": "Discount-whole-cart",
+                "discount": {
+                    "type": "AMOUNT",
+                    "amount_off": 2500,
+                    "effect": "APPLY_TO_ORDER"
+                },
+                "type": "DISCOUNT_VOUCHER",
+                "campaign": "Discount cart",
+                "campaign_id": "camp_RA6MbSbWRZdycPsllKzRwa38",
+                "is_referral_code": false,
+                "created_at": "2023-12-13T14:22:50.862+00:00",
+                "object": "voucher"
+            },
+            "redemption": "r_0e141f8085ee43c0d5",
+            "metadata": {},
             "object": "redemption"
         }
     ],
-    "order": {
-        "id": "ord_iB08cMWm3sM3mWRJW17h62Pf",
+    "parent_redemption": {
+        "id": "r_0e141f8085ee43c0d5",
+        "customer_id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+        "tracking_id": "track_Pw6r3ejnml43kIwNS4Zj09KZ67xOfLUy",
+        "date": "2024-01-02T09:43:23.941000Z",
+        "order": {
+            "id": "ord_pNW0emWxtkL83evBp7bhYqe7",
+            "source_id": null,
+            "status": "PAID",
+            "customer_id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+            "referrer_id": null,
+            "amount": 14000,
+            "discount_amount": 2500,
+            "applied_discount_amount": 2500,
+            "items_discount_amount": 4000,
+            "items_applied_discount_amount": 4000,
+            "total_discount_amount": 6500,
+            "total_applied_discount_amount": 6500,
+            "total_amount": 7500,
+            "items": [
+                {
+                    "object": "order_item",
+                    "source_id": "adv-mug",
+                    "related_object": "product",
+                    "quantity": 3,
+                    "amount": 3000,
+                    "discount_amount": 2000,
+                    "applied_discount_amount": 2000,
+                    "price": 1000
+                },
+                {
+                    "object": "order_item",
+                    "source_id": "adv-tshirt",
+                    "related_object": "product",
+                    "quantity": 3,
+                    "amount": 6000,
+                    "discount_amount": 2000,
+                    "applied_discount_amount": 2000,
+                    "price": 2000
+                },
+                {
+                    "object": "order_item",
+                    "source_id": "star-th-bottle",
+                    "related_object": "product",
+                    "quantity": 2,
+                    "amount": 5000,
+                    "price": 2500
+                }
+            ],
+            "metadata": {},
+            "object": "order"
+        },
+        "customer": {
+            "id": "cust_1g637SqVZnkdPNdAIZ7Ra879",
+            "name": "Jane Doe",
+            "email": "jane.doe@doejane.com",
+            "source_id": "test_customer_id_2",
+            "metadata": {
+                "lang": "en",
+                "test": true,
+                "region": "EMEA"
+            },
+            "object": "customer"
+        },
+        "result": "SUCCESS",
+        "metadata": {},
+        "object": "redemption"
+    },
+    "order": { // This is the order object to be used as a source of data
+        "id": "ord_pNW0emWxtkL83evBp7bhYqe7",
         "source_id": null,
-        "created_at": "2024-01-01T11:11:11.184Z",
+        "created_at": "2024-01-02T09:43:23.862926Z",
         "updated_at": null,
         "status": "PAID",
-        "amount": 17500,
-        "items_discount_amount": 5000,
-        "total_discount_amount": 5000,
-        "total_amount": 12500,
-        "items_applied_discount_amount": 5000,
-        "total_applied_discount_amount": 5000,
+        "amount": 14000,
+        "discount_amount": 2500,
+        "items_discount_amount": 4000,
+        "total_discount_amount": 6500,
+        "total_amount": 7500,
+        "applied_discount_amount": 2500,
+        "items_applied_discount_amount": 4000,
+        "total_applied_discount_amount": 6500,
         "items": [
             {
                 "object": "order_item",
                 "source_id": "adv-mug",
                 "related_object": "product",
-                "quantity": 2,
-                "amount": 2000,
+                "quantity": 3,
+                "amount": 3000,
                 "discount_amount": 2000,
                 "applied_discount_amount": 2000,
                 "price": 1000,
-                "subtotal_amount": 0,
+                "subtotal_amount": 1000,
                 "product": {
                     "id": "prod_0df14b3a6ad8f282a8",
                     "source_id": "adv-mug",
@@ -231,33 +357,14 @@ I'd consider only the order and/or item.
             },
             {
                 "object": "order_item",
-                "source_id": "adv-poster",
-                "related_object": "product",
-                "quantity": 3,
-                "amount": 4500,
-                "discount_amount": 2000,
-                "applied_discount_amount": 2000,
-                "price": 1500,
-                "subtotal_amount": 2500,
-                "product": {
-                    "id": "prod_0df14b548e58f282c0",
-                    "source_id": "adv-poster",
-                    "name": "Adventure Poster",
-                    "metadata": {
-                        "brand": "Adventure"
-                    }
-                }
-            },
-            {
-                "object": "order_item",
                 "source_id": "adv-tshirt",
                 "related_object": "product",
                 "quantity": 3,
                 "amount": 6000,
-                "discount_amount": 1000,
-                "applied_discount_amount": 1000,
+                "discount_amount": 2000,
+                "applied_discount_amount": 2000,
                 "price": 2000,
-                "subtotal_amount": 5000,
+                "subtotal_amount": 4000,
                 "product": {
                     "id": "prod_0df14b684f58f282d4",
                     "source_id": "adv-tshirt",
@@ -281,7 +388,8 @@ I'd consider only the order and/or item.
                     "name": "Star Thermal Bottle",
                     "metadata": {
                         "brand": "Star"
-                    }
+                    },
+                    "price": 2500
                 }
             }
         ],
@@ -294,11 +402,14 @@ I'd consider only the order and/or item.
         "referrer_id": null,
         "object": "order",
         "redemptions": {
-            "r_0df92df74824167835": {
-                "date": "2023-12-12T11:27:36.224Z",
-                "related_object_type": "voucher",
-                "related_object_id": "v_NhxOlxSaoeK13zf949Q3u0CRQ0ag0L3o",
-                "related_object_parent_id": "camp_BiFtRVJHJ8moAUe75NzspHNO"
+            "r_0e141f8085ee43c0d5": {
+                "date": "2024-01-02T09:43:23.941Z",
+                "related_object_type": "redemption",
+                "related_object_id": "r_0e141f8085ee43c0d5",
+                "stacked": [
+                    "r_0e141f80896e43c0d6",
+                    "r_0e141f80896e43c0d7"
+                ]
             }
         }
     },
@@ -310,31 +421,31 @@ I'd consider only the order and/or item.
 </p>
 </details>
 
-<!-- ### Order object – response analysis
-
-Code plus description, plus a link to the API reference
-
-### Item object – response analysis
-
-Code plus description, plus a link to the API reference
-
- -->
-
 ## Data to be shown
 
 Voucherify supports many different use cases. Once the data are mapped correctly, the data can be shown to end-customers in various contexts. The following sections contain snippets of JSON responses from the Voucherify API [redemption](ref:redeem-stacked-discounts) endpoint.
 
-See the comments in the code to find suggestions as to which data are worth showing to an end-customer.
+### Where to find required data?
+
+The data to be shown is taken from the `order` object in a response. However, the response can have several `order` objects.
+ 
+The `order` object to be used is under the `redemptions` object, which is usually towards the end of the response. See the response example in the [Response analysis](#response-analysis).
+
+The `order` object used in the examples in the following sections is taken from the `redemptions` object. See the comments in the code to find suggestions as to which data to show to an end-customer.
+
+> 🚧
+>
+> It is **not** recommended to use `order` object which can be found in the object within the array under the `redemptions` object or the `order` object. The data displayed in such `order` objects can have only some of all the applied discounts.
 
 ### Discounts
 
-In the case of discounts, the end-customer can be shown the data as commented in the code. This example covers any redeemed discount applied to the end-customer, whether it is applied from a discount coupon, cart promotion, gift card, or pay with points.
+In the case of discounts, the end-customer can be shown the data as indicated in the code. This example covers any redeemed discount applied to the end-customer, whether it is applied from a discount coupon, cart promotion, gift card, or pay with points.
 
 In this example, two discounts are applied:
 - a discount that reduces each item subtotal by $20 and covers only the products with `"brand": "Adventure"` metadata,
 - a discount that reduces the cart's total price by $25.
 
-A Star thermal bottle is added as a reference item that is not covered by any discounts.
+A Star thermal bottle is added as a reference item that is not covered by any discount.
 
 ```json Response
 "order": {
@@ -372,7 +483,7 @@ A Star thermal bottle is added as a reference item that is not covered by any di
                 }
             },
             {
-                "object": "order_item", // The comments are the same as in the `adv-mug` item above.
+                "object": "order_item", // The comments are the same as in the "adv-mug" item above.
                 "source_id": "adv-tshirt",
                 "related_object": "product",
                 "quantity": 3,
@@ -417,7 +528,7 @@ The image below shows an example of an order summary for the purchase shown in t
 
 ### Free items
 
-In the case of free item campaigns, there is additional data in the response which also can be shown to the end-customer, as commented in the code. This example covers any type of campaign in which an item (here, an Adventure mug product) is added to the cart for free, whether it is applied from a voucher, cart promotion, gift card, or otherwise.
+In the case of free item campaigns, there is additional data in the response which also can be shown to the end-customer, as indicated in the code. This example covers any type of campaign in which an item (here, an Adventure mug product) is added to the cart for free, whether it is applied from a voucher, cart promotion, gift card, or otherwise.
 
 In this section, two cases are covered:
 - the free item is already in the cart,
@@ -425,7 +536,7 @@ In this section, two cases are covered:
 
 #### Free item already in the cart
 
-In this example, the cart includes an Adventure mug and one mug is added for free. A Star thermal bottle is added as a reference item that is not covered by any discounts.
+In this example, the cart includes an Adventure mug and one mug is added for free. A Star thermal bottle is added as a reference item that is not covered by any discount.
 
 Check the request tab for reference.
 
@@ -500,7 +611,7 @@ Pick one for the code comments! -->
     "redeemables": [ // In this case, the free mug is added with a voucher.
         {
             "object": "voucher",
-            "id": "Always-add-prods-5"
+            "id": "Always-add-mugs"
         }
     ],
     "order": { // The end-customer ordered one Adventure mug and two Start thermal bottles.
@@ -536,11 +647,11 @@ Pick one for the code comments! -->
 
 The image below shows an example of an order summary for the purchase shown in the response above.
 
-![](https://files.readme.io/da280ae-guides_development_data_parsing_order_summary_02.png "An order summary showing the cart representing the example described in the response.")
+![](https://files.readme.io/5f359eb-guides_development_data_parsing_order_summary_02.png "An order summary showing the cart representing the example described in the response.")
 
 #### Free item not in the cart
 
-In this example, the cart does not include an Adventure mug, so one mug is added for free. A Star thermal bottle is added as a reference item that is not covered by any discounts.
+In this example, the cart does not include an Adventure mug, so one mug is added for free. A Star thermal bottle is added as a reference item that is not covered by any discount.
 
 Check the request tab for reference.
 
@@ -594,7 +705,7 @@ Check the request tab for reference.
     "redeemables": [ // In this case, the free mug is added with a voucher.
         {
             "object": "voucher",
-            "id": "Always-add-prods-5"
+            "id": "Always-add-mugs"
         }
     ],
     "order": { // The end-customer ordered only two Start thermal bottles. That is why there is no object for the Adventure mug in the request.
