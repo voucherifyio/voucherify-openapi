@@ -21,7 +21,7 @@ $order = \OpenAPI\Client\Model\ParameterOrderListCampaigns::CREATED_AT->value; /
 
 try {
     $result = $campaignsApiInstance->listCampaigns($limit, $page, $campaign_type, $expand, $order);
-    print_r(json_encode($result));
+    echo '<pre>' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CampaignsApi->listCampaigns: ', $e->getMessage(), PHP_EOL;
 }
@@ -35,7 +35,7 @@ $customersCreateRequestBody = new \OpenAPI\Client\Model\CustomersCreateRequestBo
 
 try {
     $result = $campaignsApiInstance->createCustomer($customersCreateRequestBody);
-    print_r($result);
+     echo '<pre>' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CampaignsApi->listCampaigns: ', $e->getMessage(), PHP_EOL;
 }
