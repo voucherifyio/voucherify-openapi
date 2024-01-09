@@ -47,6 +47,7 @@ export const removedNotUsedSchemas = (
     ...schemasNamesFoundInPathsParameters,
   ];
 
+
   for (const schemaName of allSchemasNames) {
     if (!components.schemas?.[schemaName]) {
       console.log(`not found ${schemaName} in schemas`);
@@ -56,11 +57,6 @@ export const removedNotUsedSchemas = (
       components.schemas[schemaName],
       !languageOptions.simplifyAllObjectsThatHaveAdditionalProperties
     );
-    if (languageOptions.removeRequiredOnNullable) {
-      schemas[schemaName] = removeRequiredOnNullableAttributes(
-        schemas[schemaName]
-      );
-    }
   }
 
   // Finding other schemas uses
@@ -84,13 +80,13 @@ export const removedNotUsedSchemas = (
         components.schemas[schemaName],
         !languageOptions.simplifyAllObjectsThatHaveAdditionalProperties
       );
-      if (languageOptions.removeRequiredOnNullable) {
-        schemas[schemaName] = removeRequiredOnNullableAttributes(
-          schemas[schemaName]
-        );
-      }
     }
   }
+
+  languageOptions.removeRequiredOnNullable &&
+    Object.keys(schemas).forEach((schemaName) => {
+      schemas[schemaName] = removeRequiredOnNullableAttributes(schemas[schemaName]);
+    });
 
   return schemas;
 };
