@@ -11,11 +11,7 @@ import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import dotenv from "dotenv";
 dotenv.config();
 import colors from "colors";
-import { asyncMap } from "../helpers/asyncMap";
 
-const sleep = async (ms: number) => {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-};
 const addSpacesInTitle = (title: string) =>
   title
     .replaceAll(" ", "")
@@ -417,7 +413,7 @@ const mergeAllOfObjects = (allAreObjects, schemas, title) => {
     );
 };
 
-export const removeAllOneOfs = async (
+export const removeAllOneOfs = (
   schemas,
   paths,
   parameters,
@@ -431,7 +427,7 @@ export const removeAllOneOfs = async (
     }
     localSchemas = result.schemas;
   } while (true);
-  return await cleanUpDescriptionsInEntireObject(
+  return cleanUpDescriptionsInEntireObject(
     removeNotUsedSchemas(
       { schemas: localSchemas, parameters },
       paths,
@@ -441,87 +437,36 @@ export const removeAllOneOfs = async (
   );
 };
 
-const cleanUpDescriptionsInEntireObject = async (object: any) => {
-  const { ChatGPTAPI } = await import("chatgpt");
-  const chatGptApi = process.env.OPENAI_API_KEY
-    ? new ChatGPTAPI({
-        apiKey: process.env.OPENAI_API_KEY,
-        completionParams: {
-          model: "gpt-3.5-turbo",
-          temperature: 0.5,
-          top_p: 0.8,
-        },
-      })
-    : undefined;
-  const cleanUpDescriptions = async (object: any) => {
-    if (Array.isArray(object)) {
-      return await asyncMap(
-        object,
-        async (value) => await cleanUpDescriptions(value)
-      );
-    }
-    if (object instanceof Object) {
-      if ("descriptions" in object) {
-        const descriptions = uniq(object["descriptions"]);
-        if (descriptions.length === 0) {
-          return omit(object, "descriptions");
-        }
-        if (descriptions.length === 1) {
-          return omit(
-            { ...object, description: descriptions[0] },
-            "descriptions"
-          );
-        }
-        if (!chatGptApi) {
-          return omit(
-            { ...object, description: descriptions.join(" and ") },
-            "descriptions"
-          );
-        }
-        try {
-          const createdDescription = (
-            await chatGptApi.sendMessage(
-              `Please out of those descriptions create a single description\n [${descriptions
-                .map((value) => `"${value}"`)
-                .join(
-                  ", "
-                )}]\n Response ONLY with description! DO NOT START WITH ANY PRESENTATION! DO NOT USE WORD "DESCRIPTION" OR A SYNONYM OF A WORD "DESCRIPTION"`
-            )
-          ).text;
-          //sleep to not reach the rate limiter limit
-          await sleep(200);
-          console.log(
-            colors.green("DESCRIPTION HAVE BEEN CREATED:\n"),
-            {
-              descriptions,
-              createdDescription,
-            },
-            "\n"
-          );
-          return omit(
-            {
-              ...object,
-              description: createdDescription,
-            },
-            "descriptions"
-          );
-        } catch (e) {
-          console.log(e);
-        }
-        return omit(
-          { ...object, description: descriptions.join(" and ") },
-          "descriptions"
+const cleanUpDescriptionsInEntireObject = (object: any) => {
+  if (Array.isArray(object)) {
+    return object.map((value) => cleanUpDescriptionsInEntireObject(value));
+  }
+  if (object instanceof Object) {
+    if ("descriptions" in object) {
+      const descriptions = uniq(object["descriptions"]);
+      if (descriptions.length === 0) {
+        return omit(object, "descriptions");
+      }
+      if (descriptions.length > 1) {
+        console.log(
+          colors.red("DESCRIPTIONS ARE NOT THE SAME:\n"),
+          {
+            descriptions,
+          },
+          "\n"
         );
       }
-      return Object.fromEntries(
-        await asyncMap(Object.entries(object), async (keyAndEntry) => {
-          const [key, entry] = keyAndEntry;
-          return [key, await cleanUpDescriptions(entry)];
-        })
+      return omit(
+        { ...object, description: descriptions.join(" and ") },
+        "descriptions"
       );
     }
-    return object;
-  };
-
-  return await cleanUpDescriptions(object);
+    return Object.fromEntries(
+      Object.entries(object).map((keyAndEntry) => {
+        const [key, entry] = keyAndEntry;
+        return [key, cleanUpDescriptionsInEntireObject(entry)];
+      })
+    );
+  }
+  return object;
 };
