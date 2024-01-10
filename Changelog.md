@@ -1,5 +1,10 @@
 # Changelog
 
+## 20240110
+
+- Data parsing article added
+- Changed the link in the Guides > Introduction for API Reference
+
 ## 20231213
 
 - Integration processes article added
