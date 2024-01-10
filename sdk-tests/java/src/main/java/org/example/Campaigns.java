@@ -16,23 +16,20 @@ public class Campaigns {
         String campaignId = "";
         String generatedString = Utils.getAlphaNumericString(20);
 
-        Discount discount = new Discount();
-        DiscountAmount discountAmount = new DiscountAmount();
-        discountAmount.setType(DiscountAmount.TypeEnum.AMOUNT);
-        discountAmount.setAmountOff(BigDecimal.valueOf(1));
-        discount.setActualInstance(discountAmount);
+        CampaignLoyaltyCard campaignLoyaltyCard = new CampaignLoyaltyCard();
+        campaignLoyaltyCard.setPoints(500);
 
-        DiscountCouponsCampaignVoucher discountCouponsCampaignVoucher = new DiscountCouponsCampaignVoucher();
-        discountCouponsCampaignVoucher.setDiscount(discount);
+        CampaignLoyaltyVoucher campaignLoyaltyVoucher = new CampaignLoyaltyVoucher();
+        campaignLoyaltyVoucher.loyaltyCard(campaignLoyaltyCard);
 
-        CampaignsCreateDiscountCouponsCampaign campaignsCreateDiscountCouponsCampaign = new CampaignsCreateDiscountCouponsCampaign();
-        campaignsCreateDiscountCouponsCampaign.setCampaignType("DISCOUNT_COUPONS");
-        campaignsCreateDiscountCouponsCampaign.setCampaignType("AUTO_UPDATE");
-        campaignsCreateDiscountCouponsCampaign.setName(generatedString);
+        CampaignsCreateLoyaltyCampaign campaignsCreate = new CampaignsCreateLoyaltyCampaign();
+        campaignsCreate.setCampaignType("REFERRAL_PROGRAM");
+        campaignsCreate.setCampaignType("AUTO_UPDATE");
+        campaignsCreate.setName(generatedString);
 
         CampaignsCreateRequestBody campaignsCreateRequestBody = new CampaignsCreateRequestBody(); // CampaignsCreateRequestBody | Specify the details of the campaign that you would like to create.
-        campaignsCreateRequestBody.setActualInstance(campaignsCreateDiscountCouponsCampaign);
-        campaignsCreateDiscountCouponsCampaign.setVoucher(discountCouponsCampaignVoucher);
+        campaignsCreateRequestBody.setActualInstance(campaignsCreate);
+        campaignsCreate.setVoucher(campaignLoyaltyVoucher);
 
         try {
             CampaignsCreateResponseBody result = apiInstance.createCampaign(campaignsCreateRequestBody);

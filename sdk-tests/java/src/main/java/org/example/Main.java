@@ -69,12 +69,14 @@ public class Main {
         Main.ensureDataByTesting(defaultClient);
 
         if(Voucherify.getInstance().isDataEnsured()){
+            Loyalties loyalties = new Loyalties();
             StackableDiscounts stackableDiscounts = new StackableDiscounts();
             Redemptions redemptions = new Redemptions();
             Publications publications = new Publications();
 
-            publications.test(defaultClient);
-            redemptions.test(defaultClient);
+            loyalties.test(defaultClient);
+//            publications.test(defaultClient);
+//            redemptions.test(defaultClient);
         }
     }
 }
