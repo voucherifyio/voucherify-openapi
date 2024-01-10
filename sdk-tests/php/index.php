@@ -38,7 +38,7 @@ try {
     $result = $customersApiInstance->createCustomer($customersCreateRequestBody);
      echo '<pre>' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
-    echo 'Exception when calling CampaignsApi->listCampaigns: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling CustomersApi->createCustomer: ', $e->getMessage(), PHP_EOL;
 }
 
 
@@ -51,5 +51,5 @@ try {
     $result = $redemptionsApiInstance->listRedemptions();
      echo '<pre>' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
-    echo 'Exception when calling CampaignsApi->listCampaigns: ', $e->getMessage(), PHP_EOL;
+    echo 'Exception when calling RedemptionsApi->listRedemptions: ', $e->getMessage(), PHP_EOL;
 }
