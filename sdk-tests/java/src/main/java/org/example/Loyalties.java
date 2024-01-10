@@ -94,7 +94,6 @@ public class Loyalties {
                 tiers
             );
 
-            System.out.println(responseList);
             System.out.println("Calling LoyaltiesApi#createInBulkLoyaltyTiers OK");
         } catch (ApiException | JsonSyntaxException e) {
             System.err.println("Exception when calling LoyaltiesApi#createInBulkLoyaltyTiers");
@@ -102,18 +101,18 @@ public class Loyalties {
             e.printStackTrace();
         }
 
-        try {
-            LoyaltiesTiersRewardsListResponseBody loyaltiesTiersRewardsListResponseBody = loyalties.listLoyaltyTierRewards(
-                Voucherify.getInstance().getCampaign().getId(),
-                Voucherify.getInstance().getCampaign().getVoucherIds().get(0)
-            );
-
-            System.out.println(loyaltiesTiersRewardsListResponseBody);
-            System.out.println("Calling LoyaltiesApi#createEarningRule OK");
-        } catch (ApiException | JsonSyntaxException e) {
-            System.err.println("Exception when calling LoyaltiesApi#createEarningRule");
-            System.err.println("Status message: " + e.getMessage());
-            e.printStackTrace();
-        }
+//        try {
+//            LoyaltiesTiersRewardsListResponseBody loyaltiesTiersRewardsListResponseBody = loyalties.listLoyaltyTierRewards(
+//                Voucherify.getInstance().getCampaign().getId(),
+//                Voucherify.getInstance().getCampaign().getVoucherIds().get(0)
+//            );
+//
+//            System.out.println(loyaltiesTiersRewardsListResponseBody);
+//            System.out.println("Calling LoyaltiesApi#listLoyaltyTierRewards OK");
+//        } catch (ApiException | JsonSyntaxException e) {
+//            System.err.println("Exception when calling LoyaltiesApi#listLoyaltyTierRewards");
+//            System.err.println("Status message: " + e.getMessage());
+//            e.printStackTrace();
+//        }
     }
 }
