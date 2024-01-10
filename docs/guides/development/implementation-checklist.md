@@ -1,6 +1,6 @@
 ---
 title: Development Checklist
-excerpt: Get the documentation, sample code, and developer tools — everything you need to build digital promotions faster
+excerpt: Learn what development steps you need to take to integrate with Voucherify
 categorySlug: development
 slug: welcome
 type: basic
@@ -8,7 +8,36 @@ hidden: false
 order: 10
 ---
 
-Voucherify makes launching and tracking digital promotions easy. Get the documentation, sample code, and developer tools you need to build exactly what you want, fast. We will handle the complexity of promotions delivery and validation. Let’s get building!
+<!--
+General plan of the document:
+- Describing the necessary steps as per the development section
+  - Authentication
+  - Integration processes
+  - etc.
+- What's next section
+
+
+-->
+
+Voucherify offers a REST-based API and a web dashboard to create and manage promotional campaigns. Dedicated endpoints help you deliver personalized incentives to any channel, device, and e-commerce solution while keeping your data in secure and highly available environments. This is achieved with real-time data synchronization with CRM, product inventory, distribution channels, and any customer touchpoints.
+
+## What are the development steps to integrate with Voucherify?
+
+- **[Authentication](doc:authentication)**: get API keys to authorize Voucherify API requests.
+- **[Integration processes](doc:integration-processes)**: learn key Voucherify processes and steps how your customer's journey works with Voucherify in different use cases.
+- **[Data parsing](doc:data-parsing)**: learn how to read and use the data sent by Voucherify.
+- **[Metadata mapping](doc:metadata-mapping)**: learn about custom attributes (metadata) and their use in Voucherify
+- **[Data synchronization](data-synchronization)**: learn which of your data can be synchronized with Voucherify and how you can do this.
+- 
+
+## What's next
+
+* Join Voucherify [Community Slack](https://community.voucherify.io/) to get help and inspiration.
+* Browse through [API reference](ref:introduction-1) to learn more about Voucherify API endpoints.
+* Visit Voucherify [roadmap](https://roadmap.voucherify.io/) to find out what Voucherify developers are currently working on or suggest improvements and vote for features you want to see in the platform.
+
+
+<!-- Voucherify makes launching and tracking digital promotions easy. Get the documentation, sample code, and developer tools you need to build exactly what you want, fast. We will handle the complexity of promotions delivery and validation. Let’s get building!
 
 ## What is Voucherify?
 
@@ -16,7 +45,7 @@ Voucherify is an API-first Promotion Engine for digital teams. With our programm
 
 Voucherify offers a REST-based API and a web dashboard to create and manage promotional campaigns. Our dedicated endpoints help you deliver personalized incentives to any channel, device, and e-commerce solution while keeping your data in secure, highly available environments. This is achieved with real-time data synchronization with CRM, product inventory, distribution channels, and any customer touchpoints. 
 
-<!-- ![Welcome Diagram](../../assets/img/guides_getting_started_integration_checklist_welcome_diagram_1.png "Welcome Diagram") -->
+<!-- ![Welcome Diagram](../../assets/img/guides_getting_started_integration_checklist_welcome_diagram_1.png "Welcome Diagram")
 ![Welcome Diagram](https://files.readme.io/6070078-welcome-diagram.png "Welcome Diagram")
 
 The majority of development work is required at the beginning: 
@@ -98,3 +127,4 @@ For advanced customization, you should read about how Voucherify:
 * Join our [Community Slack](https://community.voucherify.io/) to get help and inspiration.
 * Browse through Campaign, Discount, Distribution recipes to learn how to get a particular job done.
 * Visit our [roadmap](https://roadmap.voucherify.io/) to find out what we’ll release in the next cycle; suggest improvements and vote for features you want to see in the platform.
+-->
