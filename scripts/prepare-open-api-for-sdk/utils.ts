@@ -85,7 +85,22 @@ export const removeAdditionalProperties = (
 };
 
 export const removeRequiredOnNullableAttributes = (schemaPartial: any) => {
-  if (isObject(schemaPartial?.properties)) {
+  if (!isObject(schemaPartial)) {
+    return schemaPartial;
+  }
+
+  if (!schemaPartial?.properties && !schemaPartial?.allOf) {
+    return schemaPartial;
+  }
+
+  //ONLY FOR ALL OF BECAUSE WE ENSURE ALL ONE OF CONTAINS LIST OF REFS
+  if (schemaPartial?.allOf) {
+    schemaPartial.allOf = schemaPartial.allOf.map((item: any) =>
+      removeRequiredOnNullableAttributes(item)
+    );
+  }
+
+  if (schemaPartial.properties) {
     Object.keys(schemaPartial.properties).forEach((key) => {
       schemaPartial.properties[key] = removeRequiredOnNullableAttributes(
         schemaPartial.properties[key]
@@ -98,9 +113,7 @@ export const removeRequiredOnNullableAttributes = (schemaPartial: any) => {
 
     const required = schemaPartial.required ?? [];
 
-    const newRequired = difference(required, nullables);
-
-    if (newRequired.length > 0) {
+    if (required.length > 0) {
       schemaPartial.required = difference(required, nullables);
     }
   }

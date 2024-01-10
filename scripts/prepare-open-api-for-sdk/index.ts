@@ -81,7 +81,7 @@ const main = async (languageOptions: LanguageOptions) => {
     languageOptions,
     newSchemas
   );
-  const schemas = languageOptions?.mergeOneOfs
+  const schemas = languageOptions.mergeOneOfs
     ? removeAllOneOfs(
         schemasWithoutNotUsed,
         paths,
