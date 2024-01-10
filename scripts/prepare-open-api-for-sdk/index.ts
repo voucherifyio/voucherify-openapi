@@ -82,7 +82,7 @@ const main = async (languageOptions: LanguageOptions) => {
     newSchemas
   );
   const schemas = languageOptions.mergeOneOfs
-    ? await removeAllOneOfs(
+    ? removeAllOneOfs(
         schemasWithoutNotUsed,
         paths,
         openAPIContent.components.parameters,
