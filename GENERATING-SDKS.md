@@ -13,45 +13,44 @@ Voucherify is using openAPI definition to generate sdks.
 
 - `npm i` (if you have not already installed)
 - `npm install @openapitools/openapi-generator-cli -g` (if you have not already installed)
-- `npm run generate-sdk-ruby`/`generate-sdk-python`
+- `npm run generate-sdk-ruby`/`generate-sdk-python`/`generate-sdk-java`/`generate-sdk-php`
 
-## For ruby
+## Tests
 
-- Install `gem` and `ruby` (if you have not already installed)
-- Go to `./tmp/ruby`
-- run `gem build openapi_client.gemspec`
-- run `gem install ./openapi_client-1.0.0.gem`
-- Test it:
-  - Go to branch root folder
-  - run `ruby ./sdk-tests/ruby.rb` for tests
-
-## For python
-
-- install python3 and pip (if you have not already installed)
-- install requirement python packages using pip -> **tmp/python/requirements.txt**
-- install using pip `responses 0.24.0` and `Urllib3 2.0.5`
-- run in terminal `/Applications/Python\ 3.XXXXXX/Install\ Certificates.command`, where `XXXXXX` is the version of your Python3. For example `3.12` for `3.12.0`.
-- run `python3 sdk-tests/python.py` (fails...)
-
-## For testing purposes you need to export environment variables by running
+### Before start
 
 - Add `.env` file inside `sdk-tests` folder with following content:
 
 ```dotenv
-VOUCHERIFY_HOST=https://api.voucherify.io #optional
 X_APP_ID=4xxx17d6-xxxx-xxxx-xxxx-ce24381228ab
 X_APP_TOKEN=3xxx165i-xxxx-xxxx-xxxx-cb5327024ce4
+#optional:
+VOUCHERIFY_HOST=https://api.voucherify.io
 ```
 
-#### For ruby
+- Python
+  - install `python3` and pip (if you have not already installed)
+  - install requirement python packages using pip -> **tmp/python/requirements.txt**
+  - install using pip `responses 0.24.0` and `Urllib3 2.0.5`
+  - run in terminal `/Applications/Python\ 3.XXXXXX/Install\ Certificates.command`, where `XXXXXX` is the version of your Python3. For example `3.12` for `3.12.0`.
+- Ruby
+  - install `ruby >= 2.7` and `gem` (if you have not already installed)
+  - go to `./tmp/ruby`
+  - run `gem build openapi_client.gemspec`
+  - run `gem install ./openapi_client-1.0.0.gem`
+- Php
+  - install `php >= 8.1` and `composer` (if you have not already installed)
 
-- Use `gem install dotenv`.
-- If you create new test remember to add `require 'dotenv/load'`
+### Run tests
 
-#### For python
-
-- Use `pip3 install python-dotenv` or `pip install python-dotenv`.
-- If you create new test remember to import `from dotenv import load_dotenv`
-
-**NOTE** If You have problem with wrong reading of `.env` file variables You probably need to use unset command for removing aforementioned variables from OS ENV.
-
+- Python
+  - run `pip3 install python-dotenv` (if you have never)
+  - run `python3 ./sdk-tests/python.py` for tests
+- Ruby
+  - run `gem install dotenv` (if you have never)
+  - run `ruby ./sdk-tests/ruby.rb` for tests
+- Php
+  - run `npm run generate-php-sdk-for-tests`
+  - go to `./sdk-tests` (`cd ./sdk-tests`)
+  - run `php -S localhost:8000 php/index.php`
+  - visit `http://localhost:8000/`
