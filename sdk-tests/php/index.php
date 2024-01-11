@@ -178,8 +178,10 @@ foreach ($applicable_promotion_tiers_ids as $promotion_tier_id) {
 $voucher_redeemable = new \OpenAPI\Client\Model\StackableValidateRedeemBaseRedeemablesItem();
 $voucher_redeemable->setId($voucher->getCode());
 $voucher_redeemable->setObject("voucher");
+array_push($validations_validate_request_body_redeemables, $voucher_redeemable);
 $validations_validate_request_body->setRedeemables($validations_validate_request_body_redeemables);
 try {
+    echo '<pre>validateStackedDiscounts<br />' . json_encode($validations_validate_request_body, JSON_PRETTY_PRINT) . '</pre>';
     $result = $stackedDiscountsApiInstance->validateStackedDiscounts($validations_validate_request_body);
     echo '<pre>validateStackedDiscounts<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
