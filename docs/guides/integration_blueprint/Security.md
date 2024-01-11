@@ -2,7 +2,7 @@
 title: Security
 excerpt: Voucherify data security
 categorySlug: integration-blueprint
-slug: security-1
+slug: security
 type: basic
 hidden: false
 order: 16
