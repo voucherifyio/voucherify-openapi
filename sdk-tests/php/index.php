@@ -54,18 +54,20 @@ $created_promotion_campaign;
 $campaigns_create_request_body_promotion = new \OpenAPI\Client\Model\CampaignsCreateRequestBody();
 $campaigns_create_request_body_promotion->setName(generateRandomString(12));
 $campaigns_create_request_body_promotion->setCampaignType("PROMOTION");
+$campaigns_create_request_body_promotion->setPromotion(new \OpenAPI\Client\Model\CampaignsCreateRequestBodyPromotion());
 //promotionTierCreateParams
 $promotionTierCreateParams = new \OpenAPI\Client\Model\PromotionTierCreateParams();
+$promotionTierCreateParams->setName(generateRandomString());
 $promotionTierCreateParams->setBanner('testBanner');
 $promotionTierCreateParams->setAction(new \OpenAPI\Client\Model\PromotionTierAction());
 $promotionTierCreateParams->getAction()->setDiscount(new \OpenAPI\Client\Model\Discount());
 $promotionTierCreateParams->getAction()->getDiscount()->setType("AMOUNT");
 $promotionTierCreateParams->getAction()->getDiscount()->setAmountOff(1000);
-$campaigns_create_request_body_promotion->setPromotion([$promotionTierCreateParams]);
+$campaigns_create_request_body_promotion->getPromotion()->setTiers([$promotionTierCreateParams]);
+
 try {
-    echo '<pre>createCampaign - PROMOTION<br />' . json_encode($campaigns_create_request_body_promotion, JSON_PRETTY_PRINT) . '</pre>';
     $created_promotion_campaign = $campaignsApiInstance->createCampaign($campaigns_create_request_body_promotion);
-    echo '<pre>createCampaign - PROMOTION<br />' . json_encode($created_discount_campaign, JSON_PRETTY_PRINT) . '</pre>';
+    echo '<pre>createCampaign - PROMOTION<br />' . json_encode($created_promotion_campaign, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CampaignsApi->createCampaign: ', $e->getMessage(), PHP_EOL;
 }
@@ -122,6 +124,29 @@ try {
     echo 'Exception when calling CustomersApi->createCustomer: ', $e->getMessage(), PHP_EOL;
 }
 
+//create qualificationsApi
+$qualificationsApiInstance = new OpenAPI\Client\Api\QualificationsApi(
+    new GuzzleHttp\Client(),
+    $config
+);
+
+//qualifications_check_eligibility_request_body
+$qualifications_check_eligibility_request_body = new \OpenAPI\Client\Model\QualificationsCheckEligibilityRequestBody();
+$qualifications_check_eligibility_request_body->setCustomer(new \OpenAPI\Client\Model\Customer());
+$qualifications_check_eligibility_request_body->getCustomer()->setId($created_customer->getId());
+$qualifications_check_eligibility_request_body->setOrder(new \OpenAPI\Client\Model\Order());
+$qualifications_check_eligibility_request_body->getOrder()->setAmount(10000);
+$qualifications_check_eligibility_request_body->getOrder()->setStatus("CREATED");
+$qualifications_check_eligibility_request_body->setMode("BASIC");
+$qualifications_check_eligibility_request_body->setScenario("ALL");
+try {
+    $result = $qualificationsApiInstance->checkEligibility($qualifications_check_eligibility_request_body);
+     echo '<pre>checkEligibility<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
+} catch (Exception $e) {
+    echo 'Exception when calling CustomersApi->createCustomer: ', $e->getMessage(), PHP_EOL;
+}
+
+
 //create redemptionsApi
 $redemptionsApiInstance = new OpenAPI\Client\Api\RedemptionsApi(
     new GuzzleHttp\Client(),
@@ -150,7 +175,7 @@ try {
 try {
     $result = $campaignsApiInstance->deleteCampaign($created_promotion_campaign->getId(), true);
     echo '<pre>deleteCampaign - PROMOTION<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
-    echo '<pre>getAsyncActionId<br />' . $result->getAsyncActionId() . '</pre>';
+    echo '<pre>getAsyncActionId<br />' . $result . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CampaignsApi->listCampaigns: ', $e->getMessage(), PHP_EOL;
 }
@@ -159,7 +184,7 @@ try {
 //deleteCustomer
 try {
     $result = $customersApiInstance->deleteCustomer($created_customer->getId());
-     echo '<pre>createCustomer<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
+     echo '<pre>deleteCustomer<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CustomersApi->createCustomer: ', $e->getMessage(), PHP_EOL;
 }
