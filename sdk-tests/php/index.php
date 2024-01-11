@@ -24,21 +24,16 @@ $config = OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey('X-
 $config = OpenAPI\Client\Configuration::getDefaultConfiguration()->setApiKey('X-App-Token', $env["X_APP_TOKEN"]);
 $config = OpenAPI\Client\Configuration::getDefaultConfiguration()->setHost($env["VOUCHERIFY_HOST"]);
 
-//create campaignsApi
-$campaignsApiInstance = new OpenAPI\Client\Api\CampaignsApi(
-    new GuzzleHttp\Client(),
-    $config
-);
-
-//create campaignsApi
+//create productsApi
 $productsApiInstance = new OpenAPI\Client\Api\ProductsApi(
     new GuzzleHttp\Client(),
     $config
 );
 
-//create variable to store product data
+//create variables to store products data
 $created_product;
-//create Product
+$created_product2;
+//create Products
 $products_create_request_body = new \OpenAPI\Client\Model\ProductsCreateRequestBody();
 $products_create_request_body->setSourceId(generateRandomString());
 $products_create_request_body->setName(generateRandomString());
@@ -49,6 +44,46 @@ try {
     echo '<pre>createProduct<br />' . json_encode($created_product, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling ProductsApi->createProduct: ', $e->getMessage(), PHP_EOL;
+}
+$products_create_request_body->setSourceId(generateRandomString());
+$products_create_request_body->setName(generateRandomString());
+$products_create_request_body->setPrice(66000);
+try {
+    $created_product2 = $productsApiInstance->createProduct($products_create_request_body);
+    echo '<pre>createProduct<br />' . json_encode($created_product, JSON_PRETTY_PRINT) . '</pre>';
+} catch (Exception $e) {
+    echo 'Exception when calling ProductsApi->createProduct: ', $e->getMessage(), PHP_EOL;
+}
+
+//create campaignsApi
+$campaignsApiInstance = new OpenAPI\Client\Api\CampaignsApi(
+    new GuzzleHttp\Client(),
+    $config
+);
+
+//create validationRulesApi
+$validationRulesApiInstance = new OpenAPI\Client\Api\ValidationRulesApi(
+    new GuzzleHttp\Client(),
+    $config
+);
+
+//create variable to store campaign data
+$created_validation_rule;
+//create validation rule
+$validation_rules_create_request_body = new \OpenAPI\Client\Model\ValidationRulesCreateRequestBody();
+$applicable_to_created_product2 = new \OpenAPI\Client\Model\ApplicableTo();
+$applicable_to_created_product2->setProductId($created_product2->getId());
+$applicable_to_created_product2->setObject("product");
+$validation_rules_create_request_body->setApplicableTo(new \OpenAPI\Client\Model\ValidationRuleBaseApplicableTo());
+$validation_rules_create_request_body->getApplicableTo()->setIncluded([$applicable_to_created_product2]);
+$validation_rules_create_request_body->setType("basic");
+$validation_rules_create_request_body->setName(generateRandomString());
+try {
+    echo '<pre>createValidationRules<br />' . json_encode($validation_rules_create_request_body, JSON_PRETTY_PRINT) . '</pre>';
+    $created_validation_rule = $validationRulesApiInstance->createValidationRules($validation_rules_create_request_body);
+    echo '<pre>createValidationRules<br />' . json_encode($created_validation_rule, JSON_PRETTY_PRINT) . '</pre>';
+} catch (Exception $e) {
+    echo 'Exception when calling ValidationRulesApi->createValidationRules: ', $e->getMessage(), PHP_EOL;
 }
 
 //create variable to store campaign data
@@ -68,6 +103,15 @@ try {
     echo '<pre>createCampaign - DISCOUNT_COUPONS<br />' . json_encode($created_discount_campaign, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CampaignsApi->createCampaign: ', $e->getMessage(), PHP_EOL;
+}
+
+//addVouchersToCampaign
+$campaign_voucher;
+try {
+    $campaign_voucher = $campaignsApiInstance->addVouchersToCampaign($created_discount_campaign->getId(), 1);
+    echo '<pre>addVouchersToCampaign<br />' . json_encode($campaign_voucher, JSON_PRETTY_PRINT) . '</pre>';
+} catch (Exception $e) {
+    echo 'Exception when calling CampaignsApi->getCampaign: ', $e->getMessage(), PHP_EOL;
 }
 
 //create variable to store campaign data
@@ -112,16 +156,6 @@ try {
     $result = $campaignsApiInstance->getCampaign($created_discount_campaign->getId());
     echo '<pre>getCampaign<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
     echo '<pre>getValidationRulesAssignments<br />' . json_encode($result->getValidationRulesAssignments(), JSON_PRETTY_PRINT) . '</pre>';
-} catch (Exception $e) {
-    echo 'Exception when calling CampaignsApi->getCampaign: ', $e->getMessage(), PHP_EOL;
-}
-
-
-//createVoucher
-$voucher;
-try {
-    $voucher = $campaignsApiInstance->addVouchersToCampaign($created_discount_campaign->getId(), 1);
-    echo '<pre>addVouchersToCampaign<br />' . json_encode($voucher, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CampaignsApi->getCampaign: ', $e->getMessage(), PHP_EOL;
 }
@@ -210,7 +244,7 @@ foreach ($applicable_promotion_tiers_ids as $promotion_tier_id) {
     array_push($validations_validate_request_body_redeemables, $redeemable);
 }
 $voucher_redeemable = new \OpenAPI\Client\Model\StackableValidateRedeemBaseRedeemablesItem();
-$voucher_redeemable->setId($voucher->getCode());
+$voucher_redeemable->setId($campaign_voucher->getCode());
 $voucher_redeemable->setObject("voucher");
 array_push($validations_validate_request_body_redeemables, $voucher_redeemable);
 $validations_validate_request_body->setRedeemables($validations_validate_request_body_redeemables);
