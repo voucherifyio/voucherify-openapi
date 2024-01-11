@@ -1,6 +1,7 @@
 <?php
 //generateRandomString
-function generateRandomString($length = 10) {
+function generateRandomString($length = 10)
+{
     $randomString = '';
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -99,7 +100,7 @@ try {
 //createVoucher
 $voucher;
 try {
-    $voucher = $campaignsApiInstance->addVouchersToCampaign($created_discount_campaign->getId(),1);
+    $voucher = $campaignsApiInstance->addVouchersToCampaign($created_discount_campaign->getId(), 1);
     echo '<pre>addVouchersToCampaign<br />' . json_encode($voucher, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CampaignsApi->getCampaign: ', $e->getMessage(), PHP_EOL;
@@ -119,7 +120,7 @@ $customersCreateRequestBody = new \OpenAPI\Client\Model\CustomersCreateRequestBo
 $customersCreateRequestBody->setSourceId('test123');
 try {
     $created_customer = $customersApiInstance->createCustomer($customersCreateRequestBody);
-     echo '<pre>createCustomer<br />' . json_encode($created_customer, JSON_PRETTY_PRINT) . '</pre>';
+    echo '<pre>createCustomer<br />' . json_encode($created_customer, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CustomersApi->createCustomer: ', $e->getMessage(), PHP_EOL;
 }
@@ -130,22 +131,60 @@ $qualificationsApiInstance = new OpenAPI\Client\Api\QualificationsApi(
     $config
 );
 
+//create variable to store checkEligibility result data
+$check_eligibility_result;
+
 //qualifications_check_eligibility_request_body
 $qualifications_check_eligibility_request_body = new \OpenAPI\Client\Model\QualificationsCheckEligibilityRequestBody();
 $qualifications_check_eligibility_request_body->setCustomer(new \OpenAPI\Client\Model\Customer());
 $qualifications_check_eligibility_request_body->getCustomer()->setId($created_customer->getId());
 $qualifications_check_eligibility_request_body->setOrder(new \OpenAPI\Client\Model\Order());
-$qualifications_check_eligibility_request_body->getOrder()->setAmount(10000);
+$qualifications_check_eligibility_request_body->getOrder()->setAmount(100000);
 $qualifications_check_eligibility_request_body->getOrder()->setStatus("CREATED");
 $qualifications_check_eligibility_request_body->setMode("BASIC");
 $qualifications_check_eligibility_request_body->setScenario("ALL");
 try {
-    $result = $qualificationsApiInstance->checkEligibility($qualifications_check_eligibility_request_body);
-     echo '<pre>checkEligibility<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
+    $check_eligibility_result = $qualificationsApiInstance->checkEligibility($qualifications_check_eligibility_request_body);
+    echo '<pre>checkEligibility<br />' . json_encode($check_eligibility_result, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CustomersApi->createCustomer: ', $e->getMessage(), PHP_EOL;
 }
+$applicable_promotion_tiers = array_slice(array_filter($check_eligibility_result->getRedeemables()->getData(), function ($redeemable) {
+    return $redeemable->getObject() === 'promotion_tier';
+}), 0, 3);
+$applicable_promotion_tiers_ids = array_map(function ($promotion_tier) {
+    return $promotion_tier->getId();
+}, $applicable_promotion_tiers);
 
+//create redemptionsApi
+$stackedDiscountsApiInstance = new OpenAPI\Client\Api\StackableDiscountsApi(
+    new GuzzleHttp\Client(),
+    $config
+);
+
+$validations_validate_request_body = new \OpenAPI\Client\Model\ValidationsValidateRequestBody();
+$validations_validate_request_body->setOrder(new \OpenAPI\Client\Model\Order());
+$validations_validate_request_body->getOrder()->setAmount(100000);
+$validations_validate_request_body->getOrder()->setStatus("CREATED");
+$validations_validate_request_body->setCustomer(new \OpenAPI\Client\Model\Customer());
+$validations_validate_request_body->getCustomer()->setSourceId($created_customer->getSourceId());
+$validations_validate_request_body_redeemables = [];
+foreach ($applicable_promotion_tiers_ids as $promotion_tier_id) {
+    $redeemable = new \OpenAPI\Client\Model\StackableValidateRedeemBaseRedeemablesItem();
+    $redeemable->setId($promotion_tier_id);
+    $redeemable->setObject("promotion_tier");
+    array_push($validations_validate_request_body_redeemables, $redeemable);
+}
+$voucher_redeemable = new \OpenAPI\Client\Model\StackableValidateRedeemBaseRedeemablesItem();
+$voucher_redeemable->setId($voucher->getCode());
+$voucher_redeemable->setObject("voucher");
+$validations_validate_request_body->setRedeemables($validations_validate_request_body_redeemables);
+try {
+    $result = $stackedDiscountsApiInstance->validateStackedDiscounts($validations_validate_request_body);
+    echo '<pre>validateStackedDiscounts<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
+} catch (Exception $e) {
+    echo 'Exception when calling StackableDiscountsApi->redeemStackedDiscounts: ', $e->getMessage(), PHP_EOL;
+}
 
 //create redemptionsApi
 $redemptionsApiInstance = new OpenAPI\Client\Api\RedemptionsApi(
@@ -156,7 +195,7 @@ $redemptionsApiInstance = new OpenAPI\Client\Api\RedemptionsApi(
 //listRedemptions
 try {
     $result = $redemptionsApiInstance->listRedemptions(1, 1);
-     echo '<pre>listRedemptions<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
+    echo '<pre>listRedemptions<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling RedemptionsApi->listRedemptions: ', $e->getMessage(), PHP_EOL;
 }
@@ -166,7 +205,6 @@ try {
 try {
     $result = $campaignsApiInstance->deleteCampaign($created_discount_campaign->getId(), true);
     echo '<pre>deleteCampaign - DISCOUNT_COUPONS<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
-    echo '<pre>getAsyncActionId<br />' . $result->getAsyncActionId() . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CampaignsApi->listCampaigns: ', $e->getMessage(), PHP_EOL;
 }
@@ -175,16 +213,14 @@ try {
 try {
     $result = $campaignsApiInstance->deleteCampaign($created_promotion_campaign->getId(), true);
     echo '<pre>deleteCampaign - PROMOTION<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
-    echo '<pre>getAsyncActionId<br />' . $result . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CampaignsApi->listCampaigns: ', $e->getMessage(), PHP_EOL;
 }
 
-
 //deleteCustomer
 try {
     $result = $customersApiInstance->deleteCustomer($created_customer->getId());
-     echo '<pre>deleteCustomer<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
+    echo '<pre>deleteCustomer<br />' . json_encode($result, JSON_PRETTY_PRINT) . '</pre>';
 } catch (Exception $e) {
     echo 'Exception when calling CustomersApi->createCustomer: ', $e->getMessage(), PHP_EOL;
 }
