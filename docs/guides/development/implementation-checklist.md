@@ -30,7 +30,7 @@ Voucherify offers a REST-based API and a web dashboard to create and manage prom
 - **[SDKs](doc:sdks)**: choose your software development kit to integrate faster with Voucherify.
 - **[Integration and connectors](doc:integration-connectors)**: connect Voucherify with your CMS, CRM, CDP, CEP, distribution, or other platforms.
 - **[Webhooks](doc:webhooks)**: learn more about using and configuring webhook notifications.
-- **[API reference](ref:introduction-1): explore the documentation of Voucherify API endpoints.
+- **[API reference](ref:introduction-1)**: explore the documentation of Voucherify API endpoints.
 - **[Performance](doc:performance)**: check Voucherify average response rates and learn what happens in the background.
 - **[Limits](doc:limits)**: learn about Voucherify API use summaries, notifications, and distribution and request limits.
 - **[API optimization](doc:api-optimization)**: learn how to optimize your API call usage.
@@ -42,10 +42,9 @@ Voucherify offers a REST-based API and a web dashboard to create and manage prom
 
 ## What's next
 
-* Join Voucherify [Community Slack](https://community.voucherify.io/) to get help and inspiration.
-* Browse through [the API reference](ref:introduction-1) to learn more about Voucherify API endpoints.
-* Visit [Voucherify roadmap](https://roadmap.voucherify.io/) to find out what Voucherify developers are currently working on or suggest improvements and vote for features you want to see in the platform.
-* Contact [Voucherify support](https://www.voucherify.io/contact-support) if you have any further questions.
+- Join Voucherify [Community Slack](https://community.voucherify.io/) to get help and inspiration.
+- Visit [Voucherify roadmap](https://roadmap.voucherify.io/) to find out what Voucherify developers are currently working on or suggest improvements and vote for features you want to see in the platform.
+- Contact [Voucherify support](https://www.voucherify.io/contact-support) if you have any further questions.
 
 
 <!-- Voucherify makes launching and tracking digital promotions easy. Get the documentation, sample code, and developer tools you need to build exactly what you want, fast. We will handle the complexity of promotions delivery and validation. Let’s get building!
@@ -56,7 +55,7 @@ Voucherify is an API-first Promotion Engine for digital teams. With our programm
 
 Voucherify offers a REST-based API and a web dashboard to create and manage promotional campaigns. Our dedicated endpoints help you deliver personalized incentives to any channel, device, and e-commerce solution while keeping your data in secure, highly available environments. This is achieved with real-time data synchronization with CRM, product inventory, distribution channels, and any customer touchpoints. 
 
-<!-- ![Welcome Diagram](../../assets/img/guides_getting_started_integration_checklist_welcome_diagram_1.png "Welcome Diagram")
+<!-- ![Welcome Diagram](https://files.readme.io/d9ca377-guides_getting_started_integration_checklist_welcome_diagram_1.png "Welcome Diagram")
 ![Welcome Diagram](https://files.readme.io/6070078-welcome-diagram.png "Welcome Diagram")
 
 The majority of development work is required at the beginning: 
