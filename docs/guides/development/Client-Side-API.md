@@ -29,15 +29,9 @@ To keep your vouchers and promotions safe from fraudulent customer behavior, Vou
 When the limit is exceeded, Voucherify returns:
 
 ```json Response
-{  
-   "type": "error",
-   "message": "XHR error happened.",
-   "context": {  
-      "readyState": 4,
-      "responseText": "API calls limit exceeded.",
-      "status": 429,
-      "statusText": "Too Many Requests"
-   }
+{
+    "code": 429,
+    "message": "Too many requests hit the API too quickly."
 }
 ```
 
