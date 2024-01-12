@@ -38,6 +38,7 @@ VOUCHERIFY_HOST=https://api.voucherify.io
   - run `npm run generate-sdk-ruby-for-tests`
 - Php
   - install `php >= 8.1` and `composer` (if you have not already installed)
+  - run `npm run generate-php-sdk-for-tests`
 
 ### Run tests
 
@@ -48,7 +49,6 @@ VOUCHERIFY_HOST=https://api.voucherify.io
   - run `gem install dotenv` (if you have never)
   - run `cd ./sdk-tests && ruby ./ruby.rb` for tests
 - Php
-  - run `npm run generate-php-sdk-for-tests`
   - go to `./sdk-tests` (`cd ./sdk-tests`)
   - run `php -S localhost:8000 php/index.php`
   - visit `http://localhost:8000/`
