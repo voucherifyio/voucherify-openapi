@@ -10,6 +10,7 @@ import { removedNotUsedParameters } from "./removed-not-used-parameters";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
 import { removeAllOneOfs } from "./removeOneOfs";
+import { putNotObjectSchemasIntoObjectSchemas } from "./put-not-object-schemas-into-object-schemas";
 
 const options = minimist(process.argv.slice(2));
 
@@ -19,6 +20,7 @@ type LanguageOptions = {
   simplifyAllObjectsThatHaveAdditionalProperties?: true; //default: false
   okResponseMustBeOnlyOne?: true; //default: false
   mergeOneOfs?: true; //default: false
+  putNotObjectSchemasIntoObjectSchemas?: true; //default: false
 };
 
 const supportedLanguages: {
@@ -35,6 +37,7 @@ const supportedLanguages: {
   php: {
     name: "php",
     mergeOneOfs: true,
+    putNotObjectSchemasIntoObjectSchemas: true,
   },
   java: {
     name: "java",
@@ -75,12 +78,17 @@ const main = async (languageOptions: LanguageOptions) => {
     paths,
     languageOptions
   );
-  const schemasWithoutNotUsed = removeNotUsedSchemas(
+  let schemasWithoutNotUsed = removeNotUsedSchemas(
     openAPIContent.components,
     paths,
     languageOptions,
     newSchemas
   );
+  if (languageOptions.putNotObjectSchemasIntoObjectSchemas) {
+    schemasWithoutNotUsed = putNotObjectSchemasIntoObjectSchemas(
+      schemasWithoutNotUsed
+    );
+  }
   const schemas = languageOptions.mergeOneOfs
     ? removeAllOneOfs(
         schemasWithoutNotUsed,
