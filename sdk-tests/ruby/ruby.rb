@@ -90,35 +90,11 @@ rescue VoucherifySdk::ApiError => e
 end
 
 
-# begin
-#   # List Customers
-#   result = customers_api_instance.list_customers({
-#     limit: 100
-#   })
-#   puts result.class
-#   puts result.customers[1]
-# #   puts result
-#     puts 1
-
-#   export_result = exports_api_instance.create_export(opts={
-#   exports_create_request_body:{
-#   exported_object: "voucher",
-#       parameters: {
-#         fields: ["code","voucher_type","value","discount_type","campaign","category","start_date","expiration_date","gift_balance","loyalty_balance","redemption_quantity","redemption_count","active","qr_code","bar_code","metadata","id","is_referral_code","created_at","updated_at","validity_timeframe_interval","validity_timeframe_duration","validity_day_of_week","discount_amount_limit","campaign_id","additional_info","customer_id","discount_unit_type","discount_unit_effect"],
-#         }
-#   }
-#   })
-#   puts export_result
-#   puts exports_api_instance.list_exports()
 
 
-#   puts redemptions_api_instance.list_redemptions({limit: 100})
+#
 
-
-
-# rescue OpenapiClient::ApiError => e
-#   puts e
-# end
+#
 
 begin
   # Delete Customer
