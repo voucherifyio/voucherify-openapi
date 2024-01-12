@@ -47,7 +47,7 @@ VOUCHERIFY_HOST=https://api.voucherify.io
   - run `python3 ./sdk-tests/python.py` for tests
 - Ruby
   - run `gem install dotenv` (if you have never)
-  - run `cd ./sdk-tests && ruby ./ruby.rb` for tests
+  - run `cd ./sdk-tests && ruby ./ruby/ruby.rb` for tests
 - Php
   - go to `./sdk-tests` (`cd ./sdk-tests`)
   - run `php -S localhost:8000 php/index.php`
