@@ -35,9 +35,7 @@ VOUCHERIFY_HOST=https://api.voucherify.io
   - run in terminal `/Applications/Python\ 3.XXXXXX/Install\ Certificates.command`, where `XXXXXX` is the version of your Python3. For example `3.12` for `3.12.0`.
 - Ruby
   - install `ruby >= 2.7` and `gem` (if you have not already installed)
-  - go to `./tmp/ruby`
-  - run `gem build openapi_client.gemspec`
-  - run `gem install ./openapi_client-1.0.0.gem`
+  - run `npm run generate-sdk-ruby-for-tests`
 - Php
   - install `php >= 8.1` and `composer` (if you have not already installed)
 
@@ -48,7 +46,7 @@ VOUCHERIFY_HOST=https://api.voucherify.io
   - run `python3 ./sdk-tests/python.py` for tests
 - Ruby
   - run `gem install dotenv` (if you have never)
-  - run `ruby ./sdk-tests/ruby.rb` for tests
+  - run `cd ./sdk-tests && ruby ./ruby.rb` for tests
 - Php
   - run `npm run generate-php-sdk-for-tests`
   - go to `./sdk-tests` (`cd ./sdk-tests`)
