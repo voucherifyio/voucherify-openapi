@@ -1,5 +1,14 @@
 # Changelog
 
+## 20240112
+
+Updates to:
+- Rewritten the Development checklist article
+- Changed slug in the Security article
+- Changed the Sandbox and demoshop article to redirect to Help Scout article
+- Changed the response example in the Client-side API article
+- Changed images in the Integration Processes article
+
 ## 20240110
 
 - Data parsing article added
