@@ -39,11 +39,11 @@ In this scenario, a customer will redeem voucher codes.
 
 The customer is given voucher codes using different methods. You can use [Voucherify's Distributions](doc:distributions) or a standalone voucher that the customer received in many different ways.
 
-![Distributions in Voucherify](https://files.readme.io/13e4e4f-guides_implementation_blueprint_integration_processes_distributions.png "Distributions in Voucherify")
+![Distributions in Voucherify](https://files.readme.io/8236eff-guides_implementation_blueprint_integration_processes_distributions.png "Distributions in Voucherify")
 
 Code application can be different depending on the customer experience that you designed. This image shows an example of a customer experience:
 
-![Customer experience in Voucherify](../../assets/img/guides_development_integration_processes_customer_experience_case_1.png "Customer experience in Voucherify")
+![Customer experience in Voucherify](https://files.readme.io/1ee38e4-guides_development_integration_processes_customer_experience_case_1.png "Customer experience in Voucherify")
 
 **Step 1**: A typical scenario is presented where the customer browses products, adds them to their cart, and proceeds to checkout.
 
@@ -70,7 +70,7 @@ Code application can be different depending on the customer experience that you 
 
 In this scenario, promotion eligibility is going to be verified during the checkout step. A customer did not receive any voucher codes beforehand. Instead, all discounts and promotions will be displayed on the checkout screen. 
 
-![Customer experience in Voucherify case 2](../../assets/img/guides_development_integration_processes_customer_experience_case_4.png "Customer experience in Voucherify case 2")
+![Customer experience in Voucherify case 2](https://files.readme.io/3718f77-guides_development_integration_processes_customer_experience_case_2a.png "Customer experience in Voucherify case 2")
 
 **Step 1**: A typical scenario is presented where the customer browses products, adds them to their cart, and proceeds to checkout.
 
@@ -97,7 +97,7 @@ In this scenario, promotion eligibility is going to be verified during the check
 
 In this scenario, a customer is going to receive a voucher code during their visit to the store. The distribution will trigger after the specific action takes place.
 
-![Customer experience in Voucherify case 3](../../assets/img/guides_development_integration_processes_customer_experience_case_2.png "Customer experience in Voucherify case 3")
+![Customer experience in Voucherify case 3](https://files.readme.io/0729f90-guides_development_integration_processes_customer_experience_case_3a.png "Customer experience in Voucherify case 3")
 
 **Step 1**: The customer visits the store and adds products to the cart but does not go to checkout for a while.
 
@@ -124,7 +124,7 @@ In this scenario, a customer is going to receive a voucher code during their vis
 
 In this scenario, a customer will receive points for their purchase. The customer may, but does not have to, use discounts during the purchase. The redemption request will create an order in Voucherify but if the customer does not have any eligible discounts, you have to send an API request to synchronize the new order so that Voucherify can reward the customer with points. Voucherify can inform the customer how many points the customer earned.
 
-![Customer experience in Voucherify case 4](../../assets/img/guides_development_integration_processes_customer_experience_case_3.png "Customer experience in Voucherify case 4")
+![Customer experience in Voucherify case 4](https://files.readme.io/334ae9f-guides_development_integration_processes_customer_experience_case_4.png "Customer experience in Voucherify case 4")
 
 **Step 1**: A typical scenario is presented where the customer browses products, adds them to their cart, and proceeds to checkout.
 
