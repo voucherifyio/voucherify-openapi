@@ -14,13 +14,20 @@ public class Qualifications {
     public void test(ApiClient defaultClient) {
         QualificationsApi qualifications = new QualificationsApi(defaultClient);
 
-        try {
-            //TO ENSURE DATA FOR QUALIFICATIONS WAS CALCULATED PROPERLY
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
+        //TO ENSURE DATA FOR QUALIFICATIONS WAS CALCULATED PROPERLY
+        System.out.println("Doing sleep()");
+        if (Thread.currentThread().isAlive()) {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Sleep currently working");
+        }
+        System.out.println("Done sleep()");
+        
         try {
             QualificationsCheckEligibilityRequestBody qualificationsCheckEligibilityRequestBody = new QualificationsCheckEligibilityRequestBody();
 

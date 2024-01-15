@@ -1,54 +1,44 @@
 package org.example;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.example.data.Voucherify;
 import org.openapitools.client.ApiClient;
 import org.openapitools.client.Configuration;
-import org.openapitools.client.api.RedemptionsApi;
 import org.openapitools.client.auth.ApiKeyAuth;
 
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class Main {
-    private Path removeLastNElements(Path path, int n) {
-        int elementsCount = path.getNameCount();
-        if (n >= elementsCount) {
-            return Paths.get("");
+    private ApiClient getDefaultClient() {
+        Properties properties = new Properties();
+        InputStream input = null;
+
+        try {
+            String dir = System.getProperty("user.dir");
+            input = new FileInputStream(dir + "/sdk-tests/.env");
+            properties.load(input);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
-        int startIndex = elementsCount - n;
-
-        return path.subpath(0, startIndex);
-    }
-
-    private Path getCurrentFileDirectory() {
-        Path currentDirectory = FileSystems.getDefault().getPath(System.getProperty("user.dir"));
-
-        String filePath = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-
-        Path path = Paths.get(filePath);
-
-        Path relativePath = currentDirectory.relativize(path);
-
-        return relativePath.getParent();
-    }
-
-    private ApiClient getDefaultClient() {
-        Dotenv dotenv = Dotenv.configure()
-            .directory(this.removeLastNElements(this.getCurrentFileDirectory(), 2).toString())
-            .filename(".env")
-            .load();
-
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath(dotenv.get("VOUCHERIFY_HOST"));
+        defaultClient.setBasePath(properties.getProperty("VOUCHERIFY_HOST"));
 
         ApiKeyAuth id = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Id-1");
-        id.setApiKey(dotenv.get("X_APP_ID"));
+        id.setApiKey(properties.getProperty("X_APP_ID"));
 
         ApiKeyAuth token = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Token-1");
-        token.setApiKey(dotenv.get("X_APP_TOKEN"));
+        token.setApiKey(properties.getProperty("X_APP_TOKEN"));
 
         return defaultClient;
     }
