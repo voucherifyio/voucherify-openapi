@@ -1,9 +1,13 @@
 package org.example.data;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Voucherify {
     private final Campaign campaign;
     private final Customer customer;
+    private final List<Product> products;
 
     //FIXME: FIND BETTER SOLUTION FOR REMOVING COUPLINGS
     private boolean dataEnsured = false;
@@ -11,6 +15,7 @@ public class Voucherify {
     private Voucherify() {
         campaign = new Campaign();
         customer = new Customer();
+        products = new ArrayList<>();
     }
 
     private static class SingletonHolder {
@@ -27,6 +32,10 @@ public class Voucherify {
 
     public Customer getCustomer() {
         return customer;
+    }
+
+    public List<Product> getProducts() {
+        return products;
     }
 
     public boolean isDataEnsured() {

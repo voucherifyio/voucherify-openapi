@@ -87,12 +87,13 @@ public class Loyalties {
 
             tiers.add(item);
 
-            System.out.println(tiers);
-
-            List<LoyaltyTier> responseList = loyalties.createInBulkLoyaltyTiers(
+            loyalties.createInBulkLoyaltyTiers(
                 Voucherify.getInstance().getCampaign().getId(),
                 tiers
             );
+
+            ApplicableTo applicableTo = new ApplicableTo();
+            applicableTo.effect(ApplicableToEffect.EVERY);
 
             System.out.println("Calling LoyaltiesApi#createInBulkLoyaltyTiers OK");
         } catch (ApiException | JsonSyntaxException e) {

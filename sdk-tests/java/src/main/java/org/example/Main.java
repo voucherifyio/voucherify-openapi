@@ -56,7 +56,11 @@ public class Main {
     private static void ensureDataByTesting(ApiClient defaultClient){
         Customers customers = new Customers();
         Campaigns campaigns = new Campaigns();
+        Products products = new Products();
+        ValidationRules validationRules = new ValidationRules();
 
+        products.test(defaultClient);
+        validationRules.test(defaultClient);
         customers.test(defaultClient);
         campaigns.test(defaultClient);
 
@@ -70,11 +74,13 @@ public class Main {
 
         if(Voucherify.getInstance().isDataEnsured()){
             Loyalties loyalties = new Loyalties();
+            Qualifications qualifications = new Qualifications();
             StackableDiscounts stackableDiscounts = new StackableDiscounts();
             Redemptions redemptions = new Redemptions();
             Publications publications = new Publications();
 
-            loyalties.test(defaultClient);
+            qualifications.test(defaultClient);
+//            loyalties.test(defaultClient);
 //            publications.test(defaultClient);
 //            redemptions.test(defaultClient);
         }

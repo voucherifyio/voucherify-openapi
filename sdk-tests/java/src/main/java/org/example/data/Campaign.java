@@ -7,6 +7,8 @@ public class Campaign {
     private String name;
     private final ArrayList<String> voucherIds = new ArrayList<>();
 
+    private final ArrayList<String> validationRuleIds = new ArrayList<>();
+
     Campaign() {
 
     }
@@ -33,5 +35,13 @@ public class Campaign {
 
     public void addVoucherId(String voucherId) {
         voucherIds.add(voucherId);
+    }
+
+    public ArrayList<String> getValidationRuleIds() {
+        return validationRuleIds;
+    }
+
+    public void addValidationRuleId(String validationRuleId) {
+        validationRuleIds.add(validationRuleId);
     }
 }
