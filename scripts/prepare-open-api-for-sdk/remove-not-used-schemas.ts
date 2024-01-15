@@ -13,7 +13,7 @@ type LanguageOptions = {
   simplifyAllObjectsThatHaveAdditionalProperties?: boolean;
 };
 
-export const removedNotUsedSchemas = (
+export const removeNotUsedSchemas = (
   components: Components,
   paths: {},
   languageOptions: LanguageOptions,

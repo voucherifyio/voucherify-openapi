@@ -85,20 +85,20 @@ export const removeAdditionalProperties = (
 };
 
 export const removeRequiredOnNullableAttributes = (schemaPartial: any) => {
-  if (!isObject(schemaPartial)) {
-    return schemaPartial;
-  }
+    if (!isObject(schemaPartial)) {
+        return schemaPartial;
+    }
 
-  if (!schemaPartial?.properties && !schemaPartial?.allOf) {
-    return schemaPartial;
-  }
+    if (!schemaPartial?.properties && !schemaPartial?.allOf) {
+        return schemaPartial;
+    }
 
-  //ONLY FOR ALL OF BECAUSE WE ENSURE ALL ONE OF CONTAINS LIST OF REFS
-  if (schemaPartial?.allOf) {
-    schemaPartial.allOf = schemaPartial.allOf.map(
-      (item: any) => removeRequiredOnNullableAttributes(item),
-    );
-  }
+    //ONLY FOR ALL OF BECAUSE WE ENSURE ALL ONE OF CONTAINS LIST OF REFS
+    if (schemaPartial?.allOf) {
+        schemaPartial.allOf = schemaPartial.allOf.map(
+            (item: any) => removeRequiredOnNullableAttributes(item),
+        );
+    }
 
   if (schemaPartial.properties) {
     Object.keys(schemaPartial.properties).forEach((key) => {

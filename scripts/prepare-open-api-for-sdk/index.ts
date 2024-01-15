@@ -7,8 +7,9 @@ import { removedDeprecatedPaths } from "./removed-deprecated-paths";
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 import openAPIContent from "../../reference/OpenAPI.json";
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
-import { removedNotUsedSchemas } from "./removed-not-used-schemas";
+import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
+import { removeAllOneOfs } from "./removeOneOfs";
 
 const options = minimist(process.argv.slice(2));
 
@@ -17,6 +18,7 @@ type LanguageOptions = {
   removeRequiredOnNullable?: true; //default: false
   simplifyAllObjectsThatHaveAdditionalProperties?: true; //default: false
   okResponseMustBeOnlyOne?: true; //default: false
+  mergeOneOfs?: true; //default: false
 };
 
 const supportedLanguages: {
@@ -29,6 +31,10 @@ const supportedLanguages: {
   },
   ruby: {
     name: "ruby",
+  },
+  php: {
+    name: "php",
+    mergeOneOfs: true,
   },
   java: {
     name: "java",
@@ -65,18 +71,25 @@ const main = async (languageOptions: LanguageOptions) => {
     removedDeprecatedPaths(openAPIContent.paths),
     languageOptions.okResponseMustBeOnlyOne
   );
-
   const parameters = removedNotUsedParameters(
     openAPIContent.components.parameters,
     paths,
     languageOptions
   );
-  const schemas = removedNotUsedSchemas(
+  const schemasWithoutNotUsed = removeNotUsedSchemas(
     openAPIContent.components,
     paths,
     languageOptions,
     newSchemas
   );
+  const schemas = languageOptions.mergeOneOfs
+    ? removeAllOneOfs(
+        schemasWithoutNotUsed,
+        paths,
+        openAPIContent.components.parameters,
+        languageOptions
+      )
+    : schemasWithoutNotUsed;
 
   // Building all together
   const newOpenApiFile = {
