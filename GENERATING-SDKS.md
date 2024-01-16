@@ -39,6 +39,10 @@ VOUCHERIFY_HOST=https://api.voucherify.io
 - Php
   - install `php >= 8.1` and `composer` (if you have not already installed)
   - run `npm run generate-php-sdk-for-tests`
+- Java
+  - install `java` and `maven` e.g. `Java 18.0.2` and `Mvn 14.1.2` (if you have not already installed)
+  - go to `./tmp/java`
+  - run `mvn clean install`
 
 ### Run tests
 
@@ -52,3 +56,7 @@ VOUCHERIFY_HOST=https://api.voucherify.io
   - go to `./sdk-tests` (`cd ./sdk-tests`)
   - run `php -S localhost:8000 php/index.php`
   - visit `http://localhost:8000/`
+- Java
+  - in main catalog run `mvn install:install-file -Dfile=./tmp/java/target/openapi-java-client-v2018-08-01.jar -DgroupId=voucherify -DartifactId=java-sdk-test -Dversion=0.0.1 -Dpackaging=jar` to add jar to local maven repository
+  - use `mvn -f ./sdk-tests/java clean install && mvn -f ./sdk-tests/java exec:java` for build and run tests
+
