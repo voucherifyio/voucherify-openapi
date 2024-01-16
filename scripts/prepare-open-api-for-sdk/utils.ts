@@ -32,7 +32,7 @@ export const parseNullsToNullableObjects = (schemas) => {
       if (schema.properties) {
         for (const propertyKey of Object.keys(schema.properties)) {
           schema.properties[propertyKey] = parseNullToNullableInSchema(
-            schema.properties[propertyKey]
+            schema.properties[propertyKey],
           );
         }
       }
@@ -52,7 +52,7 @@ export const parseNullsToNullableObjects = (schemas) => {
 
 export const removeAdditionalProperties = (
   schemaPartial: any,
-  keepIfPropertiesNotPresent: boolean
+  keepIfPropertiesNotPresent: boolean,
 ) => {
   const simplifyObjectModel = (schemaPartialTypeObject: object) =>
     omit(schemaPartialTypeObject, ["additionalProperties", "properties"]);
@@ -77,7 +77,7 @@ export const removeAdditionalProperties = (
     if (typeof schemaPartial[f] === "object") {
       schemaPartial[f] = removeAdditionalProperties(
         schemaPartial[f],
-        keepIfPropertiesNotPresent
+        keepIfPropertiesNotPresent,
       );
     }
   }
@@ -85,31 +85,34 @@ export const removeAdditionalProperties = (
 };
 
 export const removeRequiredOnNullableAttributes = (schemaPartial: any) => {
-  if (!isObject(schemaPartial)) {
-    return schemaPartial;
-  }
+    if (!isObject(schemaPartial)) {
+        return schemaPartial;
+    }
 
-  if (!schemaPartial?.properties && !schemaPartial?.allOf) {
-    return schemaPartial;
-  }
+    if (!schemaPartial?.properties && !schemaPartial?.allOf) {
+        return schemaPartial;
+    }
 
-  //ONLY FOR ALL OF BECAUSE WE ENSURE ALL ONE OF CONTAINS LIST OF REFS
-  if (schemaPartial?.allOf) {
-    schemaPartial.allOf = schemaPartial.allOf.map((item: any) =>
-      removeRequiredOnNullableAttributes(item)
-    );
-  }
+    //ONLY FOR ALL OF BECAUSE WE ENSURE ALL ONE OF CONTAINS LIST OF REFS
+    if (schemaPartial?.allOf) {
+        schemaPartial.allOf = schemaPartial.allOf.map(
+            (item: any) => removeRequiredOnNullableAttributes(item),
+        );
+    }
 
   if (schemaPartial.properties) {
     Object.keys(schemaPartial.properties).forEach((key) => {
-      schemaPartial.properties[key] = removeRequiredOnNullableAttributes(
-        schemaPartial.properties[key]
-      );
+      schemaPartial.properties[key] =
+        removeRequiredOnNullableAttributes(
+          schemaPartial.properties[key],
+        );
     });
 
-    const nullables = Object.keys(schemaPartial.properties).filter((key) => {
-      return schemaPartial.properties[key].nullable ?? false;
-    });
+    const nullables = Object.keys(schemaPartial.properties).filter(
+      (key) => {
+        return schemaPartial.properties[key].nullable ?? false;
+      },
+    );
 
     const required = schemaPartial.required ?? [];
 
