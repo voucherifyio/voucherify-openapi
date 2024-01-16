@@ -1,123 +1,78 @@
 package org.example;
 
-import io.github.cdimascio.dotenv.Dotenv;
+import org.example.data.Voucherify;
 import org.openapitools.client.ApiClient;
-import org.openapitools.client.ApiException;
 import org.openapitools.client.Configuration;
-import org.openapitools.client.api.CampaignsApi;
 import org.openapitools.client.auth.ApiKeyAuth;
-import org.openapitools.client.model.*;
 
-import java.math.BigDecimal;
-
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class Main {
-    // function to generate a random string of length n
-    static String getAlphaNumericString(int n)
-    {
+    private ApiClient getDefaultClient() {
+        Properties properties = new Properties();
+        InputStream input = null;
 
-        // choose a Character random from this String
-        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                + "0123456789"
-                + "abcdefghijklmnopqrstuvxyz";
-
-        // create StringBuffer size of AlphaNumericString
-        StringBuilder sb = new StringBuilder(n);
-
-        for (int i = 0; i < n; i++) {
-
-            // generate a random number between
-            // 0 to AlphaNumericString variable length
-            int index
-                    = (int)(AlphaNumericString.length()
-                    * Math.random());
-
-            // add Character one by one in end of sb
-            sb.append(AlphaNumericString
-                    .charAt(index));
+        try {
+            String dir = System.getProperty("user.dir");
+            input = new FileInputStream(dir + "/sdk-tests/.env");
+            properties.load(input);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
-        return sb.toString();
+        ApiClient defaultClient = Configuration.getDefaultApiClient();
+        defaultClient.setBasePath(properties.getProperty("VOUCHERIFY_HOST"));
+
+        ApiKeyAuth id = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Id-1");
+        id.setApiKey(properties.getProperty("X_APP_ID"));
+
+        ApiKeyAuth token = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Token-1");
+        token.setApiKey(properties.getProperty("X_APP_TOKEN"));
+
+        return defaultClient;
+    }
+
+    private static void ensureDataByTesting(ApiClient defaultClient){
+        Customers customers = new Customers();
+        Campaigns campaigns = new Campaigns();
+        Products products = new Products();
+        ValidationRules validationRules = new ValidationRules();
+
+        products.test(defaultClient);
+        validationRules.test(defaultClient);
+        customers.test(defaultClient);
+        campaigns.test(defaultClient);
+
+        Voucherify.getInstance().setDataEnsured(true);
     }
 
     public static void main(String[] args) {
-        Dotenv dotenv = Dotenv.load();
+        ApiClient defaultClient = new Main().getDefaultClient();
 
-        ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath(dotenv.get("VOUCHERIFY_HOST"));
+        Main.ensureDataByTesting(defaultClient);
 
-        ApiKeyAuth id = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Id-1");
-        id.setApiKey(dotenv.get("X_APP_ID"));
+        if(Voucherify.getInstance().isDataEnsured()){
+            Loyalties loyalties = new Loyalties();
+            Qualifications qualifications = new Qualifications();
+            StackableDiscounts stackableDiscounts = new StackableDiscounts();
+            Redemptions redemptions = new Redemptions();
+            Publications publications = new Publications();
 
-        ApiKeyAuth token = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Token-1");
-        token.setApiKey(dotenv.get("X_APP_TOKEN"));
-
-        CampaignsApi apiInstance = new CampaignsApi(defaultClient);
-
-        CampaignsCreateRequestBody campaignsCreateRequestBody = new CampaignsCreateRequestBody(); // CampaignsCreateRequestBody | Specify the details of the campaign that you would like to create.
-        CampaignsCreateDiscountCouponsCampaign campaignsCreateDiscountCouponsCampaign = new CampaignsCreateDiscountCouponsCampaign();
-        String generatedString = Main.getAlphaNumericString(20);
-        campaignsCreateDiscountCouponsCampaign.setCampaignType("DISCOUNT_COUPONS");
-        campaignsCreateDiscountCouponsCampaign.setCampaignType("AUTO_UPDATE");
-        campaignsCreateDiscountCouponsCampaign.setName(generatedString);
-        DiscountCouponsCampaignVoucher discountCouponsCampaignVoucher = new DiscountCouponsCampaignVoucher();
-        Discount discount = new Discount();
-        DiscountAmount discountAmount = new DiscountAmount();
-        discountAmount.setType(DiscountAmount.TypeEnum.AMOUNT);
-        discountAmount.setAmountOff(BigDecimal.valueOf(1));
-        discount.setActualInstance(discountAmount);
-        discountCouponsCampaignVoucher.setDiscount(discount);
-        campaignsCreateDiscountCouponsCampaign.setVoucher(discountCouponsCampaignVoucher);
-        campaignsCreateRequestBody.setActualInstance(campaignsCreateDiscountCouponsCampaign);
-        String campaignId = "";
-
-        try {
-            CampaignsCreateResponseBody result = apiInstance.createCampaign(campaignsCreateRequestBody);
-            campaignId = result.getId();
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CampaignsApi#createCampaign");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-
-        try {
-            CampaignsGetResponseBody result = apiInstance.getCampaign(campaignId);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CampaignsApiApi#addVoucherWithSpecificCodeToCampaign");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-
-        try {
-            Integer vouchersCount = 1; // Integer | Number of vouchers that should be added.
-            CampaignsVouchersCreateInBulkRequestBody campaignsVouchersCreateInBulkRequestBody = new CampaignsVouchersCreateInBulkRequestBody(); // CampaignsVouchersCreateInBulkRequestBody | Specify the voucher parameters that you would like to overwrite.
-            CampaignsVouchersCreateCombinedResponseBody result = apiInstance.addVouchersToCampaign(campaignId, vouchersCount, campaignsVouchersCreateInBulkRequestBody);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CampaignsApi#addVouchersToCampaign");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
-        }
-
-        try {
-            Integer vouchersCount = 2; // Integer | Number of vouchers that should be added.
-            CampaignsVouchersCreateInBulkRequestBody campaignsVouchersCreateInBulkRequestBody = new CampaignsVouchersCreateInBulkRequestBody(); // CampaignsVouchersCreateInBulkRequestBody | Specify the voucher parameters that you would like to overwrite.
-            CampaignsVouchersCreateCombinedResponseBody result = apiInstance.addVouchersToCampaign(campaignId, vouchersCount, campaignsVouchersCreateInBulkRequestBody);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CampaignsApi#addVouchersToCampaign");
-            System.err.println("Status code: " + e.getCode());
-            System.err.println("Reason: " + e.getResponseBody());
-            System.err.println("Response headers: " + e.getResponseHeaders());
-            e.printStackTrace();
+            qualifications.test(defaultClient);
+//            loyalties.test(defaultClient);
+//            publications.test(defaultClient);
+//            redemptions.test(defaultClient);
         }
     }
 }

@@ -1266,7 +1266,6 @@
           }
         },
         "required": [
-          "id",
           "source_id",
           "customer_id",
           "referrer_id",
@@ -2388,7 +2387,7 @@
           },
           "discount_amount": {
             "type": "integer",
-            "description": "\nSum of all order-item-level discounts applied to the order."
+            "description": "Sum of all order-item-level discounts applied to the order."
           },
           "applied_discount_amount": {
             "type": "integer",
@@ -2442,7 +2441,11 @@
           },
           "discount_amount": {
             "type": "integer",
-            "description": "\nSum of all order-item-level discounts applied to the order."
+            "description": "Sum of all order-item-level discounts applied to the order."
+          },
+          "applied_discount_amount": {
+            "type": "integer",
+            "description": "This field shows the order-level discount applied."
           },
           "initial_amount": {
             "type": "integer",
@@ -26876,7 +26879,7 @@
                     "description": "A unique SKU ID assigned by Voucherify.",
                     "example": "sku_0a41e31c7b41c28358"
                   }
-                }
+               }
               },
               "coin": {
                 "type": "object",
@@ -29626,6 +29629,73 @@
           "joint_categories"
         ]
       },
+      "QualificationsOption": {
+        "type": "object",
+        "description": "Configure parameters returned in the response.",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5",
+            "maximum": 100
+          },
+          "starting_after": {
+            "type": "string",
+            "nullable": true,
+            "example": "2021-09-08T13:52:18.227Z",
+            "format": "date-time",
+            "description": "Cursor used for paging."
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "A set of filters to return only a specific category or type of redeemable.",
+            "properties": {
+              "junction": {
+                "$ref": "#/components/schemas/Junction"
+              },
+              "category_id": {
+                "$ref": "#/components/schemas/QualificationsFieldConditions"
+              },
+              "campaign_id": {
+                "$ref": "#/components/schemas/QualificationsFieldConditions"
+              },
+              "resource_id": {
+                "$ref": "#/components/schemas/QualificationsFieldConditions"
+              },
+              "resource_type": {
+                "$ref": "#/components/schemas/QualificationsFieldConditions"
+              },
+              "voucher_type": {
+                "$ref": "#/components/schemas/QualificationsFieldConditions"
+              },
+              "code": {
+                "$ref": "#/components/schemas/QualificationsFieldConditions"
+              }
+            }
+          },
+          "expand": {
+            "type": "array",
+            "description": "The expand array lets you configure the parameters included in the response. Depending on the strings included in the array, the response will contain different details. \n\n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"redeemable\"] | - Returns the redeemables' metadata. |\n| [\"category\"] | - Returns an expanded `categories` object, showing details about the category. |\n| [\"validation_rules\"] | - Returns an expanded `validation_rules` object, showing details about the validation rules. |",
+            "items": {
+              "type": "string",
+              "enum": [
+                "redeemable",
+                "category",
+                "validation_rules"
+              ]
+            }
+          },
+          "sorting_rule": {
+            "type": "string",
+            "description": "Is used to determine the order in which data is displayed in the result array. \n\n - `DEFAULT` - Sorting descending by `created_at` \n - `BEST_DEAL` - Sorting descending by `total_applied_discount_amount` \n - `LEAST_DEAL` - Sorting ascending by `total_applied_discount_amount`",
+            "enum": [
+              "BEST_DEAL",
+              "LEAST_DEAL",
+              "DEFAULT"
+            ]
+          }
+        }
+      },
       "QualificationsCheckEligibilityRequestBody": {
         "type": "object",
         "title": "Qualifications Check Eligibility Request Body",
@@ -29674,71 +29744,11 @@
             ]
           },
           "options": {
-            "type": "object",
-            "description": "Configure parameters returned in the response.",
-            "properties": {
-              "limit": {
-                "type": "integer",
-                "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5",
-                "maximum": 100
-              },
-              "starting_after": {
-                "type": "string",
-                "nullable": true,
-                "example": "2021-09-08T13:52:18.227Z",
-                "format": "date-time",
-                "description": "Cursor used for paging."
-              },
-              "filters": {
-                "type": "object",
-                "additionalProperties": false,
-                "description": "A set of filters to return only a specific category or type of redeemable.",
-                "properties": {
-                  "junction": {
-                    "$ref": "#/components/schemas/Junction"
-                  },
-                  "category_id": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "campaign_id": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "resource_id": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "resource_type": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "voucher_type": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "code": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  }
-                }
-              },
-              "expand": {
-                "type": "array",
-                "description": "The expand array lets you configure the parameters included in the response. Depending on the strings included in the array, the response will contain different details. \n\n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"redeemable\"] | - Returns the redeemables' metadata. |\n| [\"category\"] | - Returns an expanded `categories` object, showing details about the category. |\n| [\"validation_rules\"] | - Returns an expanded `validation_rules` object, showing details about the validation rules. |",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "redeemable",
-                    "category",
-                    "validation_rules"
-                  ]
-                }
-              },
-              "sorting_rule": {
-                "type": "string",
-                "description": "Is used to determine the order in which data is displayed in the result array. \n\n - `DEFAULT` - Sorting descending by `created_at` \n - `BEST_DEAL` - Sorting descending by `total_applied_discount_amount` \n - `LEAST_DEAL` - Sorting ascending by `total_applied_discount_amount`",
-                "enum": [
-                  "BEST_DEAL",
-                  "LEAST_DEAL",
-                  "DEFAULT"
-                ]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QualificationsOption"
               }
-            }
+            ]
           },
           "metadata": {
             "type": "object",
@@ -30057,9 +30067,7 @@
           "rule_id",
           "related_object_id",
           "related_object_type",
-          "object",
-          "validation_status",
-          "validation_omitted_rules"
+          "object"
         ]
       },
       "RedeemableResult": {
@@ -37595,71 +37603,11 @@
             ]
           },
           "options": {
-            "type": "object",
-            "description": "Configure parameters returned in the response.",
-            "properties": {
-              "limit": {
-                "type": "integer",
-                "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5",
-                "maximum": 100
-              },
-              "starting_after": {
-                "type": "string",
-                "nullable": true,
-                "example": "2021-09-08T13:52:18.227Z",
-                "format": "date-time",
-                "description": "Cursor used for paging."
-              },
-              "filters": {
-                "type": "object",
-                "additionalProperties": false,
-                "description": "A set of filters to return only a specific category or type of redeemable.",
-                "properties": {
-                  "junction": {
-                    "$ref": "#/components/schemas/Junction"
-                  },
-                  "category_id": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "campaign_id": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "resource_id": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "resource_type": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "voucher_type": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "code": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  }
-                }
-              },
-              "expand": {
-                "type": "array",
-                "description": "The expand array lets you configure the parameters included in the response. Depending on the strings included in the array, the response will contain different details. \n\n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"redeemable\"] | - Returns the redeemables' metadata. |\n| [\"category\"] | - Returns an expanded `categories` object, showing details about the category. |\n| [\"validation_rules\"] | - Returns an expanded `validation_rules` object, showing details about the validation rules. |",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "redeemable",
-                    "category",
-                    "validation_rules"
-                  ]
-                }
-              },
-              "sorting_rule": {
-                "type": "string",
-                "description": "Is used to determine the order in which data is displayed in the result array. \n\n - `DEFAULT` - Sorting descending by `created_at` \n - `BEST_DEAL` - Sorting descending by `total_applied_discount_amount` \n - `LEAST_DEAL` - Sorting ascending by `total_applied_discount_amount`",
-                "enum": [
-                  "BEST_DEAL",
-                  "LEAST_DEAL",
-                  "DEFAULT"
-                ]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QualificationsOption"
               }
-            }
+            ]
           },
           "metadata": {
             "type": "object",
@@ -77622,4 +77570,3 @@
     }
   }
 }
-
