@@ -13308,13 +13308,71 @@
       "ValidationsValidateResponseBody": {
         "title": "Validations Validate Response Body",
         "description": "Response body schema for POST `/validations`.",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/ValidationsValidateAllResponseBody"
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "description": "The result of the validation. It takes all of the redeemables into account and returns a `false` if at least one redeemable is inapplicable. Returns `true` if all redeemables are applicable."
           },
-          {
-            "$ref": "#/components/schemas/ValidationsValidatePartialResponseBody"
+          "redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each redeemable. If redeemables_application_mode=\"PARTIAL\" all redeemables here will be \"APPLICABLE\"",
+            "items": {
+              "title": "Validations Validate All Response Body Redeemables Item",
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableApplicable"
+                },
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
+                },
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableSkipped"
+                }
+              ]
+            }
+          },
+          "skipped_redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each skipped redeemable.",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
+                }
+              ]
+            }
+          },
+          "inapplicable_redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each inapplicable redeemable.",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
+                }
+              ]
+            }
+          },
+          "order": {
+            "$ref": "#/components/schemas/OrderCalculated"
+          },
+          "tracking_id": {
+            "type": "string",
+            "example": "track_VAVo1/z+G2GI2LPw==",
+            "description": "Hashed customer source ID."
+          },
+          "session": {
+            "$ref": "#/components/schemas/Session"
+          },
+          "stacking_rules": {
+            "$ref": "#/components/schemas/StackingRules"
           }
+        },
+        "required": [
+          "valid",
+          "redeemables",
+          "application_mode"
         ]
       },
       "ValidationsRedeemableApplicable": {
@@ -13446,115 +13504,6 @@
             "additionalProperties": false
           }
         }
-      },
-      "ValidationsValidateAllResponseBody": {
-        "title": "Validations Validate All Response Body",
-        "description": "Response body schema for POST `/validations` where all promotion must be valid",
-        "type": "object",
-        "properties": {
-          "valid": {
-            "type": "boolean",
-            "description": "The result of the validation. It takes all of the redeemables into account and returns a `false` if at least one redeemable is inapplicable. Returns `true` if all redeemables are applicable."
-          },
-          "redeemables": {
-            "type": "array",
-            "description": "Lists validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"`.",
-            "items": {
-              "title": "Validations Validate All Response Body Redeemables Item",
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/ValidationsRedeemableApplicable"
-                },
-                {
-                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
-                },
-                {
-                  "$ref": "#/components/schemas/ValidationsRedeemableSkipped"
-                }
-              ]
-            }
-          },
-          "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
-          },
-          "tracking_id": {
-            "type": "string",
-            "example": "track_VAVo1/z+G2GI2LPw==",
-            "description": "Hashed customer source ID."
-          },
-          "session": {
-            "$ref": "#/components/schemas/Session"
-          },
-          "application_mode": {
-            "type": "string",
-            "default": "ALL",
-            "enum": [
-              "ALL"
-            ]
-          }
-        },
-        "required": [
-          "valid",
-          "redeemables",
-          "application_mode"
-        ]
-      },
-      "ValidationsValidatePartialResponseBody": {
-        "title": "Validations Validate Partial Response Body",
-        "description": "Response body schema for POST `/validations` where at least one promotion must be valid",
-        "type": "object",
-        "properties": {
-          "valid": {
-            "type": "boolean",
-            "description": "The result of the validation. It takes all of the redeemables into account and returns a `false` if at least one redeemable is inapplicable. Returns `true` if all redeemables are applicable."
-          },
-          "redeemables": {
-            "type": "array",
-            "description": "Lists validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"`.",
-            "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/ValidationsRedeemableApplicable"
-                }
-              ]
-            }
-          },
-          "inapplicable_redeemables": {
-            "type": "array",
-            "description": "Lists validation results of each inapplicable redeemable.",
-            "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
-                }
-              ]
-            }
-          },
-          "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
-          },
-          "tracking_id": {
-            "type": "string",
-            "example": "track_VAVo1/z+G2GI2LPw==",
-            "description": "Hashed customer source ID."
-          },
-          "session": {
-            "$ref": "#/components/schemas/Session"
-          },
-          "application_mode": {
-            "type": "string",
-            "default": "PARTIAL",
-            "enum": [
-              "PARTIAL"
-            ]
-          }
-        },
-        "required": [
-          "valid",
-          "redeemables",
-          "inapplicable_redeemables",
-          "application_mode"
-        ]
       },
       "RedeemableResultVoucherCode": {
         "type": "object",
@@ -29574,13 +29523,13 @@
             "$ref": "#/components/schemas/OrderCalculated"
           },
           "stacking_rules": {
-            "$ref": "#/components/schemas/QualificationsStackingRules"
+            "$ref": "#/components/schemas/StackingRules"
           }
         }
       },
-      "QualificationsStackingRules": {
+      "StackingRules": {
         "type": "object",
-        "title": "Examine Qualification Stacking Rules",
+        "title": "Stacking Rules",
         "description": "Defines stacking rules for redeemables. Read more in the [Help Center](https://support.voucherify.io/article/604-stacking-rules)",
         "properties": {
           "redeemables_limit": {
@@ -29604,6 +29553,13 @@
             "maximum": 30,
             "minimum": 1
           },
+          "applicable_redeemables_per_category_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables per category can be applied in one request.",
+            "default": 1,
+            "maximum": 30,
+            "minimum": 1
+          },
           "exclusive_categories": {
             "type": "array",
             "description": "Lists all exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
@@ -29619,7 +29575,18 @@
             "items": {
               "type": "string"
             }
-          }
+          },
+          "redeemables_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables application mode.",
+            "enum": ["ALL", "PARTIAL"]
+          },
+          "redeemables_sorting_rule": {
+            "type": "string",
+            "description": "Defines redeemables sorting rule.",
+            "enum": ["CATEGORY_HIERARCHY", "REQUESTED_ORDER"],
+            "default": "REQUESTED_ORDER",
+          },
         },
         "required": [
           "redeemables_limit",
@@ -36815,7 +36782,7 @@
             "$ref": "#/components/schemas/OrderCalculated"
           },
           "stacking_rules": {
-            "$ref": "#/components/schemas/QualificationsStackingRules"
+            "$ref": "#/components/schemas/StackingRules"
           }
         }
       },
