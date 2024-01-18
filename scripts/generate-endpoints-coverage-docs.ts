@@ -149,7 +149,7 @@ const main = async () => {
         requestNotApplicable: methodName === "",
         responseName: getAllNamesFromResponses(methodContent.responses)[0],
         responseNotApplicable: (getAllNamesFromResponses(methodContent.responses)[0] ?? "") === "",
-        responseSupported: checkAllResponsesAreCorrect(methodContent.responses),
+        responseSupported: checkIsNewName(methodName) && checkAllResponsesAreCorrect(methodContent.responses),
       };
 
       methodObj.sdkRequestLinks = {

@@ -5,11 +5,7 @@
 - **ResponseSupported:** ❌
 ### post
 - **RequestSupported:** ❌
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/VouchersGenerateResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/VouchersGenerateResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/vouchers_generate_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/vouchers_generate_response_body.rb) ✅
+- **ResponseSupported:** ❌
 ## /v1/vouchers/{code}
 ### get
 - **RequestSupported:** *Not applicable*
@@ -23,11 +19,7 @@
 - **ResponseSupported:** *Not applicable*
 ### post
 - **RequestSupported:** ❌
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/VouchersCreateResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/VouchersCreateResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/vouchers_create_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/vouchers_create_response_body.rb) ✅
+- **ResponseSupported:** ❌
 ## /v1/vouchers/{code}/enable
 ### post
 - **RequestSupported:** *Not applicable*
@@ -79,11 +71,7 @@
 ## /v1/vouchers/import
 ### post
 - **RequestSupported:** ❌
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/VouchersImportCreateResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/VouchersImportCreateResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/vouchers_import_create_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/vouchers_import_create_response_body.rb) ✅
+- **ResponseSupported:** ❌
 ## /v1/vouchers/importCSV
 ### post
 - **RequestSupported:** *Not applicable*
@@ -99,19 +87,11 @@
 ## /v1/vouchers/bulk/async
 ### post
 - **RequestSupported:** ❌
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/VouchersUpdateInBulkResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/VouchersUpdateInBulkResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/vouchers_update_in_bulk_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/vouchers_update_in_bulk_response_body.rb) ✅
+- **ResponseSupported:** ❌
 ## /v1/vouchers/metadata/async
 ### post
 - **RequestSupported:** ❌
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/VouchersMetadataUpdateInBulkResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/VouchersMetadataUpdateInBulkResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/vouchers_metadata_update_in_bulk_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/vouchers_metadata_update_in_bulk_response_body.rb) ✅
+- **ResponseSupported:** ❌
 ## /v1/vouchers/{code}/sessions/{sessionKey}
 ### delete
 - **RequestSupported:** *Not applicable*
@@ -232,11 +212,7 @@
   - [ruby](./sdks/ruby/lib/VoucherifySDK/models/promotions_tiers_list_response_body.rb) ✅
 ### post
 - **RequestSupported:** ❌
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/PromotionsTiersCreateResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/PromotionsTiersCreateResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/promotions_tiers_create_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/promotions_tiers_create_response_body.rb) ✅
+- **ResponseSupported:** ❌
 ## /v1/promotions/tiers/{promotionTierId}
 ### get
 - **RequestSupported:** *Not applicable*
@@ -1081,11 +1057,7 @@
   - [ruby](./sdks/ruby/lib/VoucherifySDK/models/validation_rules_assignments_list_response_body.rb) ✅
 ### post
 - **RequestSupported:** ❌
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/ValidationRulesAssignmentsCreateResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/ValidationRulesAssignmentsCreateResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/validation_rules_assignments_create_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/validation_rules_assignments_create_response_body.rb) ✅
+- **ResponseSupported:** ❌
 ## /v1/validation-rules/{validationRuleId}/assignments/{assignmentId}
 ### delete
 - **RequestSupported:** *Not applicable*
