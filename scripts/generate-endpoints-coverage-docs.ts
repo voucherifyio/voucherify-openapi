@@ -135,7 +135,7 @@ const generateReadme = (collection: Collection) => {
   readmeContent += generateTableOfContents(collection);
   readmeContent += generateEndpoints(collection);
 
-  const readmePath = path.join(__dirname, "../endpoints-coverage.md");
+  const readmePath = path.join(__dirname, "../ENDPOINTS-COVERAGE.md");
   fs.writeFile(readmePath, readmeContent);
 };
 
