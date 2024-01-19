@@ -2,14 +2,13 @@
 title: Promotion Tier Object
 type: basic
 categorySlug: voucherify-api
-parentDocSlug: promotions-api
+parentDocSlug: promotions
 slug: promotion-tier-object
 hidden: false
 order: 1
 ---
 
 ## Promotion Tier
-#### This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique promotion tier ID.</p> **Example:** <p>promo_63fYCt81Aw0h7lzyRkrGZh9p</p> |
@@ -30,20 +29,18 @@ order: 1
 | validity_day_of_week</br>`array` | <p>Integer array corresponding to the particular days of the week in which the promotion tier is valid.</p><ul><li><code>0</code>  Sunday</li><li><code>1</code>  Monday</li><li><code>2</code>  Tuesday</li><li><code>3</code>  Wednesday</li><li><code>4</code>  Thursday</li><li><code>5</code>  Friday</li><li><code>6</code>  Saturday</li></ul> |
 | summary</br>`object` | <p>Contains statistics about promotion tier redemptions and orders.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">redemptions</br><code>object</code></td><td style="text-align:left"><p>Contains statistics about promotion tier redemptions.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">total_redeemed</br><code>integer</code></td><td style="text-align:left"><p>Number of times the promotion tier was redeemed.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">orders</br><code>object</code></td><td style="text-align:left"><p>Contains statistics about orders related to the promotion tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">total_amount</br><code>integer</code></td><td style="text-align:left"><p>Sum of order totals.</p></td></tr><tr><td style="text-align:left">total_discount_amount</br><code>integer</code></td><td style="text-align:left"><p>Sum of total discount applied using the promotion tier.</p></td></tr></tbody></table></td></tr></tbody></table> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the promotion tier.</p> |
-| validation_rule_assignments | See: [Validation Rule Assignments](#validation-rule-assignments) |
+| validation_rule_assignments | See: [Validation Rule Assignments List](#validation-rule-assignments-list) |
 | category_id</br>`string` | <p>Promotion tier category ID.</p> **Example:** <p>cat_0c9da30e7116ba6bba</p> |
 | categories</br>`array` | Array of [Category](#category) |
 
 ## Discount
-#### Contains information about discount.
 <p>Contains information about discount.</p>
 
-Any of:
+One of:
 
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
-## Validation Rule Assignments
-#### Validation Rule Assignments
+## Validation Rule Assignments List
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rule assignments.</p> |
@@ -52,7 +49,6 @@ Any of:
 | total</br>`integer` | <p>Total number of validation rule assignments.</p> |
 
 ## Category
-#### This is an object representing a category.
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
@@ -70,7 +66,7 @@ Any of:
 | amount_off</br>`number` | <p>Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000.</p> |
 | amount_off_formula</br>`string` |  |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order.</p> |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Amount Vouchers Effect Types](#discount-amount-vouchers-effect-types) |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Amount Vouchers Effect Types](#discount-amount-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
 ## Unit
@@ -79,9 +75,9 @@ Any of:
 | type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
 | unit_off</br>`integer` | <p>Number of units to be granted a full value discount.</p> |
 | unit_off_formula</br>`string` |  |
-| effect | <p>Defines how the unit is added to the customer's order.</p> See: [Discount Unit Vouchers Effect Types](#discount-unit-vouchers-effect-types) |
+| effect | <p>Defines how the unit is added to the customer's order.</p> [Discount Unit Vouchers Effect Types](#discount-unit-vouchers-effect-types) |
 | unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
-| product | <p>Contains information about the product.</p> See: [Simple Product Discount Unit](#simple-product-discount-unit) |
+| product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |
 | sku | See: [Simple Sku Discount Unit](#simple-sku-discount-unit) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
@@ -100,7 +96,7 @@ Any of:
 | percent_off_formula</br>`string` |  |
 | amount_limit</br>`number` | <p>Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order.</p> |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Percent Vouchers Effect Types](#discount-percent-vouchers-effect-types) |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Percent Vouchers Effect Types](#discount-percent-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
 ## Fixed
@@ -109,11 +105,10 @@ Any of:
 | type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `FIXED` |
 | fixed_amount</br>`number` | <p>Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the <code>fixed_amount_formula</code> parameter is present in the fixed amount definition, this value becomes the <strong>fallback value</strong>. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
 | fixed_amount_formula</br>`string` |  |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> See: [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
 ## Validation Rule Assignment
-#### This is an object representing a validation rule assignment.
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Validation rule assignment ID.</p> **Example:** <p>asgm_74F7QZoYbUoljwQO</p> |
@@ -150,8 +145,8 @@ Available values: `ADD_MISSING_ITEMS`, `ADD_NEW_ITEMS`, `ADD_MANY_ITEMS`
 | unit_off_formula</br>`string` |  |
 | effect</br>`string` | <p>Defines how the unit is added to the customer's order.</p> Available values: `ADD_NEW_ITEMS`, `ADD_MISSING_ITEMS` |
 | unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
-| product | <p>Contains information about the product.</p> See: [Simple Product Discount Unit](#simple-product-discount-unit) |
-| sku | <p>Contains information about the sku.</p> See: [Simple Sku Discount Unit](#simple-sku-discount-unit) |
+| product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |
+| sku | <p>Contains information about the sku.</p> [Simple Sku Discount Unit](#simple-sku-discount-unit) |
 
 ## Discount Percent Vouchers Effect Types
 Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`

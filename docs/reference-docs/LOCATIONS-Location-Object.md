@@ -9,7 +9,6 @@ order: 1
 ---
 
 ## Location object
-#### This is an object representing a location.
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique location ID, assigned by the Voucherify API.</p> **Example:** <p>loc_NoMGXmHO9OUs7iz9mGWpamma</p> |
@@ -20,29 +19,25 @@ order: 1
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the location was updated in ISO 8601 format.</p> **Example:** <p>2022-03-14T15:12:06.817Z</p> |
 
 ## Circle
-#### This is an object representing a circular shape.
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>The type of shape being defined is a <code>circle</code>.</p> |
 | format</br>`string` | <p>The location is defined in terms of a <code>distance</code> object.</p> |
-| distance</br>`object` | <p>Defines the parameters for the circle.</p> <h3>Distance</h3><h5>Defines the parameters for the circle.</h5><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">center</br><code>string</code></td><td style="text-align:left"><p>Center of the circle identified by GPS coordinates in decimal degrees.</p> <strong>Example:</strong> <p>geo:40.79372699823857,-74.15092132694554</p></td></tr><tr><td style="text-align:left">radius</br><code>string</code></td><td style="text-align:left"><p>Defines the radius of the circle.</p></td></tr></tbody></table> |
+| distance</br>`object` | <p>Defines the parameters for the circle.</p> <h3>Distance</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">center</br><code>string</code></td><td style="text-align:left"><p>Center of the circle identified by GPS coordinates in decimal degrees.</p> <strong>Example:</strong> <p>geo:40.79372699823857,-74.15092132694554</p></td></tr><tr><td style="text-align:left">radius</br><code>string</code></td><td style="text-align:left"><p>Defines the radius of the circle.</p></td></tr></tbody></table> |
 
 ## Polygon
-#### This is an object representing a polygon.
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>The type of shape being defined is a <code>polygon</code>.</p> |
 | format</br>`string` | <p>The location is defined in terms of a <code>geojson</code> object.</p> |
-| distance</br>`object` | <p>Defines the parameters for the polygon.</p> <h3>Geojson</h3><h5>Defines the parameters for the polygon.</h5><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Type of geojson coordinates, i.e. <code>Polygon</code>.</p></td></tr><tr><td style="text-align:left">coordinates</br><code>array</code></td><td style="text-align:left"><p>Contains array of GeoJSON coordinate arrays.</p> Array of <a href="#geojson-coordinate-array.">GeoJSON coordinate array.</a></td></tr></tbody></table> |
+| distance</br>`object` | <p>Defines the parameters for the polygon.</p> <h3>Geojson</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Type of geojson coordinates, i.e. <code>Polygon</code>.</p></td></tr><tr><td style="text-align:left">coordinates</br><code>array</code></td><td style="text-align:left"><p>Contains array of GeoJSON coordinate arrays.</p> Array of <a href="#geojson-coordinate-array.">GeoJSON coordinate array.</a></td></tr></tbody></table> |
 
 ## GeoJSON coordinate array.
-#### GeoJSON coordinate array.
 <p>GeoJSON coordinate array.</p>
 
 Array of [GeoJSON coordinate.](#geojson-coordinate.)
 
 ## GeoJSON coordinate.
-#### GeoJSON coordinate.
 <p>GeoJSON coordinate.</p>
 
 [block:html]

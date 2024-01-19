@@ -23,7 +23,6 @@ All of:
 | points</br>`object` | <p>Defines range of loyalty tier in points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">from</br><code>integer</code></td><td style="text-align:left"><p>Bottom points threshold value.</p></td></tr><tr><td style="text-align:left">to</br><code>integer</code></td><td style="text-align:left"><p>Top points threshold value.</p></td></tr></tbody></table> |
 
 ## Loyalty Tier Expiration
-#### Defines loyalty tier expiration date.
 | Attributes |  Description |
 |:-----|:--------|
 | customer_id</br>`string` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |

@@ -2,7 +2,7 @@
 title: Metadata Schema Object
 type: basic
 categorySlug: voucherify-api
-parentDocSlug: metadata-schemas-api
+parentDocSlug: metadata-schemas
 slug: metadata-schema-object
 hidden: false
 order: 1
