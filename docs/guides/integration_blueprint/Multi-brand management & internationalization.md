@@ -12,7 +12,7 @@ order: 13
 > 
 > * Understand how Voucherify supports multiple brands and locations through projects.
 
-> 👍 **Outcome**: 
+> 👍 **Outcome** 
 >
 > Ability to set up separate projects for different locations, currencies, brands, or development phases.
 

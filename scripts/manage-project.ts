@@ -16,6 +16,7 @@ const help = options.help || options.h;
 const mainVersion = "v2018-08-01";
 const version =
   versionOption || versionTag ? `${mainVersion}-${versionTag}` : undefined;
+import "./remove-additional-properties-for-some-schemas-in-readmeio-file";
 
 const listOfGuideCategories = [
   "Getting started",
