@@ -9,6 +9,9 @@ order: 1
 ---
 
 ## Loyalty Campaign Object
+#### This is an object representing a loyalty campaign.  
+
+The loyalty campaign object contains details about the loyalty campaign. You can use dedicated endpoints to list loyalty campaigns, list loyalty card holders, member activities, active rewards, earning rules, loyalty tiers for given loyalty campaign.
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_f7fBbQxUuTN7dI7tGOo5XMDA</p> |
@@ -39,6 +42,7 @@ order: 1
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the campaign.</p> |
 
 ## Loyalty Card
+#### Schema model for a loyalty card.
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Type of voucher.</p> |
@@ -48,6 +52,7 @@ order: 1
 | is_referral_code</br>`boolean` | <p>Indicates whether the voucher is a referral code; this is <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 
 ## Category
+#### This is an object representing a category.
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
@@ -59,6 +64,7 @@ order: 1
 | stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Balance
+#### Defines the Balance expiration mechanism for loyalty tiers.
 | Attributes |  Description |
 |:-----|:--------|
 | qualification_type</br>`string` | <p>Tier qualification.</p><p><code>BALANCE</code>: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier.</p> Available values: `BALANCE` |
@@ -66,6 +72,7 @@ order: 1
 | expiration_date | <p>Defines the conditions for the expiration date of a tier.</p> Any of: [Balance Drop](#balance-drop), [Custom](#custom) |
 
 ## Points in Period
+#### Defines the Points in Period expiration mechanism for loyalty tiers.
 | Attributes |  Description |
 |:-----|:--------|
 | qualification_type</br>`string` | <p>Tier qualification.</p><p><code>POINTS_IN_PERIOD</code>: A customer qualifies for the tier only if the sum of the accumulated points in a <strong>defined time interval</strong> reaches the tier threshold.</p> Available values: `POINTS_IN_PERIOD` |
@@ -74,11 +81,13 @@ order: 1
 | expiration_date</br>`object` | <p>Defines the conditions for the expiration date of a tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to expire for a customer.<br><code>END_OF_PERIOD</code>: Expire tier at the end of the period.<br><code>END_OF_NEXT_PERIOD</code>:  Expire tier at the end of the next period.</p> Available values: <code>END_OF_PERIOD</code>, <code>END_OF_NEXT_PERIOD</code></td></tr><tr><td style="text-align:left">extend</br><code>string</code></td><td style="text-align:left"><p>Extend the expiration by adding extra months or days in ISO 8601 format. The tier will remain active even though it reaches its expiration time period. For example, a tier with a duration of <code>P3M</code> will be valid for an additional duration of 3 months and a tier with a duration of <code>P1D</code> will be valid for an additional duration of 1 day.</p></td></tr></tbody></table> |
 
 ## Balance Drop
+#### Defines the conditions for the expiration date of a tier based on a pure balance drop.
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>What triggers the tier to expire for a customer.<br><code>BALANCE_DROP</code>: Tier expires when the points balance drops below the required range of the tier.</p> Available values: `BALANCE_DROP` |
 
 ## Custom
+#### Defines the custom conditions for the expiration date of a tier.
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>What triggers the tier to expire for a customer.<br><code>CUSTOM</code>: Tier expires after a certain time period passes following the instance the points balance drops below the required range of the tier.</p> Available values: `CUSTOM` |
@@ -86,12 +95,14 @@ order: 1
 | rounding | <p>Defines the rounding mechanism for tier expiration.</p> Any of: [Calendar Periods](#calendar-periods), [Specific Month](#specific-month) |
 
 ## Calendar Periods
+#### Defines the rounding mechanism for tier expiration based on a list of available time periods.
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Period to which the expiration will be rounded to.</p><ul><li><code>MONTH</code>: The expiration date will be rounded to the end of the month.</li><li><code>QUARTER</code>: The expiration date will be rounded to the end of the quarter.</li><li><code>HALF_YEAR</code>: The expiration date will be rounded to the half year.</li><li><code>YEAR</code>: The expiration date will be rounded to the end of the year.</li></ul> Available values: `MONTH`, `QUARTER`, `HALF_YEAR`, `YEAR` |
 | strategy</br>`string` | <p>Which portion of the given period should the rounding be applied to.</p> Available values: `END` |
 
 ## Specific Month
+#### Defines the custom rounding mechanism for tier expiration.
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>This mechanism describes a custom rounding for the expiration date.</p> Available values: `CUSTOM` |

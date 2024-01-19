@@ -9,6 +9,7 @@ order: 1
 ---
 
 ## Category
+#### This is an object representing a category.
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |

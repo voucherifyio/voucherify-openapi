@@ -9,6 +9,9 @@ order: 1
 ---
 
 ## Product Object
+#### This is an object representing a product.  
+
+This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.
 <p>This is an object representing a product.</p><p>This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.</p>
 
 All of:
@@ -31,6 +34,7 @@ All of:
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the product.</p> Available values: `product` |
 
 ## SKUs object
+#### Contains information about child SKUs.
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about SKUs.</p> |
@@ -39,6 +43,7 @@ All of:
 | total</br>`integer` | <p>Total number of SKUs in the product.</p> |
 
 ## SKU Object
+#### This is an object representing a product SKU.
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>A unique identifier that represents the SKU and is assigned by Voucherify.</p> **Example:** <p>sku_0b1621b319d248b79f</p> |
