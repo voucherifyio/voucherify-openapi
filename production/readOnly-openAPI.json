@@ -36,24 +36,10 @@
           "enum": [
             "api",
             "us1.api",
-            "as1.api"
-          ]
-        }
-      }
-    },
-    {
-      "url": "https://download.voucherify.io",
-      "description": "EU Download Export Base URL"
-    },
-    {
-      "url": "https://{downloadcluster}.download.voucherify.io",
-      "description": "US and AS Download Export Base URL",
-      "variables": {
-        "downloadcluster": {
-          "default": "us1",
-          "enum": [
-            "us1",
-            "as1"
+            "as1.api",
+            "download",
+            "us1.download",
+            "as1.download"
           ]
         }
       }
@@ -155,30 +141,25 @@
   ],
   "components": {
     "securitySchemes": {
-      "X-App-Id-1": {
+      "X-App-Id": {
         "type": "apiKey",
         "name": "X-App-Id",
         "in": "header"
       },
-      "X-App-Token-1": {
+      "X-App-Token": {
         "type": "apiKey",
         "name": "X-App-Token",
         "in": "header"
       },
-      "X-Client-Token-1": {
+      "X-Client-Token": {
         "type": "apiKey",
         "name": "X-Client-Token",
         "in": "header"
       },
-      "X-Client-Application-Id-1": {
+      "X-Client-Application-Id": {
         "type": "apiKey",
         "name": "X-Client-Application-Id",
         "in": "header"
-      },
-      "Download-Token-1": {
-        "type": "apiKey",
-        "name": "token",
-        "in": "query"
       }
     },
     "parameters": {
@@ -18947,9 +18928,7 @@
           "rule_id",
           "related_object_id",
           "related_object_type",
-          "object",
-          "validation_status",
-          "validation_omitted_rules"
+          "object"
         ]
       },
       "Campaign": {
@@ -19459,10 +19438,15 @@
                 "description": "Type of campaign."
               },
               "promotion": {
-                "type": "array",
-                "nullable": true,
-                "items": {
-                  "$ref": "#/components/schemas/PromotionTierCreateParams"
+                "type": "object",
+                "properties": {
+                  "tiers": {
+                    "type": "array",
+                    "nullable": true,
+                    "items": {
+                      "$ref": "#/components/schemas/PromotionTierCreateParams"
+                    }
+                  }
                 }
               }
             }
@@ -19537,11 +19521,13 @@
         "type": "object",
         "title": "Campaigns Delete Response Body",
         "description": "Response body schema for **DELETE** `/campaigns/{campaignId}`.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/AsyncActions"
+        "properties": {
+          "async_action_id": {
+            "type": "string",
+            "example": "aa_0a875d56c805df6601",
+            "description": "The ID of the scheduled asynchronous action."
           }
-        ]
+        }
       },
       "CampaignsDisableResponseBody": {
         "type": "object",
@@ -20594,71 +20580,11 @@
             ]
           },
           "options": {
-            "type": "object",
-            "description": "Configure parameters returned in the response.",
-            "properties": {
-              "limit": {
-                "type": "integer",
-                "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5",
-                "maximum": 100
-              },
-              "starting_after": {
-                "type": "string",
-                "nullable": true,
-                "example": "2021-09-08T13:52:18.227Z",
-                "format": "date-time",
-                "description": "Cursor used for paging."
-              },
-              "filters": {
-                "type": "object",
-                "additionalProperties": false,
-                "description": "A set of filters to return only a specific category or type of redeemable.",
-                "properties": {
-                  "junction": {
-                    "$ref": "#/components/schemas/Junction"
-                  },
-                  "category_id": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "campaign_id": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "resource_id": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "resource_type": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "voucher_type": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "code": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  }
-                }
-              },
-              "expand": {
-                "type": "array",
-                "description": "The expand array lets you configure the parameters included in the response. Depending on the strings included in the array, the response will contain different details. \n\n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"redeemable\"] | - Returns the redeemables' metadata. |\n| [\"category\"] | - Returns an expanded `categories` object, showing details about the category. |\n| [\"validation_rules\"] | - Returns an expanded `validation_rules` object, showing details about the validation rules. |",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "redeemable",
-                    "category",
-                    "validation_rules"
-                  ]
-                }
-              },
-              "sorting_rule": {
-                "type": "string",
-                "description": "Is used to determine the order in which data is displayed in the result array. \n\n - `DEFAULT` - Sorting descending by `created_at` \n - `BEST_DEAL` - Sorting descending by `total_applied_discount_amount` \n - `LEAST_DEAL` - Sorting ascending by `total_applied_discount_amount`",
-                "enum": [
-                  "BEST_DEAL",
-                  "LEAST_DEAL",
-                  "DEFAULT"
-                ]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QualificationsOption"
               }
-            }
+            ]
           },
           "metadata": {
             "type": "object",
@@ -20682,7 +20608,7 @@
             "$ref": "#/components/schemas/OrderCalculated"
           },
           "stacking_rules": {
-            "$ref": "#/components/schemas/QualificationsStackingRules"
+            "$ref": "#/components/schemas/StackingRules"
           }
         }
       },
@@ -20794,12 +20720,9 @@
       "ClientValidationsValidateResponseBody": {
         "description": "Response body schema for POST `/validations`.",
         "title": "Client Validations Validate Response Body",
-        "oneOf": [
+        "allOf": [
           {
-            "$ref": "#/components/schemas/ValidationsValidateAllResponseBody"
-          },
-          {
-            "$ref": "#/components/schemas/ValidationsValidatePartialResponseBody"
+            "$ref": "#/components/schemas/ValidationsValidateResponseBody"
           }
         ]
       },
@@ -21617,6 +21540,10 @@
           "total": {
             "type": "integer",
             "description": "Total number of customers."
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates whether there are more records for given filter parameters. This let's you know if you are able to run another request (with a different end date filter) to get more records returned in the results."
           }
         },
         "required": [
@@ -25225,88 +25152,48 @@
       },
       "ExportCustomerFilters": {
         "title": "Export Customer Filters",
+        "description": "Allowed additional properties must start with \"metadata.\" or \"address.\" or \"summary.\" or \"loyalty.\" or \"loyalty_tier.\" or \"loyalty_points.\" or \"system_metadata.\"",
         "type": "object",
         "properties": {
           "junction": {
             "$ref": "#/components/schemas/Junction"
           },
-          "name": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "id": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "description": {
-            "$ref": "#/components/schemas/FieldConditions"
+          "created_at": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$after": {
+                    "$ref": "#/components/schemas/Any"
+                  },
+                  "$before": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
           },
           "email": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "source_id": {
+          "name": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "created_at": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "address_city": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "address_state": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "address_line_1": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "address_line_2": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "address_country": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "address_postal_code": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "redemptions_total_redeemed": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "redemptions_total_failed": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "redemptions_total_succeeded": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "redemptions_total_rolled_back": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "redemptions_total_rollback_failed": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "redemptions_total_rollback_succeeded": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "orders_total_amount": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "orders_total_count": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "orders_average_amount": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "orders_last_order_amount": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "orders_last_order_date": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "loyalty_points": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "loyalty_referred_customers": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "updated_at": {
-            "$ref": "#/components/schemas/FieldConditions"
+          "city": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$is": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
           },
           "phone": {
             "$ref": "#/components/schemas/FieldConditions"
@@ -25314,78 +25201,36 @@
           "birthday": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "metadata": {
+          "source_id": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "birthdate": {
+          "publications.created_at": {
+            "$ref": "#/components/schemas/FieldConditions"
+          },
+          "publications.related_object_id": {
             "$ref": "#/components/schemas/FieldConditions"
           }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/FieldConditions"
         }
       },
       "ExportCustomerOrder": {
         "title": "Export Customer Order",
         "type": "string",
         "enum": [
-          "name",
           "-name",
-          "id",
+          "name",
           "-id",
-          "description",
-          "-description",
-          "email",
+          "id",
           "-email",
-          "source_id",
+          "email",
           "-source_id",
-          "created_at",
+          "source_id",
           "-created_at",
-          "address_city",
-          "-address_city",
-          "address_state",
-          "-address_state",
-          "address_line_1",
-          "-address_line_1",
-          "address_line_2",
-          "-address_line_2",
-          "address_country",
-          "-address_country",
-          "address_postal_code",
-          "-address_postal_code",
-          "redemptions_total_redeemed",
-          "-redemptions_total_redeemed",
-          "redemptions_total_failed",
-          "-redemptions_total_failed",
-          "redemptions_total_succeeded",
-          "-redemptions_total_succeeded",
-          "redemptions_total_rolled_back",
-          "-redemptions_total_rolled_back",
-          "redemptions_total_rollback_failed",
-          "-redemptions_total_rollback_failed",
-          "redemptions_total_rollback_succeeded",
-          "-redemptions_total_rollback_succeeded",
-          "orders_total_amount",
-          "-orders_total_amount",
-          "orders_total_count",
-          "-orders_total_count",
-          "orders_average_amount",
-          "-orders_average_amount",
-          "orders_last_order_amount",
-          "-orders_last_order_amount",
-          "orders_last_order_date",
-          "-orders_last_order_date",
-          "loyalty_points",
-          "-loyalty_points",
-          "loyalty_referred_customers",
-          "-loyalty_referred_customers",
-          "updated_at",
+          "created_at",
           "-updated_at",
-          "phone",
-          "-phone",
-          "birthday",
-          "-birthday",
-          "metadata",
-          "-metadata",
-          "birthdate",
-          "-birthdate"
+          "updated_at"
         ]
       },
       "ExportCustomerScheduled": {
@@ -25479,83 +25324,82 @@
       },
       "ExportOrderFilters": {
         "title": "Export Order Filters",
+        "description": "Allowed additional properties must start with \"metadata.\"",
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "junction": {
             "$ref": "#/components/schemas/Junction"
           },
-          "id": {
+          "created_at": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$after": {
+                    "$ref": "#/components/schemas/Any"
+                  },
+                  "$before": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
+          },
+          "updated_at": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$after": {
+                    "$ref": "#/components/schemas/Any"
+                  },
+                  "$before": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
+          },
+          "status": {
             "$ref": "#/components/schemas/FieldConditions"
           },
           "source_id": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "created_at": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "updated_at": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "status": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
           "amount": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "discount_amount": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "items_discount_amount": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "total_discount_amount": {
             "$ref": "#/components/schemas/FieldConditions"
           },
           "total_amount": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "customer_id": {
+          "discount_amount": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "referrer_id": {
+          "total_discount_amount": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "metadata": {
+          "items_discount_amount": {
             "$ref": "#/components/schemas/FieldConditions"
           }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/FieldConditions"
         }
       },
       "ExportOrderOrder": {
         "title": "Export Order Order",
         "type": "string",
         "enum": [
-          "id",
-          "-id",
-          "source_id",
-          "-source_id",
-          "created_at",
           "-created_at",
-          "updated_at",
+          "created_at",
           "-updated_at",
-          "status",
+          "updated_at",
           "-status",
-          "amount",
-          "-amount",
-          "discount_amount",
-          "-discount_amount",
-          "items_discount_amount",
-          "-items_discount_amount",
-          "total_discount_amount",
-          "-total_discount_amount",
-          "total_amount",
-          "-total_amount",
-          "customer_id",
-          "-customer_id",
-          "referrer_id",
-          "-referrer_id",
-          "metadata",
-          "-metadata"
+          "status"
         ]
       },
       "ExportOrderScheduled": {
@@ -25647,22 +25491,10 @@
           "junction": {
             "$ref": "#/components/schemas/Junction"
           },
-          "id": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
           "campaign_id": {
             "$ref": "#/components/schemas/FieldConditions"
           },
           "voucher_id": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "points": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "status": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "expires_at": {
             "$ref": "#/components/schemas/FieldConditions"
           }
         }
@@ -25671,18 +25503,8 @@
         "title": "Export Points Expiration Order",
         "type": "string",
         "enum": [
-          "id",
-          "-id",
-          "campaign_id",
-          "-campaign_id",
-          "voucher_id",
-          "-voucher_id",
-          "points",
-          "-points",
-          "status",
-          "-status",
-          "expires_at",
-          "-expires_at"
+          "-expires_at",
+          "expires_at"
         ]
       },
       "ExportPointsExpirationScheduled": {
@@ -25771,57 +25593,119 @@
       },
       "ExportPublicationFilters": {
         "title": "Export Publication Filters",
+        "description": "Allowed additional properties must start with \"metadata.\"",
         "type": "object",
         "properties": {
           "junction": {
             "$ref": "#/components/schemas/Junction"
           },
-          "voucher_code": {
+          "created_at": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$after": {
+                    "$ref": "#/components/schemas/Any"
+                  },
+                  "$before": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
+          },
+          "campaign": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$is": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
+          },
+          "customer": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$is": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
+          },
+          "voucher": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$is": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
+          },
+          "failure_code": {
+            "$ref": "#/components/schemas/FieldConditions"
+          },
+          "result": {
             "$ref": "#/components/schemas/FieldConditions"
           },
           "customer_id": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "customer_source_id": {
+          "campaign_name": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "date": {
+          "voucher_type": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "channel": {
+          "is_referral_code": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "campaign": {
+          "parent_object_id": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "is_winner": {
+          "related_object_id": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "metadata": {
+          "source_id": {
             "$ref": "#/components/schemas/FieldConditions"
           }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/FieldConditions"
         }
       },
       "ExportPublicationOrder": {
         "title": "Export Publication Order",
         "type": "string",
         "enum": [
-          "voucher_code",
+          "-id",
+          "id",
           "-voucher_code",
-          "customer_id",
+          "voucher_code",
+          "-tracking_id",
+          "tracking_id",
           "-customer_id",
-          "customer_source_id",
-          "-customer_source_id",
-          "date",
-          "-date",
-          "channel",
+          "customer_id",
+          "-created_at",
+          "created_at",
           "-channel",
-          "campaign",
-          "-campaign",
-          "is_winner",
-          "-is_winner",
-          "metadata",
-          "-metadata"
+          "channel"
         ]
       },
       "ExportPublicationScheduled": {
@@ -25919,103 +25803,137 @@
       },
       "ExportRedemptionFilters": {
         "title": "Export Redemption Filters",
+        "description": "Allowed additional properties must start with \"metadata.\"",
         "type": "object",
-        "additionalProperties": false,
         "properties": {
           "junction": {
             "$ref": "#/components/schemas/Junction"
           },
-          "id": {
-            "$ref": "#/components/schemas/FieldConditions"
+          "created_at": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$after": {
+                    "$ref": "#/components/schemas/Any"
+                  },
+                  "$before": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
           },
-          "object": {
-            "$ref": "#/components/schemas/FieldConditions"
+          "campaign": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$is": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
           },
-          "date": {
-            "$ref": "#/components/schemas/FieldConditions"
+          "customer": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$is": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
+          },
+          "voucher": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$is": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
+          },
+          "related_object": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "title": "Filters Condition",
+                "type": "object",
+                "properties": {
+                  "$in": {
+                    "$ref": "#/components/schemas/Any"
+                  }
+                }
+              }
+            }
           },
           "voucher_code": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "campaign": {
+          "related_object_id": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "promotion_tier_id": {
+          "related_object_parent_id": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "customer_id": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "customer_source_id": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "customer_name": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "tracking_id": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "order_amount": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "gift_amount": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "loyalty_points": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "result": {
+          "parent_redemption_id": {
             "$ref": "#/components/schemas/FieldConditions"
           },
           "failure_code": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "failure_message": {
+          "result": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "metadata": {
+          "object": {
+            "$ref": "#/components/schemas/FieldConditions"
+          },
+          "customer_id": {
+            "$ref": "#/components/schemas/FieldConditions"
+          },
+          "campaign_name": {
+            "$ref": "#/components/schemas/FieldConditions"
+          },
+          "user_login": {
+            "$ref": "#/components/schemas/FieldConditions"
+          },
+          "status": {
             "$ref": "#/components/schemas/FieldConditions"
           }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/FieldConditions"
         }
       },
       "ExportRedemptionOrder": {
         "title": "Export Redemption Order",
         "type": "string",
         "enum": [
-          "id",
           "-id",
-          "object",
-          "-object",
-          "date",
-          "-date",
-          "voucher_code",
+          "id",
           "-voucher_code",
-          "campaign",
-          "-campaign",
-          "promotion_tier_id",
-          "-promotion_tier_id",
-          "customer_id",
-          "-customer_id",
-          "customer_source_id",
-          "-customer_source_id",
-          "customer_name",
-          "-customer_name",
-          "tracking_id",
+          "voucher_code",
           "-tracking_id",
-          "order_amount",
-          "-order_amount",
-          "gift_amount",
-          "-gift_amount",
-          "loyalty_points",
-          "-loyalty_points",
-          "result",
-          "-result",
-          "failure_code",
-          "-failure_code",
-          "failure_message",
-          "-failure_message",
-          "metadata",
-          "-metadata"
+          "tracking_id",
+          "-customer_id",
+          "customer_id",
+          "-created_at",
+          "created_at"
         ]
       },
       "ExportRedemptionScheduled": {
@@ -26282,6 +26200,7 @@
       },
       "ExportVoucherFilters": {
         "title": "Export Voucher Filters",
+        "description": "Allowed additional properties must start with \"metadata.\" or \"redemption.\"",
         "type": "object",
         "properties": {
           "junction": {
@@ -26292,22 +26211,19 @@
               }
             ]
           },
-          "code": {
+          "created_at": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "voucher_type": {
+          "updated_at": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "value": {
+          "created_date": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "discount_type": {
+          "active": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "campaign": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "category": {
+          "redemption_status": {
             "$ref": "#/components/schemas/FieldConditions"
           },
           "start_date": {
@@ -26316,138 +26232,48 @@
           "expiration_date": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "gift_balance": {
+          "validity_day_of_week": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "loyalty_balance": {
+          "code": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "redemption_quantity": {
+          "categories": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "redemption_count": {
+          "vouchers": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "active": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "qr_code": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "bar_code": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "metadata": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "id": {
+          "holder_id": {
             "$ref": "#/components/schemas/FieldConditions"
           },
           "is_referral_code": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "created_at": {
+          "published_for_customer_id": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "updated_at": {
+          "validity_timeframe": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "validity_timeframe_interval": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "validity_timeframe_duration": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "validity_day_of_week": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "discount_amount_limit": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "campaign_id": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "additional_info": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "customer_id": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "discount_unit_type": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "discount_unit_effect": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "customer_source_id": {
+          "category_ids": {
             "$ref": "#/components/schemas/FieldConditions"
           }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/FieldConditions"
         }
       },
       "ExportVoucherOrder": {
         "title": "Export Voucher Order",
         "type": "string",
         "enum": [
-          "code",
-          "-code",
-          "voucher_type",
-          "-voucher_type",
-          "value",
-          "-value",
-          "discount_type",
-          "-discount_type",
-          "campaign",
-          "-campaign",
-          "category",
-          "-category",
-          "start_date",
-          "-start_date",
-          "expiration_date",
-          "-expiration_date",
-          "gift_balance",
-          "-gift_balance",
-          "loyalty_balance",
-          "-loyalty_balance",
-          "redemption_quantity",
-          "-redemption_quantity",
-          "redemption_count",
-          "-redemption_count",
-          "active",
-          "-active",
-          "qr_code",
-          "-qr_code",
-          "bar_code",
-          "-bar_code",
-          "metadata",
-          "-metadata",
-          "id",
-          "-id",
-          "is_referral_code",
-          "-is_referral_code",
-          "created_at",
           "-created_at",
-          "updated_at",
+          "created_at",
           "-updated_at",
-          "validity_timeframe_interval",
-          "-validity_timeframe_interval",
-          "validity_timeframe_duration",
-          "-validity_timeframe_duration",
-          "validity_day_of_week",
-          "-validity_day_of_week",
-          "discount_amount_limit",
-          "-discount_amount_limit",
-          "campaign_id",
-          "-campaign_id",
-          "additional_info",
-          "-additional_info",
-          "customer_id",
-          "-customer_id",
-          "discount_unit_type",
-          "-discount_unit_type",
-          "discount_unit_effect",
-          "-discount_unit_effect",
-          "customer_source_id",
-          "-customer_source_id"
+          "updated_at",
+          "-code",
+          "code"
         ]
       },
       "ExportVoucherScheduled": {
@@ -26545,40 +26371,13 @@
           "junction": {
             "$ref": "#/components/schemas/Junction"
           },
-          "id": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "campaign_id": {
+          "created_at": {
             "$ref": "#/components/schemas/FieldConditions"
           },
           "voucher_id": {
             "$ref": "#/components/schemas/FieldConditions"
           },
-          "type": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "source_id": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "reason": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "source": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "balance": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "amount": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "related_transaction_id": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "created_at": {
-            "$ref": "#/components/schemas/FieldConditions"
-          },
-          "details": {
+          "campaign_id": {
             "$ref": "#/components/schemas/FieldConditions"
           }
         }
@@ -26587,30 +26386,8 @@
         "title": "Export Voucher Transactions Order",
         "type": "string",
         "enum": [
-          "id",
-          "-id",
-          "campaign_id",
-          "-campaign_id",
-          "voucher_id",
-          "-voucher_id",
-          "type",
-          "-type",
-          "source_id",
-          "-source_id",
-          "reason",
-          "-reason",
-          "source",
-          "-source",
-          "balance",
-          "-balance",
-          "amount",
-          "-amount",
-          "related_transaction_id",
-          "-related_transaction_id",
-          "created_at",
           "-created_at",
-          "details",
-          "-details"
+          "created_at"
         ]
       },
       "ExportVoucherTransactionsScheduled": {
@@ -27397,8 +27174,8 @@
           "type": {
             "type": "string",
             "enum": [
-              "LOYALTY_CARD",
-              "GIFT_VOUCHER"
+              "loyalty_card",
+              "gift_voucher"
             ],
             "description": "The type of voucher being modified."
           },
@@ -28928,7 +28705,6 @@
           }
         },
         "required": [
-          "id",
           "source_id",
           "customer_id",
           "referrer_id",
@@ -29125,7 +28901,11 @@
           },
           "discount_amount": {
             "type": "integer",
-            "description": "\nSum of all order-item-level discounts applied to the order."
+            "description": "Sum of all order-item-level discounts applied to the order."
+          },
+          "applied_discount_amount": {
+            "type": "integer",
+            "description": "This field shows the order-level discount applied."
           },
           "initial_amount": {
             "type": "integer",
@@ -31895,71 +31675,11 @@
             ]
           },
           "options": {
-            "type": "object",
-            "description": "Configure parameters returned in the response.",
-            "properties": {
-              "limit": {
-                "type": "integer",
-                "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5",
-                "maximum": 100
-              },
-              "starting_after": {
-                "type": "string",
-                "nullable": true,
-                "example": "2021-09-08T13:52:18.227Z",
-                "format": "date-time",
-                "description": "Cursor used for paging."
-              },
-              "filters": {
-                "type": "object",
-                "additionalProperties": false,
-                "description": "A set of filters to return only a specific category or type of redeemable.",
-                "properties": {
-                  "junction": {
-                    "$ref": "#/components/schemas/Junction"
-                  },
-                  "category_id": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "campaign_id": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "resource_id": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "resource_type": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "voucher_type": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  },
-                  "code": {
-                    "$ref": "#/components/schemas/QualificationsFieldConditions"
-                  }
-                }
-              },
-              "expand": {
-                "type": "array",
-                "description": "The expand array lets you configure the parameters included in the response. Depending on the strings included in the array, the response will contain different details. \n\n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"redeemable\"] | - Returns the redeemables' metadata. |\n| [\"category\"] | - Returns an expanded `categories` object, showing details about the category. |\n| [\"validation_rules\"] | - Returns an expanded `validation_rules` object, showing details about the validation rules. |",
-                "items": {
-                  "type": "string",
-                  "enum": [
-                    "redeemable",
-                    "category",
-                    "validation_rules"
-                  ]
-                }
-              },
-              "sorting_rule": {
-                "type": "string",
-                "description": "Is used to determine the order in which data is displayed in the result array. \n\n - `DEFAULT` - Sorting descending by `created_at` \n - `BEST_DEAL` - Sorting descending by `total_applied_discount_amount` \n - `LEAST_DEAL` - Sorting ascending by `total_applied_discount_amount`",
-                "enum": [
-                  "BEST_DEAL",
-                  "LEAST_DEAL",
-                  "DEFAULT"
-                ]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QualificationsOption"
               }
-            }
+            ]
           },
           "metadata": {
             "type": "object",
@@ -31983,7 +31703,7 @@
             "$ref": "#/components/schemas/OrderCalculated"
           },
           "stacking_rules": {
-            "$ref": "#/components/schemas/QualificationsStackingRules"
+            "$ref": "#/components/schemas/StackingRules"
           }
         }
       },
@@ -32022,6 +31742,73 @@
           },
           "$not_in": {
             "$ref": "#/components/schemas/Any"
+          }
+        }
+      },
+      "QualificationsOption": {
+        "type": "object",
+        "description": "Configure parameters returned in the response.",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "The maximum number of redeemables to be returned in the API request. The actual number of returned redeemables will be determined by the API. The default value is set to 5",
+            "maximum": 100
+          },
+          "starting_after": {
+            "type": "string",
+            "nullable": true,
+            "example": "2021-09-08T13:52:18.227Z",
+            "format": "date-time",
+            "description": "Cursor used for paging."
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "A set of filters to return only a specific category or type of redeemable.",
+            "properties": {
+              "junction": {
+                "$ref": "#/components/schemas/Junction"
+              },
+              "category_id": {
+                "$ref": "#/components/schemas/QualificationsFieldConditions"
+              },
+              "campaign_id": {
+                "$ref": "#/components/schemas/QualificationsFieldConditions"
+              },
+              "resource_id": {
+                "$ref": "#/components/schemas/QualificationsFieldConditions"
+              },
+              "resource_type": {
+                "$ref": "#/components/schemas/QualificationsFieldConditions"
+              },
+              "voucher_type": {
+                "$ref": "#/components/schemas/QualificationsFieldConditions"
+              },
+              "code": {
+                "$ref": "#/components/schemas/QualificationsFieldConditions"
+              }
+            }
+          },
+          "expand": {
+            "type": "array",
+            "description": "The expand array lets you configure the parameters included in the response. Depending on the strings included in the array, the response will contain different details. \n\n| **Expand Option** | **Response Body** |\n|:---|:---|\n| [\"redeemable\"] | - Returns the redeemables' metadata. |\n| [\"category\"] | - Returns an expanded `categories` object, showing details about the category. |\n| [\"validation_rules\"] | - Returns an expanded `validation_rules` object, showing details about the validation rules. |",
+            "items": {
+              "type": "string",
+              "enum": [
+                "redeemable",
+                "category",
+                "validation_rules"
+              ]
+            }
+          },
+          "sorting_rule": {
+            "type": "string",
+            "description": "Is used to determine the order in which data is displayed in the result array. \n\n - `DEFAULT` - Sorting descending by `created_at` \n - `BEST_DEAL` - Sorting descending by `total_applied_discount_amount` \n - `LEAST_DEAL` - Sorting ascending by `total_applied_discount_amount`",
+            "enum": [
+              "BEST_DEAL",
+              "LEAST_DEAL",
+              "DEFAULT"
+            ]
           }
         }
       },
@@ -32182,57 +31969,6 @@
           "data",
           "total",
           "has_more"
-        ]
-      },
-      "QualificationsStackingRules": {
-        "type": "object",
-        "title": "Examine Qualification Stacking Rules",
-        "description": "Defines stacking rules for redeemables. Read more in the [Help Center](https://support.voucherify.io/article/604-stacking-rules)",
-        "properties": {
-          "redeemables_limit": {
-            "type": "integer",
-            "description": "Defines how many redeemables can be sent in one stacking request (note: more redeemables means more processing time!).",
-            "default": 30,
-            "maximum": 30,
-            "minimum": 1
-          },
-          "applicable_redeemables_limit": {
-            "type": "integer",
-            "description": "Defines how many of the sent redeemables will be applied to the order. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be labelled as SKIPPED.",
-            "default": 5,
-            "maximum": 30,
-            "minimum": 1
-          },
-          "applicable_exclusive_redeemables_limit": {
-            "type": "integer",
-            "description": "Defines how many redeemables with an exclusive category can be applied in one request.",
-            "default": 1,
-            "maximum": 30,
-            "minimum": 1
-          },
-          "exclusive_categories": {
-            "type": "array",
-            "description": "Lists all exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
-            "default": [],
-            "items": {
-              "type": "string"
-            }
-          },
-          "joint_categories": {
-            "type": "array",
-            "description": "Lists all joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
-            "default": [],
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": [
-          "redeemables_limit",
-          "applicable_redeemables_limit",
-          "applicable_exclusive_redeemables_limit",
-          "exclusive_categories",
-          "joint_categories"
         ]
       },
       "RedeemableGift": {
@@ -32954,14 +32690,6 @@
         "title": "Redemption Reward Result",
         "type": "object",
         "properties": {
-          "reward": {
-            "nullable": true,
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Reward"
-              }
-            ]
-          },
           "customer": {
             "nullable": true,
             "allOf": [
@@ -33006,6 +32734,100 @@
             "type": "string",
             "nullable": true,
             "description": "Unique loyalty tier ID assigned by Voucherify."
+          },
+          "id": {
+            "type": "string",
+            "example": "rew_0bc92f81a6801f9bca",
+            "description": "Unique reward ID."
+          },
+          "name": {
+            "type": "string",
+            "example": "Reward Name",
+            "description": "Name of the reward."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by the JSON",
+            "default": "reward",
+            "enum": [
+              "reward"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the redemption was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-10-03T12:24:58.008Z",
+            "description": "Timestamp in ISO 8601 format indicating when the reward was updated."
+          },
+          "parameters": {
+            "type": "object",
+            "description": "These are parameters representing a material reward.",
+            "properties": {
+              "campaign": {
+                "type": "object",
+                "description": "Defines the product redeemed as a reward.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Campaign unique ID.",
+                    "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
+                  },
+                  "balance": {
+                    "type": "integer",
+                    "description": "Points available for reward redemption."
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Defines the type of the campaign."
+                  }
+                }
+              },
+              "product": {
+                "type": "object",
+                "description": "Defines the product redeemed as a reward.",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "example": "prod_0b7d7dfb05cbe5c616",
+                    "description": "Unique product ID, assigned by Voucherify. "
+                  },
+                  "sku_id": {
+                    "type": "string",
+                    "description": "A unique SKU ID assigned by Voucherify.",
+                    "example": "sku_0a41e31c7b41c28358"
+                  }
+                }
+              },
+              "coin": {
+                "type": "object",
+                "description": "Defines the ratio by mapping the number of loyalty points in `points_ratio` to a predefined cash amount in `exchange_ratio`.",
+                "properties": {
+                  "exchange_ratio": {
+                    "type": "integer",
+                    "description": "The cash equivalent of the points defined in the `points_ratio` property."
+                  },
+                  "points_ratio": {
+                    "type": "integer",
+                    "description": "The number of loyalty points that will map to the predefined cash amount defined by the `exchange_ratio` property."
+                  }
+                }
+              }
+            }
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "CAMPAIGN",
+              "COIN",
+              "MATERIAL"
+            ],
+            "description": "Reward type."
           }
         },
         "required": [
@@ -33453,7 +33275,7 @@
         }
       },
       "ReferralCampaignVoucher": {
-        "title": "Object representing voucher property for Referal Program",
+        "title": "Object representing voucher property for Referral Program",
         "properties": {
           "type": {
             "type": "string",
@@ -34399,7 +34221,7 @@
           },
           "discount_amount": {
             "type": "integer",
-            "description": "\nSum of all order-item-level discounts applied to the order."
+            "description": "Sum of all order-item-level discounts applied to the order."
           },
           "applied_discount_amount": {
             "type": "integer",
@@ -35076,6 +34898,81 @@
           "redeemables"
         ]
       },
+      "StackingRules": {
+        "type": "object",
+        "title": "Stacking Rules",
+        "description": "Defines stacking rules for redeemables. Read more in the [Help Center](https://support.voucherify.io/article/604-stacking-rules)",
+        "properties": {
+          "redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables can be sent in one stacking request (note: more redeemables means more processing time!).",
+            "default": 30,
+            "maximum": 30,
+            "minimum": 1
+          },
+          "applicable_redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many of the sent redeemables will be applied to the order. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be labelled as SKIPPED.",
+            "default": 5,
+            "maximum": 30,
+            "minimum": 1
+          },
+          "applicable_exclusive_redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables with an exclusive category can be applied in one request.",
+            "default": 1,
+            "maximum": 30,
+            "minimum": 1
+          },
+          "applicable_redeemables_per_category_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables per category can be applied in one request.",
+            "default": 1,
+            "maximum": 30,
+            "minimum": 1
+          },
+          "exclusive_categories": {
+            "type": "array",
+            "description": "Lists all exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
+            "default": [],
+            "items": {
+              "type": "string"
+            }
+          },
+          "joint_categories": {
+            "type": "array",
+            "description": "Lists all joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
+            "default": [],
+            "items": {
+              "type": "string"
+            }
+          },
+          "redeemables_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables application mode.",
+            "enum": [
+              "ALL",
+              "PARTIAL"
+            ]
+          },
+          "redeemables_sorting_rule": {
+            "type": "string",
+            "description": "Defines redeemables sorting rule.",
+            "enum": [
+              "CATEGORY_HIERARCHY",
+              "REQUESTED_ORDER"
+            ],
+            "default": "REQUESTED_ORDER"
+          }
+        },
+        "required": [
+          "redeemables_limit",
+          "applicable_redeemables_limit",
+          "applicable_exclusive_redeemables_limit",
+          "exclusive_categories",
+          "joint_categories"
+        ]
+      },
       "ValidationEntity": {
         "title": "Validation Entity",
         "type": "object",
@@ -35675,10 +35572,10 @@
             "$ref": "#/components/schemas/OrderCalculated"
           },
           "applicable_to": {
-            "$ref": "#/components/schemas/ApplicableTo"
+            "$ref": "#/components/schemas/ApplicableToResultList"
           },
           "inapplicable_to": {
-            "$ref": "#/components/schemas/InapplicableTo"
+            "$ref": "#/components/schemas/InapplicableToResultList"
           },
           "result": {
             "description": "Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.",
@@ -35777,115 +35674,6 @@
           }
         }
       },
-      "ValidationsValidateAllResponseBody": {
-        "title": "Validations Validate All Response Body",
-        "description": "Response body schema for POST `/validations` where all promotion must be valid",
-        "type": "object",
-        "properties": {
-          "valid": {
-            "type": "boolean",
-            "description": "The result of the validation. It takes all of the redeemables into account and returns a `false` if at least one redeemable is inapplicable. Returns `true` if all redeemables are applicable."
-          },
-          "redeemables": {
-            "type": "array",
-            "description": "Lists validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"`.",
-            "items": {
-              "title": "Validations Validate All Response Body Redeemables Item",
-              "oneOf": [
-                {
-                  "$ref": "#/components/schemas/ValidationsRedeemableApplicable"
-                },
-                {
-                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
-                },
-                {
-                  "$ref": "#/components/schemas/ValidationsRedeemableSkipped"
-                }
-              ]
-            }
-          },
-          "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
-          },
-          "tracking_id": {
-            "type": "string",
-            "example": "track_VAVo1/z+G2GI2LPw==",
-            "description": "Hashed customer source ID."
-          },
-          "session": {
-            "$ref": "#/components/schemas/Session"
-          },
-          "application_mode": {
-            "type": "string",
-            "default": "ALL",
-            "enum": [
-              "ALL"
-            ]
-          }
-        },
-        "required": [
-          "valid",
-          "redeemables",
-          "application_mode"
-        ]
-      },
-      "ValidationsValidatePartialResponseBody": {
-        "title": "Validations Validate Partial Response Body",
-        "description": "Response body schema for POST `/validations` where at least one promotion must be valid",
-        "type": "object",
-        "properties": {
-          "valid": {
-            "type": "boolean",
-            "description": "The result of the validation. It takes all of the redeemables into account and returns a `false` if at least one redeemable is inapplicable. Returns `true` if all redeemables are applicable."
-          },
-          "redeemables": {
-            "type": "array",
-            "description": "Lists validation results of each redeemable. If a redeemable can be applied, the API returns `\"status\": \"APPLICABLE\"`.",
-            "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/ValidationsRedeemableApplicable"
-                }
-              ]
-            }
-          },
-          "inapplicable_redeemables": {
-            "type": "array",
-            "description": "Lists validation results of each inapplicable redeemable.",
-            "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
-                }
-              ]
-            }
-          },
-          "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
-          },
-          "tracking_id": {
-            "type": "string",
-            "example": "track_VAVo1/z+G2GI2LPw==",
-            "description": "Hashed customer source ID."
-          },
-          "session": {
-            "$ref": "#/components/schemas/Session"
-          },
-          "application_mode": {
-            "type": "string",
-            "default": "PARTIAL",
-            "enum": [
-              "PARTIAL"
-            ]
-          }
-        },
-        "required": [
-          "valid",
-          "redeemables",
-          "inapplicable_redeemables",
-          "application_mode"
-        ]
-      },
       "ValidationsValidateRequestBody": {
         "title": "Validations Validate Request Body",
         "description": "Response body schema for **POST** `/validations`.",
@@ -35922,13 +35710,71 @@
       "ValidationsValidateResponseBody": {
         "title": "Validations Validate Response Body",
         "description": "Response body schema for POST `/validations`.",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/ValidationsValidateAllResponseBody"
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "boolean",
+            "description": "The result of the validation. It takes all of the redeemables into account and returns a `false` if at least one redeemable is inapplicable. Returns `true` if all redeemables are applicable."
           },
-          {
-            "$ref": "#/components/schemas/ValidationsValidatePartialResponseBody"
+          "redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each redeemable. If redeemables_application_mode=\"PARTIAL\" all redeemables here will be \"APPLICABLE\"",
+            "items": {
+              "title": "Validations Validate All Response Body Redeemables Item",
+              "oneOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableApplicable"
+                },
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
+                },
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableSkipped"
+                }
+              ]
+            }
+          },
+          "skipped_redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each skipped redeemable.",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
+                }
+              ]
+            }
+          },
+          "inapplicable_redeemables": {
+            "type": "array",
+            "description": "Lists validation results of each inapplicable redeemable.",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
+                }
+              ]
+            }
+          },
+          "order": {
+            "$ref": "#/components/schemas/OrderCalculated"
+          },
+          "tracking_id": {
+            "type": "string",
+            "example": "track_VAVo1/z+G2GI2LPw==",
+            "description": "Hashed customer source ID."
+          },
+          "session": {
+            "$ref": "#/components/schemas/Session"
+          },
+          "stacking_rules": {
+            "$ref": "#/components/schemas/StackingRules"
           }
+        },
+        "required": [
+          "valid",
+          "redeemables",
+          "application_mode"
         ]
       },
       "Voucher": {
@@ -37691,8 +37537,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -37854,8 +37700,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -38358,8 +38204,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -38925,8 +38771,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -39500,8 +39346,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -39543,8 +39389,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -40073,8 +39919,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -40203,8 +40049,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -40331,8 +40177,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "summary": "Add or Remove Voucher Balance",
@@ -40434,8 +40280,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "summary": "List Voucher Transactions",
@@ -40725,8 +40571,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "summary": "Export Voucher Transactions",
@@ -40874,8 +40720,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -41147,8 +40993,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -41235,8 +41081,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -41690,8 +41536,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -41760,8 +41606,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -41874,8 +41720,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -41889,16 +41735,15 @@
       "post": {
         "operationId": "create-campaign",
         "tags": [
-          "Campaigns",
-          "Promotions"
+          "Campaigns"
         ],
         "summary": "Create Campaign",
         "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n<!-- theme: info -->\n\n> 📘 Global uniqueness\n>\n> All campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.  \n<!-- theme: warning -->\n> 🚧 Code generation status\n>\n> This is an asynchronous action; you can't read or modify a newly created campaign until the code generation is completed. See the `creation_status` field in the <!-- [campaign object](OpenAPI.json/components/schemas/Campaign) -->[campaign object](ref:get-campaign) description.",
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -42783,8 +42628,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -43081,8 +42926,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -43177,8 +43022,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -43310,8 +43155,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -43382,8 +43227,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -43481,8 +43326,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -43638,8 +43483,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -43868,8 +43713,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -43961,8 +43806,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -44041,8 +43886,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -44109,8 +43954,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -44199,8 +44044,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -44439,8 +44284,8 @@
         ],
         "security": [
           {
-            "X-Client-Application-Id-1": [],
-            "X-Client-Token-1": []
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
           }
         ],
         "responses": {
@@ -44654,8 +44499,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -44769,8 +44614,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -44923,8 +44768,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -44950,8 +44795,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -45091,8 +44936,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -45147,8 +44992,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -45266,8 +45111,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -45405,8 +45250,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -45591,8 +45436,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -45657,8 +45502,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -45784,8 +45629,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -45863,8 +45708,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -45933,8 +45778,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -46004,8 +45849,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -46141,8 +45986,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -46299,8 +46144,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -46349,8 +46194,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -46510,8 +46355,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -46598,8 +46443,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -46687,8 +46532,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -46854,8 +46699,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -46943,8 +46788,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -46997,8 +46842,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -47105,8 +46950,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -47409,8 +47254,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -47585,8 +47430,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -47842,8 +47687,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -49405,8 +49250,8 @@
         ],
         "security": [
           {
-            "X-Client-Application-Id-1": [],
-            "X-Client-Token-1": []
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
           }
         ],
         "responses": {
@@ -49882,8 +49727,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -51904,8 +51749,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -52251,7 +52096,7 @@
             },
             "in": "query",
             "name": "customer",
-            "description": "Return redemptions performed by the customer with given `id`."
+            "description": "Return redemptions performed by the customer with given `id` or `source_id`."
           },
           {
             "schema": {
@@ -52277,8 +52122,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -52720,8 +52565,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -52829,8 +52674,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -54270,8 +54115,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -54764,8 +54609,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -55399,8 +55244,8 @@
         ],
         "security": [
           {
-            "X-Client-Application-Id-1": [],
-            "X-Client-Token-1": []
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
           }
         ],
         "requestBody": {
@@ -56040,8 +55885,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -56793,8 +56638,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -57218,8 +57063,8 @@
         ],
         "security": [
           {
-            "X-Client-Application-Id-1": [],
-            "X-Client-Token-1": []
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
           }
         ],
         "requestBody": {
@@ -57316,8 +57161,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -58068,8 +57913,8 @@
         ],
         "security": [
           {
-            "X-Client-Application-Id-1": [],
-            "X-Client-Token-1": []
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
           }
         ],
         "requestBody": {
@@ -58289,8 +58134,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -58408,8 +58253,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -58600,8 +58445,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -58833,8 +58678,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -58950,8 +58795,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -59149,8 +58994,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -59240,8 +59085,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -59380,8 +59225,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -59602,8 +59447,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -59698,8 +59543,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -59803,8 +59648,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -59843,8 +59688,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -59892,8 +59737,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -60005,8 +59850,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -60114,8 +59959,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -60250,8 +60095,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -60591,8 +60436,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -60925,8 +60770,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -61091,8 +60936,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -61264,8 +61109,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -61364,8 +61209,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -61547,8 +61392,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -62098,8 +61943,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -63312,8 +63157,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -63591,8 +63436,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -63700,8 +63545,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -63776,8 +63621,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -63882,8 +63727,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -63982,8 +63827,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -64221,8 +64066,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -64340,8 +64185,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -64536,8 +64381,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -64611,8 +64456,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -64749,8 +64594,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -64816,8 +64661,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -64884,8 +64729,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -64950,8 +64795,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -65026,8 +64871,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -66488,8 +66333,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -66821,8 +66666,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -66965,8 +66810,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -67024,8 +66869,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -67113,8 +66958,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -67234,8 +67079,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -67839,8 +67684,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -68073,8 +67918,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -68294,8 +68139,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -68429,8 +68274,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -68536,8 +68381,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -68579,8 +68424,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -68757,8 +68602,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -68830,8 +68675,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -68877,8 +68722,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -69037,8 +68882,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -69138,8 +68983,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -69215,8 +69060,8 @@
         "parameters": [],
         "security": [
           {
-            "X-Client-Application-Id-1": [],
-            "X-Client-Token-1": []
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
           }
         ],
         "requestBody": {
@@ -69349,8 +69194,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -69389,8 +69234,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -69469,8 +69314,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -70142,8 +69987,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -70410,8 +70255,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -70460,8 +70305,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -70597,8 +70442,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -70914,8 +70759,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -71073,8 +70918,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -71227,8 +71072,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -71319,8 +71164,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -71432,8 +71277,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -71508,8 +71353,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -71553,8 +71398,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -71659,8 +71504,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -71760,8 +71605,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -71861,8 +71706,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -71994,8 +71839,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -72096,8 +71941,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -72174,8 +72019,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -72230,8 +72075,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -72297,8 +72142,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -72353,8 +72198,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -72555,8 +72400,8 @@
         },
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "parameters": [],
@@ -72593,8 +72438,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -72683,8 +72528,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -72777,8 +72622,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -73000,8 +72845,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -73196,8 +73041,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -73417,8 +73262,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -73474,8 +73319,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -73697,8 +73542,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -73773,8 +73618,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -73895,8 +73740,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -73965,8 +73810,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -74076,8 +73921,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -74143,8 +73988,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -74215,8 +74060,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -74260,8 +74105,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -74360,8 +74205,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -74495,8 +74340,8 @@
         ],
         "security": [
           {
-            "X-Client-Application-Id-1": [],
-            "X-Client-Token-1": []
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
           }
         ],
         "requestBody": {
@@ -74612,8 +74457,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -74707,8 +74552,8 @@
         ],
         "security": [
           {
-            "X-Client-Application-Id-1": [],
-            "X-Client-Token-1": []
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
           }
         ],
         "responses": {
@@ -74815,8 +74660,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -74906,8 +74751,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -75490,8 +75335,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -75579,8 +75424,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -75703,8 +75548,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -75783,8 +75628,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -75817,6 +75662,80 @@
         }
       }
     },
+    "/v1/exports/{export_Id}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string",
+            "example": "exp_ex6zq0x0EEa9S0N68QcqhxcQ"
+          },
+          "name": "export_Id",
+          "in": "path",
+          "required": true,
+          "description": "Unique export object ID."
+        },
+        {
+          "name": "token",
+          "in": "query",
+          "required": false,
+          "schema": {
+            "type": "string"
+          },
+          "description": "Token that was issued to the export, to get this token, get the export first"
+        }
+      ],
+      "get": {
+        "operationId": "download-export",
+        "tags": [
+          "Exports"
+        ],
+        "summary": "Download Export",
+        "description": "Download the contents of the exported CSV file. \n\n<!-- theme: info -->\n\n> 📘 Important notes\n>\n> **Base URL:** \n> - `https://download.voucherify.io` (Europe) \n> - `https://us1.download.voucherify.io` (US) \n> - `https://as1.download.voucherify.io` (Asia) \n>\n> **Token:** Can be found within the `result` parameter of the <!-- [Get Export](OpenAPI.json/paths/~1exports~1{exportId}/get) -->[Get Export](ref:get-export) method response.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id-1": [],
+            "X-App-Token-1": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns contents of CSV file.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                },
+                "examples": {
+                  "CSV file contents": {
+                    "value": "ID,Code,Voucher Type,Value v_mKNYXWf5168jyW3EvwnAf73d7vnTiXaa,iuCvt3BT,GIFT_VOUCHER,2000.00 v_xb5KuIw90ViUY7NrNbDZzf1JwFmyTUi0,M3X8IwW8,GIFT_VOUCHER,2000.00 v_flCSHFGOfjxuM582jhriJTWQuetb2xHX,6vpzmKaC,GIFT_VOUCHER,2050.00 v_YtzZG4UJaWm9DNCY3AvIqVbc7Dt5WToU,lRvBOUPl,LOYALTY_CARD,0"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/categories": {
       "get": {
         "operationId": "list-categories",
@@ -75828,8 +75747,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -75908,8 +75827,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -76007,8 +75926,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -76045,8 +75964,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -76088,8 +76007,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -76177,8 +76096,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -76682,8 +76601,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -77176,8 +77095,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -77369,8 +77288,8 @@
         ],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "responses": {
@@ -77473,8 +77392,8 @@
         "parameters": [],
         "security": [
           {
-            "X-App-Id-1": [],
-            "X-App-Token-1": []
+            "X-App-Id": [],
+            "X-App-Token": []
           }
         ],
         "requestBody": {
@@ -77512,8 +77431,8 @@
         "parameters": [],
         "security": [
           {
-            "X-Client-Application-Id-1": [],
-            "X-Client-Token-1": []
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
           }
         ],
         "requestBody": {

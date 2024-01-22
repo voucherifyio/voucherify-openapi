@@ -16,6 +16,7 @@ const help = options.help || options.h;
 const mainVersion = "v2018-08-01";
 const version =
   versionOption || versionTag ? `${mainVersion}-${versionTag}` : undefined;
+import { removeAdditionalPropertiesFromSchemas } from "./remove-additional-properties-for-some-schemas";
 
 const listOfGuideCategories = [
   "Getting started",
@@ -109,7 +110,16 @@ const createOpenAPIVersionToUpload = async () => {
     fs.mkdirSync(pathToTmpReferenceToUpload);
   }
 
-  const newOpenApiFile = { ...openAPIContent };
+  const newOpenApiFile = {
+    ...openAPIContent,
+    components: {
+      ...openAPIContent.components,
+      schemas: removeAdditionalPropertiesFromSchemas(
+        openAPIContent.components.schemas,
+        ["ExportsCreateRequestBody", "ExportsCreateResponseBody"]
+      ),
+    },
+  };
   newOpenApiFile.openapi = "3.1.0";
 
   await fsPromises.writeFile(

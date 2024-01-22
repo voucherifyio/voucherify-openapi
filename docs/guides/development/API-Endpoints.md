@@ -12,7 +12,7 @@ Voucherify is shipped from shared clusters located on three continents, as well 
 
 If you want to get the best performance from Voucherify, it is recommended to create a project in the region (cluster) closest to your customers.
 
-When your create a project, you can choose a preferred region. You can have projects located in different regions within one organization.
+When you create a project, you can choose a preferred region. You can have projects located in different regions within one organization.
 
 If your project is not created in Europe and your organization has a dedicated cluster, you must configure your application to use the appropriate API endpoint. Otherwise, your HTTP requests will be rejected.
 

@@ -470,7 +470,7 @@ All of:
 | name</br>`string` | <p>Campaign name.</p> |
 | campaign_type</br>`string` | <p>Type of campaign.</p> |
 | type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation.</p><ul><li><code>AUTO_UPDATE</code>: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).</li><li><code>STATIC</code>: vouchers need to be manually published.</li></ul> Available values: `AUTO_UPDATE`, `STATIC` |
-| is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code.</p> |
+| is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 | voucher</br>`object` |  |
 | lucky_draw</br>`object` |  |
 | referral_program | See: [Referral Program](#referral-program) |
@@ -491,7 +491,7 @@ All of:
 | type</br>`string` | <p>Type of the object.</p> Available values: `voucher` |
 | campaign</br>`object` | <p>Campaign object</p> |
 | campaign_id</br>`string` | <p>Campaign unique ID.</p> |
-| is_referral_code</br>`boolean` | <p>Indicates whether the voucher is a referral code; this is <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
+| is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 | holder_id</br>`string` | <p>Unique customer ID of campaign owner.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
 | referrer_id</br>`string` | <p>Unique referrer ID.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the order was created in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
@@ -528,7 +528,7 @@ All of:
 | reason</br>`string` | <p>System generated cause for the redemption being invalid in the context of the provided parameters.</p> |
 | result</br>`string` | <p>Redemption result.</p> Available values: `SUCCESS`, `FAILURE` |
 | status</br>`string` | <p>Redemption status.</p> Available values: `SUCCEEDED`, `FAILED` |
-| related_redemptions</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">rollbacks</br><code>array</code></td><td style="text-align:left">Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique rollback redemption ID.</p> <strong>Example:</strong> <p>rr_0bc92f81a6801f9bca</p></td></tr><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the object was created in ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:13:06.487Z</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">redemptions</br><code>array</code></td><td style="text-align:left">Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique redemption ID.</p> <strong>Example:</strong> <p>r_0bc92f81a6801f9bca</p></td></tr><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the object was created in ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:13:06.487Z</p></td></tr></tbody></table></td></tr></tbody></table> |
+| related_redemptions</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">rollbacks</br><code>array</code></td><td style="text-align:left">Array of: <h4>Redemption Internal Related Redemptions Rollbacks Item</h4><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique rollback redemption ID.</p> <strong>Example:</strong> <p>rr_0bc92f81a6801f9bca</p></td></tr><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the object was created in ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:13:06.487Z</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">redemptions</br><code>array</code></td><td style="text-align:left">Array of: <h4>Redemption Internal Related Redemptions Item</h4><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique redemption ID.</p> <strong>Example:</strong> <p>r_0bc92f81a6801f9bca</p></td></tr><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the object was created in ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:13:06.487Z</p></td></tr></tbody></table></td></tr></tbody></table> |
 | parent_redemption_id</br>`string` | <p>Unique redemption ID of the parent redemption.</p> **Example:** <p>r_0c656311b5878a2031</p> |
 | redemption</br>`string` | <p>Unique redemption ID of the parent redemption.</p> **Example:** <p>r_0c656311b5878a2031</p> |
 | customer | See: [Simple Customer](#simple-customer) |
@@ -715,7 +715,7 @@ All of:
 | Attributes |  Description |
 |:-----|:--------|
 | total</br>`integer` | <p>Total number of times this customer received a referral, i.e. was referred by another customer.</p> |
-| campaigns</br>`array` | <p>Contains an array of campaigns that served as the source of a referral for the customer.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">campaign_id</br><code>string</code></td><td style="text-align:left"><p>Unique campaign ID, assigned by Voucherify.</p> <strong>Example:</strong> <p>camp_rRsfatlwN7unSeUIJDCYedal</p></td></tr><tr><td style="text-align:left">referrer_id</br><code>string</code></td><td style="text-align:left"><p>Unique referrer ID, assigned by Voucherify. This is the customer ID of a customer that is referring this customer.</p> <strong>Example:</strong> <p>cust_sehkNIi8Uq2qQuRqSr7xn4Zi</p></td></tr><tr><td style="text-align:left">related_object_id</br><code>string</code></td><td style="text-align:left"><p>Related object id</p> <strong>Example:</strong> <p>r_0b9d4cc4aa164dd073</p></td></tr><tr><td style="text-align:left">related_object_type</br><code>string</code></td><td style="text-align:left"><p>Related object type, i.e. <code>redemption</code>.</p></td></tr><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the customer was referred in ISO 8601 format.</p> <strong>Example:</strong> <p>2022-08-30T10:19:39.196Z</p></td></tr></tbody></table> |
+| campaigns</br>`array` | <p>Contains an array of campaigns that served as the source of a referral for the customer.</p> Array of: <h3>Customer Referrals Campaigns Item</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">campaign_id</br><code>string</code></td><td style="text-align:left"><p>Unique campaign ID, assigned by Voucherify.</p> <strong>Example:</strong> <p>camp_rRsfatlwN7unSeUIJDCYedal</p></td></tr><tr><td style="text-align:left">referrer_id</br><code>string</code></td><td style="text-align:left"><p>Unique referrer ID, assigned by Voucherify. This is the customer ID of a customer that is referring this customer.</p> <strong>Example:</strong> <p>cust_sehkNIi8Uq2qQuRqSr7xn4Zi</p></td></tr><tr><td style="text-align:left">related_object_id</br><code>string</code></td><td style="text-align:left"><p>Related object id</p> <strong>Example:</strong> <p>r_0b9d4cc4aa164dd073</p></td></tr><tr><td style="text-align:left">related_object_type</br><code>string</code></td><td style="text-align:left"><p>Related object type, i.e. <code>redemption</code>.</p></td></tr><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the customer was referred in ISO 8601 format.</p> <strong>Example:</strong> <p>2022-08-30T10:19:39.196Z</p></td></tr></tbody></table> |
 
 ## Customer Base
 | Attributes |  Description |
@@ -763,13 +763,19 @@ One of:
 ## Redemption Reward Result
 | Attributes |  Description |
 |:-----|:--------|
-| reward | [Reward](#reward) |
 | customer | [Simple Customer](#simple-customer) |
 | assignment_id</br>`string`, `null` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
 | voucher | <p>Defines of the voucher.</p> [Voucher](#voucher) |
 | product | <p>Defines of the product.</p> [Product](#product) |
 | sku | <p>Defines of the sku.</p> [SKU Object](#sku-object) |
 | loyalty_tier_id</br>`string`, `null` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
+| id</br>`string` | <p>Unique reward ID.</p> **Example:** <p>rew_0bc92f81a6801f9bca</p> |
+| name</br>`string` | <p>Name of the reward.</p> **Example:** <p>Reward Name</p> |
+| object</br>`string` | <p>The type of object represented by the JSON</p> Available values: `reward` |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the redemption was created in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
+| updated_at</br>`string` | <p>Timestamp in ISO 8601 format indicating when the reward was updated.</p> **Example:** <p>2022-10-03T12:24:58.008Z</p> |
+| parameters</br>`object` | <p>These are parameters representing a material reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">campaign</br><code>object</code></td><td style="text-align:left"><p>Defines the product redeemed as a reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Campaign unique ID.</p> <strong>Example:</strong> <p>camp_13BbZ0kQsNinhqsX3wUts2UP</p></td></tr><tr><td style="text-align:left">balance</br><code>integer</code></td><td style="text-align:left"><p>Points available for reward redemption.</p></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Defines the type of the campaign.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">product</br><code>object</code></td><td style="text-align:left"><p>Defines the product redeemed as a reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique product ID, assigned by Voucherify.</p> <strong>Example:</strong> <p>prod_0b7d7dfb05cbe5c616</p></td></tr><tr><td style="text-align:left">sku_id</br><code>string</code></td><td style="text-align:left"><p>A unique SKU ID assigned by Voucherify.</p> <strong>Example:</strong> <p>sku_0a41e31c7b41c28358</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">coin</br><code>object</code></td><td style="text-align:left"><p>Defines the ratio by mapping the number of loyalty points in <code>points_ratio</code> to a predefined cash amount in <code>exchange_ratio</code>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">exchange_ratio</br><code>integer</code></td><td style="text-align:left"><p>The cash equivalent of the points defined in the <code>points_ratio</code> property.</p></td></tr><tr><td style="text-align:left">points_ratio</br><code>integer</code></td><td style="text-align:left"><p>The number of loyalty points that will map to the predefined cash amount defined by the <code>exchange_ratio</code> property.</p></td></tr></tbody></table></td></tr></tbody></table> |
+| type</br>`string` | <p>Reward type.</p> Available values: `CAMPAIGN`, `COIN`, `MATERIAL` |
 
 ## Voucher
 | Attributes |  Description |
@@ -793,7 +799,7 @@ One of:
 | additional_info</br>`string` | <p>An optional field to keep any extra textual information about the code such as a code description and details.</p> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format.</p> |
 | assets | See: [Voucher Assets](#voucher-assets) |
-| is_referral_code</br>`boolean`, `null` | <p>Flag indicating whether this voucher is a referral code.</p> |
+| is_referral_code</br>`boolean`, `null` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the voucher was created in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was last updated in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:14:45.316Z</p> |
 | holder_id</br>`string` | <p>Unique customer ID of voucher owner.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
@@ -801,6 +807,7 @@ One of:
 | object</br>`string` | <p>The type of object represented by JSON. Default is <code>voucher</code>.</p> |
 | distributions</br>`array` | Array of:  |
 | deleted</br>`boolean` | <p>Flag indicating whether this voucher is deleted.</p> |
+| validation_rules_assignments | See: [Validation Rules Assignments List](#validation-rules-assignments-list) |
 | publish</br>`object` | <p>This object stores a summary of publish events: an events counter and an endpoint which can be called to return details of each event.  A publication is required for loyalty cards and referral codes. This object gets updated whenever a voucher has been published. Publication means assigning a code to a particular customer. Typically, a publication is made by distributing your codes to your customers, e.g. through Export to MailChimp or <!-- [publish voucher](OpenAPI.json/paths/~1publications/post) --><a href="ref:create-publication">publish voucher</a> API method.</p><!-- title: My Table Title --><table><thead><tr><th>Required</th><th style="text-align:center">Optional</th></tr></thead><tbody><tr><td><code>type</code>:<code>LOYALTY_CARD</code></td><td style="text-align:center"><code>type</code>:<code>DISCOUNT_VOUCHER</code></td></tr><tr><td><code>is_referral_code</code>:<code>true</code></td><td style="text-align:center"><code>type</code>:<code>GIFT_VOUCHER</code></td></tr></tbody></table> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of object represented is by default <code>list</code>. To get this list, you need to make a call to the endpoint returned in the <code>url</code> attribute.</p></td></tr><tr><td style="text-align:left">count</br><code>integer</code></td><td style="text-align:left"><p>Publication events counter.</p> <strong>Example:</strong> <p>0</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>The endpoint where this list of publications can be accessed using a GET method. <code>/v1/vouchers/{voucher_code}/publications</code></p> <strong>Example:</strong> <p>/v1/vouchers/WVPblOYX/publications?page=1&amp;limit=10</p></td></tr></tbody></table> |
 | redemption</br>`object` | <p>Stores a summary of redemptions that have been applied to the voucher.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr><tr><td style="text-align:left">redeemed_quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher has already been redeemed.</p> <strong>Example:</strong> <p>1</p></td></tr><tr><td style="text-align:left">redeemed_amount</br><code>integer</code></td><td style="text-align:left"><p>Total amount redeemed. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 balance is written as 10000.</p> <strong>Example:</strong> <p>100000</p></td></tr><tr><td style="text-align:left">redeemed_points</br><code>integer</code></td><td style="text-align:left"><p>Total loyalty points redeemed.</p> <strong>Example:</strong> <p>100000</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of object represented is by default <code>list</code>. To get this list, you need to make a call to the endpoint returned in the url attribute.</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>The endpoint where this list of redemptions can be accessed using a GET method. <code>/v1/vouchers/{voucher_code}/redemptions</code></p> <strong>Example:</strong> <p>/v1/vouchers/WVPblOYX/redemptions?page=1&amp;limit=10</p></td></tr></tbody></table> |
 
@@ -926,8 +933,8 @@ Available values: `POINTS_ACCRUAL`, `POINTS_CANCELLATION`, `POINTS_REDEMPTION`, 
 | id</br>`string` | <p>Redeemable ID, i.e. the voucher code.</p> |
 | object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
 | order | See: [Order Calculated](#order-calculated) |
-| applicable_to | See: [Applicable To](#applicable-to) |
-| inapplicable_to | See: [Inapplicable To](#inapplicable-to) |
+| applicable_to | See: [Applicable To Result List](#applicable-to-result-list) |
+| inapplicable_to | See: [Inapplicable To Result List](#inapplicable-to-result-list) |
 | result | <p>Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.</p> One of: [Coupon Code](#coupon-code), [Gift Card](#gift-card), [Loyalty Card](#loyalty-card), [Redeemable Result Promotion Tier](#redeemable-result-promotion-tier), [Promotion Stack](#promotion-stack) |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
 | categories</br>`array` | Array of [Category](#category) |
@@ -1059,21 +1066,6 @@ All of:
 | effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
-## Reward
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique reward ID, assigned by Voucherify.</p> **Example:** <p>rew_nIy4gHpQHle2c3pNMwuj7G6j</p> |
-| name</br>`string` | <p>Reward name.</p> |
-| stock</br>`integer`, `null` | <p>Configurable for <strong>material rewards</strong>. The number of units of the product that you want to share as reward.</p> |
-| redeemed</br>`integer`, `null` | <p>Defines the number of already invoked (successful) reward redemptions.</p> |
-| attributes</br>`object` | <p>These properties are configurable for <strong>material rewards</strong>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">image_url</br><code>string</code></td><td style="text-align:left"><p>The HTTPS URL pointing to the .png or .jpg file.</p></td></tr><tr><td style="text-align:left">description</br><code>string</code></td><td style="text-align:left"><p>An arbitrary string that you can attach to a material reward.</p></td></tr></tbody></table> |
-| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format.</p> |
-| type</br>`string` | <p>Reward type.</p> Available values: `CAMPAIGN`, `COIN`, `MATERIAL` |
-| parameters | <p>Defines how the reward is generated.</p> [Reward type](#reward-type) |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the reward was created in ISO 8601 format.</p> **Example:** <p>2022-08-11T14:49:22.586Z</p> |
-| updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the reward was updated in ISO 8601 format.</p> **Example:** <p>2022-08-11T16:01:34.885Z</p> |
-| object | <p>The type of object represented by the JSON. This object stores information about the reward.</p> Available values: `reward` |
-
 ## Product
 <p>This is an object representing a product.</p><p>This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.</p>
 
@@ -1089,7 +1081,7 @@ All of:
 | source_id</br>`string`, `null` | <p>A unique SKU identifier from your inventory system.</p> **Example:** <p>sku_source_id_4</p> |
 | product_id</br>`string` | <p>The parent product's unique ID.</p> **Example:** <p>prod_0b15f6b9f650c16990</p> |
 | sku</br>`string`, `null` | <p>Unique user-defined SKU name.</p> **Example:** <p>Large Pink Shirt</p> |
-| price</br>`integer`, `null` | <p>SKU unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 is written as 10000.</p> |
+| price</br>`integer`, `null` | <p>Unit price. It is represented by a value multiplied by 100 to accurately reflect 2 decimal places, such as <code>$100.00</code> being expressed as <code>10000</code>.</p> |
 | currency</br>`string`, `null` | <p>SKU price currency.</p> **Example:** <p>USD</p> |
 | attributes</br>`object` | <p>The attributes object stores values for all custom attributes inherited by the SKU from the parent product. A set of key/value pairs that are attached to a SKU object and are unique to each SKU within a product family.</p> |
 | image_url</br>`string`, `null` | <p>The HTTPS URL pointing to the .png or .jpg file that will be used to render the SKU image.</p> |
@@ -1114,6 +1106,14 @@ All of:
 |:-----|:--------|
 | qr</br>`object` | <p>Stores Quick Response (QR) representation of encrypted code.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Encrypted voucher code ID.</p> <strong>Example:</strong> <p>U2FsdGVkX19ucFhvVmBVpVYG5KoswTsjSIaqoKg5L9ie4BK+t4pp7U7oFzjGJzj9q/bmuMOj9mEFiVKDMIkSaruKedMvHbKoPX5Sg+BaZk5QwXMf8k/OzSlOEVybpwSq+AiqPoNtjeuqtIgkDyvT6Q==</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>URL to QR code</p><p><em>Optional:</em> Attach query parameters to base URL to customize the image of the encrypted voucher code.</p><ul><li><code>size</code>: integer value from <code>1</code> to <code>100</code></li><li><code>format</code>: string, either <code>png</code> (default) or <code>svg</code></li></ul> <strong>Example:</strong> <p>https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX19ucFhvVmBVpVYG5KoswTsjSIaqoKg5L9ie4BK%2Bt4pp7U7oFzjGJzj9q%2FbmuMOj9mEFiVKDMIkSaruKedMvHbKoPX5Sg%2BBaZk5QwXMf8k%2FOzSlOEVybpwSq%2BAiqPoNtjeuqtIgkDyvT6Q%3D%3D</p></td></tr></tbody></table> |
 | barcode</br>`object` | <p>Stores barcode representation of encrypted code.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Encrypted voucher code ID.</p> <strong>Example:</strong> <p>U2FsdGVkX19eJhGfWwUrH9+tulBkON+AnMktic+N6CVWzZ9+fHVxuVx22WakrzxiWXy0skuvvEHSeZIw9HlgyIJ+kJ1iPdUKpyENuNYJKzoZlO0mmTf6WQM6/pFs61apEn9SJx32ttCF6d3oxKISQQ==</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>URL to barcode</p><p><em>Optional:</em> Attach query parameters to base URL to customize the image of the encrypted voucher code.</p><ul><li><code>size</code>: integer value from <code>1</code> to <code>100</code></li><li><code>format</code>: string, either <code>png</code> (default) or <code>svg</code></li></ul> <strong>Example:</strong> <p>https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX19eJhGfWwUrH9%2BtulBkON%2BAnMktic%2BN6CVWzZ9%2BfHVxuVx22WakrzxiWXy0skuvvEHSeZIw9HlgyIJ%2BkJ1iPdUKpyENuNYJKzoZlO0mmTf6WQM6%2FpFs61apEn9SJx32ttCF6d3oxKISQQ%3D%3D</p></td></tr></tbody></table> |
+
+## Validation Rules Assignments List
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rules assignments.</p> Available values: `list` |
+| data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of validation rules assignments.</p> Available values: `data` |
+| data</br>`array` | <p>Contains array of validation rules assignments.</p> Array of [Business Validation Rule Assignment](#business-validation-rule-assignment) |
+| total</br>`integer` | <p>Total number of validation rules assignments.</p> |
 
 ## Validation Rule Assignments List
 | Attributes |  Description |
@@ -1154,6 +1154,7 @@ Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `cus
 | initial_quantity</br>`integer` | <p>A positive integer in the smallest unit quantity representing the total amount of the order; this is the sum of the order items' quantity.</p> |
 | amount</br>`integer` | <p>The total amount of the order item (price * quantity).</p> |
 | discount_amount</br>`integer` | <p>Sum of all order-item-level discounts applied to the order.</p> |
+| applied_discount_amount</br>`integer` | <p>This field shows the order-level discount applied.</p> |
 | initial_amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.</p> |
 | total_applied_discount_amount</br>`integer` | <p>Sum of all order-level AND all product-specific discounts applied in a particular request.<br><code>total_applied_discount_amount</code> = <code>applied_discount_amount</code> + <code>items_applied_discount_amount</code></p> |
 | price</br>`integer` | <p>Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
@@ -1175,26 +1176,21 @@ Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `cus
 | stacked</br>`array` | <p>Contains a list of unique IDs of child redemptions, which belong to the stacked incentives.</p> |
 | rollback_stacked</br>`array` | <p>Lists the rollback redemption IDs of the particular child redemptions.</p> |
 
-## Applicable To
+## Applicable To Result List
 | Attributes |  Description |
 |:-----|:--------|
-| object</br>`string` | <p>This object stores information about the product collection.</p> Available values: `product`, `sku`, `products_collection` |
-| id</br>`string` | <p>Unique product collection ID assigned by Voucherify.</p> |
-| source_id</br>`string` | <p>The source ID from your inventory system.</p> |
-| product_id</br>`string` | <p>Parent product's unique ID assigned by Voucherify.</p> |
-| product_source_id</br>`string` | <p>Parent product's source ID from your inventory system.</p> |
-| strict</br>`boolean` |  |
-| price</br>`number` | <p>New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the price_formula parameter is present in the fixed price definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price.</p> |
-| price_formula</br>`number` | <p>Formula used to calculate the discounted price of an item.</p> |
-| effect | <p>Defines how the discount is applied to the customer's order.</p> [Applicable To Effect](#applicable-to-effect) |
-| quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted per order line item.</p> |
-| aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
-| amount_limit</br>`integer` | <p>Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
-| aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:</p><ul><li><code>APPLY_TO_ITEMS</code> (each item subtotal is discounted equally)</li><li><code>APPLY_TO_ITEMS_BY_QUANTITY</code> (each unit of matched products has the same discount value)</li></ul> |
-| order_item_indices</br>`array` |  |
+| data</br>`array` | <p>Contains array of items to which the discount can apply.</p> Array of [Applicable To](#applicable-to) |
+| total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
+| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
+| data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
 
-## Inapplicable To
-[Applicable To](#applicable-to)
+## Inapplicable To Result List
+| Attributes |  Description |
+|:-----|:--------|
+| data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> Array of [Inapplicable To](#inapplicable-to) |
+| total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
+| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
+| data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
 
 ## Coupon Code
 | Attributes |  Description |
@@ -1299,18 +1295,13 @@ Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
 ## Discount Fixed Vouchers Effect Types
 Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
 
-## Reward type
-One of:
-
-[Digital](#digital), [Pay with Points](#pay-with-points), [Material](#material)
-
 ## Product without Skus Object
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique product ID assigned by Voucherify.</p> **Example:** <p>prod_0b1da8105693710357</p> |
 | source_id</br>`string`, `null` | <p>Unique product source ID.</p> **Example:** <p>productSourceID16</p> |
 | name</br>`string`, `null` | <p>Unique user-defined product name.</p> **Example:** <p>T-shirt</p> |
-| price</br>`integer`, `null` | <p>Product unit price. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
+| price</br>`integer`, `null` | <p>Unit price. It is represented by a value multiplied by 100 to accurately reflect 2 decimal places, such as <code>$100.00</code> being expressed as <code>10000</code>.</p> |
 | attributes</br>`array` | <p>A list of product attributes whose values you can customize for given SKUs: <code>[&quot;color&quot;,&quot;size&quot;,&quot;ranking&quot;]</code>. Each child SKU can have a unique value for a given attribute.</p> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format.</p> |
 | image_url</br>`string`, `null` | <p>The HTTPS URL pointing to the .png or .jpg file that will be used to render the product image.</p> **Example:** <p>https://images.com/original.jpg</p> |
@@ -1325,6 +1316,19 @@ One of:
 | data_ref</br>`string` | <p>Identifies the name of the JSON property that contains the array of SKUs.</p> |
 | data</br>`array` | <p>A dictionary that contains an array of SKUs.</p> Array of [SKU Object](#sku-object) |
 | total</br>`integer` | <p>Total number of SKUs in the product.</p> |
+
+## Business Validation Rule Assignment
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>The unique identifier for a assignment</p> |
+| rule_id</br>`string` | <p>The unique identifier for a rule</p> |
+| related_object_id</br>`string` | <p>The unique identifier for a related object</p> |
+| related_object_type</br>`string` | <p>The type of related object</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the object was created in ISO 8601 format.</p> **Example:** <p>2022-03-09T11:19:04.819Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the object was last updated in ISO 8601 format.</p> **Example:** <p>2022-03-09T11:19:04.819Z</p> |
+| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `validation_rules_assignment` |
+| validation_status</br>`string` | <p>The validation status of the assignment</p> Available values: `VALID`, `PARTIALLY_VALID`, `INVALID` |
+| validation_omitted_rules</br>`array` | <p>The list of omitted rules</p> |
 
 ## Validation Rule Assignment
 | Attributes |  Description |
@@ -1372,23 +1376,26 @@ One of:
 | calculation_type</br>`string` | <p>CUSTOM_EVENT_METADATA: Custom event metadata (X points for every Y in metadata attribute).</p> Available values: `CUSTOM_EVENT_METADATA` |
 | custom_event</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">metadata</br><code>object</code></td><td style="text-align:left"><p>Defines the ratio based on the property defined in the calculation_type parameter. For every given increment of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every order metadata property value, give points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">every</br><code>integer</code></td><td style="text-align:left"><p>For how many increments of the customer metadata property to grant points for.</p></td></tr><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points to be awarded, i.e. how many points to be added to the loyalty card.</p></td></tr><tr><td style="text-align:left">property</br><code>string</code></td><td style="text-align:left"><p>Custom event metadata property.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
-## Applicable To Effect
-Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`
-
-## Digital
+## Applicable To
 | Attributes |  Description |
 |:-----|:--------|
-| campaign</br>`object` | <p>Objects stores information about the campaign related to the reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique campaign ID, assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">balance</br><code>integer</code></td><td style="text-align:left"><p>The incremental amout to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Campaign type.</p> Available values: <code>DISCOUNT_COUPONS</code>, <code>PROMOTION</code>, <code>GIFT_VOUCHERS</code>, <code>REFERRAL_PROGRAM</code>, <code>LOYALTY_PROGRAM</code></td></tr></tbody></table> |
+| object</br>`string` | <p>This object stores information about the product collection.</p> Available values: `product`, `sku`, `products_collection` |
+| id</br>`string` | <p>Unique product collection ID assigned by Voucherify.</p> |
+| source_id</br>`string` | <p>The source ID from your inventory system.</p> |
+| product_id</br>`string` | <p>Parent product's unique ID assigned by Voucherify.</p> |
+| product_source_id</br>`string` | <p>Parent product's source ID from your inventory system.</p> |
+| strict</br>`boolean` |  |
+| price</br>`number` | <p>New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the price_formula parameter is present in the fixed price definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price.</p> |
+| price_formula</br>`number` | <p>Formula used to calculate the discounted price of an item.</p> |
+| effect | <p>Defines how the discount is applied to the customer's order.</p> [Applicable To Effect](#applicable-to-effect) |
+| quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted per order line item.</p> |
+| aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
+| amount_limit</br>`integer` | <p>Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
+| aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:</p><ul><li><code>APPLY_TO_ITEMS</code> (each item subtotal is discounted equally)</li><li><code>APPLY_TO_ITEMS_BY_QUANTITY</code> (each unit of matched products has the same discount value)</li></ul> |
+| order_item_indices</br>`array` |  |
 
-## Pay with Points
-| Attributes |  Description |
-|:-----|:--------|
-| coin</br>`object` | <p>Defines the ratio by mapping the number of loyalty points in points_ratio to a predefined cash amount in exchange_ratio.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">exchange_ratio</br><code>number</code></td><td style="text-align:left"><p>The cash equivalent of the points defined in the points_ratio property.</p></td></tr><tr><td style="text-align:left">points_ratio</br><code>integer</code></td><td style="text-align:left"><p>The number of loyalty points that will map to the predefined cash amount defined by the exchange_ratio property.</p></td></tr></tbody></table> |
-
-## Material
-| Attributes |  Description |
-|:-----|:--------|
-| product</br>`object` | <p>Contains information about the product given as a reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique product ID, assigned by Voucherify.</p> <strong>Example:</strong> <p>prod_0b7d7dfb05cbe5c616</p></td></tr><tr><td style="text-align:left">sku_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Unique SKU ID, assigned by Voucherify, of the SKU given as a reward.</p> <strong>Example:</strong> <p>sku_0b7d7dfb090be5c619</p></td></tr></tbody></table> |
+## Inapplicable To
+[Applicable To](#applicable-to)
 
 ## Order Amount
 | Attributes |  Description |
@@ -1431,6 +1438,9 @@ Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIV
 | type</br>`string` | <p>Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio.</p> Available values: `PROPORTIONAL` |
 | calculation_type</br>`string` | <p>ORDER_ITEMS_SUBTOTAL_AMOUNT; Amount spent on items defined in the order_items.subtotal_amount.object &amp; .id (X points for every Y spent on items including discounts)</p> Available values: `ORDER_ITEMS_SUBTOTAL_AMOUNT` |
 | order_items</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">subtotal_amount</br><code>object</code></td><td style="text-align:left"><p>Defines the ratio based on the property defined in the calculation_type parameter. For every set of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every calculation_type, give points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">every</br><code>integer</code></td><td style="text-align:left"><p>Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 order amount is written as 1000.</p></td></tr><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points to be awarded, i.e. how many points to be added to the loyalty card.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Type of object taken under consideration.</p> Available values: <code>products_collection</code>, <code>product</code>, <code>sku</code></td></tr><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619.</p></td></tr></tbody></table></td></tr></tbody></table> |
+
+## Applicable To Effect
+Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`
 
 [block:html]
 {

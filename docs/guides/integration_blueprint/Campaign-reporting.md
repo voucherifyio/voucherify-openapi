@@ -14,7 +14,7 @@ order: 12
 > * Learn Voucherify API and Dashboard reporting capabilities. 
 
 
-> 👍 **Outcome**:
+> 👍 **Outcome**
 > 
 > Connect Voucherify to external BI tools or prepare reports using built-in campaign analytics.
 

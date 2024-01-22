@@ -8,13 +8,13 @@ hidden: false
 order: 10
 ---
 
-> 📘 **Goals**:
+> 📘 **Goals**
 >
 > - Identify how the lack of limits impacted the ROI of previous campaigns.
 > - Learn the built-in validation rules of Voucherify.
 > - Discover how to extend your campaigns with custom limits built on top of business-specific restrictions. 
 
-> 👍 **Outcome**:
+> 👍 **Outcome**
 > 
 > Ability to build advanced promotion limits to personalize your campaigns and prevent fraud.
 
