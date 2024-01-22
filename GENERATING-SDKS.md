@@ -2,61 +2,77 @@
 
 ## Introduction
 
-Voucherify is using openAPI definition to generate sdks.
+We use [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) with version 7.0.1
+to generate SDKs for different languages.
+Our template aka mustache files are located in `./mustache-templates` directory. 
+Are slightly modified from the original ones for our needs.
 
 ## Requirements
 
-- Node.js v16+
+- Node.js v16+ and npm
 - installed `@openapitools/openapi-generator-cli` globally
+- docker (optional)
 
 ## How to generate sdk
 
-- `npm i` (if you have not already installed)
+- `npm install` (if you have not already installed)
 - `npm install @openapitools/openapi-generator-cli -g` (if you have not already installed)
 - `npm run generate-sdk-ruby`/`generate-sdk-python`/`generate-sdk-java`/`generate-sdk-php`
 
-## Tests
+SDK will be generated in `./sdks` directory in associated language folder.
 
-### Before start
 
-- Add `.env` file inside `sdk-tests` folder with following content:
+## Commands explanation
 
-```dotenv
-X_APP_ID=4xxx17d6-xxxx-xxxx-xxxx-ce24381228ab
-X_APP_TOKEN=3xxx165i-xxxx-xxxx-xxxx-cb5327024ce4
-#optional:
-VOUCHERIFY_HOST=https://api.voucherify.io
-```
+- **build-update-md-tables-from-openapi** - creating and updates docs in `./docs/reference-docs` directory
+- **remove-stoplight-tags-from-openapi** - spotlight is gui software for editing openapi files. Each usage added some tags to openapi file. This command removes them.  
+- **prepare-open-api-for-sdk** - scripts in the basic form are not ready for generating sdks without errors or bugs. This command make bunch of actions which mostly language specific.
+  - (all) removing not supported endpoints (deprecated or those wasn't refactored to the newest versions of the API)
+  - (all) removing not used schemas and parameters 
+  - (all) removing `additional properties` from schemas
+  - (java / python) removing `required` property from schema's parameters that is assigned as `nullable`
+  - (java) merging multiple response schemas with 2xx status code into one schema
+  - (php) merging oneOf schemas into one schema
+  - (php) associating each element into object
+- **manage-project** - running `build-update-md-tables-from-openapi` command and uploading openapi file to the server
+- **fix-schemas-with-refs** - script for fixing `oneOf` schemas with `$ref`
+- **fix-schemas-properties-with-single-enum** - script for adding default value to schemas with single enum
+- **readme-upload-missing-images** - script for uploading images to the server
+- **count-important-statistics-about-openapi** - script for counting occurrences and counting statistics which are important for openapi correctness
+- **build-production-openapi** - creating openapi snapshot file which was uploaded to openapi server 
+- **fix-zero-level-schemas** - script generating openapi with correct zero level schemas for requests and responses consistent with the arrangements from [CONTRIBUTING.md](CONTRIBUTING.md#naming-convention)
+- **generate-endpoints-coverage-docs** - script for generating readme file with endpoints coverage
+- **generate-sdk-xxx** - script for generating sdk in associated language 
+- **generate-sdks** - script for concurrently generating all sdks
+- **test** - tests are used to check openapi schema didn't change after scripts refactoring
 
-- Python
-  - install `python3` and pip (if you have not already installed)
-  - install requirement python packages using pip -> **tmp/python/requirements.txt**
-  - install using pip `responses 0.24.0` and `Urllib3 2.0.5`
-  - run in terminal `/Applications/Python\ 3.XXXXXX/Install\ Certificates.command`, where `XXXXXX` is the version of your Python3. For example `3.12` for `3.12.0`.
-- Ruby
-  - install `ruby >= 2.7` and `gem` (if you have not already installed)
-  - run `npm run generate-sdk-ruby-for-tests`
-- Php
-  - install `php >= 8.1` and `composer` (if you have not already installed)
-  - run `npm run generate-php-sdk-for-tests`
-- Java
-  - install `java` and `maven` e.g. `Java 18.0.2` and `Mvn 14.1.2` (if you have not already installed)
-  - go to `./tmp/java`
-  - run `mvn clean install`
+## Uploading new versions
 
-### Run tests
+Creating new version of the SDKs required a few manual steps:
+1. Ensure that all SDKs generation without errors.
+2. Ensure that all SDKs tests are passing.
+3. Add/change tests for all SDKs containing all changes.
+4. Decide whether the changes concern the minor, major or patch version.
+5. Commit all generated changes to submodules. 
+6. Publish new version of the SDKs to repositories manager
 
-- Python
-  - run `pip3 install python-dotenv` (if you have never)
-  - run `python3 ./sdk-tests/python.py` for tests
-- Ruby
-  - run `gem install dotenv` (if you have never)
-  - run `cd ./sdk-tests && ruby ./ruby/ruby.rb` for tests
-- Php
-  - go to `./sdk-tests` (`cd ./sdk-tests`)
-  - run `php -S localhost:8000 php/index.php`
-  - visit `http://localhost:8000/`
-- Java
-  - in main catalog run `mvn install:install-file -Dfile=./tmp/java/target/openapi-java-client-v2018-08-01.jar -DgroupId=voucherify -DartifactId=java-sdk-test -Dversion=0.0.1 -Dpackaging=jar` to add jar to local maven repository
-  - use `mvn -f ./sdk-tests/java clean install && mvn -f ./sdk-tests/java exec:java` for build and run tests
+### Running tests
 
+Easiest way for running tests is to use `docker-compose` file.
+1. Ensure that you have installed `docker`.
+2. Ensure that You have init submodules `git submodule update --init --recursive`
+3. `docker-compose build` - build docker images for containers
+4. `docker-compose up` - run containers (running commands separately for better readability of logs)
+
+For running SDK separately or on Your local machine without docker go in to the directory of the SDK and read `README.md` file.
+
+### Versioning 
+
+- **patch** - backward compatible changes - bug fixes, small changes, refactoring
+- **minor** - backward compatible changes - new endpoints or properties
+- **major** - breaking changes - new schemas, naming changes, removing endpoints or properties, changes in the mustache logic
+
+
+### Publishing for remote repositories 
+
+TODO

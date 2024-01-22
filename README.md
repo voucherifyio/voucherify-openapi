@@ -1,5 +1,10 @@
-# Voucherify's OpenAPI Specification
----
+# Voucherify's OpenAPI Specification and SDK
+
+[![JAVA SDK](https://img.shields.io/badge/JAVA-SDK-FF0000?logo=openjdk&logoColor=red)](https://github.com/voucherifyio/sdk-java-openapi-based)
+[![PHP SDK](https://img.shields.io/badge/PHP-SDK-777BB4?logo=php&logoColor=white)](https://github.com/voucherifyio/sdk-php-openapi-based)
+[![PYTHON SDK](https://img.shields.io/badge/PYTHON-SDK-58ad09?logo=python&logoColor=green)](https://github.com/voucherifyio/sdk-python-openapi-based)
+[![PYTHON SDK](https://img.shields.io/badge/PYTHON-SDK-c71628?logo=ruby&logoColor=c71628)](https://github.com/voucherifyio/sdk-ruby-openapi-based)
+
 This repository contains OpenAPI specification for Voucherify's API.
 
  - **Version supported**: `3.0.1`
@@ -7,15 +12,10 @@ This repository contains OpenAPI specification for Voucherify's API.
  - **Changelog**: `Changelog.md`
  - **Status**: _Released_
 
-This OpenAPI specfication is live. 
+This OpenAPI specification is live. 
 
 Please refer to the following guides:
 - [Guides](https://docs.voucherify.io/docs)
 - [Recipes](https://docs.voucherify.io/recipes)
 - [API Reference](https://docs.voucherify.io/reference/)
 - [Support Documentation](https://support.voucherify.io/)
-
-### Sdk generation
-
-We use [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) with version 7.0.1 
-to generate SDKs for different languages with our custom changes.

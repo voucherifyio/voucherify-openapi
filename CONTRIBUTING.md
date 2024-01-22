@@ -83,7 +83,9 @@ How to edit OpenAPI file:
 
 > [!WARNING] Each OpenAPI change should be tested by reviewing documentation on readme.io after the full documentation update process.
 
- Building new models, we should follow the following name convention: 
+### Naming convention
+
+Building new models, we should follow the following name convention: 
 - Use pascal case casing.
 - If a model is used as a specific API endpoint description (0-level model), then we follow the pattern: `{Client?}{PathNameResult}{Action}{Differentiator?}{Request|Response}{Body|Query}`, where:
   - (optional) `Client`: Use for all client schemas.
@@ -237,4 +239,4 @@ const listOfReferenceCategories = ["Introduction"];
 - In readme.io, change the current documentation version from `v2018-08-01` to `v2018-08-01-deprecated-mm-dd-yyyy`
 - Change the name of your new release version from `2018-08-01-{your name}-{pull request number}` to `v2018-08-01`
 
-> [!NOTE] Readme.io cache pages for 15 minutes, for only logged out users. If you are logged in, then you will always receive the most recent content.
+> [!NOTE] Readme.io cache pages for 15 minutes, for only logged-out users. If you are logged in, then you will always receive the most recent content.
