@@ -12,6 +12,7 @@ const help = options.help || options.h;
 const mainVersion = "v2018-08-01";
 const version =
   versionOption || versionTag ? `${mainVersion}-${versionTag}` : undefined;
+import "./remove-additional-properties-for-some-schemas-in-readmeio-file";
 
 const listOfGuideCategories = [
   "Getting started",
@@ -95,7 +96,7 @@ const uploadOpenApiFileWithMaxNumberOfAttempts = async (
   );
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
     const { success, error } = await runCliProcess({
-      command: `rdme openapi ./reference/OpenAPI.json --version=${version} --create`,
+      command: `rdme openapi ./tmp/referenceToUpload/OpenAPI.json --version=${version} --create`,
       stderrIncludes: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`,
       stdoutIncludes: `You've successfully uploaded a new OpenAPI file to your ReadMe project!`,
       resolveErrorAsFalse: true,

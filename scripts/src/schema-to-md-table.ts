@@ -19,8 +19,12 @@ const nodeWithTitleAndPropertiesSchema = yup.object({
   title: yup.string().optional(),
   type: yup.string().oneOf(["object", "string", "array", "number"]),
   properties: yup.object({}).optional(),
-  additionalProperties: yup.mixed().oneOfSchemas([yup.boolean(), yup.object({})]).optional(),
+  additionalProperties: yup
+    .mixed()
+    .oneOfSchemas([yup.boolean(), yup.object({})])
+    .optional(),
   anyOf: yup.array().optional(),
+  description: yup.string().optional(),
 });
 
 const oneOfSchema = yup
@@ -57,7 +61,10 @@ const allOfSchema = anyOfSchema;
 const propertySchema = yup.object({
   type: yup.mixed().oneOfSchemas([yup.string(), yup.array().of(yup.string())]),
   properties: yup.object({}).optional(),
-  additionalProperties: yup.mixed().oneOfSchemas([yup.boolean(), yup.object({})]).optional(),
+  additionalProperties: yup
+    .mixed()
+    .oneOfSchemas([yup.boolean(), yup.object({})])
+    .optional(),
   description: yup.string().optional(),
   enum: yup
     .array()
@@ -367,7 +374,9 @@ export default class SchemaToMarkdownTable {
       const nestedObjectName = ref.replace("#/components/schemas/", "");
       relatedObjectsNames.push(nestedObjectName);
       const title = (this.schemas[nestedObjectName].title ||
-        nestedObjectName.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z])([A-Z])/g, '$1 $2')) as string;
+        nestedObjectName
+          .replace(/([a-z])([A-Z])/g, "$1 $2")
+          .replace(/([A-Z])([A-Z])/g, "$1 $2")) as string;
       if (this.redenderMode === RenderMode.List) {
         descriptionArr.push(`See: ${this.getMarkdownLinkToHeader(title)}`);
       } else {
@@ -394,7 +403,7 @@ export default class SchemaToMarkdownTable {
       type,
       $ref,
       properties,
-        additionalProperties,
+      additionalProperties,
     } = propertySchema.validateSync(property);
 
     if (description) {
@@ -453,7 +462,10 @@ export default class SchemaToMarkdownTable {
       relatedObjectsNames.push(...relatedObjectsNamesItems);
     }
 
-    if (type === "object" && (properties instanceof Object || additionalProperties instanceof Object)) {
+    if (
+      type === "object" &&
+      (properties instanceof Object || additionalProperties instanceof Object)
+    ) {
       const { html, relatedObjects } = this.renderSchema(property, level + 1);
       relatedObjectsNames.push(...relatedObjects);
       descriptionArr.push(renderMarkdown(html));
@@ -523,16 +535,24 @@ export default class SchemaToMarkdownTable {
       throw new Error(`Schema "${schema}" not found`);
     }
 
-    const schemaResult = nodeWithTitleAndPropertiesSchema.validateSync(schema)
-    const {  title, additionalProperties } = schemaResult
-    const properties = schemaResult.properties instanceof Object ? schemaResult.properties : additionalProperties instanceof Object ? {} : undefined
-    if(additionalProperties instanceof Object){
-      properties['[propertyName]'] = additionalProperties
+    const schemaResult = nodeWithTitleAndPropertiesSchema.validateSync(schema);
+    const { title, additionalProperties, description } = schemaResult;
+    const properties =
+      schemaResult.properties instanceof Object
+        ? schemaResult.properties
+        : additionalProperties instanceof Object
+        ? {}
+        : undefined;
+    if (additionalProperties instanceof Object) {
+      properties["[propertyName]"] = additionalProperties;
     }
     const respopnseStrArr = [];
 
     if (!skipTitle && title) {
       respopnseStrArr.push(`${"#".repeat(level + 2)} ${title}`);
+      if (description) {
+        respopnseStrArr.push(`${"#".repeat(level + 4)} ${description}`);
+      }
     } else if (!skipTitle) {
       if (typeof schemaNameOrSchemaObject === "string") {
         throw new Error(`Missing title for ${schemaNameOrSchemaObject} object`);
