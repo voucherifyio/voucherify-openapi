@@ -3,7 +3,7 @@ title: List Promotion Tiers (client-side)
 type: endpoint
 categorySlug: voucherify-api
 slug: list-promotion-tiers-client-side
-parentDocSlug: promotions
+parentDocSlug: client-side
 hidden: false
 order: 3
 ---
