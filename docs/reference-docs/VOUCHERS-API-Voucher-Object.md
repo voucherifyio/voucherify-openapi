@@ -9,7 +9,8 @@ order: 1
 ---
 
 ## Voucher
-#### This is an object representing a voucher.
+<p>This is an object representing a voucher.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -44,7 +45,8 @@ order: 1
 | redemption</br>`object` | <p>Stores a summary of redemptions that have been applied to the voucher.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr><tr><td style="text-align:left">redeemed_quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher has already been redeemed.</p> <strong>Example:</strong> <p>1</p></td></tr><tr><td style="text-align:left">redeemed_amount</br><code>integer</code></td><td style="text-align:left"><p>Total amount redeemed. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 balance is written as 10000.</p> <strong>Example:</strong> <p>100000</p></td></tr><tr><td style="text-align:left">redeemed_points</br><code>integer</code></td><td style="text-align:left"><p>Total loyalty points redeemed.</p> <strong>Example:</strong> <p>100000</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of object represented is by default <code>list</code>. To get this list, you need to make a call to the endpoint returned in the url attribute.</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>The endpoint where this list of redemptions can be accessed using a GET method. <code>/v1/vouchers/{voucher_code}/redemptions</code></p> <strong>Example:</strong> <p>/v1/vouchers/WVPblOYX/redemptions?page=1&amp;limit=10</p></td></tr></tbody></table> |
 
 ## Category
-#### This is an object representing a category.
+<p>This is an object representing a category.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -57,8 +59,6 @@ order: 1
 | stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Discount
-#### Contains information about discount.
-
 <p>Contains information about discount.</p>
 
 Any of:
@@ -66,7 +66,8 @@ Any of:
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
 ## Voucher Assets
-#### Stores links to images of QR and barcode that correspond to an encrypted voucher code.
+<p>Stores links to images of QR and barcode that correspond to an encrypted voucher code.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

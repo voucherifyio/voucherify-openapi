@@ -9,7 +9,8 @@ order: 1
 ---
 
 ## Product Collection Base
-#### This is an object representing a product collection base. 
+<p>This is an object representing a product collection base.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

@@ -9,7 +9,8 @@ order: 1
 ---
 
 ## Customer Segment Object
-#### This is an object representing a customer segment.
+<p>This is an object representing a customer segment.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

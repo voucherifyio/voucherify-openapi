@@ -9,8 +9,6 @@ order: 1
 ---
 
 ## Create Publication Response Body
-#### Response schema model for publishing vouchers to a specific customer.
-
 <p>Response schema model for publishing vouchers to a specific customer.</p>
 
 One of:
@@ -18,8 +16,6 @@ One of:
 [Publications Create Response Single Voucher Body](#publications-create-response-single-voucher-body), [Publications Create Response Multiple Vouchers Body](#publications-create-response-multiple-vouchers-body)
 
 ## Publications Create Response Single Voucher Body
-#### Response schema model for publishing a single voucher to a specific customer.
-
 <p>Response schema model for publishing a single voucher to a specific customer.</p>
 
 All of:
@@ -28,8 +24,6 @@ All of:
 2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">voucher</td><td style="text-align:left">See: <a href="#voucher">Voucher</a></td></tr></tbody></table>
 
 ## Publications Create Response Multiple Vouchers Body
-#### Response schema model for publishing a multiple vouchers to a specific customer.
-
 <p>Response schema model for publishing a multiple vouchers to a specific customer.</p>
 
 All of:
@@ -53,7 +47,8 @@ All of:
 | vouchers_id</br>`array` | <p>Contains the unique internal voucher ID that was assigned by Voucherify.</p> |
 
 ## Voucher
-#### This is an object representing a voucher.
+<p>This is an object representing a voucher.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -94,7 +89,8 @@ All of:
 2. [Customer Base](#customer-base)
 
 ## Category
-#### This is an object representing a category.
+<p>This is an object representing a category.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -107,8 +103,6 @@ All of:
 | stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Discount
-#### Contains information about discount.
-
 <p>Contains information about discount.</p>
 
 Any of:
@@ -116,7 +110,8 @@ Any of:
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
 ## Voucher Assets
-#### Stores links to images of QR and barcode that correspond to an encrypted voucher code.
+<p>Stores links to images of QR and barcode that correspond to an encrypted voucher code.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -147,7 +142,8 @@ Any of:
 | campaigns</br>`object` | <p>Contains campaigns with details about point balances and how many customers were referred by the customer.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</br><code>object</code></td><td style="text-align:left"><p>Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Remaining point balance in campaign.</p></td></tr><tr><td style="text-align:left">loyalty_tier</br><code>string</code></td><td style="text-align:left"><p>Customer's loyalty tier within the campaign.</p> <strong>Example:</strong> <p>ltr_UJ5Q54Q0OvEhua87Qfv2Ki5x</p></td></tr><tr><td style="text-align:left">referred_customers</br><code>integer</code></td><td style="text-align:left"><p>Number of customers referred by the customer in campaign.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
 ## Customer Referrals
-#### Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.
+<p>Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

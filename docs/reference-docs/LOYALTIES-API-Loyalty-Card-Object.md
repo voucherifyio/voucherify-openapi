@@ -9,7 +9,8 @@ order: 2
 ---
 
 ## Loyalty Card Object
-#### This is an object representing a loyalty card.
+<p>This is an object representing a loyalty card.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -41,7 +42,8 @@ order: 2
 | object</br>`string` | <p>The type of object represented by JSON. Default is <code>voucher</code>.</p> |
 
 ## Category
-#### This is an object representing a category.
+<p>This is an object representing a category.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

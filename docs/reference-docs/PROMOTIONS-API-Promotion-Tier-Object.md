@@ -9,7 +9,8 @@ order: 1
 ---
 
 ## Promotion Tier
-#### This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.
+<p>This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -36,8 +37,6 @@ order: 1
 | categories</br>`array` | Array of [Category](#category) |
 
 ## Discount
-#### Contains information about discount.
-
 <p>Contains information about discount.</p>
 
 Any of:
@@ -45,7 +44,8 @@ Any of:
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
 ## Validation Rule Assignments
-#### Validation Rule Assignments
+<p>Validation Rule Assignments</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -55,7 +55,8 @@ Any of:
 | total</br>`integer` | <p>Total number of validation rule assignments.</p> |
 
 ## Category
-#### This is an object representing a category.
+<p>This is an object representing a category.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -117,7 +118,8 @@ Any of:
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
 ## Validation Rule Assignment
-#### This is an object representing a validation rule assignment.
+<p>This is an object representing a validation rule assignment.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

@@ -9,9 +9,8 @@ order: 1
 ---
 
 ## Loyalty Campaign Object
-#### This is an object representing a loyalty campaign.  
+<p>This is an object representing a loyalty campaign.</p><p>The loyalty campaign object contains details about the loyalty campaign. You can use dedicated endpoints to list loyalty campaigns, list loyalty card holders, member activities, active rewards, earning rules, loyalty tiers for given loyalty campaign.</p>
 
-The loyalty campaign object contains details about the loyalty campaign. You can use dedicated endpoints to list loyalty campaigns, list loyalty card holders, member activities, active rewards, earning rules, loyalty tiers for given loyalty campaign.
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -43,7 +42,8 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the campaign.</p> |
 
 ## Loyalty Card
-#### Schema model for a loyalty card.
+<p>Schema model for a loyalty card.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -54,7 +54,8 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 | is_referral_code</br>`boolean` | <p>Indicates whether the voucher is a referral code; this is <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 
 ## Category
-#### This is an object representing a category.
+<p>This is an object representing a category.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -67,7 +68,8 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 | stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Balance
-#### Defines the Balance expiration mechanism for loyalty tiers.
+<p>Defines the Balance expiration mechanism for loyalty tiers.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -76,7 +78,8 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 | expiration_date | <p>Defines the conditions for the expiration date of a tier.</p> Any of: [Balance Drop](#balance-drop), [Custom](#custom) |
 
 ## Points in Period
-#### Defines the Points in Period expiration mechanism for loyalty tiers.
+<p>Defines the Points in Period expiration mechanism for loyalty tiers.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -86,14 +89,16 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 | expiration_date</br>`object` | <p>Defines the conditions for the expiration date of a tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to expire for a customer.<br><code>END_OF_PERIOD</code>: Expire tier at the end of the period.<br><code>END_OF_NEXT_PERIOD</code>:  Expire tier at the end of the next period.</p> Available values: <code>END_OF_PERIOD</code>, <code>END_OF_NEXT_PERIOD</code></td></tr><tr><td style="text-align:left">extend</br><code>string</code></td><td style="text-align:left"><p>Extend the expiration by adding extra months or days in ISO 8601 format. The tier will remain active even though it reaches its expiration time period. For example, a tier with a duration of <code>P3M</code> will be valid for an additional duration of 3 months and a tier with a duration of <code>P1D</code> will be valid for an additional duration of 1 day.</p></td></tr></tbody></table> |
 
 ## Balance Drop
-#### Defines the conditions for the expiration date of a tier based on a pure balance drop.
+<p>Defines the conditions for the expiration date of a tier based on a pure balance drop.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>What triggers the tier to expire for a customer.<br><code>BALANCE_DROP</code>: Tier expires when the points balance drops below the required range of the tier.</p> Available values: `BALANCE_DROP` |
 
 ## Custom
-#### Defines the custom conditions for the expiration date of a tier.
+<p>Defines the custom conditions for the expiration date of a tier.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -102,7 +107,8 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 | rounding | <p>Defines the rounding mechanism for tier expiration.</p> Any of: [Calendar Periods](#calendar-periods), [Specific Month](#specific-month) |
 
 ## Calendar Periods
-#### Defines the rounding mechanism for tier expiration based on a list of available time periods.
+<p>Defines the rounding mechanism for tier expiration based on a list of available time periods.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -110,7 +116,8 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 | strategy</br>`string` | <p>Which portion of the given period should the rounding be applied to.</p> Available values: `END` |
 
 ## Specific Month
-#### Defines the custom rounding mechanism for tier expiration.
+<p>Defines the custom rounding mechanism for tier expiration.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

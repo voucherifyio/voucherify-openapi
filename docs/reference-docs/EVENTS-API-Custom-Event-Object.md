@@ -9,7 +9,8 @@ order: 1
 ---
 
 ## Track Custom Event Request Body
-#### Request schema for tracking a custom event.
+<p>Request schema for tracking a custom event.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

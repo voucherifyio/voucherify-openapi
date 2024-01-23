@@ -9,7 +9,8 @@ order: 1
 ---
 
 ## Validation Rule Response
-#### This is an object representing a validation rule.
+<p>This is an object representing a validation rule.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -26,7 +27,8 @@ order: 1
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the validation rule.</p> |
 
 ## Validation Rule Rules
-#### Contains all the rule definitions for the validation rule. It is a set of key value pairs representing the rules and logic between the rules. The keys are numbered consequtively beginning from `1`. The values are objects containing the rule conditions.
+<p>Contains all the rule definitions for the validation rule. It is a set of key value pairs representing the rules and logic between the rules. The keys are numbered consequtively beginning from <code>1</code>. The values are objects containing the rule conditions.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -34,27 +36,7 @@ order: 1
 | [propertyName]</br>`object` | <p>Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Voucherify specific rule name.  The list of available names is provided below.</p><p><strong>Name</strong></td></tr><tr><td style="text-align:left">property</br><code>string,null</code></td><td style="text-align:left"><p>Custom name for a metadata property associated with the condition to be satisfied. <strong>Required</strong> if the property <code>name</code> is any of the following:<br>customer_metadata<br>custom_event_metadata<br>order_items_metadata<br>order_metadata<br>product_metadata<br>redemption_metadata</p></td></tr><tr><td style="text-align:left">conditions</td><td style="text-align:left">See: <a href="#validation-rule-conditions">Validation Rule Conditions</a></td></tr><tr><td style="text-align:left">rules</td><td style="text-align:left">See: <a href="#validation-rule-rules">Validation Rule Rules</a></td></tr><tr><td style="text-align:left">error</br><code>object</code></td><td style="text-align:left"><p>Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>The error message returned from API when validation / redemption fails to meet requirements of defined rule.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
 ## Validation Rule Conditions
-#### A set of key value pairs representing the condition name and value. The list of available conditions is provided below: 
-
-| **Condition (key)** | **Definition**                                                | 
-|---------------------|---------------------------------------------------------------|
-| $is                 | A property is a predefined value.                             |                           
-| $is_not             | A property is not a predefined value.                         |                           
-| $in                 | A property either one value in a predefined list of values.   |                          
-| $less_than          | A property is less than a predefined value.                   |                     
-| $less_than_or_equal | A property is less than or equal to a predefined value.       | 
-| $more_than          | A property is more than a predefined value.                   | 
-| $more_than_or_equal | A property is more than or equal to a predefined value.       | 
-| $starts_with        | A property starts with the predefined sequence of characters. | 
-| $ends_with          | A property ends with the predefined sequence of characters.   | 
-| $contains           | A property contains the predefined sequence of characters.    | 
-| $timeframe          | &nbsp;                                                        | 
-| $timeframe_absolute | &nbsp;                                                        | 
-| $dow                | &nbsp;                                                        | 
-| $count              | &nbsp;                                                        | 
-| $count_more         | &nbsp;                                                        | 
-| $count_less         | &nbsp;                                                        | 
-| $from               | &nbsp;                                                        | 
+<p>A set of key value pairs representing the condition name and value. The list of available conditions is provided below:</p><table><thead><tr><th><strong>Condition (key)</strong></th><th><strong>Definition</strong></th></tr></thead><tbody><tr><td>$is</td><td>A property is a predefined value.</td></tr><tr><td>$is_not</td><td>A property is not a predefined value.</td></tr><tr><td>$in</td><td>A property either one value in a predefined list of values.</td></tr><tr><td>$less_than</td><td>A property is less than a predefined value.</td></tr><tr><td>$less_than_or_equal</td><td>A property is less than or equal to a predefined value.</td></tr><tr><td>$more_than</td><td>A property is more than a predefined value.</td></tr><tr><td>$more_than_or_equal</td><td>A property is more than or equal to a predefined value.</td></tr><tr><td>$starts_with</td><td>A property starts with the predefined sequence of characters.</td></tr><tr><td>$ends_with</td><td>A property ends with the predefined sequence of characters.</td></tr><tr><td>$contains</td><td>A property contains the predefined sequence of characters.</td></tr><tr><td>$timeframe</td><td> </td></tr><tr><td>$timeframe_absolute</td><td> </td></tr><tr><td>$dow</td><td> </td></tr><tr><td>$count</td><td> </td></tr><tr><td>$count_more</td><td> </td></tr><tr><td>$count_less</td><td> </td></tr><tr><td>$from</td><td> </td></tr></tbody></table>
 
 
 | Attributes |  Description |

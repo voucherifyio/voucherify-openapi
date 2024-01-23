@@ -9,7 +9,8 @@ order: 1
 ---
 
 ## Metadata Schema Object
-#### This is an object representing a metadata schema.
+<p>This is an object representing a metadata schema.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

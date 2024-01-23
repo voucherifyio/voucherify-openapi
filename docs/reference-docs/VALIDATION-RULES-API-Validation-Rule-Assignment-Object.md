@@ -9,7 +9,8 @@ order: 2
 ---
 
 ## Validation Rule Assignment
-#### This is an object representing a validation rule assignment.
+<p>This is an object representing a validation rule assignment.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

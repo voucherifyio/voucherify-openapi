@@ -9,7 +9,8 @@ order: 1
 ---
 
 ## Async Action Object
-#### This is an object representing an asynchronous action.
+<p>This is an object representing an asynchronous action.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -25,7 +26,8 @@ order: 1
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>async_action</code>.</p> |
 
 ## CAMPAIGN.VOUCHERS_IMPORT
-#### Result schema for a CAMPAIGN.VOUCHERS_IMPORT async action type.
+<p>Result schema for a CAMPAIGN.VOUCHERS_IMPORT async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -35,7 +37,8 @@ order: 1
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
 
 ## CAMPAIGN.VOUCHERS_IMPORT_CSV
-#### Result schema for a CAMPAIGN.VOUCHERS_IMPORT_CSV async action type.
+<p>Result schema for a CAMPAIGN.VOUCHERS_IMPORT_CSV async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -45,7 +48,8 @@ order: 1
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
 
 ## CAMPAIGN.VOUCHERS_UPDATE
-#### Result schema for a CAMPAIGN.VOUCHERS_UPDATE async action type.
+<p>Result schema for a CAMPAIGN.VOUCHERS_UPDATE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -53,7 +57,8 @@ order: 1
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 
 ## CAMPAIGN.VOUCHERS_DELETE
-#### Result schema for a CAMPAIGN.VOUCHERS_DELETE async action type.
+<p>Result schema for a CAMPAIGN.VOUCHERS_DELETE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -61,7 +66,8 @@ order: 1
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 
 ## CAMPAIGN.VOUCHERS_GENERATE
-#### Result schema for a CAMPAIGN.VOUCHERS_GENERATE async action type.
+<p>Result schema for a CAMPAIGN.VOUCHERS_GENERATE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -69,7 +75,8 @@ order: 1
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 
 ## CAMPAIGNS.METADATA_KEY_PURGE
-#### Result schema for a CAMPAIGNS.METADATA_KEY_PURGE async action type.
+<p>Result schema for a CAMPAIGNS.METADATA_KEY_PURGE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -77,7 +84,8 @@ order: 1
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 
 ## CUSTOMERS.IMPORT_CSV
-#### Result schema for a CUSTOMERS.IMPORT_CSV async action type.
+<p>Result schema for a CUSTOMERS.IMPORT_CSV async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -87,7 +95,8 @@ order: 1
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
 
 ## CUSTOMERS.BULK_UPDATE
-#### Result schema for a CUSTOMERS.BULK_UPDATE async action type.
+<p>Result schema for a CUSTOMERS.BULK_UPDATE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -95,7 +104,8 @@ order: 1
 | done_count</br>`integer` | <p>Number or resources processed successfully.</p> |
 
 ## CUSTOMERS.METADATA_UPDATE
-#### Result schema for a CUSTOMERS.METADATA_UPDATE async action type.
+<p>Result schema for a CUSTOMERS.METADATA_UPDATE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -103,7 +113,8 @@ order: 1
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 
 ## CUSTOMERS.METADATA_KEY_PURGE
-#### Result schema for a CUSTOMERS.METADATA_KEY_PURGE async action type.
+<p>Result schema for a CUSTOMERS.METADATA_KEY_PURGE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -111,7 +122,8 @@ order: 1
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 
 ## PRODUCTS.BULK_UPDATE
-#### Result schema for a PRODUCTS.BULK_UPDATE async action type.
+<p>Result schema for a PRODUCTS.BULK_UPDATE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -119,7 +131,8 @@ order: 1
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 
 ## PRODUCTS.METADATA_UPDATE
-#### Result schema for a PRODUCTS.METADATA_UPDATE async action type.
+<p>Result schema for a PRODUCTS.METADATA_UPDATE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -127,7 +140,8 @@ order: 1
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 
 ## PRODUCTS.IMPORT_CSV
-#### Result schema for a PRODUCTS.IMPORT_CSV async action type.
+<p>Result schema for a PRODUCTS.IMPORT_CSV async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -137,7 +151,8 @@ order: 1
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
 
 ## SKUS.IMPORT_CSV
-#### Result schema for a SKUS.IMPORT_CSV async action type.
+<p>Result schema for a SKUS.IMPORT_CSV async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -147,7 +162,8 @@ order: 1
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
 
 ## PRODUCTS.METADATA_KEY_PURGE
-#### Result schema for a PRODUCTS.METADATA_KEY_PURGE async action type.
+<p>Result schema for a PRODUCTS.METADATA_KEY_PURGE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -155,7 +171,8 @@ order: 1
 | done_count</br>`integer` | <p>Number of resources updated successfully.</p> |
 
 ## VOUCHERS.IMPORT
-#### Result schema for a VOUCHERS.IMPORT async action type.
+<p>Result schema for a VOUCHERS.IMPORT async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -165,7 +182,8 @@ order: 1
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
 
 ## VOUCHERS.IMPORT_CSV
-#### Result schema for a VOUCHERS.IMPORT_CSV async action type.
+<p>Result schema for a VOUCHERS.IMPORT_CSV async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -175,7 +193,8 @@ order: 1
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
 
 ## VOUCHERS.BULK_UPDATE
-#### Result schema for a VOUCHERS.BULK_UPDATE async action type.
+<p>Result schema for a VOUCHERS.BULK_UPDATE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -183,7 +202,8 @@ order: 1
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 
 ## VOUCHERS.METADATA_UPDATE
-#### Result schema for a VOUCHERS.METADATA_UPDATE async action type.
+<p>Result schema for a VOUCHERS.METADATA_UPDATE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -191,7 +211,8 @@ order: 1
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 
 ## VOUCHERS.METADATA_KEY_PURGE
-#### Result schema for a VOUCHERS.METADATA_KEY_PURGE async action type.
+<p>Result schema for a VOUCHERS.METADATA_KEY_PURGE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -199,7 +220,8 @@ order: 1
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 
 ## ORDERS.IMPORT
-#### Result schema for a ORDERS.IMPORT async action type.
+<p>Result schema for a ORDERS.IMPORT async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -209,7 +231,8 @@ order: 1
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
 
 ## ORDERS.METADATA_KEY_PURGE
-#### Result schema for a ORDERS.METADATA_KEY_PURGE async action type.
+<p>Result schema for a ORDERS.METADATA_KEY_PURGE async action type.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

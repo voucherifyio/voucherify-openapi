@@ -9,11 +9,8 @@ order: 2
 ---
 
 ## Customer Activity
-#### This is an object representing customer activity.  
+<p>This is an object representing customer activity.</p><p>This is a general object which presents moments from customers' activity. There are all types of different events that customers perform during their journey once they participate in Promotions. Events describe moments when customers redeem coupons and earn points or rewards. The list of all types of activities is listed below.</p><p>The details describing the activity are collected in a property named <code>data</code>. In this object, software integrators will find all further information explaining the event context.</p>
 
-This is a general object which presents moments from customers' activity. There are all types of different events that customers perform during their journey once they participate in Promotions. Events describe moments when customers redeem coupons and earn points or rewards. The list of all types of activities is listed below.
-
-The details describing the activity are collected in a property named `data`. In this object, software integrators will find all further information explaining the event context.
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -23,8 +20,6 @@ The details describing the activity are collected in a property named `data`. In
 | created_at</br>`string` | <p>Timestamp representing the date and time when the customer activity occurred in ISO 8601 format.</p> **Example:** <p>2022-08-30T09:14:07.660Z</p> |
 
 ## Customer Activity Data
-#### Event data object schema.
-
 <p>Event data object schema.</p>
 
 Any of:
@@ -32,7 +27,8 @@ Any of:
 [Event Customer Confirmed](#event-customer-confirmed), [Event Customer Created](#event-customer-created), [Event Customer Updated](#event-customer-updated), [Event Customer Deleted](#event-customer-deleted), [Event Customer Referred](#event-customer-referred), [Event Customer Custom Event](#event-customer-custom-event), [Event Customer Segment Entered](#event-customer-segment-entered), [Event Customer Segment Left](#event-customer-segment-left), [Event Customer SMS Sent](#event-customer-sms-sent), [Event Customer SMS Recovered](#event-customer-sms-recovered), [Event Customer SMS Failed](#event-customer-sms-failed), [Event Customer Email Sent](#event-customer-email-sent), [Event Customer Email Recovered](#event-customer-email-recovered), [Event Customer Email Failed](#event-customer-email-failed), [Event Customer ActiveCampaign Sent](#event-customer-activecampaign-sent), [Event Customer ActiveCampaign Recovered](#event-customer-activecampaign-recovered), [Event Customer ActiveCampaign Failed](#event-customer-activecampaign-failed), [Event Customer Braze Sent](#event-customer-braze-sent), [Event Customer Braze Recovered](#event-customer-braze-recovered), [Event Customer Braze Failed](#event-customer-braze-failed), [Event Customer Mailchimp Sent](#event-customer-mailchimp-sent), [Event Customer Mailchimp Recovered](#event-customer-mailchimp-recovered), [Event Customer Mailchimp Failed](#event-customer-mailchimp-failed), [Event Customer Intercom Sent](#event-customer-intercom-sent), [Event Customer Intercom Recovered](#event-customer-intercom-recovered), [Event Customer Intercom Failed](#event-customer-intercom-failed), [Event Customer Shopify Sent](#event-customer-shopify-sent), [Event Customer Shopify Recovered](#event-customer-shopify-recovered), [Event Customer Shopify Failed](#event-customer-shopify-failed), [Event Customer Klaviyo Sent](#event-customer-klaviyo-sent), [Event Customer Klaviyo Recovered](#event-customer-klaviyo-recovered), [Event Customer Klaviyo Failed](#event-customer-klaviyo-failed), [Event Customer Batch Sent](#event-customer-batch-sent), [Event Customer Batch Recovered](#event-customer-batch-recovered), [Event Customer Batch Failed](#event-customer-batch-failed), [Event Customer Rewarded](#event-customer-rewarded), [Event Customer Rewarded Loyalty Points](#event-customer-rewarded-loyalty-points), [Event Customer Gift Voucher Balance Added](#event-customer-gift-voucher-balance-added), [Event Customer Loyalty Card Points Added](#event-customer-loyalty-card-points-added), [Event Customer Loyalty Card Points Transferred](#event-customer-loyalty-card-points-transferred), [Event Customer Loyalty Card Points Expired](#event-customer-loyalty-card-points-expired), [Event Customer Voucher Deleted](#event-customer-voucher-deleted), [Event Customer Publication Succeeded](#event-customer-publication-succeeded), [Event Customer Publication Failed](#event-customer-publication-failed), [Event Customer Validation Succeeded](#event-customer-validation-succeeded), [Event Customer Validation Failed](#event-customer-validation-failed), [Event Customer Redemption Succeeded](#event-customer-redemption-succeeded), [Event Customer Redemption Failed](#event-customer-redemption-failed), [Event Customer Redemption Rollback Succeeded](#event-customer-redemption-rollback-succeeded), [Event Customer Redemption Rollback Failed](#event-customer-redemption-rollback-failed), [Event Customer Consents Given](#event-customer-consents-given), [Event Customer Consents Revoked](#event-customer-consents-revoked), [Event Customer Order Canceled](#event-customer-order-canceled), [Event Customer Order Created](#event-customer-order-created), [Event Customer Order Fulfilled](#event-customer-order-fulfilled), [Event Customer Order Paid](#event-customer-order-paid), [Event Customer Order Processing](#event-customer-order-processing), [Event Customer Order Updated](#event-customer-order-updated), [Event Customer Reward Redemptions Created](#event-customer-reward-redemptions-created), [Event Customer Reward Redemptions Pending](#event-customer-reward-redemptions-pending), [Event Customer Reward Redemptions Completed](#event-customer-reward-redemptions-completed), [Event Customer Reward Redemptions Rolled Back](#event-customer-reward-redemptions-rolled-back), [Event Customer Loyalty Updated](#event-customer-loyalty-updated), [Event Customer Loyalty Tier Upgraded](#event-customer-loyalty-tier-upgraded), [Event Customer Loyalty Tier Downgraded](#event-customer-loyalty-tier-downgraded), [Event Customer Loyalty Tier Prolonged](#event-customer-loyalty-tier-prolonged), [Event Customer Loyalty Tier Expiration Changed](#event-customer-loyalty-tier-expiration-changed), [Event Customer Loyalty Tier Joined](#event-customer-loyalty-tier-joined), [Event Customer Loyalty Tier Left](#event-customer-loyalty-tier-left)
 
 ## Event Customer Confirmed
-#### Event data object schema for `customer.confirmed`.
+<p>Event data object schema for <code>customer.confirmed</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -40,28 +36,32 @@ Any of:
 | unconfirmed_customer</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><strong>Example:</strong> <p>ucust_1qa70mVfYkl11Ab0ZxDPdWNa</p></td></tr></tbody></table> |
 
 ## Event Customer Created
-#### Event data object schema for `customer.created`.
+<p>Event data object schema for <code>customer.created</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
 | customer | See: [Customer Response](#customer-response) |
 
 ## Event Customer Updated
-#### Event data object schema for `customer.updated`.
+<p>Event data object schema for <code>customer.updated</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
 | customer | See: [Customer Response](#customer-response) |
 
 ## Event Customer Deleted
-#### Event data object schema for `customer.deleted`.
+<p>Event data object schema for <code>customer.deleted</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
 | customer | See: [Customer Response](#customer-response) |
 
 ## Event Customer Referred
-#### Event data object schema for `customer.referred`.
+<p>Event data object schema for <code>customer.referred</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -73,14 +73,16 @@ Any of:
 | redemption | See: [Redemption Internal](#redemption-internal) |
 
 ## Event Customer Custom Event
-#### Event data object schema for `customer.custom_event`.
+<p>Event data object schema for <code>customer.custom_event</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
 | customer | See: [Customer Response](#customer-response) |
 
 ## Event Customer Segment Entered
-#### Event data object schema for `customer.segment.entered`.
+<p>Event data object schema for <code>customer.segment.entered</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -88,7 +90,8 @@ Any of:
 | segment | See: [Simple Segment](#simple-segment) |
 
 ## Event Customer Segment Left
-#### Event data object schema for `customer.segment.left`.
+<p>Event data object schema for <code>customer.segment.left</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -96,8 +99,6 @@ Any of:
 | segment | See: [Simple Segment](#simple-segment) |
 
 ## Event Customer SMS Sent
-#### Event data object schema for `customer.sms.sent`.
-
 <p>Event data object schema for <code>customer.sms.sent</code>.</p>
 
 All of:
@@ -105,8 +106,6 @@ All of:
 1. [Event Customer Sent](#event-customer-sent)
 
 ## Event Customer SMS Recovered
-#### Event data object schema for `customer.sms.recovered`.
-
 <p>Event data object schema for <code>customer.sms.recovered</code>.</p>
 
 All of:
@@ -114,8 +113,6 @@ All of:
 1. [Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer SMS Failed
-#### Event data object schema for `customer.sms.failed`.
-
 <p>Event data object schema for <code>customer.sms.failed</code>.</p>
 
 All of:
@@ -123,8 +120,6 @@ All of:
 1. [Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Email Sent
-#### Event data object schema for `customer.email.sent`.
-
 <p>Event data object schema for <code>customer.email.sent</code>.</p>
 
 All of:
@@ -132,8 +127,6 @@ All of:
 1. [Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Email Recovered
-#### Event data object schema for `customer.email.recovered`.
-
 <p>Event data object schema for <code>customer.email.recovered</code>.</p>
 
 All of:
@@ -141,8 +134,6 @@ All of:
 1. [Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Email Failed
-#### Event data object schema for `customer.email.failed`.
-
 <p>Event data object schema for <code>customer.email.failed</code>.</p>
 
 All of:
@@ -150,8 +141,6 @@ All of:
 1. [Event Customer Failed](#event-customer-failed)
 
 ## Event Customer ActiveCampaign Sent
-#### Event data object schema for `customer.activecampaign.sent`.
-
 <p>Event data object schema for <code>customer.activecampaign.sent</code>.</p>
 
 All of:
@@ -159,8 +148,6 @@ All of:
 1. [Event Customer Sent](#event-customer-sent)
 
 ## Event Customer ActiveCampaign Recovered
-#### Event data object schema for `customer.activecampaign.recovered`.
-
 <p>Event data object schema for <code>customer.activecampaign.recovered</code>.</p>
 
 All of:
@@ -168,8 +155,6 @@ All of:
 1. [Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer ActiveCampaign Failed
-#### Event data object schema for `customer.activecampaign.failed`.
-
 <p>Event data object schema for <code>customer.activecampaign.failed</code>.</p>
 
 All of:
@@ -177,8 +162,6 @@ All of:
 1. [Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Braze Sent
-#### Event data object schema for `customer.braze.sent`.
-
 <p>Event data object schema for <code>customer.braze.sent</code>.</p>
 
 All of:
@@ -186,8 +169,6 @@ All of:
 1. [Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Braze Recovered
-#### Event data object schema for `customer.braze.recovered`.
-
 <p>Event data object schema for <code>customer.braze.recovered</code>.</p>
 
 All of:
@@ -195,8 +176,6 @@ All of:
 1. [Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Braze Failed
-#### Event data object schema for `customer.braze.failed`.
-
 <p>Event data object schema for <code>customer.braze.failed</code>.</p>
 
 All of:
@@ -204,8 +183,6 @@ All of:
 1. [Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Mailchimp Sent
-#### Event data object schema for `customer.mailchimp.sent`.
-
 <p>Event data object schema for <code>customer.mailchimp.sent</code>.</p>
 
 All of:
@@ -213,8 +190,6 @@ All of:
 1. [Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Mailchimp Recovered
-#### Event data object schema for `customer.mailchimp.recovered`.
-
 <p>Event data object schema for <code>customer.mailchimp.recovered</code>.</p>
 
 All of:
@@ -222,8 +197,6 @@ All of:
 1. [Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Mailchimp Failed
-#### Event data object schema for `customer.mailchimp.failed`.
-
 <p>Event data object schema for <code>customer.mailchimp.failed</code>.</p>
 
 All of:
@@ -231,8 +204,6 @@ All of:
 1. [Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Intercom Sent
-#### Event data object schema for `customer.intercom.sent`.
-
 <p>Event data object schema for <code>customer.intercom.sent</code>.</p>
 
 All of:
@@ -240,8 +211,6 @@ All of:
 1. [Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Intercom Recovered
-#### Event data object schema for `customer.intercom.recovered`.
-
 <p>Event data object schema for <code>customer.intercom.recovered</code>.</p>
 
 All of:
@@ -249,8 +218,6 @@ All of:
 1. [Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Intercom Failed
-#### Event data object schema for `customer.intercom.failed`.
-
 <p>Event data object schema for <code>customer.intercom.failed</code>.</p>
 
 All of:
@@ -258,8 +225,6 @@ All of:
 1. [Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Shopify Sent
-#### Event data object schema for `customer.shopify.sent`.
-
 <p>Event data object schema for <code>customer.shopify.sent</code>.</p>
 
 All of:
@@ -267,8 +232,6 @@ All of:
 1. [Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Shopify Recovered
-#### Event data object schema for `customer.shopify.recovered`.
-
 <p>Event data object schema for <code>customer.shopify.recovered</code>.</p>
 
 All of:
@@ -276,8 +239,6 @@ All of:
 1. [Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Shopify Failed
-#### Event data object schema for `customer.shopify.failed`.
-
 <p>Event data object schema for <code>customer.shopify.failed</code>.</p>
 
 All of:
@@ -285,8 +246,6 @@ All of:
 1. [Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Klaviyo Sent
-#### Event data object schema for `customer.klaviyo.sent`.
-
 <p>Event data object schema for <code>customer.klaviyo.sent</code>.</p>
 
 All of:
@@ -294,8 +253,6 @@ All of:
 1. [Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Klaviyo Recovered
-#### Event data object schema for `customer.klaviyo.recovered`.
-
 <p>Event data object schema for <code>customer.klaviyo.recovered</code>.</p>
 
 All of:
@@ -303,8 +260,6 @@ All of:
 1. [Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Klaviyo Failed
-#### Event data object schema for `customer.klaviyo.failed`.
-
 <p>Event data object schema for <code>customer.klaviyo.failed</code>.</p>
 
 All of:
@@ -312,8 +267,6 @@ All of:
 1. [Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Batch Sent
-#### Event data object schema for `customer.batch.sent`.
-
 <p>Event data object schema for <code>customer.batch.sent</code>.</p>
 
 All of:
@@ -321,8 +274,6 @@ All of:
 1. [Event Customer Sent](#event-customer-sent)
 
 ## Event Customer Batch Recovered
-#### Event data object schema for `customer.batch.recovered`.
-
 <p>Event data object schema for <code>customer.batch.recovered</code>.</p>
 
 All of:
@@ -330,8 +281,6 @@ All of:
 1. [Event Customer Recovered](#event-customer-recovered)
 
 ## Event Customer Batch Failed
-#### Event data object schema for `customer.batch.failed`.
-
 <p>Event data object schema for <code>customer.batch.failed</code>.</p>
 
 All of:
@@ -339,7 +288,8 @@ All of:
 1. [Event Customer Failed](#event-customer-failed)
 
 ## Event Customer Rewarded
-#### Event data object schema for `customer.rewarded`.
+<p>Event data object schema for <code>customer.rewarded</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -355,7 +305,8 @@ All of:
 | customer_event</br>`object` |  |
 
 ## Event Customer Rewarded Loyalty Points
-#### Event data object schema for `customer.rewarded.loyalty_points`.
+<p>Event data object schema for <code>customer.rewarded.loyalty_points</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -370,7 +321,8 @@ All of:
 | event</br>`object` |  |
 
 ## Event Customer Gift Voucher Balance Added
-#### Event data object schema for `customer.voucher.gift.balance_added`.
+<p>Event data object schema for <code>customer.voucher.gift.balance_added</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -381,7 +333,8 @@ All of:
 | transaction | See: [Voucher Transaction](#voucher-transaction) |
 
 ## Event Customer Loyalty Card Points Added
-#### Event data object schema for `customer.voucher.loyalty_card.points_added`.
+<p>Event data object schema for <code>customer.voucher.loyalty_card.points_added</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -392,7 +345,8 @@ All of:
 | transaction | See: [Voucher Transaction](#voucher-transaction) |
 
 ## Event Customer Loyalty Card Points Transferred
-#### Event data object schema for `customer.voucher.loyalty_card.points_transferred`.
+<p>Event data object schema for <code>customer.voucher.loyalty_card.points_transferred</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -405,7 +359,8 @@ All of:
 | transaction | See: [Voucher Transaction](#voucher-transaction) |
 
 ## Event Customer Loyalty Card Points Expired
-#### Event data object schema for `customer.voucher.loyalty_card.points_expired`.
+<p>Event data object schema for <code>customer.voucher.loyalty_card.points_expired</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -417,7 +372,8 @@ All of:
 | transaction | See: [Voucher Transaction](#voucher-transaction) |
 
 ## Event Customer Voucher Deleted
-#### Event data object schema for `customer.voucher.deleted`.
+<p>Event data object schema for <code>customer.voucher.deleted</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -426,7 +382,8 @@ All of:
 | voucher | See: [Simple Voucher](#simple-voucher) |
 
 ## Event Customer Publication Succeeded
-#### Event data object schema for `customer.publication.succeeded`.
+<p>Event data object schema for <code>customer.publication.succeeded</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -435,7 +392,8 @@ All of:
 | publication</br>`object` |  |
 
 ## Event Customer Publication Failed
-#### Event data object schema for `customer.publication.failed`.
+<p>Event data object schema for <code>customer.publication.failed</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -444,7 +402,8 @@ All of:
 | publication</br>`object` |  |
 
 ## Event Customer Validation Succeeded
-#### Event data object schema for `customer.validation.succeeded`.
+<p>Event data object schema for <code>customer.validation.succeeded</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -452,7 +411,8 @@ All of:
 | validation | See: [Validation Entity](#validation-entity) |
 
 ## Event Customer Validation Failed
-#### Event data object schema for `customer.validation.failed`.
+<p>Event data object schema for <code>customer.validation.failed</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -460,8 +420,6 @@ All of:
 | validation | See: [Validation Entity](#validation-entity) |
 
 ## Event Customer Redemption Succeeded
-#### Event data object schema for `customer.redemption.succeeded`.
-
 <p>Event data object schema for <code>customer.redemption.succeeded</code>.</p>
 
 All of:
@@ -469,8 +427,6 @@ All of:
 1. [Event Customer Redemption](#event-customer-redemption)
 
 ## Event Customer Redemption Failed
-#### Event data object schema for `customer.redemption.failed`.
-
 <p>Event data object schema for <code>customer.redemption.failed</code>.</p>
 
 All of:
@@ -478,8 +434,6 @@ All of:
 1. [Event Customer Redemption](#event-customer-redemption)
 
 ## Event Customer Redemption Rollback Succeeded
-#### Event data object schema for `customer.redemption.rollback.succeeded`.
-
 <p>Event data object schema for <code>customer.redemption.rollback.succeeded</code>.</p>
 
 All of:
@@ -488,8 +442,6 @@ All of:
 2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">redemption_rollback</td><td style="text-align:left">See: <a href="#simple-redemption">Simple Redemption</a></td></tr></tbody></table>
 
 ## Event Customer Redemption Rollback Failed
-#### Event data object schema for `customer.redemption.rollback.failed`.
-
 <p>Event data object schema for <code>customer.redemption.rollback.failed</code>.</p>
 
 All of:
@@ -498,8 +450,6 @@ All of:
 2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">redemption_rollback</td><td style="text-align:left">See: <a href="#simple-redemption">Simple Redemption</a></td></tr></tbody></table>
 
 ## Event Customer Consents Given
-#### Event data object schema for `customer.consents.given`.
-
 <p>Event data object schema for <code>customer.consents.given</code>.</p>
 
 All of:
@@ -507,8 +457,6 @@ All of:
 1. [Event Customer Consents](#event-customer-consents)
 
 ## Event Customer Consents Revoked
-#### Event data object schema for `customer.consents.revoked`.
-
 <p>Event data object schema for <code>customer.consents.revoked</code>.</p>
 
 All of:
@@ -516,8 +464,6 @@ All of:
 1. [Event Customer Consents](#event-customer-consents)
 
 ## Event Customer Order Canceled
-#### Event data object schema for `customer.order.canceled`.
-
 <p>Event data object schema for <code>customer.order.canceled</code>.</p>
 
 All of:
@@ -525,8 +471,6 @@ All of:
 1. [Event Customer Order](#event-customer-order)
 
 ## Event Customer Order Created
-#### Event data object schema for `customer.order.created`.
-
 <p>Event data object schema for <code>customer.order.created</code>.</p>
 
 All of:
@@ -534,8 +478,6 @@ All of:
 1. [Event Customer Order](#event-customer-order)
 
 ## Event Customer Order Fulfilled
-#### Event data object schema for `customer.order.fulfilled`.
-
 <p>Event data object schema for <code>customer.order.fulfilled</code>.</p>
 
 All of:
@@ -543,8 +485,6 @@ All of:
 1. [Event Customer Order](#event-customer-order)
 
 ## Event Customer Order Paid
-#### Event data object schema for `customer.order.paid`.
-
 <p>Event data object schema for <code>customer.order.paid</code>.</p>
 
 All of:
@@ -552,8 +492,6 @@ All of:
 1. [Event Customer Order](#event-customer-order)
 
 ## Event Customer Order Processing
-#### Event data object schema for `customer.order.processing`.
-
 <p>Event data object schema for <code>customer.order.processing</code>.</p>
 
 All of:
@@ -561,8 +499,6 @@ All of:
 1. [Event Customer Order](#event-customer-order)
 
 ## Event Customer Order Updated
-#### Event data object schema for `customer.order.updated`.
-
 <p>Event data object schema for <code>customer.order.updated</code>.</p>
 
 All of:
@@ -570,8 +506,6 @@ All of:
 1. [Event Customer Order](#event-customer-order)
 
 ## Event Customer Reward Redemptions Created
-#### Event data object schema for `customer.reward_redemptions.created`.
-
 <p>Event data object schema for <code>customer.reward_redemptions.created</code>.</p>
 
 All of:
@@ -579,8 +513,6 @@ All of:
 1. [Event Customer Reward Redemptions](#event-customer-reward-redemptions)
 
 ## Event Customer Reward Redemptions Pending
-#### Event data object schema for `customer.reward_redemptions.pending`.
-
 <p>Event data object schema for <code>customer.reward_redemptions.pending</code>.</p>
 
 All of:
@@ -588,8 +520,6 @@ All of:
 1. [Event Customer Reward Redemptions](#event-customer-reward-redemptions)
 
 ## Event Customer Reward Redemptions Completed
-#### Event data object schema for `customer.reward_redemptions.completed`.
-
 <p>Event data object schema for <code>customer.reward_redemptions.completed</code>.</p>
 
 All of:
@@ -597,8 +527,6 @@ All of:
 1. [Event Customer Reward Redemptions](#event-customer-reward-redemptions)
 
 ## Event Customer Reward Redemptions Rolled Back
-#### Event data object schema for `customer.reward_redemptions.rolledback`.
-
 <p>Event data object schema for <code>customer.reward_redemptions.rolledback</code>.</p>
 
 All of:
@@ -606,7 +534,8 @@ All of:
 1. [Event Customer Reward Redemptions](#event-customer-reward-redemptions)
 
 ## Event Customer Loyalty Updated
-#### Event data object schema for `customer.loyalty.updated`.
+<p>Event data object schema for <code>customer.loyalty.updated</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -616,8 +545,6 @@ All of:
 | created_at</br>`string` | **Example:** <p>2022-02-25T13:32:08.734Z</p> |
 
 ## Event Customer Loyalty Tier Upgraded
-#### Event data object schema for `customer.loyalty.tier.upgraded`.
-
 <p>Event data object schema for <code>customer.loyalty.tier.upgraded</code>.</p>
 
 All of:
@@ -626,8 +553,6 @@ All of:
 2. <h3>Loyalty Tier Upgraded</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">loyalty_tier_from</td><td style="text-align:left">See: <a href="#loyalty-tier">Loyalty Tier</a></td></tr><tr><td style="text-align:left">loyalty_tier_to</td><td style="text-align:left">See: <a href="#loyalty-tier">Loyalty Tier</a></td></tr><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><strong>Example:</strong> <p>2022-02-25T13:32:08.734Z</p></td></tr></tbody></table>
 
 ## Event Customer Loyalty Tier Downgraded
-#### Event data object schema for `customer.loyalty.tier.downgraded`.
-
 <p>Event data object schema for <code>customer.loyalty.tier.downgraded</code>.</p>
 
 All of:
@@ -636,8 +561,6 @@ All of:
 2. <h3>Loyalty Tier Downgraded</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">loyalty_tier_from</td><td style="text-align:left">See: <a href="#loyalty-tier">Loyalty Tier</a></td></tr><tr><td style="text-align:left">loyalty_tier_to</td><td style="text-align:left">See: <a href="#loyalty-tier">Loyalty Tier</a></td></tr><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><strong>Example:</strong> <p>2022-02-25T13:32:08.734Z</p></td></tr></tbody></table>
 
 ## Event Customer Loyalty Tier Prolonged
-#### Event data object schema for `customer.loyalty.tier.prolonged`.
-
 <p>Event data object schema for <code>customer.loyalty.tier.prolonged</code>.</p>
 
 All of:
@@ -646,8 +569,6 @@ All of:
 2. <h3>Loyalty Tier Prolonged</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">loyalty_tier</td><td style="text-align:left">See: <a href="#loyalty-tier">Loyalty Tier</a></td></tr><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><strong>Example:</strong> <p>2022-02-25T13:32:08.734Z</p></td></tr></tbody></table>
 
 ## Event Customer Loyalty Tier Expiration Changed
-#### Event data object schema for `customer.loyalty.tier.expiration.changed`.
-
 <p>Event data object schema for <code>customer.loyalty.tier.expiration.changed</code>.</p>
 
 All of:
@@ -656,8 +577,6 @@ All of:
 2. <h3>Loyalty Tier Expiration Changed</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">loyalty_tier</td><td style="text-align:left">See: <a href="#loyalty-tier">Loyalty Tier</a></td></tr><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><strong>Example:</strong> <p>2022-02-25T13:32:08.734Z</p></td></tr><tr><td style="text-align:left">expiration_date</br><code>string</code></td><td style="text-align:left"><strong>Example:</strong> <p>2022-02-25T13:32:08.734Z</p></td></tr></tbody></table>
 
 ## Event Customer Loyalty Tier Joined
-#### Event data object schema for `customer.loyalty.tier.joined`.
-
 <p>Event data object schema for <code>customer.loyalty.tier.joined</code>.</p>
 
 All of:
@@ -666,8 +585,6 @@ All of:
 2. <h3>Loyalty Tier Joined</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">loyalty_tier</td><td style="text-align:left">See: <a href="#loyalty-tier">Loyalty Tier</a></td></tr><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><strong>Example:</strong> <p>2022-02-25T13:32:08.734Z</p></td></tr></tbody></table>
 
 ## Event Customer Loyalty Tier Left
-#### Event data object schema for `customer.loyalty.tier.left`.
-
 <p>Event data object schema for <code>customer.loyalty.tier.left</code>.</p>
 
 All of:
@@ -692,7 +609,8 @@ All of:
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `customer` |
 
 ## Simple Campaign
-#### Request body schema for creating a discount voucher campaign using **POST** `/campaigns`.
+<p>Request body schema for creating a discount voucher campaign using <strong>POST</strong> <code>/campaigns</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -740,7 +658,8 @@ All of:
 | created_at</br>`string` | <p>Timestamp representing the date and time when the custom event was created in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 
 ## Redemption Internal
-#### Model Used for internal communication
+<p>Model Used for internal communication</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -841,7 +760,7 @@ All of:
 All of:
 
 1. [Order Response Base](#order-response-base)
-2. <h3>Order Response</h3><h5>Order information.</h5><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left">Any of: <a href="#customer-response">Customer Response</a>, <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">Any of: <a href="#referrer-response">Referrer Response</a>, <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
+2. <h3>Order Response</h3><p>Order information.</p><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left">Any of: <a href="#customer-response">Customer Response</a>, <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">Any of: <a href="#referrer-response">Referrer Response</a>, <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
 
 ## Voucher Transaction
 | Attributes |  Description |
@@ -881,7 +800,8 @@ All of:
 | redemption | See: [Simple Redemption](#simple-redemption) |
 
 ## Simple Redemption
-#### This is an object representing a simple redemption.
+<p>This is an object representing a simple redemption.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -946,7 +866,8 @@ All of:
 | campaigns</br>`object` | <p>Contains campaigns with details about point balances and how many customers were referred by the customer.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</br><code>object</code></td><td style="text-align:left"><p>Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Remaining point balance in campaign.</p></td></tr><tr><td style="text-align:left">loyalty_tier</br><code>string</code></td><td style="text-align:left"><p>Customer's loyalty tier within the campaign.</p> <strong>Example:</strong> <p>ltr_UJ5Q54Q0OvEhua87Qfv2Ki5x</p></td></tr><tr><td style="text-align:left">referred_customers</br><code>integer</code></td><td style="text-align:left"><p>Number of customers referred by the customer in campaign.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
 ## Customer Referrals
-#### Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.
+<p>Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -966,7 +887,8 @@ All of:
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.</p> |
 
 ## Referral Program
-#### Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.
+<p>Defines the referee reward and the way a referral is triggered. Context: <code>REFERRAL_PROGRAM</code>.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -975,7 +897,8 @@ All of:
 | referee_reward</br>`object` | <p>Defines the referee reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">related_object_parent</br><code>object</code></td><td style="text-align:left"><p>Details of the resource from which the reward originates.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique ID of the reward source.</p> <strong>Example:</strong> <p>camp_kdxp3vf1clQ9CFs1jpqv3tZe</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Name of the reward source.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Type of resource represented by the source of the reward.</p> Available values: <code>CAMPAIGN</code></td></tr></tbody></table></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Type of reward.</p> Available values: <code>DISCOUNT_VOUCHER</code>, <code>LOYALTY_CARD</code>, <code>GIFT_VOUCHER</code>, <code>LUCKY_DRAW_CODE</code></td></tr><tr><td style="text-align:left">amount</br><code>string</code></td><td style="text-align:left"><p>Define the number of <code>points</code> to add to a loyalty card or <code>credits</code> to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p></td></tr></tbody></table> |
 
 ## Gift
-#### Contains current gift card balance information.
+<p>Contains current gift card balance information.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -984,8 +907,6 @@ All of:
 | effect</br>`string` | <p>Defines how the credits are applied to the customer's order.</p> Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS` |
 
 ## Discount
-#### Contains information about discount.
-
 <p>Contains information about discount.</p>
 
 Any of:
@@ -993,7 +914,8 @@ Any of:
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
 ## Customer Object
-#### This is an object representing a customer with limited properties used in Event Tracking endpoints.
+<p>This is an object representing a customer with limited properties used in Event Tracking endpoints.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1016,7 +938,8 @@ Any of:
 | loyalty_tier_id</br>`string` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 
 ## Voucher
-#### This is an object representing a voucher.
+<p>This is an object representing a voucher.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1051,7 +974,8 @@ Any of:
 | redemption</br>`object` | <p>Stores a summary of redemptions that have been applied to the voucher.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr><tr><td style="text-align:left">redeemed_quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher has already been redeemed.</p> <strong>Example:</strong> <p>1</p></td></tr><tr><td style="text-align:left">redeemed_amount</br><code>integer</code></td><td style="text-align:left"><p>Total amount redeemed. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 balance is written as 10000.</p> <strong>Example:</strong> <p>100000</p></td></tr><tr><td style="text-align:left">redeemed_points</br><code>integer</code></td><td style="text-align:left"><p>Total loyalty points redeemed.</p> <strong>Example:</strong> <p>100000</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of object represented is by default <code>list</code>. To get this list, you need to make a call to the endpoint returned in the url attribute.</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>The endpoint where this list of redemptions can be accessed using a GET method. <code>/v1/vouchers/{voucher_code}/redemptions</code></p> <strong>Example:</strong> <p>/v1/vouchers/WVPblOYX/redemptions?page=1&amp;limit=10</p></td></tr></tbody></table> |
 
 ## Promotion Tier
-#### This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.
+<p>This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1100,7 +1024,8 @@ Any of:
 | points</br>`object` | <p>Defines range of loyalty tier in points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">from</br><code>integer</code></td><td style="text-align:left"><p>Bottom points threshold value.</p></td></tr><tr><td style="text-align:left">to</br><code>integer</code></td><td style="text-align:left"><p>Top points threshold value.</p></td></tr></tbody></table> |
 
 ## Loyalty Tier Expiration
-#### Defines loyalty tier expiration date.
+<p>Defines loyalty tier expiration date.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1131,7 +1056,8 @@ Any of:
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format.</p> |
 
 ## Order Response Base
-#### Order information.
+<p>Order information.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1205,7 +1131,8 @@ Available values: `POINTS_ACCRUAL`, `POINTS_CANCELLATION`, `POINTS_REDEMPTION`, 
 | result</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead></table> |
 
 ## Simple Order
-#### Order information.
+<p>Order information.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1227,7 +1154,8 @@ Available values: `POINTS_ACCRUAL`, `POINTS_CANCELLATION`, `POINTS_REDEMPTION`, 
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `order` |
 
 ## Simple Promotion Tier
-#### This is an object representing a simple promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.
+<p>This is an object representing a simple promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1334,10 +1262,6 @@ One of:
 | object | <p>The type of object represented by the JSON. This object stores information about the reward.</p> Available values: `reward` |
 
 ## Product Object
-#### This is an object representing a product.  
-
-This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.
-
 <p>This is an object representing a product.</p><p>This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.</p>
 
 All of:
@@ -1346,7 +1270,8 @@ All of:
 2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">skus</td><td style="text-align:left">See: <a href="#skus-object">SKUs object</a></td></tr></tbody></table>
 
 ## SKU Object
-#### This is an object representing a product SKU.
+<p>This is an object representing a product SKU.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1364,7 +1289,8 @@ All of:
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>SKU</code>.</p> Available values: `sku` |
 
 ## Category
-#### This is an object representing a category.
+<p>This is an object representing a category.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1377,7 +1303,8 @@ All of:
 | stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Voucher Assets
-#### Stores links to images of QR and barcode that correspond to an encrypted voucher code.
+<p>Stores links to images of QR and barcode that correspond to an encrypted voucher code.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1385,7 +1312,8 @@ All of:
 | barcode</br>`object` | <p>Stores barcode representation of encrypted code.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Encrypted voucher code ID.</p> <strong>Example:</strong> <p>U2FsdGVkX19eJhGfWwUrH9+tulBkON+AnMktic+N6CVWzZ9+fHVxuVx22WakrzxiWXy0skuvvEHSeZIw9HlgyIJ+kJ1iPdUKpyENuNYJKzoZlO0mmTf6WQM6/pFs61apEn9SJx32ttCF6d3oxKISQQ==</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>URL to barcode</p><p><em>Optional:</em> Attach query parameters to base URL to customize the image of the encrypted voucher code.</p><ul><li><code>size</code>: integer value from <code>1</code> to <code>100</code></li><li><code>format</code>: string, either <code>png</code> (default) or <code>svg</code></li></ul> <strong>Example:</strong> <p>https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX19eJhGfWwUrH9%2BtulBkON%2BAnMktic%2BN6CVWzZ9%2BfHVxuVx22WakrzxiWXy0skuvvEHSeZIw9HlgyIJ%2BkJ1iPdUKpyENuNYJKzoZlO0mmTf6WQM6%2FpFs61apEn9SJx32ttCF6d3oxKISQQ%3D%3D</p></td></tr></tbody></table> |
 
 ## Validation Rule Assignments
-#### Validation Rule Assignments
+<p>Validation Rule Assignments</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1470,42 +1398,48 @@ All of:
 1. [Applicable To](#applicable-to)
 
 ## Coupon Code
-#### This is a `result` object representing the results for a coupon code.
+<p>This is a <code>result</code> object representing the results for a coupon code.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
 | discount | <p>Discount details about the type of discount to be applied for the redeemable.</p> One of: [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed) |
 
 ## Gift Card
-#### This is a `result` object representing the results for a gift card.
+<p>This is a <code>result</code> object representing the results for a gift card.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
 | gift</br>`object` | <p>Stores the amount of gift card credits to be applied in the redemption.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">credits</br><code>integer</code></td><td style="text-align:left"><p>Total number of gift card credits to be applied in the redemption expressed as the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
 
 ## Loyalty Card
-#### This is a `result` object representing the results for a loyalty card.
+<p>This is a <code>result</code> object representing the results for a loyalty card.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
 | loyalty_card</br>`object` | <p>Stores the amount of loyalty card points to be applied in the redemption.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Total number of loyalty points to be applied in the redemption.</p></td></tr></tbody></table> |
 
 ## Promotion Tier
-#### This is a `result` object representing the results for a promotion tier.
+<p>This is a <code>result</code> object representing the results for a promotion tier.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
 | discount | <p>Discount details about the type of discount to be applied for the redeemable.</p> Any of: [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed) |
 
 ## Promotion Stack
-#### This is a `result` object representing the results for a promotion stack.
+<p>This is a <code>result</code> object representing the results for a promotion stack.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
 | loyalty_card</br>`object` | <p>Stores the amount of loyalty card points to be applied in the redemption.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Total number of loyalty points to be applied in the redemption.</p></td></tr></tbody></table> |
 
 ## Error Object
-#### Error details
+<p>Error details</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1597,7 +1531,8 @@ One of:
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the product.</p> Available values: `product` |
 
 ## SKUs object
-#### Contains information about child SKUs.
+<p>Contains information about child SKUs.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -1607,7 +1542,8 @@ One of:
 | total</br>`integer` | <p>Total number of SKUs in the product.</p> |
 
 ## Validation Rule Assignment
-#### This is an object representing a validation rule assignment.
+<p>This is an object representing a validation rule assignment.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

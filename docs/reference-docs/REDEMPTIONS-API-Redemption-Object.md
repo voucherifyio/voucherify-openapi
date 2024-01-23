@@ -9,7 +9,8 @@ order: 1
 ---
 
 ## Redemption
-#### This is an object representing a redemption.
+<p>This is an object representing a redemption.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -41,7 +42,7 @@ order: 1
 All of:
 
 1. [Order Response Base](#order-response-base)
-2. <h3>Order Customer And Referrer Ids Objects</h3><h5>Order information.</h5><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left"><p>If only <code>customer_id</code> was provided, customer return data will be limited.</p> See: <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left"><p>If only <code>referrer_id</code> was provided, referrer return data will be limited.</p> See: <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
+2. <h3>Order Customer And Referrer Ids Objects</h3><p>Order information.</p><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left"><p>If only <code>customer_id</code> was provided, customer return data will be limited.</p> See: <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left"><p>If only <code>referrer_id</code> was provided, referrer return data will be limited.</p> See: <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
 
 ## Simple Customer
 | Attributes |  Description |
@@ -54,7 +55,8 @@ All of:
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `customer` |
 
 ## Voucher
-#### This is an object representing a voucher.
+<p>This is an object representing a voucher.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -89,7 +91,8 @@ All of:
 | redemption</br>`object` | <p>Stores a summary of redemptions that have been applied to the voucher.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr><tr><td style="text-align:left">redeemed_quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher has already been redeemed.</p> <strong>Example:</strong> <p>1</p></td></tr><tr><td style="text-align:left">redeemed_amount</br><code>integer</code></td><td style="text-align:left"><p>Total amount redeemed. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 balance is written as 10000.</p> <strong>Example:</strong> <p>100000</p></td></tr><tr><td style="text-align:left">redeemed_points</br><code>integer</code></td><td style="text-align:left"><p>Total loyalty points redeemed.</p> <strong>Example:</strong> <p>100000</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of object represented is by default <code>list</code>. To get this list, you need to make a call to the endpoint returned in the url attribute.</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>The endpoint where this list of redemptions can be accessed using a GET method. <code>/v1/vouchers/{voucher_code}/redemptions</code></p> <strong>Example:</strong> <p>/v1/vouchers/WVPblOYX/redemptions?page=1&amp;limit=10</p></td></tr></tbody></table> |
 
 ## Promotion Tier
-#### This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.
+<p>This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -127,7 +130,8 @@ All of:
 | loyalty_tier_id</br>`string` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 
 ## Order Response Base
-#### Order information.
+<p>Order information.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -164,7 +168,8 @@ All of:
 1. [Customer Id](#customer-id)
 
 ## Category
-#### This is an object representing a category.
+<p>This is an object representing a category.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -177,8 +182,6 @@ All of:
 | stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Discount
-#### Contains information about discount.
-
 <p>Contains information about discount.</p>
 
 Any of:
@@ -186,7 +189,8 @@ Any of:
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
 ## Voucher Assets
-#### Stores links to images of QR and barcode that correspond to an encrypted voucher code.
+<p>Stores links to images of QR and barcode that correspond to an encrypted voucher code.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -194,7 +198,8 @@ Any of:
 | barcode</br>`object` | <p>Stores barcode representation of encrypted code.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Encrypted voucher code ID.</p> <strong>Example:</strong> <p>U2FsdGVkX19eJhGfWwUrH9+tulBkON+AnMktic+N6CVWzZ9+fHVxuVx22WakrzxiWXy0skuvvEHSeZIw9HlgyIJ+kJ1iPdUKpyENuNYJKzoZlO0mmTf6WQM6/pFs61apEn9SJx32ttCF6d3oxKISQQ==</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>URL to barcode</p><p><em>Optional:</em> Attach query parameters to base URL to customize the image of the encrypted voucher code.</p><ul><li><code>size</code>: integer value from <code>1</code> to <code>100</code></li><li><code>format</code>: string, either <code>png</code> (default) or <code>svg</code></li></ul> <strong>Example:</strong> <p>https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX19eJhGfWwUrH9%2BtulBkON%2BAnMktic%2BN6CVWzZ9%2BfHVxuVx22WakrzxiWXy0skuvvEHSeZIw9HlgyIJ%2BkJ1iPdUKpyENuNYJKzoZlO0mmTf6WQM6%2FpFs61apEn9SJx32ttCF6d3oxKISQQ%3D%3D</p></td></tr></tbody></table> |
 
 ## Validation Rule Assignments
-#### Validation Rule Assignments
+<p>Validation Rule Assignments</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -225,10 +230,6 @@ All of:
 2. [Customer Base](#customer-base)
 
 ## Product Object
-#### This is an object representing a product.  
-
-This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.
-
 <p>This is an object representing a product.</p><p>This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.</p>
 
 All of:
@@ -237,7 +238,8 @@ All of:
 2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">skus</td><td style="text-align:left">See: <a href="#skus-object">SKUs object</a></td></tr></tbody></table>
 
 ## SKU Object
-#### This is an object representing a product SKU.
+<p>This is an object representing a product SKU.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -337,7 +339,8 @@ All of:
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
 ## Validation Rule Assignment
-#### This is an object representing a validation rule assignment.
+<p>This is an object representing a validation rule assignment.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -367,7 +370,8 @@ One of:
 | campaigns</br>`object` | <p>Contains campaigns with details about point balances and how many customers were referred by the customer.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</br><code>object</code></td><td style="text-align:left"><p>Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Remaining point balance in campaign.</p></td></tr><tr><td style="text-align:left">loyalty_tier</br><code>string</code></td><td style="text-align:left"><p>Customer's loyalty tier within the campaign.</p> <strong>Example:</strong> <p>ltr_UJ5Q54Q0OvEhua87Qfv2Ki5x</p></td></tr><tr><td style="text-align:left">referred_customers</br><code>integer</code></td><td style="text-align:left"><p>Number of customers referred by the customer in campaign.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
 ## Customer Referrals
-#### Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.
+<p>Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
@@ -401,7 +405,8 @@ One of:
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the product.</p> Available values: `product` |
 
 ## SKUs object
-#### Contains information about child SKUs.
+<p>Contains information about child SKUs.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

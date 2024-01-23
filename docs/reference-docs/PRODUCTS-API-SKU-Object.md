@@ -9,7 +9,8 @@ order: 2
 ---
 
 ## SKU Object
-#### This is an object representing a product SKU.
+<p>This is an object representing a product SKU.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|

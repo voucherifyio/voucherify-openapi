@@ -9,7 +9,8 @@ order: 1
 ---
 
 ## List Consents Response Body
-#### Response body schema for listing consents.
+<p>Response body schema for listing consents.</p>
+
 
 | Attributes |  Description |
 |:-----|:--------|
