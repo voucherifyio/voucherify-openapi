@@ -16,6 +16,7 @@ All of:
 
 ## Campaign
 #### This is an object representing a campaign.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_f7fBbQxUuTN7dI7tGOo5XMDA</p> |
@@ -49,6 +50,7 @@ All of:
 
 ## Promotion Tiers
 #### Promotion Tiers
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about promotion tiers in a dictionary.</p> |
@@ -59,6 +61,7 @@ All of:
 
 ## Validation Rules Assignments List
 #### List of Validation Rules Assignments
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rules assignments.</p> Available values: `list` |
@@ -68,6 +71,7 @@ All of:
 
 ## Campaign Discount Voucher
 #### Schema model for a campaign voucher.
+
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Type of voucher.</p> |
@@ -83,6 +87,7 @@ All of:
 
 ## Category
 #### This is an object representing a category.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
@@ -95,6 +100,7 @@ All of:
 
 ## Referral Program
 #### Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.
+
 | Attributes |  Description |
 |:-----|:--------|
 | conversion_event_type</br>`string` | <p>Define how a referral is triggered.</p> Available values: `redemption`, `custom_event` |
@@ -103,6 +109,7 @@ All of:
 
 ## Loyalty Tiers Expiration
 #### Defines the Loyalty Tiers Expiration.
+
 | Attributes |  Description |
 |:-----|:--------|
 | qualification_type</br>`string` | <p>Tier qualification.</p><p><code>BALANCE</code>: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier.<br><code>POINTS_IN_PERIOD</code>: A customer qualifies for the tier only if the sum of the accumulated points in a <strong>defined time interval</strong> reaches the tier threshold.</p> Available values: `BALANCE`, `POINTS_IN_PERIOD` |
@@ -112,6 +119,7 @@ All of:
 
 ## Promotion Tier
 #### This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique promotion tier ID.</p> **Example:** <p>promo_63fYCt81Aw0h7lzyRkrGZh9p</p> |
@@ -138,6 +146,7 @@ All of:
 
 ## Business Validation Rule Assignment
 #### Assignments of business validation rule
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>The unique identifier for a assignment</p> |
@@ -152,6 +161,7 @@ All of:
 
 ## Discount
 #### Contains information about discount.
+
 <p>Contains information about discount.</p>
 
 Any of:
@@ -160,6 +170,7 @@ Any of:
 
 ## Gift
 #### Contains current gift card balance information.
+
 | Attributes |  Description |
 |:-----|:--------|
 | amount</br>`number` | <p>Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
@@ -168,6 +179,7 @@ Any of:
 
 ## Campaign Loyalty Card
 #### Schema model for a campaign loyalty card.
+
 | Attributes |  Description |
 |:-----|:--------|
 | points</br>`integer` | <p>The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card.</p> |
@@ -180,6 +192,7 @@ All of:
 
 ## Validation Rule Assignments
 #### Validation Rule Assignments
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rule assignments.</p> |
@@ -238,6 +251,7 @@ All of:
 
 ## Code Config
 #### Schema containing information about config used for voucher. Defines code's pattern (prefix, suffix, length, charset, etc).
+
 | Attributes |  Description |
 |:-----|:--------|
 | length</br>`string` | <p>Number of characters in a generated code (excluding prefix and postfix).</p> |
@@ -249,6 +263,7 @@ All of:
 
 ## Validation Rule Assignment
 #### This is an object representing a validation rule assignment.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Validation rule assignment ID.</p> **Example:** <p>asgm_74F7QZoYbUoljwQO</p> |

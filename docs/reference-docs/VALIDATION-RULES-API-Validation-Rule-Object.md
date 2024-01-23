@@ -10,6 +10,7 @@ order: 1
 
 ## Validation Rule Response
 #### This is an object representing a validation rule.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique validation rule ID.</p> **Example:** <p>val_eR1c41hu0vUU</p> |
@@ -26,6 +27,7 @@ order: 1
 
 ## Validation Rule Rules
 #### Contains all the rule definitions for the validation rule. It is a set of key value pairs representing the rules and logic between the rules. The keys are numbered consequtively beginning from `1`. The values are objects containing the rule conditions.
+
 | Attributes |  Description |
 |:-----|:--------|
 | logic</br>`string` | <p>Defines the logic between the rules.</p> **Example:** <p>(1 and 2) and (3)</p> |
@@ -53,6 +55,7 @@ order: 1
 | $count_more         | &nbsp;                                                        | 
 | $count_less         | &nbsp;                                                        | 
 | $from               | &nbsp;                                                        | 
+
 
 | Attributes |  Description |
 |:-----|:--------|

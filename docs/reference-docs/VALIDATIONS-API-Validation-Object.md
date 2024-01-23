@@ -62,6 +62,7 @@ Any of:
 
 ## Discount
 #### Contains information about discount.
+
 <p>Contains information about discount.</p>
 
 Any of:
@@ -70,6 +71,7 @@ Any of:
 
 ## Gift
 #### Contains current gift card balance information.
+
 | Attributes |  Description |
 |:-----|:--------|
 | amount</br>`number` | <p>Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
@@ -164,6 +166,7 @@ All of:
 
 ## Order Response Base
 #### Order information.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.</p> |
@@ -296,6 +299,7 @@ Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
 
 ## Customer Referrals
 #### Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.
+
 | Attributes |  Description |
 |:-----|:--------|
 | total</br>`integer` | <p>Total number of times this customer received a referral, i.e. was referred by another customer.</p> |

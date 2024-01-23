@@ -10,6 +10,7 @@ order: 1
 
 ## Async Action Object
 #### This is an object representing an asynchronous action.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Async action unique ID.</p> **Example:** <p>aa_0adad13d6f057f088e</p> |
@@ -25,6 +26,7 @@ order: 1
 
 ## CAMPAIGN.VOUCHERS_IMPORT
 #### Result schema for a CAMPAIGN.VOUCHERS_IMPORT async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -34,6 +36,7 @@ order: 1
 
 ## CAMPAIGN.VOUCHERS_IMPORT_CSV
 #### Result schema for a CAMPAIGN.VOUCHERS_IMPORT_CSV async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -43,6 +46,7 @@ order: 1
 
 ## CAMPAIGN.VOUCHERS_UPDATE
 #### Result schema for a CAMPAIGN.VOUCHERS_UPDATE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -50,6 +54,7 @@ order: 1
 
 ## CAMPAIGN.VOUCHERS_DELETE
 #### Result schema for a CAMPAIGN.VOUCHERS_DELETE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -57,6 +62,7 @@ order: 1
 
 ## CAMPAIGN.VOUCHERS_GENERATE
 #### Result schema for a CAMPAIGN.VOUCHERS_GENERATE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -64,6 +70,7 @@ order: 1
 
 ## CAMPAIGNS.METADATA_KEY_PURGE
 #### Result schema for a CAMPAIGNS.METADATA_KEY_PURGE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -71,6 +78,7 @@ order: 1
 
 ## CUSTOMERS.IMPORT_CSV
 #### Result schema for a CUSTOMERS.IMPORT_CSV async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -80,6 +88,7 @@ order: 1
 
 ## CUSTOMERS.BULK_UPDATE
 #### Result schema for a CUSTOMERS.BULK_UPDATE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique customer <code>source_id</code>.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
@@ -87,6 +96,7 @@ order: 1
 
 ## CUSTOMERS.METADATA_UPDATE
 #### Result schema for a CUSTOMERS.METADATA_UPDATE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique customer <code>source_id</code>.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
@@ -94,6 +104,7 @@ order: 1
 
 ## CUSTOMERS.METADATA_KEY_PURGE
 #### Result schema for a CUSTOMERS.METADATA_KEY_PURGE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -101,6 +112,7 @@ order: 1
 
 ## PRODUCTS.BULK_UPDATE
 #### Result schema for a PRODUCTS.BULK_UPDATE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique product <code>source_id</code>.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
@@ -108,6 +120,7 @@ order: 1
 
 ## PRODUCTS.METADATA_UPDATE
 #### Result schema for a PRODUCTS.METADATA_UPDATE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique product <code>source_id</code>.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
@@ -115,6 +128,7 @@ order: 1
 
 ## PRODUCTS.IMPORT_CSV
 #### Result schema for a PRODUCTS.IMPORT_CSV async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -124,6 +138,7 @@ order: 1
 
 ## SKUS.IMPORT_CSV
 #### Result schema for a SKUS.IMPORT_CSV async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> **Example:** <p>2 sku(s) imported successfully, 6 failed.</p> |
@@ -133,6 +148,7 @@ order: 1
 
 ## PRODUCTS.METADATA_KEY_PURGE
 #### Result schema for a PRODUCTS.METADATA_KEY_PURGE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -140,6 +156,7 @@ order: 1
 
 ## VOUCHERS.IMPORT
 #### Result schema for a VOUCHERS.IMPORT async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -149,6 +166,7 @@ order: 1
 
 ## VOUCHERS.IMPORT_CSV
 #### Result schema for a VOUCHERS.IMPORT_CSV async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -158,6 +176,7 @@ order: 1
 
 ## VOUCHERS.BULK_UPDATE
 #### Result schema for a VOUCHERS.BULK_UPDATE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Unique voucher code.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
@@ -165,6 +184,7 @@ order: 1
 
 ## VOUCHERS.METADATA_UPDATE
 #### Result schema for a VOUCHERS.METADATA_UPDATE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Unique voucher code.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
@@ -172,6 +192,7 @@ order: 1
 
 ## VOUCHERS.METADATA_KEY_PURGE
 #### Result schema for a VOUCHERS.METADATA_KEY_PURGE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -179,6 +200,7 @@ order: 1
 
 ## ORDERS.IMPORT
 #### Result schema for a ORDERS.IMPORT async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
@@ -188,6 +210,7 @@ order: 1
 
 ## ORDERS.METADATA_KEY_PURGE
 #### Result schema for a ORDERS.METADATA_KEY_PURGE async action type.
+
 | Attributes |  Description |
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |

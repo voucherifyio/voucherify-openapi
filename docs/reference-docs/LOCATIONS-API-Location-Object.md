@@ -10,6 +10,7 @@ order: 1
 
 ## Location object
 #### This is an object representing a location.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique location ID, assigned by the Voucherify API.</p> **Example:** <p>loc_NoMGXmHO9OUs7iz9mGWpamma</p> |
@@ -21,6 +22,7 @@ order: 1
 
 ## Circle
 #### This is an object representing a circular shape.
+
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>The type of shape being defined is a <code>circle</code>.</p> |
@@ -29,6 +31,7 @@ order: 1
 
 ## Polygon
 #### This is an object representing a polygon.
+
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>The type of shape being defined is a <code>polygon</code>.</p> |
@@ -37,12 +40,14 @@ order: 1
 
 ## GeoJSON coordinate array.
 #### GeoJSON coordinate array.
+
 <p>GeoJSON coordinate array.</p>
 
 Array of [GeoJSON coordinate.](#geojson-coordinate.)
 
 ## GeoJSON coordinate.
 #### GeoJSON coordinate.
+
 <p>GeoJSON coordinate.</p>
 
 [block:html]

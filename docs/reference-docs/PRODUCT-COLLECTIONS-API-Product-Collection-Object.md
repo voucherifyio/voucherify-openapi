@@ -10,6 +10,7 @@ order: 1
 
 ## Product Collection Base
 #### This is an object representing a product collection base. 
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Product collection ID.</p> |

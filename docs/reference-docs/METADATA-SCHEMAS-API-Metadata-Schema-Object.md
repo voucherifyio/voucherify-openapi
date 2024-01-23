@@ -10,6 +10,7 @@ order: 1
 
 ## Metadata Schema Object
 #### This is an object representing a metadata schema.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique metadata schema ID.</p> **Example:** <p>ms_OF36L2rk4EqhdxvZs56IW9iE</p> |

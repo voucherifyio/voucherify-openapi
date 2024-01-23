@@ -10,6 +10,7 @@ order: 1
 
 ## Promotion Tier
 #### This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique promotion tier ID.</p> **Example:** <p>promo_63fYCt81Aw0h7lzyRkrGZh9p</p> |
@@ -36,6 +37,7 @@ order: 1
 
 ## Discount
 #### Contains information about discount.
+
 <p>Contains information about discount.</p>
 
 Any of:
@@ -44,6 +46,7 @@ Any of:
 
 ## Validation Rule Assignments
 #### Validation Rule Assignments
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rule assignments.</p> |
@@ -53,6 +56,7 @@ Any of:
 
 ## Category
 #### This is an object representing a category.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
@@ -114,6 +118,7 @@ Any of:
 
 ## Validation Rule Assignment
 #### This is an object representing a validation rule assignment.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Validation rule assignment ID.</p> **Example:** <p>asgm_74F7QZoYbUoljwQO</p> |

@@ -24,6 +24,7 @@ All of:
 
 ## Loyalty Tier Expiration
 #### Defines loyalty tier expiration date.
+
 | Attributes |  Description |
 |:-----|:--------|
 | customer_id</br>`string` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |

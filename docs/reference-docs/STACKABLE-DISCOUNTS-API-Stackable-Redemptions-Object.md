@@ -19,6 +19,7 @@ order: 3
 
 ## Redemption
 #### This is an object representing a redemption.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique redemption ID.</p> **Example:** <p>r_0bc92f81a6801f9bca</p> |
@@ -85,6 +86,7 @@ All of:
 
 ## Voucher
 #### This is an object representing a voucher.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Assigned by the Voucherify API, identifies the voucher.</p> **Example:** <p>v_mkZN9v7vjYUadXnHrMza8W5c34fE5KiV</p> |
@@ -119,6 +121,7 @@ All of:
 
 ## Promotion Tier
 #### This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique promotion tier ID.</p> **Example:** <p>promo_63fYCt81Aw0h7lzyRkrGZh9p</p> |
@@ -156,6 +159,7 @@ All of:
 
 ## Order Response Base
 #### Order information.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.</p> |
@@ -203,6 +207,7 @@ All of:
 
 ## Error Object
 #### Error details
+
 | Attributes |  Description |
 |:-----|:--------|
 | code</br>`integer` | <p>Error's HTTP status code.</p> |
@@ -215,6 +220,7 @@ All of:
 
 ## Category
 #### This is an object representing a category.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
@@ -227,6 +233,7 @@ All of:
 
 ## Discount
 #### Contains information about discount.
+
 <p>Contains information about discount.</p>
 
 Any of:
@@ -235,6 +242,7 @@ Any of:
 
 ## Voucher Assets
 #### Stores links to images of QR and barcode that correspond to an encrypted voucher code.
+
 | Attributes |  Description |
 |:-----|:--------|
 | qr</br>`object` | <p>Stores Quick Response (QR) representation of encrypted code.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Encrypted voucher code ID.</p> <strong>Example:</strong> <p>U2FsdGVkX19ucFhvVmBVpVYG5KoswTsjSIaqoKg5L9ie4BK+t4pp7U7oFzjGJzj9q/bmuMOj9mEFiVKDMIkSaruKedMvHbKoPX5Sg+BaZk5QwXMf8k/OzSlOEVybpwSq+AiqPoNtjeuqtIgkDyvT6Q==</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>URL to QR code</p><p><em>Optional:</em> Attach query parameters to base URL to customize the image of the encrypted voucher code.</p><ul><li><code>size</code>: integer value from <code>1</code> to <code>100</code></li><li><code>format</code>: string, either <code>png</code> (default) or <code>svg</code></li></ul> <strong>Example:</strong> <p>https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX19ucFhvVmBVpVYG5KoswTsjSIaqoKg5L9ie4BK%2Bt4pp7U7oFzjGJzj9q%2FbmuMOj9mEFiVKDMIkSaruKedMvHbKoPX5Sg%2BBaZk5QwXMf8k%2FOzSlOEVybpwSq%2BAiqPoNtjeuqtIgkDyvT6Q%3D%3D</p></td></tr></tbody></table> |
@@ -242,6 +250,7 @@ Any of:
 
 ## Validation Rule Assignments
 #### Validation Rule Assignments
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rule assignments.</p> |
@@ -268,6 +277,7 @@ Any of:
 #### This is an object representing a product.  
 
 This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.
+
 <p>This is an object representing a product.</p><p>This entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.</p>
 
 All of:
@@ -277,6 +287,7 @@ All of:
 
 ## SKU Object
 #### This is an object representing a product SKU.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>A unique identifier that represents the SKU and is assigned by Voucherify.</p> **Example:** <p>sku_0b1621b319d248b79f</p> |
@@ -340,6 +351,7 @@ All of:
 
 ## Customer Referrals
 #### Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.
+
 | Attributes |  Description |
 |:-----|:--------|
 | total</br>`integer` | <p>Total number of times this customer received a referral, i.e. was referred by another customer.</p> |
@@ -408,6 +420,7 @@ All of:
 
 ## Validation Rule Assignment
 #### This is an object representing a validation rule assignment.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Validation rule assignment ID.</p> **Example:** <p>asgm_74F7QZoYbUoljwQO</p> |
@@ -438,6 +451,7 @@ One of:
 
 ## SKUs object
 #### Contains information about child SKUs.
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about SKUs.</p> |

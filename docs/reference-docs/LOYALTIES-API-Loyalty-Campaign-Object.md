@@ -12,6 +12,7 @@ order: 1
 #### This is an object representing a loyalty campaign.  
 
 The loyalty campaign object contains details about the loyalty campaign. You can use dedicated endpoints to list loyalty campaigns, list loyalty card holders, member activities, active rewards, earning rules, loyalty tiers for given loyalty campaign.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_f7fBbQxUuTN7dI7tGOo5XMDA</p> |
@@ -43,6 +44,7 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 
 ## Loyalty Card
 #### Schema model for a loyalty card.
+
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Type of voucher.</p> |
@@ -53,6 +55,7 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 
 ## Category
 #### This is an object representing a category.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
@@ -65,6 +68,7 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 
 ## Balance
 #### Defines the Balance expiration mechanism for loyalty tiers.
+
 | Attributes |  Description |
 |:-----|:--------|
 | qualification_type</br>`string` | <p>Tier qualification.</p><p><code>BALANCE</code>: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier.</p> Available values: `BALANCE` |
@@ -73,6 +77,7 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 
 ## Points in Period
 #### Defines the Points in Period expiration mechanism for loyalty tiers.
+
 | Attributes |  Description |
 |:-----|:--------|
 | qualification_type</br>`string` | <p>Tier qualification.</p><p><code>POINTS_IN_PERIOD</code>: A customer qualifies for the tier only if the sum of the accumulated points in a <strong>defined time interval</strong> reaches the tier threshold.</p> Available values: `POINTS_IN_PERIOD` |
@@ -82,12 +87,14 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 
 ## Balance Drop
 #### Defines the conditions for the expiration date of a tier based on a pure balance drop.
+
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>What triggers the tier to expire for a customer.<br><code>BALANCE_DROP</code>: Tier expires when the points balance drops below the required range of the tier.</p> Available values: `BALANCE_DROP` |
 
 ## Custom
 #### Defines the custom conditions for the expiration date of a tier.
+
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>What triggers the tier to expire for a customer.<br><code>CUSTOM</code>: Tier expires after a certain time period passes following the instance the points balance drops below the required range of the tier.</p> Available values: `CUSTOM` |
@@ -96,6 +103,7 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 
 ## Calendar Periods
 #### Defines the rounding mechanism for tier expiration based on a list of available time periods.
+
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Period to which the expiration will be rounded to.</p><ul><li><code>MONTH</code>: The expiration date will be rounded to the end of the month.</li><li><code>QUARTER</code>: The expiration date will be rounded to the end of the quarter.</li><li><code>HALF_YEAR</code>: The expiration date will be rounded to the half year.</li><li><code>YEAR</code>: The expiration date will be rounded to the end of the year.</li></ul> Available values: `MONTH`, `QUARTER`, `HALF_YEAR`, `YEAR` |
@@ -103,6 +111,7 @@ The loyalty campaign object contains details about the loyalty campaign. You can
 
 ## Specific Month
 #### Defines the custom rounding mechanism for tier expiration.
+
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>This mechanism describes a custom rounding for the expiration date.</p> Available values: `CUSTOM` |

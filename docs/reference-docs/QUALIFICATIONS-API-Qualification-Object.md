@@ -14,6 +14,7 @@ order: 1
 
 ## Qualification object
 #### This is an object representing a qualification.
+
 | Attributes |  Description |
 |:-----|:--------|
 | redeemables | See: [Redeemables](#redeemables) |
@@ -23,6 +24,7 @@ order: 1
 
 ## Redeemables
 #### List of redeemables for examine qualification.
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. Default is <code>list</code>.</p> Available values: `list` |
@@ -40,6 +42,7 @@ All of:
 
 ## Examine Qualification Stacking Rules
 #### Defines stacking rules for redeemables. Read more in the [Help Center](https://support.voucherify.io/article/604-stacking-rules)
+
 | Attributes |  Description |
 |:-----|:--------|
 | redeemables_limit</br>`integer` | <p>Defines how many redeemables can be sent in one stacking request (note: more redeemables means more processing time!).</p> |
@@ -56,6 +59,7 @@ All of:
 
 ## Order Response Base
 #### Order information.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.</p> |
@@ -103,6 +107,7 @@ All of:
 
 ## Single redeemable
 #### Data of single redeemable which was properly qualified.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Id of the redeemable.</p> |
@@ -169,6 +174,7 @@ All of:
 
 ## Customer Referrals
 #### Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.
+
 | Attributes |  Description |
 |:-----|:--------|
 | total</br>`integer` | <p>Total number of times this customer received a referral, i.e. was referred by another customer.</p> |
@@ -188,6 +194,7 @@ All of:
 
 ## Redeemable Single Result
 #### Information about redeemable result.
+
 | Attributes |  Description |
 |:-----|:--------|
 | discount | See: [Discount](#discount) |
@@ -213,6 +220,7 @@ All of:
 
 ## Category
 #### This is an object representing a category.
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
@@ -225,6 +233,7 @@ All of:
 
 ## Validation Rules Assignments List
 #### List of Validation Rules Assignments
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rules assignments.</p> Available values: `list` |
@@ -255,6 +264,7 @@ All of:
 
 ## Discount
 #### Contains information about discount.
+
 <p>Contains information about discount.</p>
 
 Any of:
@@ -263,6 +273,7 @@ Any of:
 
 ## Gift
 #### Contains current gift card balance information.
+
 | Attributes |  Description |
 |:-----|:--------|
 | balance</br>`number` | <p>Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
@@ -270,6 +281,7 @@ Any of:
 
 ## Loyalty Card
 #### Loyalty Card object response
+
 | Attributes |  Description |
 |:-----|:--------|
 | points</br>`integer` | <p>Total points incurred over lifespan of loyalty card.</p> **Example:** <p>7000</p> |
@@ -280,6 +292,7 @@ Any of:
 
 ## Error Object
 #### Error details
+
 | Attributes |  Description |
 |:-----|:--------|
 | code</br>`integer` | <p>Error's HTTP status code.</p> |
@@ -315,6 +328,7 @@ All of:
 
 ## Business Validation Rule Assignment
 #### Assignments of business validation rule
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>The unique identifier for a assignment</p> |

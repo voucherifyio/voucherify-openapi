@@ -75,6 +75,7 @@ Available values: `code`, `voucher_type`, `value`, `discount_type`, `campaign`, 
 
 ## Export Voucher Filters
 #### Allowed additional properties must start with "metadata." or "redemption."
+
 | Attributes |  Description |
 |:-----|:--------|
 | junction | <p>Filter by conditions set on the junction parameter indicating how the conditions should be accounted for in the query. An AND is an all-inclusive logical operator, meaning the AND operator displays a record if ALL the conditions separated by AND are TRUE, while an OR operator displays a record if ANY of the conditions separated by OR is TRUE.</p> See: [Junction](#junction) |
@@ -104,6 +105,7 @@ Available values: `id`, `object`, `date`, `voucher_code`, `campaign`, `promotion
 
 ## Export Redemption Filters
 #### Allowed additional properties must start with "metadata."
+
 | Attributes |  Description |
 |:-----|:--------|
 | junction | See: [Junction](#junction) |
@@ -133,6 +135,7 @@ Available values: `name`, `id`, `description`, `email`, `source_id`, `created_at
 
 ## Export Customer Filters
 #### Allowed additional properties must start with "metadata." or "address." or "summary." or "loyalty." or "loyalty_tier." or "loyalty_points." or "system_metadata."
+
 | Attributes |  Description |
 |:-----|:--------|
 | junction | See: [Junction](#junction) |
@@ -155,6 +158,7 @@ Available values: `voucher_code`, `customer_id`, `customer_source_id`, `date`, `
 
 ## Export Publication Filters
 #### Allowed additional properties must start with "metadata."
+
 | Attributes |  Description |
 |:-----|:--------|
 | junction | See: [Junction](#junction) |
@@ -181,6 +185,7 @@ Available values: `id`, `source_id`, `created_at`, `updated_at`, `status`, `amou
 
 ## Export Order Filters
 #### Allowed additional properties must start with "metadata."
+
 | Attributes |  Description |
 |:-----|:--------|
 | junction | See: [Junction](#junction) |
