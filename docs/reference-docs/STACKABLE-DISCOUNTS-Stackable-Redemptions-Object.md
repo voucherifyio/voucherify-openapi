@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 parentDocSlug: redemptions
 slug: stackable-redemptions-object
 hidden: true
-order: 3
+order: 33
 ---
 
 ## Redemptions Redeem Response Body
