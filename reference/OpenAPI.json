@@ -37424,6 +37424,1667 @@
     }
   },
   "paths": {
+    "/v1/publications/create": {
+      "get": {
+        "operationId": "create-publication-1",
+        "tags": [
+          "Publications"
+        ],
+        "summary": "Create Publication",
+        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.\n> ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for specific integrations and the API keys need to be configured to access this endpoint. Navigate to the **Dashboard** &rarr; **Project Settings** &rarr; **General** &rarr; **Integration Keys** to set up a pair of API keys and use them to send the request.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple vouchers from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use a [dedicated endpoint](ref:create-publication).  \n\n<!-- theme: info -->\n\n> 📘 Auto-update campaign\n>\n> In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign.  \n\n## Example Request \n```markdown Publication Query \n/publications/create?campaign[name]=BlackFriday&customer[source_id]=Customer_Source_ID \n```  \n\n<!-- theme: danger -->\n> ❗️ Required  \n>\n> Query param `voucher` OR `campaign` MUST be filled out. If you provide both, `campaign` param will be skipped.",
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterBoolean"
+            },
+            "in": "query",
+            "name": "join_once",
+            "description": "Through this flag, you can control if a particular person gets only one and always the same code even if the app sends multiple publication requests. It means that if you have a referral program, a referrer is assigned only to one code if an integration sends publication requests more than once for the same customer."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCode"
+            },
+            "in": "query",
+            "name": "voucher",
+            "description": "Code of voucher being published."
+          },
+          {
+            "name": "campaign",
+            "in": "query",
+            "description": "Create publication with campaign.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/CreatePublicationCampaign"
+            }
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "source_id",
+            "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.\nIf `source_id` is provided only 1 voucher can be published per request."
+          },
+          {
+            "name": "customer",
+            "in": "query",
+            "required": true,
+            "description": "Contains information about the customer to whom the publication was directed.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/Customer"
+            }
+          },
+          {
+            "name": "metadata",
+            "in": "query",
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/ParameterObject"
+            }
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a publication object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicationsCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "pub_ocaXCa023ayJ3WL1ARxUeKgIvg3JcEGh",
+                      "object": "publication",
+                      "created_at": "2022-09-30T16:30:32.924Z",
+                      "customer_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                      "tracking_id": "pub_source_customer_5",
+                      "metadata": {
+                        "year": 2022
+                      },
+                      "channel": "myown",
+                      "source_id": "publication_source_ID_10",
+                      "result": "SUCCESS",
+                      "customer": {
+                        "id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                        "name": "Bob Jones",
+                        "email": "bob.smith@email.com",
+                        "source_id": "pub_source_customer_5",
+                        "metadata": {
+                          "lang": "en",
+                          "test": true
+                        },
+                        "object": "customer"
+                      },
+                      "voucher": {
+                        "id": "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf",
+                        "code": "cEsMn0uA",
+                        "campaign": "Test - Discount Effect - Amount - Items",
+                        "campaign_id": "camp_dphuwqH7BOVkgh4JmpDtS32l",
+                        "category": null,
+                        "category_id": null,
+                        "type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "amount_off": 300,
+                          "effect": "APPLY_TO_ITEMS"
+                        },
+                        "gift": null,
+                        "loyalty_card": null,
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX188XVmOotyCyR2j3G8sJR8HzS3DQ+6J1OElPWSmjlEnthuJc7rkc7WIVxjT4pTl1JVVkHEuGXNXdzRik11H8S18HQeQFJFiuwLZ2mzEC2zZitEinyUxtZwhnEHoi0eGAgYCG7iVMNuOQA==",
+                            "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX188XVmOotyCyR2j3G8sJR8HzS3DQ%2B6J1OElPWSmjlEnthuJc7rkc7WIVxjT4pTl1JVVkHEuGXNXdzRik11H8S18HQeQFJFiuwLZ2mzEC2zZitEinyUxtZwhnEHoi0eGAgYCG7iVMNuOQA%3D%3D"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX18wDd9CcLM0Ef7aBfUSXZUoCQpuNpk4CHGOipbn+wFkfzcIZGBtUlxrI2KsXciCqF+c93AKzsymq5Yw8eEAFF/FK5f94z4/sgzaLDvyBmPCXHuS11Ew9S4ZEMjdTkUJftER2IlxWaCARA==",
+                            "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX18wDd9CcLM0Ef7aBfUSXZUoCQpuNpk4CHGOipbn%2BwFkfzcIZGBtUlxrI2KsXciCqF%2Bc93AKzsymq5Yw8eEAFF%2FFK5f94z4%2FsgzaLDvyBmPCXHuS11Ew9S4ZEMjdTkUJftER2IlxWaCARA%3D%3D"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-09-30T16:30:32.956Z",
+                        "updated_at": null,
+                        "holder_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                        "redemption": {
+                          "quantity": 1,
+                          "redeemed_quantity": 0,
+                          "object": "list",
+                          "url": "/v1/vouchers/cEsMn0uA/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/cEsMn0uA/publications?page=1&limit=10"
+                        },
+                        "object": "voucher"
+                      },
+                      "vouchers_id": [
+                        "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the query parameters are incomplete.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Missing customer": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_query_params",
+                      "message": "Invalid query params",
+                      "details": "Query should have required property 'customer'",
+                      "request_id": "v-0c8b6423f3c80ed3e4"
+                    }
+                  },
+                  "Missing vouchers": {
+                    "value": {
+                      "code": 400,
+                      "key": "missing_vouchers",
+                      "message": "Missing vouchers",
+                      "details": "Either Campaign or Voucher is required"
+                    }
+                  },
+                  "Voucher cannot be published": {
+                    "value": {
+                      "code": 400,
+                      "key": "voucher_cannot_be_published",
+                      "message": "Voucher cannot be published",
+                      "details": "Voucher cannot be published. Customer already joined program.",
+                      "request_id": "v-0c8b763544080efed2"
+                    }
+                  },
+                  "Voucher already published": {
+                    "value": {
+                      "code": 400,
+                      "key": "voucher_already_published",
+                      "message": "Voucher already published",
+                      "details": "Voucher 'v_vM7vQZmgV86k0wuz05cFAOfarj4s8BQE' has already been published",
+                      "request_id": "v-0c8baebc67c80e97a0"
+                    }
+                  },
+                  "Duplicate source ID": {
+                    "value": {
+                      "code": 400,
+                      "key": "duplicate_source_id",
+                      "message": "Duplicate source_id",
+                      "details": "Publication with source_id: 'test_publication_source_id_test_voucher' already exists",
+                      "request_id": "v-0c8b7e8f78c80e94a2"
+                    }
+                  },
+                  "Too many vouchers requested": {
+                    "value": {
+                      "code": 400,
+                      "key": "too_many_vouchers_requested",
+                      "message": "Too many vouchers requested",
+                      "details": "Only up to 1 can be published",
+                      "request_id": "v-0c8bac9a25c80e912d"
+                    }
+                  },
+                  "Metadata validation failed": {
+                    "value": {
+                      "code": 400,
+                      "key": "metadata_validation_failed",
+                      "message": "Metadata validation failed",
+                      "details": "ImageURL: must be a URL pointing to JPG/JPEG or PNG resource (actual value is 'http.com')",
+                      "request_id": "v-0c8bcbd742080ee807"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if you don't have a specific credentials set up. Navigate to the **Dashboard** &rarr; **Project Settings** &rarr; **General** &rarr; **Integration Keys** to set up a pair of API keys and use them to send the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_integration_key"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "message": "Forbidden",
+                      "key": "integration_api_key_required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id cust_xqA7DGj5eYPHg6PHVKwYRWiA",
+                      "request_id": "v-0c8b6b35294af6f192",
+                      "resource_id": "cust_xqA7DGj5eYPHg6PHVKwYRWiA",
+                      "resource_type": "customer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/qualifications": {
+      "post": {
+        "operationId": "check-eligibility",
+        "tags": [
+          "Qualifications"
+        ],
+        "summary": "Check Eligibility",
+        "description": "<!-- theme: warning -->\n> 🚧 The Qualifications endpoint in the basic mode ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read our dedicated guide to learn about some use cases this endpoint can cover [here](doc:checking-eligibility).\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Define order and customer context.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QualificationsCheckEligibilityRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a qualifications object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QualificationsCheckEligibilityResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/validations": {
+      "post": {
+        "operationId": "validate-stacked-discounts",
+        "tags": [
+          "Validations"
+        ],
+        "summary": "Validate Stackable Discounts",
+        "description": "Verify redeemables provided in the request. This method is designed for server side integration which means that it is accessible only through private keys.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidationsValidateRequestBody"
+              },
+              "examples": {
+                "1 Redeemable": {
+                  "value": {
+                    "customer": {
+                      "source_id": "sample_customer",
+                      "metadata": {
+                        "key": "value"
+                      }
+                    },
+                    "options": {
+                      "expand": [
+                        "order",
+                        "redeemable",
+                        "category"
+                      ]
+                    },
+                    "redeemables": [
+                      {
+                        "object": "voucher",
+                        "id": "voucher-code"
+                      }
+                    ],
+                    "session": {
+                      "type": "LOCK"
+                    },
+                    "order": {
+                      "amount": 55000,
+                      "status": "PAID",
+                      "items": [
+                        {
+                          "quantity": 2,
+                          "price": 20000,
+                          "source_id": "sample product1",
+                          "related_object": "product",
+                          "product": {
+                            "metadata": {
+                              "key": "value"
+                            }
+                          }
+                        },
+                        {
+                          "quantity": 1,
+                          "price": 15000,
+                          "source_id": "sample product2",
+                          "related_object": "product",
+                          "product": {
+                            "metadata": {
+                              "key": "value"
+                            }
+                          }
+                        }
+                      ],
+                      "metadata": {
+                        "key": "value"
+                      }
+                    }
+                  }
+                },
+                "5 Redeemables": {
+                  "value": {
+                    "customer": {
+                      "source_id": "36_bob"
+                    },
+                    "options": {
+                      "expand": [
+                        "order",
+                        "redeemable",
+                        "category"
+                      ]
+                    },
+                    "redeemables": [
+                      {
+                        "object": "voucher",
+                        "id": "GNcuPKGe"
+                      },
+                      {
+                        "object": "voucher",
+                        "id": "AnsvocvP",
+                        "reward": {
+                          "id": "rew_EPx1hCTpqzF0HW1z9NKckZH4"
+                        }
+                      },
+                      {
+                        "object": "voucher",
+                        "id": "M3X8IwW8",
+                        "gift": {
+                          "credits": 100
+                        }
+                      },
+                      {
+                        "object": "promotion_tier",
+                        "id": "promo_DE1N30D731Tg2F6NoMwNas2W"
+                      },
+                      {
+                        "object": "promotion_tier",
+                        "id": "promo_NDHgTg4VnOLYNjk9r7WOmQxf"
+                      }
+                    ],
+                    "session": {
+                      "type": "LOCK"
+                    },
+                    "order": {
+                      "items": [
+                        {
+                          "sku_id": "sku_0a3efc90375d1217e2",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0bc3bd8a4e072c5275",
+                          "quantity": 1
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid validation. See https://support.voucherify.io/article/604-stacking-rules#application-rules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationsValidateResponseBody"
+                },
+                "examples": {
+                  "False": {
+                    "value": {
+                      "valid": false,
+                      "redeemables": [
+                        {
+                          "status": "INAPPLICABLE",
+                          "id": "eee33463",
+                          "object": "voucher",
+                          "result": {
+                            "error": {
+                              "code": 404,
+                              "key": "not_found",
+                              "message": "Resource not found",
+                              "details": "Cannot find voucher with id eee33463",
+                              "request_id": "v-0c6c6e20dc42940f0b",
+                              "resource_id": "eee33463",
+                              "resource_type": "voucher"
+                            }
+                          }
+                        },
+                        {
+                          "status": "SKIPPED",
+                          "id": "promo_Mwy9XpA0TLctSGriM5kum0qp",
+                          "object": "promotion_tier",
+                          "result": {}
+                        }
+                      ],
+                      "tracking_id": "track_VAVW6qltuo1/z+G2GI2LPw=="
+                    }
+                  },
+                  "True - 5 Redeemables": {
+                    "value": {
+                      "valid": true,
+                      "redeemables": [
+                        {
+                          "status": "APPLICABLE",
+                          "id": "GNcuPKGe",
+                          "object": "voucher",
+                          "order": {
+                            "amount": 2700,
+                            "items_discount_amount": 1700,
+                            "total_discount_amount": 1700,
+                            "total_amount": 1000,
+                            "items_applied_discount_amount": 1700,
+                            "total_applied_discount_amount": 1700,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_s3C0nDpr0DuC7",
+                                "sku_id": "sku_0a3efc90375d1217e2",
+                                "quantity": 1,
+                                "amount": 2000,
+                                "discount_amount": 1000,
+                                "applied_discount_amount": 1000,
+                                "price": 2000,
+                                "subtotal_amount": 1000,
+                                "product": {
+                                  "id": "prod_s3C0nDpr0DuC7",
+                                  "source_id": "test_prod_id_2",
+                                  "name": "Watchflix"
+                                },
+                                "sku": {
+                                  "id": "sku_0a3efc90375d1217e2",
+                                  "source_id": "test_standard_ultra_hd",
+                                  "sku": "Premium",
+                                  "price": 2000
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0bc3bd8a4e072c5275",
+                                "quantity": 1,
+                                "amount": 700,
+                                "discount_amount": 700,
+                                "applied_discount_amount": 700,
+                                "price": 700,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0bc3bd8a4e072c5275",
+                                  "name": "Bouquet - Romantic Roses",
+                                  "price": 700
+                                }
+                              }
+                            ],
+                            "metadata": {},
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "applicable_to": {
+                            "data": [
+                              {
+                                "object": "products_collection",
+                                "id": "pc_a11pr0dUc75",
+                                "strict": false,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "sku",
+                                "id": "sku_0a3efc90375d1217e2",
+                                "source_id": "test_standard_ultra_hd",
+                                "product_id": "prod_s3C0nDpr0DuC7",
+                                "product_source_id": "test_prod_id_2",
+                                "strict": true,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "product",
+                                "id": "prod_0bc3bd8a4e072c5275",
+                                "source_id": "prod_0bc3bd8a4e072c5275",
+                                "strict": true,
+                                "effect": "APPLY_TO_EVERY"
+                              }
+                            ],
+                            "total": 3,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "result": {
+                            "discount": {
+                              "type": "AMOUNT",
+                              "effect": "APPLY_TO_ITEMS",
+                              "amount_off": 1000,
+                              "is_dynamic": false
+                            }
+                          },
+                          "metadata": {},
+                          "categories": []
+                        },
+                        {
+                          "status": "APPLICABLE",
+                          "id": "AnsvocvP",
+                          "object": "voucher",
+                          "order": {
+                            "amount": 2700,
+                            "items_discount_amount": 1700,
+                            "total_discount_amount": 1700,
+                            "total_amount": 1000,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_s3C0nDpr0DuC7",
+                                "sku_id": "sku_0a3efc90375d1217e2",
+                                "quantity": 1,
+                                "amount": 2000,
+                                "discount_amount": 1000,
+                                "price": 2000,
+                                "subtotal_amount": 1000,
+                                "product": {
+                                  "id": "prod_s3C0nDpr0DuC7",
+                                  "source_id": "test_prod_id_2",
+                                  "name": "Watchflix"
+                                },
+                                "sku": {
+                                  "id": "sku_0a3efc90375d1217e2",
+                                  "source_id": "test_standard_ultra_hd",
+                                  "sku": "Premium",
+                                  "price": 2000
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0bc3bd8a4e072c5275",
+                                "quantity": 1,
+                                "amount": 700,
+                                "discount_amount": 700,
+                                "price": 700,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0bc3bd8a4e072c5275",
+                                  "name": "Bouquet - Romantic Roses",
+                                  "price": 700
+                                }
+                              }
+                            ],
+                            "metadata": {},
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "applicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "result": {
+                            "loyalty_card": {
+                              "points": 4
+                            }
+                          },
+                          "metadata": {},
+                          "categories": [
+                            {
+                              "id": "cat_0bb81a481615a37b5e",
+                              "name": "Second",
+                              "hierarchy": 2,
+                              "created_at": "2022-09-20T05:58:01.561Z",
+                              "object": "category"
+                            }
+                          ]
+                        },
+                        {
+                          "status": "APPLICABLE",
+                          "id": "M3X8IwW8",
+                          "object": "voucher",
+                          "order": {
+                            "amount": 2700,
+                            "discount_amount": 100,
+                            "items_discount_amount": 1700,
+                            "total_discount_amount": 1800,
+                            "total_amount": 900,
+                            "applied_discount_amount": 100,
+                            "total_applied_discount_amount": 100,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_s3C0nDpr0DuC7",
+                                "sku_id": "sku_0a3efc90375d1217e2",
+                                "quantity": 1,
+                                "amount": 2000,
+                                "discount_amount": 1000,
+                                "price": 2000,
+                                "subtotal_amount": 1000,
+                                "product": {
+                                  "id": "prod_s3C0nDpr0DuC7",
+                                  "source_id": "test_prod_id_2",
+                                  "name": "Watchflix"
+                                },
+                                "sku": {
+                                  "id": "sku_0a3efc90375d1217e2",
+                                  "source_id": "test_standard_ultra_hd",
+                                  "sku": "Premium",
+                                  "price": 2000
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0bc3bd8a4e072c5275",
+                                "quantity": 1,
+                                "amount": 700,
+                                "discount_amount": 700,
+                                "price": 700,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0bc3bd8a4e072c5275",
+                                  "name": "Bouquet - Romantic Roses",
+                                  "price": 700
+                                }
+                              }
+                            ],
+                            "metadata": {},
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "applicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [],
+                            "total": 0,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "result": {
+                            "gift": {
+                              "credits": 100
+                            }
+                          },
+                          "metadata": {},
+                          "categories": []
+                        },
+                        {
+                          "status": "APPLICABLE",
+                          "id": "promo_DE1N30D731Tg2F6NoMwNas2W",
+                          "object": "promotion_tier",
+                          "order": {
+                            "amount": 2700,
+                            "discount_amount": 460,
+                            "items_discount_amount": 1700,
+                            "total_discount_amount": 2160,
+                            "total_amount": 540,
+                            "applied_discount_amount": 360,
+                            "total_applied_discount_amount": 360,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_s3C0nDpr0DuC7",
+                                "sku_id": "sku_0a3efc90375d1217e2",
+                                "quantity": 1,
+                                "amount": 2000,
+                                "discount_amount": 1000,
+                                "price": 2000,
+                                "subtotal_amount": 1000,
+                                "product": {
+                                  "id": "prod_s3C0nDpr0DuC7",
+                                  "source_id": "test_prod_id_2",
+                                  "name": "Watchflix"
+                                },
+                                "sku": {
+                                  "id": "sku_0a3efc90375d1217e2",
+                                  "source_id": "test_standard_ultra_hd",
+                                  "sku": "Premium",
+                                  "price": 2000
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0bc3bd8a4e072c5275",
+                                "quantity": 1,
+                                "amount": 700,
+                                "discount_amount": 700,
+                                "price": 700,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0bc3bd8a4e072c5275",
+                                  "name": "Bouquet - Romantic Roses",
+                                  "price": 700
+                                }
+                              }
+                            ],
+                            "metadata": {},
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "applicable_to": {
+                            "data": [
+                              {
+                                "object": "sku",
+                                "id": "sku_0a3efc90375d1217e2",
+                                "source_id": "test_standard_ultra_hd",
+                                "product_id": "prod_s3C0nDpr0DuC7",
+                                "product_source_id": "test_prod_id_2",
+                                "strict": true,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "product",
+                                "id": "prod_0bc3bd8a4e072c5275",
+                                "source_id": "prod_0bc3bd8a4e072c5275",
+                                "strict": true,
+                                "effect": "APPLY_TO_EVERY"
+                              }
+                            ],
+                            "total": 2,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [
+                              {
+                                "object": "product",
+                                "id": "prod_0b2c2ddf35150b83bb",
+                                "source_id": "97",
+                                "strict": false,
+                                "effect": "APPLY_TO_EVERY"
+                              }
+                            ],
+                            "total": 1,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "result": {
+                            "discount": {
+                              "type": "PERCENT",
+                              "effect": "APPLY_TO_ORDER",
+                              "percent_off": 40,
+                              "is_dynamic": false
+                            }
+                          },
+                          "metadata": {}
+                        },
+                        {
+                          "status": "APPLICABLE",
+                          "id": "promo_NDHgTg4VnOLYNjk9r7WOmQxf",
+                          "object": "promotion_tier",
+                          "order": {
+                            "amount": 2700,
+                            "discount_amount": 490,
+                            "items_discount_amount": 1700,
+                            "total_discount_amount": 2190,
+                            "total_amount": 510,
+                            "applied_discount_amount": 30,
+                            "total_applied_discount_amount": 30,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_s3C0nDpr0DuC7",
+                                "sku_id": "sku_0a3efc90375d1217e2",
+                                "quantity": 1,
+                                "amount": 2000,
+                                "discount_amount": 1000,
+                                "price": 2000,
+                                "subtotal_amount": 1000,
+                                "product": {
+                                  "id": "prod_s3C0nDpr0DuC7",
+                                  "source_id": "test_prod_id_2",
+                                  "name": "Watchflix"
+                                },
+                                "sku": {
+                                  "id": "sku_0a3efc90375d1217e2",
+                                  "source_id": "test_standard_ultra_hd",
+                                  "sku": "Premium",
+                                  "price": 2000
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0bc3bd8a4e072c5275",
+                                "quantity": 1,
+                                "amount": 700,
+                                "discount_amount": 700,
+                                "price": 700,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0bc3bd8a4e072c5275",
+                                  "name": "Bouquet - Romantic Roses",
+                                  "price": 700
+                                }
+                              }
+                            ],
+                            "metadata": {},
+                            "customer_id": null,
+                            "referrer_id": null,
+                            "object": "order"
+                          },
+                          "applicable_to": {
+                            "data": [
+                              {
+                                "object": "sku",
+                                "id": "sku_0a3efc90375d1217e2",
+                                "source_id": "test_standard_ultra_hd",
+                                "product_id": "prod_s3C0nDpr0DuC7",
+                                "product_source_id": "test_prod_id_2",
+                                "strict": true,
+                                "effect": "APPLY_TO_EVERY"
+                              },
+                              {
+                                "object": "product",
+                                "id": "prod_0bc3bd8a4e072c5275",
+                                "source_id": "prod_0bc3bd8a4e072c5275",
+                                "strict": true,
+                                "effect": "APPLY_TO_EVERY"
+                              }
+                            ],
+                            "total": 2,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "inapplicable_to": {
+                            "data": [
+                              {
+                                "object": "product",
+                                "id": "prod_0b2c2ddf35150b83bb",
+                                "source_id": "97",
+                                "strict": false,
+                                "effect": "APPLY_TO_EVERY"
+                              }
+                            ],
+                            "total": 1,
+                            "data_ref": "data",
+                            "object": "list"
+                          },
+                          "result": {
+                            "discount": {
+                              "type": "AMOUNT",
+                              "effect": "APPLY_TO_ORDER",
+                              "amount_off": 30,
+                              "is_dynamic": false
+                            }
+                          },
+                          "metadata": {}
+                        }
+                      ],
+                      "order": {
+                        "amount": 2700,
+                        "discount_amount": 490,
+                        "items_discount_amount": 1700,
+                        "total_discount_amount": 2190,
+                        "total_amount": 510,
+                        "applied_discount_amount": 490,
+                        "items_applied_discount_amount": 1700,
+                        "total_applied_discount_amount": 2190,
+                        "items": [
+                          {
+                            "object": "order_item",
+                            "product_id": "prod_s3C0nDpr0DuC7",
+                            "sku_id": "sku_0a3efc90375d1217e2",
+                            "quantity": 1,
+                            "amount": 2000,
+                            "discount_amount": 1000,
+                            "applied_discount_amount": 1000,
+                            "price": 2000,
+                            "subtotal_amount": 1000,
+                            "product": {
+                              "id": "prod_s3C0nDpr0DuC7",
+                              "source_id": "test_prod_id_2",
+                              "name": "Watchflix"
+                            },
+                            "sku": {
+                              "id": "sku_0a3efc90375d1217e2",
+                              "source_id": "test_standard_ultra_hd",
+                              "sku": "Premium",
+                              "price": 2000
+                            }
+                          },
+                          {
+                            "object": "order_item",
+                            "product_id": "prod_0bc3bd8a4e072c5275",
+                            "quantity": 1,
+                            "amount": 700,
+                            "discount_amount": 700,
+                            "applied_discount_amount": 700,
+                            "price": 700,
+                            "subtotal_amount": 0,
+                            "product": {
+                              "id": "prod_0bc3bd8a4e072c5275",
+                              "name": "Bouquet - Romantic Roses",
+                              "price": 700
+                            }
+                          }
+                        ],
+                        "metadata": {},
+                        "customer_id": null,
+                        "referrer_id": null,
+                        "object": "order"
+                      },
+                      "tracking_id": "track_9B0kB92+bJa8a+PegaWREw==",
+                      "session": {
+                        "key": "ssn_pkJfPcWAgp9WyHpA62Eky8X8SzxpKub2",
+                        "type": "LOCK",
+                        "ttl": 7,
+                        "ttl_unit": "DAYS"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload is missing an `\"object\"` or `\"id\"` property in the redeemables array, if you add more than one promotion stack or attempt to join stacks with vouchers/promotion tiers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .redeemables[1] should have required property 'id'",
+                      "request_id": "v-0b4ff38ab8c8164573"
+                    }
+                  },
+                  "Duplicated Redeemables": {
+                    "value": {
+                      "code": 400,
+                      "key": "duplicated_redeemables",
+                      "message": "Duplicated redeemables detected",
+                      "details": "Duplicated redeemables detected in one redemption",
+                      "request_id": "v-0b4ffecfb408165300"
+                    }
+                  },
+                  "Invalid Redeemables": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_redeemables",
+                      "message": "Invalid redeemables",
+                      "details": "Promotion Stack cannot be use with other redeemables",
+                      "request_id": "v-0b5007812f48165d6b"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/redemptions": {
+      "get": {
+        "operationId": "list-redemptions",
+        "tags": [
+          "Redemptions"
+        ],
+        "summary": "List Redemptions",
+        "description": "Returns a list of redemptions previously created. The redemptions are returned in a sorted order, with the most recent redemptions appearing first. The response returns a list of redemptions of all vouchers. \n\n## Filtering results\nThe result can be narrowed according to specified (or default) filters, for example, you can sort redemptions by date:\n`https://api.voucherify.io/v1/redemptions?limit=3&[created_at][before]=2017-09-08T13:52:18.227Z`. A filter based on the object `created_at` field narrows down the results and lists redemptions done before or after a particular date time. You can use the following options: `[created_at][after]`, `[created_at][before]`. A date value must be presented in ISO 8601 format (`2016-11-16T14:14:31Z` or `2016-11-16`). An example: `[created_at][before]=2017-09-08T13:52:18.227Z`.\n\n## Failed Redemptions\n\nA redemption may fail for various reasons. You can figure out an exact reason from the `failure_code`:\n- `resource_not_found` - voucher with given code does not exist\n- `voucher_not_active` - voucher is not active yet (before start date)\n- `voucher_expired` - voucher has already expired (after expiration date)\n- `voucher_disabled` -  voucher has been disabled (`active: false`)\n- `quantity_exceeded` - voucher's redemptions limit has been exceeded\n- `gift_amount_exceeded` - gift amount has been exceeded\n- `customer_rules_violated` - customer did not match the segment\n- `order_rules_violated` - order did not match validation rules\n- `invalid_order` - order was specified incorrectly\n- `invalid_amount` - order amount was specified incorrectly\n- `missing_amount` - order amount was not specified\n- `missing_order_items` - order items were not specified\n- `missing_customer` - customer was not specified",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "result",
+            "description": "A filter on the list based on the redemption result. Available options are: `SUCCESS`, `FAILURE`. You can provide multiple values by repeating the param."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "campaign",
+            "description": "A filter by the campaign **name** that the redemption resources originate from."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCustomerId"
+            },
+            "in": "query",
+            "name": "customer",
+            "description": "Return redemptions performed by the customer with given `id` or `source_id`."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListRedemptions"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash - preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "$ref": "#/components/parameters/created_at"
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListRedemptions"
+            },
+            "description": "Filters for listing responses.",
+            "style": "deepObject",
+            "explode": true
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of redemption objects. Each entry in the array is a separate redemption object. If no more redemptions are available, the resulting array will be empty. If you provide a non-existent customer ID, this call returns an empty object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedemptionsListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "redemptions",
+                      "redemptions": [
+                        {
+                          "id": "r_0c0469eaf705889d99",
+                          "object": "redemption",
+                          "date": "2022-11-18T12:30:32.622Z",
+                          "customer_id": "cust_qBwHpagDOFu71Z3F22UzR80X",
+                          "tracking_id": "track_5DQxXbK0C0pvAaHk7mnulhyMBo7VratI",
+                          "metadata": {
+                            "store_names": "Store 2 - Florida - Miami"
+                          },
+                          "result": "SUCCESS",
+                          "order": {
+                            "id": "ord_ndw5rQJt12zvZ4upF72a3ljh",
+                            "source_id": null,
+                            "created_at": "2022-11-18T12:30:31.338Z",
+                            "updated_at": null,
+                            "status": "PAID",
+                            "amount": 9680000,
+                            "items_discount_amount": 9450000,
+                            "total_discount_amount": 9450000,
+                            "total_amount": 230000,
+                            "items_applied_discount_amount": 9450000,
+                            "total_applied_discount_amount": 9450000,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0bae45ffc7003ffc52",
+                                "quantity": 1,
+                                "amount": 230000,
+                                "price": 230000,
+                                "subtotal_amount": 230000,
+                                "product": {
+                                  "id": "prod_0bae45ffc7003ffc52",
+                                  "source_id": "second_product",
+                                  "name": "Samsung Phone 2",
+                                  "price": 230000
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0bae2dc5a090fd0184",
+                                "sku_id": "sku_0bae3b28f610fd0da1",
+                                "quantity": 45,
+                                "discount_quantity": 45,
+                                "initial_quantity": 0,
+                                "amount": 9450000,
+                                "discount_amount": 9450000,
+                                "initial_amount": 0,
+                                "applied_discount_amount": 9450000,
+                                "price": 210000,
+                                "subtotal_amount": 0,
+                                "product": {
+                                  "id": "prod_0bae2dc5a090fd0184",
+                                  "source_id": "first_product",
+                                  "name": "Samsung Phone 1",
+                                  "price": 220000
+                                },
+                                "sku": {
+                                  "id": "sku_0bae3b28f610fd0da1",
+                                  "source_id": "first_product_sku_1",
+                                  "sku": "Samsung phone 256GB",
+                                  "price": 210000
+                                }
+                              }
+                            ],
+                            "metadata": {},
+                            "customer": {
+                              "id": "cust_qBwHpagDOFu71Z3F22UzR80X",
+                              "object": "customer"
+                            },
+                            "customer_id": "cust_qBwHpagDOFu71Z3F22UzR80X",
+                            "referrer_id": null,
+                            "object": "order",
+                            "redemptions": {
+                              "r_0c0469eaf705889d99": {
+                                "date": "2022-11-18T12:30:31.388Z",
+                                "related_object_type": "promotion_tier",
+                                "related_object_id": "promo_ZWkx6R0I1Ts3N9HL4kfTdxOm",
+                                "related_object_parent_id": "camp_40LC42P5NFbkkD4RWoJ4btks"
+                              }
+                            }
+                          },
+                          "channel": {
+                            "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
+                            "channel_type": "USER"
+                          },
+                          "customer": {
+                            "id": "cust_qBwHpagDOFu71Z3F22UzR80X",
+                            "name": "Bob Jones",
+                            "email": "bob.smith@email.com",
+                            "source_id": "pub_source_customer_5_a",
+                            "metadata": {
+                              "lang": "en",
+                              "test": true
+                            },
+                            "object": "customer"
+                          },
+                          "related_object_type": "promotion_tier",
+                          "related_object_id": "promo_ZWkx6R0I1Ts3N9HL4kfTdxOm",
+                          "voucher": null,
+                          "promotion_tier": {
+                            "id": "promo_ZWkx6R0I1Ts3N9HL4kfTdxOm",
+                            "campaign": {
+                              "id": "camp_40LC42P5NFbkkD4RWoJ4btks"
+                            }
+                          }
+                        },
+                        {
+                          "id": "r_0bf9cf0a8b12dc5ba6",
+                          "object": "redemption",
+                          "date": "2022-11-10T06:49:03.835Z",
+                          "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                          "tracking_id": "track_fxEMFisanb4sbl4Z4yCnJyDW013IrRbJmqKByTNHbXE=",
+                          "metadata": {},
+                          "amount": 200,
+                          "result": "SUCCESS",
+                          "order": {
+                            "id": "ord_jAifScsbOqxgb12hLu7hXrLU",
+                            "source_id": null,
+                            "created_at": "2022-11-10T06:49:02.703Z",
+                            "updated_at": null,
+                            "status": "PAID",
+                            "amount": 4500,
+                            "discount_amount": 4000,
+                            "total_discount_amount": 4000,
+                            "total_amount": 500,
+                            "applied_discount_amount": 4000,
+                            "total_applied_discount_amount": 4000,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b72b0bd64d198e3ae",
+                                "quantity": 3,
+                                "amount": 4500,
+                                "price": 1500,
+                                "subtotal_amount": 4500,
+                                "product": {
+                                  "id": "prod_0b72b0bd64d198e3ae",
+                                  "source_id": "vase_1",
+                                  "name": "Vase - Boho Vintage",
+                                  "price": 1500
+                                }
+                              }
+                            ],
+                            "metadata": {},
+                            "customer": {
+                              "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                              "object": "customer"
+                            },
+                            "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                            "referrer_id": null,
+                            "object": "order",
+                            "redemptions": {
+                              "r_0bf9cf0a8b12dc5ba6": {
+                                "date": "2022-11-10T06:49:02.764Z",
+                                "related_object_type": "voucher",
+                                "related_object_id": "v_Xak3ViMbxCH8Lb4ZG0lWwC0goMRBXWB4",
+                                "related_object_parent_id": "camp_fkZ28pe7DUAEmmabofkxHI8N"
+                              }
+                            }
+                          },
+                          "channel": {
+                            "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
+                            "channel_type": "USER"
+                          },
+                          "customer": {
+                            "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                            "name": "Bobby McDonald",
+                            "email": "bobby.mcdonald@email.com",
+                            "source_id": "bobby.mcdonald@email.com",
+                            "metadata": {
+                              "acquisition_channel": "Facebook",
+                              "customer_life_time_value": 100
+                            },
+                            "object": "customer"
+                          },
+                          "related_object_type": "voucher",
+                          "related_object_id": "v_Xak3ViMbxCH8Lb4ZG0lWwC0goMRBXWB4",
+                          "voucher": {
+                            "id": "v_Xak3ViMbxCH8Lb4ZG0lWwC0goMRBXWB4",
+                            "code": "LT1-wMPnRhxb",
+                            "campaign": "Loyalty Campaign - Tiers - 1",
+                            "campaign_id": "camp_fkZ28pe7DUAEmmabofkxHI8N"
+                          },
+                          "reward": {
+                            "customer": {
+                              "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                              "name": "Bobby McDonald",
+                              "email": "bobby.mcdonald@email.com",
+                              "source_id": "bobby.mcdonald@email.com",
+                              "metadata": {
+                                "acquisition_channel": "Facebook",
+                                "customer_life_time_value": 100
+                              },
+                              "object": "customer"
+                            },
+                            "assignment_id": "rewa_nMXB59qGTNYawMT8eP8M4oUp",
+                            "id": "rew_MVXA2kV7lZ1zC057WUaTrvNz",
+                            "object": "reward",
+                            "name": "100 Points = $20",
+                            "created_at": "2022-09-09T06:41:54.496Z",
+                            "updated_at": null,
+                            "parameters": {
+                              "coin": {
+                                "exchange_ratio": 20,
+                                "points_ratio": 100
+                              }
+                            },
+                            "type": "COIN"
+                          },
+                          "loyalty_card": {
+                            "points": 200
+                          }
+                        },
+                        {
+                          "id": "rf_0bf9caf744d2dc593a",
+                          "object": "redemption",
+                          "date": "2022-11-10T06:31:15.477Z",
+                          "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                          "tracking_id": "track_fxEMFisanb4sbl4Z4yCnJyDW013IrRbJmqKByTNHbXE=",
+                          "metadata": {},
+                          "result": "FAILURE",
+                          "failure_code": "loyalty_card_points_exceeded",
+                          "failure_message": "loyalty card points exceeded",
+                          "order": null,
+                          "channel": {
+                            "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
+                            "channel_type": "USER"
+                          },
+                          "customer": {
+                            "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                            "name": "Bobby McDonald",
+                            "email": "bobby.mcdonald@email.com",
+                            "source_id": "bobby.mcdonald@email.com",
+                            "metadata": {
+                              "acquisition_channel": "Facebook",
+                              "customer_life_time_value": 100
+                            },
+                            "object": "customer"
+                          },
+                          "related_object_type": "voucher",
+                          "related_object_id": "v_Xak3ViMbxCH8Lb4ZG0lWwC0goMRBXWB4",
+                          "voucher": {
+                            "id": "v_Xak3ViMbxCH8Lb4ZG0lWwC0goMRBXWB4",
+                            "code": "LT1-wMPnRhxb",
+                            "campaign": "Loyalty Campaign - Tiers - 1",
+                            "campaign_id": "camp_fkZ28pe7DUAEmmabofkxHI8N"
+                          }
+                        },
+                        {
+                          "id": "rf_0bf8c023eb4d4aa4ad",
+                          "object": "redemption",
+                          "date": "2022-11-09T11:05:28.074Z",
+                          "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                          "tracking_id": "track_fxEMFisanb4sbl4Z4yCnJyDW013IrRbJmqKByTNHbXE=",
+                          "metadata": {},
+                          "result": "FAILURE",
+                          "failure_code": "customer_rules_violated",
+                          "failure_message": "customer does not match validation rules",
+                          "order": null,
+                          "channel": {
+                            "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
+                            "channel_type": "USER"
+                          },
+                          "customer": {
+                            "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                            "name": "Bob Smith",
+                            "email": "bob.smith@email.com",
+                            "source_id": "bob.smith@email.com",
+                            "metadata": {
+                              "acquisition_channel": "Facebook"
+                            },
+                            "object": "customer"
+                          },
+                          "related_object_type": "voucher",
+                          "related_object_id": "v_FGQjOjqasEbbdpnySdCpUoalJio3OHWK",
+                          "voucher": {
+                            "id": "v_FGQjOjqasEbbdpnySdCpUoalJio3OHWK",
+                            "code": "3rqWOTAh",
+                            "campaign_id": null
+                          }
+                        },
+                        {
+                          "id": "r_0ba9fa02fcd28ed8f1",
+                          "object": "redemption",
+                          "date": "2022-09-09T06:38:20.085Z",
+                          "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                          "tracking_id": "track_fxEMFisanb4sbl4Z4yCnJyDW013IrRbJmqKByTNHbXE=",
+                          "metadata": {},
+                          "amount": 300,
+                          "result": "SUCCESS",
+                          "order": {
+                            "id": "ord_G9LBb5SOPa36pHdwxUvzkw4P",
+                            "source_id": null,
+                            "created_at": "2022-09-09T06:38:17.984Z",
+                            "updated_at": null,
+                            "status": "PAID",
+                            "amount": 4600,
+                            "items_discount_amount": 300,
+                            "total_discount_amount": 300,
+                            "total_amount": 4300,
+                            "items_applied_discount_amount": 300,
+                            "total_applied_discount_amount": 300,
+                            "items": [
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0b7d7dfb05cbe5c616",
+                                "sku_id": "sku_0b7d7dfb090be5c619",
+                                "quantity": 1,
+                                "amount": 1600,
+                                "price": 1600,
+                                "subtotal_amount": 1600,
+                                "product": {
+                                  "id": "prod_0b7d7dfb05cbe5c616",
+                                  "source_id": "Books",
+                                  "name": "Comic Books1",
+                                  "price": 1600
+                                },
+                                "sku": {
+                                  "id": "sku_0b7d7dfb090be5c619",
+                                  "source_id": "ComicBook_1",
+                                  "sku": "Comics1",
+                                  "price": 1600
+                                }
+                              },
+                              {
+                                "object": "order_item",
+                                "product_id": "prod_0a65b3ff8592d7a5b5",
+                                "quantity": 1,
+                                "amount": 3000,
+                                "discount_amount": 300,
+                                "applied_discount_amount": 300,
+                                "price": 3000,
+                                "subtotal_amount": 2700,
+                                "product": {
+                                  "id": "prod_0a65b3ff8592d7a5b5",
+                                  "name": "Koffee Cup",
+                                  "price": 3000
+                                }
+                              }
+                            ],
+                            "metadata": {},
+                            "customer": {
+                              "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                              "object": "customer"
+                            },
+                            "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                            "referrer_id": null,
+                            "object": "order",
+                            "redemptions": {
+                              "r_0ba9fa02fcd28ed8f1": {
+                                "date": "2022-09-09T06:38:18.099Z",
+                                "related_object_type": "voucher",
+                                "related_object_id": "v_KqP2NOSb4dJb1D6UBhcq7ScPZXun0y40",
+                                "related_object_parent_id": "camp_hC2GdqYtOmTT45zfhib62cK1"
+                              }
+                            }
+                          },
+                          "channel": {
+                            "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
+                            "channel_type": "USER"
+                          },
+                          "customer": {
+                            "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
+                            "name": "Bob Smith",
+                            "email": "bob.smith@email.com",
+                            "source_id": "bob.smith@email.com",
+                            "metadata": {},
+                            "object": "customer"
+                          },
+                          "related_object_type": "voucher",
+                          "related_object_id": "v_KqP2NOSb4dJb1D6UBhcq7ScPZXun0y40",
+                          "voucher": {
+                            "id": "v_KqP2NOSb4dJb1D6UBhcq7ScPZXun0y40",
+                            "code": "vTcguVLE",
+                            "campaign": "SL-Gift",
+                            "campaign_id": "camp_hC2GdqYtOmTT45zfhib62cK1"
+                          },
+                          "gift": {
+                            "amount": 300
+                          }
+                        },
+                        {
+                          "id": "rf_0bf8bfe0808d4aa473",
+                          "object": "redemption",
+                          "date": "2022-11-09T11:04:19.062Z",
+                          "customer_id": null,
+                          "tracking_id": null,
+                          "metadata": {},
+                          "result": "FAILURE",
+                          "failure_code": "missing_customer",
+                          "failure_message": "Missing customer",
+                          "order": null,
+                          "channel": {
+                            "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
+                            "channel_type": "USER"
+                          },
+                          "customer": null,
+                          "related_object_type": "voucher",
+                          "related_object_id": "v_FGQjOjqasEbbdpnySdCpUoalJio3OHWK",
+                          "voucher": {
+                            "id": "v_FGQjOjqasEbbdpnySdCpUoalJio3OHWK",
+                            "code": "3rqWOTAh",
+                            "campaign_id": null
+                          }
+                        }
+                      ],
+                      "total": 6
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "redeem-stacked-discounts",
+        "tags": [
+          "Redemptions"
+        ],
+        "summary": "Redeem Stackable Discounts",
+        "description": "## How API returns calculated discounts and order amounts in the response\n\nIn the table below, you can see the logic the API follows to calculate discounts and amounts:\n\n| **Field** | **Calculation** | **Description** |\n|:---|:---|:---|\n| amount | N/A | This field shows the order amount before applying any discount |\n| total_amount | `total_amount` = `amount` - `total_discount_amount` | This field shows the order amount after applying all the discounts |\n| discount_amount | `discount_amount` = `previous_discount_amount` + `applied_discount_amount` | This field sums up all order-level discounts up to and including the specific discount being calculated for the stacked redemption. |\n| items_discount_amount | sum(items, i => i.discount_amount) | This field sums up all product-specific discounts |\n| total_discount_amount | `total_discount_amount` = `discount_amount` + `items_discount_amount` | This field sums up all order-level and all product-specific discounts |\n| applied_discount_amount | N/A | This field shows the order-level discount applied in a particular request |\n| items_applied_discount_amount | sum(items, i => i.applied_discount_amount) | This field sums up all product-specific discounts applied in a particular request |\n| total_applied_discount_amount | `total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount` | This field sums up all order-level and all product-specific discounts applied in a particular request |\n\n<!-- theme: info -->\n> 📘 Rollbacks\n>\n> You can't roll back a child redemption. When you call rollback on a stacked redemption, all child redemptions will be rolled back. You need to refer to a parent redemption ID in your <!-- [rollback request](OpenAPI.json/paths/~1redemptions~1{parentRedemptionId}~1rollbacks/post) -->[rollback request](ref:rollback-stacked-redemptions).    \n\n<!-- theme: info -->\n> 📘 Also available on client-side\n>\n> This method is also accessible through public keys which you can use in client-side​ apps: mobile and web browser apps. Go to the dedicated [endpoint](ref:redeem-stacked-discounts-client-side) to learn more.\n> - Use `X-Client-Application-Id` as the application ID header.\n> - Use `X-Client-Token` as the appliction secret key header.\n> - Use client-side base URL.\n> - Use an `origin` header for your custom domain.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RedemptionsRedeemRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "customer": {
+                      "source_id": "sample_customer",
+                      "metadata": {
+                        "key": "value"
+                      }
+                    },
+                    "options": {
+                      "expand": [
+                        "order",
+                        "redeemable",
+                        "category"
+                      ]
+                    },
+                    "redeemables": [
+                      {
+                        "object": "voucher",
+                        "id": "voucher-code"
+                      }
+                    ],
+                    "session": {
+                      "type": "LOCK",
+                      "key": "session_key"
+                    },
+                    "order": {
+                      "amount": 55000,
+                      "status": "PAID",
+                      "items": [
+                        {
+                          "quantity": 2,
+                          "price": 20000,
+                          "source_id": "sample product1",
+                          "related_object": "product",
+                          "product": {
+                            "metadata": {
+                              "key": "value"
+                            }
+                          }
+                        },
+                        {
+                          "quantity": 1,
+                          "price": 15000,
+                          "source_id": "sample product2",
+                          "related_object": "product",
+                          "product": {
+                            "metadata": {
+                              "key": "value"
+                            }
+                          }
+                        }
+                      ],
+                      "metadata": {
+                        "key": "value"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid redemption. See https://support.voucherify.io/article/604-stacking-rules#application-rules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RedemptionsRedeemResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/vouchers": {
       "get": {
         "operationId": "list-vouchers",
@@ -46819,287 +48480,6 @@
         }
       }
     },
-    "/v1/publications/create": {
-      "get": {
-        "operationId": "create-publication-1",
-        "tags": [
-          "Publications"
-        ],
-        "summary": "Create Publication",
-        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.\n> ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for specific integrations and the API keys need to be configured to access this endpoint. Navigate to the **Dashboard** &rarr; **Project Settings** &rarr; **General** &rarr; **Integration Keys** to set up a pair of API keys and use them to send the request.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple vouchers from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use a [dedicated endpoint](ref:create-publication).  \n\n<!-- theme: info -->\n\n> 📘 Auto-update campaign\n>\n> In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign.  \n\n## Example Request \n```markdown Publication Query \n/publications/create?campaign[name]=BlackFriday&customer[source_id]=Customer_Source_ID \n```  \n\n<!-- theme: danger -->\n> ❗️ Required  \n>\n> Query param `voucher` OR `campaign` MUST be filled out. If you provide both, `campaign` param will be skipped.",
-        "parameters": [
-          {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterBoolean"
-            },
-            "in": "query",
-            "name": "join_once",
-            "description": "Through this flag, you can control if a particular person gets only one and always the same code even if the app sends multiple publication requests. It means that if you have a referral program, a referrer is assigned only to one code if an integration sends publication requests more than once for the same customer."
-          },
-          {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterCode"
-            },
-            "in": "query",
-            "name": "voucher",
-            "description": "Code of voucher being published."
-          },
-          {
-            "name": "campaign",
-            "in": "query",
-            "description": "Create publication with campaign.",
-            "style": "deepObject",
-            "explode": true,
-            "schema": {
-              "$ref": "#/components/schemas/CreatePublicationCampaign"
-            }
-          },
-          {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterString"
-            },
-            "in": "query",
-            "name": "source_id",
-            "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.\nIf `source_id` is provided only 1 voucher can be published per request."
-          },
-          {
-            "name": "customer",
-            "in": "query",
-            "required": true,
-            "description": "Contains information about the customer to whom the publication was directed.",
-            "style": "deepObject",
-            "explode": true,
-            "schema": {
-              "$ref": "#/components/schemas/Customer"
-            }
-          },
-          {
-            "name": "metadata",
-            "in": "query",
-            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.",
-            "style": "deepObject",
-            "explode": true,
-            "schema": {
-              "$ref": "#/components/schemas/ParameterObject"
-            }
-          }
-        ],
-        "security": [
-          {
-            "X-App-Id": [],
-            "X-App-Token": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns a publication object.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/PublicationsCreateResponseBody"
-                },
-                "examples": {
-                  "Example": {
-                    "value": {
-                      "id": "pub_ocaXCa023ayJ3WL1ARxUeKgIvg3JcEGh",
-                      "object": "publication",
-                      "created_at": "2022-09-30T16:30:32.924Z",
-                      "customer_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
-                      "tracking_id": "pub_source_customer_5",
-                      "metadata": {
-                        "year": 2022
-                      },
-                      "channel": "myown",
-                      "source_id": "publication_source_ID_10",
-                      "result": "SUCCESS",
-                      "customer": {
-                        "id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
-                        "name": "Bob Jones",
-                        "email": "bob.smith@email.com",
-                        "source_id": "pub_source_customer_5",
-                        "metadata": {
-                          "lang": "en",
-                          "test": true
-                        },
-                        "object": "customer"
-                      },
-                      "voucher": {
-                        "id": "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf",
-                        "code": "cEsMn0uA",
-                        "campaign": "Test - Discount Effect - Amount - Items",
-                        "campaign_id": "camp_dphuwqH7BOVkgh4JmpDtS32l",
-                        "category": null,
-                        "category_id": null,
-                        "type": "DISCOUNT_VOUCHER",
-                        "discount": {
-                          "type": "AMOUNT",
-                          "amount_off": 300,
-                          "effect": "APPLY_TO_ITEMS"
-                        },
-                        "gift": null,
-                        "loyalty_card": null,
-                        "start_date": null,
-                        "expiration_date": null,
-                        "validity_timeframe": null,
-                        "validity_day_of_week": null,
-                        "active": true,
-                        "additional_info": null,
-                        "metadata": {},
-                        "assets": {
-                          "qr": {
-                            "id": "U2FsdGVkX188XVmOotyCyR2j3G8sJR8HzS3DQ+6J1OElPWSmjlEnthuJc7rkc7WIVxjT4pTl1JVVkHEuGXNXdzRik11H8S18HQeQFJFiuwLZ2mzEC2zZitEinyUxtZwhnEHoi0eGAgYCG7iVMNuOQA==",
-                            "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX188XVmOotyCyR2j3G8sJR8HzS3DQ%2B6J1OElPWSmjlEnthuJc7rkc7WIVxjT4pTl1JVVkHEuGXNXdzRik11H8S18HQeQFJFiuwLZ2mzEC2zZitEinyUxtZwhnEHoi0eGAgYCG7iVMNuOQA%3D%3D"
-                          },
-                          "barcode": {
-                            "id": "U2FsdGVkX18wDd9CcLM0Ef7aBfUSXZUoCQpuNpk4CHGOipbn+wFkfzcIZGBtUlxrI2KsXciCqF+c93AKzsymq5Yw8eEAFF/FK5f94z4/sgzaLDvyBmPCXHuS11Ew9S4ZEMjdTkUJftER2IlxWaCARA==",
-                            "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX18wDd9CcLM0Ef7aBfUSXZUoCQpuNpk4CHGOipbn%2BwFkfzcIZGBtUlxrI2KsXciCqF%2Bc93AKzsymq5Yw8eEAFF%2FFK5f94z4%2FsgzaLDvyBmPCXHuS11Ew9S4ZEMjdTkUJftER2IlxWaCARA%3D%3D"
-                          }
-                        },
-                        "is_referral_code": false,
-                        "created_at": "2022-09-30T16:30:32.956Z",
-                        "updated_at": null,
-                        "holder_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
-                        "redemption": {
-                          "quantity": 1,
-                          "redeemed_quantity": 0,
-                          "object": "list",
-                          "url": "/v1/vouchers/cEsMn0uA/redemptions?page=1&limit=10"
-                        },
-                        "publish": {
-                          "object": "list",
-                          "count": 1,
-                          "url": "/v1/vouchers/cEsMn0uA/publications?page=1&limit=10"
-                        },
-                        "object": "voucher"
-                      },
-                      "vouchers_id": [
-                        "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf"
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Returns an error if the query parameters are incomplete.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "examples": {
-                  "Missing customer": {
-                    "value": {
-                      "code": 400,
-                      "key": "invalid_query_params",
-                      "message": "Invalid query params",
-                      "details": "Query should have required property 'customer'",
-                      "request_id": "v-0c8b6423f3c80ed3e4"
-                    }
-                  },
-                  "Missing vouchers": {
-                    "value": {
-                      "code": 400,
-                      "key": "missing_vouchers",
-                      "message": "Missing vouchers",
-                      "details": "Either Campaign or Voucher is required"
-                    }
-                  },
-                  "Voucher cannot be published": {
-                    "value": {
-                      "code": 400,
-                      "key": "voucher_cannot_be_published",
-                      "message": "Voucher cannot be published",
-                      "details": "Voucher cannot be published. Customer already joined program.",
-                      "request_id": "v-0c8b763544080efed2"
-                    }
-                  },
-                  "Voucher already published": {
-                    "value": {
-                      "code": 400,
-                      "key": "voucher_already_published",
-                      "message": "Voucher already published",
-                      "details": "Voucher 'v_vM7vQZmgV86k0wuz05cFAOfarj4s8BQE' has already been published",
-                      "request_id": "v-0c8baebc67c80e97a0"
-                    }
-                  },
-                  "Duplicate source ID": {
-                    "value": {
-                      "code": 400,
-                      "key": "duplicate_source_id",
-                      "message": "Duplicate source_id",
-                      "details": "Publication with source_id: 'test_publication_source_id_test_voucher' already exists",
-                      "request_id": "v-0c8b7e8f78c80e94a2"
-                    }
-                  },
-                  "Too many vouchers requested": {
-                    "value": {
-                      "code": 400,
-                      "key": "too_many_vouchers_requested",
-                      "message": "Too many vouchers requested",
-                      "details": "Only up to 1 can be published",
-                      "request_id": "v-0c8bac9a25c80e912d"
-                    }
-                  },
-                  "Metadata validation failed": {
-                    "value": {
-                      "code": 400,
-                      "key": "metadata_validation_failed",
-                      "message": "Metadata validation failed",
-                      "details": "ImageURL: must be a URL pointing to JPG/JPEG or PNG resource (actual value is 'http.com')",
-                      "request_id": "v-0c8bcbd742080ee807"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Returns an error if you don't have a specific credentials set up. Navigate to the **Dashboard** &rarr; **Project Settings** &rarr; **General** &rarr; **Integration Keys** to set up a pair of API keys and use them to send the request.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/e_integration_key"
-                },
-                "examples": {
-                  "Example": {
-                    "value": {
-                      "code": 403,
-                      "message": "Forbidden",
-                      "key": "integration_api_key_required"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Returns an error if a resource is not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "examples": {
-                  "Resource not found": {
-                    "value": {
-                      "code": 404,
-                      "key": "not_found",
-                      "message": "Resource not found",
-                      "details": "Cannot find customer with id cust_xqA7DGj5eYPHg6PHVKwYRWiA",
-                      "request_id": "v-0c8b6b35294af6f192",
-                      "resource_id": "cust_xqA7DGj5eYPHg6PHVKwYRWiA",
-                      "resource_type": "customer"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/publications": {
       "get": {
         "operationId": "list-publications",
@@ -51995,599 +53375,6 @@
         }
       }
     },
-    "/v1/redemptions": {
-      "get": {
-        "operationId": "list-redemptions",
-        "tags": [
-          "Redemptions"
-        ],
-        "summary": "List Redemptions",
-        "description": "Returns a list of redemptions previously created. The redemptions are returned in a sorted order, with the most recent redemptions appearing first. The response returns a list of redemptions of all vouchers. \n\n## Filtering results\nThe result can be narrowed according to specified (or default) filters, for example, you can sort redemptions by date:\n`https://api.voucherify.io/v1/redemptions?limit=3&[created_at][before]=2017-09-08T13:52:18.227Z`. A filter based on the object `created_at` field narrows down the results and lists redemptions done before or after a particular date time. You can use the following options: `[created_at][after]`, `[created_at][before]`. A date value must be presented in ISO 8601 format (`2016-11-16T14:14:31Z` or `2016-11-16`). An example: `[created_at][before]=2017-09-08T13:52:18.227Z`.\n\n## Failed Redemptions\n\nA redemption may fail for various reasons. You can figure out an exact reason from the `failure_code`:\n- `resource_not_found` - voucher with given code does not exist\n- `voucher_not_active` - voucher is not active yet (before start date)\n- `voucher_expired` - voucher has already expired (after expiration date)\n- `voucher_disabled` -  voucher has been disabled (`active: false`)\n- `quantity_exceeded` - voucher's redemptions limit has been exceeded\n- `gift_amount_exceeded` - gift amount has been exceeded\n- `customer_rules_violated` - customer did not match the segment\n- `order_rules_violated` - order did not match validation rules\n- `invalid_order` - order was specified incorrectly\n- `invalid_amount` - order amount was specified incorrectly\n- `missing_amount` - order amount was not specified\n- `missing_order_items` - order items were not specified\n- `missing_customer` - customer was not specified",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/limit"
-          },
-          {
-            "$ref": "#/components/parameters/page"
-          },
-          {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterString"
-            },
-            "in": "query",
-            "name": "result",
-            "description": "A filter on the list based on the redemption result. Available options are: `SUCCESS`, `FAILURE`. You can provide multiple values by repeating the param."
-          },
-          {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterString"
-            },
-            "in": "query",
-            "name": "campaign",
-            "description": "A filter by the campaign **name** that the redemption resources originate from."
-          },
-          {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterCustomerId"
-            },
-            "in": "query",
-            "name": "customer",
-            "description": "Return redemptions performed by the customer with given `id` or `source_id`."
-          },
-          {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterOrderListRedemptions"
-            },
-            "in": "query",
-            "name": "order",
-            "description": "Sorts the results using one of the filtering options, where the dash - preceding a sorting option means sorting in a descending order."
-          },
-          {
-            "$ref": "#/components/parameters/created_at"
-          },
-          {
-            "name": "filters",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/ParameterFiltersListRedemptions"
-            },
-            "description": "Filters for listing responses.",
-            "style": "deepObject",
-            "explode": true
-          }
-        ],
-        "security": [
-          {
-            "X-App-Id": [],
-            "X-App-Token": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns a list of redemption objects. Each entry in the array is a separate redemption object. If no more redemptions are available, the resulting array will be empty. If you provide a non-existent customer ID, this call returns an empty object.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RedemptionsListResponseBody"
-                },
-                "examples": {
-                  "Example": {
-                    "value": {
-                      "object": "list",
-                      "data_ref": "redemptions",
-                      "redemptions": [
-                        {
-                          "id": "r_0c0469eaf705889d99",
-                          "object": "redemption",
-                          "date": "2022-11-18T12:30:32.622Z",
-                          "customer_id": "cust_qBwHpagDOFu71Z3F22UzR80X",
-                          "tracking_id": "track_5DQxXbK0C0pvAaHk7mnulhyMBo7VratI",
-                          "metadata": {
-                            "store_names": "Store 2 - Florida - Miami"
-                          },
-                          "result": "SUCCESS",
-                          "order": {
-                            "id": "ord_ndw5rQJt12zvZ4upF72a3ljh",
-                            "source_id": null,
-                            "created_at": "2022-11-18T12:30:31.338Z",
-                            "updated_at": null,
-                            "status": "PAID",
-                            "amount": 9680000,
-                            "items_discount_amount": 9450000,
-                            "total_discount_amount": 9450000,
-                            "total_amount": 230000,
-                            "items_applied_discount_amount": 9450000,
-                            "total_applied_discount_amount": 9450000,
-                            "items": [
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_0bae45ffc7003ffc52",
-                                "quantity": 1,
-                                "amount": 230000,
-                                "price": 230000,
-                                "subtotal_amount": 230000,
-                                "product": {
-                                  "id": "prod_0bae45ffc7003ffc52",
-                                  "source_id": "second_product",
-                                  "name": "Samsung Phone 2",
-                                  "price": 230000
-                                }
-                              },
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_0bae2dc5a090fd0184",
-                                "sku_id": "sku_0bae3b28f610fd0da1",
-                                "quantity": 45,
-                                "discount_quantity": 45,
-                                "initial_quantity": 0,
-                                "amount": 9450000,
-                                "discount_amount": 9450000,
-                                "initial_amount": 0,
-                                "applied_discount_amount": 9450000,
-                                "price": 210000,
-                                "subtotal_amount": 0,
-                                "product": {
-                                  "id": "prod_0bae2dc5a090fd0184",
-                                  "source_id": "first_product",
-                                  "name": "Samsung Phone 1",
-                                  "price": 220000
-                                },
-                                "sku": {
-                                  "id": "sku_0bae3b28f610fd0da1",
-                                  "source_id": "first_product_sku_1",
-                                  "sku": "Samsung phone 256GB",
-                                  "price": 210000
-                                }
-                              }
-                            ],
-                            "metadata": {},
-                            "customer": {
-                              "id": "cust_qBwHpagDOFu71Z3F22UzR80X",
-                              "object": "customer"
-                            },
-                            "customer_id": "cust_qBwHpagDOFu71Z3F22UzR80X",
-                            "referrer_id": null,
-                            "object": "order",
-                            "redemptions": {
-                              "r_0c0469eaf705889d99": {
-                                "date": "2022-11-18T12:30:31.388Z",
-                                "related_object_type": "promotion_tier",
-                                "related_object_id": "promo_ZWkx6R0I1Ts3N9HL4kfTdxOm",
-                                "related_object_parent_id": "camp_40LC42P5NFbkkD4RWoJ4btks"
-                              }
-                            }
-                          },
-                          "channel": {
-                            "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
-                            "channel_type": "USER"
-                          },
-                          "customer": {
-                            "id": "cust_qBwHpagDOFu71Z3F22UzR80X",
-                            "name": "Bob Jones",
-                            "email": "bob.smith@email.com",
-                            "source_id": "pub_source_customer_5_a",
-                            "metadata": {
-                              "lang": "en",
-                              "test": true
-                            },
-                            "object": "customer"
-                          },
-                          "related_object_type": "promotion_tier",
-                          "related_object_id": "promo_ZWkx6R0I1Ts3N9HL4kfTdxOm",
-                          "voucher": null,
-                          "promotion_tier": {
-                            "id": "promo_ZWkx6R0I1Ts3N9HL4kfTdxOm",
-                            "campaign": {
-                              "id": "camp_40LC42P5NFbkkD4RWoJ4btks"
-                            }
-                          }
-                        },
-                        {
-                          "id": "r_0bf9cf0a8b12dc5ba6",
-                          "object": "redemption",
-                          "date": "2022-11-10T06:49:03.835Z",
-                          "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                          "tracking_id": "track_fxEMFisanb4sbl4Z4yCnJyDW013IrRbJmqKByTNHbXE=",
-                          "metadata": {},
-                          "amount": 200,
-                          "result": "SUCCESS",
-                          "order": {
-                            "id": "ord_jAifScsbOqxgb12hLu7hXrLU",
-                            "source_id": null,
-                            "created_at": "2022-11-10T06:49:02.703Z",
-                            "updated_at": null,
-                            "status": "PAID",
-                            "amount": 4500,
-                            "discount_amount": 4000,
-                            "total_discount_amount": 4000,
-                            "total_amount": 500,
-                            "applied_discount_amount": 4000,
-                            "total_applied_discount_amount": 4000,
-                            "items": [
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_0b72b0bd64d198e3ae",
-                                "quantity": 3,
-                                "amount": 4500,
-                                "price": 1500,
-                                "subtotal_amount": 4500,
-                                "product": {
-                                  "id": "prod_0b72b0bd64d198e3ae",
-                                  "source_id": "vase_1",
-                                  "name": "Vase - Boho Vintage",
-                                  "price": 1500
-                                }
-                              }
-                            ],
-                            "metadata": {},
-                            "customer": {
-                              "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                              "object": "customer"
-                            },
-                            "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                            "referrer_id": null,
-                            "object": "order",
-                            "redemptions": {
-                              "r_0bf9cf0a8b12dc5ba6": {
-                                "date": "2022-11-10T06:49:02.764Z",
-                                "related_object_type": "voucher",
-                                "related_object_id": "v_Xak3ViMbxCH8Lb4ZG0lWwC0goMRBXWB4",
-                                "related_object_parent_id": "camp_fkZ28pe7DUAEmmabofkxHI8N"
-                              }
-                            }
-                          },
-                          "channel": {
-                            "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
-                            "channel_type": "USER"
-                          },
-                          "customer": {
-                            "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                            "name": "Bobby McDonald",
-                            "email": "bobby.mcdonald@email.com",
-                            "source_id": "bobby.mcdonald@email.com",
-                            "metadata": {
-                              "acquisition_channel": "Facebook",
-                              "customer_life_time_value": 100
-                            },
-                            "object": "customer"
-                          },
-                          "related_object_type": "voucher",
-                          "related_object_id": "v_Xak3ViMbxCH8Lb4ZG0lWwC0goMRBXWB4",
-                          "voucher": {
-                            "id": "v_Xak3ViMbxCH8Lb4ZG0lWwC0goMRBXWB4",
-                            "code": "LT1-wMPnRhxb",
-                            "campaign": "Loyalty Campaign - Tiers - 1",
-                            "campaign_id": "camp_fkZ28pe7DUAEmmabofkxHI8N"
-                          },
-                          "reward": {
-                            "customer": {
-                              "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                              "name": "Bobby McDonald",
-                              "email": "bobby.mcdonald@email.com",
-                              "source_id": "bobby.mcdonald@email.com",
-                              "metadata": {
-                                "acquisition_channel": "Facebook",
-                                "customer_life_time_value": 100
-                              },
-                              "object": "customer"
-                            },
-                            "assignment_id": "rewa_nMXB59qGTNYawMT8eP8M4oUp",
-                            "id": "rew_MVXA2kV7lZ1zC057WUaTrvNz",
-                            "object": "reward",
-                            "name": "100 Points = $20",
-                            "created_at": "2022-09-09T06:41:54.496Z",
-                            "updated_at": null,
-                            "parameters": {
-                              "coin": {
-                                "exchange_ratio": 20,
-                                "points_ratio": 100
-                              }
-                            },
-                            "type": "COIN"
-                          },
-                          "loyalty_card": {
-                            "points": 200
-                          }
-                        },
-                        {
-                          "id": "rf_0bf9caf744d2dc593a",
-                          "object": "redemption",
-                          "date": "2022-11-10T06:31:15.477Z",
-                          "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                          "tracking_id": "track_fxEMFisanb4sbl4Z4yCnJyDW013IrRbJmqKByTNHbXE=",
-                          "metadata": {},
-                          "result": "FAILURE",
-                          "failure_code": "loyalty_card_points_exceeded",
-                          "failure_message": "loyalty card points exceeded",
-                          "order": null,
-                          "channel": {
-                            "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
-                            "channel_type": "USER"
-                          },
-                          "customer": {
-                            "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                            "name": "Bobby McDonald",
-                            "email": "bobby.mcdonald@email.com",
-                            "source_id": "bobby.mcdonald@email.com",
-                            "metadata": {
-                              "acquisition_channel": "Facebook",
-                              "customer_life_time_value": 100
-                            },
-                            "object": "customer"
-                          },
-                          "related_object_type": "voucher",
-                          "related_object_id": "v_Xak3ViMbxCH8Lb4ZG0lWwC0goMRBXWB4",
-                          "voucher": {
-                            "id": "v_Xak3ViMbxCH8Lb4ZG0lWwC0goMRBXWB4",
-                            "code": "LT1-wMPnRhxb",
-                            "campaign": "Loyalty Campaign - Tiers - 1",
-                            "campaign_id": "camp_fkZ28pe7DUAEmmabofkxHI8N"
-                          }
-                        },
-                        {
-                          "id": "rf_0bf8c023eb4d4aa4ad",
-                          "object": "redemption",
-                          "date": "2022-11-09T11:05:28.074Z",
-                          "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                          "tracking_id": "track_fxEMFisanb4sbl4Z4yCnJyDW013IrRbJmqKByTNHbXE=",
-                          "metadata": {},
-                          "result": "FAILURE",
-                          "failure_code": "customer_rules_violated",
-                          "failure_message": "customer does not match validation rules",
-                          "order": null,
-                          "channel": {
-                            "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
-                            "channel_type": "USER"
-                          },
-                          "customer": {
-                            "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                            "name": "Bob Smith",
-                            "email": "bob.smith@email.com",
-                            "source_id": "bob.smith@email.com",
-                            "metadata": {
-                              "acquisition_channel": "Facebook"
-                            },
-                            "object": "customer"
-                          },
-                          "related_object_type": "voucher",
-                          "related_object_id": "v_FGQjOjqasEbbdpnySdCpUoalJio3OHWK",
-                          "voucher": {
-                            "id": "v_FGQjOjqasEbbdpnySdCpUoalJio3OHWK",
-                            "code": "3rqWOTAh",
-                            "campaign_id": null
-                          }
-                        },
-                        {
-                          "id": "r_0ba9fa02fcd28ed8f1",
-                          "object": "redemption",
-                          "date": "2022-09-09T06:38:20.085Z",
-                          "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                          "tracking_id": "track_fxEMFisanb4sbl4Z4yCnJyDW013IrRbJmqKByTNHbXE=",
-                          "metadata": {},
-                          "amount": 300,
-                          "result": "SUCCESS",
-                          "order": {
-                            "id": "ord_G9LBb5SOPa36pHdwxUvzkw4P",
-                            "source_id": null,
-                            "created_at": "2022-09-09T06:38:17.984Z",
-                            "updated_at": null,
-                            "status": "PAID",
-                            "amount": 4600,
-                            "items_discount_amount": 300,
-                            "total_discount_amount": 300,
-                            "total_amount": 4300,
-                            "items_applied_discount_amount": 300,
-                            "total_applied_discount_amount": 300,
-                            "items": [
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_0b7d7dfb05cbe5c616",
-                                "sku_id": "sku_0b7d7dfb090be5c619",
-                                "quantity": 1,
-                                "amount": 1600,
-                                "price": 1600,
-                                "subtotal_amount": 1600,
-                                "product": {
-                                  "id": "prod_0b7d7dfb05cbe5c616",
-                                  "source_id": "Books",
-                                  "name": "Comic Books1",
-                                  "price": 1600
-                                },
-                                "sku": {
-                                  "id": "sku_0b7d7dfb090be5c619",
-                                  "source_id": "ComicBook_1",
-                                  "sku": "Comics1",
-                                  "price": 1600
-                                }
-                              },
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_0a65b3ff8592d7a5b5",
-                                "quantity": 1,
-                                "amount": 3000,
-                                "discount_amount": 300,
-                                "applied_discount_amount": 300,
-                                "price": 3000,
-                                "subtotal_amount": 2700,
-                                "product": {
-                                  "id": "prod_0a65b3ff8592d7a5b5",
-                                  "name": "Koffee Cup",
-                                  "price": 3000
-                                }
-                              }
-                            ],
-                            "metadata": {},
-                            "customer": {
-                              "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                              "object": "customer"
-                            },
-                            "customer_id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                            "referrer_id": null,
-                            "object": "order",
-                            "redemptions": {
-                              "r_0ba9fa02fcd28ed8f1": {
-                                "date": "2022-09-09T06:38:18.099Z",
-                                "related_object_type": "voucher",
-                                "related_object_id": "v_KqP2NOSb4dJb1D6UBhcq7ScPZXun0y40",
-                                "related_object_parent_id": "camp_hC2GdqYtOmTT45zfhib62cK1"
-                              }
-                            }
-                          },
-                          "channel": {
-                            "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
-                            "channel_type": "USER"
-                          },
-                          "customer": {
-                            "id": "cust_tAED42tFhLM9v7GmZUaklJFd",
-                            "name": "Bob Smith",
-                            "email": "bob.smith@email.com",
-                            "source_id": "bob.smith@email.com",
-                            "metadata": {},
-                            "object": "customer"
-                          },
-                          "related_object_type": "voucher",
-                          "related_object_id": "v_KqP2NOSb4dJb1D6UBhcq7ScPZXun0y40",
-                          "voucher": {
-                            "id": "v_KqP2NOSb4dJb1D6UBhcq7ScPZXun0y40",
-                            "code": "vTcguVLE",
-                            "campaign": "SL-Gift",
-                            "campaign_id": "camp_hC2GdqYtOmTT45zfhib62cK1"
-                          },
-                          "gift": {
-                            "amount": 300
-                          }
-                        },
-                        {
-                          "id": "rf_0bf8bfe0808d4aa473",
-                          "object": "redemption",
-                          "date": "2022-11-09T11:04:19.062Z",
-                          "customer_id": null,
-                          "tracking_id": null,
-                          "metadata": {},
-                          "result": "FAILURE",
-                          "failure_code": "missing_customer",
-                          "failure_message": "Missing customer",
-                          "order": null,
-                          "channel": {
-                            "channel_id": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH",
-                            "channel_type": "USER"
-                          },
-                          "customer": null,
-                          "related_object_type": "voucher",
-                          "related_object_id": "v_FGQjOjqasEbbdpnySdCpUoalJio3OHWK",
-                          "voucher": {
-                            "id": "v_FGQjOjqasEbbdpnySdCpUoalJio3OHWK",
-                            "code": "3rqWOTAh",
-                            "campaign_id": null
-                          }
-                        }
-                      ],
-                      "total": 6
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "operationId": "redeem-stacked-discounts",
-        "tags": [
-          "Redemptions"
-        ],
-        "summary": "Redeem Stackable Discounts",
-        "description": "## How API returns calculated discounts and order amounts in the response\n\nIn the table below, you can see the logic the API follows to calculate discounts and amounts:\n\n| **Field** | **Calculation** | **Description** |\n|:---|:---|:---|\n| amount | N/A | This field shows the order amount before applying any discount |\n| total_amount | `total_amount` = `amount` - `total_discount_amount` | This field shows the order amount after applying all the discounts |\n| discount_amount | `discount_amount` = `previous_discount_amount` + `applied_discount_amount` | This field sums up all order-level discounts up to and including the specific discount being calculated for the stacked redemption. |\n| items_discount_amount | sum(items, i => i.discount_amount) | This field sums up all product-specific discounts |\n| total_discount_amount | `total_discount_amount` = `discount_amount` + `items_discount_amount` | This field sums up all order-level and all product-specific discounts |\n| applied_discount_amount | N/A | This field shows the order-level discount applied in a particular request |\n| items_applied_discount_amount | sum(items, i => i.applied_discount_amount) | This field sums up all product-specific discounts applied in a particular request |\n| total_applied_discount_amount | `total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount` | This field sums up all order-level and all product-specific discounts applied in a particular request |\n\n<!-- theme: info -->\n> 📘 Rollbacks\n>\n> You can't roll back a child redemption. When you call rollback on a stacked redemption, all child redemptions will be rolled back. You need to refer to a parent redemption ID in your <!-- [rollback request](OpenAPI.json/paths/~1redemptions~1{parentRedemptionId}~1rollbacks/post) -->[rollback request](ref:rollback-stacked-redemptions).    \n\n<!-- theme: info -->\n> 📘 Also available on client-side\n>\n> This method is also accessible through public keys which you can use in client-side​ apps: mobile and web browser apps. Go to the dedicated [endpoint](ref:redeem-stacked-discounts-client-side) to learn more.\n> - Use `X-Client-Application-Id` as the application ID header.\n> - Use `X-Client-Token` as the appliction secret key header.\n> - Use client-side base URL.\n> - Use an `origin` header for your custom domain.",
-        "parameters": [],
-        "security": [
-          {
-            "X-App-Id": [],
-            "X-App-Token": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RedemptionsRedeemRequestBody"
-              },
-              "examples": {
-                "Example": {
-                  "value": {
-                    "customer": {
-                      "source_id": "sample_customer",
-                      "metadata": {
-                        "key": "value"
-                      }
-                    },
-                    "options": {
-                      "expand": [
-                        "order",
-                        "redeemable",
-                        "category"
-                      ]
-                    },
-                    "redeemables": [
-                      {
-                        "object": "voucher",
-                        "id": "voucher-code"
-                      }
-                    ],
-                    "session": {
-                      "type": "LOCK",
-                      "key": "session_key"
-                    },
-                    "order": {
-                      "amount": 55000,
-                      "status": "PAID",
-                      "items": [
-                        {
-                          "quantity": 2,
-                          "price": 20000,
-                          "source_id": "sample product1",
-                          "related_object": "product",
-                          "product": {
-                            "metadata": {
-                              "key": "value"
-                            }
-                          }
-                        },
-                        {
-                          "quantity": 1,
-                          "price": 15000,
-                          "source_id": "sample product2",
-                          "related_object": "product",
-                          "product": {
-                            "metadata": {
-                              "key": "value"
-                            }
-                          }
-                        }
-                      ],
-                      "metadata": {
-                        "key": "value"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid redemption. See https://support.voucherify.io/article/604-stacking-rules#application-rules",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RedemptionsRedeemResponseBody"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/redemptions/{redemptionId}": {
       "parameters": [
         {
@@ -57079,754 +57866,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ClientRedemptionsRedeemResponseBody"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/validations": {
-      "post": {
-        "operationId": "validate-stacked-discounts",
-        "tags": [
-          "Validations"
-        ],
-        "summary": "Validate Stackable Discounts",
-        "description": "Verify redeemables provided in the request. This method is designed for server side integration which means that it is accessible only through private keys.",
-        "parameters": [],
-        "security": [
-          {
-            "X-App-Id": [],
-            "X-App-Token": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ValidationsValidateRequestBody"
-              },
-              "examples": {
-                "1 Redeemable": {
-                  "value": {
-                    "customer": {
-                      "source_id": "sample_customer",
-                      "metadata": {
-                        "key": "value"
-                      }
-                    },
-                    "options": {
-                      "expand": [
-                        "order",
-                        "redeemable",
-                        "category"
-                      ]
-                    },
-                    "redeemables": [
-                      {
-                        "object": "voucher",
-                        "id": "voucher-code"
-                      }
-                    ],
-                    "session": {
-                      "type": "LOCK"
-                    },
-                    "order": {
-                      "amount": 55000,
-                      "status": "PAID",
-                      "items": [
-                        {
-                          "quantity": 2,
-                          "price": 20000,
-                          "source_id": "sample product1",
-                          "related_object": "product",
-                          "product": {
-                            "metadata": {
-                              "key": "value"
-                            }
-                          }
-                        },
-                        {
-                          "quantity": 1,
-                          "price": 15000,
-                          "source_id": "sample product2",
-                          "related_object": "product",
-                          "product": {
-                            "metadata": {
-                              "key": "value"
-                            }
-                          }
-                        }
-                      ],
-                      "metadata": {
-                        "key": "value"
-                      }
-                    }
-                  }
-                },
-                "5 Redeemables": {
-                  "value": {
-                    "customer": {
-                      "source_id": "36_bob"
-                    },
-                    "options": {
-                      "expand": [
-                        "order",
-                        "redeemable",
-                        "category"
-                      ]
-                    },
-                    "redeemables": [
-                      {
-                        "object": "voucher",
-                        "id": "GNcuPKGe"
-                      },
-                      {
-                        "object": "voucher",
-                        "id": "AnsvocvP",
-                        "reward": {
-                          "id": "rew_EPx1hCTpqzF0HW1z9NKckZH4"
-                        }
-                      },
-                      {
-                        "object": "voucher",
-                        "id": "M3X8IwW8",
-                        "gift": {
-                          "credits": 100
-                        }
-                      },
-                      {
-                        "object": "promotion_tier",
-                        "id": "promo_DE1N30D731Tg2F6NoMwNas2W"
-                      },
-                      {
-                        "object": "promotion_tier",
-                        "id": "promo_NDHgTg4VnOLYNjk9r7WOmQxf"
-                      }
-                    ],
-                    "session": {
-                      "type": "LOCK"
-                    },
-                    "order": {
-                      "items": [
-                        {
-                          "sku_id": "sku_0a3efc90375d1217e2",
-                          "quantity": 1
-                        },
-                        {
-                          "product_id": "prod_0bc3bd8a4e072c5275",
-                          "quantity": 1
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid validation. See https://support.voucherify.io/article/604-stacking-rules#application-rules",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationsValidateResponseBody"
-                },
-                "examples": {
-                  "False": {
-                    "value": {
-                      "valid": false,
-                      "redeemables": [
-                        {
-                          "status": "INAPPLICABLE",
-                          "id": "eee33463",
-                          "object": "voucher",
-                          "result": {
-                            "error": {
-                              "code": 404,
-                              "key": "not_found",
-                              "message": "Resource not found",
-                              "details": "Cannot find voucher with id eee33463",
-                              "request_id": "v-0c6c6e20dc42940f0b",
-                              "resource_id": "eee33463",
-                              "resource_type": "voucher"
-                            }
-                          }
-                        },
-                        {
-                          "status": "SKIPPED",
-                          "id": "promo_Mwy9XpA0TLctSGriM5kum0qp",
-                          "object": "promotion_tier",
-                          "result": {}
-                        }
-                      ],
-                      "tracking_id": "track_VAVW6qltuo1/z+G2GI2LPw=="
-                    }
-                  },
-                  "True - 5 Redeemables": {
-                    "value": {
-                      "valid": true,
-                      "redeemables": [
-                        {
-                          "status": "APPLICABLE",
-                          "id": "GNcuPKGe",
-                          "object": "voucher",
-                          "order": {
-                            "amount": 2700,
-                            "items_discount_amount": 1700,
-                            "total_discount_amount": 1700,
-                            "total_amount": 1000,
-                            "items_applied_discount_amount": 1700,
-                            "total_applied_discount_amount": 1700,
-                            "items": [
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_s3C0nDpr0DuC7",
-                                "sku_id": "sku_0a3efc90375d1217e2",
-                                "quantity": 1,
-                                "amount": 2000,
-                                "discount_amount": 1000,
-                                "applied_discount_amount": 1000,
-                                "price": 2000,
-                                "subtotal_amount": 1000,
-                                "product": {
-                                  "id": "prod_s3C0nDpr0DuC7",
-                                  "source_id": "test_prod_id_2",
-                                  "name": "Watchflix"
-                                },
-                                "sku": {
-                                  "id": "sku_0a3efc90375d1217e2",
-                                  "source_id": "test_standard_ultra_hd",
-                                  "sku": "Premium",
-                                  "price": 2000
-                                }
-                              },
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_0bc3bd8a4e072c5275",
-                                "quantity": 1,
-                                "amount": 700,
-                                "discount_amount": 700,
-                                "applied_discount_amount": 700,
-                                "price": 700,
-                                "subtotal_amount": 0,
-                                "product": {
-                                  "id": "prod_0bc3bd8a4e072c5275",
-                                  "name": "Bouquet - Romantic Roses",
-                                  "price": 700
-                                }
-                              }
-                            ],
-                            "metadata": {},
-                            "customer_id": null,
-                            "referrer_id": null,
-                            "object": "order"
-                          },
-                          "applicable_to": {
-                            "data": [
-                              {
-                                "object": "products_collection",
-                                "id": "pc_a11pr0dUc75",
-                                "strict": false,
-                                "effect": "APPLY_TO_EVERY"
-                              },
-                              {
-                                "object": "sku",
-                                "id": "sku_0a3efc90375d1217e2",
-                                "source_id": "test_standard_ultra_hd",
-                                "product_id": "prod_s3C0nDpr0DuC7",
-                                "product_source_id": "test_prod_id_2",
-                                "strict": true,
-                                "effect": "APPLY_TO_EVERY"
-                              },
-                              {
-                                "object": "product",
-                                "id": "prod_0bc3bd8a4e072c5275",
-                                "source_id": "prod_0bc3bd8a4e072c5275",
-                                "strict": true,
-                                "effect": "APPLY_TO_EVERY"
-                              }
-                            ],
-                            "total": 3,
-                            "data_ref": "data",
-                            "object": "list"
-                          },
-                          "inapplicable_to": {
-                            "data": [],
-                            "total": 0,
-                            "data_ref": "data",
-                            "object": "list"
-                          },
-                          "result": {
-                            "discount": {
-                              "type": "AMOUNT",
-                              "effect": "APPLY_TO_ITEMS",
-                              "amount_off": 1000,
-                              "is_dynamic": false
-                            }
-                          },
-                          "metadata": {},
-                          "categories": []
-                        },
-                        {
-                          "status": "APPLICABLE",
-                          "id": "AnsvocvP",
-                          "object": "voucher",
-                          "order": {
-                            "amount": 2700,
-                            "items_discount_amount": 1700,
-                            "total_discount_amount": 1700,
-                            "total_amount": 1000,
-                            "items": [
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_s3C0nDpr0DuC7",
-                                "sku_id": "sku_0a3efc90375d1217e2",
-                                "quantity": 1,
-                                "amount": 2000,
-                                "discount_amount": 1000,
-                                "price": 2000,
-                                "subtotal_amount": 1000,
-                                "product": {
-                                  "id": "prod_s3C0nDpr0DuC7",
-                                  "source_id": "test_prod_id_2",
-                                  "name": "Watchflix"
-                                },
-                                "sku": {
-                                  "id": "sku_0a3efc90375d1217e2",
-                                  "source_id": "test_standard_ultra_hd",
-                                  "sku": "Premium",
-                                  "price": 2000
-                                }
-                              },
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_0bc3bd8a4e072c5275",
-                                "quantity": 1,
-                                "amount": 700,
-                                "discount_amount": 700,
-                                "price": 700,
-                                "subtotal_amount": 0,
-                                "product": {
-                                  "id": "prod_0bc3bd8a4e072c5275",
-                                  "name": "Bouquet - Romantic Roses",
-                                  "price": 700
-                                }
-                              }
-                            ],
-                            "metadata": {},
-                            "customer_id": null,
-                            "referrer_id": null,
-                            "object": "order"
-                          },
-                          "applicable_to": {
-                            "data": [],
-                            "total": 0,
-                            "data_ref": "data",
-                            "object": "list"
-                          },
-                          "inapplicable_to": {
-                            "data": [],
-                            "total": 0,
-                            "data_ref": "data",
-                            "object": "list"
-                          },
-                          "result": {
-                            "loyalty_card": {
-                              "points": 4
-                            }
-                          },
-                          "metadata": {},
-                          "categories": [
-                            {
-                              "id": "cat_0bb81a481615a37b5e",
-                              "name": "Second",
-                              "hierarchy": 2,
-                              "created_at": "2022-09-20T05:58:01.561Z",
-                              "object": "category"
-                            }
-                          ]
-                        },
-                        {
-                          "status": "APPLICABLE",
-                          "id": "M3X8IwW8",
-                          "object": "voucher",
-                          "order": {
-                            "amount": 2700,
-                            "discount_amount": 100,
-                            "items_discount_amount": 1700,
-                            "total_discount_amount": 1800,
-                            "total_amount": 900,
-                            "applied_discount_amount": 100,
-                            "total_applied_discount_amount": 100,
-                            "items": [
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_s3C0nDpr0DuC7",
-                                "sku_id": "sku_0a3efc90375d1217e2",
-                                "quantity": 1,
-                                "amount": 2000,
-                                "discount_amount": 1000,
-                                "price": 2000,
-                                "subtotal_amount": 1000,
-                                "product": {
-                                  "id": "prod_s3C0nDpr0DuC7",
-                                  "source_id": "test_prod_id_2",
-                                  "name": "Watchflix"
-                                },
-                                "sku": {
-                                  "id": "sku_0a3efc90375d1217e2",
-                                  "source_id": "test_standard_ultra_hd",
-                                  "sku": "Premium",
-                                  "price": 2000
-                                }
-                              },
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_0bc3bd8a4e072c5275",
-                                "quantity": 1,
-                                "amount": 700,
-                                "discount_amount": 700,
-                                "price": 700,
-                                "subtotal_amount": 0,
-                                "product": {
-                                  "id": "prod_0bc3bd8a4e072c5275",
-                                  "name": "Bouquet - Romantic Roses",
-                                  "price": 700
-                                }
-                              }
-                            ],
-                            "metadata": {},
-                            "customer_id": null,
-                            "referrer_id": null,
-                            "object": "order"
-                          },
-                          "applicable_to": {
-                            "data": [],
-                            "total": 0,
-                            "data_ref": "data",
-                            "object": "list"
-                          },
-                          "inapplicable_to": {
-                            "data": [],
-                            "total": 0,
-                            "data_ref": "data",
-                            "object": "list"
-                          },
-                          "result": {
-                            "gift": {
-                              "credits": 100
-                            }
-                          },
-                          "metadata": {},
-                          "categories": []
-                        },
-                        {
-                          "status": "APPLICABLE",
-                          "id": "promo_DE1N30D731Tg2F6NoMwNas2W",
-                          "object": "promotion_tier",
-                          "order": {
-                            "amount": 2700,
-                            "discount_amount": 460,
-                            "items_discount_amount": 1700,
-                            "total_discount_amount": 2160,
-                            "total_amount": 540,
-                            "applied_discount_amount": 360,
-                            "total_applied_discount_amount": 360,
-                            "items": [
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_s3C0nDpr0DuC7",
-                                "sku_id": "sku_0a3efc90375d1217e2",
-                                "quantity": 1,
-                                "amount": 2000,
-                                "discount_amount": 1000,
-                                "price": 2000,
-                                "subtotal_amount": 1000,
-                                "product": {
-                                  "id": "prod_s3C0nDpr0DuC7",
-                                  "source_id": "test_prod_id_2",
-                                  "name": "Watchflix"
-                                },
-                                "sku": {
-                                  "id": "sku_0a3efc90375d1217e2",
-                                  "source_id": "test_standard_ultra_hd",
-                                  "sku": "Premium",
-                                  "price": 2000
-                                }
-                              },
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_0bc3bd8a4e072c5275",
-                                "quantity": 1,
-                                "amount": 700,
-                                "discount_amount": 700,
-                                "price": 700,
-                                "subtotal_amount": 0,
-                                "product": {
-                                  "id": "prod_0bc3bd8a4e072c5275",
-                                  "name": "Bouquet - Romantic Roses",
-                                  "price": 700
-                                }
-                              }
-                            ],
-                            "metadata": {},
-                            "customer_id": null,
-                            "referrer_id": null,
-                            "object": "order"
-                          },
-                          "applicable_to": {
-                            "data": [
-                              {
-                                "object": "sku",
-                                "id": "sku_0a3efc90375d1217e2",
-                                "source_id": "test_standard_ultra_hd",
-                                "product_id": "prod_s3C0nDpr0DuC7",
-                                "product_source_id": "test_prod_id_2",
-                                "strict": true,
-                                "effect": "APPLY_TO_EVERY"
-                              },
-                              {
-                                "object": "product",
-                                "id": "prod_0bc3bd8a4e072c5275",
-                                "source_id": "prod_0bc3bd8a4e072c5275",
-                                "strict": true,
-                                "effect": "APPLY_TO_EVERY"
-                              }
-                            ],
-                            "total": 2,
-                            "data_ref": "data",
-                            "object": "list"
-                          },
-                          "inapplicable_to": {
-                            "data": [
-                              {
-                                "object": "product",
-                                "id": "prod_0b2c2ddf35150b83bb",
-                                "source_id": "97",
-                                "strict": false,
-                                "effect": "APPLY_TO_EVERY"
-                              }
-                            ],
-                            "total": 1,
-                            "data_ref": "data",
-                            "object": "list"
-                          },
-                          "result": {
-                            "discount": {
-                              "type": "PERCENT",
-                              "effect": "APPLY_TO_ORDER",
-                              "percent_off": 40,
-                              "is_dynamic": false
-                            }
-                          },
-                          "metadata": {}
-                        },
-                        {
-                          "status": "APPLICABLE",
-                          "id": "promo_NDHgTg4VnOLYNjk9r7WOmQxf",
-                          "object": "promotion_tier",
-                          "order": {
-                            "amount": 2700,
-                            "discount_amount": 490,
-                            "items_discount_amount": 1700,
-                            "total_discount_amount": 2190,
-                            "total_amount": 510,
-                            "applied_discount_amount": 30,
-                            "total_applied_discount_amount": 30,
-                            "items": [
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_s3C0nDpr0DuC7",
-                                "sku_id": "sku_0a3efc90375d1217e2",
-                                "quantity": 1,
-                                "amount": 2000,
-                                "discount_amount": 1000,
-                                "price": 2000,
-                                "subtotal_amount": 1000,
-                                "product": {
-                                  "id": "prod_s3C0nDpr0DuC7",
-                                  "source_id": "test_prod_id_2",
-                                  "name": "Watchflix"
-                                },
-                                "sku": {
-                                  "id": "sku_0a3efc90375d1217e2",
-                                  "source_id": "test_standard_ultra_hd",
-                                  "sku": "Premium",
-                                  "price": 2000
-                                }
-                              },
-                              {
-                                "object": "order_item",
-                                "product_id": "prod_0bc3bd8a4e072c5275",
-                                "quantity": 1,
-                                "amount": 700,
-                                "discount_amount": 700,
-                                "price": 700,
-                                "subtotal_amount": 0,
-                                "product": {
-                                  "id": "prod_0bc3bd8a4e072c5275",
-                                  "name": "Bouquet - Romantic Roses",
-                                  "price": 700
-                                }
-                              }
-                            ],
-                            "metadata": {},
-                            "customer_id": null,
-                            "referrer_id": null,
-                            "object": "order"
-                          },
-                          "applicable_to": {
-                            "data": [
-                              {
-                                "object": "sku",
-                                "id": "sku_0a3efc90375d1217e2",
-                                "source_id": "test_standard_ultra_hd",
-                                "product_id": "prod_s3C0nDpr0DuC7",
-                                "product_source_id": "test_prod_id_2",
-                                "strict": true,
-                                "effect": "APPLY_TO_EVERY"
-                              },
-                              {
-                                "object": "product",
-                                "id": "prod_0bc3bd8a4e072c5275",
-                                "source_id": "prod_0bc3bd8a4e072c5275",
-                                "strict": true,
-                                "effect": "APPLY_TO_EVERY"
-                              }
-                            ],
-                            "total": 2,
-                            "data_ref": "data",
-                            "object": "list"
-                          },
-                          "inapplicable_to": {
-                            "data": [
-                              {
-                                "object": "product",
-                                "id": "prod_0b2c2ddf35150b83bb",
-                                "source_id": "97",
-                                "strict": false,
-                                "effect": "APPLY_TO_EVERY"
-                              }
-                            ],
-                            "total": 1,
-                            "data_ref": "data",
-                            "object": "list"
-                          },
-                          "result": {
-                            "discount": {
-                              "type": "AMOUNT",
-                              "effect": "APPLY_TO_ORDER",
-                              "amount_off": 30,
-                              "is_dynamic": false
-                            }
-                          },
-                          "metadata": {}
-                        }
-                      ],
-                      "order": {
-                        "amount": 2700,
-                        "discount_amount": 490,
-                        "items_discount_amount": 1700,
-                        "total_discount_amount": 2190,
-                        "total_amount": 510,
-                        "applied_discount_amount": 490,
-                        "items_applied_discount_amount": 1700,
-                        "total_applied_discount_amount": 2190,
-                        "items": [
-                          {
-                            "object": "order_item",
-                            "product_id": "prod_s3C0nDpr0DuC7",
-                            "sku_id": "sku_0a3efc90375d1217e2",
-                            "quantity": 1,
-                            "amount": 2000,
-                            "discount_amount": 1000,
-                            "applied_discount_amount": 1000,
-                            "price": 2000,
-                            "subtotal_amount": 1000,
-                            "product": {
-                              "id": "prod_s3C0nDpr0DuC7",
-                              "source_id": "test_prod_id_2",
-                              "name": "Watchflix"
-                            },
-                            "sku": {
-                              "id": "sku_0a3efc90375d1217e2",
-                              "source_id": "test_standard_ultra_hd",
-                              "sku": "Premium",
-                              "price": 2000
-                            }
-                          },
-                          {
-                            "object": "order_item",
-                            "product_id": "prod_0bc3bd8a4e072c5275",
-                            "quantity": 1,
-                            "amount": 700,
-                            "discount_amount": 700,
-                            "applied_discount_amount": 700,
-                            "price": 700,
-                            "subtotal_amount": 0,
-                            "product": {
-                              "id": "prod_0bc3bd8a4e072c5275",
-                              "name": "Bouquet - Romantic Roses",
-                              "price": 700
-                            }
-                          }
-                        ],
-                        "metadata": {},
-                        "customer_id": null,
-                        "referrer_id": null,
-                        "object": "order"
-                      },
-                      "tracking_id": "track_9B0kB92+bJa8a+PegaWREw==",
-                      "session": {
-                        "key": "ssn_pkJfPcWAgp9WyHpA62Eky8X8SzxpKub2",
-                        "type": "LOCK",
-                        "ttl": 7,
-                        "ttl_unit": "DAYS"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Returns an error if the payload is missing an `\"object\"` or `\"id\"` property in the redeemables array, if you add more than one promotion stack or attempt to join stacks with vouchers/promotion tiers.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/e_400_invalid_payload"
-                },
-                "examples": {
-                  "Invalid payload": {
-                    "value": {
-                      "code": 400,
-                      "key": "invalid_payload",
-                      "message": "Invalid payload",
-                      "details": "Property .redeemables[1] should have required property 'id'",
-                      "request_id": "v-0b4ff38ab8c8164573"
-                    }
-                  },
-                  "Duplicated Redeemables": {
-                    "value": {
-                      "code": 400,
-                      "key": "duplicated_redeemables",
-                      "message": "Duplicated redeemables detected",
-                      "details": "Duplicated redeemables detected in one redemption",
-                      "request_id": "v-0b4ffecfb408165300"
-                    }
-                  },
-                  "Invalid Redeemables": {
-                    "value": {
-                      "code": 400,
-                      "key": "invalid_redeemables",
-                      "message": "Invalid redeemables",
-                      "details": "Promotion Stack cannot be use with other redeemables",
-                      "request_id": "v-0b5007812f48165d6b"
-                    }
-                  }
                 }
               }
             }
@@ -77310,45 +77349,6 @@
                       "updated_at": null
                     }
                   }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/qualifications": {
-      "post": {
-        "operationId": "check-eligibility",
-        "tags": [
-          "Qualifications"
-        ],
-        "summary": "Check Eligibility",
-        "description": "<!-- theme: warning -->\n> 🚧 The Qualifications endpoint in the basic mode ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read our dedicated guide to learn about some use cases this endpoint can cover [here](doc:checking-eligibility).\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
-        "parameters": [],
-        "security": [
-          {
-            "X-App-Id": [],
-            "X-App-Token": []
-          }
-        ],
-        "requestBody": {
-          "description": "Define order and customer context.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/QualificationsCheckEligibilityRequestBody"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Returns a qualifications object.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QualificationsCheckEligibilityResponseBody"
                 }
               }
             }
