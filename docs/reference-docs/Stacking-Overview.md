@@ -1,7 +1,7 @@
 ---
 title: Stacking API Overview
 categorySlug: voucherify-api
-parentDocSlug: stackable-discounts
+parentDocSlug: redemptions
 slug: stacking-api-overview
 type: link
 hidden: true
