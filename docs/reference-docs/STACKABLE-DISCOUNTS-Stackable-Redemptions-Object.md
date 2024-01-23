@@ -2,10 +2,10 @@
 title: Stackable Redemptions Object
 type: basic
 categorySlug: voucherify-api
-parentDocSlug: stackable-discounts
+parentDocSlug: redemptions
 slug: stackable-redemptions-object
 hidden: true
-order: 3
+order: 33
 ---
 
 ## Redemptions Redeem Response Body
