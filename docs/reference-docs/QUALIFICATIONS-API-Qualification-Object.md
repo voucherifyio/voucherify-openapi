@@ -13,7 +13,9 @@ order: 1
 > Read our dedicated guide to learn about some use cases these endpoints can cover [here](doc:checking-eligibility).
 
 ## Qualification object
-#### This is an object representing a qualification.
+<p>This is an object representing a qualification.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | redeemables | See: [Redeemables](#redeemables) |
@@ -22,7 +24,9 @@ order: 1
 | stacking_rules | See: [Examine Qualification Stacking Rules](#examine-qualification-stacking-rules) |
 
 ## Redeemables
-#### List of redeemables for examine qualification.
+<p>List of redeemables for examine qualification.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. Default is <code>list</code>.</p> Available values: `list` |
@@ -36,10 +40,12 @@ order: 1
 All of:
 
 1. [Order Response Base](#order-response-base)
-2. <h3>Order Response</h3><h5>Order information.</h5><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left">Any of: <a href="#customer-response">Customer Response</a>, <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">Any of: <a href="#referrer-response">Referrer Response</a>, <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
+2. <h3>Order Response</h3><p>Order information.</p><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left">Any of: <a href="#customer-response">Customer Response</a>, <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">Any of: <a href="#referrer-response">Referrer Response</a>, <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
 
 ## Examine Qualification Stacking Rules
-#### Defines stacking rules for redeemables. Read more in the [Help Center](https://support.voucherify.io/article/604-stacking-rules)
+<p>Defines stacking rules for redeemables. Read more in the <a href="https://support.voucherify.io/article/604-stacking-rules">Help Center</a></p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | redeemables_limit</br>`integer` | <p>Defines how many redeemables can be sent in one stacking request (note: more redeemables means more processing time!).</p> |
@@ -55,7 +61,9 @@ All of:
 2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">redeemables</br><code>array</code></td><td style="text-align:left">Array of <a href="#single-redeemable">Single redeemable</a></td></tr></tbody></table>
 
 ## Order Response Base
-#### Order information.
+<p>Order information.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.</p> |
@@ -102,7 +110,9 @@ All of:
 1. [Customer Id](#customer-id)
 
 ## Single redeemable
-#### Data of single redeemable which was properly qualified.
+<p>Data of single redeemable which was properly qualified.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Id of the redeemable.</p> |
@@ -168,7 +178,9 @@ All of:
 | campaigns</br>`object` | <p>Contains campaigns with details about point balances and how many customers were referred by the customer.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</br><code>object</code></td><td style="text-align:left"><p>Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Remaining point balance in campaign.</p></td></tr><tr><td style="text-align:left">loyalty_tier</br><code>string</code></td><td style="text-align:left"><p>Customer's loyalty tier within the campaign.</p> <strong>Example:</strong> <p>ltr_UJ5Q54Q0OvEhua87Qfv2Ki5x</p></td></tr><tr><td style="text-align:left">referred_customers</br><code>integer</code></td><td style="text-align:left"><p>Number of customers referred by the customer in campaign.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
 ## Customer Referrals
-#### Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.
+<p>Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | total</br>`integer` | <p>Total number of times this customer received a referral, i.e. was referred by another customer.</p> |
@@ -187,7 +199,9 @@ All of:
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.</p> |
 
 ## Redeemable Single Result
-#### Information about redeemable result.
+<p>Information about redeemable result.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | discount | See: [Discount](#discount) |
@@ -212,7 +226,9 @@ All of:
 | data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
 
 ## Category
-#### This is an object representing a category.
+<p>This is an object representing a category.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
@@ -224,7 +240,9 @@ All of:
 | stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Validation Rules Assignments List
-#### List of Validation Rules Assignments
+<p>List of Validation Rules Assignments</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rules assignments.</p> Available values: `list` |
@@ -254,7 +272,6 @@ All of:
 | last_order_date</br>`string` | <p>Timestamp representing the date and time of the customer's last order in ISO 8601 format.</p> **Example:** <p>2022-08-30T11:51:08.029Z</p> |
 
 ## Discount
-#### Contains information about discount.
 <p>Contains information about discount.</p>
 
 Any of:
@@ -262,14 +279,18 @@ Any of:
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
 ## Gift
-#### Contains current gift card balance information.
+<p>Contains current gift card balance information.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | balance</br>`number` | <p>Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
 | credits</br>`number` | <p>The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
 
 ## Loyalty Card
-#### Loyalty Card object response
+<p>Loyalty Card object response</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | points</br>`integer` | <p>Total points incurred over lifespan of loyalty card.</p> **Example:** <p>7000</p> |
@@ -279,7 +300,9 @@ Any of:
 | transfers</br>`array` | Array of [Loyalties Transfer Points](#loyalties-transfer-points) |
 
 ## Error Object
-#### Error details
+<p>Error details</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | code</br>`integer` | <p>Error's HTTP status code.</p> |
@@ -314,7 +337,9 @@ All of:
 1. [Applicable To](#applicable-to)
 
 ## Business Validation Rule Assignment
-#### Assignments of business validation rule
+<p>Assignments of business validation rule</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>The unique identifier for a assignment</p> |

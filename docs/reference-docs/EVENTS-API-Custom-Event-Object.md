@@ -9,7 +9,9 @@ order: 1
 ---
 
 ## Track Custom Event Request Body
-#### Request schema for tracking a custom event.
+<p>Request schema for tracking a custom event.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | event</br>`string` | <p>Event name. This is the same name that you used to define a custom event in the <strong>Dashboard</strong> &gt; <strong>Project Settings</strong> &gt; <strong>Event Schema</strong>.</p> |

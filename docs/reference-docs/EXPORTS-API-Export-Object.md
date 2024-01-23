@@ -74,7 +74,9 @@ Available values: `-created_at`, `created_at`, `-updated_at`, `updated_at`, `-co
 Available values: `code`, `voucher_type`, `value`, `discount_type`, `campaign`, `category`, `start_date`, `expiration_date`, `gift_balance`, `loyalty_balance`, `redemption_quantity`, `redemption_count`, `active`, `qr_code`, `bar_code`, `metadata`, `id`, `is_referral_code`, `created_at`, `updated_at`, `validity_timeframe_interval`, `validity_timeframe_duration`, `validity_day_of_week`, `discount_amount_limit`, `campaign_id`, `additional_info`, `customer_id`, `discount_unit_type`, `discount_unit_effect`, `customer_source_id`
 
 ## Export Voucher Filters
-#### Allowed additional properties must start with "metadata." or "redemption."
+<p>Allowed additional properties must start with &quot;metadata.&quot; or &quot;redemption.&quot;</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | junction | <p>Filter by conditions set on the junction parameter indicating how the conditions should be accounted for in the query. An AND is an all-inclusive logical operator, meaning the AND operator displays a record if ALL the conditions separated by AND are TRUE, while an OR operator displays a record if ANY of the conditions separated by OR is TRUE.</p> See: [Junction](#junction) |
@@ -103,7 +105,9 @@ Available values: `-id`, `id`, `-voucher_code`, `voucher_code`, `-tracking_id`, 
 Available values: `id`, `object`, `date`, `voucher_code`, `campaign`, `promotion_tier_id`, `customer_id`, `customer_source_id`, `customer_name`, `tracking_id`, `order_amount`, `gift_amount`, `loyalty_points`, `result`, `failure_code`, `failure_message`, `metadata`
 
 ## Export Redemption Filters
-#### Allowed additional properties must start with "metadata."
+<p>Allowed additional properties must start with &quot;metadata.&quot;</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | junction | See: [Junction](#junction) |
@@ -132,7 +136,9 @@ Available values: `-name`, `name`, `-id`, `id`, `-email`, `email`, `-source_id`,
 Available values: `name`, `id`, `description`, `email`, `source_id`, `created_at`, `address_city`, `address_state`, `address_line_1`, `address_line_2`, `address_country`, `address_postal_code`, `redemptions_total_redeemed`, `redemptions_total_failed`, `redemptions_total_succeeded`, `redemptions_total_rolled_back`, `redemptions_total_rollback_failed`, `redemptions_total_rollback_succeeded`, `orders_total_amount`, `orders_total_count`, `orders_average_amount`, `orders_last_order_amount`, `orders_last_order_date`, `loyalty_points`, `loyalty_referred_customers`, `updated_at`, `phone`, `birthday`, `metadata`, `birthdate`
 
 ## Export Customer Filters
-#### Allowed additional properties must start with "metadata." or "address." or "summary." or "loyalty." or "loyalty_tier." or "loyalty_points." or "system_metadata."
+<p>Allowed additional properties must start with &quot;metadata.&quot; or &quot;address.&quot; or &quot;summary.&quot; or &quot;loyalty.&quot; or &quot;loyalty_tier.&quot; or &quot;loyalty_points.&quot; or &quot;system_metadata.&quot;</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | junction | See: [Junction](#junction) |
@@ -154,7 +160,9 @@ Available values: `-id`, `id`, `-voucher_code`, `voucher_code`, `-tracking_id`, 
 Available values: `voucher_code`, `customer_id`, `customer_source_id`, `date`, `channel`, `campaign`, `is_winner`, `metadata`
 
 ## Export Publication Filters
-#### Allowed additional properties must start with "metadata."
+<p>Allowed additional properties must start with &quot;metadata.&quot;</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | junction | See: [Junction](#junction) |
@@ -180,7 +188,9 @@ Available values: `-created_at`, `created_at`, `-updated_at`, `updated_at`, `-st
 Available values: `id`, `source_id`, `created_at`, `updated_at`, `status`, `amount`, `discount_amount`, `items_discount_amount`, `total_discount_amount`, `total_amount`, `customer_id`, `referrer_id`, `metadata`
 
 ## Export Order Filters
-#### Allowed additional properties must start with "metadata."
+<p>Allowed additional properties must start with &quot;metadata.&quot;</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | junction | See: [Junction](#junction) |

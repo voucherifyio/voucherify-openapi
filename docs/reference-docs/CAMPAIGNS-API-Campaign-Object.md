@@ -15,7 +15,9 @@ All of:
 2. <h3>Campaign Additional Data</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">promotion</td><td style="text-align:left">See: <a href="#promotion-tiers">Promotion Tiers</a></td></tr><tr><td style="text-align:left">validation_rules_assignments</td><td style="text-align:left">See: <a href="#validation-rules-assignments-list">Validation Rules Assignments List</a></td></tr></tbody></table>
 
 ## Campaign
-#### This is an object representing a campaign.
+<p>This is an object representing a campaign.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_f7fBbQxUuTN7dI7tGOo5XMDA</p> |
@@ -48,7 +50,9 @@ All of:
 | loyalty_tiers_expiration | See: [Loyalty Tiers Expiration](#loyalty-tiers-expiration) |
 
 ## Promotion Tiers
-#### Promotion Tiers
+<p>Promotion Tiers</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about promotion tiers in a dictionary.</p> |
@@ -58,7 +62,9 @@ All of:
 | has_more</br>`boolean` | <p>As query results are always limited (by the limit parameter), the <code>has_more</code> flag indicates whether there are more records for given filter parameters. This let's you know if you are able to run another request (with a different page or a different start date filter) to get more records returned in the results.</p> |
 
 ## Validation Rules Assignments List
-#### List of Validation Rules Assignments
+<p>List of Validation Rules Assignments</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rules assignments.</p> Available values: `list` |
@@ -67,7 +73,9 @@ All of:
 | total</br>`integer` | <p>Total number of validation rules assignments.</p> |
 
 ## Campaign Discount Voucher
-#### Schema model for a campaign voucher.
+<p>Schema model for a campaign voucher.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Type of voucher.</p> |
@@ -82,7 +90,9 @@ All of:
 | validity_timeframe</br>`object` | <p>Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.<code>start_date</code> <strong>required</strong> when including the <code>validity_timeframe</code>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">interval</br><code>string</code></td><td style="text-align:left"><p>Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an <code>interval</code> of <code>P2D</code> will be active every other day.</p></td></tr><tr><td style="text-align:left">duration</br><code>string</code></td><td style="text-align:left"><p>Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a <code>duration</code> of <code>P1D</code> will be valid for a duration of one day.</p></td></tr></tbody></table> |
 
 ## Category
-#### This is an object representing a category.
+<p>This is an object representing a category.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
@@ -94,7 +104,9 @@ All of:
 | stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Referral Program
-#### Defines the referee reward and the way a referral is triggered. Context: `REFERRAL_PROGRAM`.
+<p>Defines the referee reward and the way a referral is triggered. Context: <code>REFERRAL_PROGRAM</code>.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | conversion_event_type</br>`string` | <p>Define how a referral is triggered.</p> Available values: `redemption`, `custom_event` |
@@ -102,7 +114,9 @@ All of:
 | referee_reward</br>`object` | <p>Defines the referee reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">related_object_parent</br><code>object</code></td><td style="text-align:left"><p>Details of the resource from which the reward originates.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique ID of the reward source.</p> <strong>Example:</strong> <p>camp_kdxp3vf1clQ9CFs1jpqv3tZe</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Name of the reward source.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Type of resource represented by the source of the reward.</p> Available values: <code>CAMPAIGN</code></td></tr></tbody></table></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Type of reward.</p> Available values: <code>DISCOUNT_VOUCHER</code>, <code>LOYALTY_CARD</code>, <code>GIFT_VOUCHER</code>, <code>LUCKY_DRAW_CODE</code></td></tr><tr><td style="text-align:left">amount</br><code>string</code></td><td style="text-align:left"><p>Define the number of <code>points</code> to add to a loyalty card or <code>credits</code> to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p></td></tr></tbody></table> |
 
 ## Loyalty Tiers Expiration
-#### Defines the Loyalty Tiers Expiration.
+<p>Defines the Loyalty Tiers Expiration.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | qualification_type</br>`string` | <p>Tier qualification.</p><p><code>BALANCE</code>: Points balance is based on the customer's current points balance. Customers qualify for the tier if their points balance is in the points range of the tier.<br><code>POINTS_IN_PERIOD</code>: A customer qualifies for the tier only if the sum of the accumulated points in a <strong>defined time interval</strong> reaches the tier threshold.</p> Available values: `BALANCE`, `POINTS_IN_PERIOD` |
@@ -111,7 +125,9 @@ All of:
 | expiration_date</br>`object` | <p>Defines the conditions for the expiration date of a tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to expire for a customer.<br><code>END_OF_PERIOD</code>: Expire tier at the end of the period.<br><code>END_OF_NEXT_PERIOD</code>:  Expire tier at the end of the next period.<br><code>BALANCE_DROP</code>: Tier expires when the points balance drops below the required range of the tier.<br><code>CUSTOM</code>: Tier expires after a certain time period passes following the instance the points balance drops below the required range of the tier.</p> Available values: <code>END_OF_PERIOD</code>, <code>END_OF_NEXT_PERIOD</code>, <code>BALANCE_DROP</code>, <code>CUSTOM</code></td></tr><tr><td style="text-align:left">extend</br><code>string</code></td><td style="text-align:left"><p>Extend the expiration by adding extra months or days in ISO 8601 format. The tier will remain active even though it reaches its expiration time period. For example, a tier with a duration of <code>P3M</code> will be valid for an additional duration of 3 months and a tier with a duration of <code>P1D</code> will be valid for an additional duration of 1 day.</p></td></tr><tr><td style="text-align:left">rounding</td><td style="text-align:left"><p>Defines the rounding mechanism for tier expiration.</p></td></tr></tbody></table> |
 
 ## Promotion Tier
-#### This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.
+<p>This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique promotion tier ID.</p> **Example:** <p>promo_63fYCt81Aw0h7lzyRkrGZh9p</p> |
@@ -137,7 +153,9 @@ All of:
 | categories</br>`array` | Array of [Category](#category) |
 
 ## Business Validation Rule Assignment
-#### Assignments of business validation rule
+<p>Assignments of business validation rule</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>The unique identifier for a assignment</p> |
@@ -151,7 +169,6 @@ All of:
 | validation_omitted_rules</br>`array` | <p>The list of omitted rules</p> |
 
 ## Discount
-#### Contains information about discount.
 <p>Contains information about discount.</p>
 
 Any of:
@@ -159,7 +176,9 @@ Any of:
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
 ## Gift
-#### Contains current gift card balance information.
+<p>Contains current gift card balance information.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | amount</br>`number` | <p>Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
@@ -167,7 +186,9 @@ Any of:
 | effect</br>`string` | <p>Defines how the credits are applied to the customer's order.</p> Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS` |
 
 ## Campaign Loyalty Card
-#### Schema model for a campaign loyalty card.
+<p>Schema model for a campaign loyalty card.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | points</br>`integer` | <p>The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card.</p> |
@@ -179,7 +200,9 @@ All of:
 1. [Code Config](#code-config)
 
 ## Validation Rule Assignments
-#### Validation Rule Assignments
+<p>Validation Rule Assignments</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rule assignments.</p> |
@@ -237,7 +260,9 @@ All of:
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
 ## Code Config
-#### Schema containing information about config used for voucher. Defines code's pattern (prefix, suffix, length, charset, etc).
+<p>Schema containing information about config used for voucher. Defines code's pattern (prefix, suffix, length, charset, etc).</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | length</br>`string` | <p>Number of characters in a generated code (excluding prefix and postfix).</p> |
@@ -248,7 +273,9 @@ All of:
 | initial_count</br>`integer` | <p>The initial count</p> |
 
 ## Validation Rule Assignment
-#### This is an object representing a validation rule assignment.
+<p>This is an object representing a validation rule assignment.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Validation rule assignment ID.</p> **Example:** <p>asgm_74F7QZoYbUoljwQO</p> |

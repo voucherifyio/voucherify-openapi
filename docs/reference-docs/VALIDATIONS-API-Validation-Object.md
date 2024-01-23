@@ -61,7 +61,6 @@ Any of:
 | data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
 
 ## Discount
-#### Contains information about discount.
 <p>Contains information about discount.</p>
 
 Any of:
@@ -69,7 +68,9 @@ Any of:
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
 ## Gift
-#### Contains current gift card balance information.
+<p>Contains current gift card balance information.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | amount</br>`number` | <p>Total gift card income over the lifetime of the card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
@@ -80,7 +81,7 @@ Any of:
 All of:
 
 1. [Order Response Base](#order-response-base)
-2. <h3>Order Response</h3><h5>Order information.</h5><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left">Any of: <a href="#customer-response">Customer Response</a>, <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">Any of: <a href="#referrer-response">Referrer Response</a>, <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
+2. <h3>Order Response</h3><p>Order information.</p><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left">Any of: <a href="#customer-response">Customer Response</a>, <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">Any of: <a href="#referrer-response">Referrer Response</a>, <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
 
 ## Session
 | Attributes |  Description |
@@ -163,7 +164,9 @@ All of:
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
 ## Order Response Base
-#### Order information.
+<p>Order information.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.</p> |
@@ -295,7 +298,9 @@ Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
 | campaigns</br>`object` | <p>Contains campaigns with details about point balances and how many customers were referred by the customer.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</br><code>object</code></td><td style="text-align:left"><p>Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Remaining point balance in campaign.</p></td></tr><tr><td style="text-align:left">loyalty_tier</br><code>string</code></td><td style="text-align:left"><p>Customer's loyalty tier within the campaign.</p> <strong>Example:</strong> <p>ltr_UJ5Q54Q0OvEhua87Qfv2Ki5x</p></td></tr><tr><td style="text-align:left">referred_customers</br><code>integer</code></td><td style="text-align:left"><p>Number of customers referred by the customer in campaign.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
 ## Customer Referrals
-#### Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.
+<p>Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | total</br>`integer` | <p>Total number of times this customer received a referral, i.e. was referred by another customer.</p> |

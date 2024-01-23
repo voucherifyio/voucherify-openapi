@@ -550,8 +550,9 @@ export default class SchemaToMarkdownTable {
 
     if (!skipTitle && title) {
       respopnseStrArr.push(`${"#".repeat(level + 2)} ${title}`);
-      if (description) {
-        respopnseStrArr.push(`${"#".repeat(level + 4)} ${description}\n`);
+      if (description && properties) {
+        respopnseStrArr.push(renderMarkdown(description));
+        respopnseStrArr.push("\n");
       }
     } else if (!skipTitle) {
       if (typeof schemaNameOrSchemaObject === "string") {

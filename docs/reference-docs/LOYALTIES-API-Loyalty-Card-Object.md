@@ -9,7 +9,9 @@ order: 2
 ---
 
 ## Loyalty Card Object
-#### This is an object representing a loyalty card.
+<p>This is an object representing a loyalty card.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Assigned by the Voucherify API, identifies the voucher.</p> **Example:** <p>v_mkZN9v7vjYUadXnHrMza8W5c34fE5KiV</p> |
@@ -40,7 +42,9 @@ order: 2
 | object</br>`string` | <p>The type of object represented by JSON. Default is <code>voucher</code>.</p> |
 
 ## Category
-#### This is an object representing a category.
+<p>This is an object representing a category.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |

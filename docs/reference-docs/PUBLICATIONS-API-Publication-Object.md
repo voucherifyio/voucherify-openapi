@@ -9,7 +9,6 @@ order: 1
 ---
 
 ## Create Publication Response Body
-#### Response schema model for publishing vouchers to a specific customer.
 <p>Response schema model for publishing vouchers to a specific customer.</p>
 
 One of:
@@ -17,7 +16,6 @@ One of:
 [Publications Create Response Single Voucher Body](#publications-create-response-single-voucher-body), [Publications Create Response Multiple Vouchers Body](#publications-create-response-multiple-vouchers-body)
 
 ## Publications Create Response Single Voucher Body
-#### Response schema model for publishing a single voucher to a specific customer.
 <p>Response schema model for publishing a single voucher to a specific customer.</p>
 
 All of:
@@ -26,7 +24,6 @@ All of:
 2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">voucher</td><td style="text-align:left">See: <a href="#voucher">Voucher</a></td></tr></tbody></table>
 
 ## Publications Create Response Multiple Vouchers Body
-#### Response schema model for publishing a multiple vouchers to a specific customer.
 <p>Response schema model for publishing a multiple vouchers to a specific customer.</p>
 
 All of:
@@ -50,7 +47,9 @@ All of:
 | vouchers_id</br>`array` | <p>Contains the unique internal voucher ID that was assigned by Voucherify.</p> |
 
 ## Voucher
-#### This is an object representing a voucher.
+<p>This is an object representing a voucher.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Assigned by the Voucherify API, identifies the voucher.</p> **Example:** <p>v_mkZN9v7vjYUadXnHrMza8W5c34fE5KiV</p> |
@@ -90,7 +89,9 @@ All of:
 2. [Customer Base](#customer-base)
 
 ## Category
-#### This is an object representing a category.
+<p>This is an object representing a category.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
@@ -102,7 +103,6 @@ All of:
 | stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Discount
-#### Contains information about discount.
 <p>Contains information about discount.</p>
 
 Any of:
@@ -110,7 +110,9 @@ Any of:
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
 ## Voucher Assets
-#### Stores links to images of QR and barcode that correspond to an encrypted voucher code.
+<p>Stores links to images of QR and barcode that correspond to an encrypted voucher code.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | qr</br>`object` | <p>Stores Quick Response (QR) representation of encrypted code.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Encrypted voucher code ID.</p> <strong>Example:</strong> <p>U2FsdGVkX19ucFhvVmBVpVYG5KoswTsjSIaqoKg5L9ie4BK+t4pp7U7oFzjGJzj9q/bmuMOj9mEFiVKDMIkSaruKedMvHbKoPX5Sg+BaZk5QwXMf8k/OzSlOEVybpwSq+AiqPoNtjeuqtIgkDyvT6Q==</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>URL to QR code</p><p><em>Optional:</em> Attach query parameters to base URL to customize the image of the encrypted voucher code.</p><ul><li><code>size</code>: integer value from <code>1</code> to <code>100</code></li><li><code>format</code>: string, either <code>png</code> (default) or <code>svg</code></li></ul> <strong>Example:</strong> <p>https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX19ucFhvVmBVpVYG5KoswTsjSIaqoKg5L9ie4BK%2Bt4pp7U7oFzjGJzj9q%2FbmuMOj9mEFiVKDMIkSaruKedMvHbKoPX5Sg%2BBaZk5QwXMf8k%2FOzSlOEVybpwSq%2BAiqPoNtjeuqtIgkDyvT6Q%3D%3D</p></td></tr></tbody></table> |
@@ -140,7 +142,9 @@ Any of:
 | campaigns</br>`object` | <p>Contains campaigns with details about point balances and how many customers were referred by the customer.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</br><code>object</code></td><td style="text-align:left"><p>Contains details about the point balances left on loyalty cards and the number of referred customers in each campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Remaining point balance in campaign.</p></td></tr><tr><td style="text-align:left">loyalty_tier</br><code>string</code></td><td style="text-align:left"><p>Customer's loyalty tier within the campaign.</p> <strong>Example:</strong> <p>ltr_UJ5Q54Q0OvEhua87Qfv2Ki5x</p></td></tr><tr><td style="text-align:left">referred_customers</br><code>integer</code></td><td style="text-align:left"><p>Number of customers referred by the customer in campaign.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
 ## Customer Referrals
-#### Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.
+<p>Summary of customer's referrals, in this case, the customer being the referee, i.e. information about the source of referrals and number of times the customer was referred by other customers.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | total</br>`integer` | <p>Total number of times this customer received a referral, i.e. was referred by another customer.</p> |

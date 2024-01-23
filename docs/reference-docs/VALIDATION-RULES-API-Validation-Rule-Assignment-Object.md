@@ -9,7 +9,9 @@ order: 2
 ---
 
 ## Validation Rule Assignment
-#### This is an object representing a validation rule assignment.
+<p>This is an object representing a validation rule assignment.</p>
+
+
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Validation rule assignment ID.</p> **Example:** <p>asgm_74F7QZoYbUoljwQO</p> |
