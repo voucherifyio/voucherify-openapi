@@ -1,11 +1,11 @@
 ---
-title: Redeem Voucher (client-side) [Deprecated]
+title: Redeem Stackable Discounts
 type: endpoint
 categorySlug: voucherify-api
-slug: redeem-voucher-client-side
+slug: redeem-stacked-discounts
 parentDocSlug: redemptions
 hidden: false
-order: 7
+order: 10
 ---
 [block:html]
 {

@@ -1,9 +1,9 @@
 ---
-title: List Consents (client-side)
+title: Redeem Voucher (client-side) [Deprecated]
 type: endpoint
 categorySlug: voucherify-api
-slug: list-consents-client-side
-parentDocSlug: consents
+slug: redeem-voucher-client-side
+parentDocSlug: client-side
 hidden: false
 order: 3
 ---

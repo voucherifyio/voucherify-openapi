@@ -3,9 +3,9 @@ title: Update Customer's Consents (client-side)
 type: endpoint
 categorySlug: voucherify-api
 slug: update-customers-consents-client-side
-parentDocSlug: customers
+parentDocSlug: client-side
 hidden: false
-order: 11
+order: 6
 ---
 [block:html]
 {

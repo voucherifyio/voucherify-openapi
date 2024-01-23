@@ -1,11 +1,11 @@
 ---
-title: Redeem Stackable Discounts
+title: Track Custom Event (client-side)
 type: endpoint
 categorySlug: voucherify-api
-slug: redeem-stacked-discounts
-parentDocSlug: stackable-discounts
+slug: track-custom-event-client-side
+parentDocSlug: client-side
 hidden: false
-order: 6
+order: 7
 ---
 [block:html]
 {

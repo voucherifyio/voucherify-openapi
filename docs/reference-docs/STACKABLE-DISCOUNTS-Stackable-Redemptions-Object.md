@@ -4,7 +4,7 @@ type: basic
 categorySlug: voucherify-api
 parentDocSlug: stackable-discounts
 slug: stackable-redemptions-object
-hidden: false
+hidden: true
 order: 3
 ---
 

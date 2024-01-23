@@ -4,7 +4,7 @@ categorySlug: voucherify-api
 parentDocSlug: stackable-discounts
 slug: establish-validation-session
 type: link
-hidden: false
+hidden: true
 order: 2
 link_url: https://docs.voucherify.io/docs/locking-validation-session
 ---

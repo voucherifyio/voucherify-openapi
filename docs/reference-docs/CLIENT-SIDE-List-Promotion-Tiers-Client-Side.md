@@ -1,11 +1,11 @@
 ---
-title: Rollback Stackable Redemptions
+title: List Promotion Tiers (client-side)
 type: endpoint
 categorySlug: voucherify-api
-slug: rollback-stacked-redemptions
-parentDocSlug: stackable-discounts
+slug: list-promotion-tiers-client-side
+parentDocSlug: client-side
 hidden: false
-order: 8
+order: 2
 ---
 [block:html]
 {

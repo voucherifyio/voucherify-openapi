@@ -1,11 +1,11 @@
 ---
-title: Track Custom Event (client-side)
+title: Validate Voucher (client-side) [Deprecated]
 type: endpoint
 categorySlug: voucherify-api
-slug: track-custom-event-client-side
-parentDocSlug: events
+slug: validate-voucher-client-side
+parentDocSlug: client-side
 hidden: false
-order: 3
+order: 1
 ---
 [block:html]
 {
