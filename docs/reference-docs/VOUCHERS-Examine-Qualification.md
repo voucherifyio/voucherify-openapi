@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: examine-vouchers-qualification
 parentDocSlug: vouchers
 hidden: false
-order: 15
+order: 100
 ---
 [block:html]
 {
