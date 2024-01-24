@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: validate-voucher-client-side
 parentDocSlug: client-side
 hidden: false
-order: 1
+order: 100
 ---
 [block:html]
 {

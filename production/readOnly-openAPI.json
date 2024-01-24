@@ -75699,6 +75699,592 @@
         }
       }
     },
+    "/client/v1/redemptions": {
+      "post": {
+        "operationId": "redeem-stacked-discounts-client-side",
+        "tags": [
+          "Client-side"
+        ],
+        "summary": "Redeem Stackable Discounts (client-side)",
+        "description": "This method is accessible through public keys which you can use in client side requests coming from mobile and web browser applications.\n\n## How API returns calculated discounts and order amounts in the response\n\nIn the table below, you can see the logic the API follows to calculate discounts and amounts:\n\n| **Field** | **Calculation** | **Description** |\n|:---|:---|:---|\n| amount | N/A | This field shows the order amount before applying any discount |\n| total_amount | `total_amount` = `amount` - `total_discount_amount` | This field shows the order amount after applying all the discounts |\n| discount_amount | `discount_amount` = `previous_discount_amount` + `applied_discount_amount` | This field sums up all order-level discounts up to and including the specific discount being calculated for the stacked redemption. |\n| items_discount_amount | sum(items, i => i.discount_amount) | This field sums up all product-specific discounts |\n| total_discount_amount | `total_discount_amount` = `discount_amount` + `items_discount_amount` | This field sums up all order-level and all product-specific discounts |\n| applied_discount_amount | N/A | This field shows the order-level discount applied in a particular request |\n| items_applied_discount_amount | sum(items, i => i.applied_discount_amount) | This field sums up all product-specific discounts applied in a particular request |\n| total_applied_discount_amount | `total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount` | This field sums up all order-level and all product-specific discounts applied in a particular request |\n\n<!-- theme: info -->\n> 📘 Rollbacks\n>\n> You can't roll back a child redemption. When you call rollback on a stacked redemption, all child redemptions will be rolled back. You need to refer to a parent redemption ID in your <!-- [rollback request](OpenAPI.json/paths/~1redemptions~1{parentRedemptionId}~1rollbacks/post) -->[rollback request](ref:rollback-stacked-redemptions).",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/origin"
+          }
+        ],
+        "security": [
+          {
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientRedemptionsRedeemRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "customer": {
+                      "source_id": "sample_customer",
+                      "metadata": {
+                        "key": "value"
+                      }
+                    },
+                    "options": {
+                      "expand": [
+                        "order",
+                        "redeemable",
+                        "category"
+                      ]
+                    },
+                    "redeemables": [
+                      {
+                        "object": "voucher",
+                        "id": "voucher-code"
+                      }
+                    ],
+                    "session": {
+                      "type": "LOCK",
+                      "key": "session_key"
+                    },
+                    "order": {
+                      "amount": 55000,
+                      "status": "PAID",
+                      "items": [
+                        {
+                          "quantity": 2,
+                          "price": 20000,
+                          "source_id": "sample product1",
+                          "related_object": "product",
+                          "product": {
+                            "metadata": {
+                              "key": "value"
+                            }
+                          }
+                        },
+                        {
+                          "quantity": 1,
+                          "price": 15000,
+                          "source_id": "sample product2",
+                          "related_object": "product",
+                          "product": {
+                            "metadata": {
+                              "key": "value"
+                            }
+                          }
+                        }
+                      ],
+                      "metadata": {
+                        "key": "value"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid redemption. See https://support.voucherify.io/article/604-stacking-rules#application-rules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientRedemptionsRedeemResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client/v1/validations": {
+      "post": {
+        "operationId": "validate-stacked-discounts-client-side",
+        "tags": [
+          "Client-side"
+        ],
+        "summary": "Validate Stackable Discounts (client-side)",
+        "description": "Verify redeemables provided in the request. This method is accessible through public keys which you can use in client side requests coming from mobile and web browser applications.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/origin"
+          }
+        ],
+        "security": [
+          {
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientValidationsValidateRequestBody"
+              },
+              "examples": {
+                "1 Redeemable": {
+                  "value": {
+                    "customer": {
+                      "source_id": "sample_customer",
+                      "metadata": {
+                        "key": "value"
+                      }
+                    },
+                    "options": {
+                      "expand": [
+                        "order",
+                        "redeemable",
+                        "category"
+                      ]
+                    },
+                    "redeemables": [
+                      {
+                        "object": "voucher",
+                        "id": "voucher-code"
+                      }
+                    ],
+                    "session": {
+                      "type": "LOCK"
+                    },
+                    "order": {
+                      "amount": 55000,
+                      "status": "PAID",
+                      "items": [
+                        {
+                          "quantity": 2,
+                          "price": 20000,
+                          "source_id": "sample product1",
+                          "related_object": "product",
+                          "product": {
+                            "metadata": {
+                              "key": "value"
+                            }
+                          }
+                        },
+                        {
+                          "quantity": 1,
+                          "price": 15000,
+                          "source_id": "sample product2",
+                          "related_object": "product",
+                          "product": {
+                            "metadata": {
+                              "key": "value"
+                            }
+                          }
+                        }
+                      ],
+                      "metadata": {
+                        "key": "value"
+                      }
+                    }
+                  }
+                },
+                "5 Redeemables": {
+                  "value": {
+                    "customer": {
+                      "source_id": "36_bob"
+                    },
+                    "options": {
+                      "expand": [
+                        "order",
+                        "redeemable",
+                        "category"
+                      ]
+                    },
+                    "redeemables": [
+                      {
+                        "object": "voucher",
+                        "id": "GNcuPKGe"
+                      },
+                      {
+                        "object": "voucher",
+                        "id": "AnsvocvP",
+                        "reward": {
+                          "id": "rew_EPx1hCTpqzF0HW1z9NKckZH4"
+                        }
+                      },
+                      {
+                        "object": "voucher",
+                        "id": "M3X8IwW8",
+                        "gift": {
+                          "credits": 100
+                        }
+                      },
+                      {
+                        "object": "promotion_tier",
+                        "id": "promo_DE1N30D731Tg2F6NoMwNas2W"
+                      },
+                      {
+                        "object": "promotion_tier",
+                        "id": "promo_NDHgTg4VnOLYNjk9r7WOmQxf"
+                      }
+                    ],
+                    "session": {
+                      "type": "LOCK"
+                    },
+                    "order": {
+                      "items": [
+                        {
+                          "sku_id": "sku_0a3efc90375d1217e2",
+                          "quantity": 1
+                        },
+                        {
+                          "product_id": "prod_0bc3bd8a4e072c5275",
+                          "quantity": 1
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid validation. See https://support.voucherify.io/article/604-stacking-rules#application-rules",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientValidationsValidateResponseBody"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload is missing an `\"object\"` or `\"id\"` property in the redeemables array, if you add more than one promotion stack or attempt to join stacks with vouchers/promotion tiers.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .redeemables[1] should have required property 'id'",
+                      "request_id": "v-0b4ff38ab8c8164573"
+                    }
+                  },
+                  "Duplicated Redeemables": {
+                    "value": {
+                      "code": 400,
+                      "key": "duplicated_redeemables",
+                      "message": "Duplicated redeemables detected",
+                      "details": "Duplicated redeemables detected in one redemption",
+                      "request_id": "v-0b4ffecfb408165300"
+                    }
+                  },
+                  "Invalid Redeemables": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_redeemables",
+                      "message": "Invalid redeemables",
+                      "details": "Promotion Stack cannot be use with other redeemables",
+                      "request_id": "v-0b5007812f48165d6b"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client/v1/customers/{customerId}/consents": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCustomerId"
+          },
+          "name": "customerId",
+          "in": "path",
+          "required": true,
+          "description": "A Voucherify customer identifier or `source_id`"
+        }
+      ],
+      "put": {
+        "operationId": "update-customers-consents-client-side",
+        "tags": [
+          "Client-side"
+        ],
+        "summary": "Update Customer's consents (client-side)",
+        "description": "Update marketing permissions for the specified customer.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Key-value pairs where the key is the consent identifier and value is a boolean that identifies if a customer has given the consent or not. To deny all consents use \"unsubscribed\" as a consent identifier and \"true\" as its value.  \n\n#### Examples\n\n<!--\ntitle: \"Request Body\"\nlineNumbers: true\n-->\n```json\n{\n    \"cnst_aIdUulAh0SCsOCaS3005y7yS\": true,\n    \"cnst_aIdUulAhwewqaS31213fdsfds\": false\n}\n```\n\nOpt-out from all communication:\n\n<!--\ntitle: \"Request Body\"\nlineNumbers: true\n-->\n```json\n{\n    \"unsubscribed\": true\n}\n```",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientCustomersConsentsUpdateRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I": true,
+                    "cnst_VCmucIvAsmDYw2PPAok6bcYy": false
+                  }
+                },
+                "Opt-out of all": {
+                  "value": {
+                    "unsubscribed": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Returns no content if the consents were updated successfully."
+          },
+          "400": {
+            "description": "Returns an error if the payload is empty.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client/v1/events": {
+      "post": {
+        "operationId": "track-custom-event-client-side",
+        "tags": [
+          "Client-side"
+        ],
+        "summary": "Track Custom Event (client-side)",
+        "description": "To track a custom event, you create an event object.  \n\nThe event object must be linked to the customer who performs the action. If a customer doesn't exist in Voucherify, the customer will be created.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/origin"
+          }
+        ],
+        "security": [
+          {
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the details of the custom event.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientEventsCreateRequestBody"
+              },
+              "examples": {
+                "Referral triggered by custom event": {
+                  "value": {
+                    "event": "user_subscribed",
+                    "customer": {
+                      "source_id": "source_customer_event"
+                    },
+                    "referral": {
+                      "code": "46jL0kYI",
+                      "referrer_id": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv"
+                    },
+                    "metadata": {
+                      "login": "bob",
+                      "pricing_plan": "PP1",
+                      "volume_number": 4
+                    }
+                  }
+                },
+                "Earning rule triggered by custom event": {
+                  "value": {
+                    "event": "cart_abandoned",
+                    "customer": {
+                      "source_id": "source_customer_event"
+                    },
+                    "loyalty": {
+                      "code": "6CB4KDAu"
+                    },
+                    "metadata": {
+                      "date": "2022-12-01",
+                      "flag": true,
+                      "text": "Cart abandoned event",
+                      "date_time": "2022-12-01T09:24:33.061Z",
+                      "number": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the event type if the event was received by the application.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientEventsCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "event",
+                      "type": "cart_abandoned",
+                      "customer": {
+                        "id": "cust_ypePCF6IU6fnUvec6RMXZuH4",
+                        "name": "John Doe",
+                        "email": "john@voucherify.io",
+                        "source_id": "source_customer_event",
+                        "metadata": {
+                          "prop": "value"
+                        },
+                        "object": "customer"
+                      },
+                      "referral": null,
+                      "loyalty": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the request payload is incomplete.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .referral should have required property 'code'",
+                      "request_id": "v-0c15694e0e022146dd"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client/v1/consents": {
+      "get": {
+        "operationId": "list-consents-client-side",
+        "tags": [
+          "Client-side"
+        ],
+        "summary": "List Consents (client-side)",
+        "description": "List the Marketing Permission definitions within the project along with opt-in consents.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/origin"
+          }
+        ],
+        "security": [
+          {
+            "X-Client-Application-Id": [],
+            "X-Client-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns marketing permission groups and opt-in consents.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/18_res_list_consents_GET"
+                },
+                "examples": {
+                  "Marketing Permissions Groups and Consents": {
+                    "value": {
+                      "groups": {
+                        "object": "list",
+                        "data_ref": "data",
+                        "data": [
+                          {
+                            "id": "cnstgr_3c7Z3rcOLv51bsXlRtTZPYj8",
+                            "name": "Consent group",
+                            "description": "Consent group",
+                            "consents": [
+                              "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
+                              "cnst_VCmucIvAsmDYw2PPAok6bcYy"
+                            ],
+                            "created_at": "2022-04-13T09:12:47.743Z",
+                            "updated_at": "2022-04-13T09:45:46.616Z",
+                            "object": "consent_group"
+                          },
+                          {
+                            "id": "cnstgr_EAIakTj5lNG2ZpiQEauGqBlY",
+                            "name": "Consent group 2",
+                            "description": "Consent group 2",
+                            "consents": [
+                              "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
+                              "cnst_VCmucIvAsmDYw2PPAok6bcYy"
+                            ],
+                            "created_at": "2022-04-13T10:03:46.564Z",
+                            "updated_at": null,
+                            "object": "consent_group"
+                          }
+                        ],
+                        "total": 2
+                      },
+                      "consents": {
+                        "object": "list",
+                        "data_ref": "data",
+                        "data": [
+                          {
+                            "id": "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
+                            "name": "Consent",
+                            "description": "Consent for marketing",
+                            "category": "New",
+                            "created_at": "2022-04-13T09:11:27.037Z",
+                            "updated_at": null,
+                            "object": "consent"
+                          },
+                          {
+                            "id": "cnst_VCmucIvAsmDYw2PPAok6bcYy",
+                            "name": "Consent 2",
+                            "description": "Consent 2",
+                            "category": "Trial",
+                            "created_at": "2022-04-13T09:45:37.597Z",
+                            "updated_at": null,
+                            "object": "consent"
+                          }
+                        ],
+                        "total": 2
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/client/v1/validate": {
       "get": {
         "operationId": "validate-voucher-client-side",
@@ -76867,592 +77453,6 @@
                       "resource_type": "redemption",
                       "error": {
                         "message": "The voucher is not active in the given timeframe."
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/client/v1/redemptions": {
-      "post": {
-        "operationId": "redeem-stacked-discounts-client-side",
-        "tags": [
-          "Client-side"
-        ],
-        "summary": "Redeem Stackable Discounts (client-side)",
-        "description": "This method is accessible through public keys which you can use in client side requests coming from mobile and web browser applications.\n\n## How API returns calculated discounts and order amounts in the response\n\nIn the table below, you can see the logic the API follows to calculate discounts and amounts:\n\n| **Field** | **Calculation** | **Description** |\n|:---|:---|:---|\n| amount | N/A | This field shows the order amount before applying any discount |\n| total_amount | `total_amount` = `amount` - `total_discount_amount` | This field shows the order amount after applying all the discounts |\n| discount_amount | `discount_amount` = `previous_discount_amount` + `applied_discount_amount` | This field sums up all order-level discounts up to and including the specific discount being calculated for the stacked redemption. |\n| items_discount_amount | sum(items, i => i.discount_amount) | This field sums up all product-specific discounts |\n| total_discount_amount | `total_discount_amount` = `discount_amount` + `items_discount_amount` | This field sums up all order-level and all product-specific discounts |\n| applied_discount_amount | N/A | This field shows the order-level discount applied in a particular request |\n| items_applied_discount_amount | sum(items, i => i.applied_discount_amount) | This field sums up all product-specific discounts applied in a particular request |\n| total_applied_discount_amount | `total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount` | This field sums up all order-level and all product-specific discounts applied in a particular request |\n\n<!-- theme: info -->\n> 📘 Rollbacks\n>\n> You can't roll back a child redemption. When you call rollback on a stacked redemption, all child redemptions will be rolled back. You need to refer to a parent redemption ID in your <!-- [rollback request](OpenAPI.json/paths/~1redemptions~1{parentRedemptionId}~1rollbacks/post) -->[rollback request](ref:rollback-stacked-redemptions).",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/origin"
-          }
-        ],
-        "security": [
-          {
-            "X-Client-Application-Id": [],
-            "X-Client-Token": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ClientRedemptionsRedeemRequestBody"
-              },
-              "examples": {
-                "Example": {
-                  "value": {
-                    "customer": {
-                      "source_id": "sample_customer",
-                      "metadata": {
-                        "key": "value"
-                      }
-                    },
-                    "options": {
-                      "expand": [
-                        "order",
-                        "redeemable",
-                        "category"
-                      ]
-                    },
-                    "redeemables": [
-                      {
-                        "object": "voucher",
-                        "id": "voucher-code"
-                      }
-                    ],
-                    "session": {
-                      "type": "LOCK",
-                      "key": "session_key"
-                    },
-                    "order": {
-                      "amount": 55000,
-                      "status": "PAID",
-                      "items": [
-                        {
-                          "quantity": 2,
-                          "price": 20000,
-                          "source_id": "sample product1",
-                          "related_object": "product",
-                          "product": {
-                            "metadata": {
-                              "key": "value"
-                            }
-                          }
-                        },
-                        {
-                          "quantity": 1,
-                          "price": 15000,
-                          "source_id": "sample product2",
-                          "related_object": "product",
-                          "product": {
-                            "metadata": {
-                              "key": "value"
-                            }
-                          }
-                        }
-                      ],
-                      "metadata": {
-                        "key": "value"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid redemption. See https://support.voucherify.io/article/604-stacking-rules#application-rules",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ClientRedemptionsRedeemResponseBody"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/client/v1/validations": {
-      "post": {
-        "operationId": "validate-stacked-discounts-client-side",
-        "tags": [
-          "Client-side"
-        ],
-        "summary": "Validate Stackable Discounts (client-side)",
-        "description": "Verify redeemables provided in the request. This method is accessible through public keys which you can use in client side requests coming from mobile and web browser applications.",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/origin"
-          }
-        ],
-        "security": [
-          {
-            "X-Client-Application-Id": [],
-            "X-Client-Token": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ClientValidationsValidateRequestBody"
-              },
-              "examples": {
-                "1 Redeemable": {
-                  "value": {
-                    "customer": {
-                      "source_id": "sample_customer",
-                      "metadata": {
-                        "key": "value"
-                      }
-                    },
-                    "options": {
-                      "expand": [
-                        "order",
-                        "redeemable",
-                        "category"
-                      ]
-                    },
-                    "redeemables": [
-                      {
-                        "object": "voucher",
-                        "id": "voucher-code"
-                      }
-                    ],
-                    "session": {
-                      "type": "LOCK"
-                    },
-                    "order": {
-                      "amount": 55000,
-                      "status": "PAID",
-                      "items": [
-                        {
-                          "quantity": 2,
-                          "price": 20000,
-                          "source_id": "sample product1",
-                          "related_object": "product",
-                          "product": {
-                            "metadata": {
-                              "key": "value"
-                            }
-                          }
-                        },
-                        {
-                          "quantity": 1,
-                          "price": 15000,
-                          "source_id": "sample product2",
-                          "related_object": "product",
-                          "product": {
-                            "metadata": {
-                              "key": "value"
-                            }
-                          }
-                        }
-                      ],
-                      "metadata": {
-                        "key": "value"
-                      }
-                    }
-                  }
-                },
-                "5 Redeemables": {
-                  "value": {
-                    "customer": {
-                      "source_id": "36_bob"
-                    },
-                    "options": {
-                      "expand": [
-                        "order",
-                        "redeemable",
-                        "category"
-                      ]
-                    },
-                    "redeemables": [
-                      {
-                        "object": "voucher",
-                        "id": "GNcuPKGe"
-                      },
-                      {
-                        "object": "voucher",
-                        "id": "AnsvocvP",
-                        "reward": {
-                          "id": "rew_EPx1hCTpqzF0HW1z9NKckZH4"
-                        }
-                      },
-                      {
-                        "object": "voucher",
-                        "id": "M3X8IwW8",
-                        "gift": {
-                          "credits": 100
-                        }
-                      },
-                      {
-                        "object": "promotion_tier",
-                        "id": "promo_DE1N30D731Tg2F6NoMwNas2W"
-                      },
-                      {
-                        "object": "promotion_tier",
-                        "id": "promo_NDHgTg4VnOLYNjk9r7WOmQxf"
-                      }
-                    ],
-                    "session": {
-                      "type": "LOCK"
-                    },
-                    "order": {
-                      "items": [
-                        {
-                          "sku_id": "sku_0a3efc90375d1217e2",
-                          "quantity": 1
-                        },
-                        {
-                          "product_id": "prod_0bc3bd8a4e072c5275",
-                          "quantity": 1
-                        }
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Depending on your project settings: all redeemables must be valid or just one must be valid to result as valid validation. See https://support.voucherify.io/article/604-stacking-rules#application-rules",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ClientValidationsValidateResponseBody"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Returns an error if the payload is missing an `\"object\"` or `\"id\"` property in the redeemables array, if you add more than one promotion stack or attempt to join stacks with vouchers/promotion tiers.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/e_400_invalid_payload"
-                },
-                "examples": {
-                  "Invalid payload": {
-                    "value": {
-                      "code": 400,
-                      "key": "invalid_payload",
-                      "message": "Invalid payload",
-                      "details": "Property .redeemables[1] should have required property 'id'",
-                      "request_id": "v-0b4ff38ab8c8164573"
-                    }
-                  },
-                  "Duplicated Redeemables": {
-                    "value": {
-                      "code": 400,
-                      "key": "duplicated_redeemables",
-                      "message": "Duplicated redeemables detected",
-                      "details": "Duplicated redeemables detected in one redemption",
-                      "request_id": "v-0b4ffecfb408165300"
-                    }
-                  },
-                  "Invalid Redeemables": {
-                    "value": {
-                      "code": 400,
-                      "key": "invalid_redeemables",
-                      "message": "Invalid redeemables",
-                      "details": "Promotion Stack cannot be use with other redeemables",
-                      "request_id": "v-0b5007812f48165d6b"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/client/v1/customers/{customerId}/consents": {
-      "parameters": [
-        {
-          "schema": {
-            "$ref": "#/components/schemas/ParameterCustomerId"
-          },
-          "name": "customerId",
-          "in": "path",
-          "required": true,
-          "description": "A Voucherify customer identifier or `source_id`"
-        }
-      ],
-      "put": {
-        "operationId": "update-customers-consents-client-side",
-        "tags": [
-          "Client-side"
-        ],
-        "summary": "Update Customer's consents (client-side)",
-        "description": "Update marketing permissions for the specified customer.",
-        "parameters": [],
-        "security": [
-          {
-            "X-Client-Application-Id": [],
-            "X-Client-Token": []
-          }
-        ],
-        "requestBody": {
-          "description": "Key-value pairs where the key is the consent identifier and value is a boolean that identifies if a customer has given the consent or not. To deny all consents use \"unsubscribed\" as a consent identifier and \"true\" as its value.  \n\n#### Examples\n\n<!--\ntitle: \"Request Body\"\nlineNumbers: true\n-->\n```json\n{\n    \"cnst_aIdUulAh0SCsOCaS3005y7yS\": true,\n    \"cnst_aIdUulAhwewqaS31213fdsfds\": false\n}\n```\n\nOpt-out from all communication:\n\n<!--\ntitle: \"Request Body\"\nlineNumbers: true\n-->\n```json\n{\n    \"unsubscribed\": true\n}\n```",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ClientCustomersConsentsUpdateRequestBody"
-              },
-              "examples": {
-                "Example": {
-                  "value": {
-                    "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I": true,
-                    "cnst_VCmucIvAsmDYw2PPAok6bcYy": false
-                  }
-                },
-                "Opt-out of all": {
-                  "value": {
-                    "unsubscribed": true
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Returns no content if the consents were updated successfully."
-          },
-          "400": {
-            "description": "Returns an error if the payload is empty.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "examples": {
-                  "Example": {
-                    "value": {}
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/client/v1/events": {
-      "post": {
-        "operationId": "track-custom-event-client-side",
-        "tags": [
-          "Client-side"
-        ],
-        "summary": "Track Custom Event (client-side)",
-        "description": "To track a custom event, you create an event object.  \n\nThe event object must be linked to the customer who performs the action. If a customer doesn't exist in Voucherify, the customer will be created.",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/origin"
-          }
-        ],
-        "security": [
-          {
-            "X-Client-Application-Id": [],
-            "X-Client-Token": []
-          }
-        ],
-        "requestBody": {
-          "description": "Specify the details of the custom event.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ClientEventsCreateRequestBody"
-              },
-              "examples": {
-                "Referral triggered by custom event": {
-                  "value": {
-                    "event": "user_subscribed",
-                    "customer": {
-                      "source_id": "source_customer_event"
-                    },
-                    "referral": {
-                      "code": "46jL0kYI",
-                      "referrer_id": "cust_Vzck5i8U3OhcEUFY6MKhN9Rv"
-                    },
-                    "metadata": {
-                      "login": "bob",
-                      "pricing_plan": "PP1",
-                      "volume_number": 4
-                    }
-                  }
-                },
-                "Earning rule triggered by custom event": {
-                  "value": {
-                    "event": "cart_abandoned",
-                    "customer": {
-                      "source_id": "source_customer_event"
-                    },
-                    "loyalty": {
-                      "code": "6CB4KDAu"
-                    },
-                    "metadata": {
-                      "date": "2022-12-01",
-                      "flag": true,
-                      "text": "Cart abandoned event",
-                      "date_time": "2022-12-01T09:24:33.061Z",
-                      "number": 1
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Returns the event type if the event was received by the application.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ClientEventsCreateResponseBody"
-                },
-                "examples": {
-                  "Example": {
-                    "value": {
-                      "object": "event",
-                      "type": "cart_abandoned",
-                      "customer": {
-                        "id": "cust_ypePCF6IU6fnUvec6RMXZuH4",
-                        "name": "John Doe",
-                        "email": "john@voucherify.io",
-                        "source_id": "source_customer_event",
-                        "metadata": {
-                          "prop": "value"
-                        },
-                        "object": "customer"
-                      },
-                      "referral": null,
-                      "loyalty": null
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Returns an error if the request payload is incomplete.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "examples": {
-                  "Invalid payload": {
-                    "value": {
-                      "code": 400,
-                      "key": "invalid_payload",
-                      "message": "Invalid payload",
-                      "details": "Property .referral should have required property 'code'",
-                      "request_id": "v-0c15694e0e022146dd"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/client/v1/consents": {
-      "get": {
-        "operationId": "list-consents-client-side",
-        "tags": [
-          "Client-side"
-        ],
-        "summary": "List Consents (client-side)",
-        "description": "List the Marketing Permission definitions within the project along with opt-in consents.",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/origin"
-          }
-        ],
-        "security": [
-          {
-            "X-Client-Application-Id": [],
-            "X-Client-Token": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns marketing permission groups and opt-in consents.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/18_res_list_consents_GET"
-                },
-                "examples": {
-                  "Marketing Permissions Groups and Consents": {
-                    "value": {
-                      "groups": {
-                        "object": "list",
-                        "data_ref": "data",
-                        "data": [
-                          {
-                            "id": "cnstgr_3c7Z3rcOLv51bsXlRtTZPYj8",
-                            "name": "Consent group",
-                            "description": "Consent group",
-                            "consents": [
-                              "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                              "cnst_VCmucIvAsmDYw2PPAok6bcYy"
-                            ],
-                            "created_at": "2022-04-13T09:12:47.743Z",
-                            "updated_at": "2022-04-13T09:45:46.616Z",
-                            "object": "consent_group"
-                          },
-                          {
-                            "id": "cnstgr_EAIakTj5lNG2ZpiQEauGqBlY",
-                            "name": "Consent group 2",
-                            "description": "Consent group 2",
-                            "consents": [
-                              "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                              "cnst_VCmucIvAsmDYw2PPAok6bcYy"
-                            ],
-                            "created_at": "2022-04-13T10:03:46.564Z",
-                            "updated_at": null,
-                            "object": "consent_group"
-                          }
-                        ],
-                        "total": 2
-                      },
-                      "consents": {
-                        "object": "list",
-                        "data_ref": "data",
-                        "data": [
-                          {
-                            "id": "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                            "name": "Consent",
-                            "description": "Consent for marketing",
-                            "category": "New",
-                            "created_at": "2022-04-13T09:11:27.037Z",
-                            "updated_at": null,
-                            "object": "consent"
-                          },
-                          {
-                            "id": "cnst_VCmucIvAsmDYw2PPAok6bcYy",
-                            "name": "Consent 2",
-                            "description": "Consent 2",
-                            "category": "Trial",
-                            "created_at": "2022-04-13T09:45:37.597Z",
-                            "updated_at": null,
-                            "object": "consent"
-                          }
-                        ],
-                        "total": 2
                       }
                     }
                   }
