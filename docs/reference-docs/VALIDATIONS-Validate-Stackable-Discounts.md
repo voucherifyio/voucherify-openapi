@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: validate-stacked-discounts
 parentDocSlug: validations
 hidden: false
-order: 8
+order: 3
 ---
 [block:html]
 {
