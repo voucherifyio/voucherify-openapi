@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: redeem-stacked-discounts
 parentDocSlug: redemptions
 hidden: false
-order: 10
+order: 4
 ---
 [block:html]
 {
