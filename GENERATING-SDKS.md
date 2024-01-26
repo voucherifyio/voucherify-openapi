@@ -66,6 +66,8 @@ Easiest way for running tests is to use `docker-compose` file.
 
 For running SDK separately or on Your local machine without docker go in to the directory of the SDK and read `README.md` file.
 
+**Note that running tests will affect your Voucherify project data. Run tests only on development projects.**
+
 ### Versioning 
 
 - **patch** - backward compatible changes - bug fixes, small changes, refactoring
