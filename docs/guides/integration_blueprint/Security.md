@@ -2,7 +2,7 @@
 title: Security
 excerpt: Voucherify data security
 categorySlug: integration-blueprint
-slug: security-1
+slug: security
 type: basic
 hidden: false
 order: 16
@@ -14,7 +14,7 @@ order: 16
 > * Identify PII data to be shared with Voucherify.
 > * Analyze your distribution processes in relation to GDPR and Data Privacy laws. 				
 
-> 👍 **Outcome**:
+> 👍 **Outcome**
 >
 > Data security assessment of integration.
 

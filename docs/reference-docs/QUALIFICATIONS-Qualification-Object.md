@@ -18,7 +18,7 @@ order: 1
 | redeemables | See: [Redeemables](#redeemables) |
 | tracking_id</br>`string` | <p>This identifier is generated during voucher qualification based on your internal id (e.g., email, database ID). This is a hashed customer source ID.</p> |
 | order | See: [Order Calculated](#order-calculated) |
-| stacking_rules | See: [Examine Qualification Stacking Rules](#examine-qualification-stacking-rules) |
+| stacking_rules | See: [Stacking Rules](#stacking-rules) |
 
 ## Redeemables
 | Attributes |  Description |
@@ -36,14 +36,17 @@ All of:
 1. [Order Response Base](#order-response-base)
 2. <h3>Order Calculated</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left">One of: <a href="#customer-with-summary-loyalty-referrals">Customer With Summary Loyalty Referrals</a>, <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">One of: <a href="#referrer-with-summary-loyalty-referrals">Referrer With Summary Loyalty Referrals</a>, <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
 
-## Examine Qualification Stacking Rules
+## Stacking Rules
 | Attributes |  Description |
 |:-----|:--------|
 | redeemables_limit</br>`integer` | <p>Defines how many redeemables can be sent in one stacking request (note: more redeemables means more processing time!).</p> |
 | applicable_redeemables_limit</br>`integer` | <p>Defines how many of the sent redeemables will be applied to the order. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be labelled as SKIPPED.</p> |
 | applicable_exclusive_redeemables_limit</br>`integer` | <p>Defines how many redeemables with an exclusive category can be applied in one request.</p> |
+| applicable_redeemables_per_category_limit</br>`integer` | <p>Defines how many redeemables per category can be applied in one request.</p> |
 | exclusive_categories</br>`array` | <p>Lists all exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.</p> |
 | joint_categories</br>`array` | <p>Lists all joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.</p> |
+| redeemables_application_mode</br>`string` | <p>Defines redeemables application mode.</p> Available values: `ALL`, `PARTIAL` |
+| redeemables_sorting_rule</br>`string` | <p>Defines redeemables sorting rule.</p> Available values: `CATEGORY_HIERARCHY`, `REQUESTED_ORDER` |
 
 ## Combined response of redeemable object and multiple redeemables within
 All of:
@@ -124,6 +127,7 @@ All of:
 | initial_quantity</br>`integer` | <p>A positive integer in the smallest unit quantity representing the total amount of the order; this is the sum of the order items' quantity.</p> |
 | amount</br>`integer` | <p>The total amount of the order item (price * quantity).</p> |
 | discount_amount</br>`integer` | <p>Sum of all order-item-level discounts applied to the order.</p> |
+| applied_discount_amount</br>`integer` | <p>This field shows the order-level discount applied.</p> |
 | initial_amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.</p> |
 | total_applied_discount_amount</br>`integer` | <p>Sum of all order-level AND all product-specific discounts applied in a particular request.<br><code>total_applied_discount_amount</code> = <code>applied_discount_amount</code> + <code>items_applied_discount_amount</code></p> |
 | price</br>`integer` | <p>Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
@@ -162,7 +166,7 @@ All of:
 | Attributes |  Description |
 |:-----|:--------|
 | total</br>`integer` | <p>Total number of times this customer received a referral, i.e. was referred by another customer.</p> |
-| campaigns</br>`array` | <p>Contains an array of campaigns that served as the source of a referral for the customer.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">campaign_id</br><code>string</code></td><td style="text-align:left"><p>Unique campaign ID, assigned by Voucherify.</p> <strong>Example:</strong> <p>camp_rRsfatlwN7unSeUIJDCYedal</p></td></tr><tr><td style="text-align:left">referrer_id</br><code>string</code></td><td style="text-align:left"><p>Unique referrer ID, assigned by Voucherify. This is the customer ID of a customer that is referring this customer.</p> <strong>Example:</strong> <p>cust_sehkNIi8Uq2qQuRqSr7xn4Zi</p></td></tr><tr><td style="text-align:left">related_object_id</br><code>string</code></td><td style="text-align:left"><p>Related object id</p> <strong>Example:</strong> <p>r_0b9d4cc4aa164dd073</p></td></tr><tr><td style="text-align:left">related_object_type</br><code>string</code></td><td style="text-align:left"><p>Related object type, i.e. <code>redemption</code>.</p></td></tr><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the customer was referred in ISO 8601 format.</p> <strong>Example:</strong> <p>2022-08-30T10:19:39.196Z</p></td></tr></tbody></table> |
+| campaigns</br>`array` | <p>Contains an array of campaigns that served as the source of a referral for the customer.</p> Array of: <h3>Customer Referrals Campaigns Item</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">campaign_id</br><code>string</code></td><td style="text-align:left"><p>Unique campaign ID, assigned by Voucherify.</p> <strong>Example:</strong> <p>camp_rRsfatlwN7unSeUIJDCYedal</p></td></tr><tr><td style="text-align:left">referrer_id</br><code>string</code></td><td style="text-align:left"><p>Unique referrer ID, assigned by Voucherify. This is the customer ID of a customer that is referring this customer.</p> <strong>Example:</strong> <p>cust_sehkNIi8Uq2qQuRqSr7xn4Zi</p></td></tr><tr><td style="text-align:left">related_object_id</br><code>string</code></td><td style="text-align:left"><p>Related object id</p> <strong>Example:</strong> <p>r_0b9d4cc4aa164dd073</p></td></tr><tr><td style="text-align:left">related_object_type</br><code>string</code></td><td style="text-align:left"><p>Related object type, i.e. <code>redemption</code>.</p></td></tr><tr><td style="text-align:left">date</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the customer was referred in ISO 8601 format.</p> <strong>Example:</strong> <p>2022-08-30T10:19:39.196Z</p></td></tr></tbody></table> |
 
 ## Customer Base
 | Attributes |  Description |

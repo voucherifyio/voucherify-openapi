@@ -10,7 +10,11 @@ order: 30
 
 ## Authorization overview
 
-We use two pairs of keys — one for server applications (*back-end*) and one for publicly available client applications (*mobile apps* and *web applications*).
+Voucherify uses two pairs of keys — one for server applications (*back-end*) and one for publicly available client applications (*mobile apps* and *web applications*).
+
+> 📘 API endpoints
+>
+> In addition to the keys, you will need to choose suitable [API endpoints](doc:api-endpoints).
 
 ## Application authentication
 
@@ -25,7 +29,7 @@ X-App-Id: 3XXXXXXa-125l-XXXr-qXXX-3XXXX8092e70
 X-App-Token: 4XX1XD-2X3X-XXXX-3X59-8XXXXXXX23y3
 ```
 
-Most likely, you will not have to send your keys manually. We provide [SDKs](doc:sdks) that know how to handle them, so no extra code is needed.
+Most likely, you will not have to send your keys manually. See [SDKs](doc:sdks) that know how to handle them, so no extra code is needed.
 
 > ❗ Security threat
 > 

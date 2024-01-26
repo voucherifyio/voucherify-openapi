@@ -1,5 +1,5 @@
 ---
-title: Data synchronization
+title: Data Synchronization
 excerpt: Learn what kind of data you can synchronize with Voucherify and how you can do this
 categorySlug: development
 slug: data-synchronization
@@ -16,12 +16,12 @@ In Voucherify, you can synchronize the following data:
 
 When you have [created your Voucherify account](doc:getting-started), you can import your existing data and then synchronize it for future use in campaigns.
 
-> 📘 **Goals**:
+> 📘 **Goals**
 >
 > - Learn why data synchronization is important
 > - Learn how to synchronize your data through data import and updates
 
-> 👍 **Outcome**:
+> 👍 **Outcome**
 > 
 > Your data is synchronized with Voucherify.
 
@@ -78,7 +78,7 @@ Read our [customer import guide](https://support.voucherify.io/article/67-how-to
 
 If you want to keep your customers database up to date with Voucherify, create a customer in Voucherify every time a new user is added to your database. Use the [create customer](ref:create-customer) API endpoint to create customer data.
 
-To update customer data, use [update customer](ref:update-customer) API endpoint. The [create customer](ref:create-customer) API endpoint can be also used to update customer data.
+To update customer data, use the [update customer](ref:update-customer) API endpoint. The [create customer](ref:create-customer) API endpoint can be also used to update customer data.
 
 #### Synchronizing with connectors
 

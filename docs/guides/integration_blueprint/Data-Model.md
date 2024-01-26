@@ -13,7 +13,7 @@ order: 8
 > * Learn more about metadata. 
 > * Choose which attributes and events you would like to share with Voucherify.
 
-> 👍 **Outcome**:
+> 👍 **Outcome**
 >
 > Data model PoC that is based on your use cases and business model.
 

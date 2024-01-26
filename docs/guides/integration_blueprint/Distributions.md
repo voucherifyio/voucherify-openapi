@@ -14,13 +14,13 @@ order: 11
 > * Learn how Voucherify publication works.
 > * Discover Voucherify integrations for messaging.
 
-> 👍 **Outcome**: 
+> 👍 **Outcome** 
 >
 > Connect Voucherify with your preferred communication channels.
 
 ---
 
-Evaluate your customer journey and **think of places and times the information about the deal should be displayed**: website, product pages, emails, SMS, push, print, partners, or social media. Think of how you want to remind customers about the deals they’re eligible to use. Voucherify offers **two distribution modes**:
+Evaluate your customer journey and **think of places and times the information about the deal should be displayed**: website, product pages, emails, SMS, push, print, partners, or social media. Think of how you want to remind customers about the deals they’re eligible to use. Voucherify offers **two distribution modes**
 
 * **Pull** – you can use API to get promotions in front of customers (e.g., list all active coupons for John Doe).
 * **Push** – an integral distribution mechanism that you can use to define a trigger for the message send-out (e.g., if John Doe signs up for a newsletter, send him a 10% off promo code).

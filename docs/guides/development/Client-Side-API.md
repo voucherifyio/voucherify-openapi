@@ -8,9 +8,9 @@ hidden: false
 order: 190
 ---
 
-Sometimes it's important to validate a promo code or promotion on the client-side, e.g., you want to calculate and display a discounted price on the fly. That's why Voucherify comes with client-side features build in [Voucherify JS SDK](https://github.com/voucherifyio/voucherify-js-sdk) - an open-source JavaScript library which enables you to query the API. 
+Sometimes it's important to validate a promo code or promotion on the client side, e.g., you want to calculate and display a discounted price on the fly. That's why Voucherify comes with client-side features built into [Voucherify JS SDK](https://github.com/voucherifyio/voucherify-js-sdk) - an open-source JavaScript library that enables you to query the API. 
 
-Among other features it delivers [Voucherify React Widgets](https://github.com/voucherifyio/voucherify-js-sdk#-voucherify-react-widget)
+Among other features, it delivers [Voucherify React Widgets](https://github.com/voucherifyio/voucherify-js-sdk#-voucherify-react-widget)
 
 <!-- ![React Widget](../../assets/img/guides_development_client_side_api_widget_1.gif "React Widget") -->
 ![React Widget](https://files.readme.io/0427b12-widget.gif "React Widget")
@@ -22,9 +22,22 @@ Voucherify JS SDK offers many client-side features:
 - `subscribe widget` which adds a [customer](ref:get-customer) to Voucherify. You can then use one of the [automatic delivery](doc:automatic-delivery) channels to send him/her a coupon.
 [Read more here](https://voucherifyio.github.io/voucherify-js-sdk/#client-side-methods).
 
+## API requests rate limit
+
+To keep your vouchers and promotions safe from fraudulent customer behavior, Voucherify limits the rate of public client requests coming from a single IP address. The current limit can be found at [Limits](doc:limits) section.
+
+When the limit is exceeded, Voucherify returns:
+
+```json Response
+{
+    "code": 429,
+    "message": "Too many requests hit the API too quickly."
+}
+```
+
 ## Installation & reference
 
-Visit :fa-github-alt: [Github repository](https://github.com/voucherifyio/voucherify-js-sdk) to get the up-to-date documentation.
+Visit :fa-github-alt: [Github repository](https://github.com/voucherifyio/voucherify-js-sdk) to get the current documentation.
 
 > 🚧 Domain white list
 > 

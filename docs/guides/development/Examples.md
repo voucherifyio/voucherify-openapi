@@ -115,7 +115,7 @@ To manage promotional activities on the frontend, consider using Voucherify open
 
 ## Figma Promo UI Kits
 
-Looking for ready designs for the best promotions experience in your ecommerce store? Check out our 100% customizable UI kit with ready-to-use components based on the best practices for usability:
+Looking for ready designs for the best promotions experience in your e-commerce store? Check out our 100% customizable UI kit with ready-to-use components based on the best practices for usability:
 
 * [Download Coupon & Promotions UI Kit on Figma](https://www.figma.com/community/file/1100356622702326488)
 * [Download Referral UI Kit on Figma](https://www.figma.com/community/file/1039555483777372722)

@@ -52,12 +52,9 @@ const saveToJson = async (file, name) => {
     fs.mkdirSync(pathToTmp);
   }
 
-  const pathToTmpReferenceToUpload = path.join(
-    __dirname,
-    "../tmp/script-results"
-  );
-  if (!fs.existsSync(pathToTmpReferenceToUpload)) {
-    fs.mkdirSync(pathToTmpReferenceToUpload);
+  const pathToTmpScriptsResults = path.join(__dirname, "../tmp/script-results");
+  if (!fs.existsSync(pathToTmpScriptsResults)) {
+    fs.mkdirSync(pathToTmpScriptsResults);
   }
 
   await fsPromises.writeFile(
