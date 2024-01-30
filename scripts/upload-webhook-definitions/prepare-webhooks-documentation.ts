@@ -19,10 +19,10 @@ const removeKey = (node: object, key: string): object => {
   return node;
 };
 
-const main = async () => {
+export const prepareWebhooksDocumentation = async () => {
   const openApiWebhooksPath = path.join(
     __dirname,
-    "../reference/OpenAPIWebhooks.json"
+    "../../reference/OpenAPIWebhooks.json"
   );
   const openApiWebhooksContent = JSON.parse(
     (await fsPromises.readFile(openApiWebhooksPath)).toString()
@@ -105,7 +105,7 @@ const main = async () => {
           ""
         )}"<br />HTTP method: ${method.toUpperCase()}`
       );
-      const PATH_TO_WEBHOOKS_DOCS = [__dirname, "../docs/webhooks"];
+      const PATH_TO_WEBHOOKS_DOCS = [__dirname, "../../docs/webhooks"];
       await fsPromises.writeFile(
         path.join(
           ...PATH_TO_WEBHOOKS_DOCS,
@@ -114,11 +114,9 @@ const main = async () => {
         [...mdComment, ...mdIntroduction].join(EOL) +
           `${EOL}${EOL}[block:html]${EOL}` +
           `{${EOL}` +
-          `"html": "<style>\\n[title=\\"Toggle library\\"] { \\n  display: none; }\\n.LanguagePicker-divider { \\n  display: none; }\\n.Playground-section3VTXuaYZivJK > .APISectionHeader3LN_-QIR0m7x {\\n  display: none; }\\n.LanguagePicker-languages1qVVo_v6AlP9 {\\n  display: none; }\\n.headline-container-article-info2GaOf2jMpV0r {\\n  display: none; }\\n.APISectionHeader3LN_-QIR0m7x {\\n  display: none; }\\n.APIResponseSchemaPicker-label3XMQ9E-slNcS {\\n  display: none; }\\n.PlaygroundC7DInM9NFvBg {\\n  display: none; }\\n.Modal-Header3VPrQs3MUWWd {\\n  display: none; }\\n.rm-ReferenceMain .rm-Article {\\n  max-width: 2000px; }\\n</style>"${EOL}}${EOL}` +
+          `"html": "<style>\\n[title=\\"Toggle library\\"] { \\n  display: none; }\\n.LanguagePicker-divider { \\n  display: none; }\\n.Playground-section3VTXuaYZivJK > .APISectionHeader3LN_-QIR0m7x {\\n  display: none; }\\n.LanguagePicker-languages1qVVo_v6AlP9 {\\n  display: none; }\\n.headline-container-article-info2GaOf2jMpV0r {\\n  display: none; }\\n.APISectionHeader3LN_-QIR0m7x {\\n  display: none; }\\n.APIResponseSchemaPicker-label3XMQ9E-slNcS {\\n  display: none; }\\n.PlaygroundC7DInM9NFvBg {\\n  display: none; }\\n.Modal-Header3VPrQs3MUWWd {\\n  display: none; }\\n.rm-ReferenceMain .rm-Article {\\n  max-width: 2000px; }\\n.AccordionContentzBCM46dZQ5Xc {\\n  display: block !important; }\\n.AccordionToggle2c6jPP7vVvLS {\\n  display: block; cursor: default !important; }\\n.APIResponseSchemaPicker-option-toggle1Rk-RliJASLl {\\n  display: block; cursor: default !important; }\\n.APIResponseSchemaPicker-option-toggle1Rk-RliJASLl:focus-within {\\n  border-color: inherit !important; cursor: default !important; background: inherit !important; box-shadow: none !important; }\\n</style>"${EOL}}${EOL}` +
           `[/block]`
       );
     }
   }
 };
-
-main();

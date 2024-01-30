@@ -18,8 +18,7 @@ const removeKey = (node: object, key: string): object => {
   return node;
 };
 
-const main = async () => {
-  const version = "v2018-08-01-pw-609";
+export const updateWebhooksDocumentationTitles = async (version) => {
   if (process.env.README_IO_AUTH?.length < 10) {
     console.log("`README_IO_AUTH` was not provided in `.env` file :/");
     return;
@@ -94,5 +93,3 @@ const main = async () => {
     }
   }
 };
-
-main();
