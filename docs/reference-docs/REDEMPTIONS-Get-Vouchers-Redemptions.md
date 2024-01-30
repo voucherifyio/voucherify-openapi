@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: get-voucher-redemptions
 parentDocSlug: redemptions
 hidden: false
-order: 5
+order: 6
 ---
 [block:html]
 {

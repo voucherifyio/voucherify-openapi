@@ -1,11 +1,11 @@
 ---
-title: Validate Stackable Discounts (client-side)
+title: List Promotion Tiers (client-side)
 type: endpoint
 categorySlug: voucherify-api
-slug: validate-stacked-discounts-client-side
-parentDocSlug: stackable-discounts
+slug: list-promotion-tiers-client-side
+parentDocSlug: client-side
 hidden: false
-order: 5
+order: 2
 ---
 [block:html]
 {

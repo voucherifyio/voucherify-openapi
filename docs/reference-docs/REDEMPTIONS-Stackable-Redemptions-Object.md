@@ -2,7 +2,7 @@
 title: Stackable Redemptions Object
 type: basic
 categorySlug: voucherify-api
-parentDocSlug: stackable-discounts
+parentDocSlug: redemptions
 slug: stackable-redemptions-object
 hidden: false
 order: 3

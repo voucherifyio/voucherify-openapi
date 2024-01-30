@@ -1,11 +1,11 @@
 ---
-title: Rollback Stackable Redemptions
+title: Track Custom Event (client-side)
 type: endpoint
 categorySlug: voucherify-api
-slug: rollback-stacked-redemptions
-parentDocSlug: stackable-discounts
+slug: track-custom-event-client-side
+parentDocSlug: client-side
 hidden: false
-order: 8
+order: 7
 ---
 [block:html]
 {
