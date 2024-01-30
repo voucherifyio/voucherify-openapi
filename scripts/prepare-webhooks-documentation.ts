@@ -6,6 +6,8 @@ import SchemaToMarkdownTable, {
   RenderMode,
 } from "./src/schema-to-md-table";
 import { EOL } from "os";
+import dotenv from "dotenv";
+dotenv.config();
 
 function isObject(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -61,9 +63,17 @@ const main = async () => {
       schemaRef: string;
     }[]
   > = groupBy(dataStructure, "group");
+
+  // initialize SchemaToMarkdownTable tool
+  const stm = new SchemaToMarkdownTable(
+    openApiWebhooksContent.components.schemas,
+    RenderMode.List,
+    ExamplesRenderedAs.PartOfDescription
+  );
+
   //create Webhooks category
   const response = await fetch(`https://dash.readme.com/api/v1/categories`, {
-    method: "PUT",
+    method: "POST",
     headers: {
       "x-readme-version": version,
       authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
@@ -90,7 +100,7 @@ const main = async () => {
   //clean up this folder
 
   //create categories docs grab slug...
-  for (const singleDataStructureGroupedById in Object.keys(
+  for (const singleDataStructureGroupedById of Object.keys(
     dataStructureGroupedById
   )) {
     const categoryTitle = capitalize(singleDataStructureGroupedById);
@@ -141,17 +151,11 @@ const main = async () => {
       const mdIntroduction = [];
       mdIntroduction.push(`# EVENTS.${group}.${title}`);
       mdIntroduction.push(`## HTTP request method: ${method.toUpperCase()}`);
-      // initialize SchemaToMarkdownTable tool
-      const stm = new SchemaToMarkdownTable(
-        openApiWebhooksContent.components.schemas,
-        RenderMode.List,
-        ExamplesRenderedAs.PartOfDescription
-      );
       const schemaData = stm.render(schemaRef);
       const PATH_TO_WEBHOOKS_DOCS = [__dirname, "../docs/webhooks"];
       await fsPromises.writeFile(
         path.join(...PATH_TO_WEBHOOKS_DOCS, `${slug}.md`),
-        [...mdComment, ...mdIntroduction].join(EOL) + EOL
+        [...mdComment, ...mdIntroduction].join(EOL) + EOL + schemaData
       );
     }
   }
