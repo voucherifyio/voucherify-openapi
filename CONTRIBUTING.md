@@ -215,7 +215,15 @@ const listOfReferenceCategories = ["Introduction"];
 	- Create your own branch from `master`,
 	- Create a draft pull request
 - Make changes in the repository following patterns and good practices.
-- Run `npm run manage-project -- --vt={your name}-{pull request number} --create` - this will create new version project with your tag number.
+- Run `npm run manage-project -- --vt={your name}-{pull request number} --create` - this will create a new version project with your tag number.
+  - If the following error occurs:
+  ```
+  > manage-project
+  > ts-node scripts/build-update-md-tables-from-openapi.ts && ts-node ./scripts/manage-project.ts --vt=pw-658 --create
+
+  sh: ts-node: command not found
+  ```
+  Run `npm i` in the terminal.
 - Visit url provided at the end of the script run to test changes using preview on readme.io
 - If you need to make a change:
 	- Do changes...
