@@ -25,7 +25,7 @@ export const updateWebhooksDocumentationTitles = async (version) => {
   }
   const openApiWebhooksPath = path.join(
     __dirname,
-    "../reference/OpenAPIWebhooks.json"
+    "../../reference/OpenAPIWebhooks.json"
   );
   const openApiWebhooksContent = JSON.parse(
     (await fsPromises.readFile(openApiWebhooksPath)).toString()

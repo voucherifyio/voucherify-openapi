@@ -3,6 +3,7 @@ import path from "path";
 import { capitalize, groupBy } from "lodash";
 import { EOL } from "os";
 import dotenv from "dotenv";
+import fs from "fs";
 dotenv.config();
 
 function isObject(value) {
@@ -77,6 +78,12 @@ export const prepareWebhooksDocumentation = async () => {
     JSON.stringify(openApiWebhooksContent, null, 2)
   );
 
+  const PATH_TO_WEBHOOKS_DOCS = [__dirname, "../../docs/webhooks"];
+
+  if (!fs.existsSync(path.join(...PATH_TO_WEBHOOKS_DOCS))) {
+    fs.mkdirSync(path.join(...PATH_TO_WEBHOOKS_DOCS));
+  }
+
   for (const dataStructures of Object.values(dataStructuresByGroup)) {
     for (const [index, singleDataStructure] of dataStructures.entries()) {
       const {
@@ -105,7 +112,6 @@ export const prepareWebhooksDocumentation = async () => {
           ""
         )}"<br />HTTP method: ${method.toUpperCase()}`
       );
-      const PATH_TO_WEBHOOKS_DOCS = [__dirname, "../../docs/webhooks"];
       await fsPromises.writeFile(
         path.join(
           ...PATH_TO_WEBHOOKS_DOCS,
