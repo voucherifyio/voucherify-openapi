@@ -49,6 +49,11 @@ const main = async ({
   }
   await cleanProject(version);
   await uploadOpenApiFileWithMaxNumberOfAttempts(version, 1);
+  console.log(
+    colors.green(
+      `BUILDING AND UPDATING MD TABLES FROM OPEN API... PLEASE WAIT...`
+    )
+  );
   await buildAndUpdateMdTables();
   await uploadImagesUsedInMdFiles();
   await uploadGuideFiles(version);

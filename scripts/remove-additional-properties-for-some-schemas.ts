@@ -31,11 +31,11 @@ const getAllRelatedSchemasNames = (
         continue;
       }
       additionalSchemasNames.push(
-        ...JSON.stringify(schemas[schemaName])
+        ...(JSON.stringify(schemas[schemaName])
           .match(/"#\/components\/schemas\/.*?"/g)
           ?.map((match) =>
             match.replace('"#/components/schemas/', "").slice(0, -1)
-          )
+          ) || [])
       );
     }
     additionalSchemasNames = difference(
