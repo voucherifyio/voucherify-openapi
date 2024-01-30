@@ -4,6 +4,10 @@
 
 # Changelog - DEPRECATED
 
+## 20240130
+
+Update to the API version upgrades article regarding the v2024-01-01 webhook version.
+
 ## 20240117
 
 Quick fix to the CSV export with API article.
