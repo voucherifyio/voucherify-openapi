@@ -5,6 +5,6 @@ parentDocSlug: validations
 slug: validation-session
 type: link
 hidden: false
-order: 2
+order: 1
 link_url: https://docs.voucherify.io/docs/locking-validation-session
 ---

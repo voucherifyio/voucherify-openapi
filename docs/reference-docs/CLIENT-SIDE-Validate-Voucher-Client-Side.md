@@ -1,11 +1,11 @@
 ---
-title: Redeem Voucher (client-side) [Deprecated]
+title: Validate Voucher (client-side) [Deprecated]
 type: endpoint
 categorySlug: voucherify-api
-slug: redeem-voucher-client-side
-parentDocSlug: redemptions
+slug: validate-voucher-client-side
+parentDocSlug: client-side
 hidden: false
-order: 7
+order: 100
 ---
 [block:html]
 {

@@ -3,9 +3,9 @@ title: Validate Stackable Discounts
 type: endpoint
 categorySlug: voucherify-api
 slug: validate-stacked-discounts
-parentDocSlug: stackable-discounts
+parentDocSlug: validations
 hidden: false
-order: 4
+order: 3
 ---
 [block:html]
 {

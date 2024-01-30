@@ -1,11 +1,11 @@
 ---
-title: List Consents (client-side)
+title: Redeem Stackable Discounts (client-side)
 type: endpoint
 categorySlug: voucherify-api
-slug: list-consents-client-side
-parentDocSlug: consents
+slug: redeem-stacked-discounts-client-side
+parentDocSlug: client-side
 hidden: false
-order: 3
+order: 4
 ---
 [block:html]
 {

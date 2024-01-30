@@ -2,10 +2,10 @@
 title: Check Eligibility (client-side)
 type: endpoint
 categorySlug: voucherify-api
-parentDocSlug: qualifications
+parentDocSlug: client-side
 slug: check-eligibility-client-side
 hidden: false
-order: 3
+order: 9
 ---
 
 [block:html]

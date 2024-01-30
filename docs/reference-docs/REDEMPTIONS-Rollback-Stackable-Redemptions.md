@@ -1,11 +1,11 @@
 ---
-title: Validate Voucher (client-side) [Deprecated]
+title: Rollback Stackable Redemptions
 type: endpoint
 categorySlug: voucherify-api
-slug: validate-voucher-client-side
-parentDocSlug: validations
+slug: rollback-stacked-redemptions
+parentDocSlug: redemptions
 hidden: false
-order: 5
+order: 11
 ---
 [block:html]
 {
