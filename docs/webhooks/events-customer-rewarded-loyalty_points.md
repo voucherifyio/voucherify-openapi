@@ -2,13 +2,12 @@
 title: Rewarded loyalty_points
 type: endpoint
 categorySlug: webhooks
-parentDocSlug: customer
+parentDocSlug: events-customer
 slug: events-customer-rewarded-loyalty_points
 hidden: false
 order: 4
 ---
-# /EVENTS.CUSTOMER.REWARDED.LOYALTY_POINTS
-## HTTP method: POST
+# EVENT: "EVENTS.CUSTOMER.REWARDED.LOYALTY_POINTS"<br />HTTP method: POST
 
 [block:html]
 {

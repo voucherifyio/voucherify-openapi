@@ -2,13 +2,12 @@
 title: Rewarded main
 type: endpoint
 categorySlug: webhooks
-parentDocSlug: customer
+parentDocSlug: events-customer
 slug: events-customer-rewarded-main
 hidden: false
 order: 3
 ---
-# /EVENTS.CUSTOMER.REWARDED.MAIN
-## HTTP method: POST
+# EVENT: "EVENTS.CUSTOMER.REWARDED.MAIN"<br />HTTP method: POST
 
 [block:html]
 {

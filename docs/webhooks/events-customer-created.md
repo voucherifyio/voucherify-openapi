@@ -2,13 +2,12 @@
 title: Created
 type: endpoint
 categorySlug: webhooks
-parentDocSlug: customer
+parentDocSlug: events-customer
 slug: events-customer-created
 hidden: false
 order: 1
 ---
-# /EVENTS.CUSTOMER.CREATED
-## HTTP method: POST
+# EVENT: "EVENTS.CUSTOMER.CREATED"<br />HTTP method: POST
 
 [block:html]
 {

@@ -2,13 +2,12 @@
 title: Failed
 type: endpoint
 categorySlug: webhooks
-parentDocSlug: redemption
+parentDocSlug: events-redemption
 slug: events-redemption-failed
 hidden: false
 order: 1
 ---
-# /EVENTS.REDEMPTION.FAILED
-## HTTP method: POST
+# EVENT: "EVENTS.REDEMPTION.FAILED"<br />HTTP method: POST
 
 [block:html]
 {

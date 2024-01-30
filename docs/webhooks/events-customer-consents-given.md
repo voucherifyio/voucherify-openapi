@@ -2,13 +2,12 @@
 title: Consents given
 type: endpoint
 categorySlug: webhooks
-parentDocSlug: customer
+parentDocSlug: events-customer
 slug: events-customer-consents-given
 hidden: false
 order: 6
 ---
-# /EVENTS.CUSTOMER.CONSENTS.GIVEN
-## HTTP method: PUT
+# EVENT: "EVENTS.CUSTOMER.CONSENTS.GIVEN"<br />HTTP method: PUT
 
 [block:html]
 {

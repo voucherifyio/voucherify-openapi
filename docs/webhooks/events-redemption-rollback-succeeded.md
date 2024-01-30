@@ -2,13 +2,12 @@
 title: Rollback succeeded
 type: endpoint
 categorySlug: webhooks
-parentDocSlug: redemption
+parentDocSlug: events-redemption
 slug: events-redemption-rollback-succeeded
 hidden: false
 order: 3
 ---
-# /EVENTS.REDEMPTION.ROLLBACK.SUCCEEDED
-## HTTP method: POST
+# EVENT: "EVENTS.REDEMPTION.ROLLBACK.SUCCEEDED"<br />HTTP method: POST
 
 [block:html]
 {

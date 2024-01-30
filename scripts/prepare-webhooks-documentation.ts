@@ -1,10 +1,6 @@
 import fsPromises from "fs/promises";
 import path from "path";
 import { capitalize, groupBy } from "lodash";
-import SchemaToMarkdownTable, {
-  ExamplesRenderedAs,
-  RenderMode,
-} from "./src/schema-to-md-table";
 import { EOL } from "os";
 import dotenv from "dotenv";
 dotenv.config();
@@ -52,7 +48,9 @@ const main = async () => {
         Object.fromEntries(
           Object.entries(pathEntry).map(([method, methodEntry]) => {
             const title = capitalize(path.split(".").slice(2).join(" "));
-            const group = capitalize(path.split(".")[1]);
+            const group = capitalize(
+              path.split(".").slice(0, 2).join(" ").replaceAll("/", "")
+            );
             const operationId = path
               .toLowerCase()
               .replaceAll(".", "-")
@@ -101,8 +99,12 @@ const main = async () => {
       mdComment.push(`order: ${index + 1}`);
       mdComment.push("---");
       const mdIntroduction = [];
-      mdIntroduction.push(`# ${pathName}`);
-      mdIntroduction.push(`## HTTP method: ${method.toUpperCase()}`);
+      mdIntroduction.push(
+        `# EVENT: "${pathName.replaceAll(
+          "/",
+          ""
+        )}"<br />HTTP method: ${method.toUpperCase()}`
+      );
       const PATH_TO_WEBHOOKS_DOCS = [__dirname, "../docs/webhooks"];
       await fsPromises.writeFile(
         path.join(
