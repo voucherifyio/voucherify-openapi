@@ -34,7 +34,7 @@ const main = async () => {
 
   removeKey(openApiWebhooksContent, "x-stoplight");
 
-  const dataStructure: {
+  const dataStructures: {
     title: string;
     path: string;
     group: string;
@@ -54,7 +54,7 @@ const main = async () => {
             const title = capitalize(path.split(".").slice(2).join(" "));
             const group = capitalize(path.split(".")[1]);
             const operationId = path.toLowerCase();
-            dataStructure.push({ method, path, title, group, operationId });
+            dataStructures.push({ method, path, title, group, operationId });
             methodEntry.summary = title;
             methodEntry.tags = [group];
             methodEntry.operationId = operationId;
@@ -64,45 +64,55 @@ const main = async () => {
       ];
     })
   );
-  openApiWebhooksContent.tags = Object.keys(
-    groupBy(dataStructure, "group")
-  ).map((key) => ({ name: capitalize(key), description: capitalize(key) }));
+
+  const dataStructuresByGroup = groupBy(dataStructures, "group");
+
+  openApiWebhooksContent.tags = Object.keys(dataStructuresByGroup).map(
+    (key) => ({ name: capitalize(key), description: capitalize(key) })
+  );
 
   await fsPromises.writeFile(
     openApiWebhooksPath,
     JSON.stringify(openApiWebhooksContent, null, 2)
   );
 
-  for (const [index, singleDataStructure] of dataStructure.entries()) {
-    const {
-      title,
-      group,
-      path: pathName,
-      method,
-      operationId,
-    } = singleDataStructure;
-    const mdComment = [];
-    mdComment.push("---");
-    mdComment.push(`title: ${capitalize(title)}`);
-    mdComment.push(`type: endpoint`);
-    mdComment.push(`categorySlug: webhooks`);
-    mdComment.push(
-      `parentDocSlug: ${group.toLowerCase().replaceAll(" ", "-")}`
-    );
-    mdComment.push(`slug: ${operationId}`);
-    mdComment.push(`hidden: false`);
-    mdComment.push(`order: ${index + 1}`);
-    mdComment.push("---");
-    const mdIntroduction = [];
-    mdIntroduction.push(`# ${pathName}`);
-    const PATH_TO_WEBHOOKS_DOCS = [__dirname, "../docs/webhooks"];
-    await fsPromises.writeFile(
-      path.join(
-        ...PATH_TO_WEBHOOKS_DOCS,
-        `${operationId.replaceAll(".", "-")}.md`
-      ),
-      [...mdComment, ...mdIntroduction].join(EOL) + EOL
-    );
+  for (const dataStructures of Object.values(dataStructuresByGroup)) {
+    for (const [index, singleDataStructure] of dataStructures.entries()) {
+      const {
+        title,
+        group,
+        path: pathName,
+        method,
+        operationId,
+      } = singleDataStructure;
+      const mdComment = [];
+      mdComment.push("---");
+      mdComment.push(`title: ${capitalize(title)}`);
+      mdComment.push(`type: endpoint`);
+      mdComment.push(`categorySlug: webhooks`);
+      mdComment.push(
+        `parentDocSlug: ${group.toLowerCase().replaceAll(" ", "-")}`
+      );
+      mdComment.push(`slug: ${operationId}`);
+      mdComment.push(`hidden: false`);
+      mdComment.push(`order: ${index + 1}`);
+      mdComment.push("---");
+      const mdIntroduction = [];
+      mdIntroduction.push(`# ${pathName}`);
+      mdIntroduction.push(`## HTTP method: ${method.toUpperCase()}`);
+      const PATH_TO_WEBHOOKS_DOCS = [__dirname, "../docs/webhooks"];
+      await fsPromises.writeFile(
+        path.join(
+          ...PATH_TO_WEBHOOKS_DOCS,
+          `${operationId.replaceAll(".", "-")}.md`
+        ),
+        [...mdComment, ...mdIntroduction].join(EOL) +
+          `${EOL}${EOL}[block:html]${EOL}` +
+          `{${EOL}` +
+          `"html": "<style>\\n[title=\\"Toggle library\\"] { \\n  display: none; }\\n.LanguagePicker-divider { \\n  display: none; }\\n.Playground-section3VTXuaYZivJK > .APISectionHeader3LN_-QIR0m7x {\\n  display: none; }\\n.LanguagePicker-languages1qVVo_v6AlP9 {\\n  display: none; }\\n.headline-container-article-info2GaOf2jMpV0r {\\n  display: none; }\\n.APISectionHeader3LN_-QIR0m7x {\\n  display: none; }\\n.APIResponseSchemaPicker-label3XMQ9E-slNcS {\\n  display: none; }\\n.PlaygroundC7DInM9NFvBg {\\n  display: none; }\\n.Modal-Header3VPrQs3MUWWd {\\n  display: none; }\\n.rm-ReferenceMain .rm-Article {\\n  max-width: 2000px; }\\n</style>"${EOL}}${EOL}` +
+          `[/block]`
+      );
+    }
   }
 };
 
