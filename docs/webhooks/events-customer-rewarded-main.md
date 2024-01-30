@@ -3,11 +3,11 @@ title: Rewarded main
 type: endpoint
 categorySlug: webhooks
 parentDocSlug: customer
-slug: events.customer.rewarded.main
+slug: events-customer-rewarded-main
 hidden: false
 order: 3
 ---
-# EVENTS.CUSTOMER.REWARDED.MAIN
+# /EVENTS.CUSTOMER.REWARDED.MAIN
 ## HTTP method: POST
 
 [block:html]

@@ -3,11 +3,11 @@ title: Rollback failed
 type: endpoint
 categorySlug: webhooks
 parentDocSlug: redemption
-slug: events.redemption.rollback.failed
+slug: events-redemption-rollback-failed
 hidden: false
 order: 2
 ---
-# EVENTS.REDEMPTION.ROLLBACK.FAILED
+# /EVENTS.REDEMPTION.ROLLBACK.FAILED
 ## HTTP method: POST
 
 [block:html]

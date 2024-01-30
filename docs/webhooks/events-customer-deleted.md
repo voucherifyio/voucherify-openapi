@@ -3,11 +3,11 @@ title: Deleted
 type: endpoint
 categorySlug: webhooks
 parentDocSlug: customer
-slug: events.customer.deleted
+slug: events-customer-deleted
 hidden: false
 order: 2
 ---
-# EVENTS.CUSTOMER.DELETED
+# /EVENTS.CUSTOMER.DELETED
 ## HTTP method: DELETE
 
 [block:html]

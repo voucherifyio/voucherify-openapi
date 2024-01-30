@@ -3,11 +3,11 @@ title: Consents revoked
 type: endpoint
 categorySlug: webhooks
 parentDocSlug: customer
-slug: events.customer.consents.revoked
+slug: events-customer-consents-revoked
 hidden: false
 order: 5
 ---
-# EVENTS.CUSTOMER.CONSENTS.REVOKED
+# /EVENTS.CUSTOMER.CONSENTS.REVOKED
 ## HTTP method: PUT
 
 [block:html]

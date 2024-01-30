@@ -3,11 +3,11 @@ title: Succeeded
 type: endpoint
 categorySlug: webhooks
 parentDocSlug: redemption
-slug: events.redemption.succeeded
+slug: events-redemption-succeeded
 hidden: false
 order: 4
 ---
-# EVENTS.REDEMPTION.SUCCEEDED
+# /EVENTS.REDEMPTION.SUCCEEDED
 ## HTTP method: POST
 
 [block:html]

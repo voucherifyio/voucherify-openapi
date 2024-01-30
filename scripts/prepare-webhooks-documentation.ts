@@ -53,7 +53,10 @@ const main = async () => {
           Object.entries(pathEntry).map(([method, methodEntry]) => {
             const title = capitalize(path.split(".").slice(2).join(" "));
             const group = capitalize(path.split(".")[1]);
-            const operationId = path.toLowerCase();
+            const operationId = path
+              .toLowerCase()
+              .replaceAll(".", "-")
+              .replaceAll("/", "");
             dataStructures.push({ method, path, title, group, operationId });
             methodEntry.summary = title;
             methodEntry.tags = [group];
