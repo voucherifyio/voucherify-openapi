@@ -18,80 +18,72 @@ yup.addMethod(
 const nodeWithTitleAndPropertiesSchema = yup.object({
   title: yup.string().optional(),
   type: yup.string().oneOf(["object", "string", "array", "number"]),
+  nullable: yup.boolean().optional(),
   properties: yup.object({}).optional(),
-  additionalProperties: yup
-    .mixed()
+  additionalProperties: (yup.mixed() as any)
     .oneOfSchemas([yup.boolean(), yup.object({})])
     .optional(),
-  anyOf: yup.array().optional(),
-  description: yup.string().optional(),
+  oneOf: yup.array().optional(),
 });
 
-const oneOfSchema = yup
-  .array()
-  .of(
-    yup.object({
-      $ref: yup.string().required(),
-    })
-  )
-  .optional();
-
-const itemsSchema = yup
-  .mixed()
+const itemsSchema = (yup.mixed() as any)
   .oneOfSchemas([
     nodeWithTitleAndPropertiesSchema,
     yup.object({ $ref: yup.string().optional() }),
   ])
   .optional();
 
-const anyOfSchema = yup
+const oneOfSchema = yup
   .array()
   .of(
-    yup
-      .mixed()
-      .oneOfSchemas([
-        nodeWithTitleAndPropertiesSchema,
-        yup.object({ $ref: yup.string().required() }),
-      ])
+    (yup.mixed() as any).oneOfSchemas([
+      nodeWithTitleAndPropertiesSchema,
+      yup.object({ $ref: yup.string().required() }),
+    ])
   )
   .optional();
 
-const allOfSchema = anyOfSchema;
+const allOfSchema = oneOfSchema;
 
 const propertySchema = yup.object({
-  type: yup.mixed().oneOfSchemas([yup.string(), yup.array().of(yup.string())]),
+  type: (yup.mixed() as any).oneOfSchemas([
+    yup.string(),
+    yup.array().of(yup.string()),
+  ]),
+  nullable: yup.boolean().optional(),
   properties: yup.object({}).optional(),
-  additionalProperties: yup
-    .mixed()
+  additionalProperties: (yup.mixed() as any)
     .oneOfSchemas([yup.boolean(), yup.object({})])
     .optional(),
   description: yup.string().optional(),
   enum: yup
     .array()
     .of(
-      yup
-        .mixed()
-        .oneOfSchemas([
-          yup.string(),
-          yup.array().of(yup.number()),
-          yup.array().of(yup.string()),
-        ])
+      (yup.mixed() as any).oneOfSchemas([
+        yup.string(),
+        yup.array().of(yup.number()),
+        yup.array().of(yup.string()),
+      ])
     )
     .optional(),
   oneOf: oneOfSchema,
-  anyOf: anyOfSchema,
   allOf: allOfSchema,
   items: itemsSchema,
   $ref: yup.string().optional(),
 });
 
 interface Items extends yup.InferType<typeof itemsSchema> {}
-interface AnyOf extends yup.InferType<typeof anyOfSchema> {}
-interface AllOf extends yup.InferType<typeof anyOfSchema> {}
+interface OneOf extends yup.InferType<typeof oneOfSchema> {}
+interface AllOf extends yup.InferType<typeof oneOfSchema> {}
 interface OneOf extends yup.InferType<typeof oneOfSchema> {}
 
 export type Properties = Record<string, Property>;
-type Property = { description?: string; example?: string; type?: string };
+type Property = {
+  description?: string;
+  example?: string;
+  type?: string;
+  nullable?: boolean;
+};
 
 const md = new MarkdownIt({ breaks: true, html: true });
 const renderMarkdown = (markdown) =>
@@ -143,50 +135,18 @@ export default class SchemaToMarkdownTable {
       .replace(/[,]/g, "")})`;
   }
 
-  private renderOneOfDescription(oneOf: OneOf, level: number) {
-    const descriptionArr = [];
-    const relatedObjectsNames = [];
-    descriptionArr.push(`One of:`);
-    const nestedObjectsHtml = oneOf
-      .map((item) => {
-        const nestedObjectName = item["$ref"].replace(
-          "#/components/schemas/",
-          ""
-        );
-        if (typeof this.schemas[nestedObjectName] !== "object") {
-          return false;
-        }
-
-        relatedObjectsNames.push(nestedObjectName);
-        const title = (this.schemas[nestedObjectName].title ||
-          nestedObjectName) as string;
-        if (this.redenderMode === RenderMode.List) {
-          return this.getMarkdownLinkToHeader(title);
-        } else {
-          const { html } = this.renderSchema(nestedObjectName, level + 1);
-          return renderMarkdown(html);
-        }
-      })
-      .filter((i) => !!i);
-    descriptionArr.push(
-      nestedObjectsHtml.join(this.redenderMode === RenderMode.List ? ", " : "")
-    );
-
-    return { descriptionArr, relatedObjectsNames };
-  }
-
-  private renderAnyOfDescription(
-    anyOf: AnyOf,
+  private renderOneOfDescription(
+    oneOf: OneOf,
     level: number,
-    skipAnyOf: boolean = false
+    skipOneOf: boolean = false
   ) {
     const descriptionArr = [];
     const relatedObjectsNames = [];
-    if (!skipAnyOf) {
-      descriptionArr.push(`Any of:`);
+    if (!skipOneOf) {
+      descriptionArr.push(`One of:`);
     }
-    const nestedObjectsHtml = anyOf
-      .map((item) => {
+    const nestedObjectsHtml = oneOf
+      .map((item: any) => {
         if (
           "$ref" in item &&
           typeof item["$ref"] === "string" &&
@@ -225,7 +185,8 @@ export default class SchemaToMarkdownTable {
           typeof item.type === "string" &&
           ["string", "number", "object"].includes(item.type)
         ) {
-          return level ? item.type : renderMarkdown(item.type);
+          const type = "nullable" in item ? `${item.type}, null` : item.type;
+          return level ? type : renderMarkdown(type);
         }
       })
       .filter((i) => !!i);
@@ -277,12 +238,14 @@ export default class SchemaToMarkdownTable {
       .join("");
   }
 
-  private renderAllOfDescription(allOf: AnyOf, level: number) {
+  private renderAllOfDescription(allOf: OneOf, level: number) {
     const descriptionArr = [];
     const relatedObjectsNames = [];
-    descriptionArr.push(`All of:`);
+    if (allOf.length > 1) {
+      descriptionArr.push(`All of:`);
+    }
     const nestedObjectsHtml = allOf
-      .map((item) => {
+      .map((item: any) => {
         if (
           "$ref" in item &&
           typeof item["$ref"] === "string" &&
@@ -308,20 +271,22 @@ export default class SchemaToMarkdownTable {
           const { html, relatedObjects } = this.renderSchema(item, level + 1);
           relatedObjectsNames.push(...relatedObjects);
           return renderMarkdown(html);
-        } else if ("anyOf" in item) {
-          const anyOf = anyOfSchema.validateSync(item["anyOf"]);
+        } else if ("oneOf" in item) {
+          const oneOf = oneOfSchema.validateSync(item["oneOf"]);
           const {
-            descriptionArr: anyOfDescriptionArr,
-            relatedObjectsNames: anyOfRelatedObjectsNames,
-          } = this.renderAnyOfDescription(anyOf, level + 1);
-          relatedObjectsNames.push(...anyOfRelatedObjectsNames);
-          return anyOfDescriptionArr.join(" ");
+            descriptionArr: oneOfDescriptionArr,
+            relatedObjectsNames: oneOfRelatedObjectsNames,
+          } = this.renderOneOfDescription(oneOf, level + 1);
+          relatedObjectsNames.push(...oneOfRelatedObjectsNames);
+          return oneOfDescriptionArr.join(" ");
         }
       })
       .filter((i) => !!i);
     descriptionArr.push(
       nestedObjectsHtml
-        .map((row, index) => `${index + 1}. ${row}`)
+        .map(
+          (row, index) => `${allOf.length > 1 ? `${index + 1}. ` : ""}${row}`
+        )
         .join(this.redenderMode === RenderMode.List ? `${EOL}` : "")
     );
     return { descriptionArr, relatedObjectsNames };
@@ -355,14 +320,14 @@ export default class SchemaToMarkdownTable {
       const { html, relatedObjects } = this.renderSchema(items, level + 1);
       relatedObjectsNames.push(...relatedObjects);
       descriptionArr.push(renderMarkdown(html));
-    } else if ("anyOf" in items) {
-      const anyOf = anyOfSchema.validateSync(items.anyOf);
+    } else if ("oneOf" in items) {
+      const oneOf = oneOfSchema.validateSync(items.oneOf);
       const {
-        descriptionArr: anyOfDescriptionArr,
-        relatedObjectsNames: anyOfRelatedObjectsNames,
-      } = this.renderAnyOfDescription(anyOf, level + 1, true);
-      relatedObjectsNames.push(...anyOfRelatedObjectsNames);
-      descriptionArr.push(`Array any of: ${anyOfDescriptionArr.join(" ")}`);
+        descriptionArr: oneOfDescriptionArr,
+        relatedObjectsNames: oneOfRelatedObjectsNames,
+      } = this.renderOneOfDescription(oneOf, level + 1, true);
+      relatedObjectsNames.push(...oneOfRelatedObjectsNames);
+      descriptionArr.push(`Array any of: ${oneOfDescriptionArr.join(" ")}`);
     }
     return { descriptionArr, relatedObjectsNames };
   }
@@ -397,7 +362,6 @@ export default class SchemaToMarkdownTable {
       description,
       enum: EnumProp,
       oneOf,
-      anyOf,
       allOf,
       items,
       type,
@@ -417,15 +381,6 @@ export default class SchemaToMarkdownTable {
       descriptionArr.push(availableValues);
     }
 
-    if (oneOf) {
-      const {
-        descriptionArr: descriptionArrOneOf,
-        relatedObjectsNames: relatedObjectsNamesOneOff,
-      } = this.renderOneOfDescription(oneOf, level);
-      descriptionArr.push(...descriptionArrOneOf);
-      relatedObjectsNames.push(...relatedObjectsNamesOneOff);
-    }
-
     if (allOf) {
       const {
         descriptionArr: descriptionArrAllOf,
@@ -435,13 +390,13 @@ export default class SchemaToMarkdownTable {
       relatedObjectsNames.push(...relatedObjectsNamesAllOff);
     }
 
-    if (anyOf) {
+    if (oneOf) {
       const {
-        descriptionArr: descriptionArrAnyOf,
-        relatedObjectsNames: relatedObjectsNamesAnyOff,
-      } = this.renderAnyOfDescription(anyOf, level);
-      descriptionArr.push(...descriptionArrAnyOf);
-      relatedObjectsNames.push(...relatedObjectsNamesAnyOff);
+        descriptionArr: descriptionArrOneOf,
+        relatedObjectsNames: relatedObjectsNamesOneOff,
+      } = this.renderOneOfDescription(oneOf, level);
+      descriptionArr.push(...descriptionArrOneOf);
+      relatedObjectsNames.push(...relatedObjectsNamesOneOff);
     }
 
     if (items) {
@@ -492,7 +447,9 @@ export default class SchemaToMarkdownTable {
 
         const propertyLabel = [
           propertyId,
-          property.type ? `\`${property.type}\`` : false,
+          property.type
+            ? `\`${property.type}\`${property.nullable ? `, \`null\`` : ""}`
+            : false,
         ]
           .filter((e) => !!e)
           .join("</br>");
@@ -536,7 +493,7 @@ export default class SchemaToMarkdownTable {
     }
 
     const schemaResult = nodeWithTitleAndPropertiesSchema.validateSync(schema);
-    const { title, additionalProperties, description } = schemaResult;
+    const { title, additionalProperties } = schemaResult;
     const properties =
       schemaResult.properties instanceof Object
         ? schemaResult.properties
@@ -550,10 +507,6 @@ export default class SchemaToMarkdownTable {
 
     if (!skipTitle && title) {
       respopnseStrArr.push(`${"#".repeat(level + 2)} ${title}`);
-      if (description && properties) {
-        respopnseStrArr.push(renderMarkdown(description));
-        respopnseStrArr.push("\n");
-      }
     } else if (!skipTitle) {
       if (typeof schemaNameOrSchemaObject === "string") {
         throw new Error(`Missing title for ${schemaNameOrSchemaObject} object`);
