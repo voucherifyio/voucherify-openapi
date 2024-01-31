@@ -37,6 +37,7 @@ export const prepareWebhooksDocumentation = async () => {
     group: string;
     method: string;
     operationId: string;
+    examples?: Record<string, any>;
   }[] = [];
 
   openApiWebhooksContent.paths = Object.fromEntries(
@@ -56,7 +57,18 @@ export const prepareWebhooksDocumentation = async () => {
               .toLowerCase()
               .replaceAll(".", "-")
               .replaceAll("/", "");
-            dataStructures.push({ method, path, title, group, operationId });
+            dataStructures.push({
+              method,
+              path,
+              title,
+              group,
+              operationId,
+              examples:
+                methodEntry?.responses?.["200"]?.content?.["application/json"]
+                  ?.examples ||
+                methodEntry?.responses?.["201"]?.content?.["application/json"]
+                  ?.examples,
+            });
             methodEntry.summary = title;
             methodEntry.tags = [group];
             methodEntry.operationId = operationId;
@@ -92,6 +104,7 @@ export const prepareWebhooksDocumentation = async () => {
         path: pathName,
         method,
         operationId,
+        examples,
       } = singleDataStructure;
       const mdComment = [];
       mdComment.push("---");
@@ -105,19 +118,27 @@ export const prepareWebhooksDocumentation = async () => {
       mdComment.push(`hidden: false`);
       mdComment.push(`order: ${index + 1}`);
       mdComment.push("---");
-      const mdIntroduction = [];
-      mdIntroduction.push(
+      const mdText = [];
+      mdText.push(
         `# EVENT: "${pathName.replaceAll(
           "/",
           ""
         )}"<br />HTTP method: ${method.toUpperCase()}`
       );
+      if (examples && Object.keys(examples).length > 0) {
+        Object.entries(examples).map(([exampleName, example]) => {
+          mdText.push(`#### Example: ${exampleName}`);
+          mdText.push(`\`\`\`json`);
+          mdText.push(JSON.stringify(example.value, null, 2));
+          mdText.push(`\`\`\``);
+        });
+      }
       await fsPromises.writeFile(
         path.join(
           ...PATH_TO_WEBHOOKS_DOCS,
           `${operationId.replaceAll(".", "-")}.md`
         ),
-        [...mdComment, ...mdIntroduction].join(EOL) +
+        [...mdComment, ...mdText].join(EOL) +
           `${EOL}${EOL}[block:html]${EOL}` +
           `{${EOL}` +
           `"html": "<style>\\n[title=\\"Toggle library\\"] { \\n  display: none; }\\n.LanguagePicker-divider { \\n  display: none; }\\n.Playground-section3VTXuaYZivJK > .APISectionHeader3LN_-QIR0m7x {\\n  display: none; }\\n.LanguagePicker-languages1qVVo_v6AlP9 {\\n  display: none; }\\n.headline-container-article-info2GaOf2jMpV0r {\\n  display: none; }\\n.APISectionHeader3LN_-QIR0m7x {\\n  display: none; }\\n.APIResponseSchemaPicker-label3XMQ9E-slNcS {\\n  display: none; }\\n.PlaygroundC7DInM9NFvBg {\\n  display: none; }\\n.Modal-Header3VPrQs3MUWWd {\\n  display: none; }\\n.rm-ReferenceMain .rm-Article {\\n  max-width: 2000px; }\\n.AccordionContentzBCM46dZQ5Xc {\\n  display: block !important; }\\n.AccordionToggle2c6jPP7vVvLS {\\n  display: block; cursor: default !important; }\\n.APIResponseSchemaPicker-option-toggle1Rk-RliJASLl {\\n  display: block; cursor: default !important; }\\n.APIResponseSchemaPicker-option-toggle1Rk-RliJASLl:focus-within {\\n  border-color: inherit !important; cursor: default !important; background: inherit !important; box-shadow: none !important; }\\n</style>"${EOL}}${EOL}` +
