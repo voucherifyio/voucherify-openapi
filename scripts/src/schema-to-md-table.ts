@@ -20,15 +20,13 @@ const nodeWithTitleAndPropertiesSchema = yup.object({
   type: yup.string().oneOf(["object", "string", "array", "number"]),
   nullable: yup.boolean().optional(),
   properties: yup.object({}).optional(),
-  additionalProperties: yup
-    .mixed()
+  additionalProperties: (yup.mixed() as any)
     .oneOfSchemas([yup.boolean(), yup.object({})])
     .optional(),
   oneOf: yup.array().optional(),
 });
 
-const itemsSchema = yup
-  .mixed()
+const itemsSchema = (yup.mixed() as any)
   .oneOfSchemas([
     nodeWithTitleAndPropertiesSchema,
     yup.object({ $ref: yup.string().optional() }),
@@ -38,36 +36,34 @@ const itemsSchema = yup
 const oneOfSchema = yup
   .array()
   .of(
-    yup
-      .mixed()
-      .oneOfSchemas([
-        nodeWithTitleAndPropertiesSchema,
-        yup.object({ $ref: yup.string().required() }),
-      ])
+    (yup.mixed() as any).oneOfSchemas([
+      nodeWithTitleAndPropertiesSchema,
+      yup.object({ $ref: yup.string().required() }),
+    ])
   )
   .optional();
 
 const allOfSchema = oneOfSchema;
 
 const propertySchema = yup.object({
-  type: yup.mixed().oneOfSchemas([yup.string(), yup.array().of(yup.string())]),
+  type: (yup.mixed() as any).oneOfSchemas([
+    yup.string(),
+    yup.array().of(yup.string()),
+  ]),
   nullable: yup.boolean().optional(),
   properties: yup.object({}).optional(),
-  additionalProperties: yup
-    .mixed()
+  additionalProperties: (yup.mixed() as any)
     .oneOfSchemas([yup.boolean(), yup.object({})])
     .optional(),
   description: yup.string().optional(),
   enum: yup
     .array()
     .of(
-      yup
-        .mixed()
-        .oneOfSchemas([
-          yup.string(),
-          yup.array().of(yup.number()),
-          yup.array().of(yup.string()),
-        ])
+      (yup.mixed() as any).oneOfSchemas([
+        yup.string(),
+        yup.array().of(yup.number()),
+        yup.array().of(yup.string()),
+      ])
     )
     .optional(),
   oneOf: oneOfSchema,
@@ -150,7 +146,7 @@ export default class SchemaToMarkdownTable {
       descriptionArr.push(`One of:`);
     }
     const nestedObjectsHtml = oneOf
-      .map((item) => {
+      .map((item: any) => {
         if (
           "$ref" in item &&
           typeof item["$ref"] === "string" &&
@@ -249,7 +245,7 @@ export default class SchemaToMarkdownTable {
       descriptionArr.push(`All of:`);
     }
     const nestedObjectsHtml = allOf
-      .map((item) => {
+      .map((item: any) => {
         if (
           "$ref" in item &&
           typeof item["$ref"] === "string" &&
