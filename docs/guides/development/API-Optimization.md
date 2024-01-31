@@ -31,3 +31,7 @@ Voucherify is capable of seamless data incorporation during the validation, qual
 ### Synchronizing data via Webhooks
 
 Explore the possibility of using [webhooks](https://support.voucherify.io/article/68-webhooks-notifications). Instead of polling the API for updates, the API can notify your system when there are changes. This minimizes the need for constant querying.
+
+> 📘
+>
+>Webhooks use separate limits and do not count towards the API call limits. Learn more in our [Limits](ref:limits) article.
