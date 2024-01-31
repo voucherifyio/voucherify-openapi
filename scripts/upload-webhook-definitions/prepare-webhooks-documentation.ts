@@ -127,7 +127,7 @@ export const prepareWebhooksDocumentation = async () => {
       );
       if (examples && Object.keys(examples).length > 0) {
         Object.entries(examples).map(([exampleName, example]) => {
-          mdText.push(`#### Example: ${exampleName}`);
+          mdText.push(`#### Example: ${exampleName.replaceAll("_", " ")}`);
           mdText.push(`\`\`\`json`);
           mdText.push(JSON.stringify(example.value, null, 2));
           mdText.push(`\`\`\``);
