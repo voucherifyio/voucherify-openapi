@@ -10,9 +10,9 @@ order: 150
 
 ## API calls optimization
 
-API calls optimization is a great way of lowering the number of API calls used, and therefore reducing the operational costs in Voucherify.
+API call optimization is a great way of lowering the number of API calls used and, in effect, reducing the operational costs in Voucherify.
 
-Voucherify follows the usage-based pricing model. This means that the user is charged for the number of API calls they make to the platform. Our promotion engine operates on a fixed quota model, which means that the user can easily predict the average number of API calls they will need per month.
+Voucherify follows the usage-based pricing model. This means that the user is charged for the number of API calls they make to the platform. Voucherify promotion engine operates on a fixed quota model, which means that the user can easily predict the average number of API calls they will need per month.
 
 To optimize and reduce the number of API requests, consider the following strategies:
 
@@ -26,7 +26,7 @@ Voucherify has a set of predefined use cases that explain when specific API requ
 
 ### Revising data synchronization between the systems
 
-Our platform is capable of seamless data incorporation during the validation, qualification, and redemption processes without requiring data synchronization. This key feature introduces a level of flexibility and adaptability to the workflow, allowing the system to assimilate information at different stages without being bound by synchronization protocols. Learn more about [data synchronization](data-synchronization) in Voucherify.
+Voucherify is capable of seamless data incorporation during the validation, qualification, and redemption processes without requiring data synchronization. This key feature introduces a level of flexibility and adaptability to the workflow, allowing the system to assimilate information at different stages without being bound by synchronization protocols. Learn more about [data synchronization](data-synchronization) in Voucherify.
 
 ### Synchronizing data via Webhooks
 
