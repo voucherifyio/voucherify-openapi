@@ -20,6 +20,8 @@ Voucherify offers a REST-based API and a web dashboard to create and manage prom
 6. **[SDKs](doc:sdks)** and **[API reference](ref:introduction-1)**: choose your software development kit to integrate faster with Voucherify or use the Voucherify endpoints directly.
 7. **[Integration and connectors](doc:integration-connectors)**: connect Voucherify with your CMS, CRM, CDP, CEP, distribution, or other platforms.
 8. **[Webhooks](doc:webhooks)**: learn more about using and configuring webhook notifications.
+9. **[Limits](doc:limits)**: learn more about the limits connected with API calls, webhooks, and distributions.
+10. **[Fraud prevention mechanism](https://support.voucherify.io/article/516-fraud-prevention)**: learn about fraud prevention mechanisms available in Voucherify.
 
 ## What's next?
 
