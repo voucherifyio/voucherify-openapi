@@ -40,9 +40,13 @@ Use Voucherify's campaign creation process and validation rules to restrict coup
 
 ### Own protective layers
 
+Add your own protective layers on top of what Voucherify has to offer.
+
 One way of preventing fraud can be achieved by setting thresholds for failed code redemption attempts, you can automatically lock or temporarily suspend the user after a certain number of unsuccessful tries. This simple yet effective strategy helps safeguard against brute force attacks.
 
 ### External services
+
+Leveraging third-party platforms, advanced artificial intelligence, and specialized tools is crucial for a robust fraud prevention strategy. These technologies provide enhanced security measures, real-time threat detection, and proactive risk management, ensuring organizations stay ahead in safeguarding against evolving fraudulent activities.
 
 1. [Sift](https://www.sift.com) - provides a real-time machine-learning platform for online fraud prevention. Ift offer APIs that allow you to add fraud detection to your applications. It can learn and predict fraudulent behavior based on past transactions.
 
