@@ -2,6 +2,10 @@ import dotenv from "dotenv";
 import minimist from "minimist";
 import colors from "colors";
 import { exec } from "child_process";
+import path from "path";
+import fs from "fs";
+import fsPromises from "fs/promises";
+import "./build-production-openapi";
 
 dotenv.config();
 const options = minimist(process.argv.slice(2));
@@ -12,13 +16,12 @@ const help = options.help || options.h;
 const mainVersion = "v2018-08-01";
 const version =
   versionOption || versionTag ? `${mainVersion}-${versionTag}` : undefined;
-import "./remove-additional-properties-for-some-schemas-in-readmeio-file";
+import { removeAdditionalPropertiesFromSchemas } from "./remove-additional-properties-for-some-schemas";
 
 const listOfGuideCategories = [
   "Getting started",
   "Integration Blueprint",
   "Development",
-  "Building blocks",
   "Campaigns Recipes",
   "Discounts Recipes",
   "Distributions Recipes",
@@ -46,8 +49,12 @@ const main = async ({
   }
   await cleanProject(version);
   await uploadOpenApiFileWithMaxNumberOfAttempts(version, 1);
-  await buildMdTables();
-  await updateMdTablesInDocs();
+  console.log(
+    colors.green(
+      `BUILDING AND UPDATING MD TABLES FROM OPEN API... PLEASE WAIT...`
+    )
+  );
+  await buildAndUpdateMdTables();
   await uploadImagesUsedInMdFiles();
   await uploadGuideFiles(version);
   await uploadReferenceDocsWithMaxNumberOfAttempts(version, 2);
@@ -85,15 +92,59 @@ const isVersionExists = async (version: string) => {
   );
 };
 
+const createOpenAPIVersionToUpload = async () => {
+  console.log(
+    colors.green("CREATING OPEN API FILE TO UPLOAD... PLEASE WAIT...")
+  );
+
+  const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
+  const openAPIContent = JSON.parse(
+    (await fsPromises.readFile(openApiPath)).toString()
+  );
+
+  const pathToTmp = path.join(__dirname, "../tmp");
+  if (!fs.existsSync(pathToTmp)) {
+    fs.mkdirSync(pathToTmp);
+  }
+
+  const pathToTmpReferenceToUpload = path.join(
+    __dirname,
+    "../tmp/referenceToUpload"
+  );
+  if (!fs.existsSync(pathToTmpReferenceToUpload)) {
+    fs.mkdirSync(pathToTmpReferenceToUpload);
+  }
+
+  const newOpenApiFile = {
+    ...openAPIContent,
+    components: {
+      ...openAPIContent.components,
+      schemas: removeAdditionalPropertiesFromSchemas(
+        openAPIContent.components.schemas,
+        ["ExportsCreateRequestBody", "ExportsCreateResponseBody"]
+      ),
+    },
+  };
+  newOpenApiFile.openapi = "3.1.0";
+
+  await fsPromises.writeFile(
+    path.join(__dirname, "../tmp/referenceToUpload/OpenAPI.json"),
+    JSON.stringify(newOpenApiFile, null, 2)
+  );
+};
+
 const uploadOpenApiFileWithMaxNumberOfAttempts = async (
   version,
   maxNumberOfUploadingAttempts = 3
 ) => {
+  await createOpenAPIVersionToUpload();
+
   console.log(
     colors.green(
       "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE"
     )
   );
+
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
     const { success, error } = await runCliProcess({
       command: `rdme openapi ./tmp/referenceToUpload/OpenAPI.json --version=${version} --create`,
@@ -179,17 +230,10 @@ const uploadGuideFiles = async (version) => {
   console.log(colors.green("GUIDES DOC FILES WERE UPLOADED!"));
 };
 
-const updateMdTablesInDocs = async () => {
-  console.log(colors.green("UPDATING MD TABLES IN DOCS..."));
-  await runCliProcess({
-    command: `npm run update-md-tables-in-doc`,
-  });
-  console.log(colors.green("MD TABLES WERE UPDATED IN DOCS SUCCESSFULLY!"));
-};
-const buildMdTables = async () => {
+const buildAndUpdateMdTables = async () => {
   console.log(colors.green("BUILDING MD TABLES FROM OPEN API..."));
   await runCliProcess({
-    command: `npm run build-md-tables-from-openapi`,
+    command: `npm run build-update-md-tables-from-openapi`,
   });
   console.log(colors.green("MD TABLES WERE BUILDED SUCCESSFULLY!"));
 };

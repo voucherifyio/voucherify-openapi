@@ -3,6 +3,7 @@ import path from "path";
 import dotenv from "dotenv";
 import minimist from "minimist";
 import { getFiles } from "./helpers/getFiles";
+import { asyncMap } from "./helpers/asyncMap";
 
 dotenv.config();
 const { version } = minimist(process.argv.slice(2));
@@ -85,9 +86,5 @@ const chunkArray = (list, chunkSize) =>
   [...Array(Math.ceil(list.length / chunkSize))].map((_) =>
     list.splice(0, chunkSize)
   );
-
-const asyncMap = (arr, asyncFn) => {
-  return Promise.all(arr.map(asyncFn));
-};
 
 readmeFixReferenceDocs();

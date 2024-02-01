@@ -3,7 +3,7 @@ title: Get Product Collection
 type: endpoint
 categorySlug: voucherify-api
 slug: get-product-collection
-parentDocSlug: product-collections-api
+parentDocSlug: product-collections
 hidden: false
 order: 4
 ---
