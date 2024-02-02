@@ -1,6 +1,6 @@
 ---
 title: API Optimization
-excerpt: API calls optimization
+excerpt: API call optimization
 categorySlug: development
 slug: api-optimization
 type: basic
@@ -8,7 +8,7 @@ hidden: false
 order: 150
 ---
 
-## API calls optimization
+## API call optimization
 
 API call optimization is a great way of lowering the number of API calls used and, in effect, reducing the operational costs in Voucherify.
 
@@ -22,11 +22,11 @@ To optimize and reduce the number of API requests, consider the following strate
 
 ### Revising integrated processes
 
-Voucherify has a set of predefined use cases that explain when specific API requests are necessary and optional. These well-defined scenarios help streamline the integration process and ensure efficient utilization of the API. Feel free to look into [integration processes](integration-processes) to get more information.
+Voucherify has a set of predefined use cases that explain when specific API requests are necessary and optional. These well-defined scenarios help streamline the integration process and ensure efficient utilization of the API. Feel free to look into [integration processes](doc:integration-processes) to get more information.
 
 ### Revising data synchronization between the systems
 
-Voucherify is capable of seamless data incorporation during the validation, qualification, and redemption processes without requiring data synchronization. This key feature introduces a level of flexibility and adaptability to the workflow, allowing the system to assimilate information at different stages without being bound by synchronization protocols. Learn more about [data synchronization](data-synchronization) in Voucherify.
+Voucherify is capable of seamless data incorporation during the validation, qualification, and redemption processes without requiring data synchronization. This key feature introduces a level of flexibility and adaptability to the workflow, allowing the system to assimilate information at different stages without being bound by synchronization protocols. Learn more about [data synchronization](doc:data-synchronization) in Voucherify.
 
 ### Synchronizing data via Webhooks
 
@@ -34,4 +34,4 @@ Explore the possibility of using [webhooks](https://support.voucherify.io/articl
 
 > 📘
 >
->Webhooks use separate limits and do not count towards the API call limits. Learn more in our [Limits](ref:limits) article.
+>Webhooks use separate limits and do not count towards the API call limits. Learn more in our [Limits](doc:limits) article.
