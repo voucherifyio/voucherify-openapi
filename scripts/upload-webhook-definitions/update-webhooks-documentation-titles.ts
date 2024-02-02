@@ -78,7 +78,9 @@ export const updateWebhooksDocumentationTitles = async (version) => {
           accept: "application/json",
         },
         body: JSON.stringify({
-          title: capitalize(slug.split("-").slice(1).join(" ")),
+          title: capitalize(
+            slug.split("-").slice(1).join(" ").replaceAll("_", " ")
+          ),
         }),
       }
     );
