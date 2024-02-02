@@ -48,8 +48,7 @@ One way of preventing fraud can be achieved by setting thresholds for failed cod
 
 Leveraging third-party platforms, advanced artificial intelligence, and specialized tools is crucial for a robust fraud prevention strategy.
 
-Voucherify provides the functionality of Referral Codes. These codes allow the customers to introduce other customers to an e-commerce platform, rewarding the referrer and the referee.
-Some customers might take advantage of the referral campaigns by creating fake accounts and getting additionally benefited. Voucherify has the capability not to allow existing customers to redeem the referral codes, but if someone created a new account, Voucherify would not be able to block the usage of the referral code alone. Voucherify’s team verified the possible approaches and tools that can be used to introduce a mechanism to block fraudulent activity.
+Voucherify lets you generate referral codes, allowing customers to refer others and earn rewards. To prevent abuse, you can set validation rules in the campaign that exlude specific customer groups from redeeming referral codes. However, the referral program can still be exploited by setting up fake accounts. This is why Voucherify explored methods and third-party tools to address this issue and enhance fraud prevention of your referral programs.
 
 
 1. [Sift](https://www.sift.com) - provides a real-time machine-learning platform for online fraud prevention. Ift offer APIs that allow you to add fraud detection to your applications. It can learn and predict fraudulent behavior based on past transactions.
