@@ -1,6 +1,6 @@
 ---
 title: API Optimization
-excerpt: API call optimization
+excerpt: Learn how to optimize your API calls
 categorySlug: development
 slug: api-optimization
 type: basic
