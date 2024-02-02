@@ -79,10 +79,6 @@
       "description": "Manage rewards."
     },
     {
-      "name": "Redemptions",
-      "description": "Manage redemptions."
-    },
-    {
       "name": "Loyalties",
       "description": "Manage loyalty campaigns."
     },
@@ -20534,6 +20530,31 @@
           "customer",
           "referral",
           "loyalty"
+        ]
+      },
+      "ClientPublicationsCreateRequestBody": {
+        "title": "Client Publications Create Request Body",
+        "description": "Request body schema for **POST** `/publish`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/CreatePublicationWithSpecificVoucher"
+          },
+          {
+            "$ref": "#/components/schemas/CreatePublicationWithCampaign"
+          }
+        ]
+      },
+      "ClientPublicationsCreateResponseBody": {
+        "title": "Client Publications Create Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/publish`",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/PublicationsCreateVoucherResponseBody"
+          },
+          {
+            "$ref": "#/components/schemas/PublicationsCreateVouchersResponseBody"
+          }
         ]
       },
       "ClientQualificationsCheckEligibilityRequestBody": {
@@ -77488,6 +77509,260 @@
                       "error": {
                         "message": "The voucher is not active in the given timeframe."
                       }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/client/v1/publish": {
+      "post": {
+        "operationId": "create-publication-client-side",
+        "tags": [
+          "Client-side"
+        ],
+        "summary": "Create Publication (client-side)",
+        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> In case you want to publish multiple vouchers within a single publication, you need to specify the campaign name and number of vouchers you want to publish.  \n<!-- theme: info -->\n\n> 📘 Auto-update campaign\n>\n> In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign.",
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterBoolean"
+            },
+            "in": "query",
+            "name": "join_once",
+            "description": "Through this flag, you can control if a particular person gets only one and always the same code even if the app sends multiple publication requests. It means that if you have a referral program, a referrer is assigned only to one code if an integration sends publication requests more than once for the same customer."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the publication parameters.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClientPublicationsCreateRequestBody"
+              },
+              "examples": {
+                "Example - Specific Voucher": {
+                  "value": {
+                    "campaign": {
+                      "name": "campaign-name"
+                    },
+                    "customer": {
+                      "source_id": "source-id",
+                      "Name": "Customer Name",
+                      "email": "customer email"
+                    },
+                    "voucher": "voucher-code",
+                    "metadata": {
+                      "key": "value"
+                    }
+                  }
+                },
+                "Example - Random Voucher": {
+                  "value": {
+                    "campaign": {
+                      "name": "campaign-name",
+                      "count": 1
+                    },
+                    "customer": {
+                      "source_id": "source-id",
+                      "Name": "Customer Name",
+                      "email": "customer email"
+                    },
+                    "voucher": "voucher-code",
+                    "metadata": {
+                      "key": "value"
+                    }
+                  }
+                },
+                "Example 3": {
+                  "value": {
+                    "source_id": "publication_source_ID_10",
+                    "campaign": "Test - Discount Effect - Amount - Items",
+                    "channel": "myown",
+                    "customer": {
+                      "source_id": "pub_source_customer_5",
+                      "name": "Bob Jones",
+                      "description": "A frequent customer",
+                      "email": "bob.smith@email.com",
+                      "phone": "+1 933 222 3333",
+                      "address": {
+                        "city": "New York",
+                        "country": "United States",
+                        "line_1": "123 Main St.",
+                        "line_2": "APT 3 BLG 5",
+                        "postal_code": "10001",
+                        "state": "NY"
+                      },
+                      "metadata": {
+                        "lang": "en",
+                        "test": true
+                      },
+                      "birthday": "1901-12-01"
+                    },
+                    "metadata": {
+                      "year": 2022
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a publication object if a valid identifier was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClientPublicationsCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "pub_ocaXCa023ayJ3WL1ARxUeKgIvg3JcEGh",
+                      "object": "publication",
+                      "created_at": "2022-09-30T16:30:32.924Z",
+                      "customer_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                      "tracking_id": "pub_source_customer_5",
+                      "metadata": {
+                        "year": 2022
+                      },
+                      "channel": "myown",
+                      "source_id": "publication_source_ID_10",
+                      "result": "SUCCESS",
+                      "customer": {
+                        "id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                        "name": "Bob Jones",
+                        "email": "bob.smith@email.com",
+                        "source_id": "pub_source_customer_5",
+                        "metadata": {
+                          "lang": "en",
+                          "test": true
+                        },
+                        "object": "customer"
+                      },
+                      "voucher": {
+                        "id": "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf",
+                        "code": "cEsMn0uA",
+                        "campaign": "Test - Discount Effect - Amount - Items",
+                        "campaign_id": "camp_dphuwqH7BOVkgh4JmpDtS32l",
+                        "category": null,
+                        "category_id": null,
+                        "type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "amount_off": 300,
+                          "effect": "APPLY_TO_ITEMS"
+                        },
+                        "gift": null,
+                        "loyalty_card": null,
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX188XVmOotyCyR2j3G8sJR8HzS3DQ+6J1OElPWSmjlEnthuJc7rkc7WIVxjT4pTl1JVVkHEuGXNXdzRik11H8S18HQeQFJFiuwLZ2mzEC2zZitEinyUxtZwhnEHoi0eGAgYCG7iVMNuOQA==",
+                            "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX188XVmOotyCyR2j3G8sJR8HzS3DQ%2B6J1OElPWSmjlEnthuJc7rkc7WIVxjT4pTl1JVVkHEuGXNXdzRik11H8S18HQeQFJFiuwLZ2mzEC2zZitEinyUxtZwhnEHoi0eGAgYCG7iVMNuOQA%3D%3D"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX18wDd9CcLM0Ef7aBfUSXZUoCQpuNpk4CHGOipbn+wFkfzcIZGBtUlxrI2KsXciCqF+c93AKzsymq5Yw8eEAFF/FK5f94z4/sgzaLDvyBmPCXHuS11Ew9S4ZEMjdTkUJftER2IlxWaCARA==",
+                            "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX18wDd9CcLM0Ef7aBfUSXZUoCQpuNpk4CHGOipbn%2BwFkfzcIZGBtUlxrI2KsXciCqF%2Bc93AKzsymq5Yw8eEAFF%2FFK5f94z4%2FsgzaLDvyBmPCXHuS11Ew9S4ZEMjdTkUJftER2IlxWaCARA%3D%3D"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-09-30T16:30:32.956Z",
+                        "updated_at": null,
+                        "holder_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                        "redemption": {
+                          "quantity": 1,
+                          "redeemed_quantity": 0,
+                          "object": "list",
+                          "url": "/v1/vouchers/cEsMn0uA/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/cEsMn0uA/publications?page=1&limit=10"
+                        },
+                        "object": "voucher"
+                      },
+                      "vouchers_id": [
+                        "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if a publication with the same source ID already exists in the system or some request body parameter is missing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Missing Parameters": {
+                    "value": {
+                      "code": 400,
+                      "key": "missing_vouchers",
+                      "message": "Missing vouchers",
+                      "details": "Either Campaign or Voucher is required"
+                    }
+                  },
+                  "Already published": {
+                    "value": {
+                      "code": 400,
+                      "key": "voucher_already_published",
+                      "message": "Voucher already published",
+                      "details": "Voucher 'v_Y5P4UZ1yilkiYOIJmAAgWazUi1wfkNwF' has already been published",
+                      "request_id": "v-0bc40bb800d5651137"
+                    }
+                  },
+                  "Duplicate Source ID": {
+                    "value": {
+                      "code": 400,
+                      "key": "duplicate_source_id",
+                      "message": "Duplicate source_id",
+                      "details": "Publication with source_id: 'publication_source_ID_1' already exists",
+                      "request_id": "v-0bc40bf81555651191"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Campaign Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id 1",
+                      "request_id": "v-0bc40546e5d56508e5",
+                      "resource_id": "1",
+                      "resource_type": "campaign"
                     }
                   }
                 }
