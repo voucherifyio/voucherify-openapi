@@ -50,6 +50,12 @@ Add your own protective layers on top of Voucherify functionalities.
 
 One way of preventing fraud can be achieved by setting thresholds for failed code redemption attempts. This way, you can automatically lock out or temporarily suspend users after a certain number of unsuccessful tries. This simple yet effective strategy helps safeguard against brute force attacks.
 
+Another solution is to focus on email and customer verification, and it can be achieved by:
+- disabling the use of aliases in email addresses during the registration process
+- using lowercase only to rule out matching problems in your database and ensuring you don't have unintended duplicates
+- blacklisting certain email domains
+- requiring account verification via email or SMS
+
 ### External services
 
 Third-party platforms, advanced artificial intelligence, and specialized tools are some of the methods for a robust fraud prevention strategy.
