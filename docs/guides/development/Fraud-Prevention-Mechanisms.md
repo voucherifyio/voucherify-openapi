@@ -52,9 +52,9 @@ One way of preventing fraud can be achieved by setting thresholds for failed cod
 
 Another solution is to focus on email and customer verification, and it can be achieved by:
 - disabling the use of aliases in email addresses during the registration process
-- using lowercase only to rule out matching problems in your database and ensuring you don't have unintended duplicates
-- blacklisting certain email domains
-- requiring account verification via email or SMS
+- using lowercase only to rule out matching problems in your database and ensuring you do not have unintended duplicates
+- blocking certain email domains
+- requiring account verification via email or text messages
 
 ### External services
 
