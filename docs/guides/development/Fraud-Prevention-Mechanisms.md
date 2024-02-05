@@ -10,7 +10,7 @@ order: 330
 
 ## Fraud Prevention Mechanisms
 
-In Voucherify, your digital safety matters. While our promotion engine has built-in fraud prevention mechanisms, you can add your own protective layers or tap into external services. This guide provides straightforward steps to boost your security, making your Voucherify experience not only seamless but also secure. Let us dive into easy ways to keep your digital journey worry-free.
+While Voucherify promotion engine has built-in fraud prevention mechanisms to ensure your digital safety, you can add your own protective layers or use external services. This guide provides several straightforward steps to improve your security.
 
 ### Built-in mechanisms
 
@@ -23,41 +23,43 @@ The built-in mechanisms in Voucherify can be divided into two categories:
 
 1. Account security 
 
-Take proactive steps such as enabling two-factor authentication, SAML authentication, use strong and unique passwords, and regularly update them. These simple yet effective measures will significantly bolster your account's defenses against potential threats. We encourage you to get familiar with the [account security](https://support.voucherify.io/article/437-account-security) guide. 
+You can take the following proactive steps to improve your account's defenses against potential threats:
+- enable two-factor authentication,
+- enable SAML authentication,
+- use strong and unique passwords,
+- regularly update the passwords.
+
+Learn more in the [Account security](https://support.voucherify.io/article/437-account-security) guide.
 
 2. IP whitelisting 
 
 > 🚧
-> Enterprise feature available upon request
+> This is an Enterprise feature available upon request
 
-This functionality, available only upon request for customers on the Enterprise plan, provides an additional layer of security by filtering and allowing API requests exclusively from an authorized list of IP addresses.
+This feature provides an additional layer of security by filtering and allowing API requests exclusively from an authorized list of IP addresses.
 
-Navigate to Project Settings→General→Application Keys and edit a Key. This will allow you to restrict the API keys to a specific list of IP addresses. By default, when the list is empty, access to the API through the API keys is allowed from any IP address.
+Go to Project Settings > General > Application Keys, and edit a Key. There, you can restrict the API keys to a specific list of IP addresses. By default, when the list is empty, access to the API through the API keys is allowed from any IP address.
 
 #### Campaign-wide mechanisms
 
-Use Voucherify's campaign creation process and validation rules to restrict coupon usage and make redemptions a reliable measure of campaign success. Take a look at several examples that will help you fight the most commmon forms of coupon abuse in our ['How to Prevent Coupon Fraud and Abuse'](https://www.voucherify.io/blog/how-to-prevent-coupon-fraud-and-abuse) article.
+Use Voucherify's campaign creation process and validation rules to restrict coupon usage and make redemptions a reliable measure of campaign success. Take a look at several examples that will help you fight the most common forms of coupon abuse in the ['How to Prevent Coupon Fraud and Abuse'](https://www.voucherify.io/blog/how-to-prevent-coupon-fraud-and-abuse) article.
 
 ### Additional protective layers
 
-Add your own protective layers on top of what Voucherify has to offer.
+Add your own protective layers on top of Voucherify functionalities.
 
-One way of preventing fraud can be achieved by setting thresholds for failed code redemption attempts, you can automatically lock or temporarily suspend the user after a certain number of unsuccessful tries. This simple yet effective strategy helps safeguard against brute force attacks.
+One way of preventing fraud can be achieved by setting thresholds for failed code redemption attempts. This way, you can automatically lock out or temporarily suspend users after a certain number of unsuccessful tries. This simple yet effective strategy helps safeguard against brute force attacks.
 
 ### External services
 
-Leveraging third-party platforms, advanced artificial intelligence, and specialized tools is crucial for a robust fraud prevention strategy.
+Third-party platforms, advanced artificial intelligence, and specialized tools are some of the methods for a robust fraud prevention strategy.
 
-Voucherify lets you generate referral codes, allowing customers to refer others and earn rewards. To prevent abuse, you can set validation rules in the campaign that exlude specific customer groups from redeeming referral codes. However, the referral program can still be exploited by setting up fake accounts. This is why Voucherify explored methods and third-party tools to address this issue and enhance fraud prevention of your referral programs.
+Voucherify lets you generate referral codes, allowing customers to refer others and earn rewards. To prevent abuse, you can set validation rules in the campaign to exclude specific customer groups from redeeming referral codes. However, the referral program can still be exploited by setting up fake accounts. This is why Voucherify explored methods and third-party tools to address this issue and enhance fraud prevention of your referral programs.
 
-
-1. [Sift](https://www.sift.com) - provides a real-time machine-learning platform for online fraud prevention. Ift offer APIs that allow you to add fraud detection to your applications. It can learn and predict fraudulent behavior based on past transactions.
-
-2. [Seon](https://www.seon.io) - a fraud prevention tool offered to companies and other organizations that need help to reduce the costs and resources lost to fraudulent activities.
-
-3. [Nethone](https://www.nethone.com) - an AI fraud detection solution that blocks fraudsters before they attack.
-
-4. [Fingeprint.js](https://demo.fingerprint.com) - a fraud detection service that provides a visitor identification API. 
+1. [Sift](https://www.sift.com) – provides a real-time machine-learning platform for online fraud prevention. Sift offers APIs with which you can add fraud detection to your applications. It can learn and predict fraudulent behavior based on past transactions.
+2. [Seon](https://www.seon.io) – a fraud prevention tool offered to companies and other organizations that need help to reduce the costs and resources lost to fraudulent activities.
+3. [Nethone](https://www.nethone.com) – an AI fraud detection solution that blocks fraudsters before they attack.
+4. [Fingeprint.js](https://demo.fingerprint.com) – a fraud detection service that provides a visitor identification API.
 
 >👍
-> Voucherify investigated the above-mentioned tools, and each solution has a similar integration process and usage. If you wish to implement external service or services into your fraud prevention mechanisms, visit the respective links.
+> Voucherify investigated the above-mentioned tools and each solution has a similar integration process and usage. If you want to implement an external service into your fraud prevention mechanisms, visit the respective links.
