@@ -25,6 +25,7 @@ Voucherify offers a REST-based API and a web dashboard to create and manage prom
 
 ## What's next?
 
+- Explore Voucherify [Postman Collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/collection/31663208-927de30f-b9ba-4723-a7ad-9984d835d939).
 - Join Voucherify [Community Slack](https://community.voucherify.io/) to get help and inspiration.
 - Visit [the Voucherify roadmap](https://roadmap.voucherify.io/) to find out what Voucherify developers are currently working on or suggest improvements and vote for features you want to see in the platform.
 - Contact [Voucherify support](https://www.voucherify.io/contact-support) if you have any further questions.

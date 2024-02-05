@@ -38,6 +38,10 @@ Create campaigns and experiment with Voucherify.
 
 <!-- Add links in this section -->
 
+## Postman Collection
+
+We highly encourage you to take a look at our new [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/collection/31663208-927de30f-b9ba-4723-a7ad-9984d835d939) presenting examples of the basic processes required to integrate Voucherify to your system, advances interactions, and industry-specific cases.
+
 ## Enabling distributions
 
 If you want to test the distribution of vouchers, your account must be verified as part of our [anti-spam policy](https://www.voucherify.io/legal/anti-spam-policy-v1-1 "Voucherify anti-spam policy"). You can send 10 messages per day, per month, and no emails from an unverified account.
