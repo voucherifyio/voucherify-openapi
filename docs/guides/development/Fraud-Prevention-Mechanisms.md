@@ -10,7 +10,7 @@ order: 330
 
 ## Fraud Prevention Mechanisms
 
-While Voucherify promotion engine has built-in fraud prevention mechanisms to ensure your digital safety, you can add your own protective layers or use external services. This guide provides several straightforward steps to improve your security.
+While the Voucherify promotion engine has built-in fraud prevention mechanisms to ensure your digital safety, you can add your own protective layers or use external services. This guide provides several straightforward steps to improve your security.
 
 ### Built-in mechanisms
 
