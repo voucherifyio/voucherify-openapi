@@ -21,7 +21,7 @@ The built-in mechanisms in Voucherify can be divided into two categories:
 
 #### Account-wide mechanisms
 
-1. Account security 
+##### Account security 
 
 You can take the following proactive steps to improve your account's defenses against potential threats:
 - enable two-factor authentication,
@@ -31,7 +31,7 @@ You can take the following proactive steps to improve your account's defenses ag
 
 Learn more in the [Account security](https://support.voucherify.io/article/437-account-security) guide.
 
-2. IP whitelisting 
+##### IP whitelisting 
 
 > 🚧
 > This is an Enterprise feature available upon request
