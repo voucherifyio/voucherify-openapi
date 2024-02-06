@@ -40,7 +40,7 @@ Create campaigns and experiment with Voucherify.
 
 ## Postman Collection
 
-We highly encourage you to take a look at our new [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/collection/31663208-927de30f-b9ba-4723-a7ad-9984d835d939) presenting examples of the basic processes required to integrate Voucherify to your system, advances interactions, and industry-specific cases.
+Take a look at the Voucherify [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/collection/31663208-927de30f-b9ba-4723-a7ad-9984d835d939), where you can test examples of the basic processes required to integrate Voucherify with your system, advanced interactions, and industry-specific cases.
 
 ## Enabling distributions
 
