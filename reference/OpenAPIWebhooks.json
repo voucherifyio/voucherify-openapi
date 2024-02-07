@@ -818,6 +818,7 @@
     "/EVENTS.PUBLICATION.SUCCEEDED": {
       "post": {
         "summary": "Succeeded",
+        "description": "A `PUBLICATION.SUCCEEDED` webhook means that a voucher code was successfully published to a customer. The webhook serves as a real-time notification mechanism and it can notify other systems or applications that a voucher was assigned. As a result, the systems can react by, for example, sending a notification about an assignment to a customer.",
         "tags": [
           "Events publication"
         ],
@@ -1937,9 +1938,9 @@
   "components": {
     "schemas": {
       "4_obj_reward_object_parameters_CAMPAIGN": {
-        "title": "Digital",
+        "title": "Campaign",
         "type": "object",
-        "description": "These are parameters representing a digital (CAMPAIGN) reward. These can be in the form of discount coupons, gift card credits, or loyalty point credits.",
+        "description": "These are parameters representing a Campaign reward. These can be in the form of discount coupons, gift card credits, or loyalty point credits.",
         "properties": {
           "campaign": {
             "description": "Objects stores information about the campaign related to the reward.",
@@ -1960,17 +1961,20 @@
       "4_obj_reward_object_parameters_CAMPAIGN_DISCOUNT_COUPONS": {
         "title": "Discount Coupons",
         "type": "object",
-        "description": "These are parameters representing a discount coupon, which is a subset of a Digital (CAMPAIGN) reward.",
+        "description": "These are parameters representing a discount coupon, which is a subset of a Campaign reward.",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique campaign ID, assigned by Voucherify.",
+            "description": "Unique identifier of the campaign assigned by Voucherify.",
             "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
           },
           "type": {
             "type": "string",
             "description": "Campaign type.",
-            "default": "DISCOUNT_COUPONS"
+            "default": "DISCOUNT_COUPONS",
+            "enum": [
+              "DISCOUNT_COUPONS"
+            ]
           }
         },
         "required": [
@@ -1981,11 +1985,11 @@
       "4_obj_reward_object_parameters_CAMPAIGN_GIFT_VOUCHERS": {
         "title": "Gift Vouchers",
         "type": "object",
-        "description": "These are parameters representing a gift voucher, which is a subset of a Digital (CAMPAIGN) reward.",
+        "description": "These are parameters representing a gift voucher, which is a subset of a Campaign reward.",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique campaign ID, assigned by Voucherify.",
+            "description": "Unique identifier of the campaign assigned by Voucherify.",
             "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
           },
           "balance": {
@@ -1995,7 +1999,10 @@
           "type": {
             "type": "string",
             "description": "Campaign type.",
-            "default": "GIFT_VOUCHERS"
+            "default": "GIFT_VOUCHERS",
+            "enum": [
+              "GIFT_VOUCHERS"
+            ]
           }
         },
         "required": [
@@ -2007,11 +2014,11 @@
       "4_obj_reward_object_parameters_CAMPAIGN_LOYALTY_PROGRAM": {
         "title": "Points on loyalty card",
         "type": "object",
-        "description": "These are parameters representing points on a loyalty card, which is a subset of a Digital (CAMPAIGN) reward.",
+        "description": "These are parameters representing points on a loyalty card, which is a subset of a Campaign reward.",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique campaign ID, assigned by Voucherify.",
+            "description": "Unique identifier of the campaign assigned by Voucherify.",
             "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
           },
           "balance": {
@@ -2021,7 +2028,10 @@
           "type": {
             "type": "string",
             "description": "Campaign type.",
-            "default": "LOYALTY_PROGRAM"
+            "default": "LOYALTY_PROGRAM",
+            "enum": [
+              "LOYALTY_PROGRAM"
+            ]
           }
         },
         "required": [
@@ -2054,7 +2064,7 @@
       "4_obj_reward_object_parameters_MATERIAL": {
         "title": "Material",
         "type": "object",
-        "description": "These are parameters representing products as a (MATERIAL) reward.",
+        "description": "These are parameters representing products as a reward.",
         "properties": {
           "product": {
             "type": "object",
@@ -2063,12 +2073,12 @@
               "id": {
                 "type": "string",
                 "example": "prod_0b7d7dfb05cbe5c616",
-                "description": "Unique product ID, assigned by Voucherify. "
+                "description": "Unique identifier of the product assigned by Voucherify. "
               },
               "sku_id": {
                 "type": "string",
                 "nullable": true,
-                "description": "Unique SKU ID, assigned by Voucherify, of the SKU given as a reward.",
+                "description": "Unique identifier of the SKU assigned by Voucherify for the SKU given as a reward.",
                 "example": "sku_0b7d7dfb090be5c619"
               }
             }
@@ -4292,7 +4302,6 @@
                 "$ref": "#/components/schemas/SimpleReferralTier"
               },
               "balance": {
-                "check": "czego to dotyczy? tutaj dostałem `amount: 100,`, gdy dałem nagrodę w postaci przelicz punkty na gift card balance... skąd wziąć dokładną rozpiskę?",
                 "nullable": true,
                 "type": "object",
                 "description": "Balance changed by the event."
@@ -7054,7 +7063,6 @@
             "format": "date-time"
           },
           "parameters": {
-            "check": "this can be found in https://github.com/rspective/voucherify-mono/blob/dev/commons/domain/rewards/models/index.js#L54; The parameters here can be COIN, MATERIAL, or CAMPAIGN, so oneOf?? – in pz-openapi.json `4_obj_reward_object` object, not everything goes from there to here I guess",
             "description": "Defines how the reward is generated.",
             "type": "object",
             "oneOf": [
@@ -7203,6 +7211,7 @@
             "type": "string",
             "description": "Type of the object.",
             "default": "voucher",
+            "check": "popraw opis, tutaj może być `LOYALTY_CARD`` np.",
             "enum": [
               "voucher"
             ]
@@ -7280,14 +7289,13 @@
             ]
           }
         },
-        "Check": "dlaczego w `required` te są required, skoro nie ma takich obiektów tutaj?",
+        "check": "sprawdź te `required`",
         "required": [
-          "valid",
+          "type",
           "code",
-          "applicable_to",
+          "created_at",
           "inapplicable_to",
-          "metadata",
-          "tracking_id"
+          "object"
         ]
       },
       "Sku": {
