@@ -267,7 +267,7 @@
     "/EVENTS.REDEMPTION.FAILED": {
       "post": {
         "summary": "Failed",
-        "description": "A `REDEMPTION.FAILED`` webhook means that the redemption process encountered issues while applying the voucher codes or promotions tiers.",
+        "description": "A `REDEMPTION.FAILED` webhook means that the redemption process encountered issues while applying the voucher codes or promotions tiers.",
         "tags": [
           "Events redemption"
         ],
@@ -1936,6 +1936,145 @@
   },
   "components": {
     "schemas": {
+      "4_obj_reward_object_parameters_CAMPAIGN": {
+        "title": "Digital",
+        "type": "object",
+        "description": "These are parameters representing a digital (CAMPAIGN) reward. These can be in the form of discount coupons, gift card credits, or loyalty point credits.",
+        "properties": {
+          "campaign": {
+            "description": "Objects stores information about the campaign related to the reward.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_CAMPAIGN_DISCOUNT_COUPONS"
+              },
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_CAMPAIGN_GIFT_VOUCHERS"
+              },
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_CAMPAIGN_LOYALTY_PROGRAM"
+              }
+            ]
+          }
+        }
+      },
+      "4_obj_reward_object_parameters_CAMPAIGN_DISCOUNT_COUPONS": {
+        "title": "Discount Coupons",
+        "type": "object",
+        "description": "These are parameters representing a discount coupon, which is a subset of a Digital (CAMPAIGN) reward.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique campaign ID, assigned by Voucherify.",
+            "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
+          },
+          "type": {
+            "type": "string",
+            "description": "Campaign type.",
+            "default": "DISCOUNT_COUPONS"
+          }
+        },
+        "required": [
+          "id",
+          "type"
+        ]
+      },
+      "4_obj_reward_object_parameters_CAMPAIGN_GIFT_VOUCHERS": {
+        "title": "Gift Vouchers",
+        "type": "object",
+        "description": "These are parameters representing a gift voucher, which is a subset of a Digital (CAMPAIGN) reward.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique campaign ID, assigned by Voucherify.",
+            "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
+          },
+          "balance": {
+            "type": "integer",
+            "description": "The incremental amout to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+          },
+          "type": {
+            "type": "string",
+            "description": "Campaign type.",
+            "default": "GIFT_VOUCHERS"
+          }
+        },
+        "required": [
+          "id",
+          "balance",
+          "type"
+        ]
+      },
+      "4_obj_reward_object_parameters_CAMPAIGN_LOYALTY_PROGRAM": {
+        "title": "Points on loyalty card",
+        "type": "object",
+        "description": "These are parameters representing points on a loyalty card, which is a subset of a Digital (CAMPAIGN) reward.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique campaign ID, assigned by Voucherify.",
+            "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
+          },
+          "balance": {
+            "type": "integer",
+            "description": "The incremental points to be added to the current balance on the loyalty card."
+          },
+          "type": {
+            "type": "string",
+            "description": "Campaign type.",
+            "default": "LOYALTY_PROGRAM"
+          }
+        },
+        "required": [
+          "id",
+          "balance",
+          "type"
+        ]
+      },
+      "4_obj_reward_object_parameters_COIN": {
+        "title": "Pay with Points",
+        "type": "object",
+        "description": "These are parameters representing a Pay with Points (COIN) reward. ",
+        "properties": {
+          "coin": {
+            "type": "object",
+            "description": "Defines the ratio by mapping the number of loyalty points in `points_ratio` to a predefined cash amount in `exchange_ratio`.",
+            "properties": {
+              "exchange_ratio": {
+                "type": "integer",
+                "description": "The cash equivalent of the points defined in the `points_ratio` property."
+              },
+              "points_ratio": {
+                "type": "integer",
+                "description": "The number of loyalty points that will map to the predefined cash amount defined by the `exchange_ratio` property."
+              }
+            }
+          }
+        }
+      },
+      "4_obj_reward_object_parameters_MATERIAL": {
+        "title": "Material",
+        "type": "object",
+        "description": "These are parameters representing products as a (MATERIAL) reward.",
+        "properties": {
+          "product": {
+            "type": "object",
+            "description": "Contains information about the product given as a reward.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "prod_0b7d7dfb05cbe5c616",
+                "description": "Unique product ID, assigned by Voucherify. "
+              },
+              "sku_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique SKU ID, assigned by Voucherify, of the SKU given as a reward.",
+                "example": "sku_0b7d7dfb090be5c619"
+              }
+            }
+          }
+        }
+      },
       "BusValRuleAssignment": {
         "title": "Business Validation Rule Assignment",
         "description": "Assignments of a business validation rule",
@@ -6391,6 +6530,7 @@
       "SimpleCustomer": {
         "title": "Simple Customer",
         "type": "object",
+        "description": "",
         "properties": {
           "id": {
             "type": "string",
@@ -6914,9 +7054,20 @@
             "format": "date-time"
           },
           "parameters": {
-            "check": "this can be found in https://github.com/rspective/voucherify-mono/blob/dev/commons/domain/rewards/models/index.js#L54",
+            "check": "this can be found in https://github.com/rspective/voucherify-mono/blob/dev/commons/domain/rewards/models/index.js#L54; The parameters here can be COIN, MATERIAL, or CAMPAIGN, so oneOf?? – in pz-openapi.json `4_obj_reward_object` object, not everything goes from there to here I guess",
             "description": "Defines how the reward is generated.",
-            "type": "object"
+            "type": "object",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_CAMPAIGN"
+              },
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_COIN"
+              },
+              {
+                "$ref": "#/components/schemas/4_obj_reward_object_parameters_MATERIAL"
+              }
+            ]
           },
           "type": {
             "type": "string",
