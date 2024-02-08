@@ -1,11 +1,11 @@
 ---
-title: Check Eligibility (client-side)
+title: Create Publication (client-side)
 type: endpoint
 categorySlug: voucherify-api
 parentDocSlug: client-side
-slug: check-eligibility-client-side
+slug: create-publication-client-side
 hidden: false
-order: 2
+order: 1
 ---
 
 [block:html]
