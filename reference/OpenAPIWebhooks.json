@@ -2164,9 +2164,9 @@
         ]
       },
       "CampaignLoyaltyCard": {
+        "title": "Campaign Loyalty Card",
         "type": "object",
         "description": "Schema model for a campaign loyalty card.",
-        "title": "Campaign Loyalty Card",
         "properties": {
           "points": {
             "type": "integer",
@@ -4304,16 +4304,29 @@
               "balance": {
                 "nullable": true,
                 "type": "object",
-                "description": "Balance changed by the event."
+                "description": "Balance changed by the event.",
+                "properties": {
+                  "amount": {
+                    "type": "integer"
+                  }
+                }
               },
               "custom_event": {
                 "nullable": true,
                 "$ref": "#/components/schemas/CustomEvent"
               },
               "customer_event": {
-                "check": "czego to dotyczy? CustomerEvent? ale to nie wynika z kodu...",
                 "nullable": true,
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "segment": {
+                    "$ref": "#/components/schemas/SimpleSegment"
+                  },
+                  "event_type": {
+                    "type": "string",
+                    "description": "Type of activity that triggered the event."
+                  }
+                }
               }
             }
           }
@@ -5140,6 +5153,26 @@
           "tier_id",
           "created_at"
         ]
+      },
+      "LuckyDraw": {
+        "type": "object",
+        "title": "Lucky Draw",
+        "description": "Object for defining detailed information about lucky draw should be applied",
+        "properties": {
+          "winners_count": {
+            "description": "Represents the total number of winners in a lucky draw.",
+            "minimum": 1,
+            "type": "string"
+          },
+          "unique_winners_per_draw": {
+            "description": "Indicates whether each winner in a draw is unique or not.",
+            "type": "string"
+          },
+          "unique_winners": {
+            "description": "Specifies whether each participant can win only once across multiple draws.",
+            "type": "string"
+          }
+        }
       },
       "MappingFixed": {
         "title": "MappingFixed",
@@ -6404,7 +6437,12 @@
             "$ref": "#/components/schemas/SimpleCampaignVoucher"
           },
           "lucky_draw": {
-            "type": "object"
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LuckyDraw"
+              }
+            ]
           },
           "referral_program": {
             "$ref": "#/components/schemas/ReferralProgram"
@@ -6495,12 +6533,12 @@
                 "type": "integer",
                 "example": 1,
                 "description": "How many times a voucher has already been redeemed."
-              },
-              "required": [
-                "quantity",
-                "redeemed_quantity"
-              ]
-            }
+              }
+            },
+            "required": [
+              "quantity",
+              "redeemed_quantity"
+            ]
           },
           "code_config": {
             "$ref": "#/components/schemas/CodeConfigRequiredLengthCharsetPattern"
@@ -6645,6 +6683,32 @@
             "type": "string",
             "description": "Unique identifier of the request that caused the event.",
             "example": "v-1f36113948e50fc4ge"
+          }
+        }
+      },
+      "SimpleLoyaltyCard": {
+        "type": "object",
+        "description": "Object representing a loyalty card.",
+        "required": [
+          "points",
+          "balance"
+        ],
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "Total points incurred over lifespan of loyalty card."
+          },
+          "balance": {
+            "type": "integer",
+            "description": "Points available for reward redemption."
+          },
+          "next_expiration_date": {
+            "type": "string",
+            "description": "The next closest date when the next set of points are due to expire."
+          },
+          "next_expiration_points": {
+            "type": "integer",
+            "description": "The amount of points that are set to expire next."
           }
         }
       },
@@ -7205,7 +7269,12 @@
           },
           "loyalty_card": {
             "description": "Defines the loyalty card details.",
-            "type": "object"
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleLoyaltyCard"
+              }
+            ]
           },
           "type": {
             "type": "string",
@@ -7217,8 +7286,8 @@
             ]
           },
           "campaign": {
-            "description": "Campaign object.",
-            "type": "object"
+            "type": "string",
+            "description": "Campaign name."
           },
           "campaign_id": {
             "type": "string",
