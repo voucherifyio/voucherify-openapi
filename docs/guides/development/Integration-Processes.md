@@ -66,6 +66,9 @@ Code application can be different depending on the customer experience that you 
 > 📘
 > The validation and redemption requests can validate and redeem a combination of different discount types and redeemables. You can verify with one request how promotion tiers and voucher codes affect the customer's cart.
 
+>👍
+> Take a look at out new [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/collection/31663208-927de30f-b9ba-4723-a7ad-9984d835d939) that will lead you through the entire process flow of a voucher (coupon code) in Voucherify.
+
 ### Checking promotion (discount without a code) eligibility during checkout
 
 In this scenario, promotion eligibility is going to be verified during the checkout step. A customer did not receive any voucher codes beforehand. Instead, all discounts and promotions will be displayed on the checkout screen. 

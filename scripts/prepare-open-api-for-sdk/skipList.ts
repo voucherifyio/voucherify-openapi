@@ -71,4 +71,5 @@ export const skipList: { endpoint: string; methods: string[] | true }[] = [
   { endpoint: "/v1/locations/{locationId}", methods: ["get"] },
   { endpoint: "/client/v1/consents", methods: ["get"] },
   { endpoint: "/v1/consents", methods: ["get"] },
+  { endpoint: "/client/v1/publish", methods: ["post"] },
 ];

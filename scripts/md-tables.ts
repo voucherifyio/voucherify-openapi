@@ -10,7 +10,7 @@ export const mdTables: [string, string?][] = [
   ["RedemptionRollback", "REDEMPTIONS-Rollback-Redemption-Object.md"],
   [
     "RedemptionsRedeemResponseBody",
-    "STACKABLE-DISCOUNTS-Stackable-Redemptions-Object.md",
+    "REDEMPTIONS-Redemption-Object.md",
   ],
   ["8_obj_loyalty_campaign_object", "LOYALTIES-Loyalty-Campaign-Object.md"],
   [
