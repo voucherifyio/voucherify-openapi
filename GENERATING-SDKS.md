@@ -21,7 +21,6 @@ Are slightly modified from the original ones for our needs.
 
 SDK will be generated in `./sdks` directory in associated language folder.
 
-
 ## Commands explanation
 
 - **build-update-md-tables-from-openapi** - creating and updates docs in `./docs/reference-docs` directory
@@ -45,6 +44,14 @@ SDK will be generated in `./sdks` directory in associated language folder.
 - **generate-sdk-xxx** - script for generating sdk in associated language 
 - **generate-sdks** - script for concurrently generating all sdks
 - **test** - tests are used to check openapi schema didn't change after scripts refactoring
+
+## Creating changes 
+
+1. [Fork](https://help.github.com/articles/fork-a-repo/) this repository to your GitHub account and then [clone](https://help.github.com/articles/cloning-a-repository/) it to your local machine
+2. Init all submodules `git submodule update --init --recursive`.
+3. Create a new branch: `git checkout -b MY_BRANCH_NAME`
+4. Add and commit your changes (sticking to the rules from [CONTRIBUTING.md](./CONTRIBUTING.md))
+5. Push your branch and create a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork) against `main` branch
 
 ## Uploading new versions
 
