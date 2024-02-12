@@ -16,23 +16,25 @@ The v2024-01-01 webhook version can be used to inform your system about various 
    4. Click Create endpoint.
 6. If necessary for authentication reasons, enter the Secret key in your system to receive webhooks from Voucherify.
 
+To update webhook details, click the Pencil button – edit. Enter your changes and click Update endpoint.
+
 ## Events in the Project Settings
 
 The following events can send a webhook:
 - Redemption events:
-  - Redemption succeeded
-  - Redemption failed
-  - Redemption rollback succeeded
-  - Redemption rollback failed
-- Customer events:
-  - Customer created
-  - Customer deleted
-  - Customer rewarded
-  - Customer rewarded loyalty points
-  - Customer consent given
-  - Customer consent revoked
+  - [Redemption succeeded](https://docs.voucherify.io/reference/events-redemption-succeeded "Redemption succeeded webhook documentation")
+  - [Redemption failed](https://docs.voucherify.io/reference/events-redemption-failed "Redemption failed webhook documentation")
+  - [Redemption rollback succeeded](https://docs.voucherify.io/reference/events-redemption-rollback-succeeded "Redemption rollback succeeded webhook documentation")
+  - [Redemption rollback failed](https://docs.voucherify.io/reference/events-redemption-rollback-failed "Redemption rollback failed webhook documentation")
 - Publication event:
-  - Publication succeeded
+  - [Publication succeeded](https://docs.voucherify.io/reference/events-publication-succeeded "Publication succeeded webhook documentation")
+- Customer events:
+  - [Customer created](https://docs.voucherify.io/reference/events-customer-created "Customer created webhook documentation")
+  - [Customer deleted](https://docs.voucherify.io/reference/events-customer-deleted "Customer deleted webhook documentation")
+  - [Customer rewarded](https://docs.voucherify.io/reference/events-customer-rewarded-main "Customer rewarded webhook documentation")
+  - [Customer rewarded loyalty points](https://docs.voucherify.io/reference/events-customer-rewarded-loyalty_points "Customer rewarded loyalty points webhook documentation")
+  - [Customer consent given](https://docs.voucherify.io/reference/events-customer-consents-given "Customer consent given webhook documentation")
+  - [Customer consent revoked](https://docs.voucherify.io/reference/events-customer-consents-revoked "Customer consent revoked webhook documentation")
 - Voucher events:
   - Voucher created
   - Voucher disabled
