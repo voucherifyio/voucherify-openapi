@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-02-13
+
+Added an introductory page for webhooks.
+
 ## 2024-02-08
 
 - Added info to `Redemption rollback` and `Stackable redemption rollback` about the 3 months limit for rollbacks.
