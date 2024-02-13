@@ -6,5 +6,5 @@ slug: webhooks
 type: link
 hidden: false
 order: 100
-link_url: https://support.voucherify.io/article/68-webhooks-notifications
+link_url: https://docs.voucherify.io/reference/introduction-to-webhooks
 ---
