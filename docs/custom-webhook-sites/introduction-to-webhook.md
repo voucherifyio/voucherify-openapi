@@ -1,5 +1,5 @@
 ---
-title: Webhook v2024-01-01
+title: Webhooks v2024-01-01
 type: basic
 categorySlug: webhooks
 slug: introduction-to-webhooks
