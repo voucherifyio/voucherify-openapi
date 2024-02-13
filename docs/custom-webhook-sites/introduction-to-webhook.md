@@ -27,16 +27,16 @@ To update webhook details, click the Pencil button – edit. Enter your changes 
 
 The following events can send a webhook:
 - Redemption events:
-  - [Redemption succeeded](https://docs.voucherify.io/reference/events-redemption-succeeded "Redemption succeeded webhook documentation")
-  - [Redemption failed](https://docs.voucherify.io/reference/events-redemption-failed "Redemption failed webhook documentation")
-  - [Redemption rollback succeeded](https://docs.voucherify.io/reference/events-redemption-rollback-succeeded "Redemption rollback succeeded webhook documentation")
-  - [Redemption rollback failed](https://docs.voucherify.io/reference/events-redemption-rollback-failed "Redemption rollback failed webhook documentation")
+  - [Redemption succeeded](ref:events-redemption-succeeded "Redemption succeeded webhook documentation")
+  - [Redemption failed](ref:events-redemption-failed "Redemption failed webhook documentation")
+  - [Redemption rollback succeeded](ref:events-redemption-rollback-succeeded "Redemption rollback succeeded webhook documentation")
+  - [Redemption rollback failed](ref:events-redemption-rollback-failed "Redemption rollback failed webhook documentation")
 - Publication event:
-  - [Publication succeeded](https://docs.voucherify.io/reference/events-publication-succeeded "Publication succeeded webhook documentation")
+  - [Publication succeeded](ref:events-publication-succeeded "Publication succeeded webhook documentation")
 - Customer events:
-  - [Customer created](https://docs.voucherify.io/reference/events-customer-created "Customer created webhook documentation")
-  - [Customer deleted](https://docs.voucherify.io/reference/events-customer-deleted "Customer deleted webhook documentation")
-  - [Customer rewarded](https://docs.voucherify.io/reference/events-customer-rewarded-main "Customer rewarded webhook documentation")
-  - [Customer rewarded loyalty points](https://docs.voucherify.io/reference/events-customer-rewarded-loyalty_points "Customer rewarded loyalty points webhook documentation")
-  - [Customer consent given](https://docs.voucherify.io/reference/events-customer-consents-given "Customer consent given webhook documentation")
-  - [Customer consent revoked](https://docs.voucherify.io/reference/events-customer-consents-revoked "Customer consent revoked webhook documentation")
+  - [Customer created](ref:events-customer-created "Customer created webhook documentation")
+  - [Customer deleted](ref:events-customer-deleted "Customer deleted webhook documentation")
+  - [Customer rewarded](ref:events-customer-rewarded-main "Customer rewarded webhook documentation")
+  - [Customer rewarded loyalty points](ref:events-customer-rewarded-loyalty_points "Customer rewarded loyalty points webhook documentation")
+  - [Customer consent given](ref:events-customer-consents-given "Customer consent given webhook documentation")
+  - [Customer consent revoked](ref:events-customer-consents-revoked "Customer consent revoked webhook documentation")
