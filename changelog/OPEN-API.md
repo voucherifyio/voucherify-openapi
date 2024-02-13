@@ -6,7 +6,8 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 ## 2024-02-13
 
-Added an introductory page for webhooks.
+- Added an introductory page for webhooks.
+- Fixes to `CUSTOMER.CREATED` and `CUSTOMER.DELETED` schemas
 
 ## 2024-02-08
 
