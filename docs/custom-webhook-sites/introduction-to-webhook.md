@@ -23,6 +23,10 @@ The v2024-01-01 webhook version can be used to inform your system about various 
 
 To update webhook details, click the Pencil button – edit. Enter your changes and click Update endpoint.
 
+## Audit log
+
+You can check details about a webhook sendout. In Voucherify dashboard, go to Audit log and Webhook sendouts tab.
+
 ## Events in the Project Settings
 
 The following events can send a webhook:

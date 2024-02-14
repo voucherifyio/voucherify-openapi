@@ -4,7 +4,7 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
-## 2024-02-12
+## 2024-02-14
 
 Added the following webhooks to OpenAPIWebhooks.json:
 - EVENTS.VOUCHER.PUBLISHED
