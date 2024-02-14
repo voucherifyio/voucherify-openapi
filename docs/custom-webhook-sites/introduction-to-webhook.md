@@ -23,6 +23,10 @@ The v2024-01-01 webhook version can be used to inform your system about various 
 
 To update webhook details, click the Pencil button – edit. Enter your changes and click Update endpoint.
 
+## Audit log
+
+You can check details about a webhook sendout. In Voucherify dashboard, go to Audit log and Webhook sendouts tab.
+
 ## Events in the Project Settings
 
 The following events can send a webhook:
@@ -40,3 +44,12 @@ The following events can send a webhook:
   - [Customer rewarded loyalty points](ref:events-customer-rewarded-loyalty_points "Customer rewarded loyalty points webhook documentation")
   - [Customer consent given](ref:events-customer-consents-given "Customer consent given webhook documentation")
   - [Customer consent revoked](ref:events-customer-consents-revoked "Customer consent revoked webhook documentation")
+- Voucher events:
+  - [Voucher created](ref:events-voucher-created "Voucher created webhook documentation")
+  - [Voucher disabled](ref:events-voucher-disabled "Voucher disabled webhook documentation")
+  - [Voucher enabled](ref:events-voucher-enabled "Voucher enabled webhook documentation")
+  - [Voucher updated](ref:events-voucher-updated "Voucher updated webhook documentation")
+  - [Voucher published](ref:events-voucher-published "Voucher published webhook documentation")
+  - [Voucher loyalty card points added](ref:events-voucher-loyalty_card-points_added "Voucher loyalty card points added webhook documentation")
+  - [Voucher gift balance added](events-voucher-gift-balance_added "Voucher gift balance added webhook documentation")
+  - [Voucher deleted](ref:events-voucher-deleted "Voucher deleted webhook documentation")
