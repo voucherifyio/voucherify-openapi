@@ -87,4 +87,10 @@ Manual steps checklist:
 
 ### Publishing for remote repositories 
 
-Publishing 
+#### Ruby
+
+1. Ensure changes are on main branch and all tests has passed.
+2. Ensure that all data are correct in the `VoucherifySdk.gemspec` file. 
+3. Ensure which version You want to build.
+4. Use command `git tag vx.y.z` to add tag
+5. Use command `git push origin vx.y.z` this will run GitHub action that will publish new version of ruby SDK
