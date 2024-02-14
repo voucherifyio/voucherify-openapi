@@ -15,6 +15,11 @@ Added the following webhooks to OpenAPIWebhooks.json:
 - EVENTS.VOUCHER.DISABLED
 - EVENTS.VOUCHER.LOYALTY_CARD.POINTS_ADDED
 
+## 2024-02-13
+
+- Added an introductory page for webhooks.
+- Fixes to `CUSTOMER.CREATED` and `CUSTOMER.DELETED` schemas
+
 ## 2024-02-08
 
 - Added info to `Redemption rollback` and `Stackable redemption rollback` about the 3 months limit for rollbacks.
