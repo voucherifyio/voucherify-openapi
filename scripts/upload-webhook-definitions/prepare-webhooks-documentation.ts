@@ -114,9 +114,14 @@ export const prepareWebhooksDocumentation = async () => {
         operationId,
         examples,
       } = singleDataStructure;
+
       const mdComment = [];
       mdComment.push("---");
-      mdComment.push(`title: ${capitalize(title)}`);
+      mdComment.push(
+        `title: ${title
+          .replaceAll("_", " ")
+          .replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase())}`
+      );
       mdComment.push(`type: endpoint`);
       mdComment.push(`categorySlug: webhooks`);
       mdComment.push(
