@@ -47,7 +47,7 @@ export const updateWebhooksDocumentationTitles = async (version) => {
       path,
       Object.fromEntries(
         Object.entries(pathEntry).map(([method, methodEntry]) => {
-          const title = capitalize(path.split(".").slice(2).join(" "));
+          let title = capitalize(path.split(".").slice(2).join(" "));
           const group = capitalize(
             path.split(".").slice(0, 2).join(" ").replaceAll("/", "")
           );
@@ -67,6 +67,15 @@ export const updateWebhooksDocumentationTitles = async (version) => {
 
   for (const categoryName of Object.keys(groupBy(dataStructures, "group"))) {
     const slug = categoryName.replaceAll(" ", "-").toLowerCase();
+    let title = capitalize(
+      slug.split("-").slice(1).join(" ").replaceAll("_", " ")
+    );
+    if (title === "Bus val rule") {
+      title = "Validation Rules";
+    }
+    title = title
+      .replaceAll("_", " ")
+      .replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase());
     const response = await fetch(
       `https://dash.readme.com/api/v1/docs/${slug}`,
       {
@@ -78,9 +87,7 @@ export const updateWebhooksDocumentationTitles = async (version) => {
           accept: "application/json",
         },
         body: JSON.stringify({
-          title: capitalize(
-            slug.split("-").slice(1).join(" ").replaceAll("_", " ")
-          ),
+          title,
         }),
       }
     );
