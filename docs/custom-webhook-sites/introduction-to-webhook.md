@@ -8,6 +8,10 @@ order: -1
 ---
 The v2024-01-01 webhook version can be used to inform your system about various events that are triggered in Voucherify. The v2024-01-01 webhooks work for distributions and events listed in the Project settings.
 
+> 🚧 Work in progress
+>
+> The current documentation is still in progress. Documentation of the Webhooks for campaign events and business validation events will be published soon.
+
 ## Enabling v2024-01-01 Webhooks
 
 1. In Voucherify dashboard, go to Project settings.
@@ -53,3 +57,15 @@ The following events can send a webhook:
   - [Voucher loyalty card points added](ref:events-voucher-loyalty_card-points_added "Voucher loyalty card points added webhook documentation")
   - [Voucher gift balance added](events-voucher-gift-balance_added "Voucher gift balance added webhook documentation")
   - [Voucher deleted](ref:events-voucher-deleted "Voucher deleted webhook documentation")
+- Campaign events (work in progress):
+  - Campaign created
+  - Campaign voucher generation completed
+  - Campaign enabled
+  - Campaign updated
+  - Campaign deleted
+- Business validation rule events (work in progress):
+  - Business validation rule created
+  - Business validation rule updated
+  - Business validation rule assignment created
+  - Business validation rule assignment deleted
+  - Business validation rule deleted
