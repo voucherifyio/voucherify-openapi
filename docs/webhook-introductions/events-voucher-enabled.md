@@ -1,0 +1,1 @@
+The `EVENTS.VOUCHER.ENABLED` event means that a voucher has been successfully enabled for use. It indicates that the voucher is now active and it can be redeemed.

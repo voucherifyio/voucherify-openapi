@@ -1,0 +1,1 @@
+The `EVENTS.VOUCHER.GIFT.BALANCE_ADDED` event means that additional balance has been successfully added to a gift voucher. It provides real-time notification that the gift voucher's balance has been increased.

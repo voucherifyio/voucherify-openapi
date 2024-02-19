@@ -1,0 +1,1 @@
+The `EVENTS.VOUCHER.LOYALTY_CARD.POINTS_ADDED` event means that loyalty points have been successfully added to a customer's loyalty card associated with a voucher. It informs about the accumulation of loyalty points.
