@@ -1,4 +1,4 @@
-The `EVENTS.BUS_VAL_RULE.ASSIGNMENT.CREATED` means that a business validation rule has been assigned. A business validation rule can be assigned to a:
+The `EVENTS.BUS_VAL_RULE.ASSIGNMENT.CREATED` webhook that a business validation rule has been assigned. A business validation rule can be assigned to a:
 - Campaign,
 - Voucher code,
 - Promotion tier,
