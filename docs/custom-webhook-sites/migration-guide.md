@@ -38,7 +38,7 @@ The changes to the webhooks consider the difference in the payload only. Here is
 
 The following table contains the explanation of the new webhook structure.
 
-Each webhook definition was described in [Voucherify’s documentation](https://docs.voucherify.io/reference/introduction-to-webhooks#events-in-the-project-settings).
+Each webhook definition was described in [Voucherify’s documentation](https://docs.voucherify.io/reference/introduction-to-webhooks#events-in-the-project-settings "Project settings webhook list").
 
 <table
         style="table-layout: fixed; font-size: 10pt; font-family: Arial; width: 0px; border-collapse: collapse; border: none;">
@@ -58,7 +58,6 @@ Each webhook definition was described in [Voucherify’s documentation](https://
             <tr style="height: 21px;">
                 <td>id</td>
                 <td>The sendout ID of the webhook</td>
-
             </tr>
             <tr style="height: 21px;">
                 <td>project_id</td>
@@ -68,14 +67,12 @@ Each webhook definition was described in [Voucherify’s documentation](https://
             <tr style="height: 21px;">
                 <td>created_at</td>
                 <td>Original sendout date and time</td>
-
             </tr>
             <tr style="height: 21px;">
                 <td>type</td>
                 <td>The event's name</td>
-
             </tr>
-            <tr>
+            <tr style="height: 21px;">
                 <td>data</td>
                 <td>The webhook's unified information that, depending on the type of the webhook, can consist of:
                     <ul>
@@ -103,10 +100,10 @@ Each webhook definition was described in [Voucherify’s documentation](https://
                     `"balance": {}`,
                     `"order": {},`
                     `"event": {}`
-
+                
                 </td>
             </tr>
-            <tr>Webhook or distribution ID,</td>
+            <tr style="height: 21px;">Webhook or distribution ID,</td>
                 <td>
 
                     ```json
@@ -138,7 +135,6 @@ Each webhook definition was described in [Voucherify’s documentation](https://
 
                 </td>
             </tr>
-            
         </tbody>
     </table>
 
@@ -168,7 +164,7 @@ The new webhooks bring a couple of improvements to the Voucherify platform.
 
 With the new generic approach to the structure of the payloads, it is easier to maintain the new payload structure, making the integration robust. The data object always reuses the same generic objects associated with the event.
 
-The new structure is the first step to introducing a Custom Webhook builder. The builder will allow you to translate the webhook payload into an API request to external systems, so you will not need middleware between the two systems.
+The new structure is the first step to introducing a [Custom Webhook builder](https://roadmap.voucherify.io/c/167-custom-webhook-builder "Voucherify roadmap concerning the custom webhook builder"). The builder will allow you to translate the webhook payload into an API request to external systems, so you will not need middleware between the two systems.
 
 Also, the v2024-01-01 webhooks have a separate log. In the Voucherify Dashboard, go to the Audit log and the Webhook sendouts tab.
 
@@ -176,6 +172,6 @@ In the Webhook Sendouts log, you can see the status of the sent webhooks, filter
 
 ## Documentation of the changes and support
 
-We understand that adapting to changes can be challenging, so we are here to assist you throughout this process. Please refer to [regularly updated documentation](https://docs.voucherify.io/reference/introduction-to-webhooks), which outlines the specifics of the new payload structure.
+We understand that adapting to changes can be challenging, so we are here to assist you throughout this process. Please refer to [regularly updated documentation](https://docs.voucherify.io/reference/introduction-to-webhooks "Webhook v2024-01-01 home page"), which outlines the specifics of the new payload structure.
 
-If you encounter any issues or have questions during this transition, Voucherify support team is ready to help. Reach out to support at [support@voucherify.io](support@voucherify.io).
+If you encounter any issues or have questions during this transition, Voucherify support team is ready to help. Reach out to support at [support@voucherify.io](support@voucherify.io "Voucherify support").
