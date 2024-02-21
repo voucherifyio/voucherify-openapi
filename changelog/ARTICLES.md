@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-02-20
+
+Added a `Migration Guide` article for the webhook documentation.
+
 ## 2024-02-14
 
 - Minor corrections in the "Integration overview" article.

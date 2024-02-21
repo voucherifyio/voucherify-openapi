@@ -1,0 +1,1 @@
+The `EVENTS.BUS_VAL_RULE.ASSIGNMENT.DELETED` webhook means that a business validation rule has been successfully unassigned.

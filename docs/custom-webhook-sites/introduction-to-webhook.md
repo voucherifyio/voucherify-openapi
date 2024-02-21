@@ -4,13 +4,17 @@ type: basic
 categorySlug: webhooks
 slug: introduction-to-webhooks
 hidden: false
-order: -1
+order: -2
 ---
 The v2024-01-01 webhook version can be used to inform your system about various events that are triggered in Voucherify. The v2024-01-01 webhooks work for distributions and events listed in the Project settings.
 
 > 🚧 Work in progress
 >
-> The current documentation is still in progress. Documentation of the Webhooks for campaign events and business validation events will be published soon.
+> The current documentation is still in progress. Documentation of the Webhooks for campaign events will be published soon.
+
+## Migrating to v2024-01-01 Webhooks from v2018-08-01
+
+Read the [Migration Guide](ref:migration-guide) to learn more about the differences between the v2024-01-01 and v2018-08-01 webhook versions.
 
 ## Enabling v2024-01-01 Webhooks
 

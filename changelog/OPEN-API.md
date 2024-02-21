@@ -4,6 +4,19 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-02-21
+
+Fixed title for `"QualificationsFiltersCondition"` object.
+
+## 2024-02-16
+
+Added the following webhooks to OpenAPIWebhooks.json:
+- EVENTS.BUS_VAL_RULE.ASSIGNMENT.CREATED
+- EVENTS.BUS_VAL_RULE.ASSIGNMENT.DELETED
+- EVENTS.BUS_VAL_RULE.CREATED
+- EVENTS.BUS_VAL_RULE.UPDATED
+- EVENTS.BUS_VAL_RULE.DELETED
+
 ## 2024-02-14
 
 Added the following webhooks to OpenAPIWebhooks.json:
