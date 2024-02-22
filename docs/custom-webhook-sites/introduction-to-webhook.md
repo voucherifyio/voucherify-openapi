@@ -8,9 +8,9 @@ order: -2
 ---
 The v2024-01-01 webhook version can be used to inform your system about various events that are triggered in Voucherify. The v2024-01-01 webhooks work for distributions and events listed in the Project settings.
 
-## Migrating to v2024-01-01 Webhooks from v2018-08-01
-
-Read the [Migration Guide](ref:migration-guide) to learn more about the differences between the v2024-01-01 and v2018-08-01 webhook versions.
+> 🚧 Migrating to v2024-01-01 Webhooks from v2018-08-01
+>
+> Read the [Migration Guide](ref:migration-guide "Webhook v2024-01-01 migration guide") to learn more about the differences between the v2024-01-01 and v2018-08-01 webhook versions.
 
 ## Enabling v2024-01-01 Webhooks
 
@@ -57,12 +57,13 @@ The following events can send a webhook:
   - [Voucher loyalty card points added](ref:events-voucher-loyalty_card-points_added "Voucher loyalty card points added webhook documentation")
   - [Voucher gift balance added](ref:events-voucher-gift-balance_added "Voucher gift balance added webhook documentation")
   - [Voucher deleted](ref:events-voucher-deleted "Voucher deleted webhook documentation")
-- Campaign events (work in progress):
-  - [Campaign created](ref:)
-  - Campaign voucher generation completed
-  - Campaign enabled
-  - Campaign updated
-  - Campaign deleted
+- Campaign events:
+  - [Campaign created](ref:events-campaign-created "Campaign created webhook documentation")
+  - [Campaign voucher generation completed](ref:events-campaign-vouchers-generation-completed "Campaign voucher generation completed webhook documentation")
+  - [Campaign disabled](ref:events-campaign-disabled "Campaign disabled webhook documentation")
+  - [Campaign enabled](ref:events-campaign-enabled "Campaign enabled webhook documentation")
+  - [Campaign updated](ref:events-campaign-updated "Campaign updated webhook documentation")
+  - [Campaign deleted](ref:events-campaign-deleted "Campaign deleted webhook documentation")
 - Business validation rule events:
   - [Business validation rule created](ref:events-bus_val_rule-created "Validation rule created webhook documentation")
   - [Business validation rule updated](ref:events-bus_val_rule-updated "Validation rule updated webhook documentation")
