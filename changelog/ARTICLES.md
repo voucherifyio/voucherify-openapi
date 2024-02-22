@@ -7,9 +7,10 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
-## 2024-02-21
+## 2024-02-22
 
-Fixed wrong links to recipes in the "Examples" page.
+- Fixed wrong links to recipes in the "Examples" page.
+- Updated the "Webhooks v2024-01-01" page.
 
 ## 2024-02-20
 

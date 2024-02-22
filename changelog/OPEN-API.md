@@ -4,9 +4,16 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
-## 2024-02-21
+## 2024-02-22
 
-Fixed title for `"QualificationsFiltersCondition"` object.
+- Fixed the title for `"QualificationsFiltersCondition"` object.
+- Added the following webhooks to OpenAPIWebhook.json:
+  - EVENTS.CAMPAIGN.ENABLED
+  - EVENTS.CAMPAIGN.DISABLED
+  - EVENTS.CAMPAIGN.CREATED
+  - EVENTS.CAMPAIGN.UPDATED
+  - EVENTS.CAMPAIGN.DELETED
+  - EVENTS.CAMPAIGN.VOUCHERS.GENERATION.COMPLETED
 
 ## 2024-02-16
 

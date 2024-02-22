@@ -35,10 +35,10 @@ All of:
 | active</br>`boolean` | <p>A flag to toggle the campaign on or off. You can disable a campaign even though it's within the active period defined by the <code>start_date</code> and <code>expiration_date</code>.</p><ul><li><code>true</code> indicates an <em>active</em> campaign</li><li><code>false</code> indicates an <em>inactive</em> campaign</li></ul> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the campaign was created in ISO 8601 format.</p> **Example:** <p>2021-12-01T08:00:50.038Z</p> |
-| updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was updated in ISO 8601 format.</p> **Example:** <p>2022-09-20T09:18:19.623Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the campaign was last updated in ISO 8601 format.</p> **Example:** <p>2022-09-20T09:18:19.623Z</p> |
 | category</br>`string` | <p>Unique category name.</p> |
 | creation_status</br>`string` | <p>Indicates the status of the campaign creation.</p> Available values: `DONE`, `IN_PROGRESS`, `FAILED`, `DRAFT`, `MODIFYING` |
-| vouchers_generation_status</br>`string` | <p>Indicates the status of the campaign's vouchers.</p> Available values: `DONE`, `IN_PROGRESS`, `FAILED`, `DRAFT`, `MODIFYING` |
+| vouchers_generation_status</br>`string` | <p>Indicates the status of the campaign's voucher generation.</p> Available values: `DONE`, `IN_PROGRESS`, `FAILED`, `DRAFT`, `MODIFYING` |
 | protected</br>`boolean` | <p>Indicates whether the resource can be deleted.</p> |
 | category_id</br>`string`, `null` | <p>Unique category ID that this campaign belongs to.</p> **Example:** <p>cat_0b688929a2476386a7</p> |
 | categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |

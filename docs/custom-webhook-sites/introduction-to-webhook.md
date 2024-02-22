@@ -8,10 +8,6 @@ order: -2
 ---
 The v2024-01-01 webhook version can be used to inform your system about various events that are triggered in Voucherify. The v2024-01-01 webhooks work for distributions and events listed in the Project settings.
 
-> 🚧 Work in progress
->
-> The current documentation is still in progress. Documentation of the Webhooks for campaign events will be published soon.
-
 ## Migrating to v2024-01-01 Webhooks from v2018-08-01
 
 Read the [Migration Guide](ref:migration-guide) to learn more about the differences between the v2024-01-01 and v2018-08-01 webhook versions.
@@ -62,7 +58,7 @@ The following events can send a webhook:
   - [Voucher gift balance added](ref:events-voucher-gift-balance_added "Voucher gift balance added webhook documentation")
   - [Voucher deleted](ref:events-voucher-deleted "Voucher deleted webhook documentation")
 - Campaign events (work in progress):
-  - Campaign created
+  - [Campaign created](ref:)
   - Campaign voucher generation completed
   - Campaign enabled
   - Campaign updated
