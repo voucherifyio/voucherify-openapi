@@ -1,0 +1,1 @@
+The `EVENTS.CAMPAIGN.DELETED` webhook means that a specific campaign was removed. This serves as a real-time notification about this event.

@@ -1,0 +1,1 @@
+The `EVENTS.CAMPAIGN.VOUCHERS.GENERATION.COMPLETED` webhook means that voucher generation for a given campaign was completed. It includes details about the campaign for which voucher were generated, the number of generated vouchers, and the date when the process was completed.
