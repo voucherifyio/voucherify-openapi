@@ -11,7 +11,10 @@ import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
 import { removeAllOneOfs } from "./removeOneOfs";
 import { putNotObjectSchemasIntoObjectSchemas } from "./put-not-object-schemas-into-object-schemas";
-import {removeBuggedTagsFromEndpointDescriptions} from "./remove-bugged-tags-from-endpoint-descriptions";
+import {
+  removeBuggedTagsFromOpenAPIParameters,
+  removeBuggedTagsFromOpenAPIPaths
+} from "./remove-bugged-tags-from-open-api";
 
 const options = minimist(process.argv.slice(2));
 
@@ -22,7 +25,7 @@ type LanguageOptions = {
   okResponseMustBeOnlyOne?: true; //default: false
   mergeOneOfs?: true; //default: false
   putNotObjectSchemasIntoObjectSchemas?: true; //default: false
-  removeBuggedTagsFromEndpointDescriptions?: boolean
+  removeBuggedTagsFromOpenAPIPaths?: boolean
 };
 
 const supportedLanguages: {
@@ -35,7 +38,7 @@ const supportedLanguages: {
   },
   ruby: {
     name: "ruby",
-    removeBuggedTagsFromEndpointDescriptions: true
+    removeBuggedTagsFromOpenAPIPaths: true
   },
   php: {
     name: "php",
@@ -102,8 +105,11 @@ const main = async (languageOptions: LanguageOptions) => {
       )
     : schemasWithoutNotUsed;
 
-  const newPaths = languageOptions.removeBuggedTagsFromEndpointDescriptions
-      ? removeBuggedTagsFromEndpointDescriptions(paths) : paths
+  const newPaths = languageOptions.removeBuggedTagsFromOpenAPIPaths
+      ? removeBuggedTagsFromOpenAPIPaths(paths) : paths
+
+  openAPIContent.components.parameters = languageOptions.removeBuggedTagsFromOpenAPIPaths
+      ? removeBuggedTagsFromOpenAPIParameters(openAPIContent.components.parameters) : openAPIContent.components.parameters
 
   // Building all together
   const newOpenApiFile = {
