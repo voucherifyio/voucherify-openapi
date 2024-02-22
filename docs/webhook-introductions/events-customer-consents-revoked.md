@@ -1,0 +1,1 @@
+The `CUSTOMER.CONSENTS.REVOKED` webhook means that a customer revoked their consent in Voucherify, such as consent to receive marketing communication.

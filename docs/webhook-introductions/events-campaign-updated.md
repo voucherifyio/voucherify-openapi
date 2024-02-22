@@ -1,0 +1,1 @@
+The `EVENTS.CAMPAIGN.UPDATED` webhook means that an existing campaign was modified within Voucherify. This event provides the campaign definition after the update, ensuring that relevant systems are informed in real-time.

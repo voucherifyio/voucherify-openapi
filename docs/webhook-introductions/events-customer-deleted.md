@@ -1,0 +1,1 @@
+The `EVENTS.CUSTOMER.DELETED` webhook means that a customer was successfully deleted in Voucherify.
