@@ -1,0 +1,1 @@
+The `EVENTS.REDEMPTION.FAILED` webhook means that the redemption process encountered issues while applying the voucher codes or promotions tiers. As a result, the redemption was unsuccesssful.

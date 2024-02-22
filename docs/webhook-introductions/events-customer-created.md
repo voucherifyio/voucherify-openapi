@@ -1,0 +1,1 @@
+The `EVENTS.CUSTOMER.CREATED` webhook means that a new customer was successfully created in Voucherify.
