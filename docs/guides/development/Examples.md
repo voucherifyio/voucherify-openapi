@@ -25,8 +25,8 @@ order: 160
   "backgroundColor": "#018FF4",
   "emoji": "📗",
   "id": "6375002bf20a2b00339b3ab0",
-  "link": "https://docs.voucherify.io/v2018-08-01/recipes/unique-promo-codes-with-discount-for-specific-product-1",
-  "slug": "unique-promo-codes-with-discount-for-specific-product-1",
+  "link": "https://docs.voucherify.io/v2018-08-01/recipes/unique-promo-codes-with-discount-for-specific-product",
+  "slug": "unique-promo-codes-with-discount-for-specific-product",
   "title": "Unique promo codes with discount for specific product"
 }
 [/block]
@@ -35,8 +35,8 @@ order: 160
   "backgroundColor": "#018FF4",
   "emoji": "📗",
   "id": "6374e8000a86e600176d7034",
-  "link": "https://docs.voucherify.io/v2018-08-01/recipes/cart-level-promotion-with-tiers-based-on-total-order-value-1",
-  "slug": "cart-level-promotion-with-tiers-based-on-total-order-value-1",
+  "link": "https://docs.voucherify.io/v2018-08-01/recipes/cart-level-promotion-with-tiers-based-on-total-order-value",
+  "slug": "cart-level-promotion-with-tiers-based-on-total-order-value",
   "title": "Cart-level promotion with tiers based on total order value"
 }
 [/block]
@@ -45,8 +45,8 @@ order: 160
   "backgroundColor": "#018FF4",
   "emoji": "📗",
   "id": "637538f067e42a00168fe975",
-  "link": "https://docs.voucherify.io/v2018-08-01/recipes/gift-card-campaign-for-vip-customers-1",
-  "slug": "gift-card-campaign-for-vip-customers-1",
+  "link": "https://docs.voucherify.io/v2018-08-01/recipes/gift-card-campaign-for-vip-customers",
+  "slug": "gift-card-campaign-for-vip-customers",
   "title": "Gift card campaign for VIP customers"
 }
 [/block]
