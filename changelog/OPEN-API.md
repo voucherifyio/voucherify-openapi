@@ -4,6 +4,14 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-02-23
+
+OpenAPI.json:
+- Added `metadata` object to the following schemas (release v20240124):
+  - `SimpleCampaign`,
+  - `SimpleVoucher`,
+  - `SimplePromotionTier`.
+
 ## 2024-02-22
 
 - Fixed the title for `"QualificationsFiltersCondition"` object.
