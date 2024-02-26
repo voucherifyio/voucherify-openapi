@@ -15,6 +15,7 @@ OpenAPI.json:
 - Added `order.initial_amount` to the `ValidationRuleRules` schema.
 - Fixed `number` to `integer` on the "Validation Rule Object" page.
 - Added `updated_at` filter to `ExportCustomerFilters` schema. Tested for `$before`, `$after`, `$is` – works. The `$is_not` fitler does not work.
+- Added `SimplePromotionStack` and `SimplePromotionStackCampaign` schemas because `promotion_stack` was added to customer redemption events.
 
 ## 2024-02-22
 
