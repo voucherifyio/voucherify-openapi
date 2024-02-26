@@ -76,9 +76,9 @@ Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIV
 ## Any
 One of:
 
- 1. Array any of: string, number, object
+ 1. Array any of: string, integer, object
  2. string
- 3. number
+ 3. integer
  4. object
 
 [block:html]

@@ -4,13 +4,17 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
-## 2024-02-23
+## 2024-02-26
 
 OpenAPI.json:
 - Added `metadata` object to the following schemas (release v20240124):
   - `SimpleCampaign`,
   - `SimpleVoucher`,
   - `SimplePromotionTier`.
+- Updated the `page` objects' descriptions with: `The lowest value is 1.`.
+- Added `order.initial_amount` to the `ValidationRuleRules` schema.
+- Fixed `number` to `integer` on the "Validation Rule Object" page.
+- Added `updated_at` filter to `ExportCustomerFilters` schema. Tested for `$before`, `$after`, `$is` – works. The `$is_not` fitler does not work.
 
 ## 2024-02-22
 
