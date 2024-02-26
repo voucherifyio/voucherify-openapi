@@ -1,6 +1,23 @@
 # Endpoints Coverage
 # Table of Contents
 
+- [Publications](#publications)
+  - [/v1/publications/create](#v1publicationscreate)
+  - [/v1/publications](#v1publications)
+- [Qualifications](#qualifications)
+  - [/v1/qualifications](#v1qualifications)
+- [Validations](#validations)
+  - [/v1/validations](#v1validations)
+  - [/v1/vouchers/{code}/validate](#v1voucherscodevalidate-deprecated)
+  - [/v1/promotions/validation](#v1promotionsvalidation-deprecated)
+  - [/v1/promotions/tiers/{tierId}/validation](#v1promotionstierstieridvalidation-deprecated)
+- [Redemptions](#redemptions)
+  - [/v1/redemptions](#v1redemptions)
+  - [/v1/redemptions/{redemptionId}](#v1redemptionsredemptionid)
+  - [/v1/vouchers/{code}/redemption](#v1voucherscoderedemption)
+  - [/v1/redemptions/{redemptionId}/rollback](#v1redemptionsredemptionidrollback)
+  - [/v1/promotions/tiers/{promotionTierId}/redemption](#v1promotionstierspromotiontieridredemption-deprecated)
+  - [/v1/redemptions/{parentRedemptionId}/rollbacks](#v1redemptionsparentredemptionidrollbacks)
 - [Vouchers](#vouchers)
   - [/v1/vouchers](#v1vouchers)
   - [/v1/vouchers/{code}](#v1voucherscode)
@@ -11,10 +28,10 @@
   - [/v1/vouchers/{code}/transactions/export](#v1voucherscodetransactionsexport)
   - [/v1/vouchers/import](#v1vouchersimport)
   - [/v1/vouchers/importCSV](#v1vouchersimportcsv)
-  - [/v1/vouchers/qualification](#v1vouchersqualification)
   - [/v1/vouchers/bulk/async](#v1vouchersbulkasync)
   - [/v1/vouchers/metadata/async](#v1vouchersmetadataasync)
   - [/v1/vouchers/{code}/sessions/{sessionKey}](#v1voucherscodesessionssessionkey)
+  - [/v1/vouchers/qualification](#v1vouchersqualification-deprecated)
 - [Campaigns](#campaigns)
   - [/v1/campaigns](#v1campaigns)
   - [/v1/campaigns/{campaignId}](#v1campaignscampaignid)
@@ -22,12 +39,11 @@
   - [/v1/campaigns/{campaignId}/vouchers/{code}](#v1campaignscampaignidvoucherscode)
   - [/v1/campaigns/{campaignId}/import](#v1campaignscampaignidimport)
   - [/v1/campaigns/{campaignId}/importCSV](#v1campaignscampaignidimportcsv)
-  - [/v1/campaigns/qualification](#v1campaignsqualification)
+  - [/v1/campaigns/qualification](#v1campaignsqualification-deprecated)
   - [/v1/campaigns/{campaignId}/enable](#v1campaignscampaignidenable)
   - [/v1/campaigns/{campaignId}/disable](#v1campaignscampaigniddisable)
 - [Promotions](#promotions)
   - [/v1/promotions/tiers](#v1promotionstiers)
-  - [/client/v1/promotions/tiers](#clientv1promotionstiers)
   - [/v1/promotions/{campaignId}/tiers](#v1promotionscampaignidtiers)
   - [/v1/promotions/tiers/{promotionTierId}](#v1promotionstierspromotiontierid)
   - [/v1/promotions/tiers/{promotionTierId}/enable](#v1promotionstierspromotiontieridenable)
@@ -40,26 +56,6 @@
   - [/v1/rewards/{rewardId}](#v1rewardsrewardid)
   - [/v1/rewards/{rewardId}/assignments](#v1rewardsrewardidassignments)
   - [/v1/rewards/{rewardId}/assignments/{assignmentId}](#v1rewardsrewardidassignmentsassignmentid)
-- [Publications](#publications)
-  - [/v1/publications/create](#v1publicationscreate)
-  - [/v1/publications](#v1publications)
-- [Validations](#validations)
-  - [/v1/vouchers/{code}/validate](#v1voucherscodevalidate)
-  - [/client/v1/validate](#clientv1validate)
-  - [/v1/promotions/validation](#v1promotionsvalidation)
-  - [/v1/promotions/tiers/{tierId}/validation](#v1promotionstierstieridvalidation)
-- [Redemptions](#redemptions)
-  - [/v1/redemptions](#v1redemptions)
-  - [/v1/redemptions/{redemptionId}](#v1redemptionsredemptionid)
-  - [/v1/vouchers/{code}/redemption](#v1voucherscoderedemption)
-  - [/client/v1/redeem](#clientv1redeem)
-  - [/v1/redemptions/{redemptionId}/rollback](#v1redemptionsredemptionidrollback)
-  - [/v1/promotions/tiers/{promotionTierId}/redemption](#v1promotionstierspromotiontieridredemption)
-- [Stackable Discounts](#stackable discounts)
-  - [/client/v1/redemptions](#clientv1redemptions)
-  - [/v1/validations](#v1validations)
-  - [/client/v1/validations](#clientv1validations)
-  - [/v1/redemptions/{parentRedemptionId}/rollbacks](#v1redemptionsparentredemptionidrollbacks)
 - [Loyalties](#loyalties)
   - [/v1/loyalties](#v1loyalties)
   - [/v1/loyalties/{campaignId}](#v1loyaltiescampaignid)
@@ -102,7 +98,6 @@
   - [/v1/customers/bulk/async](#v1customersbulkasync)
   - [/v1/customers/metadata/async](#v1customersmetadataasync)
   - [/v1/customers/{customerId}/consents](#v1customerscustomeridconsents)
-  - [/client/v1/customers/{customerId}/consents](#clientv1customerscustomeridconsents)
   - [/v1/customers/{customerId}/activities](#v1customerscustomeridactivities)
   - [/v1/customers/{customerId}/segments](#v1customerscustomeridsegments)
 - [Orders](#orders)
@@ -135,16 +130,15 @@
   - [/v1/segments](#v1segments)
 - [Events](#events)
   - [/v1/events](#v1events)
-  - [/client/v1/events](#clientv1events)
 - [Consents](#consents)
   - [/v1/consents](#v1consents)
-  - [/client/v1/consents](#clientv1consents)
 - [Async Actions](#async actions)
   - [/v1/async-actions](#v1async-actions)
   - [/v1/async-actions/{asyncActionId}](#v1async-actionsasyncactionid)
 - [Exports](#exports)
   - [/v1/exports](#v1exports)
   - [/v1/exports/{exportId}](#v1exportsexportid)
+  - [/v1/exports/{export_Id}](#v1exportsexport_id)
 - [Categories](#categories)
   - [/v1/categories](#v1categories)
   - [/v1/categories/{categoryId}](#v1categoriescategoryid)
@@ -154,11 +148,133 @@
 - [Locations](#locations)
   - [/v1/locations](#v1locations)
   - [/v1/locations/{locationId}](#v1locationslocationid)
-- [Qualifications](#qualifications)
-  - [/v1/qualifications](#v1qualifications)
+- [Client-side](#client-side)
   - [/client/v1/qualifications](#clientv1qualifications)
+  - [/client/v1/promotions/tiers](#clientv1promotionstiers)
+  - [/client/v1/redemptions](#clientv1redemptions)
+  - [/client/v1/validations](#clientv1validations)
+  - [/client/v1/customers/{customerId}/consents](#clientv1customerscustomeridconsents)
+  - [/client/v1/events](#clientv1events)
+  - [/client/v1/consents](#clientv1consents)
+  - [/client/v1/validate](#clientv1validate-deprecated)
+  - [/client/v1/redeem](#clientv1redeem-deprecated)
 # Endpoints
 
+## Publications
+### /v1/publications/create
+#### Create Publication (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** ❌
+### /v1/publications
+#### List Publications (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/PublicationsListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/PublicationsListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/publications_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/publications_list_response_body.rb) ✅
+#### Create Publication (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/PublicationsCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/PublicationsCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/publications_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/publications_create_request_body.rb) ✅
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/PublicationsCreateResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/PublicationsCreateResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/publications_create_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/publications_create_response_body.rb) ✅
+## Qualifications
+### /v1/qualifications
+#### Check Eligibility (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/QualificationsCheckEligibilityRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/QualificationsCheckEligibilityRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/qualifications_check_eligibility_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/qualifications_check_eligibility_request_body.rb) ✅
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/QualificationsCheckEligibilityResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/QualificationsCheckEligibilityResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/qualifications_check_eligibility_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/qualifications_check_eligibility_response_body.rb) ✅
+## Validations
+### /v1/validations
+#### Validate Stackable Discounts (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ValidationsValidateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ValidationsValidateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/validations_validate_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/validations_validate_request_body.rb) ✅
+- **ResponseSupported:** ❌
+### ~~❗/v1/vouchers/{code}/validate [Deprecated]❗~~
+#### ~~❗Validate Voucher [Deprecated] (post)❗~~
+### ~~❗/v1/promotions/validation [Deprecated]❗~~
+#### ~~❗Validate Promotions [Deprecated] (post)❗~~
+### ~~❗/v1/promotions/tiers/{tierId}/validation [Deprecated]❗~~
+#### ~~❗Validate Promotion Tier [Deprecated] (post)❗~~
+## Redemptions
+### /v1/redemptions
+#### List Redemptions (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/RedemptionsListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/redemptions_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_list_response_body.rb) ✅
+#### Redeem Stackable Discounts (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsRedeemRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/RedemptionsRedeemRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/redemptions_redeem_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_redeem_request_body.rb) ✅
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsRedeemResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/RedemptionsRedeemResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/redemptions_redeem_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_redeem_response_body.rb) ✅
+### /v1/redemptions/{redemptionId}
+#### Get Redemption (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsGetResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/RedemptionsGetResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/redemptions_get_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_get_response_body.rb) ✅
+### /v1/vouchers/{code}/redemption
+#### Get Voucher's Redemptions (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/VouchersRedemptionGetResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/VouchersRedemptionGetResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/vouchers_redemption_get_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/vouchers_redemption_get_response_body.rb) ✅
+#### ~~❗Redeem Voucher [Deprecated] (post)❗~~
+### /v1/redemptions/{redemptionId}/rollback
+#### Rollback Redemption (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsRollbackCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/RedemptionsRollbackCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/redemptions_rollback_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_rollback_create_request_body.rb) ✅
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsRollbackCreateResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/RedemptionsRollbackCreateResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/redemptions_rollback_create_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_rollback_create_response_body.rb) ✅
+### ~~❗/v1/promotions/tiers/{promotionTierId}/redemption [Deprecated]❗~~
+#### ~~❗Redeem Promotion [Deprecated] (post)❗~~
+### /v1/redemptions/{parentRedemptionId}/rollbacks
+#### Rollback Stackable Redemptions (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsRollbacksCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/RedemptionsRollbacksCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/redemptions_rollbacks_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_rollbacks_create_request_body.rb) ✅
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsRollbacksCreateResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/RedemptionsRollbacksCreateResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/redemptions_rollbacks_create_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_rollbacks_create_response_body.rb) ✅
 ## Vouchers
 ### /v1/vouchers
 #### List Vouchers (get)
@@ -244,8 +360,6 @@
   - [php](./sdks/php/src/Model/VouchersImportCsvCreateResponseBody.php) ✅
   - [python](./sdks/python/voucherify_client/models/vouchers_import_csv_create_response_body.py) ✅
   - [ruby](./sdks/ruby/lib/VoucherifySDK/models/vouchers_import_csv_create_response_body.rb) ✅
-### ~~❗/v1/vouchers/qualification [Deprecated]❗~~
-#### ~~❗Examine Qualification [Deprecated] (post)❗~~
 ### /v1/vouchers/bulk/async
 #### Update Vouchers in bulk (post)
 - **RequestSupported:** ❌
@@ -258,6 +372,8 @@
 #### Release Validation Session (delete)
 - **RequestSupported:** *Not applicable*
 - **ResponseSupported:** *Not applicable*
+### ~~❗/v1/vouchers/qualification [Deprecated]❗~~
+#### ~~❗Examine Qualification [Deprecated] (post)❗~~
 ## Campaigns
 ### /v1/campaigns
 #### Create Campaign (post)
@@ -369,10 +485,6 @@
 ## Promotions
 ### /v1/promotions/tiers
 #### List Promotion Tiers (get)
-- **RequestSupported:** *Not applicable*
-- **ResponseSupported:** ❌
-### /client/v1/promotions/tiers
-#### List Promotion Tiers (client-side) (get)
 - **RequestSupported:** *Not applicable*
 - **ResponseSupported:** ❌
 ### /v1/promotions/{campaignId}/tiers
@@ -520,133 +632,6 @@
   - [php](./sdks/php/src/Model/RewardsAssignmentsGetResponseBody.php) ✅
   - [python](./sdks/python/voucherify_client/models/rewards_assignments_get_response_body.py) ✅
   - [ruby](./sdks/ruby/lib/VoucherifySDK/models/rewards_assignments_get_response_body.rb) ✅
-## Publications
-### /v1/publications/create
-#### Create Publication (get)
-- **RequestSupported:** *Not applicable*
-- **ResponseSupported:** ❌
-### /v1/publications
-#### List Publications (get)
-- **RequestSupported:** *Not applicable*
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/PublicationsListResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/PublicationsListResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/publications_list_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/publications_list_response_body.rb) ✅
-#### Create Publication (post)
-- **RequestSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/PublicationsCreateRequestBody.java) ✅
-  - [php](./sdks/php/src/Model/PublicationsCreateRequestBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/publications_create_request_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/publications_create_request_body.rb) ✅
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/PublicationsCreateResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/PublicationsCreateResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/publications_create_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/publications_create_response_body.rb) ✅
-## Validations
-### ~~❗/v1/vouchers/{code}/validate [Deprecated]❗~~
-#### ~~❗Validate Voucher [Deprecated] (post)❗~~
-### ~~❗/client/v1/validate [Deprecated]❗~~
-#### ~~❗Validate Voucher (client-side) [Deprecated] (get)❗~~
-### ~~❗/v1/promotions/validation [Deprecated]❗~~
-#### ~~❗Validate Promotions [Deprecated] (post)❗~~
-### ~~❗/v1/promotions/tiers/{tierId}/validation [Deprecated]❗~~
-#### ~~❗Validate Promotion Tier [Deprecated] (post)❗~~
-## Redemptions
-### /v1/redemptions
-#### List Redemptions (get)
-- **RequestSupported:** *Not applicable*
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsListResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/RedemptionsListResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/redemptions_list_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_list_response_body.rb) ✅
-#### Redeem Stackable Discounts (post)
-- **RequestSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsRedeemRequestBody.java) ✅
-  - [php](./sdks/php/src/Model/RedemptionsRedeemRequestBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/redemptions_redeem_request_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_redeem_request_body.rb) ✅
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsRedeemResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/RedemptionsRedeemResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/redemptions_redeem_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_redeem_response_body.rb) ✅
-### /v1/redemptions/{redemptionId}
-#### Get Redemption (get)
-- **RequestSupported:** *Not applicable*
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsGetResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/RedemptionsGetResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/redemptions_get_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_get_response_body.rb) ✅
-### /v1/vouchers/{code}/redemption
-#### Get Voucher's Redemptions (get)
-- **RequestSupported:** *Not applicable*
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/VouchersRedemptionGetResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/VouchersRedemptionGetResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/vouchers_redemption_get_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/vouchers_redemption_get_response_body.rb) ✅
-#### ~~❗Redeem Voucher [Deprecated] (post)❗~~
-### ~~❗/client/v1/redeem [Deprecated]❗~~
-#### ~~❗Redeem Voucher (client-side) [Deprecated] (post)❗~~
-### /v1/redemptions/{redemptionId}/rollback
-#### Rollback Redemption (post)
-- **RequestSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsRollbackCreateRequestBody.java) ✅
-  - [php](./sdks/php/src/Model/RedemptionsRollbackCreateRequestBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/redemptions_rollback_create_request_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_rollback_create_request_body.rb) ✅
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsRollbackCreateResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/RedemptionsRollbackCreateResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/redemptions_rollback_create_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_rollback_create_response_body.rb) ✅
-### ~~❗/v1/promotions/tiers/{promotionTierId}/redemption [Deprecated]❗~~
-#### ~~❗Redeem Promotion [Deprecated] (post)❗~~
-## Stackable Discounts
-### /client/v1/redemptions
-#### Redeem Stackable Discounts (client-side) (post)
-- **RequestSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientRedemptionsRedeemRequestBody.java) ✅
-  - [php](./sdks/php/src/Model/ClientRedemptionsRedeemRequestBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/client_redemptions_redeem_request_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_redemptions_redeem_request_body.rb) ✅
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientRedemptionsRedeemResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/ClientRedemptionsRedeemResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/client_redemptions_redeem_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_redemptions_redeem_response_body.rb) ✅
-### /v1/validations
-#### Validate Stackable Discounts (post)
-- **RequestSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/ValidationsValidateRequestBody.java) ✅
-  - [php](./sdks/php/src/Model/ValidationsValidateRequestBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/validations_validate_request_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/validations_validate_request_body.rb) ✅
-- **ResponseSupported:** ❌
-### /client/v1/validations
-#### Validate Stackable Discounts (client-side) (post)
-- **RequestSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientValidationsValidateRequestBody.java) ✅
-  - [php](./sdks/php/src/Model/ClientValidationsValidateRequestBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/client_validations_validate_request_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_validations_validate_request_body.rb) ✅
-- **ResponseSupported:** ❌
-### /v1/redemptions/{parentRedemptionId}/rollbacks
-#### Rollback Stackable Redemptions (post)
-- **RequestSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsRollbacksCreateRequestBody.java) ✅
-  - [php](./sdks/php/src/Model/RedemptionsRollbacksCreateRequestBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/redemptions_rollbacks_create_request_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_rollbacks_create_request_body.rb) ✅
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/RedemptionsRollbacksCreateResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/RedemptionsRollbacksCreateResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/redemptions_rollbacks_create_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/redemptions_rollbacks_create_response_body.rb) ✅
 ## Loyalties
 ### /v1/loyalties
 #### List Loyalty Campaigns (get)
@@ -1031,14 +1016,6 @@
   - [python](./sdks/python/voucherify_client/models/customers_consents_update_request_body.py) ✅
   - [ruby](./sdks/ruby/lib/VoucherifySDK/models/customers_consents_update_request_body.rb) ✅
 - **ResponseSupported:** *Not applicable*
-### /client/v1/customers/{customerId}/consents
-#### Update Customer's consents (client-side) (put)
-- **RequestSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientCustomersConsentsUpdateRequestBody.java) ✅
-  - [php](./sdks/php/src/Model/ClientCustomersConsentsUpdateRequestBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/client_customers_consents_update_request_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_customers_consents_update_request_body.rb) ✅
-- **ResponseSupported:** *Not applicable*
 ### /v1/customers/{customerId}/activities
 #### List Customer Activities (get)
 - **RequestSupported:** *Not applicable*
@@ -1363,25 +1340,9 @@
   - [php](./sdks/php/src/Model/EventsCreateResponseBody.php) ✅
   - [python](./sdks/python/voucherify_client/models/events_create_response_body.py) ✅
   - [ruby](./sdks/ruby/lib/VoucherifySDK/models/events_create_response_body.rb) ✅
-### /client/v1/events
-#### Track Custom Event (client-side) (post)
-- **RequestSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientEventsCreateRequestBody.java) ✅
-  - [php](./sdks/php/src/Model/ClientEventsCreateRequestBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/client_events_create_request_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_events_create_request_body.rb) ✅
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientEventsCreateResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/ClientEventsCreateResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/client_events_create_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_events_create_response_body.rb) ✅
 ## Consents
 ### /v1/consents
 #### List Consents (get)
-- **RequestSupported:** *Not applicable*
-- **ResponseSupported:** ❌
-### /client/v1/consents
-#### List Consents (client-side) (get)
 - **RequestSupported:** *Not applicable*
 - **ResponseSupported:** ❌
 ## Async Actions
@@ -1422,6 +1383,10 @@
   - [python](./sdks/python/voucherify_client/models/exports_get_response_body.py) ✅
   - [ruby](./sdks/ruby/lib/VoucherifySDK/models/exports_get_response_body.rb) ✅
 #### Delete Export (delete)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** *Not applicable*
+### /v1/exports/{export_Id}
+#### Download Export (get)
 - **RequestSupported:** *Not applicable*
 - **ResponseSupported:** *Not applicable*
 ## Categories
@@ -1476,19 +1441,7 @@
 #### Get Location (get)
 - **RequestSupported:** *Not applicable*
 - **ResponseSupported:** ❌
-## Qualifications
-### /v1/qualifications
-#### Check Eligibility (post)
-- **RequestSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/QualificationsCheckEligibilityRequestBody.java) ✅
-  - [php](./sdks/php/src/Model/QualificationsCheckEligibilityRequestBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/qualifications_check_eligibility_request_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/qualifications_check_eligibility_request_body.rb) ✅
-- **ResponseSupported:** 
-  - [java](./sdks/java/src/main/java/voucherify/client/model/QualificationsCheckEligibilityResponseBody.java) ✅
-  - [php](./sdks/php/src/Model/QualificationsCheckEligibilityResponseBody.php) ✅
-  - [python](./sdks/python/voucherify_client/models/qualifications_check_eligibility_response_body.py) ✅
-  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/qualifications_check_eligibility_response_body.rb) ✅
+## Client-side
 ### /client/v1/qualifications
 #### Check Eligibility (client-side) (post)
 - **RequestSupported:** 
@@ -1501,3 +1454,55 @@
   - [php](./sdks/php/src/Model/ClientQualificationsCheckEligibilityResponseBody.php) ✅
   - [python](./sdks/python/voucherify_client/models/client_qualifications_check_eligibility_response_body.py) ✅
   - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_qualifications_check_eligibility_response_body.rb) ✅
+### /client/v1/promotions/tiers
+#### List Promotion Tiers (client-side) (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** ❌
+### /client/v1/redemptions
+#### Redeem Stackable Discounts (client-side) (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientRedemptionsRedeemRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ClientRedemptionsRedeemRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/client_redemptions_redeem_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_redemptions_redeem_request_body.rb) ✅
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientRedemptionsRedeemResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ClientRedemptionsRedeemResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/client_redemptions_redeem_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_redemptions_redeem_response_body.rb) ✅
+### /client/v1/validations
+#### Validate Stackable Discounts (client-side) (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientValidationsValidateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ClientValidationsValidateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/client_validations_validate_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_validations_validate_request_body.rb) ✅
+- **ResponseSupported:** ❌
+### /client/v1/customers/{customerId}/consents
+#### Update Customer's consents (client-side) (put)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientCustomersConsentsUpdateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ClientCustomersConsentsUpdateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/client_customers_consents_update_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_customers_consents_update_request_body.rb) ✅
+- **ResponseSupported:** *Not applicable*
+### /client/v1/events
+#### Track Custom Event (client-side) (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientEventsCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ClientEventsCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/client_events_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_events_create_request_body.rb) ✅
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientEventsCreateResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ClientEventsCreateResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/client_events_create_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_events_create_response_body.rb) ✅
+### /client/v1/consents
+#### List Consents (client-side) (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** ❌
+### ~~❗/client/v1/validate [Deprecated]❗~~
+#### ~~❗Validate Voucher (client-side) [Deprecated] (get)❗~~
+### ~~❗/client/v1/redeem [Deprecated]❗~~
+#### ~~❗Redeem Voucher (client-side) [Deprecated] (post)❗~~
