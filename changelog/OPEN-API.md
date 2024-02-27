@@ -12,14 +12,16 @@ OpenAPI.json:
   - `SimpleVoucher`,
   - `SimplePromotionTier`.
 - Updated the `page` objects' descriptions with: `The lowest value is 1.`.
+  - Fixed several articles to correctly display interactive `page` and limit `fields`.
 - Added `order.initial_amount` to the `ValidationRuleRules` schema.
 - Fixed `number` to `integer` on the "Validation Rule Object" page.
 - Added `updated_at` filter to `ExportCustomerFilters` schema. Tested for `$before`, `$after`, `$is` – works. The `$is_not` fitler does not work.
 - Added `SimplePromotionStack` and `SimplePromotionStackCampaign` schemas because `promotion_stack` was added to customer redemption events.
 - Changed info about the maximum of vouchers returned in List Vouchers
 - Changed descriptions to `total`, `balance`, and `points` descriptions for List Voucher Transactions
-- Added `deprecated` not to the `birthday` properties
+- Added `deprecated` note to the `birthday` properties
 - Info about an async action to Add or Remove Loyalty Card Balance articles
+- Fixed the table in the `ValidationRuleRules` schema.
 
 ## 2024-02-22
 
