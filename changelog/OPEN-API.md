@@ -4,7 +4,7 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
-## 2024-02-26
+## 2024-02-27
 
 OpenAPI.json:
 - Added `metadata` object to the following schemas (release v20240124):
@@ -16,6 +16,10 @@ OpenAPI.json:
 - Fixed `number` to `integer` on the "Validation Rule Object" page.
 - Added `updated_at` filter to `ExportCustomerFilters` schema. Tested for `$before`, `$after`, `$is` – works. The `$is_not` fitler does not work.
 - Added `SimplePromotionStack` and `SimplePromotionStackCampaign` schemas because `promotion_stack` was added to customer redemption events.
+- Changed info about the maximum of vouchers returned in List Vouchers
+- Changed descriptions to `total`, `balance`, and `points` descriptions for List Voucher Transactions
+- Added `deprecated` not to the `birthday` properties
+- Info about an async action to Add or Remove Loyalty Card Balance articles
 
 ## 2024-02-22
 
