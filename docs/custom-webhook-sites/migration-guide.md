@@ -4,7 +4,7 @@ type: basic
 categorySlug: webhooks
 slug: migration-guide
 hidden: false
-order: -1
+order: -10
 ---
 
 At the start of 2024, Voucherify introduced a new approach to webhook notifications. The changes to the webhook payload include modifications to key fields and the overall structure. The new approach is a breaking change that requires development effort to switch to the new version of the payloads.

@@ -4,7 +4,7 @@ type: basic
 categorySlug: webhooks
 slug: introduction-to-webhooks
 hidden: false
-order: -2
+order: -20
 ---
 The v2024-01-01 webhook version can be used to inform your system about various events that are triggered in Voucherify. The v2024-01-01 webhooks work for distributions and events listed in the Project settings.
 
@@ -33,7 +33,7 @@ You can check details about a webhook sendout. In Voucherify dashboard, go to Au
 
 ## Events in the Project Settings
 
-The following events can send a webhook:
+The following events listed in the Project Settings can send a webhook:
 - Redemption events:
   - [Redemption succeeded](ref:events-redemption-succeeded "Redemption succeeded webhook documentation")
   - [Redemption failed](ref:events-redemption-failed "Redemption failed webhook documentation")
@@ -70,3 +70,15 @@ The following events can send a webhook:
   - [Business validation rule assignment created](ref:events-bus_val_rule-assignment-created "Validation rule assignment created webhook documentation")
   - [Business validation rule assignment deleted](ref:events-bus_val_rule-assignment-deleted "Validation rule assignment deleted webhook documentation")
   - [Business validation rule deleted](ref:events-bus_val_rule-deleted "Validation rule deleted webhook documentation")
+
+## Distribution Webhooks
+
+> 🚧 Work in Progress
+>
+> The documentation of the following distribution webhooks is in progress.
+
+- Segment related activities:
+  - Customer entered segment
+- Manual messages
+  - Send and publish unique codes from a campaign
+- 
