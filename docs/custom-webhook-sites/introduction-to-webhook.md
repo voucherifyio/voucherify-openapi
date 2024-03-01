@@ -79,6 +79,27 @@ The following events listed in the Project Settings can send a webhook:
 
 - Segment related activities:
   - Customer entered segment
-- Manual messages
-  - Send and publish unique codes from a campaign
-- 
+  - Customer left segment
+- Manual messages:
+  - Send and publish unique codes from a campaign (this is the only setting for manual messages that sends webhooks)
+- Cart related activity:
+  - Order update
+  - Order has been paid
+  - Order creation
+  - Order canceled
+- All campaigns with codes:
+  - Successfully published
+- Voucher related activity
+  - Gift credits added
+  - Loyalty points added
+  - Voucher redeemed
+  - Voucher redemption rolled back
+  - Customer loyalty card points expired
+- Customer related activity
+  - Custom event
+- Loyalty tier related activity
+  - Customer entered loyalty tier structure
+  - Customer exited loyalty tier structure
+  - Customer loyalty tier upgraded
+  - Customer loyalty tier downgraded
+  - Customer loyalty tier prolonged
