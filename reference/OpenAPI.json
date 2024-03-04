@@ -23192,6 +23192,7 @@
       "SimpleVoucher": {
         "type": "object",
         "title": "Simple Voucher",
+        "description": "Simplified voucher data.",
         "properties": {
           "id": {
             "type": "string",
@@ -23202,7 +23203,7 @@
             "description": "Voucher code."
           },
           "gift": {
-            "description": "Gift object response",
+            "description": "Gift object response.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Gift"
@@ -23214,19 +23215,25 @@
           },
           "loyalty_card": {
             "description": "Defines the loyalty card details.",
-            "type": "object"
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleLoyaltyCard"
+              }
+            ]
           },
           "type": {
             "type": "string",
-            "description": "Type of the object.",
-            "default": "voucher",
+            "description": "Type of the voucher.",
             "enum": [
-              "voucher"
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD",
+              "GIFT_VOUCHER"
             ]
           },
           "campaign": {
-            "description": "Campaign object",
-            "type": "object"
+            "type": "string",
+            "description": "Campaign name."
           },
           "campaign_id": {
             "type": "string",
@@ -23239,18 +23246,70 @@
           "holder_id": {
             "type": "string",
             "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
-            "description": "Unique customer ID of campaign owner."
+            "description": "Unique customer ID of the campaign owner."
           },
           "referrer_id": {
             "type": "string",
-            "description": "Unique referrer ID.",
+            "description": "Unique identifier of the referrer assigned by Voucherify.",
             "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+          },
+          "category_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique identifier of the category that this voucher belongs to.",
+            "example": "cat_0b6152ce12414820dc"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Shows whether the voucher is on or off. `true` indicates an *active* voucher and `false` indicates an *inactive* voucher."
           },
           "created_at": {
             "type": "string",
             "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the order was created in ISO 8601 format.",
+            "description": "Timestamp representing the date and time when the order was created in the ISO 8601 format.",
             "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2024-01-01T11:11:11.111Z",
+            "description": "Timestamp representing the date and time when the voucher was updated in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "nullable": true,
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              },
+              "redeemed_quantity": {
+                "type": "integer",
+                "example": 1,
+                "description": "How many times a voucher has already been redeemed."
+              }
+            },
+            "required": [
+              "quantity",
+              "redeemed_quantity"
+            ]
+          },
+          "start_date": {
+            "type": "string",
+            "example": "2021-12-01T00:00:00.000Z",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the code starts to be active in ISO 8601 format. Voucher is *inactive before* this date."
+          },
+          "expiration_date": {
+            "type": "string",
+            "example": "2021-12-31T00:00:00.000Z",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the code expires in ISO 8601 format.  Voucher is *inactive after* this date."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a voucher. The metadata object stores all custom attributes assigned to the voucher."
           },
           "object": {
             "type": "string",
@@ -23259,29 +23318,24 @@
             "enum": [
               "voucher"
             ]
-          },
-          "metadata": {
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to a voucher. The metadata object stores all custom attributes assigned to the voucher."
           }
         },
         "required": [
-          "valid",
+          "type",
           "code",
-          "applicable_to",
+          "created_at",
           "inapplicable_to",
-          "metadata",
-          "tracking_id"
+          "object"
         ]
       },
       "SimpleCampaign": {
         "title": "Simple Campaign",
         "type": "object",
-        "description": "Request body schema for creating a discount voucher campaign using **POST** `/campaigns`.",
+        "description": "Simplified campaign data.",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Campaign name."
+            "description": "Campaign ID."
           },
           "name": {
             "type": "string",
@@ -23304,17 +23358,23 @@
             "description": "Flag indicating whether this voucher is a referral code; `true` for campaign type `REFERRAL_PROGRAM`."
           },
           "voucher": {
-            "type": "object"
+            "type": "object",
+            "$ref": "#/components/schemas/SimpleCampaignVoucher"
           },
           "lucky_draw": {
-            "type": "object"
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LuckyDraw"
+              }
+            ]
           },
           "referral_program": {
             "$ref": "#/components/schemas/ReferralProgram"
           },
           "auto_join": {
             "type": "boolean",
-            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled."
+            "description": "Indicates whether customers will be able to auto-join the campaign if any earning rule is fulfilled."
           },
           "join_once": {
             "type": "boolean",
@@ -23322,12 +23382,47 @@
           },
           "active": {
             "type": "boolean",
-            "description": "Indicates whether campaign is active"
+            "description": "Indicates whether the campaign is active."
+          },
+          "category": {
+            "type": "string",
+            "description": "Unique category name."
+          },
+          "category_id": {
+            "nullable": true,
+            "type:": "string",
+            "description": "The unique category ID that this campaign belongs to."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a campaign. The metadata object stores all custom attributes assigned to the campaign."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is inactive *before* this date. ",
+            "example": "2022-09-20T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is inactive *after* this date.",
+            "example": "2022-09-30T00:00:00.000Z"
+          },
+          "description": {
+            "type": "string",
+            "description": "An optional field to keep extra textual information about the campaign such as a campaign description and details."
           },
           "created_at": {
             "type": "string",
-            "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the campaign was created in ISO 8601 format.",
+            "example": "2024-01-01T11:11:11.111Z",
+            "description": "Timestamp representing the date and time when the campaign was created in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2024-01-01T11:11:11.111Z",
+            "description": "Timestamp representing the date and time when the campaign was updated in the ISO 8601 format.",
             "format": "date-time"
           },
           "object": {
@@ -23337,10 +23432,6 @@
               "campaign"
             ],
             "description": "The type of object represented by JSON. This object stores information about the campaign."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to a campaign. The metadata object stores all custom attributes assigned to the campaign."
           }
         }
       },
