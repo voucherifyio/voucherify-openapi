@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-03-06
+
+Changed "Fetching data" article with regard to paging the results.
+
 ## 2024-02-22
 
 - Fixed wrong links to recipes in the "Examples" page.
