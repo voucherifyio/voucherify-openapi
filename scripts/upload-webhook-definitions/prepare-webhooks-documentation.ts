@@ -122,8 +122,8 @@ export const prepareWebhooksDocumentation = async () => {
           .replaceAll("_", " ")
           .replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase())}`
       );
-      mdComment.push(`type: endpoint`);
-      mdComment.push(`categorySlug: webhooks`);
+      mdComment.push(`type: basic`);
+      mdComment.push(`categorySlug: events-and-webhooks`);
       mdComment.push(
         `parentDocSlug: ${group.toLowerCase().replaceAll(" ", "-")}`
       );
