@@ -1,7 +1,7 @@
 ---
 title: Webhooks v2024-01-01
 type: basic
-categorySlug: events-and-webhooks
+categorySlug: events
 slug: introduction-to-webhooks
 hidden: false
 order: -2

@@ -1,7 +1,7 @@
 ---
 title: Migration Guide
 type: basic
-categorySlug: events-and-webhooks
+categorySlug: events
 slug: migration-guide
 hidden: false
 order: -1
