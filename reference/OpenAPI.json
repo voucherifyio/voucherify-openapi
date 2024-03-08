@@ -23400,6 +23400,44 @@
           "total"
         ]
       },
+      "CustomersActivityListResponseBody": {
+        "type": "object",
+        "title": "Customers Activities List Response Body",
+        "description": "Request body schema for **GET** `/customers/{customerId}/activity`.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about customer activities in a dictionary."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of customer activity objects."
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of customer activity objects.",
+            "items": {
+              "$ref": "#/components/schemas/CustomerActivity"
+            }
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "Determines whether there are more results."
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an event ID that can be used to return another page of results. Use the event id in the `staring_after_id` query parameter to display another page of the results starting after the event with that ID."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "has_more"
+        ]
+      },
       "CustomerActivity": {
         "title": "Customer Activity",
         "type": "object",
@@ -23486,7 +23524,7 @@
             ]
           },
           "data": {
-            "type": "array",
+            "type": "object",
             "description": "Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.",
             "items": {
               "$ref": "#/components/schemas/CustomerActivityData"
@@ -23497,6 +23535,11 @@
             "description": "Timestamp representing the date and time when the customer activity occurred in ISO 8601 format.",
             "example": "2022-08-30T09:14:07.660Z",
             "format": "date-time"
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Unique identifier of the request that caused the event.",
+            "example": "v-1f36113948e50fc4ge"
           }
         }
       },
@@ -67111,7 +67154,7 @@
         }
       }
     },
-    "/v1/customers/{customerId}/activities": {
+    "/v1/customers/{customerId}/activity": {
       "parameters": [
         {
           "schema": {
@@ -67128,8 +67171,183 @@
         "tags": [
           "Customers"
         ],
-        "summary": "List Customer Activities",
+        "summary": "List Customer Activity",
         "description": "Retrieve customer activities.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/order"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "By applying this filter value, you will get events starting after an event with the given ID."
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterDate"
+            },
+            "description": "Timestamp representing the date and time which results must begin on. Represented in ISO 8601 format."
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterDate"
+            },
+            "description": "Timestamp representing the date and time which results must end on. Represented in ISO 8601 format."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCampaignId"
+            },
+            "in": "query",
+            "name": "campaign_id",
+            "description": "Requests only events related to specific campaign identified by its ID."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCampaignType"
+            },
+            "in": "query",
+            "name": "campaign_type",
+            "description": "Filters related customer's activity for the selected campaign types. Allowed values: \n`DISCOUNT_COUPONS`,\n`REFERRAL_PROGRAM`,\n`GIFT_VOUCHERS`,\n`PROMOTION`,\n`LOYALTY_PROGRAM`."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "category",
+            "description": "Filters activities for actions or effects. Allowed values: \n`ACTION`,\n`EFFECT`."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "type",
+            "description": "Event name of the customer event.",
+            "enum": [
+              "customer.confirmed",
+              "customer.created",
+              "customer.updated",
+              "customer.deleted",
+              "customer.referred",
+              "customer.custom_event",
+              "customer.segment.entered",
+              "customer.segment.left",
+              "customer.sms.sent",
+              "customer.sms.recovered",
+              "customer.sms.failed",
+              "customer.email.sent",
+              "customer.email.recovered",
+              "customer.email.failed",
+              "customer.activecampaign.sent",
+              "customer.activecampaign.recovered",
+              "customer.activecampaign.failed",
+              "customer.braze.sent",
+              "customer.braze.recovered",
+              "customer.braze.failed",
+              "customer.mailchimp.sent",
+              "customer.mailchimp.recovered",
+              "customer.mailchimp.failed",
+              "customer.intercom.sent",
+              "customer.intercom.recovered",
+              "customer.intercom.failed",
+              "customer.shopify.sent",
+              "customer.shopify.recovered",
+              "customer.shopify.failed",
+              "customer.klaviyo.sent",
+              "customer.klaviyo.recovered",
+              "customer.klaviyo.failed",
+              "customer.batch.sent",
+              "customer.batch.recovered",
+              "customer.batch.failed",
+              "customer.rewarded",
+              "customer.rewarded.loyalty_points",
+              "customer.voucher.gift.balance_added",
+              "customer.voucher.loyalty_card.points_added",
+              "customer.voucher.loyalty_card.points_transferred",
+              "customer.voucher.loyalty_card.points_expired",
+              "customer.voucher.deleted",
+              "customer.publication.succeeded",
+              "customer.publication.failed",
+              "customer.validation.succeeded",
+              "customer.validation.failed",
+              "customer.redemption.failed",
+              "customer.redemption.succeeded",
+              "customer.redemption.rollback.failed",
+              "customer.redemption.rollback.succeeded",
+              "customer.consents.given",
+              "customer.consents.revoked",
+              "customer.order.canceled",
+              "customer.order.created",
+              "customer.order.fulfilled",
+              "customer.order.paid",
+              "customer.order.processing",
+              "customer.order.updated",
+              "customer.reward_redemptions.created",
+              "customer.reward_redemptions.pending",
+              "customer.reward_redemptions.completed",
+              "customer.reward_redemptions.rolledback",
+              "customer.loyalty.updated",
+              "customer.loyalty.tier.upgraded",
+              "customer.loyalty.tier.downgraded",
+              "customer.loyalty.tier.prolonged",
+              "customer.loyalty.tier.expiration.changed",
+              "customer.loyalty.tier.joined",
+              "customer.loyalty.tier.left"
+            ]
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a dictionary with customer activities.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersActivityListResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/activities": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCustomerId"
+          },
+          "name": "customerId",
+          "in": "path",
+          "required": true,
+          "description": "A Voucherify customer's `id` or source ID of the customer who performed the activities."
+        }
+      ],
+      "get": {
+        "operationId": "list-customer-activities",
+        "deprecated": true,
+        "tags": [
+          "Customers"
+        ],
+        "summary": "List Customer Activities",
+        "description": "> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for listing customer activities and we do not recommend using it. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint.\nRetrieve customer activities.",
         "parameters": [
           {
             "$ref": "#/components/parameters/limit"
