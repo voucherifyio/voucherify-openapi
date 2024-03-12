@@ -1,0 +1,1 @@
+The `EVENTS.CUSTOMER.LOYALTY.TIER.UPGRADED` event indicates that a customer has moved to a higher tier in a loyalty campaign.
