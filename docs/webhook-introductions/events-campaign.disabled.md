@@ -1,1 +1,1 @@
-The `EVENTS.CAMPAIGN.DISABLED` webhook means that the campaign is temporarily or permanently inactive and cannot be utilized during that period.
+The `EVENTS.CAMPAIGN.DISABLED` event indicates that the campaign is temporarily or permanently inactive and cannot be used during that period.

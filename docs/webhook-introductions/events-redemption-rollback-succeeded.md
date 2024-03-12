@@ -1,1 +1,1 @@
-The `EVENTS.REDEMPTION.ROLLBACK.SUCCEEDED` webhook means a redemption was successfully reversed. This occurs when a previously redeemed voucher code or promotional tier has been rolled back or undone.
+The `EVENTS.REDEMPTION.ROLLBACK.SUCCEEDED` event indicates a redemption was successfully reversed. This occurs when a previously redeemed voucher code or promotional tier has been rolled back or undone.

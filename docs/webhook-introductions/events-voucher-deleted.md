@@ -1,1 +1,1 @@
-The `EVENTS.VOUCHER.DELETED` webhook means that a voucher has been successfully deleted. It provides ą real-time notification of that the voucher has been removed.
+The `EVENTS.VOUCHER.DELETED` event indicates that a voucher has been successfully deleted. It provides ą real-time notification of that the voucher has been removed.

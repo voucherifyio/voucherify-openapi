@@ -1,1 +1,1 @@
-The `EVENTS.CUSTOMER.REWARDED.LOYALTY_POINTS` webhook means that a customer received loyalty points on one of their loyalty cards. The webhook contains the details of the number of points the customer received.
+The `EVENTS.CUSTOMER.REWARDED.LOYALTY_POINTS` event indicates that a customer received loyalty points on one of their loyalty cards. The webhook contains the details of the number of points the customer received.

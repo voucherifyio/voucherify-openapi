@@ -1,1 +1,1 @@
-The `EVENTS.VOUCHER.GIFT.BALANCE_ADDED` webhook means that additional balance has been successfully added to a gift voucher. It provides real-time notification that the gift voucher's balance has been increased.
+The `EVENTS.VOUCHER.GIFT.BALANCE_ADDED` event indicates that additional balance has been successfully added to a gift voucher. It provides real-time notification that the gift voucher's balance has been increased.

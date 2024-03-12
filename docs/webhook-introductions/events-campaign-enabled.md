@@ -1,1 +1,1 @@
-The `EVENTS.CAMPAIGN.ENABLED` webhook means that the campaign is now active and can be utilized for its intended purpose.
+The `EVENTS.CAMPAIGN.ENABLED` event indicates that the campaign is now active and can be utilized for its intended purpose.

@@ -1,1 +1,1 @@
-The `EVENTS.BUS_VAL_RULE.DELETED` webhook means that a business validation rule has been successfully deleted from Voucherify.
+The `EVENTS.BUS_VAL_RULE.DELETED` event indicates that a business validation rule has been successfully deleted from Voucherify.

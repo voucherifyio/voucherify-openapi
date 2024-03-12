@@ -1,1 +1,1 @@
-The `EVENTS.VOUCHER.ENABLED` webhook means that a voucher has been successfully enabled for use. It indicates that the voucher is now active and it can be redeemed.
+The `EVENTS.VOUCHER.ENABLED` event indicates that a voucher has been successfully enabled for use. It indicates that the voucher is now active and it can be redeemed.

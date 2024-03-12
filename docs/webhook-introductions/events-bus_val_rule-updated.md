@@ -1,1 +1,1 @@
-The `ENTS.BUS_VAL_RULE.UPDATED` webhook means that an existing business validation rule has been successfully modified. The event provides the details about the business validation rule with the changes included.
+The `EVENTS.BUS_VAL_RULE.UPDATED` event indicates that an existing business validation rule has been successfully modified. The event provides the details about the business validation rule with the changes included.

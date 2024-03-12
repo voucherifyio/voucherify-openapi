@@ -1,1 +1,1 @@
-The `EVENTS.VOUCHER.DISABLED` webhook means that a voucher has been successfully disabled for use. It indicates that the voucher is now inactive and it cannot be redeemed.
+The `EVENTS.VOUCHER.DISABLED` event indicates that a voucher has been successfully disabled for use. It indicates that the voucher is now inactive and it cannot be redeemed.

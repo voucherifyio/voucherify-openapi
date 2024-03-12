@@ -1,1 +1,1 @@
-The `EVENTS.REDEMPTION.SUCCEEDED` webhook means that the redemption process was successful. It confirms that the associated voucher codes and promotional tiers have been effectively applied.
+The `EVENTS.REDEMPTION.SUCCEEDED` event indicates that the redemption process was successful. It confirms that the associated voucher codes and promotional tiers have been effectively applied.
