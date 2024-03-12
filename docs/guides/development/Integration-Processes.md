@@ -123,7 +123,7 @@ In this scenario, a customer is going to receive a voucher code during their vis
 > 📘
 > The validation and redemption requests can validate and redeem a combination of different discount types and redeemables. You can verify with one request how promotion tiers and voucher codes affect the customer's cart.
 
-👍
+> 👍
 > Take a look at our new [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-94f1af65-f69b-4810-899e-8f5eeafa03f8) that will lead you through the entire process flow of a wandering customer scenario in Voucherify.
 
 ### Rewarding customers with points for purchases.
