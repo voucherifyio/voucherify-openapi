@@ -1,4 +1,4 @@
-The `EVENTS.CAMPAIGN.CREATED` webhook means that a new campaign was created.
+The `EVENTS.CAMPAIGN.CREATED` event indicates that a new campaign was created.
 
 The webhook provides, among others, the following details:
 - Campaign ID,
@@ -6,3 +6,7 @@ The webhook provides, among others, the following details:
 - Campaign type,
 - Creation date,
 - Other relevant details.
+
+> 📘 Webhook documentation
+>
+> This page documents only the event. If you need more details about the webhook payload data that includes this event, go to [Webhook v2024-01-01](ref:introduction-to-webhooks "Introduction to webhooks v2024-01-01") page.

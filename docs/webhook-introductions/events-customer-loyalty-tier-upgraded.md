@@ -1,4 +1,4 @@
-The `EVENTS.REDEMPTION.ROLLBACK.SUCCEEDED` event indicates a redemption was successfully reversed. This occurs when a previously redeemed voucher code or promotional tier has been rolled back or undone.
+The `EVENTS.CUSTOMER.LOYALTY.TIER.UPGRADED` event indicates that a customer has moved to a higher tier in a loyalty campaign.
 
 > 📘 Webhook documentation
 >

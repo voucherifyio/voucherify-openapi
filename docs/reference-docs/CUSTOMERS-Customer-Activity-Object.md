@@ -465,6 +465,7 @@ All of:
 | object</br>`string`    | <p>The type of object represented by JSON.</p> Available values: `customer`                                                                                                                                                                                                                                                                                                                 |
 
 ## Simple Campaign
+
 | Attributes                     | Description                                                                                                                                                                                                                                                                                                                                                                                                              |
 | :----------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | id</br>`string`                | <p>Campaign name.</p>                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -499,6 +500,7 @@ All of:
 | created_at</br>`string`        | <p>Timestamp representing the date and time when the order was created in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p>        |
 | object</br>`string`            | <p>The type of object represented by JSON.</p> Available values: `voucher`                                                                         |
 | metadata</br>`object`          | <p>A set of custom key/value pairs that you can attach to a voucher. The metadata object stores all custom attributes assigned to the voucher.</p> |
+
 
 ## Custom Event
 | Attributes              | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
@@ -733,6 +735,23 @@ All of:
 | address</br>`object`, `null` | <p>Customer's address.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">city</br><code>string</code></td><td style="text-align:left"><p>City</p></td></tr><tr><td style="text-align:left">state</br><code>string</code></td><td style="text-align:left"><p>State</p></td></tr><tr><td style="text-align:left">line_1</br><code>string</code></td><td style="text-align:left"><p>First line of address.</p></td></tr><tr><td style="text-align:left">line_2</br><code>string</code></td><td style="text-align:left"><p>Second line of address.</p></td></tr><tr><td style="text-align:left">country</br><code>string</code></td><td style="text-align:left"><p>Country.</p></td></tr><tr><td style="text-align:left">postal_code</br><code>string</code></td><td style="text-align:left"><p>Postal code.</p></td></tr></tbody></table> |
 | metadata</br>`object`        | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.</p>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
+## Simple Campaign Voucher
+| Attributes |  Description |
+|:-----|:--------|
+| type</br>`string` | <p>Type of the voucher.</p> Available values: `DISCOUNT_VOUCHER`, `LOYALTY_CARD`, `GIFT_VOUCHER` |
+| discount | <p>Defines the voucher discount type and details.</p> [Discount](#discount) |
+| gift | <p>Defines the voucher gift details.</p> [Gift](#gift) |
+| loyalty_card | <p>Defines the voucher loyalty card details.</p> [Campaign Loyalty Card](#campaign-loyalty-card) |
+| redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code>, <code>null</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr><tr><td style="text-align:left">redeemed_quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher has already been redeemed.</p> <strong>Example:</strong> <p>1</p></td></tr></tbody></table> |
+| code_config | See: [Code Config Required Length Charset Pattern](#code-config-required-length-charset-pattern) |
+
+## Lucky Draw
+| Attributes |  Description |
+|:-----|:--------|
+| winners_count</br>`string` | <p>It represents the total number of winners in a lucky draw.</p> |
+| unique_winners_per_draw</br>`string` | <p>It indicates whether each winner in a draw is unique or not.</p> |
+| unique_winners</br>`string` | <p>Specifies whether each participant can win only once across multiple draws.</p> |
+
 ## Referral Program
 | Attributes                         | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | :--------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -753,6 +772,14 @@ All of:
 One of:
 
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
+
+## Simple Loyalty Card
+| Attributes |  Description |
+|:-----|:--------|
+| points</br>`integer` | <p>Total points incurred over lifespan of loyalty card.</p> |
+| balance</br>`integer` | <p>Points available for reward redemption.</p> |
+| next_expiration_date</br>`string` | <p>The next closest date when the next set of points are due to expire.</p> |
+| next_expiration_points</br>`integer` | <p>The amount of points that are set to expire next.</p> |
 
 ## Customer Object Required Object Type
 | Attributes             | Description                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -1031,6 +1058,15 @@ All of:
 | last_order_amount</br>`integer` | <p>Amount spent on last order. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p>                                                           |
 | last_order_date</br>`string`    | <p>Timestamp representing the date and time of the customer's last order in ISO 8601 format.</p> **Example:** <p>2022-08-30T11:51:08.029Z</p>                                                                                   |
 
+## Campaign Loyalty Card
+| Attributes |  Description |
+|:-----|:--------|
+| points</br>`integer` | <p>The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card.</p> |
+| expiration_rules</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">period_type</br><code>string</code></td><td style="text-align:left"><p>Type of period</p></td></tr><tr><td style="text-align:left">period_value</br><code>integer</code></td><td style="text-align:left"><p>Value of the period</p></td></tr><tr><td style="text-align:left">rounding_type</br><code>string</code></td><td style="text-align:left"><p>Type of rounding</p></td></tr><tr><td style="text-align:left">rounding_value</br><code>integer</code></td><td style="text-align:left"><p>Value of rounding</p></td></tr></tbody></table> |
+
+## Code Config Required Length Charset Pattern
+[Code Config](#code-config)
+
 ## Amount
 | Attributes                            | Description                                                                                                                                                          |
 | :------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -1272,6 +1308,16 @@ Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `cus
 | Attributes              | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | :---------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | parameters</br>`object` | <p>Defines the cost of the reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">loyalty</br><code>object</code></td><td style="text-align:left"><p>Defines the equivalent points value of the reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>The number of points required to redeem the reward.</p></td></tr></tbody></table></td></tr></tbody></table> |
+
+## Code Config
+| Attributes |  Description |
+|:-----|:--------|
+| length</br>`number` | <p>Number of characters in a generated code (excluding prefix and postfix).</p> |
+| charset</br>`string` | <p>Characters that can appear in the code.</p><p>Examples:</p><ul><li>Alphanumeric: <code>0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic: <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic Lowercase: <code>abcdefghijklmnopqrstuvwxyz</code></li><li>Alphabetic Uppercase: <code>ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Numbers: <code>0123456789</code></li><li>Custom: a custom character set</li></ul> |
+| prefix</br>`string` | <p>A text appended before the code.</p> |
+| postfix</br>`string` | <p>A text appended after the code.</p> |
+| pattern</br>`string` | <p>A pattern for codes where hashes (#) will be replaced with random characters. Overrides <code>length</code>.</p> |
+| initial_count</br>`integer` | <p>The initial count</p> |
 
 ## Discount Amount Vouchers Effect Types
 Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`, `APPLY_TO_ITEMS_PROPORTIONALLY`, `APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY`, `APPLY_TO_ITEMS_BY_QUANTITY`
