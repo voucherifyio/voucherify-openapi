@@ -10,13 +10,23 @@ order: 4
 
 All top-level API resources have support for fetches via **list** API methods. For instance, you can list redemptions, list publications, list customers, and list products. 
 
-These list API methods share a common structure, consuming at least these three _query parameters_: `limit`, `page`, and `created_at`.  
+These list API methods share a common structure, using at least these _query parameters_: `limit` and `created_at`.  
 
 | **Parameter name** | **Description**                                                                                                                                                                                                                                                                                                                                            |
 | :----------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 |      `limit`       | A limit on the number of objects to be returned; between 1 and 100.                                                                                                                                                                                                                                                                                        |
-|       `page`       | Which page of results to return. The lowest value is `1`.                                                                                                                                                                                                                                                                                                  |
 |    `created_at`    | A filter on the list based on the object `created_at` field.<br><br>The value is a dictionary with the following options: `before`, `after`. A date value must be presented in ISO 8601 format (`2016-11-16T14:14:31Z` or `2016-11-16`).<br><br>_Examples:_<br><br>- `[created_at][before]=2017-09-08T13:52:18.227Z`<br>- `[created_at][after]=2017-09-08` |
+
+## Paging the results
+
+Some list API methods use the `page` query parameter to display another page of results.
+
+However, the following list API methods use the `starting_after_id` query parameter:
+- List member activity
+- List member activity (with campaign ID)
+- List customer activity
+
+The response to these three methods includes a `more_starting_after` key that takes a string value with an event ID. Use this event ID with the `starting_after_id` query parameter to page the results.
 
 ## Response format
 
