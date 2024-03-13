@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-03-13
+
+Added links to Postman collections in the "Integration Processes" article.
+
 ## 2024-02-22
 
 - Fixed wrong links to recipes in the "Examples" page.
