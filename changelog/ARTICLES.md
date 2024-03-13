@@ -9,7 +9,8 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 ## 2024-03-13
 
-Added links to Postman collections in the "Integration Processes" article.
+- Added links to Postman collections in the "Integration Processes" article.
+- Changed "Fetching data" article with regard to paging the results.
 
 ## 2024-02-22
 

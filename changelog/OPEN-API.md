@@ -4,6 +4,11 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-03-08
+
+- Added GET `/v1/customers/{id}/activity` endpoint
+- Deprecated GET `/v1/customers/{id}/activities`
+
 ## 2024-02-28
 
 OpenAPI.json:
