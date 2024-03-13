@@ -1,4 +1,4 @@
-The `EVENTS.ORDER.PAID` event indicates that an order has been paid.
+The `EVENTS.CUSTOMER.ORDER.PAID` event indicates that an order has been paid.
 
 When the event is used in an "Order has been paid" distribution webhook, the `data` object always contains the following required objects:
 - `customer`,

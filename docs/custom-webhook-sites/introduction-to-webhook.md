@@ -122,29 +122,29 @@ The documentation of these events contains data for all purposes. The objects wh
 
 > 🚧 Work in Progress
 >
-> The documentation of the following distribution webhooks is in progress.
+> The documentation of the following distribution webhooks is in progress. Activities with links to event pages are documented.
 
 - Segment related activities:
   - [Customer entered segment](ref:events-customer-segment-entered)
   - [Customer left segment](ref:events-customer-segment-left)
 - Manual messages:
   - Send and publish unique codes from a campaign (this is the only setting for manual messages that sends webhooks)
-- Cart related activity:
+- Cart related activities:
   - [Order update](ref:events-customer-order-updated)
   - [Order has been paid](ref:events-customer-order-paid)
   - [Order creation](ref:events-customer-order-created)
   - [Order canceled](ref:events-customer-order-canceled)
 - All campaigns with codes:
   - Successfully published
-- Voucher related activity
+- Voucher related activities:
   - Gift credits added
   - [Loyalty points added](ref:events-customer-voucher-loyalty_card-points_added)
   - Voucher redeemed
   - Voucher redemption rolled back
   - Customer loyalty card points expired
-- Customer related activity
+- Customer related activities:
   - Custom event
-- Loyalty tier related activity
+- Loyalty tier related activities:
   - Customer entered loyalty tier structure
   - Customer exited loyalty tier structure
   - [Customer loyalty tier upgraded](ref:events-customer-loyalty-tier-upgraded)

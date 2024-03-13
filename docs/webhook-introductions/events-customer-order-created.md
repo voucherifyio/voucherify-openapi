@@ -1,4 +1,4 @@
-The `EVENTS.ORDER.CREATED` event indicates that an order has been created.
+The `EVENTS.CUSTOMER.ORDER.CREATED` event indicates that an order has been created.
 
 When the event is used in an "Order creation" distribution webhook, the `data` object always contains the following required objects:
 - `customer`,

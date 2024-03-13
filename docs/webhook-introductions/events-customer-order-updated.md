@@ -1,4 +1,4 @@
-The `EVENTS.ORDER.UPDATED` event indicates that an order has been updated.
+The `EVENTS.CUSTOMER.ORDER.UPDATED` event indicates that an order has been updated.
 
 When the event is used in an "Order update" distribution webhook, the `data` object always contains the following required objects:
 - `customer`,

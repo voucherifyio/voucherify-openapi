@@ -1,4 +1,4 @@
-The `EVENTS.ORDER.CANCELED` event indicates that an order has been canceled.
+The `EVENTS.CUSTOMER.ORDER.CANCELED` event indicates that an order has been canceled.
 
 When the event is used in an "Order canceled" distribution webhook, the `data` object always contains the following required objects:
 - `customer`,
