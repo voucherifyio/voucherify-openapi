@@ -8,19 +8,23 @@ This document describes all deliverables and their development process.
 
 ## Deliverables
 
-Voucherify's dev experience is built based on three main items:
+Voucherify's dev experience is built around three main items:
 - **Guides** documentation that describes key concepts, integration with Voucherify development and common recipes. This documentation is available on the page: https://docs.voucherify.io/docs.
 - **API Reference** documentation describing REST API endpoints, including available parameters and responses. This documentation is available on the page: https://docs.voucherify.io/reference/introduction-1
-- **SDKs** - clients for all major programming languages, e.g., JavaScript, Java, Ruby, Python, .NET, PHP. SDK's source codes are hosted on the GitHub platform and available for the developers in language-specific package repositories like https://npmjs.com/, https://rubygems.org/ or https://maven.apache.org/
+- **SDKs**: clients for all major programming languages, e.g., JavaScript, Java, Ruby, Python, .NET, PHP. SDK's source codes are hosted on the GitHub platform and available for the developers in language-specific package repositories like https://npmjs.com/, https://rubygems.org/ or https://maven.apache.org/
 
 
 ## Guides and API Reference
 
-Guides and API Reference pages are hosted on readme.io, the platform for creating and hosting developer documentation. Still, the source of documentation content is stored in the GitHub repository: https://github.com/voucherifyio/voucherify-openapi. Guides are stored purely as markdown files in the https://github.com/voucherifyio/voucherify-openapi/tree/master/docs/guides folder and can be easily uploaded to the readme.io platform via readme CLI. API Reference pages are built by readme.io, which combines the OpenAPI file that describes Voucherify API endpoints, parameters and responses with markdown files from https://github.com/voucherifyio/voucherify-openapi/tree/master/docs/reference-docs folder.
+Guides and API Reference pages are hosted on [readme.io](https://readme.com/), a platform for creating and hosting developer documentation. However, the source of documentation content is stored in the [Voucherify Open API GitHub repository](https://github.com/voucherifyio/voucherify-openapi).
+
+The guides are stored purely as markdown files in the [guides folder](https://github.com/voucherifyio/voucherify-openapi/tree/master/docs/guides). They can be uploaded to the readme.io platform via readme CLI.
+
+The API reference pages are built by readme.io, which combines the OpenAPI file that describes Voucherify API endpoints, parameters, and responses with markdown files from the [reference folder](https://github.com/voucherifyio/voucherify-openapi/tree/master/docs/reference-docs).
 
 ## API Reference - Endpoint Pages
 
-API Endpoint Pages like https://docs.voucherify.io/reference/get-voucher describe REST API endpoint, including details like path, HTTP method, path params, body params, response schema and response statuses. On the right side of those pages, we have a `Playground Widget` that allows developers to make test API calls. Readme.io builds those pages using information about the REST API from the uploaded OpenAPI file and displays a UI that allows the exploration of all details. For each endpoint page, we have a corresponding dummy markdown file like https://github.com/voucherifyio/voucherify-openapi/blob/master/docs/reference-docs/VOUCHERS-Get-Voucher.md that allows us to control visual aspect of the page displayed in the readme, in particular:
+API Endpoint Pages like [GET voucher](https://docs.voucherify.io/reference/get-voucher) describe a REST API endpoint, including details like path, HTTP method, path params, body params, response schema, and response statuses. On the right side of those pages, we have a `Playground Widget` that allows developers to make test API calls. Readme.io builds those pages using information about the REST API from the uploaded OpenAPI file and displays a UI, so users can explore all details. For each endpoint page, we have a corresponding dummy markdown file like [VOUCHERS-Get-Voucher.md](https://github.com/voucherifyio/voucherify-openapi/blob/master/docs/reference-docs/VOUCHERS-Get-Voucher.md) that allows us to control visual aspect of the page displayed in the readme, in particular:
 - The markdown attributes section at the beginning of the file wrapped by `---` describes the page title, type, slug, order, and visibility.
 - `[block:html]` section that adds custom styles to the page that hides unnecessary UI elements like Playground language selector or expandable readme object exploration widget. It also can be used to display the "Beta" tag next to the title. 
 
@@ -53,7 +57,7 @@ h1::after {\n content: \"BETA\";\n background-color: rgb(237, 117, 71);\n color:
 
 ## OpenAPI files
 
-Please be notified that openAPI files slightly differ depending on where we use them.
+Note that openAPI files slightly differ depending on where we use them.
 
 - **[production/readOnly-openAPI.json]** - Spec version 3.0.1 for all external viewers.
 - **[reference/OpenAPI.json]** - Spec version 3.0.1 with `"type": "null"` usages.
@@ -109,7 +113,7 @@ Building new models, we should follow the following name convention:
   - `Request` or `Response`
   - `Body` or `Query`
 
-Example of model that need a `Differentiator`:
+Example of a model that needs a `Differentiator`:
 ```json
 "PublicationsCreateResponseBody": {
     "title": "Publications Create Response Body",
