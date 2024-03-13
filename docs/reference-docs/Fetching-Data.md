@@ -24,7 +24,7 @@ Some list API methods use the `page` query parameter to display another page of 
 However, the following list API methods use the `starting_after_id` query parameter:
 - List member activity
 - List member activity (with campaign ID)
-- List customer activity
+- [List customer activity](ref:list-customer-activity)
 
 The response to these three methods includes a `more_starting_after` key that takes a string value with an event ID. Use this event ID with the `starting_after_id` query parameter to page the results.
 

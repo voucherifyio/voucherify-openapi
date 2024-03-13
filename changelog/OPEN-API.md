@@ -7,7 +7,7 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 ## 2024-03-13
 
 - OpenAPIWebhooks.json:
-  - Changed webhook documentation into Event documentation. Now, the individual pages describe only the events
+  - Changed webhook documentation into Event documentation. Now, individual pages describe only the events
   - Added base webhook payload to the `introduction-to-webhook.md` file for distribution webhooks and project settings webhooks
   - Added the following events for distribution webhooks:
     - `customer.loyalty.tier.upgraded`
@@ -19,6 +19,12 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
     - `customer.order.canceled`
     - `customer.segment.left`
   - Relevant changes to custom webhook pages
+  - Added `category`, `start_date`, `expiration_date`, `description` to the `SimpleCampaign` schema
+  - Added `start_date` and `expiratotion_date` to the `SimpleVoucher` schema
+- OpenAPI.json:
+  - Added GET `/v1/customers/{id}/activity` endpoint
+  - Deprecated GET `/v1/customers/{id}/activities`
+  - Removed inadequate request body parameters for POST `/v1/campaigns/{campaignId}/import`
 
 ## 2024-02-28
 
