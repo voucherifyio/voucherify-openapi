@@ -4,6 +4,22 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-03-13
+
+- OpenAPIWebhooks.json:
+  - Changed webhook documentation into Event documentation. Now, the individual pages describe only the events
+  - Added base webhook payload to the `introduction-to-webhook.md` file for distribution webhooks and project settings webhooks
+  - Added the following events for distribution webhooks:
+    - `customer.loyalty.tier.upgraded`
+    - `customer.entered.segment`
+    - `customer.order.paid`
+    - `customer.voucher.loyalty_card.points_added`
+    - `customer.order.updated`
+    - `customer.order.created`
+    - `customer.order.canceled`
+    - `customer.segment.left`
+  - Relevant changes to custom webhook pages
+
 ## 2024-02-28
 
 OpenAPI.json:
