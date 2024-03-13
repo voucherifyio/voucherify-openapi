@@ -67,7 +67,7 @@ Code application can be different depending on the customer experience that you 
 > The validation and redemption requests can validate and redeem a combination of different discount types and redeemables. You can verify with one request how promotion tiers and voucher codes affect the customer's cart.
 
 >👍
-> Take a look at our new [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-a4e501ba-0e14-48b7-94c3-b66893e26c5a) that will lead you through the entire process flow of a voucher (coupon code) in Voucherify.
+> Take a look at new Voucherify [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-a4e501ba-0e14-48b7-94c3-b66893e26c5a) that will lead you through the entire process flow of a voucher (coupon code) in Voucherify.
 
 ### Checking promotion (discount without a code) eligibility during checkout
 
@@ -124,7 +124,7 @@ In this scenario, a customer is going to receive a voucher code during their vis
 > The validation and redemption requests can validate and redeem a combination of different discount types and redeemables. You can verify with one request how promotion tiers and voucher codes affect the customer's cart.
 
 > 👍
-> Take a look at our new [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-94f1af65-f69b-4810-899e-8f5eeafa03f8) that will lead you through the entire process flow of a wandering customer scenario in Voucherify.
+> Take a look at new Voucherify [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-94f1af65-f69b-4810-899e-8f5eeafa03f8) that will lead you through the entire process flow of a wandering customer scenario in Voucherify.
 
 ### Rewarding customers with points for purchases.
 
@@ -152,4 +152,4 @@ In this scenario, a customer will receive points for their purchase. The custome
 **Step 6**: The customer receives a notification.
 
 >👍
-> Take a look at our new [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-d4e5ae80-049a-4502-9c6b-57cb5f504c03) that will lead you through the entire process flow of a rewarding customers with points for purchases scenario (loyalty program).
+> Take a look at new Voucherify [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-d4e5ae80-049a-4502-9c6b-57cb5f504c03) that will lead you through the entire process flow of a rewarding customers with points for purchases scenario (loyalty program).
