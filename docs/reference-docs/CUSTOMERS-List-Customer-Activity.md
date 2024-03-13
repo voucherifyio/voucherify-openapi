@@ -1,11 +1,11 @@
 ---
-title: List Customer Activities
+title: List Customer Activity
 type: endpoint
 categorySlug: voucherify-api
-slug: list-customer-activities
+slug: list-customer-activity
 parentDocSlug: customers
 hidden: false
-order: 15
+order: 5
 ---
 [block:html]
 {

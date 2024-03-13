@@ -19628,44 +19628,9 @@
             "type": "string",
             "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
           },
-          "start_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
-            "example": "2022-09-20T00:00:00.000Z"
-          },
-          "validity_timeframe": {
-            "type": "object",
-            "description": "Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.`start_date` **required** when including the `validity_timeframe`.",
-            "properties": {
-              "interval": {
-                "type": "string",
-                "description": "Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an `interval` of `P2D` will be active every other day."
-              },
-              "duration": {
-                "type": "string",
-                "description": "Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a `duration` of `P1D` will be valid for a duration of one day."
-              }
-            }
-          },
-          "validity_day_of_week": {
-            "type": "array",
-            "description": "Integer array corresponding to the particular days of the week in which the campaign is valid.\n\n- `0`  Sunday  \n- `1`  Monday  \n- `2`  Tuesday  \n- `3`  Wednesday  \n- `4`  Thursday  \n- `5`  Friday  \n- `6`  Saturday  ",
-            "items": {
-              "type": "integer"
-            }
-          },
           "additional_info": {
             "type": "string",
             "description": "An optional field to keep any extra textual information about the code such as a code description and details."
-          },
-          "discount": {
-            "description": "Defines the voucher discount type and details.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Discount"
-              }
-            ]
           },
           "gift": {
             "description": "Defines the voucher gift details.",
@@ -20995,10 +20960,62 @@
             ]
           },
           "data": {
-            "type": "array",
+            "type": "object",
             "description": "Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.",
-            "items": {
-              "$ref": "#/components/schemas/CustomerActivityData"
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/CustomerActivityData"
+              },
+              "event_source": {
+                "type": "object",
+                "description": "Contains the source of the object that initiated the sendout.",
+                "required": [
+                  "channel"
+                ],
+                "properties": {
+                  "channel": {
+                    "type": "string",
+                    "description": "Determines the channel that initiated the sendout.",
+                    "enum": [
+                      "USER_PORTAL",
+                      "API",
+                      "CLIENT_API",
+                      "INTERNAL"
+                    ],
+                    "example": "API"
+                  },
+                  "user": {
+                    "type": "object",
+                    "description": "Defines the user who triggered the event.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique identifier of the user.",
+                        "example": "user_xyzfghSTprSTUVWXYlk6tuvXYst7FGH7"
+                      }
+                    }
+                  },
+                  "api_key": {
+                    "type": "object",
+                    "description": "Determines the API key used to initiate the sendout.",
+                    "required": [
+                      "name",
+                      "app_id"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Channel name in the application keys."
+                      },
+                      "app_id": {
+                        "type": "string",
+                        "description": "Contains the application ID from the Voucherify API key pair.",
+                        "example": "1XXXX5XX-0XXX-XXXb-X7XX-XX2XXaXXX6XX"
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
           "created_at": {
@@ -21006,6 +21023,11 @@
             "description": "Timestamp representing the date and time when the customer activity occurred in ISO 8601 format.",
             "example": "2022-08-30T09:14:07.660Z",
             "format": "date-time"
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Unique identifier of the request that caused the event.",
+            "example": "v-1f36113948e50fc4ge"
           }
         }
       },
@@ -21414,7 +21436,7 @@
       "CustomersActivitiesListResponseBody": {
         "type": "object",
         "title": "Customers Activities List Response Body",
-        "description": "Request body schema for **GET** `/customers/{customerId}/activities`.",
+        "description": "Response body schema for **GET** `/customers/{customerId}/activities`.",
         "properties": {
           "object": {
             "type": "string",
@@ -21443,6 +21465,44 @@
           "data_ref",
           "data",
           "total"
+        ]
+      },
+      "CustomersActivityListResponseBody": {
+        "type": "object",
+        "title": "Customers Activity List Response Body",
+        "description": "Response body schema for **GET** `/customers/{customerId}/activity`.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about customer activities in a dictionary."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of customer activity objects."
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of customer activity objects.",
+            "items": {
+              "$ref": "#/components/schemas/CustomerActivity"
+            }
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "Determines whether there are more results."
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an event ID that can be used to return another page of results. Use the event id in the `starting_after_id` query parameter to display another page of the results starting after the event with that ID."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "has_more"
         ]
       },
       "CustomersConsentsUpdateRequestBody": {
@@ -29307,6 +29367,13 @@
           "LUCKY_DRAW"
         ]
       },
+      "ParameterCategory": {
+        "type": "string",
+        "enum": [
+          "ACTION",
+          "EFFECT"
+        ]
+      },
       "ParameterCategoryId": {
         "type": "string",
         "example": "cat_0bb81a481615a37b5e"
@@ -29331,6 +29398,80 @@
             "format": "date-time"
           }
         }
+      },
+      "ParameterCustomerEvent": {
+        "type": "string",
+        "enum": [
+          "customer.confirmed",
+          "customer.created",
+          "customer.updated",
+          "customer.deleted",
+          "customer.referred",
+          "customer.custom_event",
+          "customer.segment.entered",
+          "customer.segment.left",
+          "customer.sms.sent",
+          "customer.sms.recovered",
+          "customer.sms.failed",
+          "customer.email.sent",
+          "customer.email.recovered",
+          "customer.email.failed",
+          "customer.activecampaign.sent",
+          "customer.activecampaign.recovered",
+          "customer.activecampaign.failed",
+          "customer.braze.sent",
+          "customer.braze.recovered",
+          "customer.braze.failed",
+          "customer.mailchimp.sent",
+          "customer.mailchimp.recovered",
+          "customer.mailchimp.failed",
+          "customer.intercom.sent",
+          "customer.intercom.recovered",
+          "customer.intercom.failed",
+          "customer.shopify.sent",
+          "customer.shopify.recovered",
+          "customer.shopify.failed",
+          "customer.klaviyo.sent",
+          "customer.klaviyo.recovered",
+          "customer.klaviyo.failed",
+          "customer.batch.sent",
+          "customer.batch.recovered",
+          "customer.batch.failed",
+          "customer.rewarded",
+          "customer.rewarded.loyalty_points",
+          "customer.voucher.gift.balance_added",
+          "customer.voucher.loyalty_card.points_added",
+          "customer.voucher.loyalty_card.points_transferred",
+          "customer.voucher.loyalty_card.points_expired",
+          "customer.voucher.deleted",
+          "customer.publication.succeeded",
+          "customer.publication.failed",
+          "customer.validation.succeeded",
+          "customer.validation.failed",
+          "customer.redemption.failed",
+          "customer.redemption.succeeded",
+          "customer.redemption.rollback.failed",
+          "customer.redemption.rollback.succeeded",
+          "customer.consents.given",
+          "customer.consents.revoked",
+          "customer.order.canceled",
+          "customer.order.created",
+          "customer.order.fulfilled",
+          "customer.order.paid",
+          "customer.order.processing",
+          "customer.order.updated",
+          "customer.reward_redemptions.created",
+          "customer.reward_redemptions.pending",
+          "customer.reward_redemptions.completed",
+          "customer.reward_redemptions.rolledback",
+          "customer.loyalty.updated",
+          "customer.loyalty.tier.upgraded",
+          "customer.loyalty.tier.downgraded",
+          "customer.loyalty.tier.prolonged",
+          "customer.loyalty.tier.expiration.changed",
+          "customer.loyalty.tier.joined",
+          "customer.loyalty.tier.left"
+        ]
       },
       "ParameterCustomerId": {
         "type": "string",
@@ -34056,11 +34197,11 @@
       "SimpleCampaign": {
         "title": "Simple Campaign",
         "type": "object",
-        "description": "Request body schema for creating a discount voucher campaign using **POST** `/campaigns`.",
+        "description": "Simplified campaign data.",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Campaign name."
+            "description": "Campaign ID."
           },
           "name": {
             "type": "string",
@@ -34083,17 +34224,23 @@
             "description": "Flag indicating whether this voucher is a referral code; `true` for campaign type `REFERRAL_PROGRAM`."
           },
           "voucher": {
-            "type": "object"
+            "type": "object",
+            "$ref": "#/components/schemas/SimpleCampaignVoucher"
           },
           "lucky_draw": {
-            "type": "object"
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LuckyDraw"
+              }
+            ]
           },
           "referral_program": {
             "$ref": "#/components/schemas/ReferralProgram"
           },
           "auto_join": {
             "type": "boolean",
-            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled."
+            "description": "Indicates whether customers will be able to auto-join the campaign if any earning rule is fulfilled."
           },
           "join_once": {
             "type": "boolean",
@@ -34101,12 +34248,47 @@
           },
           "active": {
             "type": "boolean",
-            "description": "Indicates whether campaign is active"
+            "description": "Indicates whether the campaign is active."
+          },
+          "category": {
+            "type": "string",
+            "description": "Unique category name."
+          },
+          "category_id": {
+            "nullable": true,
+            "type:": "string",
+            "description": "The unique category ID that this campaign belongs to."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a campaign. The metadata object stores all custom attributes assigned to the campaign."
+          },
+          "start_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is inactive *before* this date. ",
+            "example": "2022-09-20T00:00:00.000Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is inactive *after* this date.",
+            "example": "2022-09-30T00:00:00.000Z"
+          },
+          "description": {
+            "type": "string",
+            "description": "An optional field to keep extra textual information about the campaign such as a campaign description and details."
           },
           "created_at": {
             "type": "string",
-            "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the campaign was created in ISO 8601 format.",
+            "example": "2024-01-01T11:11:11.111Z",
+            "description": "Timestamp representing the date and time when the campaign was created in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2024-01-01T11:11:11.111Z",
+            "description": "Timestamp representing the date and time when the campaign was updated in the ISO 8601 format.",
             "format": "date-time"
           },
           "object": {
@@ -34116,12 +34298,76 @@
               "campaign"
             ],
             "description": "The type of object represented by JSON. This object stores information about the campaign."
-          },
-          "metadata": {
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to a campaign. The metadata object stores all custom attributes assigned to the campaign."
           }
         }
+      },
+      "SimpleCampaignVoucher": {
+        "type": "object",
+        "description": "Simplified campaign voucher data.",
+        "title": "Simple Campaign Voucher",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of the voucher.",
+            "enum": [
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD",
+              "GIFT_VOUCHER"
+            ]
+          },
+          "discount": {
+            "description": "Defines the voucher discount type and details.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Discount"
+              }
+            ]
+          },
+          "gift": {
+            "description": "Defines the voucher gift details.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Gift"
+              }
+            ]
+          },
+          "loyalty_card": {
+            "description": "Defines the voucher loyalty card details.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CampaignLoyaltyCard"
+              }
+            ]
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "nullable": true,
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              },
+              "redeemed_quantity": {
+                "type": "integer",
+                "example": 1,
+                "description": "How many times a voucher has already been redeemed."
+              }
+            },
+            "required": [
+              "quantity",
+              "redeemed_quantity"
+            ]
+          },
+          "code_config": {
+            "$ref": "#/components/schemas/CodeConfigRequiredLengthCharsetPattern"
+          }
+        },
+        "required": [
+          "type",
+          "redemption",
+          "code_config"
+        ]
       },
       "SimpleConsent": {
         "title": "Simple Consent",
@@ -34214,6 +34460,33 @@
         "required": [
           "object"
         ]
+      },
+      "SimpleLoyaltyCard": {
+        "title": "Simple Loyalty Card",
+        "type": "object",
+        "description": "Simplified loyalty card data.",
+        "required": [
+          "points",
+          "balance"
+        ],
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "Total points incurred over lifespan of loyalty card."
+          },
+          "balance": {
+            "type": "integer",
+            "description": "Points available for reward redemption."
+          },
+          "next_expiration_date": {
+            "type": "string",
+            "description": "The next closest date when the next set of points are due to expire."
+          },
+          "next_expiration_points": {
+            "type": "integer",
+            "description": "The amount of points that are set to expire next."
+          }
+        }
       },
       "SimpleOrder": {
         "title": "Simple Order",
@@ -34741,6 +35014,7 @@
       "SimpleVoucher": {
         "type": "object",
         "title": "Simple Voucher",
+        "description": "Simplified voucher data.",
         "properties": {
           "id": {
             "type": "string",
@@ -34751,7 +35025,7 @@
             "description": "Voucher code."
           },
           "gift": {
-            "description": "Gift object response",
+            "description": "Gift object response.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Gift"
@@ -34763,19 +35037,25 @@
           },
           "loyalty_card": {
             "description": "Defines the loyalty card details.",
-            "type": "object"
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SimpleLoyaltyCard"
+              }
+            ]
           },
           "type": {
             "type": "string",
-            "description": "Type of the object.",
-            "default": "voucher",
+            "description": "Type of the voucher.",
             "enum": [
-              "voucher"
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD",
+              "GIFT_VOUCHER"
             ]
           },
           "campaign": {
-            "description": "Campaign object",
-            "type": "object"
+            "type": "string",
+            "description": "Campaign name."
           },
           "campaign_id": {
             "type": "string",
@@ -34788,18 +35068,70 @@
           "holder_id": {
             "type": "string",
             "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
-            "description": "Unique customer ID of campaign owner."
+            "description": "Unique customer ID of the campaign owner."
           },
           "referrer_id": {
             "type": "string",
-            "description": "Unique referrer ID.",
+            "description": "Unique identifier of the referrer assigned by Voucherify.",
             "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+          },
+          "category_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique identifier of the category that this voucher belongs to.",
+            "example": "cat_0b6152ce12414820dc"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Shows whether the voucher is on or off. `true` indicates an *active* voucher and `false` indicates an *inactive* voucher."
           },
           "created_at": {
             "type": "string",
             "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the order was created in ISO 8601 format.",
+            "description": "Timestamp representing the date and time when the order was created in the ISO 8601 format.",
             "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2024-01-01T11:11:11.111Z",
+            "description": "Timestamp representing the date and time when the voucher was updated in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Defines the redemption limits on vouchers.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "nullable": true,
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              },
+              "redeemed_quantity": {
+                "type": "integer",
+                "example": 1,
+                "description": "How many times a voucher has already been redeemed."
+              }
+            },
+            "required": [
+              "quantity",
+              "redeemed_quantity"
+            ]
+          },
+          "start_date": {
+            "type": "string",
+            "example": "2021-12-01T00:00:00.000Z",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the code starts to be active in ISO 8601 format. Voucher is *inactive before* this date."
+          },
+          "expiration_date": {
+            "type": "string",
+            "example": "2021-12-31T00:00:00.000Z",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the code expires in ISO 8601 format.  Voucher is *inactive after* this date."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a voucher. The metadata object stores all custom attributes assigned to the voucher."
           },
           "object": {
             "type": "string",
@@ -34808,19 +35140,14 @@
             "enum": [
               "voucher"
             ]
-          },
-          "metadata": {
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to a voucher. The metadata object stores all custom attributes assigned to the voucher."
           }
         },
         "required": [
-          "valid",
+          "type",
           "code",
-          "applicable_to",
+          "created_at",
           "inapplicable_to",
-          "metadata",
-          "tracking_id"
+          "object"
         ]
       },
       "Sku": {
@@ -67116,6 +67443,109 @@
         }
       }
     },
+    "/v1/customers/{customerId}/activity": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCustomerId"
+          },
+          "name": "customerId",
+          "in": "path",
+          "required": true,
+          "description": "A Voucherify customer's `id` or source ID of the customer who performed the activities."
+        }
+      ],
+      "get": {
+        "operationId": "list-customer-activity",
+        "tags": [
+          "Customers"
+        ],
+        "summary": "List Customer Activity",
+        "description": "Retrieve customer activities.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/order"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "By applying this filter value, you will get events starting after an event with the given ID."
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterDate"
+            },
+            "description": "Timestamp representing the date and time which results must begin on. Represented in ISO 8601 format."
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterDate"
+            },
+            "description": "Timestamp representing the date and time which results must end on. Represented in ISO 8601 format."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCampaignId"
+            },
+            "in": "query",
+            "name": "campaign_id",
+            "description": "Requests only events related to specific campaign identified by its ID."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCampaignType"
+            },
+            "in": "query",
+            "name": "campaign_type",
+            "description": "Filters related customer's activity for the selected campaign types. Allowed values: \n`DISCOUNT_COUPONS`,\n`REFERRAL_PROGRAM`,\n`GIFT_VOUCHERS`,\n`PROMOTION`,\n`LOYALTY_PROGRAM`."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCategory"
+            },
+            "in": "query",
+            "name": "category",
+            "description": "Filters activities for actions or effects. Allowed values: \n`ACTION`,\n`EFFECT`."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCustomerEvent"
+            },
+            "in": "query",
+            "name": "type",
+            "description": "Event name of the customer event."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a dictionary with customer activities.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersActivityListResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/customers/{customerId}/activities": {
       "parameters": [
         {
@@ -67130,11 +67560,12 @@
       ],
       "get": {
         "operationId": "list-customer-activities",
+        "deprecated": true,
         "tags": [
           "Customers"
         ],
         "summary": "List Customer Activities",
-        "description": "Retrieve customer activities.",
+        "description": "> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for listing customer activities and we do not recommend using it. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint.\n\nRetrieve customer activities.",
         "parameters": [
           {
             "$ref": "#/components/parameters/limit"

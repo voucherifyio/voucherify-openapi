@@ -13,8 +13,9 @@ order: 2
 |:-----|:--------|
 | id</br>`string` | <p>Unique event ID, assigned by Voucherify.</p> **Example:** <p>evcus_0c150c51730c6b60b1</p> |
 | type</br>`string` | <p>Event type.</p> Available values: `customer.confirmed`, `customer.created`, `customer.updated`, `customer.deleted`, `customer.referred`, `customer.custom_event`, `customer.segment.entered`, `customer.segment.left`, `customer.sms.sent`, `customer.sms.recovered`, `customer.sms.failed`, `customer.email.sent`, `customer.email.recovered`, `customer.email.failed`, `customer.activecampaign.sent`, `customer.activecampaign.recovered`, `customer.activecampaign.failed`, `customer.braze.sent`, `customer.braze.recovered`, `customer.braze.failed`, `customer.mailchimp.sent`, `customer.mailchimp.recovered`, `customer.mailchimp.failed`, `customer.intercom.sent`, `customer.intercom.recovered`, `customer.intercom.failed`, `customer.shopify.sent`, `customer.shopify.recovered`, `customer.shopify.failed`, `customer.klaviyo.sent`, `customer.klaviyo.recovered`, `customer.klaviyo.failed`, `customer.batch.sent`, `customer.batch.recovered`, `customer.batch.failed`, `customer.rewarded`, `customer.rewarded.loyalty_points`, `customer.voucher.gift.balance_added`, `customer.voucher.loyalty_card.points_added`, `customer.voucher.loyalty_card.points_transferred`, `customer.voucher.loyalty_card.points_expired`, `customer.voucher.deleted`, `customer.publication.succeeded`, `customer.publication.failed`, `customer.validation.succeeded`, `customer.validation.failed`, `customer.redemption.failed`, `customer.redemption.succeeded`, `customer.redemption.rollback.failed`, `customer.redemption.rollback.succeeded`, `customer.consents.given`, `customer.consents.revoked`, `customer.order.canceled`, `customer.order.created`, `customer.order.fulfilled`, `customer.order.paid`, `customer.order.processing`, `customer.order.updated`, `customer.reward_redemptions.created`, `customer.reward_redemptions.pending`, `customer.reward_redemptions.completed`, `customer.reward_redemptions.rolledback`, `customer.loyalty.updated`, `customer.loyalty.tier.upgraded`, `customer.loyalty.tier.downgraded`, `customer.loyalty.tier.prolonged`, `customer.loyalty.tier.expiration.changed`, `customer.loyalty.tier.joined`, `customer.loyalty.tier.left` |
-| data</br>`array` | <p>Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.</p> Array of [Customer Activity Data](#customer-activity-data) |
+| data</br>`object` | <p>Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">data</td><td style="text-align:left">See: <a href="#customer-activity-data">Customer Activity Data</a></td></tr><tr><td style="text-align:left">event_source</br><code>object</code></td><td style="text-align:left"><p>Contains the source of the object that initiated the sendout.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">channel</br><code>string</code></td><td style="text-align:left"><p>Determines the channel that initiated the sendout.</p> Available values: <code>USER_PORTAL</code>, <code>API</code>, <code>CLIENT_API</code>, <code>INTERNAL</code> <strong>Example:</strong> <p>API</p></td></tr><tr><td style="text-align:left">user</br><code>object</code></td><td style="text-align:left"><p>Defines the user who triggered the event.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the user.</p> <strong>Example:</strong> <p>user_xyzfghSTprSTUVWXYlk6tuvXYst7FGH7</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">api_key</br><code>object</code></td><td style="text-align:left"><p>Determines the API key used to initiate the sendout.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Channel name in the application keys.</p></td></tr><tr><td style="text-align:left">app_id</br><code>string</code></td><td style="text-align:left"><p>Contains the application ID from the Voucherify API key pair.</p> <strong>Example:</strong> <p>1XXXX5XX-0XXX-XXXb-X7XX-XX2XXaXXX6XX</p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the customer activity occurred in ISO 8601 format.</p> **Example:** <p>2022-08-30T09:14:07.660Z</p> |
+| group_id</br>`string` | <p>Unique identifier of the request that caused the event.</p> **Example:** <p>v-1f36113948e50fc4ge</p> |
 
 ## Customer Activity Data
 <p>Event data object schema.</p>
@@ -466,38 +467,50 @@ All of:
 ## Simple Campaign
 | Attributes |  Description |
 |:-----|:--------|
-| id</br>`string` | <p>Campaign name.</p> |
+| id</br>`string` | <p>Campaign ID.</p> |
 | name</br>`string` | <p>Campaign name.</p> |
 | campaign_type</br>`string` | <p>Type of campaign.</p> |
 | type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation.</p><ul><li><code>AUTO_UPDATE</code>: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).</li><li><code>STATIC</code>: vouchers need to be manually published.</li></ul> Available values: `AUTO_UPDATE`, `STATIC` |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
-| voucher</br>`object` |  |
-| lucky_draw</br>`object` |  |
+| voucher</br>`object` | See: [Simple Campaign Voucher](#simple-campaign-voucher) |
+| lucky_draw</br>`object` | [Lucky Draw](#lucky-draw) |
 | referral_program | See: [Referral Program](#referral-program) |
-| auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled.</p> |
+| auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join the campaign if any earning rule is fulfilled.</p> |
 | join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once.</p> |
-| active</br>`boolean` | <p>Indicates whether campaign is active</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the campaign was created in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the campaign.</p> Available values: `campaign` |
+| active</br>`boolean` | <p>Indicates whether the campaign is active.</p> |
+| category</br>`string` | <p>Unique category name.</p> |
+| category_id | <p>The unique category ID that this campaign belongs to.</p> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a campaign. The metadata object stores all custom attributes assigned to the campaign.</p> |
+| start_date</br>`string` | <p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is inactive <em>before</em> this date.</p> **Example:** <p>2022-09-20T00:00:00.000Z</p> |
+| expiration_date</br>`string` | <p>Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is inactive <em>after</em> this date.</p> **Example:** <p>2022-09-30T00:00:00.000Z</p> |
+| description</br>`string` | <p>An optional field to keep extra textual information about the campaign such as a campaign description and details.</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the campaign was created in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the campaign was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the campaign.</p> Available values: `campaign` |
 
 ## Simple Voucher
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>A unique identifier that represents the voucher assigned by Voucherify.</p> |
 | code</br>`string` | <p>Voucher code.</p> |
-| gift | <p>Gift object response</p> [Gift](#gift) |
+| gift | <p>Gift object response.</p> [Gift](#gift) |
 | discount | See: [Discount](#discount) |
-| loyalty_card</br>`object` | <p>Defines the loyalty card details.</p> |
-| type</br>`string` | <p>Type of the object.</p> Available values: `voucher` |
-| campaign</br>`object` | <p>Campaign object</p> |
+| loyalty_card</br>`object` | <p>Defines the loyalty card details.</p> [Simple Loyalty Card](#simple-loyalty-card) |
+| type</br>`string` | <p>Type of the voucher.</p> Available values: `DISCOUNT_VOUCHER`, `LOYALTY_CARD`, `GIFT_VOUCHER` |
+| campaign</br>`string` | <p>Campaign name.</p> |
 | campaign_id</br>`string` | <p>Campaign unique ID.</p> |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
-| holder_id</br>`string` | <p>Unique customer ID of campaign owner.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
-| referrer_id</br>`string` | <p>Unique referrer ID.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the order was created in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `voucher` |
+| holder_id</br>`string` | <p>Unique customer ID of the campaign owner.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
+| referrer_id</br>`string` | <p>Unique identifier of the referrer assigned by Voucherify.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
+| category_id</br>`string`, `null` | <p>Unique identifier of the category that this voucher belongs to.</p> **Example:** <p>cat_0b6152ce12414820dc</p> |
+| active</br>`boolean` | <p>Shows whether the voucher is on or off. <code>true</code> indicates an <em>active</em> voucher and <code>false</code> indicates an <em>inactive</em> voucher.</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the order was created in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code>, <code>null</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr><tr><td style="text-align:left">redeemed_quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher has already been redeemed.</p> <strong>Example:</strong> <p>1</p></td></tr></tbody></table> |
+| start_date</br>`string` | <p>Activation timestamp defines when the code starts to be active in ISO 8601 format. Voucher is <em>inactive before</em> this date.</p> **Example:** <p>2021-12-01T00:00:00.000Z</p> |
+| expiration_date</br>`string` | <p>Expiration timestamp defines when the code expires in ISO 8601 format.  Voucher is <em>inactive after</em> this date.</p> **Example:** <p>2021-12-31T00:00:00.000Z</p> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a voucher. The metadata object stores all custom attributes assigned to the voucher.</p> |
+| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `voucher` |
 
 ## Custom Event
 | Attributes |  Description |
@@ -732,6 +745,23 @@ All of:
 | address</br>`object`, `null` | <p>Customer's address.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">city</br><code>string</code></td><td style="text-align:left"><p>City</p></td></tr><tr><td style="text-align:left">state</br><code>string</code></td><td style="text-align:left"><p>State</p></td></tr><tr><td style="text-align:left">line_1</br><code>string</code></td><td style="text-align:left"><p>First line of address.</p></td></tr><tr><td style="text-align:left">line_2</br><code>string</code></td><td style="text-align:left"><p>Second line of address.</p></td></tr><tr><td style="text-align:left">country</br><code>string</code></td><td style="text-align:left"><p>Country.</p></td></tr><tr><td style="text-align:left">postal_code</br><code>string</code></td><td style="text-align:left"><p>Postal code.</p></td></tr></tbody></table> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.</p> |
 
+## Simple Campaign Voucher
+| Attributes |  Description |
+|:-----|:--------|
+| type</br>`string` | <p>Type of the voucher.</p> Available values: `DISCOUNT_VOUCHER`, `LOYALTY_CARD`, `GIFT_VOUCHER` |
+| discount | <p>Defines the voucher discount type and details.</p> [Discount](#discount) |
+| gift | <p>Defines the voucher gift details.</p> [Gift](#gift) |
+| loyalty_card | <p>Defines the voucher loyalty card details.</p> [Campaign Loyalty Card](#campaign-loyalty-card) |
+| redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code>, <code>null</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr><tr><td style="text-align:left">redeemed_quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher has already been redeemed.</p> <strong>Example:</strong> <p>1</p></td></tr></tbody></table> |
+| code_config | See: [Code Config Required Length Charset Pattern](#code-config-required-length-charset-pattern) |
+
+## Lucky Draw
+| Attributes |  Description |
+|:-----|:--------|
+| winners_count</br>`string` | <p>It represents the total number of winners in a lucky draw.</p> |
+| unique_winners_per_draw</br>`string` | <p>It indicates whether each winner in a draw is unique or not.</p> |
+| unique_winners</br>`string` | <p>Specifies whether each participant can win only once across multiple draws.</p> |
+
 ## Referral Program
 | Attributes |  Description |
 |:-----|:--------|
@@ -752,6 +782,14 @@ All of:
 One of:
 
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
+
+## Simple Loyalty Card
+| Attributes |  Description |
+|:-----|:--------|
+| points</br>`integer` | <p>Total points incurred over lifespan of loyalty card.</p> |
+| balance</br>`integer` | <p>Points available for reward redemption.</p> |
+| next_expiration_date</br>`string` | <p>The next closest date when the next set of points are due to expire.</p> |
+| next_expiration_points</br>`integer` | <p>The amount of points that are set to expire next.</p> |
 
 ## Customer Object Required Object Type
 | Attributes |  Description |
@@ -1030,6 +1068,15 @@ All of:
 | last_order_amount</br>`integer` | <p>Amount spent on last order. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
 | last_order_date</br>`string` | <p>Timestamp representing the date and time of the customer's last order in ISO 8601 format.</p> **Example:** <p>2022-08-30T11:51:08.029Z</p> |
 
+## Campaign Loyalty Card
+| Attributes |  Description |
+|:-----|:--------|
+| points</br>`integer` | <p>The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card.</p> |
+| expiration_rules</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">period_type</br><code>string</code></td><td style="text-align:left"><p>Type of period</p></td></tr><tr><td style="text-align:left">period_value</br><code>integer</code></td><td style="text-align:left"><p>Value of the period</p></td></tr><tr><td style="text-align:left">rounding_type</br><code>string</code></td><td style="text-align:left"><p>Type of rounding</p></td></tr><tr><td style="text-align:left">rounding_value</br><code>integer</code></td><td style="text-align:left"><p>Value of rounding</p></td></tr></tbody></table> |
+
+## Code Config Required Length Charset Pattern
+[Code Config](#code-config)
+
 ## Amount
 | Attributes |  Description |
 |:-----|:--------|
@@ -1271,6 +1318,16 @@ Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `cus
 | Attributes |  Description |
 |:-----|:--------|
 | parameters</br>`object` | <p>Defines the cost of the reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">loyalty</br><code>object</code></td><td style="text-align:left"><p>Defines the equivalent points value of the reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>The number of points required to redeem the reward.</p></td></tr></tbody></table></td></tr></tbody></table> |
+
+## Code Config
+| Attributes |  Description |
+|:-----|:--------|
+| length</br>`number` | <p>Number of characters in a generated code (excluding prefix and postfix).</p> |
+| charset</br>`string` | <p>Characters that can appear in the code.</p><p>Examples:</p><ul><li>Alphanumeric: <code>0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic: <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic Lowercase: <code>abcdefghijklmnopqrstuvwxyz</code></li><li>Alphabetic Uppercase: <code>ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Numbers: <code>0123456789</code></li><li>Custom: a custom character set</li></ul> |
+| prefix</br>`string` | <p>A text appended before the code.</p> |
+| postfix</br>`string` | <p>A text appended after the code.</p> |
+| pattern</br>`string` | <p>A pattern for codes where hashes (#) will be replaced with random characters. Overrides <code>length</code>.</p> |
+| initial_count</br>`integer` | <p>The initial count</p> |
 
 ## Discount Amount Vouchers Effect Types
 Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`, `APPLY_TO_ITEMS_PROPORTIONALLY`, `APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY`, `APPLY_TO_ITEMS_BY_QUANTITY`

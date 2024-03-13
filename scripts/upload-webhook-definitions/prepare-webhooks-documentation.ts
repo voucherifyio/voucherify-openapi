@@ -123,7 +123,7 @@ export const prepareWebhooksDocumentation = async () => {
           .replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase())}`
       );
       mdComment.push(`type: endpoint`);
-      mdComment.push(`categorySlug: webhooks`);
+      mdComment.push(`categorySlug: events`);
       mdComment.push(
         `parentDocSlug: ${group.toLowerCase().replaceAll(" ", "-")}`
       );
@@ -132,12 +132,7 @@ export const prepareWebhooksDocumentation = async () => {
       mdComment.push(`order: ${index + 1}`);
       mdComment.push("---");
       const mdText = [];
-      mdText.push(
-        `# EVENT: "${pathName.replaceAll(
-          "/",
-          ""
-        )}"<br />HTTP method: ${method.toUpperCase()}`
-      );
+      mdText.push(`# EVENT: "${pathName.replaceAll("/", "")}"`);
       const fileName = `${operationId.replaceAll(".", "-")}.md`;
       if (
         fs.existsSync(

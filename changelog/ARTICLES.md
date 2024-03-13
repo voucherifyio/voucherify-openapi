@@ -7,6 +7,11 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-03-13
+
+- Added links to Postman collections in the "Integration Processes" article.
+- Changed "Fetching data" article with regard to paging the results with `starting_after_id`.
+
 ## 2024-02-22
 
 - Fixed wrong links to recipes in the "Examples" page.

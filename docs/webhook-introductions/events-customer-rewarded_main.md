@@ -1,1 +1,0 @@
-The `EVENTS.CUSTOMER.REWARDED.MAIN` webhook means that a customer received a reward in exchange for points in a loyalty campaign. The action is usually a manual process started by the customer.
