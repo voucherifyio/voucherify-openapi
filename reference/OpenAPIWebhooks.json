@@ -3482,6 +3482,64 @@
         "operationId": "events-customer-publication-succeeded"
       }
     },
+    "/EVENTS.CUSTOMER.CUSTOM_EVENT": {
+      "post": {
+        "summary": "Customer custom event",
+        "description": "",
+        "tags": [
+          "Events customer"
+        ],
+        "responses": {
+          "200": {
+            "description": "Indicates that a customer-related custom event has occurred.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventCustomerCustomEventData"
+                },
+                "examples": {
+                  "customer.custom_event": {
+                    "value": {
+                      "event": {
+                        "id": "event_0e70ee5acd8b2555ce",
+                        "object": "event",
+                        "type": "sign_up",
+                        "customer": {
+                          "id": "cust_154FDQKcbzygdo231M62r4CD"
+                        },
+                        "referral": null,
+                        "loyalty": null,
+                        "metadata": {
+                          "source": "API"
+                        },
+                        "created_at": "2024-03-14T11:47:24.598Z"
+                      },
+                      "event_schema": {
+                        "id": "ms_f1r5Tcu5T0m3v3nT5ch3ma",
+                        "name": "sign_up"
+                      },
+                      "customer": {
+                        "id": "cust_154FDQKcbzygdo231M62r4CD",
+                        "name": "Alex Doe",
+                        "email": null,
+                        "source_id": "4lx-d03",
+                        "metadata": {
+                          "region": "EMEA"
+                        },
+                        "object": "customer"
+                      },
+                      "referral": null,
+                      "loyalty": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "operationId": "events-customer-custom_event"
+      }
+    },
     "/EVENTS.PUBLICATION.SUCCEEDED": {
       "post": {
         "summary": "Succeeded",
@@ -6342,12 +6400,19 @@
               },
               "id": {
                 "type": "string",
-                "description": "Unique voucher ID."
+                "description": "Unique identifier of the voucher."
               }
             }
           },
           "loyalty": {
-            "type": "object"
+            "type": "object",
+            "description": "Loyalty object.",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Loyalty card code."
+              }
+            }
           },
           "metadata": {
             "type": "object",
@@ -9235,6 +9300,83 @@
           }
         }
       },
+      "EventCustomerCustomEvent": {
+        "type": "object",
+        "title": "Event Customer Custom Event",
+        "description": "Event data object schema for `customer.custom_event`.",
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/CustomEvent"
+          },
+          "event_schema": {
+            "$ref": "#/components/schemas/SimpleCustomEvent"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "referral": {
+            "type": "object",
+            "description": "Details about the referral.",
+            "properties": {
+              "referrer": {
+                "description": "Details about the referrer.",
+                "$ref": "#/components/schemas/SimpleCustomer"
+              },
+              "voucher": {
+                "description": "Details about the referral code.",
+                "$ref": "#/components/schemas/SimpleVoucher"
+              },
+              "campaign": {
+                "description": "Details about the referral campaign.",
+                "$ref": "#/components/schemas/SimpleCampaign"
+              }
+            },
+            "required": [
+              "referrer",
+              "voucher",
+              "campaign"
+            ]
+          },
+          "loyalty": {
+            "type": "object",
+            "description": "Details about the loyalty activity.",
+            "properties": {
+              "voucher": {
+                "description": "Details about the loyalty code.",
+                "$ref": "#/components/schemas/SimpleVoucher"
+              },
+              "campaign": {
+                "description": "Details about the loyalty campaign.",
+                "$ref": "#/components/schemas/SimpleCampaign"
+              }
+            },
+            "required": [
+              "voucher",
+              "campaign"
+            ]
+          }
+        },
+        "required": [
+          "event",
+          "event_schema",
+          "customer",
+          "referral",
+          "loyalty"
+        ]
+      },
+      "EventCustomerCustomEventData": {
+        "type": "object",
+        "title": "Event Customer Custom Event",
+        "description": "Event data object schema for `customer.custom_event`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerCustomEvent"
+          },
+          {
+            "$ref": "#/components/schemas/EventDistributionScenariosPromotionSendCode"
+          }
+        ]
+      },
       "EventCustomerDeleted": {
         "type": "object",
         "title": "Event Customer Deleted",
@@ -11306,7 +11448,9 @@
         },
         "required": [
           "name",
-          "points"
+          "points",
+          "earning_rules",
+          "rewards"
         ]
       },
       "LoyaltyTierExpiration": {
@@ -13060,6 +13204,21 @@
           "object",
           "id"
         ]
+      },
+      "SimpleCustomEvent": {
+        "title": "Simple Custom Event",
+        "type": "object",
+        "description": "Simplified custom event data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the custom event."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the custom event."
+          }
+        }
       },
       "SimpleCustomer": {
         "title": "Simple Customer",
