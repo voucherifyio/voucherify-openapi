@@ -1,10 +1,11 @@
-The `EVENTS.CUSTOMER.ORDER.UPDATED` event indicates that a customer-related order has been updated.
+The `EVENTS.CUSTOMER.CUSTOM_EVENT` event indicates that a custom event has occurred and it involved a customer.
 
-When the event is used in an "Order update" distribution webhook, the `data` object always contains the following required objects:
+When the event is used in an "Custom event" distribution webhook, the `data` object always contains the following required objects:
+- `event`,
+- `event_schema`,
 - `customer`,
-- `referrer`,
-- `order`,
-- `redemption`.
+- `referral`,
+- `loyalty`.
 
 Additional objects are also sent depending on the purpose:
 - "Notify customers about promotion" sends also the following objects:
@@ -15,6 +16,7 @@ Additional objects are also sent depending on the purpose:
   - `voucher`,
   - `publication`,
 - "Send plain message to customers" sends only the basic objects listed above.
+
 
 > 📘 Webhook documentation
 >

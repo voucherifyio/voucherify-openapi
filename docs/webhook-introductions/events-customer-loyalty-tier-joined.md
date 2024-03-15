@@ -1,4 +1,4 @@
-The `EVENTS.CUSTOMER.LOYALTY.TIER.UPGRADED` event indicates that a customer has moved to a higher tier or a specific tier in a loyalty campaign.
+The `EVENTS.CUSTOMER.LOYALTY.TIER.JOINED` event indicates that a customer has entered a loyalty campaign tier structure or a specific tier.
 
 > 📘 Webhook documentation
 >
