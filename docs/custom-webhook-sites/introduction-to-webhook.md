@@ -118,13 +118,17 @@ Some distribution events, e.g. Customer entered segment, have different purposes
 - Send and publish unique codes from campaign
 - Send plain message to customers
 
+> 🚧 Work in Progress
+>
+> The documentation of the following distribution webhooks is in progress. Activities with links to event pages are documented.
+
 The documentation of these events contains data for all purposes. The objects which are shared between the purposes are marked as `required`. The objects which appear only for specific purposes are respectively described.
 
 - Segment related activities:
   - [Customer entered segment](ref:events-customer-segment-entered "Customer entered segment event documentation")
   - [Customer left segment](ref:events-customer-segment-left "Customer left segment event documentation")
 - Manual messages:
-  - [Send and publish unique codes from a campaign](ref:events-distribution-publication-succeeded "Send and publish unique codes from a campaign event documentation") (this is the only setting for manual messages that sends webhooks)
+  - Send and publish unique codes from a campaign (this is the only setting for manual messages that sends webhooks)
 - Cart related activities:
   - [Order update](ref:events-customer-order-updated "Order updated event documentation")
   - [Order has been paid](ref:events-customer-order-paid "Order paid event documentation")

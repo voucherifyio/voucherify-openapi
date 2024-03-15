@@ -97,7 +97,7 @@ In this scenario, promotion eligibility is going to be verified during the check
 > The validation and redemption requests can validate and redeem a combination of different discount types and redeemables. You can verify with one request how promotion tiers and voucher codes affect the customer's cart.
 
 > 👍
-> Take a look at new Voucherify [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-d838a14e-5494-4206-b07a-0a667d6535e4) that will lead you through the entire process flow of a wandering customer scenario in Voucherify.
+> Take a look at new Voucherify [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-d838a14e-5494-4206-b07a-0a667d6535e4) that will lead you through the entire process flow of a voucher and promotion redemption scenario in Voucherify.
 
 ### Publishing a voucher code in a wandering customer scenario
 
