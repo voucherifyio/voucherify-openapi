@@ -1,4 +1,4 @@
-The `EVENTS.CUSTOMER.LOYALTY.TIER.UPGRADED` event indicates that a customer has moved to a higher tier or a specific tier in a loyalty campaign.
+The `EVENTS.CUSTOMER.VOUCHER.GIFT.BALANCE_ADDED` event indicates that additional balance has been successfully added to a customer's gift voucher. It provides real-time notification that the gift voucher's balance has been increased.
 
 > 📘 Webhook documentation
 >

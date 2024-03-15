@@ -1,4 +1,4 @@
-The `EVENTS.CUSTOMER.LOYALTY.TIER.UPGRADED` event indicates that a customer has moved to a higher tier or a specific tier in a loyalty campaign.
+The `EVENTS.CUSTOMER.REDEMPTION.SUCCEEDED` event indicates that the redemption process was successful with regard to a customer. It confirms that the associated voucher codes and promotional tiers have been effectively applied.
 
 > 📘 Webhook documentation
 >
