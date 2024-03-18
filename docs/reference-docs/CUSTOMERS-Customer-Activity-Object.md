@@ -58,7 +58,11 @@ One of:
 ## Event Customer Custom Event
 | Attributes |  Description |
 |:-----|:--------|
-| customer | See: [Customer With Summary Loyalty Referrals](#customer-with-summary-loyalty-referrals) |
+| event | See: [Custom Event](#custom-event) |
+| event_schema | See: [Simple Custom Event](#simple-custom-event) |
+| customer | See: [Simple Customer](#simple-customer) |
+| referral</br>`object`, `null` | <p>Details about the referral.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">referrer</td><td style="text-align:left"><p>Details about the referrer.</p> See: <a href="#simple-customer">Simple Customer</a></td></tr><tr><td style="text-align:left">voucher</td><td style="text-align:left"><p>Details about the referral code.</p> See: <a href="#simple-voucher">Simple Voucher</a></td></tr><tr><td style="text-align:left">campaign</td><td style="text-align:left"><p>Details about the referral campaign.</p> See: <a href="#simple-campaign">Simple Campaign</a></td></tr></tbody></table> |
+| loyalty</br>`object`, `null` | <p>Details about the loyalty activity.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">voucher</td><td style="text-align:left"><p>Details about the loyalty code.</p> See: <a href="#simple-voucher">Simple Voucher</a></td></tr><tr><td style="text-align:left">campaign</td><td style="text-align:left"><p>Details about the loyalty campaign.</p> See: <a href="#simple-campaign">Simple Campaign</a></td></tr></tbody></table> |
 
 ## Event Customer Segment Entered
 | Attributes |  Description |
@@ -217,7 +221,7 @@ One of:
 | redemption | See: [Redemption Internal](#redemption-internal) |
 | reward | See: [Simple Redemption Reward Result](#simple-redemption-reward-result) |
 | referral_tier | See: [Simple Referral Tier](#simple-referral-tier) |
-| balance</br>`integer` |  |
+| balance</br>`object`, `null` | <p>Balance changed by the event.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">amount</br><code>integer</code></td><td style="text-align:left"></td></tr></tbody></table> |
 | custom_event | See: [Custom Event](#custom-event) |
 | customer_event</br>`object` |  |
 
@@ -520,7 +524,7 @@ All of:
 | type</br>`string` | <p>The event name.</p> |
 | customer | <p>A simple customer object</p> [Customer Object Required Object Type](#customer-object-required-object-type) |
 | referral</br>`object` | <p>Referral object.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">referrer_id</br><code>string</code></td><td style="text-align:left"><p>Unique referrer ID.</p> <strong>Example:</strong> <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p></td></tr><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Voucher code.</p></td></tr><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique voucher ID.</p></td></tr></tbody></table> |
-| loyalty</br>`object` |  |
+| loyalty</br>`object` | <p>Loyalty object.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Loyalty card code.</p></td></tr></tbody></table> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer object.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the custom event was created in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 
@@ -554,6 +558,12 @@ All of:
 | campaign_name</br>`string` | <p>Campaign name</p> |
 | voucher | <p>Defines the details of the voucher being redeemed.</p> [Voucher](#voucher) |
 | promotion_tier | <p>Contains details of the promotion tier and the parent campaign.</p> [Promotion Tier](#promotion-tier) |
+
+## Simple Custom Event
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique identifier of the custom event.</p> |
+| name</br>`string` | <p>Name of the custom event.</p> |
 
 ## Simple Segment
 | Attributes |  Description |
