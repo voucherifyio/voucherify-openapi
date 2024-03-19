@@ -1,11 +1,11 @@
 ---
-title: Add or Remove Loyalty Card Balance
+title: List Member Activities
 type: endpoint
 categorySlug: voucherify-api
-slug: update-loyalty-card-balance-1
+slug: list-member-activity
 parentDocSlug: loyalties
 hidden: false
-order: 170
+order: 120
 ---
 [block:html]
 {

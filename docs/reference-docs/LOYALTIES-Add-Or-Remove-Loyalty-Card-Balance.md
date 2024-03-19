@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: update-loyalty-card-balance
 parentDocSlug: loyalties
 hidden: false
-order: 16
+order: 160
 ---
 [block:html]
 {
