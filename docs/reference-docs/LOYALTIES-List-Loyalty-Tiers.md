@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: list-loyalty-tiers
 parentDocSlug: loyalties
 hidden: false
-order: 43
+order: 430
 ---
 [block:html]
 {

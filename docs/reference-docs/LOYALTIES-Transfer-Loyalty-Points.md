@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: transfer-points
 parentDocSlug: loyalties
 hidden: false
-order: 18
+order: 180
 ---
 [block:html]
 {
