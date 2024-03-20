@@ -420,6 +420,13 @@
           "-category"
         ]
       },
+      "ParameterOrderCreatedAt": {
+        "type": "string",
+        "enum": [
+          "created_at",
+          "-created_at"
+        ]
+      },
       "ParameterOrderListLocations": {
         "type": "string",
         "enum": [
@@ -2253,6 +2260,21 @@
           "gift",
           "loyalty_card"
         ]
+      },
+      "SimpleCustomEvent": {
+        "title": "Simple Custom Event",
+        "type": "object",
+        "description": "Simplified custom event data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the custom event."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the custom event."
+          }
+        }
       },
       "SimpleCustomer": {
         "type": "object",
@@ -9847,7 +9869,26 @@
           },
           "metadata": {
             "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format."
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.",
+            "properties": {
+              "source_type": {
+                "type": "string",
+                "description": "Defines the type of the distribution source."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Unique identifier of the distribution source."
+              },
+              "distribution_id": {
+                "type": "string",
+                "description": "Unique identifier of the distribution."
+              }
+            },
+            "required": [
+              "source_type",
+              "source_id",
+              "distribution_id"
+            ]
           },
           "channel": {
             "type": "string",
@@ -23305,6 +23346,13 @@
             "description": "Unique identifier of the category that this voucher belongs to.",
             "example": "cat_0b6152ce12414820dc"
           },
+          "categories": {
+            "type": "array",
+            "description": "Contains details about the category.",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
+          },
           "active": {
             "type": "boolean",
             "description": "Shows whether the voucher is on or off. `true` indicates an *active* voucher and `false` indicates an *inactive* voucher."
@@ -23438,6 +23486,13 @@
             "nullable": true,
             "type:": "string",
             "description": "The unique category ID that this campaign belongs to."
+          },
+          "categories": {
+            "type": "array",
+            "description": "Contains details about the category.",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
           },
           "metadata": {
             "type": "object",
@@ -23640,7 +23695,10 @@
           "object": {
             "type": "string",
             "default": "list",
-            "description": "The type of object represented by JSON. This object stores information about customer activities in a dictionary."
+            "description": "The type of object represented by JSON. This object stores information about customer activities in a dictionary.",
+            "enum": [
+              "list"
+            ]
           },
           "data_ref": {
             "type": "string",
@@ -23829,6 +23887,7 @@
       },
       "CustomerActivityData": {
         "title": "Customer Activity Data",
+        "type": "object",
         "description": "Event data object schema.",
         "oneOf": [
           {
@@ -24184,17 +24243,69 @@
         ]
       },
       "EventCustomerCustomEvent": {
+        "type": "object",
         "title": "Event Customer Custom Event",
         "description": "Event data object schema for `customer.custom_event`.",
-        "type": "object",
         "properties": {
+          "event": {
+            "$ref": "#/components/schemas/CustomEvent"
+          },
+          "event_schema": {
+            "$ref": "#/components/schemas/SimpleCustomEvent"
+          },
           "customer": {
-            "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "referral": {
+            "type": "object",
+            "nullable": true,
+            "description": "Details about the referral.",
+            "properties": {
+              "referrer": {
+                "description": "Details about the referrer.",
+                "$ref": "#/components/schemas/SimpleCustomer"
+              },
+              "voucher": {
+                "description": "Details about the referral code.",
+                "$ref": "#/components/schemas/SimpleVoucher"
+              },
+              "campaign": {
+                "description": "Details about the referral campaign.",
+                "$ref": "#/components/schemas/SimpleCampaign"
+              }
+            },
+            "required": [
+              "referrer",
+              "voucher",
+              "campaign"
+            ]
+          },
+          "loyalty": {
+            "type": "object",
+            "nullable": true,
+            "description": "Details about the loyalty activity.",
+            "properties": {
+              "voucher": {
+                "description": "Details about the loyalty code.",
+                "$ref": "#/components/schemas/SimpleVoucher"
+              },
+              "campaign": {
+                "description": "Details about the loyalty campaign.",
+                "$ref": "#/components/schemas/SimpleCampaign"
+              }
+            },
+            "required": [
+              "voucher",
+              "campaign"
+            ]
           }
         },
-        "additionalProperties": true,
         "required": [
-          "customer"
+          "event",
+          "event_schema",
+          "customer",
+          "referral",
+          "loyalty"
         ]
       },
       "EventCustomerSegmentEntered": {
@@ -24501,7 +24612,14 @@
             "$ref": "#/components/schemas/SimpleReferralTier"
           },
           "balance": {
-            "type": "integer"
+            "nullable": true,
+            "type": "object",
+            "description": "Balance changed by the event.",
+            "properties": {
+              "amount": {
+                "type": "integer"
+              }
+            }
           },
           "custom_event": {
             "$ref": "#/components/schemas/CustomEvent"
@@ -24673,7 +24791,7 @@
             "$ref": "#/components/schemas/SimpleCampaign"
           },
           "publication": {
-            "type": "object"
+            "$ref": "#/components/schemas/ListPublicationsItemValidSingleVoucher"
           }
         }
       },
@@ -24689,7 +24807,7 @@
             "$ref": "#/components/schemas/SimpleCampaign"
           },
           "publication": {
-            "type": "object"
+            "$ref": "#/components/schemas/ListPublicationsItemValidSingleVoucher"
           }
         }
       },
@@ -27089,7 +27207,14 @@
             }
           },
           "loyalty": {
-            "type": "object"
+            "type": "object",
+            "description": "Loyalty object.",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Loyalty card code."
+              }
+            }
           },
           "metadata": {
             "type": "object",
@@ -30029,6 +30154,43 @@
               },
               "campaign_id": {
                 "$ref": "#/components/schemas/QualificationsFieldConditions"
+              },
+              "campaign_type": {
+                "title": "Qualifications Campaign Type Conditions",
+                "type": "object",
+                "description": "Returns both campaigns and their vouchers or promotion tiers. Use other filters, e.g. `resource_type`, to narrow down the results.",
+                "properties": {
+                  "conditions": {
+                    "description": "Data filters used to narrow the data records to be returned in the result.",
+                    "type": "object",
+                    "properties": {
+                      "$is": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/ParameterCampaignType"
+                        }
+                      },
+                      "$is_not": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/ParameterCampaignType"
+                        }
+                      },
+                      "$in": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/ParameterCampaignType"
+                        }
+                      },
+                      "$not_in": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/ParameterCampaignType"
+                        }
+                      }
+                    }
+                  }
+                }
               },
               "resource_id": {
                 "$ref": "#/components/schemas/QualificationsFieldConditions"
@@ -37512,6 +37674,47 @@
         },
         "description": "Request body schema for **POST** `/redemptions/{parentRedemptionId}/rollbacks`."
       },
+      "LoyaltiesMemberActivityListResponseBody": {
+        "type": "object",
+        "title": "Member Activity List Response Body",
+        "description": "Response body schema for retrieving member activity.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about member activities in a dictionary.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of member activity objects."
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of member activity objects.",
+            "items": {
+              "$ref": "#/components/schemas/MemberActivity"
+            }
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "Determines whether there are more results."
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an event ID that can be used to return another page of results. Use the event id in the `starting_after_id` query parameter to display another page of the results starting after the event with that ID."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "has_more"
+        ]
+      },
       "LoyaltiesMembersBalanceUpdateRequestBody": {
         "description": "Request Body schema for **post** `/loyalties/members/{memberId}/balance` and **POST** `/loyalties/{campaignId}/members/{memberId}/balance`.",
         "title": "Loyalties Members Balance Update Request Body",
@@ -37647,6 +37850,188 @@
             "description": "A set of key/value pairs that you can send in the request body to check against vouchers requiring **redemption** metadata validation rules to be satisfied. The validation runs against rules that are defined through the <!-- [Create Validation Rules](https://docs.voucherify.io/reference/create-validation-rules) -->[Create Validation Rules](ref:create-validation-rules) endpoint or via the Dashboard; in the _Advanced Rule Builder_ &rarr; _Advanced_ &rarr; _Redemption metadata satisfy_ or _Basic Builder_ &rarr; _Attributes match_ &rarr; _REDEMPTION METADATA_. [Read more](https://support.voucherify.io/article/148-how-to-build-a-rule)."
           }
         }
+      },
+      "MemberActivity": {
+        "title": "Member Activity",
+        "type": "object",
+        "description": "This is an object representing member activity.  \n\nThis is a general object which presents moments from members' activity. There are all types of different events that members perform during their journey once they participate in a loyalty program. Events describe moments when the members redeem loyalty cards and earn points or rewards. The list of all types of activities is listed below.\n\nThe details describing the activity are collected in an array property named `data`. In this object, software integrators can find all further information explaining the event context.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique event ID, assigned by Voucherify.",
+            "example": "evcus_0c150c51730c6b60b1"
+          },
+          "type": {
+            "type": "string",
+            "description": "Event type.",
+            "enum": [
+              "customer.loyalty.tier.upgraded",
+              "customer.loyalty.tier.downgraded",
+              "customer.loyalty.tier.prolonged",
+              "customer.loyalty.tier.expiration.changed",
+              "customer.loyalty.tier.joined",
+              "customer.loyalty.tier.left",
+              "customer.publication.succeeded",
+              "customer.publication.failed",
+              "customer.redemption.failed",
+              "customer.redemption.succceeded",
+              "customer.redemption.rollback.failed",
+              "customer.redemption.rollback.succceeded",
+              "customer.rewarded",
+              "customer.rewarded.loyalty_points",
+              "customer.reward_redemptions.created",
+              "customer.reward_redemptions.pending",
+              "customer.reward_redemptions.completed",
+              "customer.reward_redemptions.rolledback",
+              "customer.voucher.deleted",
+              "customer.voucher.loyalty_card.points_added",
+              "customer.voucher.loyalty_card.points_transferred",
+              "customer.voucher.loyalty_card.points_expired"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "description": "Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.",
+            "properties": {
+              "data": {
+                "$ref": "#/components/schemas/MemberActivityData"
+              },
+              "event_source": {
+                "type": "object",
+                "description": "Contains the source of the object that initiated the sendout.",
+                "required": [
+                  "channel"
+                ],
+                "properties": {
+                  "channel": {
+                    "type": "string",
+                    "description": "Determines the channel that initiated the sendout.",
+                    "enum": [
+                      "USER_PORTAL",
+                      "API",
+                      "CLIENT_API",
+                      "INTERNAL"
+                    ],
+                    "example": "API"
+                  },
+                  "user": {
+                    "type": "object",
+                    "description": "Defines the user who triggered the event.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique identifier of the user.",
+                        "example": "user_xyzfghSTprSTUVWXYlk6tuvXYst7FGH7"
+                      }
+                    }
+                  },
+                  "api_key": {
+                    "type": "object",
+                    "description": "Determines the API key used to initiate the sendout.",
+                    "required": [
+                      "name",
+                      "app_id"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "Channel name in the application keys."
+                      },
+                      "app_id": {
+                        "type": "string",
+                        "description": "Contains the application ID from the Voucherify API key pair.",
+                        "example": "1XXXX5XX-0XXX-XXXb-X7XX-XX2XXaXXX6XX"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the member activity occurred in ISO 8601 format.",
+            "example": "2022-08-30T09:14:07.660Z",
+            "format": "date-time"
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Unique identifier of the request that caused the event.",
+            "example": "w-0e30613abc1f044513"
+          }
+        }
+      },
+      "MemberActivityData": {
+        "title": "Member Activity Data",
+        "description": "Event data object schema.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierUpgraded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierDowngraded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierProlonged"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierExpirationChanged"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierJoined"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyTierLeft"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerPublicationSucceeded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerPublicationFailed"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemptionFailed"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemptionSucceeded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemptionRollbackFailed"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRedemptionRollbackSucceeded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRewarded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardedLoyaltyPoints"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardRedemptionsCreated"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardRedemptionsPending"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardRedemptionsCompleted"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerRewardRedemptionsRolledBack"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerVoucherDeleted"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyCardPointsAdded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyCardPointsTransferred"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerVouchersLoyaltyPointsExpired"
+          }
+        ]
       },
       "CustomersConsentsUpdateRequestBody": {
         "type": "object",
@@ -38328,7 +38713,7 @@
           "Qualifications"
         ],
         "summary": "Check Eligibility",
-        "description": "<!-- theme: warning -->\n> 🚧 The Qualifications endpoint in the basic mode ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read our dedicated guide to learn about some use cases this endpoint can cover [here](doc:checking-eligibility).\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
+        "description": "<!-- theme: warning -->\n> 🚧 The Qualifications endpoint in the basic mode ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read [the dedicated guide](doc:checking-eligibility) to learn about some use cases this endpoint can cover.\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
         "parameters": [],
         "security": [
           {
@@ -58015,6 +58400,135 @@
         }
       }
     },
+    "/v1/loyalties/{campaignId}/members/{memberId}/activity": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "description": "Unique campaign ID."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "A code that identifies the loyalty card."
+        }
+      ],
+      "get": {
+        "operationId": "list-member-activity-1",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "List Member Activity",
+        "description": "Retrieves the list of activities for the given member ID related to a voucher and customer who is the holder of the voucher.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderCreatedAt"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Apply this filter to order the events according the date and time when it was created. The dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "Sorts the results to get events starting after an event with the given ID."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of event objects related to the loyalty card.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMemberActivityListResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/members/{memberId}/activity": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty card assigned to a particular customer."
+        }
+      ],
+      "get": {
+        "operationId": "list-member-activity",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "List Member Activity",
+        "description": "\n> 📘 Alternative endpoint\n> This endpoint is an alternative to this [endpoint](ref:list-member-activity-1). The URL was re-designed to allow you to get member activities without having to provide the `campaignId` as a path parameter.\n\nRetrieves the list of activities for the given member ID related to a voucher and customer who is the holder of the voucher.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderCreatedAt"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Apply this filter to order the events according the date and time when it was created. The dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "Apply this filter value to get events starting after an event with the given ID."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of event objects related to the loyalty card.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMemberActivityListResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/loyalties/{campaignId}/members/{memberId}/balance": {
       "parameters": [
         {
@@ -67462,7 +67976,12 @@
             "$ref": "#/components/parameters/limit"
           },
           {
-            "$ref": "#/components/parameters/order"
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderCreatedAt"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Apply this filter to order the events according the date and time when it was created. "
           },
           {
             "schema": {
@@ -67470,7 +67989,7 @@
             },
             "in": "query",
             "name": "starting_after_id",
-            "description": "By applying this filter value, you will get events starting after an event with the given ID."
+            "description": "Apply this filter value to get events starting after an event with the given ID."
           },
           {
             "name": "start_date",
@@ -67582,7 +68101,7 @@
             },
             "in": "query",
             "name": "starting_after_id",
-            "description": "By applying this filter value, you will get events starting after an event with the given ID."
+            "description": "Apply this filter value to get events starting after an event with the given ID."
           },
           {
             "schema": {

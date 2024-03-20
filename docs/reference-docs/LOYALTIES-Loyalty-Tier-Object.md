@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 parentDocSlug: loyalties
 slug: loyalty-tier-object
 hidden: false
-order: 3
+order: 30
 ---
 
 ## Loyalty Tier

@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 parentDocSlug: loyalties
 slug: loyalty-campaign-object
 hidden: false
-order: 1
+order: 10
 ---
 
 ## Loyalty Campaign Object

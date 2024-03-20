@@ -58,7 +58,11 @@ One of:
 ## Event Customer Custom Event
 | Attributes |  Description |
 |:-----|:--------|
-| customer | See: [Customer With Summary Loyalty Referrals](#customer-with-summary-loyalty-referrals) |
+| event | See: [Custom Event](#custom-event) |
+| event_schema | See: [Simple Custom Event](#simple-custom-event) |
+| customer | See: [Simple Customer](#simple-customer) |
+| referral</br>`object`, `null` | <p>Details about the referral.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">referrer</td><td style="text-align:left"><p>Details about the referrer.</p> See: <a href="#simple-customer">Simple Customer</a></td></tr><tr><td style="text-align:left">voucher</td><td style="text-align:left"><p>Details about the referral code.</p> See: <a href="#simple-voucher">Simple Voucher</a></td></tr><tr><td style="text-align:left">campaign</td><td style="text-align:left"><p>Details about the referral campaign.</p> See: <a href="#simple-campaign">Simple Campaign</a></td></tr></tbody></table> |
+| loyalty</br>`object`, `null` | <p>Details about the loyalty activity.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">voucher</td><td style="text-align:left"><p>Details about the loyalty code.</p> See: <a href="#simple-voucher">Simple Voucher</a></td></tr><tr><td style="text-align:left">campaign</td><td style="text-align:left"><p>Details about the loyalty campaign.</p> See: <a href="#simple-campaign">Simple Campaign</a></td></tr></tbody></table> |
 
 ## Event Customer Segment Entered
 | Attributes |  Description |
@@ -217,7 +221,7 @@ One of:
 | redemption | See: [Redemption Internal](#redemption-internal) |
 | reward | See: [Simple Redemption Reward Result](#simple-redemption-reward-result) |
 | referral_tier | See: [Simple Referral Tier](#simple-referral-tier) |
-| balance</br>`integer` |  |
+| balance</br>`object`, `null` | <p>Balance changed by the event.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">amount</br><code>integer</code></td><td style="text-align:left"></td></tr></tbody></table> |
 | custom_event | See: [Custom Event](#custom-event) |
 | customer_event</br>`object` |  |
 
@@ -285,14 +289,14 @@ One of:
 |:-----|:--------|
 | customer | See: [Simple Customer](#simple-customer) |
 | campaign | See: [Simple Campaign](#simple-campaign) |
-| publication</br>`object` |  |
+| publication | See: [Valid Single Voucher](#valid-single-voucher) |
 
 ## Event Customer Publication Failed
 | Attributes |  Description |
 |:-----|:--------|
 | customer | See: [Simple Customer](#simple-customer) |
 | campaign | See: [Simple Campaign](#simple-campaign) |
-| publication</br>`object` |  |
+| publication | See: [Valid Single Voucher](#valid-single-voucher) |
 
 ## Event Customer Validation Succeeded
 | Attributes |  Description |
@@ -480,6 +484,7 @@ All of:
 | active</br>`boolean` | <p>Indicates whether the campaign is active.</p> |
 | category</br>`string` | <p>Unique category name.</p> |
 | category_id | <p>The unique category ID that this campaign belongs to.</p> |
+| categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a campaign. The metadata object stores all custom attributes assigned to the campaign.</p> |
 | start_date</br>`string` | <p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is inactive <em>before</em> this date.</p> **Example:** <p>2022-09-20T00:00:00.000Z</p> |
 | expiration_date</br>`string` | <p>Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is inactive <em>after</em> this date.</p> **Example:** <p>2022-09-30T00:00:00.000Z</p> |
@@ -503,6 +508,7 @@ All of:
 | holder_id</br>`string` | <p>Unique customer ID of the campaign owner.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
 | referrer_id</br>`string` | <p>Unique identifier of the referrer assigned by Voucherify.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
 | category_id</br>`string`, `null` | <p>Unique identifier of the category that this voucher belongs to.</p> **Example:** <p>cat_0b6152ce12414820dc</p> |
+| categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | active</br>`boolean` | <p>Shows whether the voucher is on or off. <code>true</code> indicates an <em>active</em> voucher and <code>false</code> indicates an <em>inactive</em> voucher.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the order was created in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
@@ -520,7 +526,7 @@ All of:
 | type</br>`string` | <p>The event name.</p> |
 | customer | <p>A simple customer object</p> [Customer Object Required Object Type](#customer-object-required-object-type) |
 | referral</br>`object` | <p>Referral object.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">referrer_id</br><code>string</code></td><td style="text-align:left"><p>Unique referrer ID.</p> <strong>Example:</strong> <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p></td></tr><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Voucher code.</p></td></tr><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique voucher ID.</p></td></tr></tbody></table> |
-| loyalty</br>`object` |  |
+| loyalty</br>`object` | <p>Loyalty object.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Loyalty card code.</p></td></tr></tbody></table> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer object.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the custom event was created in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 
@@ -554,6 +560,12 @@ All of:
 | campaign_name</br>`string` | <p>Campaign name</p> |
 | voucher | <p>Defines the details of the voucher being redeemed.</p> [Voucher](#voucher) |
 | promotion_tier | <p>Contains details of the promotion tier and the parent campaign.</p> [Promotion Tier](#promotion-tier) |
+
+## Simple Custom Event
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique identifier of the custom event.</p> |
+| name</br>`string` | <p>Name of the custom event.</p> |
 
 ## Simple Segment
 | Attributes |  Description |
@@ -639,6 +651,12 @@ All of:
 | details</br>`object` | <p>Contains the detailed information about the transaction.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">balance</br><code>object</code></td><td style="text-align:left"><p>Contains information on how the balance was affected by the transaction.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>The type of voucher whose balance is being adjusted due to the transaction.</p> Available values: <code>loyalty_card</code></td></tr><tr><td style="text-align:left">total</br><code>integer</code></td><td style="text-align:left"><p>The number of all points accumulated on the card as affected by add or subtract operations.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of object represented by the JSON.</p> Available values: <code>balance</code></td></tr><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Points added or subtracted in the transaction.</p></td></tr><tr><td style="text-align:left">balance</br><code>integer</code></td><td style="text-align:left"><p>The available points on the card after the transaction as affected by redemption or rollback.</p></td></tr><tr><td style="text-align:left">related_object</br><code>object</code></td><td style="text-align:left"><p>Defines the resource that is being modified with the values that are returned in the balance object.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API.</p></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>The object being modified, i.e. voucher.</p> Available values: <code>voucher</code></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td style="text-align:left">order</br><code>object</code></td><td style="text-align:left"><p>Contains information about the original order.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique order ID.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant’s order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">event</br><code>object</code></td><td style="text-align:left"><p>Contains information about the event that triggers the point accrual.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique event ID.</p></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Type of event.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">earning_rule</br><code>object</code></td><td style="text-align:left"><p>Contains information about the earning rule.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique earning rule ID.</p></td></tr><tr><td style="text-align:left">source</br><code>object</code></td><td style="text-align:left"><p>Contains the custom earning rule name.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">banner</br><code>string</code></td><td style="text-align:left"><p>Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard.</p></td></tr></tbody></table></td></tr></tbody></table></td></tr><tr><td style="text-align:left">segment</br><code>object</code></td><td style="text-align:left"><p>Contains information about the segment.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"></td></tr></tbody></table></td></tr><tr><td style="text-align:left">loyalty_tier</br><code>object</code></td><td style="text-align:left"><p>Contains information about the loyalty tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"></td></tr></tbody></table></td></tr><tr><td style="text-align:left">redemption</br><code>object</code></td><td style="text-align:left"><p>Contains information about the original redemption.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique redemption ID.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">rollback</br><code>object</code></td><td style="text-align:left"><p>Contains information about the redemption rollback.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique redemption rollback ID.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">custom_event</br><code>object</code></td><td style="text-align:left"><p>Contains information about the custom event that triggers the point accrual.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique event ID.</p></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Type of custom event.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">event_schema</br><code>object</code></td><td style="text-align:left"><p>Contains information about the custom event metadata schema.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique metadata schema ID.</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Type of custom event.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">reward</br><code>object</code></td><td style="text-align:left"><p>Contains information about the pay with points reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique reward ID.</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Reward name.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">source_voucher</td><td style="text-align:left"><p>Contains information on how the balance on the donor loyalty card was affected by the transaction.</p> <a href="#simple-voucher">Simple Voucher</a></td></tr><tr><td style="text-align:left">destination_voucher</td><td style="text-align:left"><p>Contains information on how the balance on the receiving loyalty card was affected by the transaction.</p> <a href="#simple-voucher">Simple Voucher</a></td></tr></tbody></table> |
 | related_transaction_id</br>`string`, `null` | <p>The related transaction ID on the receiving card.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the transaction was created in ISO 8601 format.</p> |
+
+## Valid Single Voucher
+All of:
+
+1. [List Publications Item Base](#list-publications-item-base)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">result</br><code>string</code></td><td style="text-align:left"><p>Status of the publication attempt.</p> Available values: <code>SUCCESS</code></td></tr><tr><td style="text-align:left">voucher</td><td style="text-align:left">See: <a href="#list-publications-item-voucher">List Publications Item Voucher</a></td></tr></tbody></table>
 
 ## Validation Entity
 | Attributes |  Description |
@@ -768,6 +786,17 @@ All of:
 | conversion_event_type</br>`string` | <p>Define how a referral is triggered.</p> Available values: `redemption`, `custom_event` |
 | custom_event</br>`object` | <p>Contains details about the custom event.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique custom event ID.</p> <strong>Example:</strong> <p>ms_Ll9enAm2BCN0M1s4VxWobLFM</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Custom event name.</p></td></tr></tbody></table> |
 | referee_reward</br>`object` | <p>Defines the referee reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">related_object_parent</br><code>object</code></td><td style="text-align:left"><p>Details of the resource from which the reward originates.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique ID of the reward source.</p> <strong>Example:</strong> <p>camp_kdxp3vf1clQ9CFs1jpqv3tZe</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Name of the reward source.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Type of resource represented by the source of the reward.</p> Available values: <code>CAMPAIGN</code></td></tr></tbody></table></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Type of reward.</p> Available values: <code>DISCOUNT_VOUCHER</code>, <code>LOYALTY_CARD</code>, <code>GIFT_VOUCHER</code>, <code>LUCKY_DRAW_CODE</code></td></tr><tr><td style="text-align:left">amount</br><code>string</code></td><td style="text-align:left"><p>Define the number of <code>points</code> to add to a loyalty card or <code>credits</code> to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p></td></tr></tbody></table> |
+
+## Category
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
+| name</br>`string` | <p>Category name.</p> |
+| hierarchy</br>`integer` | <p>Category hierarchy.</p> |
+| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
+| stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Gift
 | Attributes |  Description |
@@ -967,6 +996,31 @@ One of:
 ## LoyaltyCardTransactionsType
 Available values: `POINTS_ACCRUAL`, `POINTS_CANCELLATION`, `POINTS_REDEMPTION`, `POINTS_REFUND`, `POINTS_ADDITION`, `POINTS_REMOVAL`, `POINTS_EXPIRATION`, `POINTS_TRANSFER_IN`, `POINTS_TRANSFER_OUT`
 
+## List Publications Item Base
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique publication ID, assigned by Voucherify.</p> **Example:** <p>pub_BbjAXnmm8e0SIm3zG8qvvFCP0KuLywtp</p> |
+| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the <code>publication</code>.</p> Available values: `publication` |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the publication was created in ISO 8601 format.</p> **Example:** <p>2022-09-23T09:57:00.434Z</p> |
+| customer_id</br>`string` | <p>Unique customer ID of the customer receiving the publication.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
+| tracking_id</br>`string` | <p>Customer's <code>source_id</code>.</p> |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_type</br><code>string</code></td><td style="text-align:left"><p>Defines the type of the distribution source.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the distribution source.</p></td></tr><tr><td style="text-align:left">distribution_id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the distribution.</p></td></tr></tbody></table> |
+| channel</br>`string` | <p>How the publication was originated. It can be your own custom channel or an example value provided here.</p> |
+| source_id</br>`string`, `null` | <p>The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.</p> |
+| customer | See: [Customer With Summary Loyalty Referrals](#customer-with-summary-loyalty-referrals) |
+| vouchers_id</br>`array` | <p>Contains the unique internal voucher ID that was assigned by Voucherify.</p> |
+
+## List Publications Item Voucher
+| Attributes |  Description |
+|:-----|:--------|
+| code</br>`string` | <p>Voucher code.</p> |
+| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `voucher` |
+| campaign</br>`string` | <p>Campaign name</p> |
+| gift | <p>Gift object response</p> [Gift](#gift) |
+| loyalty_card</br>`object` | <p>Defines the loyalty card details.</p> |
+| discount | See: [Discount](#discount) |
+| is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
+
 ## Applicable Redeemable
 | Attributes |  Description |
 |:-----|:--------|
@@ -1149,17 +1203,6 @@ All of:
 | created_at</br>`string` | <p>Timestamp representing the date and time when the SKU was created in ISO 8601 format.</p> **Example:** <p>2022-05-17T10:36:30.187Z</p> |
 | updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the SKU was updated in ISO 8601 format.</p> **Example:** <p>2022-05-17T10:55:09.137Z</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>SKU</code>.</p> Available values: `sku` |
-
-## Category
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
-| name</br>`string` | <p>Category name.</p> |
-| hierarchy</br>`integer` | <p>Category hierarchy.</p> |
-| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
-| updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
-| stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Voucher Assets
 | Attributes |  Description |

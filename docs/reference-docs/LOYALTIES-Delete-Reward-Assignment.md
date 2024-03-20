@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: delete-reward-assignment-1
 parentDocSlug: loyalties
 hidden: false
-order: 42
+order: 420
 ---
 [block:html]
 {

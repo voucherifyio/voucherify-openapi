@@ -1,11 +1,11 @@
 ---
-title: List Earning Rules
+title: List Member Activity
 type: endpoint
 categorySlug: voucherify-api
-slug: list-earning-rules
+slug: list-member-activity
 parentDocSlug: loyalties
 hidden: false
-order: 250
+order: 120
 ---
 [block:html]
 {
