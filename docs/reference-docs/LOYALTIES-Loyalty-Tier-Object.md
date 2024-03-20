@@ -1,11 +1,11 @@
 ---
-title: Loyalty Campaign Object
+title: Loyalty Tier Object
 type: basic
 categorySlug: voucherify-api
 parentDocSlug: loyalties
-slug: loyalty-campaign-object
+slug: loyalty-tier-object
 hidden: false
-order: 10
+order: 30
 ---
 
 ## Loyalty Tier
