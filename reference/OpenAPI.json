@@ -9869,7 +9869,26 @@
           },
           "metadata": {
             "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format."
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.",
+            "properties": {
+              "source_type": {
+                "type": "string",
+                "description": "Defines the type of the distribution source."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Unique identifier of the distribution source."
+              },
+              "distribution_id": {
+                "type": "string",
+                "description": "Unique identifier of the distribution."
+              },
+              "required": [
+                "source_type",
+                "source_id",
+                "distribution_id"
+              ]
+            }
           },
           "channel": {
             "type": "string",
@@ -24771,7 +24790,7 @@
             "$ref": "#/components/schemas/SimpleCampaign"
           },
           "publication": {
-            "type": "object"
+            "$ref": "#/components/schemas/ListPublicationsItemValidSingleVoucher"
           }
         }
       },
@@ -24787,7 +24806,7 @@
             "$ref": "#/components/schemas/SimpleCampaign"
           },
           "publication": {
-            "type": "object"
+            "$ref": "#/components/schemas/ListPublicationsItemValidSingleVoucher"
           }
         }
       },
@@ -30134,6 +30153,43 @@
               },
               "campaign_id": {
                 "$ref": "#/components/schemas/QualificationsFieldConditions"
+              },
+              "campaign_type": {
+                "title": "Qualifications Campaign Type Conditions",
+                "type": "object",
+                "description": "Returns both campaigns and their vouchers or promotion tiers. Use other filters, e.g. `resource_type`, to narrow down the results.",
+                "properties": {
+                  "conditions": {
+                    "description": "Data filters used to narrow the data records to be returned in the result.",
+                    "type": "object",
+                    "properties": {
+                      "$is": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/ParameterCampaignType"
+                        }
+                      },
+                      "$is_not": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/ParameterCampaignType"
+                        }
+                      },
+                      "$in": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/ParameterCampaignType"
+                        }
+                      },
+                      "$not_in": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/ParameterCampaignType"
+                        }
+                      }
+                    }
+                  }
+                }
               },
               "resource_id": {
                 "$ref": "#/components/schemas/QualificationsFieldConditions"
@@ -38656,7 +38712,7 @@
           "Qualifications"
         ],
         "summary": "Check Eligibility",
-        "description": "<!-- theme: warning -->\n> 🚧 The Qualifications endpoint in the basic mode ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read our dedicated guide to learn about some use cases this endpoint can cover [here](doc:checking-eligibility).\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
+        "description": "<!-- theme: warning -->\n> 🚧 The Qualifications endpoint in the basic mode ignores the rules checking:\n> \n> - Limit of total redeemed discount amount per campaign\n> - Limit of total redemptions count per campaign\n> - Redemptions per customer\n> - Redemptions per customer in a campaign \n\nGenerate a list of redeemables that are applicable in the context of the customer and order.\n\nThe new qualifications method is an improved version of [Campaign Qualifications](ref:examine-campaigns-qualification), [Voucher Qualifications](ref:examine-vouchers-qualification), and [Promotions Validation](ref:validate-promotions) API requests. The new qualification method introduces the following improvements:\n\n- Qualification results are returned faster\n- No limit on the number of returned redeemables\n- Introduces new qualification scenarios, not available in the previous version\n\n> 👍 Scenario Guide\n>\n> Read [the dedicated guide]((doc:checking-eligibility) to learn about some use cases this endpoint can cover.\n\n## Paging \n\nThe Voucherify Qualifications API request will return to you all of the redeemables available for the customer in batches of up to 50 redeemables. To get the next batch of redeemables, you need to use the `starting_after` cursor.\n\nTo process of paging the redeemables works in the following manner:\n\n- You send the first API request for Qualifications without the `starting_after` parameter.\n- The response will contain a parameter named `has_more`. If the parameter's value is set to `true`, then more redeemables are available.\n- Get the value of the `created_at` parameter of the last returned redeemable. The value of this parameter will be used as a cursor to retrieve the next page of redeemables.\n- Send another API request for Qualification with the `starting_after` parameter set to the value taken from the `created_at` parameter from the last returned redeemable.\n- Voucherify will return the next page of redeemables.\n- If the `has_more` parameter is set to `true`, apply steps 3-5 to get the next page of redeemables.",
         "parameters": [],
         "security": [
           {
@@ -58381,7 +58437,7 @@
             },
             "in": "query",
             "name": "order",
-            "description": "Apply this filter to order the events according the date and time when it was created. "
+            "description": "Apply this filter to order the events according the date and time when it was created. The dash `-` preceding a sorting option means sorting in a descending order."
           },
           {
             "schema": {
@@ -58389,7 +58445,7 @@
             },
             "in": "query",
             "name": "starting_after_id",
-            "description": "Sorts the results to get events starting after an event with the given ID. The dash `-` preceding a sorting option means sorting in a descending order."
+            "description": "Sorts the results to get events starting after an event with the given ID."
           }
         ],
         "security": [
@@ -58441,7 +58497,7 @@
             },
             "in": "query",
             "name": "order",
-            "description": "Apply this filter to order the events according the date and time when it was created. "
+            "description": "Apply this filter to order the events according the date and time when it was created. The dash `-` preceding a sorting option means sorting in a descending order."
           },
           {
             "schema": {

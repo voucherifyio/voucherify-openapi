@@ -4,6 +4,23 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-03-20
+
+- OpenAPIWebhooks.json:
+  - Added a better example for the `customer.loyalty.tier.prolonged` event
+  - Added `MANUAL_DISTRIBUTION_SCHEDULE` event
+    - The `paths` object `/EVENTS.DISTRIBUTION.MANUAL_DISTRIBUTION_SCHEDULE` is a workaround; the actual event is called `MANUAL_DISTRIBUTION_SCHEDULE`
+  - Added `categories` to the `SimpleCampaign` and `SimpleVoucher` schemas
+  - Updated the `WebhookDistributionPayload` schema
+- OpenAPI.json:
+  - Added the GET `/v1/loyalties/members/{memberId}/activity` endpoint and its associated schemas
+  - Added the GET `/v1/loyalties/{id}/members/{memberId}/activity` endpoint and its associated schemas
+  - Added the `SimpleCustomEvent` schema
+  - Added the `campaign_type` filter for the POST `/v1/qualifications` endpoint
+  - Updated the `EventCustomerCustomEvent` schema
+  - Updated the `"publications"` object for events
+  - Added the `ParameterOrderCreatedAt` schema
+
 ## 2024-03-13
 
 - OpenAPIWebhooks.json:

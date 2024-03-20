@@ -289,14 +289,14 @@ One of:
 |:-----|:--------|
 | customer | See: [Simple Customer](#simple-customer) |
 | campaign | See: [Simple Campaign](#simple-campaign) |
-| publication</br>`object` |  |
+| publication | See: [Publications with Voucher](#publications-with-voucher) |
 
 ## Event Customer Publication Failed
 | Attributes |  Description |
 |:-----|:--------|
 | customer | See: [Simple Customer](#simple-customer) |
 | campaign | See: [Simple Campaign](#simple-campaign) |
-| publication</br>`object` |  |
+| publication | See: [Publications with Voucher](#publications-with-voucher) |
 
 ## Event Customer Validation Succeeded
 | Attributes |  Description |
@@ -484,6 +484,7 @@ All of:
 | active</br>`boolean` | <p>Indicates whether the campaign is active.</p> |
 | category</br>`string` | <p>Unique category name.</p> |
 | category_id | <p>The unique category ID that this campaign belongs to.</p> |
+| categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a campaign. The metadata object stores all custom attributes assigned to the campaign.</p> |
 | start_date</br>`string` | <p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is inactive <em>before</em> this date.</p> **Example:** <p>2022-09-20T00:00:00.000Z</p> |
 | expiration_date</br>`string` | <p>Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is inactive <em>after</em> this date.</p> **Example:** <p>2022-09-30T00:00:00.000Z</p> |
@@ -507,6 +508,7 @@ All of:
 | holder_id</br>`string` | <p>Unique customer ID of the campaign owner.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
 | referrer_id</br>`string` | <p>Unique identifier of the referrer assigned by Voucherify.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
 | category_id</br>`string`, `null` | <p>Unique identifier of the category that this voucher belongs to.</p> **Example:** <p>cat_0b6152ce12414820dc</p> |
+| categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | active</br>`boolean` | <p>Shows whether the voucher is on or off. <code>true</code> indicates an <em>active</em> voucher and <code>false</code> indicates an <em>inactive</em> voucher.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the order was created in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
@@ -650,6 +652,13 @@ All of:
 | related_transaction_id</br>`string`, `null` | <p>The related transaction ID on the receiving card.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the transaction was created in ISO 8601 format.</p> |
 
+## Publications with Voucher
+<p>Publication with a voucher.</p>
+
+All of:
+
+1. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">voucher</td><td style="text-align:left">See: <a href="#voucher">Voucher</a></td></tr></tbody></table>
+
 ## Validation Entity
 | Attributes |  Description |
 |:-----|:--------|
@@ -778,6 +787,17 @@ All of:
 | conversion_event_type</br>`string` | <p>Define how a referral is triggered.</p> Available values: `redemption`, `custom_event` |
 | custom_event</br>`object` | <p>Contains details about the custom event.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique custom event ID.</p> <strong>Example:</strong> <p>ms_Ll9enAm2BCN0M1s4VxWobLFM</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Custom event name.</p></td></tr></tbody></table> |
 | referee_reward</br>`object` | <p>Defines the referee reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">related_object_parent</br><code>object</code></td><td style="text-align:left"><p>Details of the resource from which the reward originates.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique ID of the reward source.</p> <strong>Example:</strong> <p>camp_kdxp3vf1clQ9CFs1jpqv3tZe</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Name of the reward source.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Type of resource represented by the source of the reward.</p> Available values: <code>CAMPAIGN</code></td></tr></tbody></table></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Type of reward.</p> Available values: <code>DISCOUNT_VOUCHER</code>, <code>LOYALTY_CARD</code>, <code>GIFT_VOUCHER</code>, <code>LUCKY_DRAW_CODE</code></td></tr><tr><td style="text-align:left">amount</br><code>string</code></td><td style="text-align:left"><p>Define the number of <code>points</code> to add to a loyalty card or <code>credits</code> to the balance on a gift card. In case of the gift card, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p></td></tr></tbody></table> |
+
+## Category
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
+| name</br>`string` | <p>Category name.</p> |
+| hierarchy</br>`integer` | <p>Category hierarchy.</p> |
+| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
+| stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Gift
 | Attributes |  Description |
@@ -1159,17 +1179,6 @@ All of:
 | created_at</br>`string` | <p>Timestamp representing the date and time when the SKU was created in ISO 8601 format.</p> **Example:** <p>2022-05-17T10:36:30.187Z</p> |
 | updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the SKU was updated in ISO 8601 format.</p> **Example:** <p>2022-05-17T10:55:09.137Z</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>SKU</code>.</p> Available values: `sku` |
-
-## Category
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
-| name</br>`string` | <p>Category name.</p> |
-| hierarchy</br>`integer` | <p>Category hierarchy.</p> |
-| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the category was created in ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
-| updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated in ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
-| stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
 
 ## Voucher Assets
 | Attributes |  Description |

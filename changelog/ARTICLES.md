@@ -7,6 +7,12 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-03-20
+
+- Changes to `introduction-to-webhooks.md`: removed "WIP" callout, added links to the manual message distribution
+- Changes to `SDKs.md`: fixed a link to correct JS SDK repository
+- Changed the order numbering for `LOYALTIES` markdown pages
+
 ## 2024-03-13
 
 - Added links to Postman collections in the "Integration Processes" article.

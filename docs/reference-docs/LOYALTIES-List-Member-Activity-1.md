@@ -1,5 +1,5 @@
 ---
-title: List Member Activities
+title: List Member Activity
 type: endpoint
 categorySlug: voucherify-api
 slug: list-member-activity-1
