@@ -289,14 +289,14 @@ One of:
 |:-----|:--------|
 | customer | See: [Simple Customer](#simple-customer) |
 | campaign | See: [Simple Campaign](#simple-campaign) |
-| publication | See: [Publications with Voucher](#publications-with-voucher) |
+| publication | See: [Valid Single Voucher](#valid-single-voucher) |
 
 ## Event Customer Publication Failed
 | Attributes |  Description |
 |:-----|:--------|
 | customer | See: [Simple Customer](#simple-customer) |
 | campaign | See: [Simple Campaign](#simple-campaign) |
-| publication | See: [Publications with Voucher](#publications-with-voucher) |
+| publication | See: [Valid Single Voucher](#valid-single-voucher) |
 
 ## Event Customer Validation Succeeded
 | Attributes |  Description |
@@ -652,12 +652,11 @@ All of:
 | related_transaction_id</br>`string`, `null` | <p>The related transaction ID on the receiving card.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the transaction was created in ISO 8601 format.</p> |
 
-## Publications with Voucher
-<p>Publication with a voucher.</p>
-
+## Valid Single Voucher
 All of:
 
-1. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">voucher</td><td style="text-align:left">See: <a href="#voucher">Voucher</a></td></tr></tbody></table>
+1. [List Publications Item Base](#list-publications-item-base)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">result</br><code>string</code></td><td style="text-align:left"><p>Status of the publication attempt.</p> Available values: <code>SUCCESS</code></td></tr><tr><td style="text-align:left">voucher</td><td style="text-align:left">See: <a href="#list-publications-item-voucher">List Publications Item Voucher</a></td></tr></tbody></table>
 
 ## Validation Entity
 | Attributes |  Description |
@@ -996,6 +995,31 @@ One of:
 
 ## LoyaltyCardTransactionsType
 Available values: `POINTS_ACCRUAL`, `POINTS_CANCELLATION`, `POINTS_REDEMPTION`, `POINTS_REFUND`, `POINTS_ADDITION`, `POINTS_REMOVAL`, `POINTS_EXPIRATION`, `POINTS_TRANSFER_IN`, `POINTS_TRANSFER_OUT`
+
+## List Publications Item Base
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique publication ID, assigned by Voucherify.</p> **Example:** <p>pub_BbjAXnmm8e0SIm3zG8qvvFCP0KuLywtp</p> |
+| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the <code>publication</code>.</p> Available values: `publication` |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the publication was created in ISO 8601 format.</p> **Example:** <p>2022-09-23T09:57:00.434Z</p> |
+| customer_id</br>`string` | <p>Unique customer ID of the customer receiving the publication.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
+| tracking_id</br>`string` | <p>Customer's <code>source_id</code>.</p> |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_type</br><code>string</code></td><td style="text-align:left"><p>Defines the type of the distribution source.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the distribution source.</p></td></tr><tr><td style="text-align:left">distribution_id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the distribution.</p></td></tr></tbody></table> |
+| channel</br>`string` | <p>How the publication was originated. It can be your own custom channel or an example value provided here.</p> |
+| source_id</br>`string`, `null` | <p>The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.</p> |
+| customer | See: [Customer With Summary Loyalty Referrals](#customer-with-summary-loyalty-referrals) |
+| vouchers_id</br>`array` | <p>Contains the unique internal voucher ID that was assigned by Voucherify.</p> |
+
+## List Publications Item Voucher
+| Attributes |  Description |
+|:-----|:--------|
+| code</br>`string` | <p>Voucher code.</p> |
+| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `voucher` |
+| campaign</br>`string` | <p>Campaign name</p> |
+| gift | <p>Gift object response</p> [Gift](#gift) |
+| loyalty_card</br>`object` | <p>Defines the loyalty card details.</p> |
+| discount | See: [Discount](#discount) |
+| is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 
 ## Applicable Redeemable
 | Attributes |  Description |
