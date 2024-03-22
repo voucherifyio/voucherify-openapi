@@ -27136,6 +27136,153 @@
           "total"
         ]
       },
+      "CustomerRedeemablesList": {
+        "type": "object",
+        "title": "Customer Redeemables List",
+        "description": "List of customer's redeemables",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON. This object stores information about customer redeemables.",
+            "default": "list"
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "Identifies the name of the JSON property that contains the array of redeemables.",
+            "default": "data"
+          },
+          "data": {
+            "type": "array",
+            "description": "A dictionary that contains an array of redeemables.",
+            "items": {
+              "$ref": "#/components/schemas/CustomerRedeemable"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of redeemables assigned to the customer."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
+      "CustomerRedeemable": {
+        "type": "object",
+        "title": "Customer Redeemable",
+        "description": "Single customer's redeemable",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique redeemable ID.",
+            "example": "rh_0e7b8db4700106a852"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the redeemable was created in ISO 8601 format.",
+            "example": "2024-03-22T17:48:25.910Z"
+          },
+          "redeemable_id": {
+            "type": "string",
+            "description": "Identifier for the redeemable item.",
+            "example": "v_GXVguPhq2khgFxH7GrRXWA91gDr1LiA1"
+          },
+          "redeemable_object": {
+            "type": "string",
+            "description": "The type of redeemable.",
+            "example": "voucher"
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Identifier of the customer.",
+            "example": "cust_p1ufreYbVbwZ1x70nFkH9rF9"
+          },
+          "holder_role": {
+            "type": "string",
+            "description": "Role of the holder.",
+            "enum": [
+              "OWNER",
+              "REFERRER",
+              "REFEREE"
+            ],
+            "example": "OWNER"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unique campaign ID, assigned by Voucherify.",
+            "example": "camp_weer1c3p5ZgktqfW56RfoNaG"
+          },
+          "campaign_type": {
+            "type": "string",
+            "enum": [
+              "LOYALTY_PROGRAM",
+              "GIFT_VOUCHERS",
+              "DISCOUNT_COUPONS",
+              "PROMOTION",
+              "REFERRAL_PROGRAM",
+              "LUCKY_DRAW"
+            ],
+            "example": "DISCOUNT_COUPONS",
+            "description": "Type of the campaign."
+          },
+          "voucher_type": {
+            "type": "string",
+            "enum": [
+              "GIFT_VOUCHER",
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD",
+              "LUCKY_DRAW_CODE"
+            ],
+            "example": "DISCOUNT_VOUCHER",
+            "description": "Defines the type of the voucher."
+          },
+          "redeemable":  {
+            "type": "object",
+            "description": "Detailed information about the customer's redeemable item",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Type of the redeemable.",
+                "example": "voucher"
+              },
+              "voucher": {
+                "description": "Defines the details of the voucher.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Voucher"
+                  }
+                ]
+              },
+              "status": {
+                "type": "string",
+                "description": "Status of the redeemable.",
+                "example": "voucher"
+              }
+            },
+            "required": [
+              "type",
+              "voucher",
+              "status"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "redeemable_id",
+          "redeemable_object",
+          "customer_id",
+          "holder_role",
+          "campaign_id",
+          "campaign_type",
+          "voucher_type",
+          "redeemable"
+        ]
+      },
       "SimpleReferralTier": {
         "title": "Simple Referral Tier",
         "type": "object",
@@ -35711,6 +35858,16 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/CustomerSegmentsList"
+          }
+        ]
+      },
+      "CustomersRedeemablesListResponseBody": {
+        "type": "object",
+        "title": "Customers Redeemables List Response Body",
+        "description": "Response body schema for **GET** `/customers/{customerId}/redeemables`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CustomerRedeemablesList"
           }
         ]
       },
@@ -68231,6 +68388,190 @@
                         }
                       ],
                       "total": 5
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/redeemables": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCustomerId"
+          },
+          "name": "customerId",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier of a customer represented by an internal customer ID or customer source ID."
+        }
+      ],
+      "get": {
+        "operationId": "list-customer-redeemables",
+        "tags": [
+          "Customers"
+        ],
+        "summary": "List Customer's Redeemables",
+        "description": "",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The method returns redeemable(s) to which the given customer is assigned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersRedeemablesListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "rh_0e7b8db4700106a852",
+                          "created_at": "2024-03-22T17:48:25.910Z",
+                          "redeemable_id": "v_GXVguPhq2khgFxH7GrRXWA91gDr1LiA1",
+                          "redeemable_object": "voucher",
+                          "customer_id": "cust_p1ufreYbVbwZ1x70nFkH9rF9",
+                          "holder_role": "OWNER",
+                          "campaign_id": "camp_weer1c3p5ZgktqfW56RfoNaG",
+                          "campaign_type": "DISCOUNT_COUPONS",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "redeemable": {
+                            "type": "voucher",
+                            "voucher": {
+                              "id": "v_GXVguPhq2khgFxH7GrRXWA91gDr1LiA1",
+                              "code": "3xRUnMVG",
+                              "campaign": "Gaz6Q29w1d",
+                              "campaign_id": "camp_weer1c3p5ZgktqfW56RfoNaG",
+                              "category": null,
+                              "category_id": null,
+                              "categories": [],
+                              "type": "DISCOUNT_VOUCHER",
+                              "discount": {
+                                "type": "AMOUNT",
+                                "amount_off": 1000
+                              },
+                              "gift": null,
+                              "loyalty_card": null,
+                              "start_date": null,
+                              "expiration_date": null,
+                              "validity_timeframe": null,
+                              "validity_hours": null,
+                              "validity_day_of_week": null,
+                              "active": true,
+                              "additional_info": null,
+                              "metadata": {},
+                              "assets": {
+                                "qr": {
+                                  "id": "fa250fcd-8d51-41e7-9dda-9288ce2799a7",
+                                  "url": "https://dl.voucherify.io/api/v1/assets/qr/fa250fcd-8d51-41e7-9dda-9288ce2799a7"
+                                },
+                                "barcode": {
+                                  "id": "1b876033-ad88-4e74-8344-27fca1767006",
+                                  "url": "https://dl.voucherify.io/api/v1/assets/barcode/1b876033-ad88-4e74-8344-27fca1767006"
+                                }
+                              },
+                              "is_referral_code": false,
+                              "created_at": "2024-03-22T17:48:18.57+00:00",
+                              "updated_at": "2024-03-22T17:48:25.910974+00:00",
+                              "holder_id": "cust_p1ufreYbVbwZ1x70nFkH9rF9",
+                              "redemption": {
+                                "quantity": null,
+                                "redeemed_quantity": 0,
+                                "object": "list",
+                                "url": "/v1/vouchers/3xRUnMVG/redemptions?page=1&limit=10"
+                              },
+                              "publish": {
+                                "object": "list",
+                                "count": 1,
+                                "url": "/v1/vouchers/3xRUnMVG/publications?page=1&limit=10"
+                              },
+                              "object": "voucher"
+                            },
+                            "status": "ACTIVE"
+                          }
+                        },
+                        {
+                          "id": "rh_0e79fe37e4926cafd6",
+                          "created_at": "2024-03-21T12:43:02.915Z",
+                          "redeemable_id": "v_nnxc1aFzFZCAhRlG6sm0kSO4jKUohc9b",
+                          "redeemable_object": "voucher",
+                          "customer_id": "cust_p1ufreYbVbwZ1x70nFkH9rF9",
+                          "holder_role": "REFERRER",
+                          "campaign_id": "camp_ixXNxP8kRoV15RoyZU4HqqYJ",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "redeemable": {
+                            "type": "voucher",
+                            "voucher": {
+                              "id": "v_nnxc1aFzFZCAhRlG6sm0kSO4jKUohc9b",
+                              "code": "PBF3ZYfS",
+                              "campaign": "REFER_2",
+                              "campaign_id": "camp_ixXNxP8kRoV15RoyZU4HqqYJ",
+                              "category": null,
+                              "category_id": null,
+                              "categories": [],
+                              "type": "DISCOUNT_VOUCHER",
+                              "discount": {
+                                "type": "AMOUNT",
+                                "amount_off": 88800,
+                                "effect": "APPLY_TO_ORDER"
+                              },
+                              "gift": null,
+                              "loyalty_card": null,
+                              "start_date": null,
+                              "expiration_date": null,
+                              "validity_timeframe": null,
+                              "validity_hours": null,
+                              "validity_day_of_week": null,
+                              "active": true,
+                              "additional_info": null,
+                              "metadata": {},
+                              "assets": {
+                                "qr": {
+                                  "id": "fc0471bf-0c7b-443f-9532-303437041eea",
+                                  "url": "https://dl.voucherify.io/api/v1/assets/qr/fc0471bf-0c7b-443f-9532-303437041eea"
+                                },
+                                "barcode": {
+                                  "id": "5b2f2007-494b-40c3-9d4c-ad27269a0cd0",
+                                  "url": "https://dl.voucherify.io/api/v1/assets/barcode/5b2f2007-494b-40c3-9d4c-ad27269a0cd0"
+                                }
+                              },
+                              "is_referral_code": true,
+                              "created_at": "2024-03-21T12:42:49.771+00:00",
+                              "updated_at": "2024-03-21T12:43:02.915953+00:00",
+                              "holder_id": "cust_p1ufreYbVbwZ1x70nFkH9rF9",
+                              "referrer_id": "cust_p1ufreYbVbwZ1x70nFkH9rF9",
+                              "redemption": {
+                                "quantity": null,
+                                "redeemed_quantity": 0,
+                                "object": "list",
+                                "url": "/v1/vouchers/PBF3ZYfS/redemptions?page=1&limit=10"
+                              },
+                              "publish": {
+                                "object": "list",
+                                "count": 1,
+                                "url": "/v1/vouchers/PBF3ZYfS/publications?page=1&limit=10"
+                              },
+                              "object": "voucher"
+                            },
+                            "status": "ACTIVE"
+                          }
+                        }
+                      ],
+                      "total": 2,
+                      "has_more": false
                     }
                   }
                 }
