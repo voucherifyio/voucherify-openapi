@@ -27170,6 +27170,40 @@
           "total"
         ]
       },
+      "RedeemableHoldersList": {
+        "type": "object",
+        "title": "Redeemable Holders List",
+        "description": "List of Holder's redeemables",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON. This object stores information about redeemables holders",
+            "default": "list"
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "Identifies the name of the JSON property that contains the array of holders.",
+            "default": "data"
+          },
+          "data": {
+            "type": "array",
+            "description": "A dictionary that contains an array of holders.",
+            "items": {
+              "$ref": "#/components/schemas/RedeemableHolder"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of holders assigned to the redeemable."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
       "CustomerRedeemable": {
         "type": "object",
         "title": "Customer Redeemable",
@@ -27177,7 +27211,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique redeemable ID.",
+            "description": "Unique redeemable holder ID.",
             "example": "rh_0e7b8db4700106a852"
           },
           "created_at": {
@@ -27281,6 +27315,98 @@
           "campaign_type",
           "voucher_type",
           "redeemable"
+        ]
+      },
+      "RedeemableHolder": {
+        "type": "object",
+        "title": "Customer Redeemable",
+        "description": "Single customer's redeemable",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique redeemable holder ID.",
+            "example": "rh_0e7b8db4700106a852"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the redeemable was created in ISO 8601 format.",
+            "example": "2024-03-22T17:48:25.910Z"
+          },
+          "redeemable_id": {
+            "type": "string",
+            "description": "Identifier for the redeemable item.",
+            "example": "v_GXVguPhq2khgFxH7GrRXWA91gDr1LiA1"
+          },
+          "redeemable_object": {
+            "type": "string",
+            "description": "The type of redeemable.",
+            "example": "voucher"
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Identifier of the customer.",
+            "example": "cust_p1ufreYbVbwZ1x70nFkH9rF9"
+          },
+          "holder_role": {
+            "type": "string",
+            "description": "Role of the holder.",
+            "enum": [
+              "OWNER",
+              "REFERRER",
+              "REFEREE"
+            ],
+            "example": "OWNER"
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unique campaign ID, assigned by Voucherify.",
+            "example": "camp_weer1c3p5ZgktqfW56RfoNaG"
+          },
+          "campaign_type": {
+            "type": "string",
+            "enum": [
+              "LOYALTY_PROGRAM",
+              "GIFT_VOUCHERS",
+              "DISCOUNT_COUPONS",
+              "PROMOTION",
+              "REFERRAL_PROGRAM",
+              "LUCKY_DRAW"
+            ],
+            "example": "DISCOUNT_COUPONS",
+            "description": "Type of the campaign."
+          },
+          "voucher_type": {
+            "type": "string",
+            "enum": [
+              "GIFT_VOUCHER",
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD",
+              "LUCKY_DRAW_CODE"
+            ],
+            "example": "DISCOUNT_VOUCHER",
+            "description": "Defines the type of the voucher."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of object represented by JSON.",
+            "default": "redeemable_holder",
+            "enum": [
+              "redeemable_holder"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "redeemable_id",
+          "redeemable_object",
+          "customer_id",
+          "holder_role",
+          "campaign_id",
+          "campaign_type",
+          "voucher_type",
+          "object"
         ]
       },
       "SimpleReferralTier": {
@@ -35871,6 +35997,16 @@
           }
         ]
       },
+      "ReferralsRedeemableHoldersListResponseBody": {
+        "type": "object",
+        "title": "Referrals Redeemable Holders List Response Body",
+        "description": "Response body schema for **GET** `/referrals/{id}/members/{memberId}/holders` and for **GET** `/referrals/members/{memberId}/holders`",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RedeemableHoldersList"
+          }
+        ]
+      },
       "ProductsListResponseBody": {
         "type": "object",
         "title": "Products List Response Body",
@@ -37975,7 +38111,7 @@
         }
       },
       "LoyaltiesMembersRedemptionRedeemRequestBody": {
-        "description": "Request body schema for **POST** `/loyalties/{campaignId}/members/{memberId}/redemption` and for **POST** and `/loyalties/members/{memberId}/redemption`.",
+        "description": "Request body schema for **POST** `/loyalties/{campaignId}/members/{memberId}/redemption` and for **POST** `/loyalties/members/{memberId}/redemption`.",
         "type": "object",
         "title": "Loyalties Members Redemption Redeem Request Body",
         "properties": {
@@ -76925,6 +77061,167 @@
                       },
                       "created_at": "2022-07-14T15:21:55.085Z",
                       "updated_at": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/referrals/{id}/members/{memberId}/holders": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "Unique Referral Campaign ID."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique code or ID that identifies the redeemable id."
+        }
+      ],
+      "get": {
+        "operationId": "referrals-member-holders-1",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "Get Member Holders",
+        "description": "Retrieves the holders of the redeemable that is assigned to the referral campaign.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the holders of the redeemable that is assigned to the referral campaign.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/8_obj_loyalty_card_object_non_expanded_categories"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                          {
+                              "id": "rh_0e7213a6bc407b8639",
+                              "created_at": "2024-03-15T09:08:50.529Z",
+                              "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                              "redeemable_object": "voucher",
+                              "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                              "campaign_type": "REFERRAL_PROGRAM",
+                              "voucher_type": "DISCOUNT_VOUCHER",
+                              "customer_id": "cust_XDwHXVBSZZAJgjpHvrgUHx3J",
+                              "holder_role": "REFERRER",
+                              "object": "redeemable_holder"
+                          },
+                          {
+                              "id": "rh_0e6d0b84960f447f52",
+                              "created_at": "2024-03-11T11:20:54.093Z",
+                              "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                              "redeemable_object": "voucher",
+                              "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                              "campaign_type": "REFERRAL_PROGRAM",
+                              "voucher_type": "DISCOUNT_VOUCHER",
+                              "customer_id": "cust_1B9wkAcSz5O1Y4Zn8JPfKQm6",
+                              "holder_role": "REFEREE",
+                              "object": "redeemable_holder"
+                          }
+                      ],
+                      "total": 2,
+                      "has_more": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/referrals/members/{memberId}/holders": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique code or ID that identifies the redeemable id."
+        }
+      ],
+      "get": {
+        "operationId": "referrals-member-holders-2",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "Get Member Holders",
+        "description": "Retrieves the holders of the redeemable that is assigned to the referral campaign.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the holders of the redeemable that is assigned to the referral campaign.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/8_obj_loyalty_card_object_non_expanded_categories"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                          {
+                              "id": "rh_0e7213a6bc407b8639",
+                              "created_at": "2024-03-15T09:08:50.529Z",
+                              "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                              "redeemable_object": "voucher",
+                              "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                              "campaign_type": "REFERRAL_PROGRAM",
+                              "voucher_type": "DISCOUNT_VOUCHER",
+                              "customer_id": "cust_XDwHXVBSZZAJgjpHvrgUHx3J",
+                              "holder_role": "REFERRER",
+                              "object": "redeemable_holder"
+                          },
+                          {
+                              "id": "rh_0e6d0b84960f447f52",
+                              "created_at": "2024-03-11T11:20:54.093Z",
+                              "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                              "redeemable_object": "voucher",
+                              "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                              "campaign_type": null,
+                              "voucher_type": "DISCOUNT_VOUCHER",
+                              "customer_id": "cust_1B9wkAcSz5O1Y4Zn8JPfKQm6",
+                              "holder_role": "OWNER",
+                              "object": "redeemable_holder"
+                          }
+                      ],
+                      "total": 2,
+                      "has_more": false
                     }
                   }
                 }
