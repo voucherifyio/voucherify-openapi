@@ -873,7 +873,6 @@ One of:
 | created_at</br>`string` | <p>Timestamp representing the date and time when the voucher was created in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was last updated in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:14:45.316Z</p> |
 | holder_id</br>`string` | <p>Unique customer ID of voucher owner.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
-| holder | See: [Simple Customer](#simple-customer) |
 | object</br>`string` | <p>The type of object represented by JSON. Default is <code>voucher</code>.</p> |
 | distributions</br>`array` | Array of:  |
 | deleted</br>`boolean` | <p>Flag indicating whether this voucher is deleted.</p> |
