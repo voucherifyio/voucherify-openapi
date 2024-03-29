@@ -258,9 +258,15 @@ In order to remove a category, remove its title from the list. Make sure to remo
 - If you need to make a change:
 	- Apply changes.
 	- Run `npm run manage-project -- --vt={your name}-{pull request number} --update` to update your version.
-	- Run `npm run upload-webhook-definitions -- --vt={your name}-{pull request number}` to upload the OpenAPIWebhook.json file.
+	- Run `npm run upload-webhook-definitions -- --vt={your name}-{pull request number}` to upload the OpenAPIWebhook.json file again.
 	- Test changes using preview on readme.io.
-    - If needed - **REPEAT**.
+    - If needed - **REPEAT**. Remember that the webhook definitions must be uploaded every time the API documentation is uploaded.
+  - If you change only the OpenAPIWebhooks.json file, remove the `EVENTS` section in readme.io first:
+    - Go to your documentation version.
+    - Go to API Reference.
+    - Scroll down the API definition list to the `EVENTS` section.
+    - Click the kebab menu (three dots on the right) and Delete the section.
+    - Run `npm run upload-webhook-definitions -- --vt={your name}-{pull request number}` to upload the OpenAPIWebhook.json file again.
 - If changes are fine, then:
 	- Add a note in the changelog.
 	- run `git commit; git push`.
