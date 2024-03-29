@@ -6,6 +6,30 @@ Voucherify builds and maintains REST API documentation and SDKs to make it easie
 
 This document describes all deliverables and their development process.
 
+## Contents
+- [Voucherify's Documentation and OpenAPI Contribution](#voucherifys-documentation-and-openapi-contribution)
+  - [Introduction](#introduction)
+  - [Contents](#contents)
+  - [Deliverables](#deliverables)
+  - [Guides and API Reference](#guides-and-api-reference)
+  - [API Reference - Endpoint Pages](#api-reference---endpoint-pages)
+  - [API Reference - Data Model Pages](#api-reference---data-model-pages)
+  - [API Reference - Introduction Pages](#api-reference---introduction-pages)
+  - [Beta Endpoints](#beta-endpoints)
+  - [OpenAPI Files](#openapi-files)
+  - [OpenAPI](#openapi)
+    - [OpenAPIWebhooks File and Event Documentation](#openapiwebhooks-file-and-event-documentation)
+    - [Naming Convention](#naming-convention)
+    - [Correct 0-level model example:](#correct-0-level-model-example)
+    - [Good practices](#good-practices)
+  - [Contribution to Documentation](#contribution-to-documentation)
+    - [Prerequisites](#prerequisites)
+    - [Images in Markdown Files](#images-in-markdown-files)
+    - [Categories](#categories)
+    - [Development Process](#development-process)
+  - [How to Merge a Pull Request and Update Public Documentation](#how-to-merge-a-pull-request-and-update-public-documentation)
+
+
 ## Deliverables
 
 Voucherify's dev experience is built around three main items:
