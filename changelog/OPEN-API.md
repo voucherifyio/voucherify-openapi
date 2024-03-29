@@ -4,6 +4,9 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-03-28
+- Removed "holder" object from Voucher definition
+
 ## 2024-03-20
 
 - OpenAPIWebhooks.json:
