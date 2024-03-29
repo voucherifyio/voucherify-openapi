@@ -23,7 +23,7 @@ The changes to the webhooks consider the difference in the payload only. Here is
 
 | **V2018-08-01 keys** | **Explanation**                               | **V2024-01-01 keys** | **Explanation**                                                      | **Comparison**                                                                                                                                                |
 | -------------------- | --------------------------------------------- | -------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`                 | ID of the event                               | `id``                | The ID of the webhook sendout                                        | *The purpose of the key changed*                                                                                                                              |
+| `id`                 | ID of the event                               | `id`                 | The ID of the webhook sendout                                        | *The purpose of the key changed*                                                                                                                              |
 | `object`             | Always set to `event`                         | \-                   | Key was dropped                                                      | *Key dropped*                                                                                                                                                 |
 | `webhook_id`         | ID of the webhook sendout                     | \-                   | Changed the key to `id`                                              | *Key renamed*                                                                                                                                                 |
 | `project_id`         | ID of the project associated with the webhook | `project_id`         | ID of the project associated with the webhook                        | *No change*                                                                                                                                                   |
@@ -36,9 +36,9 @@ The changes to the webhooks consider the difference in the payload only. Here is
 
 ## Webhook v2024-01-01 Structure
 
-The following table contains the explanation of the new webhook structure.
+The following table contains brief description of the new webhook structure.
 
-Each webhook definition was described in [Voucherify’s documentation](https://docs.voucherify.io/reference/introduction-to-webhooks#events-in-the-project-settings "Project settings webhook list").
+More details about the webhook structure and payload can be found in the [project setting webhooks documentation](ref:introduction-to-webhooks#webhooks-available-in-project-settings) and [distribution webhook documentation](ref:introduction-to-webhooks#webhooks-available-in-distributions).
 
 <table>
         <thead>
@@ -65,9 +65,9 @@ Each webhook definition was described in [Voucherify’s documentation](https://
                 <td><code>2024-02-06T08:39:59.188Z </code></td>
             </tr>
             <tr>
-                <td>type</td>
-                <td>The event's name</td>
-                <td><code>customer.rewarded.loyalty_points</code></td>
+                <td><code>type</code></td>
+                <td>The event's name (distribution webhooks) or type (project setting webhooks)</td>
+                <td><em>Your name of distribution</em> OR, e.g.,<br><code>customer.rewarded.loyalty_points</code></td>
             </tr>
             <tr>
                 <td><code>data</code></td>
@@ -80,7 +80,7 @@ Each webhook definition was described in [Voucherify’s documentation](https://
                             holder object,</li>
                         <li>The earning rule object,</li>
                         <li>And others.</li>
-                    </ul><br>The data will consist only of the objects relevant for the webhook notification. Please refer to the relevant section in the <a href="https://docs.voucherify.io/reference/introduction-to-webhooks#events-in-the-project-settings" target="_blank">webhook documentation</a> to retrieve the new webhook structure and example payload.
+                    </ul><br>The data will consist only of the objects relevant for the webhook notification. Please refer to the relevant section in the <a href="https://docs.voucherify.io/reference/introduction-to-webhooks" target="_blank">webhook documentation</a> to retrieve the new webhook structure and sample payload.
                 </td>
                 <td>
                 <ul>
@@ -98,7 +98,7 @@ Each webhook definition was described in [Voucherify’s documentation](https://
             </tr>
             <tr>
             <td><code>source</code></td>
-            <td>Webhook or distribution ID,</td>
+            <td>Webhook or distribution ID.</td>
                 <td>
                     <pre lang="json">
 "source": {
@@ -143,7 +143,7 @@ To migrate your existing webhooks, follow the procedure below. Please note that 
 > 📘 Important notes
 > 
 > - On April 1st, 2024, Voucherify team members will start manually switching accounts to the new webhook definitions individually. If the webhooks are not switched to the new version, Voucherify team members will reach out to the account owners to ask about the webhook migration status. If you do not respond to this communication, the webhook definitions may be changed to version v2024-01-01 within the next few days. If you need more time to switch, please contact [support@voucherify.io](https://www.voucherify.io/contact-support "Voucherify contact support page") immediately. 
-> - There are significant changes to payloads in webhook v2024-01-01. Review these changes closely.
+> - There are significant changes to payloads in webhook v2024-01-01. Review these changes closely by testing webhook sendouts and [reading webhook documentation](ref:introduction-to-webhooks).
 > - Once you switch to version v2024-01-01 on your production project(s), you can switch back to v2018-08-01 until March 31, 2024.
 > - If the new webhooks miss data that is crucial to your integration, reach out to [support@voucherify.io](https://www.voucherify.io/contact-support "Voucherify contact support page") and provide details about your case and expectations.
 > - If, once in the production project, you find that the webhook definitions do not conform to your new format, please adjust your integration accordingly and contact [support@voucherify.io](https://www.voucherify.io/contact-support "Voucherify contact support page") to resend the webhooks. Voucherify’s team can resend webhooks triggered no longer than 14 days ago.

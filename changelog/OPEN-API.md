@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-03-29
+- Removed "holder" object and "distribution" array of objects from Voucher definition
+- `CONTRIBUTING.md` – fixed style. Added info about contributing to OpenAPIWebhooks.json
+
 ## 2024-03-20
 
 - OpenAPIWebhooks.json:
