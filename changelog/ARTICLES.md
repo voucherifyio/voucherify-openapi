@@ -7,6 +7,12 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-03-29
+
+- `Authentication.md` – added info about the secret keys which disappear after preset time
+- `Free-Shipping-Discount.md` – fixed a typo and removed images, refreshed the style
+- `migration-guide.md` – added more details about the event field, added more clarification information, added more links to other documentation
+
 ## 2024-03-20
 
 - Changes to `introduction-to-webhooks.md`: removed "WIP" callout, added links to the manual message distribution
