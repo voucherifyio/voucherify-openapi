@@ -456,6 +456,15 @@
           }
         ]
       },
+      "ParameterHolderRole": {
+        "type": "string",
+        "description": "Role of the holder.",
+        "enum": [
+          "OWNER",
+          "REFERRER",
+          "REFEREE"
+        ]
+      },
       "ParameterResultListPublications": {
         "type": "string",
         "enum": [
@@ -748,6 +757,16 @@
           "-id"
         ]
       },
+      "ParameterVoucherType": {
+        "type": "string",
+        "enum": [
+          "GIFT_VOUCHER",
+          "DISCOUNT_VOUCHER",
+          "LOYALTY_CARD",
+          "LUCKY_DRAW_CODE"
+        ],
+        "description": "Defines the type of the voucher."
+      },
       "ParameterFiltersListRedemptions": {
         "type": "object",
         "properties": {
@@ -890,10 +909,24 @@
           },
           "created_at": {
             "type": "object",
-            "description": "Timestamp representing the date and time when the customer redeemable was created in ISO 8601 format.",
+            "description": "Timestamp representing the date and time when the customer redeemable was created in the ISO 8601 format.",
             "properties": {
               "conditions": {
-                "$ref": "#/components/schemas/FilterConditionsString"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/16_filter_conditions_date_time"
+                  },
+                  {
+                    "more_than": {
+                      "type": "integer"
+                    }
+                  },
+                  {
+                    "less_than": {
+                      "type": "integer"
+                    }
+                  }
+                ]
               },
               "junction": {
                 "$ref": "#/components/schemas/Junction"
@@ -926,10 +959,10 @@
           },
           "holder_role": {
             "type": "object",
-            "description": "Holder role of the redeemable, i.e. `REFEERER`.",
+            "description": "Holder role of the redeemable, e.g. `REFERRER`.",
             "properties": {
               "conditions": {
-                "$ref": "#/components/schemas/FilterConditionsString"
+                "$ref": "#/components/schemas/FilterConditionsHolderString"
               },
               "junction": {
                 "$ref": "#/components/schemas/Junction"
@@ -938,10 +971,10 @@
           },
           "campaign_type": {
             "type": "object",
-            "description": "Type of the campaign, i.e. `DISCOUNT_COUPONS`",
+            "description": "Type of the campaign, e.g. `DISCOUNT_COUPONS`",
             "properties": {
               "conditions": {
-                "$ref": "#/components/schemas/FilterConditionsString"
+                "$ref": "#/components/schemas/FilterConditionsCampaignString"
               },
               "junction": {
                 "$ref": "#/components/schemas/Junction"
@@ -950,7 +983,7 @@
           },
           "voucher_type": {
             "type": "object",
-            "description": "Type of the voucher, i.e. `DISCOUNT_VOUCHER`",
+            "description": "Type of the voucher, e.g. `DISCOUNT_VOUCHER`",
             "properties": {
               "conditions": {
                 "$ref": "#/components/schemas/FilterConditionsString"
@@ -19312,25 +19345,178 @@
         "properties": {
           "$in": {
             "type": "array",
-            "description": "Array of resource values that should be included in the results. (multiple values)",
+            "description": "Array of resource values that should be included in the results (multiple values).",
             "items": {
               "type": "string"
             }
           },
           "$not_in": {
             "type": "array",
-            "description": "Array of resource values that should be included in the results. (multiple values)",
+            "description": "Array of resource values that should be included in the results (multiple values).",
             "items": {
               "type": "string"
             }
           },
           "$is": {
             "type": "string",
-            "description": "Value is exactly this value. (single value)"
+            "description": "Value is exactly this value (single value)."
           },
           "$is_not": {
             "type": "string",
-            "description": "Results omit this value. (single value)"
+            "description": "Results omit this value (single value)."
+          },
+          "$has_value": {
+            "type": "string",
+            "description": "Value is NOT null. The value for this parameter is an empty string."
+          },
+          "$is_unknown": {
+            "type": "string",
+            "description": "Value is null. The value for this parameter is an empty string."
+          },
+          "$starts_with": {
+            "type": "string",
+            "description": "Value starts with the specified string."
+          },
+          "$ends_with": {
+            "type": "string",
+            "description": "Value ends with the specified string."
+          }
+        }
+      },
+      "FilterConditionsCampaignString": {
+        "title": "Filter by conditions",
+        "type": "object",
+        "description": "Data filters used to narrow the data records to be returned in the result.",
+        "properties": {
+          "$in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "$ref": "#/components/schemas/ParameterCampaignType"
+            }
+          },
+          "$not_in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "$ref": "#/components/schemas/ParameterCampaignType"
+            }
+          },
+          "$is": {
+            "type": "string",
+            "description": "Value is exactly this value (single value).",
+            "items": {
+              "$ref": "#/components/schemas/ParameterCampaignType"
+            }
+          },
+          "$is_not": {
+            "type": "string",
+            "description": "Results omit this value (single value).",
+            "items": {
+              "$ref": "#/components/schemas/ParameterCampaignType"
+            }
+          },
+          "$has_value": {
+            "type": "string",
+            "description": "Value is NOT null. The value for this parameter is an empty string."
+          },
+          "$is_unknown": {
+            "type": "string",
+            "description": "Value is null. The value for this parameter is an empty string."
+          },
+          "$starts_with": {
+            "type": "string",
+            "description": "Value starts with the specified string."
+          },
+          "$ends_with": {
+            "type": "string",
+            "description": "Value ends with the specified string."
+          }
+        }
+      },
+      "FilterConditionsHolderString": {
+        "title": "Filter by conditions",
+        "type": "object",
+        "description": "Data filters used to narrow the data records to be returned in the result.",
+        "properties": {
+          "$in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "$ref": "#/components/schemas/ParameterHolderRole"
+            }
+          },
+          "$not_in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "$ref": "#/components/schemas/ParameterHolderRole"
+            }
+          },
+          "$is": {
+            "type": "string",
+            "description": "Value is exactly this value (single value).",
+            "items": {
+              "$ref": "#/components/schemas/ParameterHolderRole"
+            }
+          },
+          "$is_not": {
+            "type": "string",
+            "description": "Results omit this value (single value).",
+            "items": {
+              "$ref": "#/components/schemas/ParameterHolderRole"
+            }
+          },
+          "$has_value": {
+            "type": "string",
+            "description": "Value is NOT null. The value for this parameter is an empty string."
+          },
+          "$is_unknown": {
+            "type": "string",
+            "description": "Value is null. The value for this parameter is an empty string."
+          },
+          "$starts_with": {
+            "type": "string",
+            "description": "Value starts with the specified string."
+          },
+          "$ends_with": {
+            "type": "string",
+            "description": "Value ends with the specified string."
+          }
+        }
+      },
+      "FilterConditionsVoucherString": {
+        "title": "Filter by conditions",
+        "type": "object",
+        "description": "Data filters used to narrow the data records to be returned in the result.",
+        "properties": {
+          "$in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "$ref": "#/components/schemas/ParameterVoucherType"
+            }
+          },
+          "$not_in": {
+            "type": "array",
+            "description": "Array of resource values that should be included in the results (multiple values).",
+            "items": {
+              "$ref": "#/components/schemas/ParameterVoucherType"
+            }
+          },
+          "$is": {
+            "type": "string",
+            "description": "Value is exactly this value (single value).",
+            "items": {
+              "$ref": "#/components/schemas/ParameterVoucherType"
+            }
+          },
+          "$is_not": {
+            "type": "string",
+            "description": "Results omit this value (single value).",
+            "items": {
+              "$ref": "#/components/schemas/ParameterVoucherType"
+            }
           },
           "$has_value": {
             "type": "string",
@@ -27480,7 +27666,7 @@
             "example": "DISCOUNT_VOUCHER",
             "description": "Defines the type of the voucher."
           },
-          "redeemable":  {
+          "redeemable": {
             "type": "object",
             "description": "Detailed information about the customer's redeemable item",
             "properties": {
@@ -28883,11 +29069,11 @@
               },
               "$is": {
                 "type": "string",
-                "description": "Value is exactly this value. (single value)"
+                "description": "Value is exactly this value (single value)."
               },
               "$is_not": {
                 "type": "string",
-                "description": "Results omit this value. (single value)"
+                "description": "Results omit this value (single value)."
               },
               "$has_value": {
                 "type": "string",
@@ -28934,11 +29120,11 @@
               },
               "$is": {
                 "type": "integer",
-                "description": "Value is exactly this value. (single value)"
+                "description": "Value is exactly this value (single value)."
               },
               "$is_not": {
                 "type": "integer",
-                "description": "Results omit this value. (single value)"
+                "description": "Results omit this value (single value)."
               },
               "$has_value": {
                 "type": "string",
@@ -28979,11 +29165,11 @@
             "properties": {
               "$is": {
                 "type": "string",
-                "description": "Value is exactly this value. (single value)"
+                "description": "Value is exactly this value (single value)."
               },
               "$is_not": {
                 "type": "string",
-                "description": "Results omit this value. (single value)"
+                "description": "Results omit this value (single value)."
               },
               "$has_value": {
                 "type": "string",
@@ -77401,30 +77587,30 @@
                       "object": "list",
                       "data_ref": "data",
                       "data": [
-                          {
-                              "id": "rh_0e7213a6bc407b8639",
-                              "created_at": "2024-03-15T09:08:50.529Z",
-                              "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
-                              "redeemable_object": "voucher",
-                              "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
-                              "campaign_type": "REFERRAL_PROGRAM",
-                              "voucher_type": "DISCOUNT_VOUCHER",
-                              "customer_id": "cust_XDwHXVBSZZAJgjpHvrgUHx3J",
-                              "holder_role": "REFERRER",
-                              "object": "redeemable_holder"
-                          },
-                          {
-                              "id": "rh_0e6d0b84960f447f52",
-                              "created_at": "2024-03-11T11:20:54.093Z",
-                              "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
-                              "redeemable_object": "voucher",
-                              "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
-                              "campaign_type": "REFERRAL_PROGRAM",
-                              "voucher_type": "DISCOUNT_VOUCHER",
-                              "customer_id": "cust_1B9wkAcSz5O1Y4Zn8JPfKQm6",
-                              "holder_role": "REFEREE",
-                              "object": "redeemable_holder"
-                          }
+                        {
+                          "id": "rh_0e7213a6bc407b8639",
+                          "created_at": "2024-03-15T09:08:50.529Z",
+                          "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_XDwHXVBSZZAJgjpHvrgUHx3J",
+                          "holder_role": "REFERRER",
+                          "object": "redeemable_holder"
+                        },
+                        {
+                          "id": "rh_0e6d0b84960f447f52",
+                          "created_at": "2024-03-11T11:20:54.093Z",
+                          "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_1B9wkAcSz5O1Y4Zn8JPfKQm6",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder"
+                        }
                       ],
                       "total": 2,
                       "has_more": false
@@ -77509,30 +77695,30 @@
                       "object": "list",
                       "data_ref": "data",
                       "data": [
-                          {
-                              "id": "rh_0e7213a6bc407b8639",
-                              "created_at": "2024-03-15T09:08:50.529Z",
-                              "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
-                              "redeemable_object": "voucher",
-                              "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
-                              "campaign_type": "REFERRAL_PROGRAM",
-                              "voucher_type": "DISCOUNT_VOUCHER",
-                              "customer_id": "cust_XDwHXVBSZZAJgjpHvrgUHx3J",
-                              "holder_role": "REFERRER",
-                              "object": "redeemable_holder"
-                          },
-                          {
-                              "id": "rh_0e6d0b84960f447f52",
-                              "created_at": "2024-03-11T11:20:54.093Z",
-                              "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
-                              "redeemable_object": "voucher",
-                              "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
-                              "campaign_type": null,
-                              "voucher_type": "DISCOUNT_VOUCHER",
-                              "customer_id": "cust_1B9wkAcSz5O1Y4Zn8JPfKQm6",
-                              "holder_role": "OWNER",
-                              "object": "redeemable_holder"
-                          }
+                        {
+                          "id": "rh_0e7213a6bc407b8639",
+                          "created_at": "2024-03-15T09:08:50.529Z",
+                          "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_XDwHXVBSZZAJgjpHvrgUHx3J",
+                          "holder_role": "REFERRER",
+                          "object": "redeemable_holder"
+                        },
+                        {
+                          "id": "rh_0e6d0b84960f447f52",
+                          "created_at": "2024-03-11T11:20:54.093Z",
+                          "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                          "campaign_type": null,
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_1B9wkAcSz5O1Y4Zn8JPfKQm6",
+                          "holder_role": "OWNER",
+                          "object": "redeemable_holder"
+                        }
                       ],
                       "total": 2,
                       "has_more": false
