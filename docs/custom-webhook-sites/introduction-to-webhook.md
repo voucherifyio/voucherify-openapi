@@ -30,9 +30,9 @@ The values for the `type` and `data` depend on the event that triggers the webho
 3. Click the plus button – Add new webhook.
 4. Choose v2024-01-01 webhook version.
 5. Provide the following details:
-   1. Enter the target URL
+   1. Enter the target URL.
    2. Tick the Is active? checkbox.
-   3. Select the events you want to receive. If you want to receive all the events, choose Send me all events option.
+   3. Select the [events](#webhooks-available-in-project-settings "Project setting webhooks") you want to receive. If you want to receive all the events, choose Send me all events option.
    4. Click Create endpoint.
 6. If necessary for authentication reasons, enter the Secret key in your system to receive webhooks from Voucherify.
 
