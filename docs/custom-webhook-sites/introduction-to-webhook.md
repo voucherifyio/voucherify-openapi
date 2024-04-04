@@ -23,7 +23,7 @@ The values for the `type` and `data` depend on the event that triggers the webho
 >
 > Read the [Migration Guide](ref:migration-guide "Webhook v2024-01-01 migration guide") to learn more about the differences between the v2024-01-01 and v2018-08-01 webhook versions.
 
-## Enabling v2024-01-01 Webhooks
+## Configuring v2024-01-01 Webhooks
 
 1. In Voucherify dashboard, go to Project settings.
 2. Scroll down to the Webhooks section.
@@ -33,10 +33,21 @@ The values for the `type` and `data` depend on the event that triggers the webho
    1. Enter the target URL.
    2. Tick the Is active? checkbox.
    3. Select the [events](#webhooks-available-in-project-settings "Project setting webhooks") you want to receive. If you want to receive all the events, choose Send me all events option.
-   4. Click Create endpoint.
+   4. Click Send test webhook to test your configuration (optional).
+   5. Click Create endpoint.
 6. If necessary for authentication reasons, enter the Secret key in your system to receive webhooks from Voucherify.
 
+You can add multiple webhooks to your projects following the steps above.
+
 To update webhook details, click the Pencil button – edit. Enter your changes and click Update endpoint.
+
+To delete a webhook, click the Trash button and click Delete.
+
+### Get Notified About Failed Sendouts
+
+You can set up notifications to inform you via email or in the app that a webhook did not reach the destination.
+
+Go to the Notification Center > Account Settings and scroll down to Webhook callout notifications to configure notifications.
 
 ## Audit log
 
