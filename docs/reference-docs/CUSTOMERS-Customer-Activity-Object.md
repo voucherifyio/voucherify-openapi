@@ -489,7 +489,7 @@ All of:
 | start_date</br>`string` | <p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is inactive <em>before</em> this date.</p> **Example:** <p>2022-09-20T00:00:00.000Z</p> |
 | expiration_date</br>`string` | <p>Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is inactive <em>after</em> this date.</p> **Example:** <p>2022-09-30T00:00:00.000Z</p> |
 | description</br>`string` | <p>An optional field to keep extra textual information about the campaign such as a campaign description and details.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the campaign was created in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the campaign was created. Timestamp is presented in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the campaign was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about the campaign.</p> Available values: `campaign` |
 
@@ -510,7 +510,7 @@ All of:
 | category_id</br>`string`, `null` | <p>Unique identifier of the category that this voucher belongs to.</p> **Example:** <p>cat_0b6152ce12414820dc</p> |
 | categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | active</br>`boolean` | <p>Shows whether the voucher is on or off. <code>true</code> indicates an <em>active</em> voucher and <code>false</code> indicates an <em>inactive</em> voucher.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the order was created in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the order was created. Timestamp is presented in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
 | redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code>, <code>null</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr><tr><td style="text-align:left">redeemed_quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher has already been redeemed.</p> <strong>Example:</strong> <p>1</p></td></tr></tbody></table> |
 | start_date</br>`string` | <p>Activation timestamp defines when the code starts to be active in ISO 8601 format. Voucher is <em>inactive before</em> this date.</p> **Example:** <p>2021-12-01T00:00:00.000Z</p> |
