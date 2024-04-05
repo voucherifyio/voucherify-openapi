@@ -6,7 +6,7 @@ slug: introduction-to-webhooks
 hidden: false
 order: -2
 ---
-The v2024-01-01 webhook version can be used to inform your system about various events that are triggered in Voucherify. The v2024-01-01 webhooks work for distributions and events listed in the Project settings.
+The v2024-01-01 webhook version can be used to inform your system about various events that are triggered in Voucherify. The v2024-01-01 webhooks work for [distributions](#webhooks-available-in-distributions) and events listed in the [Project settings](#webhooks-available-in-project-settings).
 
 The v2024-01-01 webhooks (both for distributions and project settings) share the same data structure, consisting of the following keys:
 - `id`
@@ -65,6 +65,91 @@ The Audit Log includes the following details:
 - Complete webhook data (three dot menu on the right > Show data)
 
 You can also send a failed webhook again. Go to the three dot menu on the right > Retry.
+
+## Responding to Webhooks
+
+Voucherify expects your webhook to return a response with a `2XX` HTTP status code, indicating that the webhook has been received successfully. If a webhook is not successfully received for any reason, Voucherify will continue trying to send the webhook in the following intervals:
+
+| **Re-try No.** | **Time since the initial attempt** | **Interval to next re-try** |
+| :------------- | :--------------------------------- | :-------------------------- |
+| 1              | 1 min                              | 1 min                       |
+| 2              | 2 min                              | 2 min                       |
+| 3              | 4 min                              | 4 min                       |
+| 4              | 8 min                              | 8 min                       |
+| 5              | 16 min                             | 16 min                      |
+| 6              | 32 min                             | 32 min                      |
+| 7              | 1 h 4 min                          | 1 h 4 min                   |
+| 8              | 2 h 8 min                          | 2 h 8 min                   |
+| 9              | 4 h 16 min                         | 4 h 16 min                  |
+| 10             | 8 h 32 min                         | 8 h 32 min                  |
+| 11             | 17 h 4 min                         | 17 h 4 min                  |
+| 12             | 24 h                               | Final re-try                |
+
+> ❗️ Latency
+>
+> Your endpoint must return a response in under 10 seconds; otherwise, it will be considered an error.
+
+> 📘 What happens after the 12th try?
+>
+>  - Project-level webhooks that are set in Project Settings are disabled after 12 unsuccessful tries.
+> - Distribution-based webhooks that are set up as channels in the Distributions manager are paused after 12 unsuccessful tries.
+
+## Re-Enabling a Webhook
+
+
+### Project-Level Webhook
+
+To re-enable a disabled webhook:
+1. In the Project Settings, go to the General tab.
+2. Scroll down to the Webhooks section.
+3. Edit the specific Webhook.
+4. Click Is active.
+5. Click Update endpoint.
+
+
+### Distribution-Based Webhook
+
+To re-enable a paused webhook:
+1. Go to the Distribution Manager.
+2. Click the distribution that has been paused.
+3. Click the set live icon in the upper right corner.
+
+## Authentication
+
+Once your server is configured to receive payloads, it will listen for any payload sent to the endpoint you configured. For security reasons, you may want to limit requests to those coming from Voucherify. To do so, you should copy a secret token and validate the information.
+
+You can generate a secret key in the Project Settings in the Webhooks section.
+
+Each webhook sent from Voucherify contains the `x-voucherify-signature` of the webhook in the header field.
+
+Then, you can validate the signature by reconstructing it and comparing it to the one sent in the webhook header field.
+
+Reconstruct it using the keyed-hash message authentication code HMAC. It is built with the cryptographic hash function **sha256** and the secret cryptographic key taken from the Project settings.
+
+To see an example, go to the `verifySignature` method in the [NodeJS SDK](https://github.com/voucherifyio/voucherify-nodejs-sdk/blob/c63f738c5a53ecb9a5006a04d80d612ee70bdeae/src/utils.js#L102).
+
+```
+const crypto = require('crypto') 
+verifySignature: function (signature, message, secretKey) {
+  return crypto.createHmac('sha256', secretKey)
+    .update(isString(message) && message || JSON.stringify(message))
+    .digest('hex') === signature
+}
+```
+
+## IP Whitelisting
+
+When Voucherify sends a webhook, the Voucherify servers make network requests to tenants’ or third parties’ servers.
+
+To add an additional layer of security, you can do IP whitelisting. This mechanism verifies if webhook requests come from Voucherify.
+
+Voucherify sends webhooks from the IP ranges below.
+
+| **Instance** | **IP**        |
+| :----------- | :------------ |
+| eu1          | 34.247.197.22 |
+| us1          | 100.25.106.67 |
+| as1          | 52.76.98.82   |
 
 ## Webhooks Available in Project Settings
 
@@ -128,6 +213,10 @@ Some distribution events, e.g. Customer entered segment, have different purposes
 - Notify customers about promotion
 - Send and publish unique codes from campaign
 - Send plain message to customers
+
+> 📘 Distribution Webhooks
+>
+> Learn more about configuring distribution webhooks from the [Webhook distributions article](https://support.voucherify.io/article/68-webhooks-notifications).
 
 The documentation of these events contains data for all purposes. The objects which are shared between the purposes are marked as `required`. The objects which appear only for specific purposes are respectively described.
 
