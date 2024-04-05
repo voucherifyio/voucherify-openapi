@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-04-05
+
+`Introduction to webhooks` – moved content from [Webhook notifications](https://support.voucherify.io/article/68-webhooks-notifications) article to this article.
+
 ## 2024-03-29
 
 - `Authentication.md` – added info about the secret keys which disappear after preset time
