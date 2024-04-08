@@ -135,6 +135,10 @@
       "description": "List locations."
     },
     {
+      "name": "Management",
+      "description": "Manage projects."
+    },
+    {
       "name": "Client-side",
       "description": "Use client-side APIs."
     }
@@ -159,6 +163,16 @@
       "X-Client-Application-Id": {
         "type": "apiKey",
         "name": "X-Client-Application-Id",
+        "in": "header"
+      },
+      "X-Management-Id": {
+        "type": "apiKey",
+        "name": "X-Management-Id",
+        "in": "header"
+      },
+      "X-Management-Token": {
+        "type": "apiKey",
+        "name": "X-Management-Token",
         "in": "header"
       }
     },
@@ -38390,7 +38404,108 @@
             "$ref": "#/components/schemas/RewardAssignment"
           }
         ]
-      }
+      },
+      "ManagementProjectsCreateRequestBody": {
+        "type": "object",
+        "title": "Management Project Create Request Body",
+        "description": "Request body schema for **POST** `/management/v1/projects`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Determines the name of the project."
+          },
+          "cluster_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Defines the unique identifier of the cluster where the project will be created."
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "Determines the description of the project, e.g. its purpose, scope, region."
+          },
+          "case_sensitive_codes": {
+            "type": "boolean",
+            "description": "Determines if the vouchers in the project will be case sensitive (if `true`, `C0dE-cfV` is not equal to `c0de-cfv`) or case insensitive (if false, `C0dE-cfV` is equal to `c0de-cfv`)."
+          },
+          "timezone": {
+            "type": "string",
+            "description": "Determines the time zone in which the project will be established. The timezone affects such features like voucher expiration dates."
+          },
+          "api_version": {
+            "type": "string",
+            "nullable": true,
+            "description": "Determines the API version used in the project. Currently, the default and only value is `v2018-08-01`.",
+            "enum": [
+              "v2018-08-01"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "nullable": true,
+            "description": "Determines the currency used in the project.",
+            "enum": []
+          },
+          "country": {
+            "type": "string",
+            "nullable": true,
+            "description": "Determines the country which is covered by the project.",
+            "enum": []
+          },
+          "dial_code": {
+            "type": "string",
+            "nullable": true,
+            "description": "Determines the dial code for the project.",
+            "enum": []
+          },
+          "users": {
+            "type": "array",
+            "nullable": true,
+            "description": "Determines the users (their identifiers, logins, and roles) who will be added to the project.",
+            "items": {
+              "title": "Create Project Users",
+              "type": "object",
+              "description": "Contains details about the users who will be added to the project.\nOnly the `id` and `role` or `login` and `role` should be provided in the request.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Determines the identifier of the user who will be added to the project. **Required** with the `role` string."
+                },
+                "login": {
+                  "type": "string",
+                  "description": "Determines the login data of the user who will be added to the project. **Required** with the `role` string."
+                },
+                "role": {
+                  "type": "string",
+                  "description": "Determines the role of the user to be added. It can be one of the following predefined roles:\n`ADMIN`,`USER`,`VIEWER`,`MERCHANT`.",
+                  "enum": [
+                    "ADMIN",
+                    "USER",
+                    "VIEWER",
+                    "MERCHANT"
+                  ]
+                }
+              },
+              "required": [
+                "role"
+              ]
+            }
+          },
+          "webhook_version": {
+            "type": "string",
+            "description": "Determines the webhook version used in the project.",
+            "enum": [
+              "v2024-01-01"
+            ]
+          }
+        },
+        "required": [
+          "name",
+          "case_sensitive_codes",
+          "timezone"
+        ]
+      },
+      "ManagementProjectsCreateResponseBody": {}
     },
     "examples": {
       "req_vouchers_metadata_1": {
@@ -76587,6 +76702,45 @@
                       "updated_at": null
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects": {
+      "post": {
+        "operationId": "create-project",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Create project",
+        "description": "Create a new project. You can add users, specify the cluster, timezone, currency, and other details.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Define project details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details of a created project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsCreateResponseBody"
                 }
               }
             }
