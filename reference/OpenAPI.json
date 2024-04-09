@@ -639,6 +639,10 @@
         "type": "string",
         "example": "cust_nk0N1uNQ1YnupAoJGOgvsODC"
       },
+      "ParameterProjectId": {
+        "type": "string",
+        "example": "proj_TrlkLiH4"
+      },
       "ParameterOrderId": {
         "type": "string",
         "example": "ord_smEh8p1p6W6DgOmeERk092LG"
@@ -38405,95 +38409,161 @@
           }
         ]
       },
-      "ManagementProjectsCreateRequestBody": {
+      "ManagementProjectResponseBase": {
         "type": "object",
-        "title": "Management Project Create Request Body",
-        "description": "Request body schema for **POST** `/management/v1/projects`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the project."
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "is_sandbox": {
+                "type": "boolean",
+                "description": "Determines if the project is a sandbox project."
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cluster_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "The identifier of the cluster where the project will be created."
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "case_sensitive_codes": {
+                "type": "boolean",
+                "description": "Determines if the vouchers in the project will be case sensitive (if `true`, `C0dE-cfV` is not equal to `c0de-cfv`) or case insensitive (if false, `C0dE-cfV` is equal to `c0de-cfv`)."
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "api_version": {
+                "type": "string",
+                "nullable": true,
+                "description": "The API version used in the project. Currently, the default and only value is `v2018-08-01`.",
+                "enum": [
+                  "v2018-08-01"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "users": {
+                "type": "array",
+                "nullable": true,
+                "description": "The users (their identifiers, logins, and roles) who have been added to the project.",
+                "items": {
+                  "title": "Create Project Users",
+                  "type": "object",
+                  "description": "Contains the details about the users added to the project.",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The unique identifier of the project user."
+                    },
+                    "login": {
+                      "type": "string",
+                      "description": "The login data of the project user."
+                    },
+                    "role": {
+                      "type": "string",
+                      "description": "The role of the project user. It can be also a custom role.",
+                      "enum": [
+                        "ADMIN",
+                        "USER",
+                        "VIEWER",
+                        "MERCHANT"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "role"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "is_sandbox": {
+                "type": "boolean",
+                "description": "Determines if the project is a sandbox project."
+              }
+            }
+          }
+        ],
+        "required": [
+          "id",
+          "name",
+          "currency",
+          "timezone",
+          "cluster_id",
+          "api_version",
+          "case_sensitive_codes",
+          "client_trusted_domains",
+          "client_redeem_enabled",
+          "client_publish_enabled",
+          "client_list_vouchers_enabled",
+          "client_create_customer_enabled",
+          "client_loyalty_events_enabled",
+          "client_set_voucher_expiration_date_enabled",
+          "api_usage_notifications",
+          "webhooks_callout_notifications",
+          "is_sandbox",
+          "webhook_version"
+        ]
+      },
+      "ManagementProjectsBase": {
+        "type": "object",
+        "title": "Management Project Base",
         "properties": {
           "name": {
             "type": "string",
-            "description": "Determines the name of the project."
-          },
-          "cluster_id": {
-            "type": "string",
-            "nullable": true,
-            "description": "Defines the unique identifier of the cluster where the project will be created."
+            "description": "The name of the project."
           },
           "description": {
             "type": "string",
             "nullable": true,
-            "description": "Determines the description of the project, e.g. its purpose, scope, region."
-          },
-          "case_sensitive_codes": {
-            "type": "boolean",
-            "description": "Determines if the vouchers in the project will be case sensitive (if `true`, `C0dE-cfV` is not equal to `c0de-cfv`) or case insensitive (if false, `C0dE-cfV` is equal to `c0de-cfv`)."
+            "description": "The detailed description of the project, e.g. its purpose, scope, region."
           },
           "timezone": {
             "type": "string",
-            "description": "Determines the time zone in which the project will be established. The timezone affects such features like voucher expiration dates."
-          },
-          "api_version": {
-            "type": "string",
-            "nullable": true,
-            "description": "Determines the API version used in the project. Currently, the default and only value is `v2018-08-01`.",
-            "enum": [
-              "v2018-08-01"
-            ]
+            "description": "The time zone in which the project will be established."
           },
           "currency": {
             "type": "string",
-            "nullable": true,
-            "description": "Determines the currency used in the project.",
-            "enum": []
-          },
-          "country": {
-            "type": "string",
-            "nullable": true,
-            "description": "Determines the country which is covered by the project.",
-            "enum": []
+            "description": "The currency used in the project."
           },
           "dial_code": {
             "type": "string",
             "nullable": true,
-            "description": "Determines the dial code for the project.",
-            "enum": []
-          },
-          "users": {
-            "type": "array",
-            "nullable": true,
-            "description": "Determines the users (their identifiers, logins, and roles) who will be added to the project.",
-            "items": {
-              "title": "Create Project Users",
-              "type": "object",
-              "description": "Contains details about the users who will be added to the project.\nOnly the `id` and `role` or `login` and `role` should be provided in the request.",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Determines the identifier of the user who will be added to the project. **Required** with the `role` string."
-                },
-                "login": {
-                  "type": "string",
-                  "description": "Determines the login data of the user who will be added to the project. **Required** with the `role` string."
-                },
-                "role": {
-                  "type": "string",
-                  "description": "Determines the role of the user to be added. It can be one of the following predefined roles:\n`ADMIN`,`USER`,`VIEWER`,`MERCHANT`.",
-                  "enum": [
-                    "ADMIN",
-                    "USER",
-                    "VIEWER",
-                    "MERCHANT"
-                  ]
-                }
-              },
-              "required": [
-                "role"
-              ]
-            }
+            "description": "The dial code for the project."
           },
           "webhook_version": {
             "type": "string",
-            "description": "Determines the webhook version used in the project.",
+            "description": "The webhook version used in the project.",
+            "default": "v2024-01-01",
             "enum": [
               "v2024-01-01"
             ]
@@ -38507,30 +38577,37 @@
           },
           "client_redeem_enabled": {
             "type": "boolean",
-            "description": "Enables client-side redemption. Set to `true` to enable the feature. Set to `false` to disable the feature."
+            "description": "Enables client-side redemption. Value `true` means the feature is enabled. Value `false` means the feature is disabled.",
+            "default": false
           },
           "client_publish_enabled": {
             "type": "boolean",
-            "description": "Enables client-side publication. Set to `true` to enable the feature. Set to `false` to disable the feature."
+            "description": "Enables client-side publication. Value `true` means the feature is enabled. Value `false` means the feature is disabled.",
+            "default": false
           },
           "client_list_vouchers_enabled": {
             "type": "boolean",
-            "description": "Enables client-side listing of vouchers. Set to `true` to enable the feature. Set to `false` to disable the feature."
+            "description": "Enables client-side listing of vouchers. Value `true` means the feature is enabled. Value `false` means the feature is disabled.",
+            "default": false
           },
           "client_create_customer_enabled": {
             "type": "boolean",
-            "description": "Enables client-side creation of customers. Set to `true` to enable the feature. Set to `false` to disable the feature."
+            "description": "Enables client-side creation of customers. Value `true` means the feature is enabled. Value `false` means the feature is disabled.",
+            "default": false
           },
           "client_loyalty_events_enabled": {
             "type": "boolean",
-            "description": "Enables client-side events for loyalty and referral programs. Set to `true` to enable the feature. Set to `false` to disable the feature."
+            "description": "Enables client-side events for loyalty and referral programs. Value `true` means the feature is enabled. Value `false` means the feature is disabled.",
+            "default": false
           },
           "client_set_voucher_expiration_date_enabled": {
             "type": "boolean",
-            "description": "Enables client-side setting of voucher expiration date. Set to `true` to enable the feature. Set to `false` to disable the feature."
+            "description": "Enables client-side setting of voucher expiration date. Value `true` means the feature is enabled. Value `false` means the feature is disabled.",
+            "default": false
           },
           "api_usage_notifications": {
             "type": "object",
+            "title": "API Usage Notifications",
             "description": "Determines the notification settings.",
             "properties": {
               "redemptions": {
@@ -38599,11 +38676,11 @@
                 "properties": {
                   "email": {
                     "type": "boolean",
-                    "description": "Enables the notification through an email. Set to `true` to enable the feature. Set to `false` to disable the feature."
+                    "description": "Enables the notification through an email. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
                   },
                   "in_app": {
                     "type": "boolean",
-                    "description": "Enables the notification through an email. Set to `true` to enable the feature. Set to `false` to disable the feature."
+                    "description": "Enables the notification through an email. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
                   },
                   "emails": {
                     "type": "array",
@@ -38620,11 +38697,11 @@
                 "properties": {
                   "email": {
                     "type": "boolean",
-                    "description": "Enables the notification through an email. Set to `true` to enable the feature. Set to `false` to disable the feature."
+                    "description": "Enables the notification through an email. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
                   },
                   "in_app": {
                     "type": "boolean",
-                    "description": "Enables the notification through an email. Set to `true` to enable the feature. Set to `false` to disable the feature."
+                    "description": "Enables the notification through an email. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
                   },
                   "emails": {
                     "type": "array",
@@ -38637,27 +38714,147 @@
               }
             }
           }
-        },
+        }
+      },
+      "ManagementProjectsCreateRequestBody": {
+        "type": "object",
+        "title": "Management Project Create Request Body",
+        "description": "Request body schema for **POST** `/management/v1/projects`.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "case_sensitive_codes": {
+                "type": "boolean",
+                "description": "Determines if the vouchers in the project will be case sensitive (if `true`, `C0dE-cfV` is not equal to `c0de-cfv`) or case insensitive (if false, `C0dE-cfV` is equal to `c0de-cfv`)."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ManagementProjectsBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cluster_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "The identifier of the cluster where the project will be created. Default cluster is `eu1` unless otherwise configured.",
+                "default": "eu1"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "api_version": {
+                "type": "string",
+                "nullable": true,
+                "description": "The API version used in the project. Currently, the default and only value is `v2018-08-01`.",
+                "default": "v2018-08-01",
+                "enum": [
+                  "v2018-08-01"
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "users": {
+                "type": "array",
+                "nullable": true,
+                "description": "The users (their identifiers, logins, and roles) who will be added to the project.",
+                "items": {
+                  "title": "Create Project Users",
+                  "type": "object",
+                  "description": "Contains details about the users who will be added to the project.\nOnly the `id` and `role` or `login` and `role` should be provided in the request.",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The unique identifier of the user who will be added to the project. **Required** with the `role` string."
+                    },
+                    "login": {
+                      "type": "string",
+                      "description": "The login data of the user who will be added to the project. **Required** with the `role` string."
+                    },
+                    "role": {
+                      "type": "string",
+                      "description": "The role of the user to be added. It can be one of the following predefined roles:\n`ADMIN`,`USER`,`VIEWER`,`MERCHANT`.",
+                      "enum": [
+                        "ADMIN",
+                        "USER",
+                        "VIEWER",
+                        "MERCHANT"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "role"
+                  ]
+                }
+              }
+            }
+          }
+        ],
         "required": [
           "name",
           "case_sensitive_codes",
-          "timezone"
+          "timezone",
+          "currency"
         ]
       },
-      "ManagementProjectsCreateResponseBody": {},
+      "ManagementProjectsCreateResponseBody": {
+        "type": "object",
+        "title": "Management Project Create Response Body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectResponseBase"
+          }
+        ]
+      },
+      "ManagementProjectsUpdateRequestBody": {
+        "type": "object",
+        "title": "Management Project Update Request Body",
+        "description": "Request body schema for **PUT** `/management/v1/projects/{projectId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "default_code_config": {
+                "type": "string",
+                "description": "Determines the character set that is used as default for vouchers."
+              }
+            }
+          }
+        ]
+      },
+      "ManagementProjectsUpdateResponseBody": {
+        "type": "object",
+        "title": "Management Project Update Response Body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectResponseBase"
+          }
+        ]
+      },
       "UsageNotifications": {
         "type": "object",
         "title": "Usage notifications",
         "properties": {
           "enabled": {
             "type": "boolean",
-            "description": "Enables the notification. Set to `true` to enable the feature. Set to `false` to disable the feature."
+            "description": "Enables the notification. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
           },
           "value": {
             "type": "integer",
             "minimum": 0,
             "maximum": 100,
-            "description": "Determines the percent value of the limit which, when reached, triggers the notification."
+            "default": 80,
+            "description": "The percent value of the limit which, when reached, triggers the notification."
           },
           "emails": {
             "type": "array",
@@ -38668,7 +38865,7 @@
           },
           "in_app": {
             "type": "boolean",
-            "description": "Enables the notification in the application. Set to `true` to enable the feature. Set to `false` to disable the feature."
+            "description": "Enables the notification in the application. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
           }
         }
       }
@@ -76882,7 +77079,7 @@
           "Management"
         ],
         "summary": "Create project",
-        "description": "Create a new project. You can add users, specify the cluster, timezone, currency, and other details.",
+        "description": "Create a new project. You can add users, specify the cluster, timezone, currency, and other details.\nAll owners are added to the project by default.",
         "parameters": [],
         "security": [
           {
@@ -76907,6 +77104,230 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ManagementProjectsCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "proj_V0uCh3RiFy",
+                      "name": "Voucherify Team Project",
+                      "currency": "EUR",
+                      "timezone": "UTC",
+                      "cluster_id": "eu1",
+                      "api_version": "v2018-08-01",
+                      "case_sensitive_codes": true,
+                      "client_trusted_domains": [],
+                      "client_redeem_enabled": false,
+                      "client_publish_enabled": false,
+                      "client_list_vouchers_enabled": false,
+                      "client_create_customer_enabled": false,
+                      "client_loyalty_events_enabled": false,
+                      "client_set_voucher_expiration_date_enabled": false,
+                      "api_usage_notifications": {
+                        "messages": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "api_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "cycle_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "redemptions": {
+                          "value": 80,
+                          "emails": [],
+                          "in_app": false,
+                          "enabled": false
+                        },
+                        "webhook_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "bulk_api_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        }
+                      },
+                      "webhooks_callout_notifications": {
+                        "webhooks": {
+                          "email": true,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true
+                        },
+                        "distributions": {
+                          "email": true,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true
+                        }
+                      },
+                      "is_sandbox": false,
+                      "webhook_version": "v2024-01-01"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "A unique identifier that identifies the project.",
+          "required": true
+        }
+      ],
+      "put": {
+        "operationId": "update-project",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Update project",
+        "description": "Updates an existing project. You can add or modify details about users, specify the cluster, timezone, currency, and other details.\nOnly the fields sent in the request will be updated.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Define the project details to be updated.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsUpdateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details of an updated project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUpdateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "proj_V0uCh3RiFy",
+                      "name": "Voucherify Team Project",
+                      "currency": "EUR",
+                      "timezone": "Etc/GMT+1",
+                      "cluster_id": "eu1",
+                      "api_version": "v2018-08-01",
+                      "description": "Project for testing.",
+                      "case_sensitive_codes": true,
+                      "client_trusted_domains": [],
+                      "client_redeem_enabled": false,
+                      "client_publish_enabled": false,
+                      "client_list_vouchers_enabled": false,
+                      "client_create_customer_enabled": false,
+                      "client_loyalty_events_enabled": false,
+                      "client_set_voucher_expiration_date_enabled": false,
+                      "api_usage_notifications": {
+                        "messages": {
+                          "value": 80,
+                          "emails": [],
+                          "in_app": false,
+                          "enabled": false
+                        },
+                        "api_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "cycle_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "redemptions": {
+                          "value": 80,
+                          "emails": [],
+                          "in_app": false,
+                          "enabled": false
+                        },
+                        "webhook_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "bulk_api_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        }
+                      },
+                      "webhooks_callout_notifications": {
+                        "webhooks": {
+                          "email": true,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true
+                        },
+                        "distributions": {
+                          "email": true,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true
+                        }
+                      },
+                      "is_sandbox": false,
+                      "default_code_config": {
+                        "charset": "0123456789"
+                      },
+                      "webhook_version": "v2024-01-01"
+                    }
+                  }
                 }
               }
             }
