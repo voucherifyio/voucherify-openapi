@@ -18872,6 +18872,25 @@
           "async_action_id"
         ]
       },
+      "BadRequest": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "error": {
+            "type": "string",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          }
+        }
+      },
       "BusValRuleAssignment": {
         "title": "Business Validation Rule Assignment",
         "description": "Assignments of business validation rule",
@@ -23821,10 +23840,8 @@
         },
         "required": [
           "code",
-          "key",
           "message",
-          "details",
-          "request_id"
+          "details"
         ]
       },
       "EventCustomerActiveCampaignFailed": {
@@ -28753,44 +28770,6 @@
           {
             "type": "object",
             "properties": {
-              "users": {
-                "type": "array",
-                "nullable": true,
-                "description": "The users (their identifiers, logins, and roles) who have been added to the project.",
-                "items": {
-                  "title": "Create Project Users",
-                  "type": "object",
-                  "description": "Contains the details about the users added to the project.",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "description": "The unique identifier of the project user."
-                    },
-                    "login": {
-                      "type": "string",
-                      "description": "The login data of the project user."
-                    },
-                    "role": {
-                      "type": "string",
-                      "description": "The role of the project user. It can be also a custom role.",
-                      "enum": [
-                        "ADMIN",
-                        "USER",
-                        "VIEWER",
-                        "MERCHANT"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "role"
-                  ]
-                }
-              }
-            }
-          },
-          {
-            "type": "object",
-            "properties": {
               "is_sandbox": {
                 "type": "boolean",
                 "description": "Determines if the project is a sandbox project."
@@ -28830,20 +28809,20 @@
           "description": {
             "type": "string",
             "nullable": true,
-            "description": "The detailed description of the project, e.g. its purpose, scope, region."
+            "description": "A user-defined description of the project, e.g. its purpose, scope, region."
           },
           "timezone": {
             "type": "string",
-            "description": "The time zone in which the project will be established."
+            "description": "The time zone in which the project is established. It is equal to one of the allowed values."
           },
           "currency": {
             "type": "string",
-            "description": "The currency used in the project."
+            "description": "The currency used in the project. It is equal to a 3-letter ISO code."
           },
           "dial_code": {
             "type": "string",
             "nullable": true,
-            "description": "The dial code for the project."
+            "description": "The dial code for the project. It is equal to one of the allowed values."
           },
           "webhook_version": {
             "type": "string",
@@ -31651,6 +31630,34 @@
           "object",
           "price"
         ]
+      },
+      "ProjectBoundError": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0a96c19b1a41c03999",
+            "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by Voucherify support team."
+          }
+        }
       },
       "PromotionsStacksCreateRequestBody": {
         "title": "Promotions Stacks Create Request Body",
@@ -77083,8 +77090,8 @@
         "tags": [
           "Management"
         ],
-        "summary": "Create project",
-        "description": "Create a new project. You can add users, specify the cluster, timezone, currency, and other details.\nAll owners are added to the project by default.",
+        "summary": "Create Project",
+        "description": "Creates a new project. You can add users, specify the cluster, timezone, currency, and other details.\n\nAll owners are added to the project by default.",
         "parameters": [],
         "security": [
           {
@@ -77198,6 +77205,67 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Returns an error if the payload is missing an `\"name\"`, `\"case_sensitive_codes\"`, `\"timezone\"`, or `\"currency\"` property in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-0e9389ccac8da56f55"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if the project is to be created in a cluster that is unavailable for the user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBoundError"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Project is bound to different region",
+                      "request_id": "v-0e938b8738000cc714"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -77214,12 +77282,146 @@
           "required": true
         }
       ],
+      "get": {
+        "operationId": "get-project",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Get Project",
+        "description": "Retrieves an existing project.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the details of a project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUpdateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "proj_V0uCh3RiFy",
+                      "name": "Voucherify Team Project",
+                      "currency": "EUR",
+                      "timezone": "Etc/GMT+1",
+                      "cluster_id": "eu1",
+                      "api_version": "v2018-08-01",
+                      "description": "Project for testing.",
+                      "case_sensitive_codes": true,
+                      "client_trusted_domains": [],
+                      "client_redeem_enabled": false,
+                      "client_publish_enabled": false,
+                      "client_list_vouchers_enabled": false,
+                      "client_create_customer_enabled": false,
+                      "client_loyalty_events_enabled": false,
+                      "client_set_voucher_expiration_date_enabled": false,
+                      "api_usage_notifications": {
+                        "messages": {
+                          "value": 80,
+                          "emails": [],
+                          "in_app": false,
+                          "enabled": false
+                        },
+                        "api_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "cycle_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "redemptions": {
+                          "value": 80,
+                          "emails": [],
+                          "in_app": false,
+                          "enabled": false
+                        },
+                        "webhook_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "bulk_api_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        }
+                      },
+                      "webhooks_callout_notifications": {
+                        "webhooks": {
+                          "email": true,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true
+                        },
+                        "distributions": {
+                          "email": true,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true
+                        }
+                      },
+                      "is_sandbox": false,
+                      "default_code_config": {
+                        "charset": "0123456789"
+                      },
+                      "webhook_version": "v2024-01-01"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when the project has been deleted or it cannot be found due to incorrect ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_2F3txY7"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "put": {
         "operationId": "update-project",
         "tags": [
           "Management"
         ],
-        "summary": "Update project",
+        "summary": "Update Project",
         "description": "Updates an existing project. You can add or modify details about users, specify the cluster, timezone, currency, and other details.\nOnly the fields sent in the request will be updated.",
         "parameters": [],
         "security": [
@@ -77331,6 +77533,64 @@
                         "charset": "0123456789"
                       },
                       "webhook_version": "v2024-01-01"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload is invalid in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "statusCode": 400,
+                      "error": "Bad Request",
+                      "message": "Invalid request payload JSON format"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-project",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Delete Project",
+        "description": "Deletes an existing project.\n\nThe users currently using the deleted project will be automatically logged out.\n\n> 🚧 Sandbox Project\n>\n>The sandbox project cannot be deleted.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          },
+          "404": {
+            "description": "Returns an error when the project has been already deleted or it cannot be found due to incorrect ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_2F3txY7"
                     }
                   }
                 }
