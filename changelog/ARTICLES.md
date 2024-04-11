@@ -7,6 +7,16 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-04-05
+
+`Introduction to webhooks` – moved content from [Webhook notifications](https://support.voucherify.io/article/68-webhooks-notifications) article to this article.
+
+## 2024-03-29
+
+- `Authentication.md` – added info about the secret keys which disappear after preset time
+- `Free-Shipping-Discount.md` – fixed a typo and removed images, refreshed the style
+- `migration-guide.md` – added more details about the event field, added more clarification information, added more links to other documentation
+
 ## 2024-03-20
 
 - Changes to `introduction-to-webhooks.md`: removed "WIP" callout, added links to the manual message distribution

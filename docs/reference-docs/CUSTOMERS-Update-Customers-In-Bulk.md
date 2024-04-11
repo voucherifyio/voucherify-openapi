@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: update-customers-in-bulk
 parentDocSlug: customers
 hidden: false
-order: 12
+order: 130
 ---
 [block:html]
 {
