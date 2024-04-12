@@ -675,6 +675,10 @@
         "type": "string",
         "example": "MmFAzfDe"
       },
+      "ParameterUserId": {
+        "type": "string",
+        "example": "user_v18mvPOjOXE5733eO4cAz8k1pn492wKK"
+      },
       "ParameterRedemptionId": {
         "type": "string",
         "example": "r_0ba186c4824e4881e1"
@@ -39778,14 +39782,71 @@
           "role"
         ]
       },
-      "ManagementProjectsUserCreateResponseBody": {
+      "ManagementProjectsUserResponseBody": {
         "type": "object",
-        "title": "Management Projects User Create Response Body",
+        "title": "Management Projects User Response Body",
         "description": "Details about the user assigned to the project.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsUser"
           }
+        ]
+      },
+      "ManagementProjectsUserUpdateRequestBody": {
+        "type": "object",
+        "title": "Management Projects User Create Request Body",
+        "properties": {
+          "role": {
+            "type": "string",
+            "description": "The role of the user to be added. It can be a custom role or one of following predefined roles:\n`ADMIN`,\n`USER`,\n`VIEWER`,\n`MERCHANT`.",
+            "enum": [
+              "ADMIN",
+              "USER",
+              "VIEWER",
+              "MERCHANT",
+              "CUSTOM ROLE"
+            ]
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "ManagementProjectsUserListResponseBody": {
+        "type": "object",
+        "title": "Management Projects User List Response Body",
+        "description": "Response body schema for **GET** `management/v1/projects/{projectId}/users`.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about the users in a dictionary.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of user objects."
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of user objects.",
+            "items": {
+              "$ref": "#/components/schemas/ManagementProjectsUser"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "The total number of users."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
         ]
       },
       "ManagementProjectsUser": {
@@ -39819,7 +39880,7 @@
             "properties": {
               "projectId": {
                 "type": "string",
-                "description": "Defines the role the user has in the project.",
+                "description": "Returns the role the user has in the project.\n\nCustom roles are available on request.",
                 "enum": [
                   "ADMIN",
                   "USER",
@@ -39831,12 +39892,24 @@
             }
           },
           "role": {
-            "type": "string"
+            "type": "string",
+            "description": "Returns the assigned role of the user in the project."
           },
           "is_owner": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Determines if the user is the owner for the organization in Voucherify."
           }
-        }
+        },
+        "required": [
+          "id",
+          "login",
+          "email",
+          "first_name",
+          "last_name",
+          "projects",
+          "role",
+          "is_owner"
+        ]
       },
       "UsageNotifications": {
         "type": "object",
@@ -78404,7 +78477,7 @@
             }
           },
           "400": {
-            "description": "Returns an error if the payload is missing an `\"name\"`, `\"case_sensitive_codes\"`, `\"timezone\"`, or `\"currency\"` property in the request.",
+            "description": "Returns an error if the payload is missing a `\"name\"`, `\"case_sensitive_codes\"`, `\"timezone\"`, or `\"currency\"` property in the request.",
             "content": {
               "application/json": {
                 "schema": {
@@ -78635,7 +78708,7 @@
           },
           "in": "path",
           "name": "projectId",
-          "description": "Provide the unique identifier that identifies the project.",
+          "description": "Provide the unique identifier of the project.",
           "required": true
         }
       ],
@@ -79017,7 +79090,7 @@
         }
       }
     },
-    "/management/v1/projects/{project-id}/users": {
+    "/management/v1/projects/{projectId}/users": {
       "parameters": [
         {
           "schema": {
@@ -79025,7 +79098,7 @@
           },
           "in": "path",
           "name": "projectId",
-          "description": "Provide the unique identifier that identifies the project.",
+          "description": "Provide the unique identifier of the project.",
           "required": true
         }
       ],
@@ -79044,7 +79117,7 @@
           }
         ],
         "requestBody": {
-          "description": "Define the user details.",
+          "description": "Defines the user details.",
           "content": {
             "application/json": {
               "schema": {
@@ -79059,16 +79132,24 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ManagementProjectsUserCreateResponseBody"
+                  "$ref": "#/components/schemas/ManagementProjectsUserResponseBody"
                 },
                 "examples": {
                   "Example": {
                     "value": {
-                      "code": 400,
-                      "key": "invalid_payload",
-                      "message": "Invalid payload",
-                      "details": "Payload must have required property 'name'",
-                      "request_id": "v-0e9389ccac8da56f55"
+                      "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "login": "name@youremaildomain.com",
+                      "email": "name@youremaildomain.com",
+                      "first_name": "Sammy",
+                      "last_name": "Jones",
+                      "projects": {
+                        "proj_9KeAhZB1": "USER",
+                        "proj_npnFzPr9": "USER",
+                        "proj_pEP3NO9s": "USER",
+                        "proj_zsPdrUIw": "ADMIN"
+                      },
+                      "role": "USER",
+                      "is_owner": false
                     }
                   }
                 }
@@ -79076,7 +79157,7 @@
             }
           },
           "400": {
-            "description": "Returns an error if the payload is missing an `\"name\"`, `\"case_sensitive_codes\"`, `\"timezone\"`, or `\"currency\"` property in the request.",
+            "description": "Returns an error if the payload is missing a `\"name\"`, `\"case_sensitive_codes\"`, `\"timezone\"`, or `\"currency\"` property in the request.",
             "content": {
               "application/json": {
                 "schema": {
@@ -79164,7 +79245,7 @@
           "Management"
         ],
         "summary": "List Users",
-        "description": "Lists all users for the project.",
+        "description": "Lists all users in the project.",
         "parameters": [],
         "security": [
           {
@@ -79174,11 +79255,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the list of all users for the project..",
+            "description": "Returns the list of all users in the project.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ManagementProjectsUserCreateResponseBody"
+                  "$ref": "#/components/schemas/ManagementProjectsUserListResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -79187,89 +79268,34 @@
                       "data_ref": "data",
                       "data": [
                         {
-                          "id": "proj_V0uCh3RiFy",
-                          "name": "Voucherify Team Project",
-                          "currency": "EUR",
-                          "timezone": "UTC",
-                          "cluster_id": "eu1",
-                          "api_version": "v2018-08-01",
-                          "case_sensitive_codes": true,
-                          "client_trusted_domains": [],
-                          "client_redeem_enabled": false,
-                          "client_publish_enabled": false,
-                          "client_list_vouchers_enabled": false,
-                          "client_create_customer_enabled": false,
-                          "client_loyalty_events_enabled": false,
-                          "client_set_voucher_expiration_date_enabled": false,
-                          "api_usage_notifications": {
-                            "messages": {
-                              "value": 80,
-                              "emails": [
-                                "your.email@your.domain"
-                              ],
-                              "in_app": true,
-                              "enabled": true
-                            },
-                            "api_calls": {
-                              "value": 80,
-                              "emails": [
-                                "your.email@your.domain"
-                              ],
-                              "in_app": true,
-                              "enabled": true
-                            },
-                            "cycle_calls": {
-                              "value": 80,
-                              "emails": [
-                                "your.email@your.domain"
-                              ],
-                              "in_app": true,
-                              "enabled": true
-                            },
-                            "redemptions": {
-                              "value": 80,
-                              "emails": [],
-                              "in_app": false,
-                              "enabled": false
-                            },
-                            "webhook_calls": {
-                              "value": 80,
-                              "emails": [
-                                "your.email@your.domain"
-                              ],
-                              "in_app": true,
-                              "enabled": true
-                            },
-                            "bulk_api_calls": {
-                              "value": 80,
-                              "emails": [
-                                "your.email@your.domain"
-                              ],
-                              "in_app": true,
-                              "enabled": true
-                            }
+                          "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                          "login": "name@youremaildomain.com",
+                          "email": "name@youremaildomain.com",
+                          "first_name": "Sammy",
+                          "last_name": "Jones",
+                          "projects": {
+                            "proj_9KeAhZB1": "USER",
+                            "proj_npnFzPr9": "USER",
+                            "proj_pEP3NO9s": "USER",
+                            "proj_zsPdrUIw": "ADMIN"
                           },
-                          "webhooks_callout_notifications": {
-                            "webhooks": {
-                              "email": true,
-                              "emails": [
-                                "your.email@your.domain"
-                              ],
-                              "in_app": true
-                            },
-                            "distributions": {
-                              "email": true,
-                              "emails": [
-                                "your.email@your.domain"
-                              ],
-                              "in_app": true
-                            }
+                          "role": "USER",
+                          "is_owner": false
+                        },
+                        {
+                          "id": "user_v18mvPOjOXE5733eO4cAz8k1pn492wKK",
+                          "login": "name@youremaildomain.com",
+                          "email": "name@youremaildomain.com",
+                          "first_name": "Alex",
+                          "last_name": "Smith",
+                          "projects": {
+                            "proj_3CNHbOe0": "ADMIN"
                           },
-                          "is_sandbox": false,
-                          "webhook_version": "v2024-01-01"
+                          "role": "ADMIN",
+                          "is_owner": true
                         }
                       ],
-                      "total": 1
+                      "total": 2
                     }
                   }
                 }
@@ -79290,6 +79316,269 @@
                       "message": "Payment required",
                       "details": "Your current plan does not include a feature required to perform this operation.",
                       "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/users/{userId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterUserId"
+          },
+          "in": "path",
+          "name": "userId",
+          "description": "Provide the unique identifier of the user. Alternatively, provide the user's login.",
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "get-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Get User",
+        "description": "Retrieves the project user's details.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the project user's details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "login": "name@youremaildomain.com",
+                      "email": "name@youremaildomain.com",
+                      "first_name": "Sammy",
+                      "last_name": "Jones",
+                      "projects": {
+                        "proj_9KeAhZB1": "USER",
+                        "proj_npnFzPr9": "USER",
+                        "proj_pEP3NO9s": "USER",
+                        "proj_zsPdrUIw": "ADMIN"
+                      },
+                      "role": "USER",
+                      "is_owner": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "update-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Update User",
+        "description": "Updates the user's role.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the user's new role.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsUserUpdateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the user assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "login": "name@youremaildomain.com",
+                      "email": "name@youremaildomain.com",
+                      "first_name": "Sammy",
+                      "last_name": "Jones",
+                      "projects": {
+                        "proj_9KeAhZB1": "USER",
+                        "proj_npnFzPr9": "USER",
+                        "proj_pEP3NO9s": "USER",
+                        "proj_zsPdrUIw": "ADMIN"
+                      },
+                      "role": "USER",
+                      "is_owner": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload is missing a `\"role\"`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-0e9389ccac8da56f55"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "unassign-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Unassign User",
+        "description": "Unassigns the user from the project. If the user is currently logged in, they are automatically logged out.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when the user has been already deleted or they cannot be found due to incorrect ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_2F3txY7"
                     }
                   }
                 }
