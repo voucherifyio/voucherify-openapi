@@ -39674,19 +39674,19 @@
               "users": {
                 "type": "array",
                 "nullable": true,
-                "description": "The users (their identifiers, logins, and roles) who will be added to the project.\nIt must be used either in the following combinations:\n- `id` and `role`, or\n- `login` and `role`.",
+                "description": "The users (their identifiers, logins, and roles) who will be assigned to the project.You can assign only existing Voucherify users.\n\nIt must be used either in the following combinations:\n- `id` and `role`, or\n- `login` and `role`.",
                 "items": {
                   "title": "Create Project Users",
                   "type": "object",
-                  "description": "Contains details about the users who will be added to the project.\nOnly the `id` and `role` or `login` and `role` should be provided in the request.",
+                  "description": "Contains details about the users who will be assigned to the project.\nOnly the `id` and `role` or `login` and `role` should be provided in the request.",
                   "properties": {
                     "id": {
                       "type": "string",
-                      "description": "The unique identifier of the user who will be added to the project. **Required** with the `role` string."
+                      "description": "The unique identifier of the user who will be assigned to the project. **Required** with the `role` string.\n\nDo **not** use with the `login` string."
                     },
                     "login": {
                       "type": "string",
-                      "description": "The login data of the user who will be added to the project. **Required** with the `role` string."
+                      "description": "The login data of the user who will be assigned to the project. **Required** with the `role` string.\n\nDo **not** use with the `id` string."
                     },
                     "role": {
                       "type": "string",
@@ -39750,6 +39750,93 @@
             "$ref": "#/components/schemas/ManagementProjectResponseBase"
           }
         ]
+      },
+      "ManagementProjectsUserCreateRequestBody": {
+        "type": "object",
+        "title": "Management Projects User Create Request Body",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the user who will be assigned to the project. **Required** with the `role` string.\n\nDo **not** use with the `login` string."
+          },
+          "login": {
+            "type": "string",
+            "description": "The login data of the user who will be assigned to the project. **Required** with the `role` string.\n\nDo **not** use with the `id` string."
+          },
+          "role": {
+            "type": "string",
+            "description": "The role of the user to be added. It can be one of the following predefined roles:\n`ADMIN`,\n`USER`,\n`VIEWER`,\n`MERCHANT`.",
+            "enum": [
+              "ADMIN",
+              "USER",
+              "VIEWER",
+              "MERCHANT"
+            ]
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "ManagementProjectsUserCreateResponseBody": {
+        "type": "object",
+        "title": "Management Projects User Create Response Body",
+        "description": "Details about the user assigned to the project.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsUser"
+          }
+        ]
+      },
+      "ManagementProjectsUser": {
+        "type": "object",
+        "title": "Project User Details",
+        "description": "Details about the user assigned to a project.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the user who has been assigned to the project."
+          },
+          "login": {
+            "type": "string",
+            "description": "The login data of the user who has been assigned to the project."
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the user who has been assigned to the project."
+          },
+          "first_name": {
+            "type": "string",
+            "description": "The first name of the user who has been assigned to the project."
+          },
+          "last_name": {
+            "type": "string",
+            "description": "The last name of the user who has been assigned to the project."
+          },
+          "projects": {
+            "type": "object",
+            "description": "Lists the projects to which the user is assigned and the respective role.",
+            "properties": {
+              "projectId": {
+                "type": "string",
+                "description": "Defines the role the user has in the project.",
+                "enum": [
+                  "ADMIN",
+                  "USER",
+                  "VIEWER",
+                  "MERCHANT",
+                  "CUSTOM ROLE"
+                ]
+              }
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "is_owner": {
+            "type": "boolean"
+          }
+        }
       },
       "UsageNotifications": {
         "type": "object",
@@ -78415,7 +78502,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the list all projects with their details.",
+            "description": "Returns the list of all projects with their details.",
             "content": {
               "application/json": {
                 "schema": {
@@ -78888,6 +78975,26 @@
           "204": {
             "description": "Returns no content if deletion is successful."
           },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
             "description": "Returns an error when the project has been already deleted or it cannot be found due to incorrect ID.",
             "content": {
@@ -78911,13 +79018,24 @@
       }
     },
     "/management/v1/projects/{project-id}/users": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier that identifies the project.",
+          "required": true
+        }
+      ],
       "post": {
-        "operationId": "add-user",
+        "operationId": "assign-user",
         "tags": [
           "Management"
         ],
         "summary": "Assign User",
-        "description": "Assigns a user to a given project. The user must be an existing user in Voucherify.",
+        "description": "Assigns a user to a given project. The user must be an existing user in Voucherify.\n\n> 🚧 Correct Use of Data\n>\n>To avoid errors, use the `role` string with either `id` or `login` strings.",
         "parameters": [],
         "security": [
           {
@@ -78930,7 +79048,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/"
+                "$ref": "#/components/schemas/ManagementProjectsUserCreateRequestBody"
               }
             }
           }
@@ -78941,11 +79059,17 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/"
+                  "$ref": "#/components/schemas/ManagementProjectsUserCreateResponseBody"
                 },
                 "examples": {
                   "Example": {
-                    "value": {}
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-0e9389ccac8da56f55"
+                    }
                   }
                 }
               }
@@ -79035,12 +79159,12 @@
         }
       },
       "get": {
-        "operationId": "list-projects",
+        "operationId": "list-users",
         "tags": [
           "Management"
         ],
-        "summary": "List Projects",
-        "description": "Lists all projects for the organization.\n\nThe endpoint does not require any query parameters.",
+        "summary": "List Users",
+        "description": "Lists all users for the project.",
         "parameters": [],
         "security": [
           {
@@ -79050,11 +79174,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the list all projects with their details.",
+            "description": "Returns the list of all users for the project..",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ManagementProjectListResponseBody"
+                  "$ref": "#/components/schemas/ManagementProjectsUserCreateResponseBody"
                 },
                 "examples": {
                   "Example": {

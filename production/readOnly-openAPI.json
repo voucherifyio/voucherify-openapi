@@ -24028,6 +24028,35 @@
           "details"
         ]
       },
+      "ErrorPaymentRequired": {
+        "title": "Payment Required Error",
+        "type": "object",
+        "description": "Error: Payment required - the current plan does not include the feature.",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "details",
+          "key"
+        ]
+      },
       "EventCustomerActiveCampaignFailed": {
         "title": "Event Customer ActiveCampaign Failed",
         "description": "Event data object schema for `customer.activecampaign.failed`.",
@@ -29010,7 +29039,7 @@
             "properties": {
               "case_sensitive_codes": {
                 "type": "boolean",
-                "description": "Determines if the vouchers in the project will be:\n- case sensitive - if `true`, `C0dE-cfV` is **not** equal to `c0de-cfv`),\n- case insensitive - if false, `C0dE-cfV` is equal to `c0de-cfv`."
+                "description": "Determines if the vouchers in the project will be:\n- case sensitive - if `true`, `C0dE-cfV` is **not** equal to `c0de-cfv`),\n- case insensitive - if `false`, `C0dE-cfV` is equal to `c0de-cfv`."
               }
             }
           },
@@ -29055,13 +29084,7 @@
           "api_usage_notifications",
           "webhooks_callout_notifications",
           "is_sandbox",
-          "webhook_version",
-          "messages",
-          "value",
-          "emails",
-          "in_app",
-          "enabled",
-          "api_calls"
+          "webhook_version"
         ]
       },
       "ManagementProjectsBase": {
@@ -29286,19 +29309,19 @@
               "users": {
                 "type": "array",
                 "nullable": true,
-                "description": "The users (their identifiers, logins, and roles) who will be added to the project.\nIt must be used either in the following combinations:\n- `id` and `role`, or\n- `login` and `role`.",
+                "description": "The users (their identifiers, logins, and roles) who will be assigned to the project.You can assign only existing Voucherify users.\n\nIt must be used either in the following combinations:\n- `id` and `role`, or\n- `login` and `role`.",
                 "items": {
                   "title": "Create Project Users",
                   "type": "object",
-                  "description": "Contains details about the users who will be added to the project.\nOnly the `id` and `role` or `login` and `role` should be provided in the request.",
+                  "description": "Contains details about the users who will be assigned to the project.\nOnly the `id` and `role` or `login` and `role` should be provided in the request.",
                   "properties": {
                     "id": {
                       "type": "string",
-                      "description": "The unique identifier of the user who will be added to the project. **Required** with the `role` string."
+                      "description": "The unique identifier of the user who will be assigned to the project. **Required** with the `role` string.\n\nDo **not** use with the `login` string."
                     },
                     "login": {
                       "type": "string",
-                      "description": "The login data of the user who will be added to the project. **Required** with the `role` string."
+                      "description": "The login data of the user who will be assigned to the project. **Required** with the `role` string.\n\nDo **not** use with the `id` string."
                     },
                     "role": {
                       "type": "string",
@@ -29360,6 +29383,93 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectResponseBase"
+          }
+        ]
+      },
+      "ManagementProjectsUser": {
+        "type": "object",
+        "title": "Project User Details",
+        "description": "Details about the user assigned to a project.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the user who has been assigned to the project."
+          },
+          "login": {
+            "type": "string",
+            "description": "The login data of the user who has been assigned to the project."
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the user who has been assigned to the project."
+          },
+          "first_name": {
+            "type": "string",
+            "description": "The first name of the user who has been assigned to the project."
+          },
+          "last_name": {
+            "type": "string",
+            "description": "The last name of the user who has been assigned to the project."
+          },
+          "projects": {
+            "type": "object",
+            "description": "Lists the projects to which the user is assigned and the respective role.",
+            "properties": {
+              "projectId": {
+                "type": "string",
+                "description": "Defines the role the user has in the project.",
+                "enum": [
+                  "ADMIN",
+                  "USER",
+                  "VIEWER",
+                  "MERCHANT",
+                  "CUSTOM ROLE"
+                ]
+              }
+            }
+          },
+          "role": {
+            "type": "string"
+          },
+          "is_owner": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ManagementProjectsUserCreateRequestBody": {
+        "type": "object",
+        "title": "Management Projects User Create Request Body",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the user who will be assigned to the project. **Required** with the `role` string.\n\nDo **not** use with the `login` string."
+          },
+          "login": {
+            "type": "string",
+            "description": "The login data of the user who will be assigned to the project. **Required** with the `role` string.\n\nDo **not** use with the `id` string."
+          },
+          "role": {
+            "type": "string",
+            "description": "The role of the user to be added. It can be one of the following predefined roles:\n`ADMIN`,\n`USER`,\n`VIEWER`,\n`MERCHANT`.",
+            "enum": [
+              "ADMIN",
+              "USER",
+              "VIEWER",
+              "MERCHANT"
+            ]
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "ManagementProjectsUserCreateResponseBody": {
+        "type": "object",
+        "title": "Management Projects User Create Response Body",
+        "description": "Details about the user assigned to the project.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsUser"
           }
         ]
       },
@@ -78338,6 +78448,26 @@
               }
             }
           },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "403": {
             "description": "Returns an error if the project is to be created in a cluster that is unavailable for the user.",
             "content": {
@@ -78377,7 +78507,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the list all projects with their details.",
+            "description": "Returns the list of all projects with their details.",
             "content": {
               "application/json": {
                 "schema": {
@@ -78473,6 +78603,26 @@
                         }
                       ],
                       "total": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
                     }
                   }
                 }
@@ -78601,6 +78751,26 @@
                         "charset": "0123456789"
                       },
                       "webhook_version": "v2024-01-01"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
                     }
                   }
                 }
@@ -78769,6 +78939,26 @@
                 }
               }
             }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       },
@@ -78789,6 +78979,26 @@
         "responses": {
           "204": {
             "description": "Returns no content if deletion is successful."
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "Returns an error when the project has been already deleted or it cannot be found due to incorrect ID.",
