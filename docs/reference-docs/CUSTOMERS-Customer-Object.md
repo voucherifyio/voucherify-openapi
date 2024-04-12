@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 parentDocSlug: customers
 slug: customer-object
 hidden: false
-order: 1
+order: 10
 ---
 
 ## Customer With Summary Loyalty Referrals

@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: list-customer-activities
 parentDocSlug: customers
 hidden: false
-order: 15
+order: 160
 ---
 [block:html]
 {
