@@ -75,7 +75,7 @@ Pages from the introduction section, like [Introduction – What is Voucherify A
 
 To label an API endpoint as a Beta version in readme.io, add the following details in its Markdown file:
 - Add `[Beta]` postfix to the page title (`title` markdown attribute)
-- Add the following style to the `[block:html]` section:
+- Add the following style to the `[block:html]` section within the `<style></style>` tags:
 
 ```css
 h1::after {\n content: \"BETA\";\n background-color: rgb(237, 117, 71);\n color: rgb(255, 255, 255);\n border-radius: 2rem;padding: 8px 13px 8px;\n white-space: nowrap;font-size:12px;\n}

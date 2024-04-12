@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-04-11
+
+- Added GET List Customer Redeemables endpoint
+
 ## 2024-04-04
 
 - `"voucher"` schema – deleted the following:
