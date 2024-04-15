@@ -39895,6 +39895,33 @@
           "is_owner"
         ]
       },
+      "ManagementProjectsStackingRulesCreateRequestBody": {
+        "type": "object",
+        "description": "",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/StackingRulesBase"
+          }
+        ]
+      },
+      "StackingRulesBase": {
+        "type": "object",
+        "description": "Object representing basic stacking rule parameters.",
+        "properties": {
+          "exclusive_categories": {},
+          "joint_categories": {},
+          "redeemables_limit": {},
+          "applicable_redeemables_limit": {},
+          "applicable_exclusive_redeemables_limit": {},
+          "discount_calculation_mode": {},
+          "initial_amount_mode_categories": {},
+          "discounted_amount_mode_categories": {},
+          "redeemables_application_mode": {},
+          "redeemables_sorting_rule": {},
+          "applicable_redeemables_per_category_limit": {},
+          "applicable_exclusive_redeemables_per_category_limit": {}
+        }
+      },
       "UsageNotifications": {
         "type": "object",
         "title": "Usage notification details",
@@ -67440,7 +67467,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns a list of earning rules for a given tier. The object for each earning rule also contains information about how the points are calculated; this includes mapping. If a specific multiplier was used to calculate points for a given tier, then the `loyalty.points` parameter will account for this calculation.",
+            "description": "Returns a list of earning rules for a given tier. The object for each earning rule also contains information about how the points are calculated; thincludes mapping. If a specific multiplier was used to calculate points for a given tier, then the `loyalty.points` parameter will account for this calculation.",
             "content": {
               "application/json": {
                 "schema": {
@@ -79321,7 +79348,7 @@
             }
           },
           "400": {
-            "description": "Returns an error if the payload is includes all three keys or the required data is missing.",
+            "description": "Returns an error if the payload includes all three keys or the required data is missing.",
             "content": {
               "application/json": {
                 "schema": {
@@ -79488,6 +79515,611 @@
       }
     },
     "/management/v1/projects/{projectId}/users/{userId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterUserId"
+          },
+          "in": "path",
+          "name": "userId",
+          "description": "Provide the unique identifier of the user. Alternatively, provide the user's login.",
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "get-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Get User",
+        "description": "Retrieves the project user's details.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the project user's details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "login": "name@youremaildomain.com",
+                      "email": "name@youremaildomain.com",
+                      "first_name": "Sammy",
+                      "last_name": "Jones",
+                      "projects": {
+                        "proj_9KeAhZB1": "USER",
+                        "proj_npnFzPr9": "USER",
+                        "proj_pEP3NO9s": "USER",
+                        "proj_zsPdrUIw": "ADMIN"
+                      },
+                      "role": "USER",
+                      "is_owner": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find user 'user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM' assigned to the project 'proj_5iQ0m7zw'",
+                      "request_id": "v-0e9a2019cf4fc6a3bd",
+                      "resource_id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "resource_type": "user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "update-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Update User",
+        "description": "Updates the user's role.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the user's new role.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsUserUpdateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the user assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "login": "name@youremaildomain.com",
+                      "email": "name@youremaildomain.com",
+                      "first_name": "Sammy",
+                      "last_name": "Jones",
+                      "projects": {
+                        "proj_9KeAhZB1": "USER",
+                        "proj_npnFzPr9": "USER",
+                        "proj_pEP3NO9s": "USER",
+                        "proj_zsPdrUIw": "ADMIN"
+                      },
+                      "role": "USER",
+                      "is_owner": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload includes incorrect `\"role\"` details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-0e9389ccac8da56f55"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the user has been deleted or incorrect user details have been provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find user with id user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "request_id": "v-0e9a191986c0a98d46",
+                      "resource_id": "user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "resource_type": "user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "unassign-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Unassign User",
+        "description": "Unassigns the user from the project. If the user is currently logged in, they are automatically logged out.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if the unnassignment is successful."
+          },
+          "400": {
+            "description": "Returns an error if the user is not assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 400,
+                      "key": "user_not_assigned",
+                      "message": "User is not assigned",
+                      "details": "User is not assigned to the project",
+                      "request_id": "v-0e9a1b979a80a99053"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when the user cannot be found due to incorrect login or ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find user with id user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "request_id": "v-0e9a1b4b98c0a98ffc",
+                      "resource_id": "user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "resource_type": "user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/stacking-rules": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "create-stacking-rule",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Create Stacking Rule",
+        "description": "Overwrites the existing stacking rules. If no stacking rules have been created earlier for the project, it overwrites the default stacking rules.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the stacking rule parameters.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsStackingRulesCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the stacking rules assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "login": "name@youremaildomain.com",
+                      "email": "name@youremaildomain.com",
+                      "first_name": "Sammy",
+                      "last_name": "Jones",
+                      "projects": {
+                        "proj_9KeAhZB1": "USER",
+                        "proj_npnFzPr9": "USER",
+                        "proj_pEP3NO9s": "USER",
+                        "proj_zsPdrUIw": "ADMIN"
+                      },
+                      "role": "USER",
+                      "is_owner": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-0e9389ccac8da56f55"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "list-users",
+        "tags": [
+          "Management"
+        ],
+        "summary": "List Users",
+        "description": "Lists all users assigned to the project.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the list of all the users assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "user_FgEAjOw6riObJdy81s2yZXdqZNiAV1pM",
+                          "login": "name@youremaildomain.com",
+                          "email": "name@youremaildomain.com",
+                          "first_name": "Sammy",
+                          "last_name": "Jones",
+                          "projects": {
+                            "proj_9KeAhZB1": "USER",
+                            "proj_npnFzPr9": "USER",
+                            "proj_pEP3NO9s": "USER",
+                            "proj_zsPdrUIw": "ADMIN"
+                          },
+                          "role": "USER",
+                          "is_owner": false
+                        },
+                        {
+                          "id": "user_11sYvPrOj3XE573FO1cAzzk1p4k92wLL",
+                          "login": "name@youremaildomain.com",
+                          "email": "name@youremaildomain.com",
+                          "first_name": "Alex",
+                          "last_name": "Smith",
+                          "projects": {
+                            "proj_3CNHbOe0": "ADMIN"
+                          },
+                          "role": "ADMIN",
+                          "is_owner": true
+                        }
+                      ],
+                      "total": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/stacking-rules/{stackingRuleId}": {
       "parameters": [
         {
           "schema": {
