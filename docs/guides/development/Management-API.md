@@ -1,6 +1,6 @@
 ---
 title: Management API
-excerpt: API calls allowing to manage account-related operations
+excerpt: API endpoints for managing account-related operations
 categorySlug: development
 slug: management-api
 type: basic
@@ -8,9 +8,18 @@ hidden: false
 order: 81
 ---
 
-## Management API benefits
+## Management API Benefits
 
-Management API introduces API calls that let you perform account-related operations connected with projects, users, metadata and custom events' schemas, webhooks, stacking rules, and branding. The three main advantages of the Management API are:
+Management API introduces API endpoints that let you perform account-related operations connected with:
+- projects,
+- users,
+- metadata schemas
+- custom event schemas,
+- webhooks,
+- stacking rules,
+- branding.
+ 
+The three main advantages of the Management API are:
 
 1. **Automation**: Streamline the process of creating new projects, configuring them, and adding users, among other tasks.
 2. **Accelerated Delivery**: Experience faster delivery times for new projects.
@@ -18,13 +27,13 @@ Management API introduces API calls that let you perform account-related operati
 
 > 📘
 >
-> Note that Management API are paid add-on feature. Contact our sales representatives for pricing.
+> The Management API is paid add-on feature. Contact [Voucherify sales representatives](https://www.voucherify.io/contact-sales "Contact Voucherify sales") for pricing.
 
 > 📘
 >
 > Documentation is still in progress. It will be soon available with the list of all available Management API endpoints.
 
-## Management API keys
+## Management API Keys
 
 The new tab within Team Settings becomes accessible once it's unlocked for your organization. From there, you can generate Management API keys to facilitate various operations.
 
@@ -32,11 +41,13 @@ Each organization can generate a maximum of 5 API keys. You have the flexibility
 
 Should you require more than 5 keys, please reach out to our support team for assistance.
 
-It's important to note that actions performed via the Management API are not logged in the audit log for privacy and security reasons.
+Note that actions performed via the Management API are not logged in the audit log for privacy and security reasons.
 
 > 🚧
 >
-> After creating a new Managemet API key you will have **15 minutes** to copy the token.
+> After creating a new Managemet API key, you have **15 minutes** to copy the token.
+>
+> Write your secret keys down and keep them in a safe place.
 
 ### Tracking Management API Usage
 
