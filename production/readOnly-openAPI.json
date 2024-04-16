@@ -29358,6 +29358,137 @@
           }
         ]
       },
+      "ManagementProjectsStackingRulesBase": {
+        "type": "object",
+        "description": "Object representing basic stacking rule parameters.",
+        "properties": {
+          "exclusive_categories": {
+            "type": "array",
+            "description": "Lists the IDs of the categories that are exclusive.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "joint_categories": {
+            "type": "array",
+            "description": "Lists the IDs of the categories that are joint.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "minimum": 1,
+            "maximum": 30
+          },
+          "applicable_redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "minimum": 1
+          },
+          "applicable_redeemables_per_category_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`.",
+            "minimum": 1
+          },
+          "applicable_exclusive_redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "applicable_exclusive_redeemables_per_category_limit": {
+            "type": "integer",
+            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`.",
+            "minimum": 1
+          },
+          "discount_calculation_mode": {
+            "type": "string",
+            "description": "Defines if the discounts are applied by taking into account the initial order amount or the discounted order amount.",
+            "enum": [
+              "INITIAL_AMOUNT",
+              "DISCOUNTED_AMOUNT"
+            ]
+          },
+          "initial_amount_mode_categories": {
+            "type": "array",
+            "description": "Lists the IDs of the categories that apply a discount based on the initial amount.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "discounted_amount_mode_categories": {
+            "type": "array",
+            "description": "Lists the IDs of the categories that apply a discount based on the discounted amount.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "redeemables_application_mode": {
+            "type": "string",
+            "description": "Defines the application mode for redeemables.",
+            "enum": [
+              "ALL",
+              "PARTIAL"
+            ]
+          },
+          "redeemables_sorting_rule": {
+            "type": "string",
+            "description": "Defines the sorting rule for redeemables.",
+            "enum": [
+              "CATEGORY_HIERARCHY",
+              "REQUESTED_ORDER"
+            ]
+          }
+        }
+      },
+      "ManagementProjectsStackingRulesCreateRequestBody": {
+        "type": "object",
+        "description": "",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsStackingRulesBase"
+          }
+        ]
+      },
+      "ManagementProjectsStackingRulesResponseBody": {
+        "type": "object",
+        "description": "",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsStackingRulesBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The unique identifier of the stacking rule."
+              },
+              "created_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the stacking rules were created. Value for this parameter is in the ISO 8601 format.",
+                "format": "date-time"
+              }
+            }
+          }
+        ],
+        "required": [
+          "id",
+          "exclusive_categories",
+          "joint_categories",
+          "redeemables_limit",
+          "applicable_redeemables_limit",
+          "applicable_exclusive_redeemables_limit",
+          "discount_calculation_mode",
+          "initial_amount_mode_categories",
+          "discounted_amount_mode_categories",
+          "redeemables_application_mode",
+          "redeemables_sorting_rule",
+          "created_at"
+        ]
+      },
       "ManagementProjectsUpdateRequestBody": {
         "type": "object",
         "title": "Management Project Update Request Body",
@@ -37334,14 +37465,14 @@
             "type": "integer",
             "description": "Defines how many redeemables with an exclusive category can be applied in one request.",
             "default": 1,
-            "maximum": 30,
+            "maximum": 5,
             "minimum": 1
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "description": "Defines how many redeemables per category can be applied in one request.",
             "default": 1,
-            "maximum": 30,
+            "maximum": 5,
             "minimum": 1
           },
           "exclusive_categories": {
@@ -79326,7 +79457,7 @@
             }
           },
           "400": {
-            "description": "Returns an error if the payload is includes all three keys or the required data is missing.",
+            "description": "Returns an error if the payload includes all three keys or the required data is missing.",
             "content": {
               "application/json": {
                 "schema": {
@@ -79762,6 +79893,611 @@
       },
       "delete": {
         "operationId": "unassign-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Unassign User",
+        "description": "Unassigns the user from the project. If the user is currently logged in, they are automatically logged out.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if the unnassignment is successful."
+          },
+          "400": {
+            "description": "Returns an error if the user is not assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 400,
+                      "key": "user_not_assigned",
+                      "message": "User is not assigned",
+                      "details": "User is not assigned to the project",
+                      "request_id": "v-0e9a1b979a80a99053"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when the user cannot be found due to incorrect login or ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find user with id user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "request_id": "v-0e9a1b4b98c0a98ffc",
+                      "resource_id": "user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "resource_type": "user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/stacking-rules": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "create-stacking-rules",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Create Stacking Rules",
+        "description": "Overwrites the existing stacking rules. If no stacking rules have been created earlier for the project, it overwrites the default stacking rules.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the stacking rule parameters.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsStackingRulesCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the stacking rules assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsStackingRulesResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "login": "name@youremaildomain.com",
+                      "email": "name@youremaildomain.com",
+                      "first_name": "Sammy",
+                      "last_name": "Jones",
+                      "projects": {
+                        "proj_9KeAhZB1": "USER",
+                        "proj_npnFzPr9": "USER",
+                        "proj_pEP3NO9s": "USER",
+                        "proj_zsPdrUIw": "ADMIN"
+                      },
+                      "role": "USER",
+                      "is_owner": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-0e9389ccac8da56f55"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "list-stacking-rules",
+        "tags": [
+          "Management"
+        ],
+        "summary": "List Stacking Rules",
+        "description": "Lists all the stacking rules.\n\nReturns always a list with one item.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "user_FgEAjOw6riObJdy81s2yZXdqZNiAV1pM",
+                          "login": "name@youremaildomain.com",
+                          "email": "name@youremaildomain.com",
+                          "first_name": "Sammy",
+                          "last_name": "Jones",
+                          "projects": {
+                            "proj_9KeAhZB1": "USER",
+                            "proj_npnFzPr9": "USER",
+                            "proj_pEP3NO9s": "USER",
+                            "proj_zsPdrUIw": "ADMIN"
+                          },
+                          "role": "USER",
+                          "is_owner": false
+                        },
+                        {
+                          "id": "user_11sYvPrOj3XE573FO1cAzzk1p4k92wLL",
+                          "login": "name@youremaildomain.com",
+                          "email": "name@youremaildomain.com",
+                          "first_name": "Alex",
+                          "last_name": "Smith",
+                          "projects": {
+                            "proj_3CNHbOe0": "ADMIN"
+                          },
+                          "role": "ADMIN",
+                          "is_owner": true
+                        }
+                      ],
+                      "total": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/stacking-rules/{stackingRuleId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterUserId"
+          },
+          "in": "path",
+          "name": "stackingRuleId",
+          "description": "Provide the unique identifier of the user. Alternatively, provide the user's login.",
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "get-stacking-rule",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Get Stacking Rule",
+        "description": "Retrieves the project user's details.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the project user's details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "login": "name@youremaildomain.com",
+                      "email": "name@youremaildomain.com",
+                      "first_name": "Sammy",
+                      "last_name": "Jones",
+                      "projects": {
+                        "proj_9KeAhZB1": "USER",
+                        "proj_npnFzPr9": "USER",
+                        "proj_pEP3NO9s": "USER",
+                        "proj_zsPdrUIw": "ADMIN"
+                      },
+                      "role": "USER",
+                      "is_owner": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find user 'user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM' assigned to the project 'proj_5iQ0m7zw'",
+                      "request_id": "v-0e9a2019cf4fc6a3bd",
+                      "resource_id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "resource_type": "user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "update-stacking-rule",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Update User",
+        "description": "Updates the user's role.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the user's new role.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsUserUpdateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the user assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "login": "name@youremaildomain.com",
+                      "email": "name@youremaildomain.com",
+                      "first_name": "Sammy",
+                      "last_name": "Jones",
+                      "projects": {
+                        "proj_9KeAhZB1": "USER",
+                        "proj_npnFzPr9": "USER",
+                        "proj_pEP3NO9s": "USER",
+                        "proj_zsPdrUIw": "ADMIN"
+                      },
+                      "role": "USER",
+                      "is_owner": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload includes incorrect `\"role\"` details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-0e9389ccac8da56f55"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns and error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the user has been deleted or incorrect user details have been provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find user with id user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "request_id": "v-0e9a191986c0a98d46",
+                      "resource_id": "user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "resource_type": "user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-stacking-rule",
         "tags": [
           "Management"
         ],

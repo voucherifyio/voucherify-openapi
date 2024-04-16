@@ -30921,14 +30921,14 @@
             "type": "integer",
             "description": "Defines how many redeemables with an exclusive category can be applied in one request.",
             "default": 1,
-            "maximum": 30,
+            "maximum": 5,
             "minimum": 1
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "description": "Defines how many redeemables per category can be applied in one request.",
             "default": 1,
-            "maximum": 30,
+            "maximum": 5,
             "minimum": 1
           },
           "exclusive_categories": {
@@ -39900,26 +39900,130 @@
         "description": "",
         "allOf": [
           {
-            "$ref": "#/components/schemas/StackingRulesBase"
+            "$ref": "#/components/schemas/ManagementProjectsStackingRulesBase"
           }
         ]
       },
-      "StackingRulesBase": {
+      "ManagementProjectsStackingRulesResponseBody": {
+        "type": "object",
+        "description": "",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsStackingRulesBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The unique identifier of the stacking rule."
+              },
+              "created_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the stacking rules were created. Value for this parameter is in the ISO 8601 format.",
+                "format": "date-time"
+              }
+            }
+          }
+        ],
+        "required": [
+          "id",
+          "exclusive_categories",
+          "joint_categories",
+          "redeemables_limit",
+          "applicable_redeemables_limit",
+          "applicable_exclusive_redeemables_limit",
+          "discount_calculation_mode",
+          "initial_amount_mode_categories",
+          "discounted_amount_mode_categories",
+          "redeemables_application_mode",
+          "redeemables_sorting_rule",
+          "created_at"
+        ]
+      },
+      "ManagementProjectsStackingRulesBase": {
         "type": "object",
         "description": "Object representing basic stacking rule parameters.",
         "properties": {
-          "exclusive_categories": {},
-          "joint_categories": {},
-          "redeemables_limit": {},
-          "applicable_redeemables_limit": {},
-          "applicable_exclusive_redeemables_limit": {},
-          "discount_calculation_mode": {},
-          "initial_amount_mode_categories": {},
-          "discounted_amount_mode_categories": {},
-          "redeemables_application_mode": {},
-          "redeemables_sorting_rule": {},
-          "applicable_redeemables_per_category_limit": {},
-          "applicable_exclusive_redeemables_per_category_limit": {}
+          "exclusive_categories": {
+            "type": "array",
+            "description": "Lists the IDs of the categories that are exclusive.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "joint_categories": {
+            "type": "array",
+            "description": "Lists the IDs of the categories that are joint.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "minimum": 1,
+            "maximum": 30
+          },
+          "applicable_redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "minimum": 1
+          },
+          "applicable_redeemables_per_category_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`.",
+            "minimum": 1
+          },
+          "applicable_exclusive_redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "applicable_exclusive_redeemables_per_category_limit": {
+            "type": "integer",
+            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`.",
+            "minimum": 1
+          },
+          "discount_calculation_mode": {
+            "type": "string",
+            "description": "Defines if the discounts are applied by taking into account the initial order amount or the discounted order amount.",
+            "enum": [
+              "INITIAL_AMOUNT",
+              "DISCOUNTED_AMOUNT"
+            ]
+          },
+          "initial_amount_mode_categories": {
+            "type": "array",
+            "description": "Lists the IDs of the categories that apply a discount based on the initial amount.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "discounted_amount_mode_categories": {
+            "type": "array",
+            "description": "Lists the IDs of the categories that apply a discount based on the discounted amount.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "redeemables_application_mode": {
+            "type": "string",
+            "description": "Defines the application mode for redeemables.",
+            "enum": [
+              "ALL",
+              "PARTIAL"
+            ]
+          },
+          "redeemables_sorting_rule": {
+            "type": "string",
+            "description": "Defines the sorting rule for redeemables.",
+            "enum": [
+              "CATEGORY_HIERARCHY",
+              "REQUESTED_ORDER"
+            ]
+          }
         }
       },
       "UsageNotifications": {
@@ -79899,12 +80003,12 @@
         }
       ],
       "post": {
-        "operationId": "create-stacking-rule",
+        "operationId": "create-stacking-rules",
         "tags": [
           "Management"
         ],
-        "summary": "Create Stacking Rule",
-        "description": "Overwrites the existing stacking rules. If no stacking rules have been created earlier for the project, it overwrites the default stacking rules.",
+        "summary": "Create Stacking Rules",
+        "description": "Overwrites the existing stacking rules. If no stacking rules have been created earlier for the project, it overwrites the default stacking rules.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
         "parameters": [],
         "security": [
           {
@@ -79928,7 +80032,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ManagementProjectsUserResponseBody"
+                  "$ref": "#/components/schemas/ManagementProjectsStackingRulesResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -80015,12 +80119,12 @@
         }
       },
       "get": {
-        "operationId": "list-users",
+        "operationId": "list-stacking-rules",
         "tags": [
           "Management"
         ],
-        "summary": "List Users",
-        "description": "Lists all users assigned to the project.",
+        "summary": "List Stacking Rules",
+        "description": "Lists all the stacking rules.\n\nReturns always a list with one item.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
         "parameters": [],
         "security": [
           {
@@ -80030,7 +80134,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns the list of all the users assigned to the project.",
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -80135,17 +80239,17 @@
             "$ref": "#/components/schemas/ParameterUserId"
           },
           "in": "path",
-          "name": "userId",
+          "name": "stackingRuleId",
           "description": "Provide the unique identifier of the user. Alternatively, provide the user's login.",
           "required": true
         }
       ],
       "get": {
-        "operationId": "get-user",
+        "operationId": "get-stacking-rule",
         "tags": [
           "Management"
         ],
-        "summary": "Get User",
+        "summary": "Get Stacking Rule",
         "description": "Retrieves the project user's details.",
         "parameters": [],
         "security": [
@@ -80249,7 +80353,7 @@
         }
       },
       "put": {
-        "operationId": "update-user",
+        "operationId": "update-stacking-rule",
         "tags": [
           "Management"
         ],
@@ -80388,7 +80492,7 @@
         }
       },
       "delete": {
-        "operationId": "unassign-user",
+        "operationId": "delete-stacking-rule",
         "tags": [
           "Management"
         ],
