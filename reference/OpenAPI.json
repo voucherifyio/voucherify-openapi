@@ -39512,12 +39512,10 @@
           }
         }
       },
-      "ManagementProjectResponseBase": {
+      "ManagementProjectsResponseBase": {
         "type": "object",
+        "description": "Object representing a project.",
         "allOf": [
-          {
-            "$ref": "#/components/schemas/ManagementProjectsBase"
-          },
           {
             "type": "object",
             "properties": {
@@ -39528,13 +39526,7 @@
             }
           },
           {
-            "type": "object",
-            "properties": {
-              "is_sandbox": {
-                "type": "boolean",
-                "description": "Determines if the project is a sandbox project."
-              }
-            }
+            "$ref": "#/components/schemas/ManagementProjectsBase"
           },
           {
             "type": "object",
@@ -39543,21 +39535,11 @@
                 "type": "string",
                 "nullable": true,
                 "description": "The identifier of the cluster where the project will be created."
-              }
-            }
-          },
-          {
-            "type": "object",
-            "properties": {
+              },
               "case_sensitive_codes": {
                 "type": "boolean",
                 "description": "Determines if the vouchers in the project will be:\n- case sensitive - if `true`, `C0dE-cfV` is **not** equal to `c0de-cfv`),\n- case insensitive - if `false`, `C0dE-cfV` is equal to `c0de-cfv`."
-              }
-            }
-          },
-          {
-            "type": "object",
-            "properties": {
+              },
               "api_version": {
                 "type": "string",
                 "nullable": true,
@@ -39565,12 +39547,7 @@
                 "enum": [
                   "v2018-08-01"
                 ]
-              }
-            }
-          },
-          {
-            "type": "object",
-            "properties": {
+              },
               "is_sandbox": {
                 "type": "boolean",
                 "description": "Determines if the project is a sandbox project."
@@ -39602,7 +39579,7 @@
       "ManagementProjectListResponseBody": {
         "type": "object",
         "title": "Management Project List Response Body",
-        "description": "Response body schema for **GET** `management/v1/projects`.",
+        "description": "Object containing a list of projects.",
         "properties": {
           "object": {
             "type": "string",
@@ -39621,7 +39598,7 @@
             "type": "array",
             "description": "Array of project objects.",
             "items": {
-              "$ref": "#/components/schemas/ManagementProjectResponseBase"
+              "$ref": "#/components/schemas/ManagementProjectsResponseBody"
             }
           },
           "total": {
@@ -39660,12 +39637,7 @@
                 "type": "string",
                 "nullable": true,
                 "description": "The identifier of the cluster where the project will be created. The default cluster is `eu1` unless otherwise configured."
-              }
-            }
-          },
-          {
-            "type": "object",
-            "properties": {
+              },
               "api_version": {
                 "type": "string",
                 "nullable": true,
@@ -39673,16 +39645,11 @@
                 "enum": [
                   "v2018-08-01"
                 ]
-              }
-            }
-          },
-          {
-            "type": "object",
-            "properties": {
+              },
               "users": {
                 "type": "array",
                 "nullable": true,
-                "description": "The users (their identifiers, logins, and roles) who will be assigned to the project.You can assign only existing Voucherify users.\n\nIt must be used either in the following combinations:\n- `id` and `role`, or\n- `login` and `role`.",
+                "description": "The users (their identifiers, logins, and roles) who will be assigned to the project. You can assign only existing Voucherify users.\n\nIt must be used either in the following combinations:\n- `id` and `role`, or\n- `login` and `role`.",
                 "items": {
                   "title": "Create Project Users",
                   "type": "object",
@@ -39698,13 +39665,7 @@
                     },
                     "role": {
                       "type": "string",
-                      "description": "The role of the user to be added. It can be one of the following predefined roles:\n`ADMIN`,\n`USER`,\n`VIEWER`,\n`MERCHANT`.",
-                      "enum": [
-                        "ADMIN",
-                        "USER",
-                        "VIEWER",
-                        "MERCHANT"
-                      ]
+                      "description": "The role of the user to be added. It can be one of the following predefined roles:\n`ADMIN`, `USER`, `VIEWER`, `MERCHANT`\nor an ID of a custom role."
                     }
                   },
                   "required": [
@@ -39725,9 +39686,10 @@
       "ManagementProjectsCreateResponseBody": {
         "type": "object",
         "title": "Management Project Create Response Body",
+        "description": "Response body schema for **POST** `management/v1/projects`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ManagementProjectResponseBase"
+            "$ref": "#/components/schemas/ManagementProjectsResponseBase"
           }
         ]
       },
@@ -39743,20 +39705,48 @@
             "type": "object",
             "properties": {
               "default_code_config": {
-                "type": "string",
-                "description": "Determines the character set that is used as default for vouchers."
+                "type": "object",
+                "title": "Default Code Configuration",
+                "description": "Determines the character set that is used as default for vouchers. It is affected by the `\"case_sensitive_codes\"` setting.",
+                "properties": {
+                  "charset": {
+                    "type": "string",
+                    "description": "Lists all characters that are used as default for vouchers"
+                  }
+                }
               }
             }
           }
         ]
       },
-      "ManagementProjectsUpdateResponseBody": {
+      "ManagementProjectsResponseBody": {
         "type": "object",
         "title": "Management Project Update Response Body",
         "allOf": [
           {
-            "$ref": "#/components/schemas/ManagementProjectResponseBase"
+            "$ref": "#/components/schemas/ManagementProjectsResponseBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "default_code_config": {
+                "type": "object",
+                "description": "Determines the character set that is used as default for vouchers. It is affected by the `\"case_sensitive_codes\"` setting.",
+                "properties": {
+                  "charset": {
+                    "type": "string",
+                    "description": "Lists all characters that are used as default for vouchers"
+                  }
+                },
+                "required": [
+                  "charset"
+                ]
+              }
+            }
           }
+        ],
+        "required": [
+          "default_code_config"
         ]
       },
       "ManagementProjectsUserCreateRequestBody": {
@@ -39773,13 +39763,7 @@
           },
           "role": {
             "type": "string",
-            "description": "The role of the user to be added. It can be one of the following predefined roles:\n`ADMIN`,\n`USER`,\n`VIEWER`,\n`MERCHANT`.",
-            "enum": [
-              "ADMIN",
-              "USER",
-              "VIEWER",
-              "MERCHANT"
-            ]
+            "description": "The role of the user to be added. It can be one of the following predefined roles:\n`ADMIN`, `USER`, `VIEWER`, `MERCHANT`,\nor an ID of a custom role."
           }
         },
         "required": [
@@ -39802,7 +39786,7 @@
         "properties": {
           "role": {
             "type": "string",
-            "description": "The role of the user to be added. It can be a custom role or one of following predefined roles:\n`ADMIN`,\n`USER`,\n`VIEWER`,\n`MERCHANT`."
+            "description": "The role of the user to be added. It can be a custom role or one of following predefined roles:\n`ADMIN`, `USER`, `VIEWER`, `MERCHANT`\nor an ID of a custom role.."
           }
         },
         "required": [
@@ -39812,7 +39796,7 @@
       "ManagementProjectsUserListResponseBody": {
         "type": "object",
         "title": "Management Projects User List Response Body",
-        "description": "Response body schema for **GET** `management/v1/projects/{projectId}/users`.",
+        "description": "Object containing a list of users assigned to the project.",
         "properties": {
           "object": {
             "type": "string",
@@ -39873,7 +39857,7 @@
           },
           "projects": {
             "type": "object",
-            "description": "Lists key-value pairs, where the keys are the projects to which the user is assigned. The values are the roles assigned in a given project.",
+            "description": "Lists key-value pairs, where the key is the project to which the user is assigned. The value is the role assigned in a given project.",
             "additionalProperties": {
               "type": "string",
               "description": "Returns the role the user has in the project."
@@ -78655,7 +78639,7 @@
             }
           },
           "400": {
-            "description": "Returns an error if the payload is missing a `\"name\"`, `\"case_sensitive_codes\"`, `\"timezone\"`, or `\"currency\"` property in the request.",
+            "description": "Returns an error if the payload is missing required properties in the request.",
             "content": {
               "application/json": {
                 "schema": {
@@ -79090,7 +79074,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ManagementProjectsUpdateResponseBody"
+                  "$ref": "#/components/schemas/ManagementProjectsResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -79254,7 +79238,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ManagementProjectsUpdateResponseBody"
+                  "$ref": "#/components/schemas/ManagementProjectsResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -79965,7 +79949,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Returns no content if the unnassignment is successful."
+            "description": "Returns no content if the user has been successfully unnassigned."
           },
           "400": {
             "description": "Returns an error if the user is not assigned to the project.",
