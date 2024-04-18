@@ -643,13 +643,13 @@
         "type": "string",
         "example": "cust_nk0N1uNQ1YnupAoJGOgvsODC"
       },
-      "ParameterProjectId": {
-        "type": "string",
-        "example": "proj_TrlkLiH4"
-      },
       "ParameterOrderId": {
         "type": "string",
         "example": "ord_smEh8p1p6W6DgOmeERk092LG"
+      },
+      "ParameterProjectId": {
+        "type": "string",
+        "example": "proj_TrlkLiH4"
       },
       "ParameterCampaignId": {
         "type": "string",
@@ -670,6 +670,10 @@
       "ParameterAsyncActionId": {
         "type": "string",
         "example": "aa_0afb3d009a55814a48"
+      },
+      "ParameterMetadataSchemaId": {
+        "type": "string",
+        "example": "ms_f0r4hm3ta6a4a5ch3ma"
       },
       "ParameterMemberId": {
         "type": "string",
@@ -40051,6 +40055,22 @@
           "updated_at"
         ]
       },
+      "ManagementProjectsMetadataSchemaCreateRequestBody": {
+        "type": "object",
+        "description": "",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaBase"
+          }
+        ],
+        "required": [
+          "related_object",
+          "properties",
+          "type",
+          "optional",
+          "array"
+        ]
+      },
       "ManagementProjectsStackingRulesBase": {
         "type": "object",
         "description": "Object representing basic stacking rule parameters.",
@@ -40194,50 +40214,78 @@
                 "object_type": {
                   "type": "string",
                   "nullable": true,
-                  "description": "Returns the name of the custom resource if the resource was previously defined in the Dashboard as a custom (non-standard) Nested object."
+                  "description": "The name of the custom resource (e.g. an object) if the resource has been previously defined. Otherwise, it is `null` for other types."
                 },
                 "min_length": {
                   "type": "integer",
-                  "description": "Value indicating minimum length when the setting for `has minimum length of` in the Dashboard is defined explicitly."
+                  "description": "Value indicating the minimum length. Available only for the `string` type."
                 },
-                "maxLength": {
+                "max_length": {
                   "type": "integer",
-                  "description": "Value for maximum length when the setting for `has maximum length of` in the Dashboard is defined explicitly."
+                  "description": "Value indicating the maximum length. Available only for the `string` type."
                 },
-                "exactLength": {
+                "exact_length": {
                   "type": "integer",
-                  "description": "Value indicating exact length when the setting for `has exact length of` in the Dashboard is defined explicitly."
+                  "description": "Value indicating the exact length. Available only for the `string` type."
                 },
                 "eq": {
                   "type": "array",
-                  "description": "Array of possible values when the setting for `is equal to any of` in the Dashboard is defined explicitly.",
-                  "items": {}
+                  "description": "Array of values that are allowed. Available only for the `string` and `number` types.",
+                  "anyOf": [
+                    {
+                      "title": "Integer",
+                      "description": "Add integers to the array.",
+                      "items": {
+                        "type": "integer"
+                      }
+                    },
+                    {
+                      "title": "String",
+                      "description": "Add strings to the array.",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  ]
                 },
                 "ne": {
                   "type": "array",
-                  "description": "Array of values that are not allowed when the setting for `is not equal to any of` in the Dashboard is defined explicitly.",
-                  "items": {}
+                  "description": "Array of values that are not allowed Available only for the `number` type.",
+                  "anyOf": [
+                    {
+                      "title": "Integer",
+                      "description": "Add integers to the array.",
+                      "items": {
+                        "type": "integer"
+                      }
+                    }
+                  ]
                 },
                 "lt": {
-                  "type": "integer",
-                  "description": "A property of `number` type must have `less than` this value."
+                  "type": "number",
+                  "description": "A property of the `number` type must have `less than` this value. Up to two decimal places."
                 },
                 "lte": {
-                  "type": "integer",
-                  "description": "A property of `number` type must be `less than or equal` to this value."
+                  "type": "number",
+                  "description": "A property of the `number` type must be `less than or equal` to this value. Up to two decimal places."
                 },
                 "gt": {
-                  "type": "integer",
-                  "description": "A property of `number` type must be `greater than` this value."
+                  "type": "number",
+                  "description": "A property of `number` type must be `greater than` this value. Up to two decimal places."
                 },
                 "gte": {
-                  "type": "integer",
-                  "description": "A property of `number` type must be `greater than or equal` to this value."
+                  "type": "number",
+                  "description": "A property of `number` type must be `greater than or equal` to this value. Up to two decimal places."
                 }
               }
             }
           }
-        }
+        },
+        "required": [
+          "type",
+          "optional",
+          "array"
+        ]
       },
       "UsageNotifications": {
         "type": "object",
@@ -80890,7 +80938,7 @@
           "Management"
         ],
         "summary": "Create Metadata Schema",
-        "description": "Creates a metadata (custom attribute) schema. The schema consists of a set of key-value pairs to customize Voucherify resources.\nYou can nest an object. However, a nested object cannot include another nested object.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
+        "description": "Creates a new nested metadata (custom attribute) schema. The schema consists of a set of key-value pairs to customize Voucherify resources.\nYou can nest an object. However, a nested object cannot include another nested object.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
         "parameters": [],
         "security": [
           {
@@ -80903,7 +80951,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaBase"
+                "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaCreateRequestBody"
               }
             }
           }
@@ -81031,7 +81079,7 @@
         }
       },
       "get": {
-        "operationId": "list-stacking-rules",
+        "operationId": "list-metadata-schema",
         "tags": [
           "Management"
         ],
@@ -81155,7 +81203,7 @@
         }
       }
     },
-    "/management/v1/projects/{projectId}/stacking-rules/{metadataSchemaId}": {
+    "/management/v1/projects/{projectId}/metadata-schemas/{metadataSchemaId}": {
       "parameters": [
         {
           "schema": {
@@ -81168,7 +81216,7 @@
         },
         {
           "schema": {
-            "$ref": "#/components/schemas/"
+            "$ref": "#/components/schemas/ParameterMetadataSchemaId"
           },
           "in": "path",
           "name": "metadataSchemaId",
@@ -81177,7 +81225,7 @@
         }
       ],
       "get": {
-        "operationId": "get-stacking-rules",
+        "operationId": "get-metadata-schema-1",
         "tags": [
           "Management"
         ],
@@ -81298,7 +81346,7 @@
         }
       },
       "put": {
-        "operationId": "update-stacking-rules",
+        "operationId": "update-metadata-schema",
         "tags": [
           "Management"
         ],
@@ -81446,7 +81494,7 @@
         }
       },
       "delete": {
-        "operationId": "delete-stacking-rules",
+        "operationId": "delete-metadata-schema",
         "tags": [
           "Management"
         ],
