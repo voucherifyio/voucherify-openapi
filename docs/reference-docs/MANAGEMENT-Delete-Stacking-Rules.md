@@ -1,11 +1,11 @@
 ---
-title: Get Stacking Rules [Beta]
+title: Delete Stacking Rules [Beta]
 type: endpoint
 categorySlug: voucherify-api
-slug: get-stacking-rules
+slug: delete-stacking-rules
 parentDocSlug: management
 hidden: false
-order: 130
+order: 150
 ---
 [block:html]
 {
