@@ -11,13 +11,13 @@ order: 81
 ## Management API Benefits
 
 Management API introduces API endpoints that let you perform account-related operations connected with:
-- projects,
-- users,
-- metadata schemas
-- custom event schemas,
-- webhooks,
-- stacking rules,
-- branding.
+- [Projects](ref:create-project "Create Project"),
+- [Users](ref:assign-user "Assign User"),
+- Metadata schemas
+- Custom event schemas,
+- Webhooks,
+- [Stacking rules](ref:create-stacking-rules "Create Stacking Rules"),
+- Branding.
  
 The three main advantages of the Management API are:
 
@@ -28,6 +28,10 @@ The three main advantages of the Management API are:
 > 📘
 >
 > The Management API is paid add-on feature. Contact [Voucherify sales representatives](https://www.voucherify.io/contact-sales "Contact Voucherify sales") for pricing.
+
+> 🚧 Beta Version
+>
+> The Management API is still in beta. Voucherify developers still work on improving the endpoints.
 
 > 📘
 >
