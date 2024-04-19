@@ -4,6 +4,13 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-04-19
+
+- Added Management API endpoints for:
+  - Projects (`POST`, `GET` all, `GET` one, `PUT`, `DELETE`)
+  - Users (`POST`, `GET` all, `GET` one, `PUT`, `DELETE`)
+  - Stacking rules (`POST`, `GET` all, `GET` one, `PUT`, `DELETE`)
+
 ## 2024-04-11
 
 - Added GET List Customer Redeemables endpoint

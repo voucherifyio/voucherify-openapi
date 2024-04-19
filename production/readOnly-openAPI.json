@@ -139,6 +139,10 @@
       "description": "List referrals."
     },
     {
+      "name": "Management",
+      "description": "Manage projects."
+    },
+    {
       "name": "Client-side",
       "description": "Use client-side APIs."
     }
@@ -163,6 +167,16 @@
       "X-Client-Application-Id": {
         "type": "apiKey",
         "name": "X-Client-Application-Id",
+        "in": "header"
+      },
+      "X-Management-Id": {
+        "type": "apiKey",
+        "name": "X-Management-Id",
+        "in": "header"
+      },
+      "X-Management-Token": {
+        "type": "apiKey",
+        "name": "X-Management-Token",
         "in": "header"
       }
     },
@@ -18862,6 +18876,25 @@
           "async_action_id"
         ]
       },
+      "BadRequest": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "error": {
+            "type": "string",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          }
+        }
+      },
       "BusValRuleAssignment": {
         "title": "Business Validation Rule Assignment",
         "description": "Assignments of business validation rule",
@@ -23991,10 +24024,37 @@
         },
         "required": [
           "code",
-          "key",
+          "message",
+          "details"
+        ]
+      },
+      "ErrorPaymentRequired": {
+        "title": "Payment Required Error",
+        "type": "object",
+        "description": "Error: Payment required - the current plan does not include the feature.",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          }
+        },
+        "required": [
+          "code",
           "message",
           "details",
-          "request_id"
+          "key"
         ]
       },
       "EventCustomerActiveCampaignFailed": {
@@ -28903,6 +28963,805 @@
           }
         }
       },
+      "ManagementProjectListResponseBody": {
+        "type": "object",
+        "title": "Management Project List Response Body",
+        "description": "Object containing a list of projects.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about the projects in a dictionary.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of project objects."
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of project objects.",
+            "items": {
+              "$ref": "#/components/schemas/ManagementProjectsResponseBody"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "The total number of projects."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
+      "ManagementProjectsBase": {
+        "type": "object",
+        "title": "Management Project Base",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the project."
+          },
+          "description": {
+            "type": "string",
+            "description": "A user-defined description of the project, e.g. its purpose, scope, region."
+          },
+          "timezone": {
+            "type": "string",
+            "description": "The time zone in which the project is established. It is equal to one of the allowed values."
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency used in the project. It is equal to a 3-letter ISO code."
+          },
+          "dial_code": {
+            "type": "string",
+            "nullable": true,
+            "description": "The dial code for the project. It is equal to one of the allowed values."
+          },
+          "webhook_version": {
+            "type": "string",
+            "description": "The webhook version used in the project.",
+            "enum": [
+              "v2024-01-01"
+            ]
+          },
+          "client_trusted_domains": {
+            "type": "array",
+            "description": "An array of URL addresses that allow client requests.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "client_redeem_enabled": {
+            "type": "boolean",
+            "description": "Enables client-side redemption. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
+          },
+          "client_publish_enabled": {
+            "type": "boolean",
+            "description": "Enables client-side publication. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
+          },
+          "client_list_vouchers_enabled": {
+            "type": "boolean",
+            "description": "Enables client-side listing of vouchers. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
+          },
+          "client_create_customer_enabled": {
+            "type": "boolean",
+            "description": "Enables client-side creation of customers. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
+          },
+          "client_loyalty_events_enabled": {
+            "type": "boolean",
+            "description": "Enables client-side events for loyalty and referral programs. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
+          },
+          "client_set_voucher_expiration_date_enabled": {
+            "type": "boolean",
+            "description": "Enables client-side setting of voucher expiration date. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
+          },
+          "api_usage_notifications": {
+            "type": "object",
+            "title": "API Usage Notifications",
+            "description": "Determines the notification settings.",
+            "properties": {
+              "redemptions": {
+                "type": "object",
+                "description": "Determines the notification settings for redemptions. The notification can be used as a warning that a limit will be reached soon.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UsageNotifications"
+                  }
+                ]
+              },
+              "messages": {
+                "type": "object",
+                "description": "Determines the notification settings for distributed messages according to the day and month limit. The notification can be used as a warning that a limit will be reached soon.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UsageNotifications"
+                  }
+                ]
+              },
+              "api_calls": {
+                "type": "object",
+                "description": "Determines the notification settings for API calls made for the hourly limit. The notification can be used as a warning that a limit will be reached soon. It is sent maximum once per hour.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UsageNotifications"
+                  }
+                ]
+              },
+              "bulk_api_calls": {
+                "type": "object",
+                "description": "Determines the notification settings for bulk API calls made for the hourly limit. The notification can be used as a warning that a limit will be reached soon. It is sent maximum once per hour.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UsageNotifications"
+                  }
+                ]
+              },
+              "webhook_calls": {
+                "type": "object",
+                "description": "Determines the notification settings for webhook calls made for the daily limit. The notification can be used as a warning that a limit will be reached soon. It is sent maximum four times a day.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UsageNotifications"
+                  }
+                ]
+              },
+              "cycle_calls": {
+                "type": "object",
+                "description": "Determines the notification settings for API calls made for the billing cycle limit. The notification can be used as a warning that a limit will be reached soon. It is sent maximum once per the billing cycle.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UsageNotifications"
+                  }
+                ]
+              }
+            }
+          },
+          "webhooks_callout_notifications": {
+            "type": "object",
+            "title": "Webhook callout notification details",
+            "description": "Determines the notification settings for webhook callouts configured in Distributions and Project settings.",
+            "properties": {
+              "distributions": {
+                "type": "object",
+                "description": "Determines the notification settings for webhooks sent through Distributions.",
+                "properties": {
+                  "email": {
+                    "type": "boolean",
+                    "description": "Enables the notification through an email. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
+                  },
+                  "in_app": {
+                    "type": "boolean",
+                    "description": "Enables the notification through an email. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
+                  },
+                  "emails": {
+                    "type": "array",
+                    "description": "An array of email addresses which will receive the notification.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "webhooks": {
+                "type": "object",
+                "description": "Determines the notification settings for webhooks sent as set out in the Project settings.",
+                "properties": {
+                  "email": {
+                    "type": "boolean",
+                    "description": "Enables the notification through an email. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
+                  },
+                  "in_app": {
+                    "type": "boolean",
+                    "description": "Enables the notification through an email. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
+                  },
+                  "emails": {
+                    "type": "array",
+                    "description": "An array of email addresses which will receive the notification.",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ManagementProjectsCreateRequestBody": {
+        "type": "object",
+        "title": "Management Project Create Request Body",
+        "description": "Request body schema for **POST** `/management/v1/projects`.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "case_sensitive_codes": {
+                "type": "boolean",
+                "description": "Determines if the vouchers in the project will be case sensitive (if `true`, `C0dE-cfV` is not equal to `c0de-cfv`) or case insensitive (if false, `C0dE-cfV` is equal to `c0de-cfv`)."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ManagementProjectsBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cluster_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "The identifier of the cluster where the project will be created. The default cluster is `eu1` unless otherwise configured."
+              },
+              "api_version": {
+                "type": "string",
+                "nullable": true,
+                "description": "The API version used in the project. Currently, the default and only value is `v2018-08-01`.",
+                "enum": [
+                  "v2018-08-01"
+                ]
+              },
+              "users": {
+                "type": "array",
+                "nullable": true,
+                "description": "The users (their identifiers, logins, and roles) who will be assigned to the project. You can assign only existing Voucherify users.\n\nIt must be used either in the following combinations:\n- `id` and `role`, or\n- `login` and `role`.",
+                "items": {
+                  "title": "Create Project Users",
+                  "type": "object",
+                  "description": "Contains details about the users who will be assigned to the project.\nOnly the `id` and `role` or `login` and `role` should be provided in the request.",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The unique identifier of the user who will be assigned to the project. **Required** with the `role` string.\n\nDo **not** use with the `login` string."
+                    },
+                    "login": {
+                      "type": "string",
+                      "description": "The login data of the user who will be assigned to the project. **Required** with the `role` string.\n\nDo **not** use with the `id` string."
+                    },
+                    "role": {
+                      "type": "string",
+                      "description": "The role of the user to be added. It can be one of the following predefined roles:\n`ADMIN`, `USER`, `VIEWER`, `MERCHANT`\nor an ID of a custom role."
+                    }
+                  },
+                  "required": [
+                    "role"
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "required": [
+          "name",
+          "case_sensitive_codes",
+          "timezone",
+          "currency"
+        ]
+      },
+      "ManagementProjectsCreateResponseBody": {
+        "type": "object",
+        "title": "Management Project Create Response Body",
+        "description": "Response body schema for **POST** `management/v1/projects`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsResponseBase"
+          }
+        ]
+      },
+      "ManagementProjectsResponseBase": {
+        "type": "object",
+        "description": "Object representing a project.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the project."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ManagementProjectsBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cluster_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "The identifier of the cluster where the project will be created."
+              },
+              "case_sensitive_codes": {
+                "type": "boolean",
+                "description": "Determines if the vouchers in the project will be:\n- case sensitive - if `true`, `C0dE-cfV` is **not** equal to `c0de-cfv`),\n- case insensitive - if `false`, `C0dE-cfV` is equal to `c0de-cfv`."
+              },
+              "api_version": {
+                "type": "string",
+                "nullable": true,
+                "description": "The API version used in the project. Currently, the default and only value is `v2018-08-01`.",
+                "enum": [
+                  "v2018-08-01"
+                ]
+              },
+              "is_sandbox": {
+                "type": "boolean",
+                "description": "Determines if the project is a sandbox project."
+              }
+            }
+          }
+        ],
+        "required": [
+          "id",
+          "name",
+          "currency",
+          "timezone",
+          "cluster_id",
+          "api_version",
+          "case_sensitive_codes",
+          "client_trusted_domains",
+          "client_redeem_enabled",
+          "client_publish_enabled",
+          "client_list_vouchers_enabled",
+          "client_create_customer_enabled",
+          "client_loyalty_events_enabled",
+          "client_set_voucher_expiration_date_enabled",
+          "api_usage_notifications",
+          "webhooks_callout_notifications",
+          "is_sandbox",
+          "webhook_version"
+        ]
+      },
+      "ManagementProjectsResponseBody": {
+        "type": "object",
+        "title": "Management Project Update Response Body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsResponseBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "default_code_config": {
+                "type": "object",
+                "description": "Determines the character set that is used as default for vouchers. It is affected by the `\"case_sensitive_codes\"` setting.",
+                "properties": {
+                  "charset": {
+                    "type": "string",
+                    "description": "Lists all characters that are used as default for vouchers"
+                  }
+                },
+                "required": [
+                  "charset"
+                ]
+              },
+              "limits": {
+                "type": "object",
+                "description": "Determines additional limits set on a given project, e.g. the Sandbox project. If no limits are returned, the limits set for the whole organization apply.",
+                "properties": {
+                  "api_calls": {
+                    "type": "array",
+                    "description": "Determines the limit of API calls per given unit time.",
+                    "properties": {
+                      "value": {
+                        "type": "integer",
+                        "description": "Determines the maximum number of API calls per time set in `\"duration\"`."
+                      },
+                      "duration": {
+                        "type": "string",
+                        "description": "Determines the amount of time during which the calls up to the number specified in the `value` can be made. The duration is presented in the ISO 8601 format, e.g. `PT1H` means one hour."
+                      }
+                    }
+                  },
+                  "bulk_api_calls": {
+                    "type": "array",
+                    "description": "",
+                    "properties": {
+                      "value": {
+                        "type": "integer",
+                        "description": "Determines the maximum number of API calls per time set in `\"duration\"`."
+                      },
+                      "duration": {
+                        "type": "string",
+                        "description": "Determines the amount of time during which the calls up to the number specified in the `value` can be made. The duration is presented in the ISO 8601 format, e.g. `PT1H` means one hour."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "required": [
+          "default_code_config"
+        ]
+      },
+      "ManagementProjectsStackingRulesBase": {
+        "type": "object",
+        "description": "Object representing basic stacking rule parameters.",
+        "properties": {
+          "exclusive_categories": {
+            "type": "array",
+            "description": "Lists the IDs of the categories that are exclusive.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "joint_categories": {
+            "type": "array",
+            "description": "Lists the IDs of the categories that are joint.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "minimum": 1,
+            "maximum": 30
+          },
+          "applicable_redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "minimum": 1
+          },
+          "applicable_redeemables_per_category_limit": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+          },
+          "applicable_exclusive_redeemables_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "applicable_exclusive_redeemables_per_category_limit": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+          },
+          "discount_calculation_mode": {
+            "type": "string",
+            "description": "Defines if the discounts are applied by taking into account the initial order amount or the discounted order amount.",
+            "enum": [
+              "INITIAL_AMOUNT",
+              "DISCOUNTED_AMOUNT"
+            ]
+          },
+          "initial_amount_mode_categories": {
+            "type": "array",
+            "description": "Lists the IDs of the categories that apply a discount based on the initial amount.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "discounted_amount_mode_categories": {
+            "type": "array",
+            "description": "Lists the IDs of the categories that apply a discount based on the discounted amount.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "redeemables_application_mode": {
+            "type": "string",
+            "description": "Defines the application mode for redeemables.\n`\"ALL\"` means that all redeemables must be validated for the redemption to be successful.\n`\"PARTIAL\"` means that only those redeemables that can be validated will be redeemed. The redeemables that fail validaton will be skipped.",
+            "enum": [
+              "ALL",
+              "PARTIAL"
+            ]
+          },
+          "redeemables_sorting_rule": {
+            "type": "string",
+            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "enum": [
+              "CATEGORY_HIERARCHY",
+              "REQUESTED_ORDER"
+            ]
+          }
+        }
+      },
+      "ManagementProjectsStackingRulesBaseResponseBody": {
+        "type": "object",
+        "description": "Object representing the details of the stacking rules.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The unique identifier of the stacking rules."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ManagementProjectsStackingRulesBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "created_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the stacking rules were created. Value for this parameter is in the ISO 8601 format.",
+                "format": "date-time"
+              }
+            }
+          }
+        ],
+        "required": [
+          "exclusive_categories",
+          "joint_categories",
+          "redeemables_limit",
+          "applicable_redeemables_limit",
+          "applicable_exclusive_redeemables_limit",
+          "discount_calculation_mode",
+          "initial_amount_mode_categories",
+          "discounted_amount_mode_categories",
+          "redeemables_application_mode",
+          "redeemables_sorting_rule"
+        ]
+      },
+      "ManagementProjectsStackingRulesCreateRequestBody": {
+        "type": "object",
+        "description": "",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsStackingRulesBase"
+          }
+        ]
+      },
+      "ManagementProjectsStackingRulesCreateResponseBody": {
+        "type": "object",
+        "description": "Object representing the settings of the stacking rules.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsStackingRulesBaseResponseBody"
+          }
+        ],
+        "required": [
+          "id",
+          "created_at"
+        ]
+      },
+      "ManagementProjectsStackingRulesListResponseBody": {
+        "type": "object",
+        "description": "Object containing a list of stacking rules. Includes only one stacking rule object.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about the stacking rules in a dictionary.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of stacking rule objects."
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of only one stacking rule object.",
+            "items": {
+              "$ref": "#/components/schemas/ManagementProjectsStackingRulesResponseBody"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "The total number of stacking rule objects. It is always 1.",
+            "default": 1
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
+      "ManagementProjectsStackingRulesResponseBody": {
+        "type": "object",
+        "description": "Stacking Rules Response Body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsStackingRulesBaseResponseBody"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "updated_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the stacking rules were updated. Value for this parameter is in the ISO 8601 format.",
+                "format": "date-time"
+              }
+            }
+          }
+        ],
+        "required": [
+          "id",
+          "created_at"
+        ]
+      },
+      "ManagementProjectsStackingRulesUpdatedResponseBody": {
+        "type": "object",
+        "description": "Stacking Rules Update Response Body",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsStackingRulesResponseBody"
+          }
+        ],
+        "required": [
+          "updated_at"
+        ]
+      },
+      "ManagementProjectsUpdateRequestBody": {
+        "type": "object",
+        "title": "Management Project Update Request Body",
+        "description": "Request body schema for **PUT** `/management/v1/projects/{projectId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "default_code_config": {
+                "type": "object",
+                "title": "Default Code Configuration",
+                "description": "Determines the character set that is used as default for vouchers. It is affected by the `\"case_sensitive_codes\"` setting.",
+                "properties": {
+                  "charset": {
+                    "type": "string",
+                    "description": "Lists all characters that are used as default for vouchers"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ManagementProjectsUser": {
+        "type": "object",
+        "title": "Project User Details",
+        "description": "Details about the user assigned to a project.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the user who has been assigned to the project."
+          },
+          "login": {
+            "type": "string",
+            "description": "The login data of the user who has been assigned to the project."
+          },
+          "email": {
+            "type": "string",
+            "description": "The email address of the user who has been assigned to the project."
+          },
+          "first_name": {
+            "type": "string",
+            "description": "The first name of the user who has been assigned to the project."
+          },
+          "last_name": {
+            "type": "string",
+            "description": "The last name of the user who has been assigned to the project."
+          },
+          "projects": {
+            "type": "object",
+            "description": "Lists key-value pairs, where the key is the project to which the user is assigned. The value is the role assigned in a given project.",
+            "additionalProperties": {
+              "type": "string",
+              "description": "Returns the role the user has in the project."
+            }
+          },
+          "role": {
+            "type": "string",
+            "description": "Returns the assigned role of the user in the project."
+          },
+          "is_owner": {
+            "type": "boolean",
+            "description": "Determines if the user is the owner for the organization in Voucherify."
+          }
+        },
+        "required": [
+          "id",
+          "login",
+          "email",
+          "first_name",
+          "last_name",
+          "projects",
+          "role",
+          "is_owner"
+        ]
+      },
+      "ManagementProjectsUserCreateRequestBody": {
+        "type": "object",
+        "title": "Management Projects User Create Request Body",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the user who will be assigned to the project. **Required** with the `role` string.\n\nDo **not** use with the `login` string."
+          },
+          "login": {
+            "type": "string",
+            "description": "The login data of the user who will be assigned to the project. **Required** with the `role` string.\n\nDo **not** use with the `id` string."
+          },
+          "role": {
+            "type": "string",
+            "description": "The role of the user to be added. It can be one of the following predefined roles:\n`ADMIN`, `USER`, `VIEWER`, `MERCHANT`,\nor an ID of a custom role."
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
+      "ManagementProjectsUserListResponseBody": {
+        "type": "object",
+        "title": "Management Projects User List Response Body",
+        "description": "Object containing a list of users assigned to the project.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about the users in a dictionary.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of user objects."
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of user objects.",
+            "items": {
+              "$ref": "#/components/schemas/ManagementProjectsUser"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "The total number of users."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
+      "ManagementProjectsUserResponseBody": {
+        "type": "object",
+        "title": "Management Projects User Response Body",
+        "description": "Details about the user assigned to the project.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsUser"
+          }
+        ]
+      },
+      "ManagementProjectsUserUpdateRequestBody": {
+        "type": "object",
+        "title": "Management Projects User Create Request Body",
+        "properties": {
+          "role": {
+            "type": "string",
+            "description": "The role of the user to be added. It can be a custom role or one of following predefined roles:\n`ADMIN`, `USER`, `VIEWER`, `MERCHANT`\nor an ID of a custom role.."
+          }
+        },
+        "required": [
+          "role"
+        ]
+      },
       "MappingFixed": {
         "title": "MappingFixed",
         "type": "object",
@@ -30730,6 +31589,10 @@
         "type": "string",
         "example": "prod_3ttSkdxGuAfcv3"
       },
+      "ParameterProjectId": {
+        "type": "string",
+        "example": "proj_TrlkLiH4"
+      },
       "ParameterPromotionStackId": {
         "type": "string",
         "example": "stack_KOIde7AUf08at12lZ1r3OfFL"
@@ -30781,6 +31644,10 @@
         "type": "string",
         "example": "sku_0b661e41eccd35a8e9"
       },
+      "ParameterStackingRulesId": {
+        "type": "string",
+        "example": "stk_0d6264108617006147"
+      },
       "ParameterString": {
         "type": "string"
       },
@@ -30800,6 +31667,10 @@
             "format": "date-time"
           }
         }
+      },
+      "ParameterUserId": {
+        "type": "string",
+        "example": "user_v18mvPOjOXE5733eO4cAz8k1pn492wKK"
       },
       "ParameterValidationRuleId": {
         "type": "string",
@@ -31647,6 +32518,34 @@
           "object",
           "price"
         ]
+      },
+      "ProjectBoundError": {
+        "title": "Error Object",
+        "type": "object",
+        "description": "Error details",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "Error's HTTP status code."
+          },
+          "key": {
+            "type": "string",
+            "description": "Short string describing the kind of error which occurred."
+          },
+          "message": {
+            "type": "string",
+            "description": "A human-readable message providing a short description about the error."
+          },
+          "details": {
+            "type": "string",
+            "description": "A human-readable message providing more details about the error."
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0a96c19b1a41c03999",
+            "description": "This ID is useful when troubleshooting and/or finding the root cause of an error response by Voucherify support team."
+          }
+        }
       },
       "PromotionsStacksCreateRequestBody": {
         "title": "Promotions Stacks Create Request Body",
@@ -36675,14 +37574,14 @@
             "type": "integer",
             "description": "Defines how many redeemables with an exclusive category can be applied in one request.",
             "default": 1,
-            "maximum": 30,
+            "maximum": 5,
             "minimum": 1
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "description": "Defines how many redeemables per category can be applied in one request.",
             "default": 1,
-            "maximum": 30,
+            "maximum": 5,
             "minimum": 1
           },
           "exclusive_categories": {
@@ -36726,6 +37625,33 @@
           "exclusive_categories",
           "joint_categories"
         ]
+      },
+      "UsageNotifications": {
+        "type": "object",
+        "title": "Usage notification details",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "Enables the notification. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
+          },
+          "value": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "The percent value of the limit which, when reached, triggers the notification."
+          },
+          "emails": {
+            "type": "array",
+            "description": "An array of email addresses which will receive the notification.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "in_app": {
+            "type": "boolean",
+            "description": "Enables the notification in the application. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
+          }
+        }
       },
       "ValidationEntity": {
         "title": "Validation Entity",
@@ -77648,6 +78574,2196 @@
                       },
                       "created_at": "2022-07-14T15:21:55.085Z",
                       "updated_at": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects": {
+      "post": {
+        "operationId": "create-project",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Create Project",
+        "description": "Creates a new project. You can add users, specify the cluster, timezone, currency, and other details.\n\nAll owners are added to the project by default.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Define project details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details of a created project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "proj_V0uCh3RiFy",
+                      "name": "Voucherify Team Project",
+                      "currency": "EUR",
+                      "timezone": "UTC",
+                      "cluster_id": "eu1",
+                      "api_version": "v2018-08-01",
+                      "case_sensitive_codes": true,
+                      "client_trusted_domains": [],
+                      "client_redeem_enabled": false,
+                      "client_publish_enabled": false,
+                      "client_list_vouchers_enabled": false,
+                      "client_create_customer_enabled": false,
+                      "client_loyalty_events_enabled": false,
+                      "client_set_voucher_expiration_date_enabled": false,
+                      "api_usage_notifications": {
+                        "messages": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "api_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "cycle_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "redemptions": {
+                          "value": 80,
+                          "emails": [],
+                          "in_app": false,
+                          "enabled": false
+                        },
+                        "webhook_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "bulk_api_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        }
+                      },
+                      "webhooks_callout_notifications": {
+                        "webhooks": {
+                          "email": true,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true
+                        },
+                        "distributions": {
+                          "email": true,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true
+                        }
+                      },
+                      "is_sandbox": false,
+                      "webhook_version": "v2024-01-01"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload is missing required properties in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-0e9389ccac8da56f55"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if the project is to be created in a cluster that is unavailable to the user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectBoundError"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Project is bound to different region",
+                      "request_id": "v-0e938b8738000cc714"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "list-projects",
+        "tags": [
+          "Management"
+        ],
+        "summary": "List Projects",
+        "description": "Lists all projects for the organization.\n\nThe endpoint does not require any query parameters.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the list of all projects with their details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "proj_TrlkLiH4",
+                          "name": "Test-project-01",
+                          "currency": "EUR",
+                          "timezone": "UTC",
+                          "cluster_id": "dev",
+                          "api_version": "v2018-08-01",
+                          "case_sensitive_codes": true,
+                          "client_trusted_domains": [],
+                          "client_redeem_enabled": false,
+                          "client_publish_enabled": false,
+                          "client_list_vouchers_enabled": false,
+                          "client_create_customer_enabled": false,
+                          "client_loyalty_events_enabled": false,
+                          "client_set_voucher_expiration_date_enabled": false,
+                          "api_usage_notifications": {
+                            "messages": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            },
+                            "api_calls": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            },
+                            "cycle_calls": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            },
+                            "redemptions": {
+                              "value": 80,
+                              "emails": [],
+                              "in_app": false,
+                              "enabled": false
+                            },
+                            "webhook_calls": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            },
+                            "bulk_api_calls": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            }
+                          },
+                          "webhooks_callout_notifications": {
+                            "webhooks": {
+                              "email": true,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true
+                            },
+                            "distributions": {
+                              "email": true,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true
+                            }
+                          },
+                          "is_sandbox": false,
+                          "webhook_version": "v2024-01-01"
+                        },
+                        {
+                          "id": "proj_yTNl0NT6",
+                          "name": "Test-project-01",
+                          "currency": "EUR",
+                          "timezone": "UTC",
+                          "cluster_id": "dev",
+                          "api_version": "v2018-08-01",
+                          "case_sensitive_codes": true,
+                          "client_trusted_domains": [],
+                          "client_redeem_enabled": false,
+                          "client_publish_enabled": false,
+                          "client_list_vouchers_enabled": false,
+                          "client_create_customer_enabled": false,
+                          "client_loyalty_events_enabled": false,
+                          "client_set_voucher_expiration_date_enabled": false,
+                          "api_usage_notifications": {
+                            "messages": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            },
+                            "api_calls": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            },
+                            "cycle_calls": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            },
+                            "redemptions": {
+                              "value": 80,
+                              "emails": [],
+                              "in_app": false,
+                              "enabled": false
+                            },
+                            "webhook_calls": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            },
+                            "bulk_api_calls": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            }
+                          },
+                          "webhooks_callout_notifications": {
+                            "webhooks": {
+                              "email": true,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true
+                            },
+                            "distributions": {
+                              "email": true,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true
+                            }
+                          },
+                          "is_sandbox": false,
+                          "webhook_version": "v2024-01-01"
+                        },
+                        {
+                          "id": "sand_CvFGa2LX",
+                          "name": "Sandbox Project",
+                          "currency": "EUR",
+                          "timezone": "Europe/Vienna",
+                          "cluster_id": "eu1",
+                          "api_version": "v2018-08-01",
+                          "description": "",
+                          "case_sensitive_codes": true,
+                          "client_trusted_domains": [],
+                          "client_redeem_enabled": false,
+                          "client_publish_enabled": false,
+                          "client_list_vouchers_enabled": false,
+                          "client_create_customer_enabled": false,
+                          "client_loyalty_events_enabled": false,
+                          "client_set_voucher_expiration_date_enabled": false,
+                          "api_usage_notifications": {
+                            "messages": {
+                              "value": 80,
+                              "emails": [],
+                              "in_app": false,
+                              "enabled": false
+                            },
+                            "api_calls": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            },
+                            "cycle_calls": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            },
+                            "redemptions": {
+                              "value": 80,
+                              "emails": [],
+                              "in_app": false,
+                              "enabled": false
+                            },
+                            "webhook_calls": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            },
+                            "bulk_api_calls": {
+                              "value": 80,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true,
+                              "enabled": true
+                            }
+                          },
+                          "webhooks_callout_notifications": {
+                            "webhooks": {
+                              "email": true,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true
+                            },
+                            "distributions": {
+                              "email": true,
+                              "emails": [
+                                "your-email@domain.com"
+                              ],
+                              "in_app": true
+                            }
+                          },
+                          "is_sandbox": true,
+                          "limits": {
+                            "api_calls": [
+                              {
+                                "value": 100,
+                                "duration": "PT1H"
+                              }
+                            ],
+                            "bulk_api_calls": [
+                              {
+                                "value": 1,
+                                "duration": "PT1H"
+                              }
+                            ]
+                          },
+                          "default_code_config": {
+                            "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                          },
+                          "webhook_version": "v2024-01-01"
+                        }
+                      ],
+                      "total": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "get-project",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Get Project",
+        "description": "Retrieves an existing project.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the details of a project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "proj_V0uCh3RiFy",
+                      "name": "Voucherify Team Project",
+                      "currency": "EUR",
+                      "timezone": "Etc/GMT+1",
+                      "cluster_id": "eu1",
+                      "api_version": "v2018-08-01",
+                      "description": "Project for testing.",
+                      "case_sensitive_codes": true,
+                      "client_trusted_domains": [],
+                      "client_redeem_enabled": false,
+                      "client_publish_enabled": false,
+                      "client_list_vouchers_enabled": false,
+                      "client_create_customer_enabled": false,
+                      "client_loyalty_events_enabled": false,
+                      "client_set_voucher_expiration_date_enabled": false,
+                      "api_usage_notifications": {
+                        "messages": {
+                          "value": 80,
+                          "emails": [],
+                          "in_app": false,
+                          "enabled": false
+                        },
+                        "api_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "cycle_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "redemptions": {
+                          "value": 80,
+                          "emails": [],
+                          "in_app": false,
+                          "enabled": false
+                        },
+                        "webhook_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "bulk_api_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        }
+                      },
+                      "webhooks_callout_notifications": {
+                        "webhooks": {
+                          "email": true,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true
+                        },
+                        "distributions": {
+                          "email": true,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true
+                        }
+                      },
+                      "is_sandbox": false,
+                      "default_code_config": {
+                        "charset": "0123456789"
+                      },
+                      "webhook_version": "v2024-01-01"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_2F3txY7"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "update-project",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Update Project",
+        "description": "Updates an existing project.\n\nYou can add or modify details about users, specify the cluster, timezone, currency, and other details.\n\nOnly the fields sent in the request will be updated.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Define the project details to be updated.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsUpdateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details of an updated project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "proj_V0uCh3RiFy",
+                      "name": "Voucherify Team Project",
+                      "currency": "EUR",
+                      "timezone": "Etc/GMT+1",
+                      "cluster_id": "eu1",
+                      "api_version": "v2018-08-01",
+                      "description": "Project for testing.",
+                      "case_sensitive_codes": true,
+                      "client_trusted_domains": [],
+                      "client_redeem_enabled": false,
+                      "client_publish_enabled": false,
+                      "client_list_vouchers_enabled": false,
+                      "client_create_customer_enabled": false,
+                      "client_loyalty_events_enabled": false,
+                      "client_set_voucher_expiration_date_enabled": false,
+                      "api_usage_notifications": {
+                        "messages": {
+                          "value": 80,
+                          "emails": [],
+                          "in_app": false,
+                          "enabled": false
+                        },
+                        "api_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "cycle_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "redemptions": {
+                          "value": 80,
+                          "emails": [],
+                          "in_app": false,
+                          "enabled": false
+                        },
+                        "webhook_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        },
+                        "bulk_api_calls": {
+                          "value": 80,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true,
+                          "enabled": true
+                        }
+                      },
+                      "webhooks_callout_notifications": {
+                        "webhooks": {
+                          "email": true,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true
+                        },
+                        "distributions": {
+                          "email": true,
+                          "emails": [
+                            "your.email@your.domain"
+                          ],
+                          "in_app": true
+                        }
+                      },
+                      "is_sandbox": false,
+                      "default_code_config": {
+                        "charset": "0123456789"
+                      },
+                      "webhook_version": "v2024-01-01"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload is invalid in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "statusCode": 400,
+                      "error": "Bad Request",
+                      "message": "Invalid request payload JSON format"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-project",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Delete Project",
+        "description": "Deletes an existing project.\n\nThe users currently using the deleted project will be automatically logged out.\n\n> 🚧 Sandbox Project\n>\n>The sandbox project cannot be deleted.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_2F3txY7"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/users": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "assign-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Assign User",
+        "description": "Assigns a user to a given project. The user must be an existing user in Voucherify.\n\n> 🚧 Correct Use of Data\n>\n>To avoid errors, use the `role` string with either `id` or `login` strings.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the user details.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsUserCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the user assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "login": "name@youremaildomain.com",
+                      "email": "name@youremaildomain.com",
+                      "first_name": "Sammy",
+                      "last_name": "Jones",
+                      "projects": {
+                        "proj_9KeAhZB1": "USER",
+                        "proj_npnFzPr9": "USER",
+                        "proj_pEP3NO9s": "USER",
+                        "proj_zsPdrUIw": "ADMIN"
+                      },
+                      "role": "USER",
+                      "is_owner": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload includes all three keys or the required data is missing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-0e9389ccac8da56f55"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "list-users",
+        "tags": [
+          "Management"
+        ],
+        "summary": "List Users",
+        "description": "Lists all users assigned to the project.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the list of all the users assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "user_FgEAjOw6riObJdy81s2yZXdqZNiAV1pM",
+                          "login": "name@youremaildomain.com",
+                          "email": "name@youremaildomain.com",
+                          "first_name": "Sammy",
+                          "last_name": "Jones",
+                          "projects": {
+                            "proj_9KeAhZB1": "USER",
+                            "proj_npnFzPr9": "USER",
+                            "proj_pEP3NO9s": "USER",
+                            "proj_zsPdrUIw": "ADMIN"
+                          },
+                          "role": "USER",
+                          "is_owner": false
+                        },
+                        {
+                          "id": "user_11sYvPrOj3XE573FO1cAzzk1p4k92wLL",
+                          "login": "name@youremaildomain.com",
+                          "email": "name@youremaildomain.com",
+                          "first_name": "Alex",
+                          "last_name": "Smith",
+                          "projects": {
+                            "proj_3CNHbOe0": "ADMIN"
+                          },
+                          "role": "ADMIN",
+                          "is_owner": true
+                        }
+                      ],
+                      "total": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/users/{userId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterUserId"
+          },
+          "in": "path",
+          "name": "userId",
+          "description": "Provide the unique identifier of the user. Alternatively, provide the user's login.",
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "get-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Get User",
+        "description": "Retrieves the project user's details.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the project user's details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "login": "name@youremaildomain.com",
+                      "email": "name@youremaildomain.com",
+                      "first_name": "Sammy",
+                      "last_name": "Jones",
+                      "projects": {
+                        "proj_9KeAhZB1": "USER",
+                        "proj_npnFzPr9": "USER",
+                        "proj_pEP3NO9s": "USER",
+                        "proj_zsPdrUIw": "ADMIN"
+                      },
+                      "role": "USER",
+                      "is_owner": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find user 'user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM' assigned to the project 'proj_5iQ0m7zw'",
+                      "request_id": "v-0e9a2019cf4fc6a3bd",
+                      "resource_id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "resource_type": "user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "update-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Update User",
+        "description": "Updates the user's role.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the user's new role.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsUserUpdateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the user assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "user_FgEAjOV6RiObJdy36sYynXdqZNiA5gjM",
+                      "login": "name@youremaildomain.com",
+                      "email": "name@youremaildomain.com",
+                      "first_name": "Sammy",
+                      "last_name": "Jones",
+                      "projects": {
+                        "proj_9KeAhZB1": "USER",
+                        "proj_npnFzPr9": "USER",
+                        "proj_pEP3NO9s": "USER",
+                        "proj_zsPdrUIw": "ADMIN"
+                      },
+                      "role": "USER",
+                      "is_owner": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload includes incorrect `\"role\"` details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-0e9389ccac8da56f55"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find user with id user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "request_id": "v-0e9a191986c0a98d46",
+                      "resource_id": "user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "resource_type": "user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "unassign-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Unassign User",
+        "description": "Unassigns the user from the project. If the user is currently logged in, they are automatically logged out.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if the user has been successfully unnassigned."
+          },
+          "400": {
+            "description": "Returns an error if the user is not assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 400,
+                      "key": "user_not_assigned",
+                      "message": "User is not assigned",
+                      "details": "User is not assigned to the project",
+                      "request_id": "v-0e9a1b979a80a99053"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find user with id user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "request_id": "v-0e9a1b4b98c0a98ffc",
+                      "resource_id": "user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "resource_type": "user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/stacking-rules": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "create-stacking-rules",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Create Stacking Rules",
+        "description": "Overwrites the default stacking rules.\n\nIf new stacking rules have been created for the project earlier, it returns an error. Use [Update Stacking Rules](ref:update-stacking-rules) endpoint to change the rules.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the stacking rule parameters.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsStackingRulesCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the stacking rules assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsStackingRulesCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "stk_0e9b71a0be48e967f3",
+                      "exclusive_categories": [],
+                      "joint_categories": [],
+                      "redeemables_limit": 30,
+                      "applicable_redeemables_limit": 15,
+                      "applicable_exclusive_redeemables_limit": 1,
+                      "discount_calculation_mode": "DISCOUNTED_AMOUNT",
+                      "initial_amount_mode_categories": [],
+                      "discounted_amount_mode_categories": [],
+                      "redeemables_application_mode": "ALL",
+                      "redeemables_sorting_rule": "REQUESTED_ORDER",
+                      "created_at": "2024-04-16T12:17:09.368Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload has incorrect values, e.g. integer limits.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .applicable_exclusive_redeemables_limit must be <= 30",
+                      "request_id": "v-0e9b7334154228a45f"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find customer with id cust_xqA7DGj5eYPHg6PHVKwYRWiA",
+                      "request_id": "v-0c8b6b35294af6f192",
+                      "resource_id": "cust_xqA7DGj5eYPHg6PHVKwYRWiA",
+                      "resource_type": "customer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns an error if the stacking rules have been already created for the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 409,
+                      "key": "stacking_rules_exist",
+                      "message": "Stacking rules exist",
+                      "details": "Cannot exist more stacking rules for given project",
+                      "request_id": "v-0e9b5f39f550e070c4"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "list-stacking-rules",
+        "tags": [
+          "Management"
+        ],
+        "summary": "List Stacking Rules",
+        "description": "Lists all stacking rules.\n\nReturns always a list with one item.\nThis endpoint can be used to retrieve the default stacking rules. The default stacking rules do not have an ID that could be used with the [Get Stacking Rules](ref:get-stacking-rules) or [Update Stacking Rules](ref:update-stacking-rules) endpoints.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the details about the stacking rules assigned to the project. These can be either the default stacking rules or the created ones.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsStackingRulesListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "stk_0d6264108617006147",
+                          "exclusive_categories": [
+                            "cat_0d75bdfe4c9030a732",
+                            "cat_0d74559c3e9030da13",
+                            "cat_0d7455f93c1030da4a"
+                          ],
+                          "joint_categories": [
+                            "cat_0d507a4d6e8a1b7b97"
+                          ],
+                          "redeemables_limit": 29,
+                          "applicable_redeemables_limit": 28,
+                          "applicable_redeemables_per_category_limit": 27,
+                          "applicable_exclusive_redeemables_limit": 4,
+                          "applicable_exclusive_redeemables_per_category_limit": 3,
+                          "discount_calculation_mode": "DISCOUNTED_AMOUNT",
+                          "initial_amount_mode_categories": [
+                            "cat_0d75bdfe4c9030a732",
+                            "cat_0d74559c3e9030da13"
+                          ],
+                          "discounted_amount_mode_categories": [
+                            "cat_0d7455f93c1030da4a"
+                          ],
+                          "redeemables_application_mode": "PARTIAL",
+                          "redeemables_sorting_rule": "CATEGORY_HIERARCHY",
+                          "created_at": "2023-08-17T08:33:19.399Z",
+                          "updated_at": "2024-04-16T10:38:27.028Z"
+                        }
+                      ],
+                      "total": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_5itvDU7"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/stacking-rules/{stackingRulesId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterStackingRulesId"
+          },
+          "in": "path",
+          "name": "stackingRulesId",
+          "description": "Provide the unique identifier of the stacking rules.",
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "get-stacking-rules",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Get Stacking Rules",
+        "description": "Retrieves the stacking rules for the project.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the stacking rules for the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsStackingRulesResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "stk_0d6264108617006147",
+                      "exclusive_categories": [
+                        "cat_0d75bdfe4c9030a732",
+                        "cat_0d74559c3e9030da13",
+                        "cat_0d7455f93c1030da4a"
+                      ],
+                      "joint_categories": [
+                        "cat_0d507a4d6e8a1b7b97"
+                      ],
+                      "redeemables_limit": 29,
+                      "applicable_redeemables_limit": 28,
+                      "applicable_redeemables_per_category_limit": 27,
+                      "applicable_exclusive_redeemables_limit": 4,
+                      "applicable_exclusive_redeemables_per_category_limit": 3,
+                      "discount_calculation_mode": "DISCOUNTED_AMOUNT",
+                      "initial_amount_mode_categories": [
+                        "cat_0d75bdfe4c9030a732",
+                        "cat_0d74559c3e9030da13"
+                      ],
+                      "discounted_amount_mode_categories": [
+                        "cat_0d7455f93c1030da4a"
+                      ],
+                      "redeemables_application_mode": "PARTIAL",
+                      "redeemables_sorting_rule": "CATEGORY_HIERARCHY",
+                      "created_at": "2023-08-17T08:33:19.399Z",
+                      "updated_at": "2024-04-16T10:38:27.028Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find stacking_rules with id stk_0d626410861700614",
+                      "request_id": "v-0e9bd7a49fd0e00ea3",
+                      "resource_id": "stk_0d626410861700614",
+                      "resource_type": "stacking_rules"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "update-stacking-rules",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Update Stacking Rules",
+        "description": "Updates the stacking rules. Only the provided fields will be updated.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the stacking rules to be updated.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsStackingRulesBase"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the updated stacking rules.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsStackingRulesUpdatedResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "stk_0d6264108617006147",
+                      "exclusive_categories": [],
+                      "joint_categories": [
+                        "cat_0d507a4d6e8a1b7b97"
+                      ],
+                      "redeemables_limit": 30,
+                      "applicable_redeemables_limit": 28,
+                      "applicable_redeemables_per_category_limit": 27,
+                      "applicable_exclusive_redeemables_limit": 4,
+                      "applicable_exclusive_redeemables_per_category_limit": 3,
+                      "discount_calculation_mode": "DISCOUNTED_AMOUNT",
+                      "initial_amount_mode_categories": [
+                        "cat_0d75bdfe4c9030a732",
+                        "cat_0d74559c3e9030da13"
+                      ],
+                      "discounted_amount_mode_categories": [
+                        "cat_0d7455f93c1030da4a"
+                      ],
+                      "redeemables_application_mode": "PARTIAL",
+                      "redeemables_sorting_rule": "CATEGORY_HIERARCHY",
+                      "created_at": "2023-08-17T08:33:19.399Z",
+                      "updated_at": "2024-04-16T19:52:24.792Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload includes incorrect details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .redeemables_limit must be <= 30",
+                      "request_id": "v-0e9bd9f0628228aa93"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find stacking_rules with id stk_0d626410861700614",
+                      "request_id": "v-0e9bd9b3cd4228aa3e",
+                      "resource_id": "stk_0d626410861700614",
+                      "resource_type": "stacking_rules"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-stacking-rules",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Delete Stacking Rules",
+        "description": "Deletes permanently the current settings for the stacking rules. The stacking rules are restored to default values.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if the stacking rules have been successfully deleted."
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find stacking_rules with id test",
+                      "request_id": "v-0e9bdaa00050e01280",
+                      "resource_id": "test",
+                      "resource_type": "stacking_rules"
                     }
                   }
                 }
