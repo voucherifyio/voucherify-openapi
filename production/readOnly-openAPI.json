@@ -29272,6 +29272,7 @@
                   "properties": {
                     "type": {
                       "type": "string",
+                      "description": "Indicates the type of metadata.",
                       "enum": [
                         "string",
                         "number",
@@ -29334,9 +29335,8 @@
           },
           "eq": {
             "type": "array",
-            "nullable": true,
             "description": "Array of values that are allowed. Available only for the `string` and `number` types.",
-            "anyOf": [
+            "oneOf": [
               {
                 "title": "Number",
                 "description": "Adds numbers to the array. The value should be up to two decimal places.",
@@ -29355,9 +29355,8 @@
           },
           "ne": {
             "type": "array",
-            "nullable": true,
             "description": "Array of values that are not allowed. Available only for the `number` type.",
-            "anyOf": [
+            "oneOf": [
               {
                 "title": "Number",
                 "description": "Adds number to the array. The value should be up to two decimal places.",
@@ -29394,7 +29393,7 @@
             "properties": {
               "related_object": {
                 "type": "string",
-                "description": "The resource type. You can define custom metadata schemas, which have a custom `\"related_object\"` resource type."
+                "description": "The resource type. You can define custom metadata schemas, which have a custom `\"related_object\"` resource type, or you can use standard resource types: `\"campaign\"`, `\"customer\"`, `\"earning_rule\"`, `\"loyalty_tier\"`, `\"order\"`, `\"order_item\"`, `\"product\"`, `\"promotion_tier\"`, `\"publication\"`, `\"redemption\"`, `\"reward\"`, `\"voucher\"`."
               }
             }
           },
@@ -29526,10 +29525,10 @@
           },
           "properties": {
             "type": "object",
-            "description": "Contains metadata definitions. There can be many properties within this object.",
+            "description": "Contains metadata definitions. There can be many properties within this object.\n\nOnly the properties sent in the request will be updated. However, if you send a property, all its key-value pairs must be provided - otherwise, they will be overwritten to new values.",
             "additionalProperties": {
               "type": "object",
-              "description": "Custom property name. This is also shown in **Project Settings** > **Metadata Schema** in the Dashboard.",
+              "description": "Custom or standard property name. This is also shown in **Project Settings** > **Metadata Schema** in the Dashboard.",
               "allOf": [
                 {
                   "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaBase"
@@ -37937,6 +37936,7 @@
           },
           "emails": {
             "type": "array",
+            "title": "Email address",
             "description": "An array of email addresses which will receive the notification.",
             "items": {
               "type": "string"
@@ -81086,7 +81086,7 @@
           "Management"
         ],
         "summary": "Create Metadata Schema",
-        "description": "Creates a new nested metadata (custom attribute) schema. The schema consists of a set of key-value pairs to customize Voucherify resources.\n\nYou can nest an object. However, a nested object cannot include another nested object.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
+        "description": "Creates a new metadata (custom attribute) schema.\n\nThe schema consists of a set of key-value pairs to customize Voucherify resources. \n\nYou can nest an object. However, a nested object cannot include another nested object.\n\n> 📘 Standard Metadata Schemas\n>\n> If you try to create a metadata schema for a resource which is pre-defined in Voucherify (e.g. campaign or redemption), you will receive an error. Use the [Update Metadata Schema](ref:update-metadata-schema) endpoint to edit a pre-defined metadata schema.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
         "parameters": [],
         "security": [
           {
@@ -81223,11 +81223,11 @@
         }
       },
       "get": {
-        "operationId": "list-metadata-schema",
+        "operationId": "list-metadata-schemas-1",
         "tags": [
           "Management"
         ],
-        "summary": "List Metadata Schema",
+        "summary": "List Metadata Schemas",
         "description": "Lists all metadata schemas.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
         "parameters": [],
         "security": [
@@ -81751,7 +81751,7 @@
           "Management"
         ],
         "summary": "Update Metadata Schema",
-        "description": "Updates a metadata schema.\n\nThe existing fields will be overwritten. The non-existing fields will be added to the metadata schema.\n\nYou cannot change the type of an existing schema, e.g. from `\"string\"` to `\"number\"`.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
+        "description": "Updates a metadata schema.\n\nIn the request, if you provide non-existing attribute definitions, they will be added to the metadata schema. If you provide fields that exist in an attribute definition, they will be overwritten. This means that if you want to update a property with new strings or numbers, you will have to add the existing ones as well, because only the ones sent in the request are updated.\n\n However, if you omit the whole attribute in the request, it will not be changed. \n\n> 🚧\n> Additional Notes\n>\n>- You cannot change the type of an existing schema, e.g. from `\"string\"` to `\"number\"`.\n>\n>- You cannot remove attributes with this endpoint. To remove a definition, go to Project Settings > Metadata Schema, and click the bin button next to a definition.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
         "parameters": [],
         "security": [
           {
@@ -81771,11 +81771,11 @@
         },
         "responses": {
           "200": {
-            "description": "Returns the details about the updated stacking rules.",
+            "description": "Returns the details about the updated metadata schema.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ManagementProjectsStackingRulesUpdatedResponseBody"
+                  "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -81898,8 +81898,8 @@
         "tags": [
           "Management"
         ],
-        "summary": "Delete Stacking Rules",
-        "description": "Deletes permanently the current settings for the stacking rules. The stacking rules are restored to default values.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
+        "summary": "Delete Metadata Schema",
+        "description": "Deletes permanently the metadata schema.\n\nIn standard metadata schemas, this endpoint removes permanently all definitions. The standard metadata schemas are:\n- Campaign\n- Voucher\n- Publication\n- Redemption\n- Product\n- Customer\n- Order\n- Order line item\n- Loyalty Tier\n- Promotion Tier\n- Earning rule\n- Reward\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
         "parameters": [],
         "security": [
           {
