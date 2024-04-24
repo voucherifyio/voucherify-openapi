@@ -7,9 +7,16 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-04-24
+
+- Changes to Project endpoints
+- Changes to List Customer Redeemables
+- Added Custom Metadata Schema endpoints – hidden for now
+
 ## 2024-04-19
 
 - Added "Management API" article
+- Added Project, User, and Stacking Rules endpoints
 
 ## 2024-04-05
 
