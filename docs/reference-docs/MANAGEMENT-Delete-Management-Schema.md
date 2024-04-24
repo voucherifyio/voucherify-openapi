@@ -1,11 +1,11 @@
 ---
-title: List Stacking Rules [Beta]
+title: Delete Metadata Schema [Beta]
 type: endpoint
 categorySlug: voucherify-api
-slug: list-stacking-rules
+slug: delete-metadata-schema
 parentDocSlug: management
-hidden: false
-order: 170
+hidden: true
+order: 150
 ---
 [block:html]
 {

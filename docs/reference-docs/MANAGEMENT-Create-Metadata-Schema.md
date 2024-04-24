@@ -1,11 +1,11 @@
 ---
-title: List Stacking Rules [Beta]
+title: Create Metadata Schema [Beta]
 type: endpoint
 categorySlug: voucherify-api
-slug: list-stacking-rules
+slug: create-metadata-schema
 parentDocSlug: management
-hidden: false
-order: 170
+hidden: true
+order: 110
 ---
 [block:html]
 {

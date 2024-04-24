@@ -21515,7 +21515,7 @@
                   "ACTIVE",
                   "USED",
                   "DISABLED",
-                  "NOT_ACTIVE",
+                  "NOT_ACTIVE_YET",
                   "EXPIRED",
                   "NO_BALANCE"
                 ],
@@ -26867,12 +26867,12 @@
             "properties": {
               "$after": {
                 "type": "string",
-                "description": "Value is after this date. Value for this parameter is in the ISO 8601 format.",
+                "description": "Value is after this date. The value for this parameter is shown in the ISO 8601 format.",
                 "format": "date-time"
               },
               "$before": {
                 "type": "string",
-                "description": "Value is before this date. Value for this parameter is in the ISO 8601 format.",
+                "description": "Value is before this date. The value for this parameter is shown in the ISO 8601 format.",
                 "format": "date-time"
               },
               "$has_value": {
@@ -29122,7 +29122,15 @@
                   }
                 ]
               }
-            }
+            },
+            "required": [
+              "redemptions",
+              "messages",
+              "api_calls",
+              "bulk_api_calls",
+              "webhook_calls",
+              "cycle_calls"
+            ]
           },
           "webhooks_callout_notifications": {
             "type": "object",
@@ -29148,7 +29156,12 @@
                       "type": "string"
                     }
                   }
-                }
+                },
+                "required": [
+                  "email",
+                  "in_app",
+                  "emails"
+                ]
               },
               "webhooks": {
                 "type": "object",
@@ -29169,9 +29182,18 @@
                       "type": "string"
                     }
                   }
-                }
+                },
+                "required": [
+                  "email",
+                  "in_app",
+                  "emails"
+                ]
               }
-            }
+            },
+            "required": [
+              "distributions",
+              "webhooks"
+            ]
           }
         }
       },
@@ -29197,12 +29219,10 @@
             "properties": {
               "cluster_id": {
                 "type": "string",
-                "nullable": true,
                 "description": "The identifier of the cluster where the project will be created. The default cluster is `eu1` unless otherwise configured."
               },
               "api_version": {
                 "type": "string",
-                "nullable": true,
                 "description": "The API version used in the project. Currently, the default and only value is `v2018-08-01`.",
                 "enum": [
                   "v2018-08-01"
@@ -29210,7 +29230,6 @@
               },
               "users": {
                 "type": "array",
-                "nullable": true,
                 "description": "The users (their identifiers, logins, and roles) who will be assigned to the project. You can assign only existing Voucherify users.\n\nIt must be used either in the following combinations:\n- `id` and `role`, or\n- `login` and `role`.",
                 "items": {
                   "title": "Create Project Users",
@@ -29255,6 +29274,282 @@
           }
         ]
       },
+      "ManagementProjectsMetadataSchema": {
+        "type": "object",
+        "title": "Metadata Definitions Object",
+        "description": "Object representing metadata definitions.",
+        "properties": {
+          "properties": {
+            "type": "object",
+            "description": "Contains metadata definitions. There can be many properties within this object.",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Custom property name. This is also shown in **Project Settings** > **Metadata Schema** in the Dashboard.",
+              "allOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "Indicates the type of metadata.",
+                      "enum": [
+                        "string",
+                        "number",
+                        "object",
+                        "date",
+                        "datetime",
+                        "geopoint",
+                        "boolean",
+                        "image_url"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaBase"
+                }
+              ],
+              "required": [
+                "type",
+                "optional",
+                "array"
+              ]
+            }
+          }
+        }
+      },
+      "ManagementProjectsMetadataSchemaBase": {
+        "type": "object",
+        "title": "Metadata Definitions",
+        "description": "Object representing metadata definitions.",
+        "properties": {
+          "optional": {
+            "type": "boolean",
+            "description": "Indicates if this definition is optional or not for the resource."
+          },
+          "array": {
+            "type": "boolean",
+            "description": "Indicates if the definition is an array."
+          },
+          "deleted": {
+            "type": "boolean",
+            "description": "Indicates if the definition has been deleted from the schema."
+          },
+          "object_type": {
+            "type": "string",
+            "nullable": true,
+            "description": "The name of the custom resource (i.e. a nested object) if the resource has been previously defined. Otherwise, it is `null` for other types."
+          },
+          "min_length": {
+            "type": "integer",
+            "description": "Value indicating the minimum length. Available only for the `string` type."
+          },
+          "max_length": {
+            "type": "integer",
+            "description": "Value indicating the maximum length. Available only for the `string` type."
+          },
+          "exact_length": {
+            "type": "integer",
+            "description": "Value indicating the exact length. Available only for the `string` type."
+          },
+          "eq": {
+            "type": "array",
+            "description": "Array of values that are allowed. Available only for the `string` and `number` types.",
+            "oneOf": [
+              {
+                "title": "Number",
+                "description": "Adds numbers to the array. The value should be up to two decimal places.",
+                "items": {
+                  "type": "number"
+                }
+              },
+              {
+                "title": "String",
+                "description": "Adds strings to the array.",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "ne": {
+            "type": "array",
+            "description": "Array of values that are not allowed. Available only for the `number` type.",
+            "oneOf": [
+              {
+                "title": "Number",
+                "description": "Adds number to the array. The value should be up to two decimal places.",
+                "items": {
+                  "type": "number"
+                }
+              }
+            ]
+          },
+          "lt": {
+            "type": "number",
+            "description": "A property of the `number` type must have `less than` this value. The value should be up to two decimal places."
+          },
+          "lte": {
+            "type": "number",
+            "description": "A property of the `number` type must be `less than or equal` to this value. The value should be up to two decimal places."
+          },
+          "gt": {
+            "type": "number",
+            "description": "A property of `number` type must be `greater than` this value. The value should be up to two decimal places."
+          },
+          "gte": {
+            "type": "number",
+            "description": "A property of `number` type must be `greater than or equal` to this value. The value should be up to two decimal places."
+          }
+        }
+      },
+      "ManagementProjectsMetadataSchemaCreateRequestBody": {
+        "type": "object",
+        "description": "",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "related_object": {
+                "type": "string",
+                "description": "The resource type. You can define custom metadata schemas, which have a custom `\"related_object\"` resource type, or you can use standard resource types: `\"campaign\"`, `\"customer\"`, `\"earning_rule\"`, `\"loyalty_tier\"`, `\"order\"`, `\"order_item\"`, `\"product\"`, `\"promotion_tier\"`, `\"publication\"`, `\"redemption\"`, `\"reward\"`, `\"voucher\"`."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ManagementProjectsMetadataSchema"
+          }
+        ],
+        "required": [
+          "related_object",
+          "properties"
+        ]
+      },
+      "ManagementProjectsMetadataSchemaListResponseBody": {
+        "type": "object",
+        "description": "Object containing a list of metadata schemas.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about the metadata schemas in a dictionary.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of metadata schema objects."
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of metadata schema objects. The metadata schemas are listed by related object properties.",
+            "items": {
+              "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaResponseBody"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "The total number of metadata schema objects."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
+      "ManagementProjectsMetadataSchemaResponseBody": {
+        "type": "object",
+        "description": "Object representing a metadata schema.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the metadata schema."
+              },
+              "related_object": {
+                "type": "string",
+                "description": "The resource type. You can define custom metadata schemas, which have a custom `\"related_object\"` resource type. The standard metadata schemas are: `\"campaign\"`, `\"customer\"`, `\"earning_rule\"`, `\"loyalty_tier\"`, `\"order\"`, `\"order_item\"`, `\"product\"`, `\"promotion_tier\"`, `\"publication\"`, `\"redemption\"`, `\"reward\"`, `\"voucher\"`."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ManagementProjectsMetadataSchema"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "allow_defined_only": {
+                "type": "boolean",
+                "nullable": true,
+                "description": "Restricts the creation of metadata fields when set to `true`. It indicates whether or not you can create new metadata definitions, e.g. in the campaign or publication manager. If set to `true`, then only the defined fields are available for assigning values."
+              },
+              "created_at": {
+                "type": "string",
+                "example": "2021-12-03T13:33:44.556Z",
+                "description": "Timestamp representing the date and time when the metadata schema was created. The value for this parameter is shown in the ISO 8601 format.",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "nullable": true,
+                "example": "2022-08-11T08:05:30.695Z",
+                "description": "Timestamp representing the date and time when the metadata schema was updated. The value for this parameter is shown in the ISO 8601 format.",
+                "format": "date-time"
+              },
+              "object": {
+                "type": "string",
+                "default": "metadata_schema",
+                "description": "The type of object represented by the JSON. This object stores information about the metadata schema."
+              }
+            }
+          }
+        ],
+        "required": [
+          "id",
+          "related_object",
+          "properties",
+          "allow_defined_only",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "ManagementProjectsMetadataSchemaUpdateRequestBody": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "allow_defined_only": {
+            "type": "boolean",
+            "description": "Restricts the creation of metadata fields when set to `true`. In other words, it indicates whether or not you are allowed to create new metadata definitions; for example, in the campaign manager or publication manager. If it is set to true, then only the defined fields will be available for assigning values.\t"
+          },
+          "properties": {
+            "type": "object",
+            "description": "Contains metadata definitions. There can be many properties within this object.\n\nOnly the properties sent in the request will be updated. However, if you send a property, all its key-value pairs must be provided - otherwise, they will be overwritten to new values.",
+            "additionalProperties": {
+              "type": "object",
+              "description": "Custom or standard property name. This is also shown in **Project Settings** > **Metadata Schema** in the Dashboard.",
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaBase"
+                }
+              ],
+              "required": [
+                "optional",
+                "array"
+              ]
+            }
+          }
+        },
+        "required": [
+          "properties"
+        ]
+      },
       "ManagementProjectsResponseBase": {
         "type": "object",
         "description": "Object representing a project.",
@@ -29276,7 +29571,6 @@
             "properties": {
               "cluster_id": {
                 "type": "string",
-                "nullable": true,
                 "description": "The identifier of the cluster where the project will be created."
               },
               "case_sensitive_codes": {
@@ -29285,7 +29579,6 @@
               },
               "api_version": {
                 "type": "string",
-                "nullable": true,
                 "description": "The API version used in the project. Currently, the default and only value is `v2018-08-01`.",
                 "enum": [
                   "v2018-08-01"
@@ -29294,6 +29587,10 @@
               "is_sandbox": {
                 "type": "boolean",
                 "description": "Determines if the project is a sandbox project."
+              },
+              "webhook_token": {
+                "type": "string",
+                "description": "Webhook token used for authentication."
               }
             }
           }
@@ -29316,7 +29613,8 @@
           "api_usage_notifications",
           "webhooks_callout_notifications",
           "is_sandbox",
-          "webhook_version"
+          "webhook_version",
+          "webhook_token"
         ]
       },
       "ManagementProjectsResponseBody": {
@@ -29489,7 +29787,7 @@
             "properties": {
               "created_at": {
                 "type": "string",
-                "description": "Timestamp representing the date and time when the stacking rules were created. Value for this parameter is in the ISO 8601 format.",
+                "description": "Timestamp representing the date and time when the stacking rules were created. The value for this parameter is shown in the ISO 8601 format.",
                 "format": "date-time"
               }
             }
@@ -29579,7 +29877,7 @@
             "properties": {
               "updated_at": {
                 "type": "string",
-                "description": "Timestamp representing the date and time when the stacking rules were updated. Value for this parameter is in the ISO 8601 format.",
+                "description": "Timestamp representing the date and time when the stacking rules were updated. The value for this parameter is shown in the ISO 8601 format.",
                 "format": "date-time"
               }
             }
@@ -31319,6 +31617,10 @@
       "ParameterMemberId": {
         "type": "string",
         "example": "MmFAzfDe"
+      },
+      "ParameterMetadataSchemaId": {
+        "type": "string",
+        "example": "ms_f0r4hm3ta6a4a5ch3ma"
       },
       "ParameterObject": {
         "type": "object"
@@ -37636,12 +37938,13 @@
           },
           "value": {
             "type": "integer",
-            "minimum": 0,
-            "maximum": 100,
+            "minimum": 10,
+            "maximum": 90,
             "description": "The percent value of the limit which, when reached, triggers the notification."
           },
           "emails": {
             "type": "array",
+            "title": "Email address",
             "description": "An array of email addresses which will receive the notification.",
             "items": {
               "type": "string"
@@ -37651,7 +37954,13 @@
             "type": "boolean",
             "description": "Enables the notification in the application. Value `true` means the feature is enabled. Value `false` means the feature is disabled."
           }
-        }
+        },
+        "required": [
+          "enabled",
+          "value",
+          "emails",
+          "in_app"
+        ]
       },
       "ValidationEntity": {
         "title": "Validation Entity",
@@ -78590,7 +78899,7 @@
           "Management"
         ],
         "summary": "Create Project",
-        "description": "Creates a new project. You can add users, specify the cluster, timezone, currency, and other details.\n\nAll owners are added to the project by default.",
+        "description": "Creates a new project. You can add users, specify the cluster, timezone, currency, and other details.\n\nAll owners are added to the project by default.\n\n> 🚧 Work in Progress\n>\n> Currently, the `\"api_usage_notifications\"` and `\"webhooks_callout_notifications\"` properties do not work as intended. Voucherify developers are working on a fix.",
         "parameters": [],
         "security": [
           {
@@ -79281,7 +79590,7 @@
           "Management"
         ],
         "summary": "Update Project",
-        "description": "Updates an existing project.\n\nYou can add or modify details about users, specify the cluster, timezone, currency, and other details.\n\nOnly the fields sent in the request will be updated.",
+        "description": "Updates an existing project.\n\nYou can add or modify settings for timezone, currency, notifications, and other details.\n\nOnly the fields sent in the request will be updated. However, if you update an array, the content of the array is overwritten. This means that if you want to add new values to an array and retain existing ones, you need to provide both the existing and new values in the request.",
         "parameters": [],
         "security": [
           {
@@ -80281,7 +80590,7 @@
           "Management"
         ],
         "summary": "List Stacking Rules",
-        "description": "Lists all stacking rules.\n\nReturns always a list with one item.\nThis endpoint can be used to retrieve the default stacking rules. The default stacking rules do not have an ID that could be used with the [Get Stacking Rules](ref:get-stacking-rules) or [Update Stacking Rules](ref:update-stacking-rules) endpoints.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "description": "Lists all stacking rules.\n\nReturns always a list with one item.\n\nThis endpoint can be used to retrieve the default stacking rules. The default stacking rules do not have an ID that could be used with the [Get Stacking Rules](ref:get-stacking-rules) or [Update Stacking Rules](ref:update-stacking-rules) endpoints.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
         "parameters": [],
         "security": [
           {
@@ -80548,7 +80857,7 @@
           "Management"
         ],
         "summary": "Update Stacking Rules",
-        "description": "Updates the stacking rules. Only the provided fields will be updated.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "description": "Updates the stacking rules.\n\nOnly the provided fields will be updated. However, if you update an array, the content of the array is overwritten. This means that if you want to add new values to an array and retain existing ones, you need to provide both the existing and new values in the request.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
         "parameters": [],
         "security": [
           {
@@ -80696,7 +81005,7 @@
           "Management"
         ],
         "summary": "Delete Stacking Rules",
-        "description": "Deletes permanently the current settings for the stacking rules. The stacking rules are restored to default values.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "description": "Deletes permanently the current settings for the stacking rules.\n\nThe stacking rules are restored to default values.\n\n> 📘 Stacking Rules Documentation\n>\n> Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
         "parameters": [],
         "security": [
           {
@@ -80707,6 +81016,914 @@
         "responses": {
           "204": {
             "description": "Returns no content if the stacking rules have been successfully deleted."
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find stacking_rules with id test",
+                      "request_id": "v-0e9bdaa00050e01280",
+                      "resource_id": "test",
+                      "resource_type": "stacking_rules"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/metadata-schemas": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "create-metadata-schema",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Create Metadata Schema",
+        "description": "Creates a new metadata (custom attribute) schema.\n\nThe schema consists of a set of key-value pairs to customize Voucherify resources. \n\nYou can nest your object within a standard metadata schema, e.g. within a campaign or customer schema. However, your nested object cannot include another nested object. The standard metadata schemas are:\n- Campaign\n- Voucher\n- Publication\n- Redemption\n- Product\n- Customer\n- Order\n- Order line item\n- Loyalty Tier\n- Promotion Tier\n- Earning rule\n- Reward\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the metadata schema.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the metadata schema.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload has incorrect values.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "statusCode": 400,
+                      "error": "Bad Request",
+                      "message": "Invalid request payload JSON format"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_5itvmU7"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns an error if the resource has a duplicate.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 409,
+                      "key": "duplicate_found",
+                      "message": "Duplicated resource found",
+                      "details": "Duplicated metadata schema exists with related_object customer",
+                      "request_id": "v-0ea5a7618fc0293d81",
+                      "resource_id": "customer",
+                      "resource_type": "metadata schema"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "list-metadata-schemas-1",
+        "tags": [
+          "Management"
+        ],
+        "summary": "List Metadata Schemas",
+        "description": "Lists all project metadata schemas.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the details about the metadata schemas created in the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "ms_bwBVnq2YHcbsfCMfdqfCi4zl",
+                          "related_object": "Test-MANAPI-custom-schema-01",
+                          "properties": {
+                            "Test-manAPI-01": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null,
+                              "eq": [
+                                "Test-01",
+                                "Test-02",
+                                "Test-03",
+                                "Test-04"
+                              ]
+                            },
+                            "Test-manAPI-02": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null,
+                              "eq": [
+                                5,
+                                1,
+                                2,
+                                3,
+                                333
+                              ]
+                            },
+                            "Test-manAPI-03": {
+                              "type": "object",
+                              "array": false,
+                              "optional": true,
+                              "object_type": "unknown"
+                            },
+                            "Test-manAPI-04": {
+                              "type": "string",
+                              "array": true,
+                              "optional": true,
+                              "object_type": null,
+                              "eq": [
+                                "Value-01",
+                                "Value-02",
+                                "Value-03"
+                              ]
+                            }
+                          },
+                          "allow_defined_only": true,
+                          "created_at": "2024-04-18T17:24:46.980Z",
+                          "updated_at": "2024-04-18T18:17:20.108Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_ctw7O05ZLsMb1zFCGMRQ8qnP",
+                          "related_object": "campaign",
+                          "properties": {
+                            "Test-manAPI": {
+                              "type": "string",
+                              "array": true,
+                              "optional": true,
+                              "object_type": null,
+                              "eq": [
+                                "2",
+                                "kek",
+                                "2313ka"
+                              ],
+                              "max_length": 5,
+                              "min_length": 2
+                            },
+                            "Test-manAPI-08": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null,
+                              "eq": [
+                                105.5
+                              ],
+                              "lt": 9.5,
+                              "lte": 10.5
+                            },
+                            "Test-manAPI-09": {
+                              "type": "object",
+                              "array": true,
+                              "optional": false,
+                              "object_type": "Test-MANAPI-custom-schema-01",
+                              "deleted": true
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2024-04-18T17:21:13.555Z",
+                          "updated_at": "2024-04-19T06:43:09.218Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_f0r4hm3ta6a4a5ch3ma",
+                          "related_object": "customer",
+                          "properties": {
+                            "age": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null
+                            },
+                            "Test-MANAPI-06": {
+                              "type": "string",
+                              "array": true,
+                              "optional": true,
+                              "object_type": null,
+                              "eq": [
+                                "Jotaro,",
+                                "Josuke,",
+                                "Okuyasu"
+                              ]
+                            },
+                            "Test-manAPI-07": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null,
+                              "eq": [
+                                "Tick",
+                                "Tack",
+                                "Toe",
+                                "Tom",
+                                "Dick",
+                                "Harry"
+                              ]
+                            },
+                            "acquisition_channel": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null,
+                              "eq": [
+                                "Facebook",
+                                "Twitter",
+                                "Website"
+                              ]
+                            },
+                            "customer_life_time_value": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2023-08-03T10:37:48.696Z",
+                          "updated_at": "2024-04-18T18:23:58.380Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_f1r5Tm3ta6a4a5ch3ma",
+                          "related_object": "order",
+                          "properties": {
+                            "region": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null,
+                              "eq": [
+                                "EU",
+                                "US",
+                                "EMEA",
+                                "APAC"
+                              ]
+                            },
+                            "location_id": {
+                              "type": "string",
+                              "array": true,
+                              "optional": true,
+                              "object_type": null,
+                              "eq": [
+                                "L1",
+                                "L2",
+                                "L3"
+                              ]
+                            },
+                            "payment_mean": {
+                              "type": "string",
+                              "array": true,
+                              "optional": true,
+                              "object_type": null,
+                              "eq": [
+                                "credit-card",
+                                "wire-transfer",
+                                "paypal"
+                              ]
+                            },
+                            "booking_end_date": {
+                              "type": "datetime",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null
+                            },
+                            "booking_start_date": {
+                              "type": "datetime",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2023-08-03T10:37:48.662Z",
+                          "updated_at": "2023-08-28T11:24:43.518Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_s3c0N6m3ta6a4a5ch3ma",
+                          "related_object": "product",
+                          "properties": {
+                            "brand": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null
+                            },
+                            "vendor": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null
+                            },
+                            "category": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "object_type": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2023-08-03T10:37:48.670Z",
+                          "updated_at": "2023-09-14T09:30:26.314Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_t4ir0Dm3ta6a4a5ch3ma",
+                          "related_object": "redemption",
+                          "properties": {
+                            "location_id": {
+                              "type": "string",
+                              "array": true,
+                              "optional": true,
+                              "object_type": null,
+                              "eq": [
+                                "L1",
+                                "L2",
+                                "L3"
+                              ]
+                            }
+                          },
+                          "allow_defined_only": null,
+                          "created_at": "2023-08-03T10:37:48.692Z",
+                          "updated_at": null,
+                          "object": "metadata_schema"
+                        }
+                      ],
+                      "total": 6
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_5itvDU7"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/metadata-schemas/{metadataSchemaId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMetadataSchemaId"
+          },
+          "in": "path",
+          "name": "metadataSchemaId",
+          "description": "Provide the unique identifier of the metadata schema.",
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "get-metadata-schema-1",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Get Metadata Schema",
+        "description": "Retrieves the metadata schema.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the metadata schema.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "ms_f1r5Tm3ta6a4a5ch3ma",
+                      "related_object": "order",
+                      "properties": {
+                        "region": {
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "object_type": null,
+                          "eq": [
+                            "EU",
+                            "US",
+                            "EMEA",
+                            "APAC"
+                          ]
+                        },
+                        "location_id": {
+                          "type": "string",
+                          "array": true,
+                          "optional": true,
+                          "object_type": null,
+                          "eq": [
+                            "L1",
+                            "L2",
+                            "L3"
+                          ]
+                        },
+                        "payment_mean": {
+                          "type": "string",
+                          "array": true,
+                          "optional": true,
+                          "object_type": null,
+                          "eq": [
+                            "credit-card",
+                            "wire-transfer",
+                            "paypal"
+                          ]
+                        },
+                        "booking_end_date": {
+                          "type": "datetime",
+                          "array": false,
+                          "optional": true,
+                          "object_type": null
+                        },
+                        "booking_start_date": {
+                          "type": "datetime",
+                          "array": false,
+                          "optional": true,
+                          "object_type": null
+                        }
+                      },
+                      "allow_defined_only": false,
+                      "created_at": "2023-08-03T10:37:48.662Z",
+                      "updated_at": "2023-08-28T11:24:43.518Z",
+                      "object": "metadata_schema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find stacking_rules with id stk_0d626410861700614",
+                      "request_id": "v-0e9bd7a49fd0e00ea3",
+                      "resource_id": "stk_0d626410861700614",
+                      "resource_type": "stacking_rules"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "update-metadata-schema",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Update Metadata Schema",
+        "description": "Updates a metadata schema.\n\nIn the request, if you provide non-existing attribute definitions, they will be added to the metadata schema. If you provide fields that exist in an attribute definition, they will be overwritten. This means that if you want to update an attribute with new strings or numbers, you will have to add the existing ones as well, because only the ones sent in the request are saved.\n\n However, if you omit the whole attribute in the request, it will not be changed. \n\n> 📘 Additional Notes\n>\n>- You cannot change the type of an existing schema, e.g. from `\"string\"` to `\"number\"`.\n>\n>- You cannot remove an attribute with this endpoint. To remove it, go to Project Settings > Metadata Schema in Voucherify and click the bin button next to the attribute.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the metadata schema to be updated.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaUpdateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the updated metadata schema.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsMetadataSchemaResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "stk_0d6264108617006147",
+                      "exclusive_categories": [],
+                      "joint_categories": [
+                        "cat_0d507a4d6e8a1b7b97"
+                      ],
+                      "redeemables_limit": 30,
+                      "applicable_redeemables_limit": 28,
+                      "applicable_redeemables_per_category_limit": 27,
+                      "applicable_exclusive_redeemables_limit": 4,
+                      "applicable_exclusive_redeemables_per_category_limit": 3,
+                      "discount_calculation_mode": "DISCOUNTED_AMOUNT",
+                      "initial_amount_mode_categories": [
+                        "cat_0d75bdfe4c9030a732",
+                        "cat_0d74559c3e9030da13"
+                      ],
+                      "discounted_amount_mode_categories": [
+                        "cat_0d7455f93c1030da4a"
+                      ],
+                      "redeemables_application_mode": "PARTIAL",
+                      "redeemables_sorting_rule": "CATEGORY_HIERARCHY",
+                      "created_at": "2023-08-17T08:33:19.399Z",
+                      "updated_at": "2024-04-16T19:52:24.792Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload includes incorrect details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .properties.Size.eq.0 must be number",
+                      "request_id": "v-0ea5a9b9b3402940a9"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find stacking_rules with id stk_0d626410861700614",
+                      "request_id": "v-0e9bd9b3cd4228aa3e",
+                      "resource_id": "stk_0d626410861700614",
+                      "resource_type": "stacking_rules"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-metadata-schema",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Delete Metadata Schema",
+        "description": "Deletes permanently the metadata schema.\n\nIn standard metadata schemas, this endpoint removes permanently all definitions and deletes the schema ID. The standard metadata schemas are:\n- Campaign\n- Voucher\n- Publication\n- Redemption\n- Product\n- Customer\n- Order\n- Order line item\n- Loyalty Tier\n- Promotion Tier\n- Earning rule\n- Reward\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if the metadata schema has been successfully deleted."
           },
           "401": {
             "description": "Returns an error if an invalid token was provided.",
