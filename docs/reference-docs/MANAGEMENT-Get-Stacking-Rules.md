@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: get-stacking-rules
 parentDocSlug: management
 hidden: false
-order: 130
+order: 180
 ---
 [block:html]
 {
