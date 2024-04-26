@@ -8,7 +8,8 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 - Added Management API endpoints for:
   - Metadata Schemas (`POST`, `GET` all, `GET` one, `PUT`, `DELETE`)
-  - Deleted deprecated `Get Member Activities` endpoints
+- Improvements to existing Management API endpoints
+- Deleted deprecated `Get Member Activities` endpoints
 
 ## 2024-04-19
 
