@@ -4,7 +4,7 @@ type: endpoint
 categorySlug: voucherify-api
 slug: delete-metadata-schema
 parentDocSlug: management
-hidden: true
+hidden: false
 order: 150
 ---
 [block:html]
