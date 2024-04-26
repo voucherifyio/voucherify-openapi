@@ -15,8 +15,8 @@ order: 1
 | object</br>`string` | <p>The type of object represented by JSON. This object stores information about a <code>location</code>.</p> |
 | name</br>`string` | <p>Location name.</p> |
 | shape</br>`object` | <p>Defines the shape and boundaries of the location.</p> One of: [Circle](#circle), [Polygon](#polygon) |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the location was created in ISO 8601 format.</p> **Example:** <p>2022-02-14T15:12:06.817Z</p> |
-| updated_at</br>`string` | <p>Timestamp representing the date and time when the location was updated in ISO 8601 format.</p> **Example:** <p>2022-03-14T15:12:06.817Z</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the location was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-02-14T15:12:06.817Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the location was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-03-14T15:12:06.817Z</p> |
 
 ## Circle
 | Attributes |  Description |
