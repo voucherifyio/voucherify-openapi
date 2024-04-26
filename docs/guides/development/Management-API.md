@@ -13,7 +13,7 @@ order: 81
 Management API introduces API endpoints that let you perform account-related operations connected with:
 - [Projects](ref:create-project "Create Project"),
 - [Users](ref:assign-user "Assign User"),
-- Metadata schemas
+- [Metadata schemas](ref:create-metadata-schema "Create Metadata Schema"),
 - Custom event schemas,
 - Webhooks,
 - [Stacking rules](ref:create-stacking-rules "Create Stacking Rules"),
