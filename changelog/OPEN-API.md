@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-05-06
+
+Added examples to Custom metadata schema endpoints
+
 ## 2024-04-26
 
 - Added Management API endpoints for:
