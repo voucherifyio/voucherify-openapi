@@ -671,6 +671,10 @@
         "type": "string",
         "example": "aa_0afb3d009a55814a48"
       },
+      "ParameterBrandingId": {
+        "type": "string",
+        "example": "brd_06d06m1944y0630hD4y"
+      },
       "ParameterCustomEventSchemaId": {
         "type": "string",
         "example": "ms_f1r5Tcu5T0m3v3nT5ch3ma"
@@ -690,6 +694,10 @@
       "ParameterStackingRulesId": {
         "type": "string",
         "example": "stk_0d6264108617006147"
+      },
+      "ParameterWebhookId": {
+        "type": "string",
+        "example": "wh_Fk1HzL9lqC1lpuIFxp3TShB4"
       },
       "ParameterRedemptionId": {
         "type": "string",
@@ -39590,6 +39598,7 @@
         "required": [
           "id",
           "name",
+          "description",
           "currency",
           "timezone",
           "cluster_id",
@@ -40037,7 +40046,8 @@
               "created_at": {
                 "type": "string",
                 "description": "Timestamp representing the date and time when the stacking rules were created. The value for this parameter is shown in the ISO 8601 format.",
-                "format": "date-time"
+                "format": "date-time",
+                "example": "2024-01-02T08:31:46.562Z"
               }
             }
           }
@@ -40239,7 +40249,7 @@
       "ManagementProjectsCustomEventSchemaCreateRequestBody": {
         "type": "object",
         "title": "Create Custom Event Schema Request",
-        "description": "Object containing the request for creating a custom event schema.",
+        "description": "Request body schema for **POST** `/management/v1/projects/{projectId}/custom-event-schema`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsCustomEventSchema"
@@ -40249,7 +40259,7 @@
       "ManagementProjectsCustomEventSchemaResponseBody": {
         "type": "object",
         "title": "Create Custom Event Schema Response",
-        "description": "Object containing the response to creating a custom event schema.",
+        "description": "Response body schema for **POST** `/management/v1/projects/{projectId}/custom-event-schema`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsCustomEventSchemaResponseBodyBase"
@@ -40343,6 +40353,101 @@
           "total": {
             "type": "integer",
             "description": "The total number of custom event schema objects."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
+      "ManagementProjectsWebhooksCreateRequestBody": {
+        "type": "object",
+        "title": "Management Webhook Create Request Body",
+        "description": "Request body schema for **POST** `/management/v1/projects/{projectId}/webhooks`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsWebhooks"
+          }
+        ],
+        "required": [
+          "target_url",
+          "events"
+        ]
+      },
+      "ManagementProjectsWebhooksResponseBody": {
+        "type": "object",
+        "title": "Management Webhook Create Request Body",
+        "description": "Response body schema for webhook endpoints.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the webhook.",
+                "example": "wh_i45Uez36Uz8XNW6PXC0eyGmb"
+              },
+              "object": {
+                "type": "string",
+                "description": "The type of object represented by JSON.",
+                "default": "webhook",
+                "enum": [
+                  "webhook"
+                ]
+              },
+              "created_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the webhook configuration was created. The value for this parameter is shown in the ISO 8601 format.",
+                "format": "date-time",
+                "example": "2024-01-02T08:31:46.562Z"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/ManagementProjectsWebhooks"
+          }
+        ],
+        "required": [
+          "id",
+          "object",
+          "created_at",
+          "target_url",
+          "events",
+          "active"
+        ]
+      },
+      "ManagementProjectsWebhooksListResponseBody": {
+        "type": "object",
+        "description": "Object containing a list of webhook configurations.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about the webhook configurations in a dictionary.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of webhook objects.",
+            "enum": [
+              "data"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of webhook objects.",
+            "items": {
+              "$ref": "#/components/schemas/ManagementProjectsWebhooksResponseBody"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "The total number of webhook objects."
           }
         },
         "required": [
@@ -40624,6 +40729,557 @@
             "required": [
               "properties"
             ]
+          }
+        }
+      },
+      "ManagementProjectsWebhooks": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "target_url": {
+            "type": "string",
+            "description": "URL address that receives webhooks."
+          },
+          "events": {
+            "type": "array",
+            "description": "Lists the events that trigger webhook sendout.",
+            "items": {
+              "type": "string",
+              "additionalProperties": true,
+              "enum": [
+                "redemption.succeeded",
+                "redemption.failed",
+                "redemption.rollback.succeeded",
+                "redemption.rollback.failed",
+                "publication.succeeded",
+                "voucher.published",
+                "voucher.updated",
+                "voucher.deleted",
+                "voucher.created",
+                "voucher.enabled",
+                "voucher.disabled",
+                "voucher.loyalty_card.points_added",
+                "voucher.gift.balance_added",
+                "campaign.enabled",
+                "campaign.deleted",
+                "campaign.created",
+                "campaign.updated",
+                "campaign.disabled",
+                "campaign.vouchers.generation.completed",
+                "business_validation_rule.assignment.created",
+                "business_validation_rule.assignment.deleted",
+                "business_validation_rule.created",
+                "business_validation_rule.deleted",
+                "business_validation_rule.updated",
+                "customer.created",
+                "customer.deleted",
+                "customer.rewarded",
+                "customer.rewarded.loyalty_points",
+                "customer.consents.revoked",
+                "customer.consents.given"
+              ]
+            }
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Determines if the webhook configuration is active.",
+            "default": true
+          }
+        }
+      },
+      "ManagementProjectsBrandingCreateRequestBody": {
+        "type": "object",
+        "title": "Create Brand Request",
+        "description": "Request body schema for **POST** `/management/v1/projects/{projectId}/branding`.",
+        "properties": {
+          "brand": {
+            "type": "object",
+            "title": "Brand",
+            "description": "Defines basic brand details.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Defines brand name."
+              },
+              "privacy_policy_url": {
+                "type": "string",
+                "nullable": true,
+                "description": "Defines the URL to the brand's privacy policy. It must be a valid URL format."
+              },
+              "terms_of_use_url": {
+                "type": "string",
+                "nullable": true,
+                "description": "Defines the URL to the brand's terms of use.  It must be a valid URL format."
+              },
+              "permission_reminder": {
+                "type": "string",
+                "description": "Defines the message that is displayed to customers who opted in an email newsletter."
+              },
+              "website_url": {
+                "type": "string",
+                "nullable": true,
+                "description": "Defines the URL to the brand's website. It must be a valid URL format."
+              }
+            },
+            "required": [
+              "name"
+            ]
+          },
+          "address": {
+            "type": "object",
+            "title": "Address",
+            "description": "Defines the address details.",
+            "properties": {
+              "street": {
+                "type": "string",
+                "description": "Defines the brand's street."
+              },
+              "city": {
+                "type": "string",
+                "description": "Defines the brand's city."
+              },
+              "postal": {
+                "type": "string",
+                "description": "Defines the brand's postal code."
+              },
+              "state": {
+                "type": "string",
+                "description": "Defines the brand's state or similar administrative area."
+              },
+              "country": {
+                "type": "string",
+                "description": "Defines the brand's country."
+              }
+            },
+            "required": [
+              "street",
+              "city",
+              "postal",
+              "country"
+            ]
+          },
+          "contact": {
+            "type": "object",
+            "title": "Contact",
+            "description": "Defines contact details.",
+            "properties": {
+              "email": {
+                "type": "string",
+                "description": "Defines the brand's email address. It must be a valid email format."
+              },
+              "phone": {
+                "type": "string",
+                "description": "Defines the brand's phone number."
+              }
+            },
+            "required": [
+              "email"
+            ]
+          },
+          "cockpits": {
+            "type": "object",
+            "title": "Cockpit",
+            "description": "Defines customer cockpit details.",
+            "properties": {
+              "campaigns_overview_enabled": {
+                "type": "boolean",
+                "default": false,
+                "description": "Enables the campaign overview for customers."
+              },
+              "loyalty_enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Enables the loyalty campaign overview for customers."
+              },
+              "gift_cards_enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Enables the gift card overview for customers."
+              },
+              "coupons_enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Enables the discount coupon overview for customers."
+              },
+              "referrals_enabled": {
+                "type": "boolean",
+                "default": true,
+                "description": "Enables the referral campaign overview for customers."
+              },
+              "lucky_draw_enabled": {
+                "type": "boolean",
+                "default": false,
+                "description": "Enables the lucky draw overview for customers."
+              },
+              "theme": {
+                "type": "string",
+                "default": "default",
+                "description": "Determines the color scheme of the customer cockpit.",
+                "enum": [
+                  "blue",
+                  "dark-green",
+                  "default",
+                  "green",
+                  "grey",
+                  "orange",
+                  "purple",
+                  "red"
+                ]
+              },
+              "use_custom_double_opt_in_redirect_url": {
+                "type": "boolean",
+                "default": false,
+                "description": "Enables the double opt-in option. It must be a valid URL format."
+              },
+              "custom_double_opt_in_redirect_url": {
+                "type": "string",
+                "description": "Defines the URL for the double opt-in consent. It must be a valid URL format."
+              }
+            }
+          }
+        },
+        "required": [
+          "brand",
+          "address",
+          "contact"
+        ]
+      },
+      "ManagementProjectsBrandingResponseBody": {
+        "type": "object",
+        "title": "Brand Response",
+        "description": "Response brand schema.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the brand configuration."
+          },
+          "brand": {
+            "type": "object",
+            "title": "Brand",
+            "description": "Defines basic brand details.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Defines brand name."
+              },
+              "privacy_policy_url": {
+                "type": "string",
+                "nullable": true,
+                "description": "Defines the URL to the brand's privacy policy. It must be a valid URL format."
+              },
+              "terms_of_use_url": {
+                "type": "string",
+                "nullable": true,
+                "description": "Defines the URL to the brand's terms of use.  It must be a valid URL format."
+              },
+              "permission_reminder": {
+                "type": "string",
+                "description": "Defines the message that is displayed to customers who opted in an email newsletter."
+              },
+              "website_url": {
+                "type": "string",
+                "nullable": true,
+                "description": "Defines the URL to the brand's website. It must be a valid URL format."
+              }
+            },
+            "required": [
+              "name",
+              "privacy_policy_url",
+              "terms_of_use_url",
+              "permission_reminder",
+              "website_url"
+            ]
+          },
+          "address": {
+            "type": "object",
+            "title": "Address",
+            "description": "Defines the address details.",
+            "properties": {
+              "street": {
+                "type": "string",
+                "description": "Defines the brand's street."
+              },
+              "city": {
+                "type": "string",
+                "description": "Defines the brand's city."
+              },
+              "postal": {
+                "type": "string",
+                "description": "Defines the brand's postal code."
+              },
+              "state": {
+                "type": "string",
+                "description": "Defines the brand's state or similar administrative area."
+              },
+              "country": {
+                "type": "string",
+                "description": "Defines the brand's country."
+              }
+            },
+            "required": [
+              "street",
+              "city",
+              "postal",
+              "state",
+              "country"
+            ]
+          },
+          "contact": {
+            "type": "object",
+            "title": "Contact",
+            "description": "Defines contact details.",
+            "properties": {
+              "email": {
+                "type": "string",
+                "description": "Defines the brand's email address. It must be a valid email format."
+              },
+              "phone": {
+                "type": "string",
+                "description": "Defines the brand's phone number."
+              }
+            },
+            "required": [
+              "email",
+              "phone"
+            ]
+          },
+          "cockpits": {
+            "type": "object",
+            "title": "Cockpit",
+            "description": "Defines customer cockpit details.",
+            "properties": {
+              "campaigns_overview_enabled": {
+                "type": "boolean",
+                "description": "Enables the campaign overview for customers."
+              },
+              "loyalty_enabled": {
+                "type": "boolean",
+                "description": "Enables the loyalty campaign overview for customers."
+              },
+              "gift_cards_enabled": {
+                "type": "boolean",
+                "description": "Enables the gift card overview for customers."
+              },
+              "coupons_enabled": {
+                "type": "boolean",
+                "description": "Enables the discount coupon overview for customers."
+              },
+              "referrals_enabled": {
+                "type": "boolean",
+                "description": "Enables the referral campaign overview for customers."
+              },
+              "lucky_draw_enabled": {
+                "type": "boolean",
+                "description": "Enables the lucky draw overview for customers."
+              },
+              "theme": {
+                "type": "string",
+                "description": "Determines the color scheme of the customer cockpit.",
+                "enum": [
+                  "blue",
+                  "dark-green",
+                  "default",
+                  "green",
+                  "grey",
+                  "orange",
+                  "purple",
+                  "red"
+                ]
+              },
+              "use_custom_double_opt_in_redirect_url": {
+                "type": "boolean",
+                "description": "Enables the double opt-in option. It must be a valid URL format."
+              },
+              "custom_double_opt_in_redirect_url": {
+                "type": "string",
+                "description": "Defines the URL for the double opt-in consent. It must be a valid URL format."
+              }
+            },
+            "required": [
+              "campaigns_overview_enabled",
+              "loyalty_enabled",
+              "gift_cards_enabled",
+              "coupons_enabled",
+              "referrals_enabled",
+              "lucky_draw_enabled",
+              "theme",
+              "use_custom_double_opt_in_redirect_url",
+              "custom_double_opt_in_redirect_url"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "brand",
+          "address",
+          "contact",
+          "cockpits"
+        ]
+      },
+      "ManagementProjectsBrandingListResponseBody": {
+        "type": "object",
+        "description": "Object containing a list of brand configurations. It always contains one item.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of object represented by JSON. This object stores information about the brand in a dictionary.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of brand objects.",
+            "enum": [
+              "data"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of brand objects. It contains only one object.",
+            "items": {
+              "$ref": "#/components/schemas/ManagementProjectsBrandingResponseBody"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "The total number of brand objects. It is always `1`."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
+      "ManagementProjectsBranding": {
+        "type": "object",
+        "title": "Brand",
+        "description": "",
+        "properties": {
+          "brand": {
+            "type": "object",
+            "title": "Brand",
+            "description": "Defines basic brand details.",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Defines brand name."
+              },
+              "privacy_policy_url": {
+                "type": "string",
+                "description": "Defines the URL to the brand's privacy policy."
+              },
+              "terms_of_use_url": {
+                "type": "string",
+                "description": "Defines the URL to the brand's terms of use."
+              },
+              "permission_reminder": {
+                "type": "string",
+                "description": "Defines the message that is displayed to customers who opted in an email newsletter."
+              },
+              "website_url": {
+                "type": "string",
+                "description": "Defines the URL to the brand's website."
+              }
+            }
+          },
+          "address": {
+            "type": "object",
+            "title": "Address",
+            "description": "Defines the address details.",
+            "properties": {
+              "street": {
+                "type": "string",
+                "description": "Defines the brand's street."
+              },
+              "city": {
+                "type": "string",
+                "description": "Defines the brand's city."
+              },
+              "postal": {
+                "type": "string",
+                "description": "Defines the brand's postal code"
+              },
+              "state": {
+                "type": "string",
+                "description": "Defines the brand's state or similar administrative area."
+              },
+              "country": {
+                "type": "string",
+                "description": "Defines the brand's country."
+              }
+            }
+          },
+          "contact": {
+            "type": "object",
+            "title": "Contact",
+            "description": "Defines contact details.",
+            "properties": {
+              "email": {
+                "type": "string",
+                "description": "Defines the brand's email address. It must be a valid email format."
+              },
+              "phone": {
+                "type": "string",
+                "description": "Defines the brand's phone number."
+              }
+            }
+          },
+          "cockpits": {
+            "type": "object",
+            "title": "Cockpit",
+            "description": "Defines customer cockpit details.",
+            "properties": {
+              "campaigns_overview_enabled": {
+                "type": "boolean",
+                "description": "Indicates if the campaign overview is turned on for customers."
+              },
+              "loyalty_enabled": {
+                "type": "boolean",
+                "description": "Indicates if the loyalty campaign overview is turned on for customers."
+              },
+              "gift_cards_enabled": {
+                "type": "boolean",
+                "description": "Indicates if the gift card overview is turned on for customers."
+              },
+              "coupons_enabled": {
+                "type": "boolean",
+                "description": "Indicates if the discount coupon overview is turned on for customers."
+              },
+              "referrals_enabled": {
+                "type": "boolean",
+                "description": "Indicates if the referral campaign overview is turned on for customers."
+              },
+              "lucky_draw_enabled": {
+                "type": "boolean",
+                "description": "Indicates if the lucky draw overview is turned on for customers."
+              },
+              "theme": {
+                "type": "string",
+                "description": "Determines the color scheme of the customer cockpit.",
+                "enum": [
+                  "orange",
+                  "green",
+                  "dark-green",
+                  "blue",
+                  "purple",
+                  "red",
+                  "grey"
+                ]
+              },
+              "use_custom_double_opt_in_redirect_url": {
+                "type": "boolean",
+                "description": "Indicates if the double opt-in option is turned on."
+              },
+              "custom_double_opt_in_redirect_url": {
+                "type": "string",
+                "description": "Defines the URL for the double opt-in consent."
+              }
+            }
           }
         }
       },
@@ -81436,9 +82092,9 @@
                               "optional": true,
                               "object_type": null,
                               "eq": [
-                                "2",
-                                "kek",
-                                "2313ka"
+                                "Test1",
+                                "Test2",
+                                "Test3"
                               ],
                               "max_length": 5,
                               "min_length": 2
@@ -81852,12 +82508,8 @@
                   "Resource not found": {
                     "value": {
                       "code": 404,
-                      "key": "not_found",
                       "message": "Resource not found",
-                      "details": "Cannot find stacking_rules with id stk_0d626410861700614",
-                      "request_id": "v-0e9bd7a49fd0e00ea3",
-                      "resource_id": "stk_0d626410861700614",
-                      "resource_type": "stacking_rules"
+                      "details": "Cannot find project with id proj_2F3txY7"
                     }
                   }
                 }
@@ -81913,14 +82565,13 @@
                             "EMEA",
                             "APAC",
                             "LATAM",
-                            "NA",
-                            "EU"
+                            "NA"
                           ]
                         }
                       },
-                      "allow_defined_only": false,
+                      "allow_defined_only": null,
                       "created_at": "2024-04-29T12:03:55.991Z",
-                      "updated_at": "2024-04-29T12:06:20.866Z",
+                      "updated_at": null,
                       "object": "metadata_schema"
                     }
                   }
@@ -81999,12 +82650,8 @@
                   "Not Found": {
                     "value": {
                       "code": 404,
-                      "key": "not_found",
                       "message": "Resource not found",
-                      "details": "Cannot find stacking_rules with id stk_0d626410861700614",
-                      "request_id": "v-0e9bd9b3cd4228aa3e",
-                      "resource_id": "stk_0d626410861700614",
-                      "resource_type": "stacking_rules"
+                      "details": "Cannot find project with id proj_2F3txY7"
                     }
                   }
                 }
@@ -82081,12 +82728,8 @@
                   "Not Found": {
                     "value": {
                       "code": 404,
-                      "key": "not_found",
                       "message": "Resource not found",
-                      "details": "Cannot find stacking_rules with id test",
-                      "request_id": "v-0e9bdaa00050e01280",
-                      "resource_id": "test",
-                      "resource_type": "stacking_rules"
+                      "details": "Cannot find project with id proj_2F3txY7"
                     }
                   }
                 }
@@ -82251,10 +82894,10 @@
                       "code": 409,
                       "key": "duplicate_found",
                       "message": "Duplicated resource found",
-                      "details": "Duplicated metadata schema exists with related_object customer",
-                      "request_id": "v-0ea5a7618fc0293d81",
-                      "resource_id": "customer",
-                      "resource_type": "metadata schema"
+                      "details": "Duplicated custom_event_schema exists with name sign-up",
+                      "request_id": "v-0ead453c10ec031067",
+                      "resource_id": "sign-up",
+                      "resource_type": "custom_event_schema"
                     }
                   }
                 }
@@ -82500,12 +83143,8 @@
                   "Resource not found": {
                     "value": {
                       "code": 404,
-                      "key": "not_found",
                       "message": "Resource not found",
-                      "details": "Cannot find stacking_rules with id stk_0d626410861700614",
-                      "request_id": "v-0e9bd7a49fd0e00ea3",
-                      "resource_id": "stk_0d626410861700614",
-                      "resource_type": "stacking_rules"
+                      "details": "Cannot find project with id proj_2F3txY7"
                     }
                   }
                 }
@@ -82647,12 +83286,8 @@
                   "Not Found": {
                     "value": {
                       "code": 404,
-                      "key": "not_found",
                       "message": "Resource not found",
-                      "details": "Cannot find stacking_rules with id stk_0d626410861700614",
-                      "request_id": "v-0e9bd9b3cd4228aa3e",
-                      "resource_id": "stk_0d626410861700614",
-                      "resource_type": "stacking_rules"
+                      "details": "Cannot find project with id proj_2F3txY7"
                     }
                   }
                 }
@@ -82729,12 +83364,1376 @@
                   "Not Found": {
                     "value": {
                       "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_2F3txY7"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/webhooks": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "create-webhook",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Create Webhook",
+        "description": "Creates a new webhook configuration.\n\n> 📘 Webhook Documentation\n>\n> Read [Webhooks v2024-01-1](ref:introduction-to-webhooks) article to learn how webhooks work in Voucherify.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines a webhook configuration.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsWebhooksCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the webhook configuration.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsWebhooksResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "webhook",
+                      "created_at": "2024-04-30T08:13:55.789Z",
+                      "id": "wh_ekFHVL6lqC4lDuIFxpETSGa3",
+                      "events": [
+                        "redemption.succeeded"
+                      ],
+                      "target_url": "your_url",
+                      "active": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload has incorrect values.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "statusCode": 400,
+                      "error": "Bad Request",
+                      "message": "Invalid request payload JSON format"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_5itvmU7"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "list-webhooks",
+        "tags": [
+          "Management"
+        ],
+        "summary": "List Webhooks",
+        "description": "Lists all webhook configurations for the project.\n\n> 📘 Webhook Documentation\n>\n> Read [Webhooks v2024-01-1](ref:introduction-to-webhooks) article to learn how webhooks work in Voucherify.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the details about webhook configurations created in the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsWebhooksListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "object": "webhook",
+                          "created_at": "2024-01-02T08:31:46.562Z",
+                          "id": "wh_i45Uez369zzXgh6PXC0eyGmb",
+                          "events": [
+                            "redemption.succeeded",
+                            "redemption.failed",
+                            "redemption.rollback.succeeded",
+                            "redemption.rollback.failed",
+                            "publication.succeeded",
+                            "voucher.published",
+                            "voucher.updated",
+                            "voucher.deleted",
+                            "voucher.created",
+                            "voucher.enabled",
+                            "voucher.disabled",
+                            "voucher.loyalty_card.points_added",
+                            "voucher.gift.balance_added",
+                            "campaign.enabled",
+                            "campaign.deleted",
+                            "campaign.created",
+                            "campaign.updated",
+                            "campaign.disabled",
+                            "campaign.vouchers.generation.completed",
+                            "business_validation_rule.assignment.created",
+                            "business_validation_rule.assignment.deleted",
+                            "business_validation_rule.created",
+                            "business_validation_rule.deleted",
+                            "business_validation_rule.updated",
+                            "customer.created",
+                            "customer.deleted",
+                            "customer.rewarded",
+                            "customer.rewarded.loyalty_points",
+                            "customer.consents.revoked",
+                            "customer.consents.given"
+                          ],
+                          "target_url": "your_url",
+                          "active": true
+                        },
+                        {
+                          "object": "webhook",
+                          "created_at": "2024-04-29T14:13:27.764Z",
+                          "id": "wh_x2YxoHtQdBlP7zfk5KZ8m5WX",
+                          "events": [
+                            "redemption.succeeded",
+                            "redemption.failed",
+                            "redemption.rollback.succeeded",
+                            "redemption.rollback.failed",
+                            "publication.succeeded",
+                            "voucher.published",
+                            "voucher.updated",
+                            "voucher.deleted",
+                            "voucher.created",
+                            "voucher.enabled"
+                          ],
+                          "target_url": "your_url",
+                          "active": false
+                        }
+                      ],
+                      "total": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_5itvDU7"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/webhooks/{webhookId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterWebhookId"
+          },
+          "in": "path",
+          "name": "webhookId",
+          "description": "Provide the unique identifier of the webhook configuration.",
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "get-webhook",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Get Webhook",
+        "description": "Retrieves a webhook configuration.\n\n> 📘 Webhook Documentation\n>\n> Read [Webhooks v2024-01-1](ref:introduction-to-webhooks) article to learn how webhooks work in Voucherify.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the webhook configuration.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsWebhooksResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "webhook",
+                      "created_at": "2024-04-30T08:13:55.789Z",
+                      "id": "wh_Fk1HzL9lqC1lpuIFxp3TShB4",
+                      "events": [
+                        "redemption.succeeded"
+                      ],
+                      "target_url": "your_url",
+                      "active": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
                       "key": "not_found",
                       "message": "Resource not found",
-                      "details": "Cannot find stacking_rules with id test",
-                      "request_id": "v-0e9bdaa00050e01280",
-                      "resource_id": "test",
-                      "resource_type": "stacking_rules"
+                      "details": "Cannot find webhook with id wh_ekFHVL6lqC4lDuIFxpETSGa",
+                      "request_id": "v-0ead4423d55b6996f2",
+                      "resource_id": "wh_ekFHVL6lqC4lDuIFxpETSGa",
+                      "resource_type": "webhook"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "update-webhook",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Update Webhook",
+        "description": "Updates a webhook configuration.\n\nThe `\"events\"` listed in the request are overwritten. If you want to add more events, provide also the events that are already in the webhook configuration.\n\n> 📘 Webhook Documentation\n>\n> Read [Webhooks v2024-01-1](ref:introduction-to-webhooks) article to learn how webhooks work in Voucherify.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the webhook configuration to be updated.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsWebhooks"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the updated webhook configuration.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsWebhooksResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "webhook",
+                      "created_at": "2024-04-30T08:13:55.789Z",
+                      "id": "wh_Fk1HzL9lqC1lpuIFxp3TShB4",
+                      "events": [
+                        "redemption.failed"
+                      ],
+                      "target_url": "your_url",
+                      "active": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload includes incorrect details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .properties.Size.eq.0 must be number",
+                      "request_id": "v-0ea5a9b9b3402940a9"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find webhook with id wh_ekFHVL6lqC4lDuIFxpETSGa",
+                      "request_id": "v-0ead4423d55b6996f2",
+                      "resource_id": "wh_ekFHVL6lqC4lDuIFxpETSGa",
+                      "resource_type": "webhook"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-webhook",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Delete Webhook",
+        "description": "Deletes a webhook configuration.\n\n> 📘 Webhook Documentation\n>\n> Read [Webhooks v2024-01-1](ref:introduction-to-webhooks) article to learn how webhooks work in Voucherify.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if the webhook configuration has been successfully deleted."
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find webhook with id wh_ekFHVL6lqC4lDuIFxpETSGa",
+                      "request_id": "v-0ead4423d55b6996f2",
+                      "resource_id": "wh_ekFHVL6lqC4lDuIFxpETSGa",
+                      "resource_type": "webhook"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/branding": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "create-brand",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Create Brand",
+        "description": "Creates a new brand configuration.\n\nYou can have only one brand configured for a project.\n\n> 📘 White Labelling\n>\n> The white labelling settings which can be found in Project Settings > Brand Details and which are available only for Enterprise clients as a separate service can be configured only in the user interface.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines a brand configuration.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsBrandingCreateRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "brand": {
+                      "name": "Voucherify PSA",
+                      "privacy_policy_url": null,
+                      "terms_of_use_url": null,
+                      "permission_reminder": "You are receiving this email because you opted in at our website.",
+                      "website_url": "voucherify.io"
+                    },
+                    "address": {
+                      "street": "Porcelanowa 23",
+                      "city": "Katowice",
+                      "postal": "43-246",
+                      "state": null,
+                      "country": "Poland"
+                    },
+                    "contact": {
+                      "email": "support@voucherify.io",
+                      "phone": null
+                    },
+                    "cockpits": {
+                      "campaigns_overview_enabled": false,
+                      "loyalty_enabled": true,
+                      "gift_cards_enabled": true,
+                      "coupons_enabled": true,
+                      "referrals_enabled": true,
+                      "lucky_draw_enabled": false,
+                      "theme": "default",
+                      "use_custom_double_opt_in_redirect_url": false,
+                      "custom_double_opt_in_redirect_url": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the brand configuration.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsBrandingResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "brd_0eb55234024e226d9d",
+                      "brand": {
+                        "name": "Voucherify PSA",
+                        "privacy_policy_url": null,
+                        "terms_of_use_url": null,
+                        "permission_reminder": "You are receiving this email because you opted in at our website.",
+                        "website_url": "voucherify.io"
+                      },
+                      "address": {
+                        "street": "Porcelanowa 23",
+                        "city": "Katowice",
+                        "postal": "43-246",
+                        "state": null,
+                        "country": "Poland"
+                      },
+                      "contact": {
+                        "email": "support@voucherify.io",
+                        "phone": null
+                      },
+                      "cockpits": {
+                        "campaigns_overview_enabled": false,
+                        "loyalty_enabled": true,
+                        "gift_cards_enabled": true,
+                        "coupons_enabled": true,
+                        "referrals_enabled": true,
+                        "lucky_draw_enabled": false,
+                        "theme": "default",
+                        "use_custom_double_opt_in_redirect_url": false,
+                        "custom_double_opt_in_redirect_url": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload has incorrect values.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "statusCode": 400,
+                      "error": "Bad Request",
+                      "message": "Invalid request payload JSON format"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_5itvmU7"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns an error if the brand has been already configured.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 409,
+                      "key": "branding_exist",
+                      "message": "Branding exist",
+                      "details": "Cannot exist more than one branding for given project",
+                      "request_id": "v-0ead51b4ff49d9319d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "list-brands",
+        "tags": [
+          "Management"
+        ],
+        "summary": "List Brands",
+        "description": "Lists all brand configurations.\n\nBecause a project can have only one brand, it always returns a list with one item.\n\nThis endpoint can be used to retrieve the brand configuration created with the Voucherify Dashboard and the ID.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the details about the brand created in the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsBrandingListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "brd_0E603421F0a2fL1814",
+                          "brand": {
+                            "name": "Voucherify PSA",
+                            "privacy_policy_url": null,
+                            "terms_of_use_url": null,
+                            "permission_reminder": "You are receiving this email because you opted in at our website.",
+                            "website_url": "voucherify.io"
+                          },
+                          "address": {
+                            "street": "Porcelanowa 23",
+                            "city": "Katowice",
+                            "postal": "40-246",
+                            "state": null,
+                            "country": "Poland"
+                          },
+                          "contact": {
+                            "email": "support@voucherify.io",
+                            "phone": null
+                          },
+                          "cockpits": {
+                            "campaigns_overview_enabled": false,
+                            "loyalty_enabled": true,
+                            "gift_cards_enabled": true,
+                            "coupons_enabled": true,
+                            "referrals_enabled": true,
+                            "lucky_draw_enabled": false,
+                            "theme": "default",
+                            "use_custom_double_opt_in_redirect_url": false,
+                            "custom_double_opt_in_redirect_url": null
+                          }
+                        }
+                      ],
+                      "total": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_5itvDU7"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/branding/{brandingId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterBrandingId"
+          },
+          "in": "path",
+          "name": "brandingId",
+          "description": "Provide the unique identifier of the brand configuration.",
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "get-brand",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Get Brand",
+        "description": "Retrieves a brand configuration.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the brand configuration.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsBrandingResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "brd_0E603421F0a2fL1814",
+                      "brand": {
+                        "name": "Voucherify PSA",
+                        "privacy_policy_url": null,
+                        "terms_of_use_url": null,
+                        "permission_reminder": "You are receiving this email because you opted in at our website.",
+                        "website_url": null
+                      },
+                      "address": {
+                        "street": "Porcelanowa 23",
+                        "city": "Katowice",
+                        "postal": "40-246",
+                        "state": null,
+                        "country": "Poland"
+                      },
+                      "contact": {
+                        "email": "support@voucherify.io",
+                        "phone": null
+                      },
+                      "cockpits": {
+                        "campaigns_overview_enabled": false,
+                        "loyalty_enabled": true,
+                        "gift_cards_enabled": true,
+                        "coupons_enabled": true,
+                        "referrals_enabled": true,
+                        "lucky_draw_enabled": false,
+                        "theme": "default",
+                        "use_custom_double_opt_in_redirect_url": false,
+                        "custom_double_opt_in_redirect_url": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find branding_details with id brd_0e603885e0c5fc180",
+                      "request_id": "v-0ead68aa7c56588378",
+                      "resource_id": "brd_0e603885e0c5fc180",
+                      "resource_type": "branding_details"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "update-brand",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Update Brand",
+        "description": "Updates a brand configuration.\n\nOnly the fields sent in the request will be updated. The fields omitted in the request will remain unchanged.\n\n> 📘 White Labelling\n>\n> The white labelling settings which can be found in Project Settings > Brand Details and which are available only for Enterprise clients as a separate service can be configured only in the user interface.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the brand configuration to be updated.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsBranding"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the updated brand configuration.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsBrandingResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "brd_0ead90c940a9deef09",
+                      "brand": {
+                        "name": "Voucherify PSA",
+                        "privacy_policy_url": null,
+                        "terms_of_use_url": null,
+                        "permission_reminder": "You are receiving this email because you opted in at our website.",
+                        "website_url": null
+                      },
+                      "address": {
+                        "street": "Porcelanowa 23",
+                        "city": "Katowice",
+                        "postal": "43-246",
+                        "state": null,
+                        "country": "Poland"
+                      },
+                      "contact": {
+                        "email": "your_email@your-domain.com",
+                        "phone": null
+                      },
+                      "cockpits": {
+                        "campaigns_overview_enabled": false,
+                        "loyalty_enabled": true,
+                        "gift_cards_enabled": true,
+                        "coupons_enabled": true,
+                        "referrals_enabled": true,
+                        "lucky_draw_enabled": false,
+                        "theme": "default",
+                        "use_custom_double_opt_in_redirect_url": false,
+                        "custom_double_opt_in_redirect_url": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload includes incorrect details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .properties.Size.eq.0 must be number",
+                      "request_id": "v-0ea5a9b9b3402940a9"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find branding_details with id brd_0e603885e0c5fc180",
+                      "request_id": "v-0ead68aa7c56588378",
+                      "resource_id": "brd_0e603885e0c5fc180",
+                      "resource_type": "branding_details"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-brand",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Delete Brand",
+        "description": "Deletes permanently a brand configuration.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if the brand configuration has been successfully deleted."
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find branding_details with id brd_0e603885e0c5fc180",
+                      "request_id": "v-0ead68aa7c56588378",
+                      "resource_id": "brd_0e603885e0c5fc180",
+                      "resource_type": "branding_details"
                     }
                   }
                 }
