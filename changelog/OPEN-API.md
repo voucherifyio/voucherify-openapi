@@ -6,6 +6,14 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 ## 2024-05-06
 
+- Added Management API endpoints for:
+  - Custom Event Schemas (`POST`, `GET` all, `GET` one, `PUT`, `DELETE`)
+  - Webhooks (`POST`, `GET` all, `GET` one, `PUT`, `DELETE`)
+  - Brand (`POST`, `GET` all, `GET` one, `PUT`, `DELETE`)
+- Added `"order_id"` field to Export Redemptions in the Export endpoint
+
+## 2024-05-06
+
 Added examples to Custom metadata schema endpoints
 
 ## 2024-04-26
@@ -14,6 +22,12 @@ Added examples to Custom metadata schema endpoints
   - Metadata Schemas (`POST`, `GET` all, `GET` one, `PUT`, `DELETE`)
 - Improvements to existing Management API endpoints
 - Deleted deprecated `Get Member Activities` endpoints
+
+## 2024-04-24
+
+- Changes to Project endpoints
+- Changes to List Customer Redeemables
+- Added Custom Metadata Schema endpoints – hidden for now
 
 ## 2024-04-19
 
