@@ -55,10 +55,6 @@ export const skipList: { endpoint: string; methods: string[] | true }[] = [
     endpoint: "/v1/loyalties/{campaignId}/rewards/{assignmentId}",
     methods: ["put"],
   },
-  {
-    endpoint: "/v1/validation-rules/{validationRuleId}/assignments",
-    methods: ["post"],
-  },
   { endpoint: "/v1/segments/{segmentId}", methods: ["get"] },
   { endpoint: "/v1/segments", methods: ["post"] },
   { endpoint: "/v1/consents", methods: ["get"] },
