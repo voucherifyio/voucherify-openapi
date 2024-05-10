@@ -10,6 +10,7 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
   - Custom Event Schemas (`POST`, `GET` all, `GET` one, `PUT`, `DELETE`)
   - Webhooks (`POST`, `GET` all, `GET` one, `PUT`, `DELETE`)
   - Brand (`POST`, `GET` all, `GET` one, `PUT`, `DELETE`)
+- Updated Management API endpoints for v20240405
 - Added `"order_id"` field to Export Redemptions in the Export endpoint
 - Removed `"ReferrerWithSummaryLoyaltyReferrals"` and `"CustomerWithSummaryLoyaltyReferrals"` from `"OrderCalculatedNoCustomerData"`
 
