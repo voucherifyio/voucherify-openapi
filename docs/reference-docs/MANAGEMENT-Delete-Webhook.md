@@ -1,11 +1,11 @@
 ---
-title: Get Stacking Rules [Beta]
+title: Delete Webhook [Beta]
 type: endpoint
 categorySlug: voucherify-api
-slug: get-stacking-rules
+slug: delete-webhook
 parentDocSlug: management
 hidden: false
-order: 230
+order: 300
 ---
 [block:html]
 {

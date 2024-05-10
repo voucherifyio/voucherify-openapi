@@ -140,7 +140,7 @@ Available values: `code`, `voucher_type`, `value`, `discount_type`, `campaign`, 
 Available values: `-id`, `id`, `-voucher_code`, `voucher_code`, `-tracking_id`, `tracking_id`, `-customer_id`, `customer_id`, `-created_at`, `created_at`
 
 ## Export Redemption Fields
-Available values: `id`, `object`, `date`, `voucher_code`, `campaign`, `promotion_tier_id`, `customer_id`, `customer_source_id`, `customer_name`, `tracking_id`, `order_amount`, `gift_amount`, `loyalty_points`, `result`, `failure_code`, `failure_message`, `metadata`
+Available values: `id`, `object`, `date`, `voucher_code`, `campaign`, `promotion_tier_id`, `customer_id`, `customer_source_id`, `customer_name`, `tracking_id`, `order_id`, `order_amount`, `gift_amount`, `loyalty_points`, `result`, `failure_code`, `failure_message`, `metadata`
 
 ## Export Redemption Filters
 | Attributes |  Description |

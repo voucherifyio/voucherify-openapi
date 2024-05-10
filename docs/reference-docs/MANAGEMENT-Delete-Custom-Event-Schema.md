@@ -1,11 +1,11 @@
 ---
-title: Get Stacking Rules [Beta]
+title: Delete Custom Event Schema [Beta]
 type: endpoint
 categorySlug: voucherify-api
-slug: get-stacking-rules
+slug: delete-custom-event-schema
 parentDocSlug: management
 hidden: false
-order: 230
+order: 200
 ---
 [block:html]
 {

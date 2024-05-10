@@ -1,11 +1,11 @@
 ---
-title: Get Stacking Rules [Beta]
+title: List Custom Event Schemas [Beta]
 type: endpoint
 categorySlug: voucherify-api
-slug: get-stacking-rules
+slug: list-custom-event-schemas
 parentDocSlug: management
 hidden: false
-order: 230
+order: 170
 ---
 [block:html]
 {

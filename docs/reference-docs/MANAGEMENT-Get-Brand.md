@@ -1,11 +1,11 @@
 ---
-title: Get Stacking Rules [Beta]
+title: Get Brand [Beta]
 type: endpoint
 categorySlug: voucherify-api
-slug: get-stacking-rules
+slug: get-brand
 parentDocSlug: management
 hidden: false
-order: 230
+order: 330
 ---
 [block:html]
 {
