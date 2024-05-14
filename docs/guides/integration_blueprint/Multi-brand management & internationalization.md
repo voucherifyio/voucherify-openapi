@@ -29,4 +29,4 @@ Voucherify supports **different approaches to campaign management**. You can use
 
 > 📘 Voucherify Management API
 > 
-> Our [Management API](doc:management-api "Management API"), available as a paid add-on feature, enables you to manage projects via API, for instance, to set up new projects under a specific configuration fully programmatically. You can conveniently list projects, retrieve specific project details, update, or delete projects as needed.
+> Voucherify [Management API](doc:management-api "Management API"), available as a paid add-on feature, enables you to manage projects via API. For instance, you can set up new projects under a specific configuration fully programmatically. You can conveniently list projects, retrieve specific project details, update, or delete projects and different project settings as needed.

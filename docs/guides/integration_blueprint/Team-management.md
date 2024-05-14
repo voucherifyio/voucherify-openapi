@@ -35,4 +35,4 @@ User management starts with mapping how various departments, such as marketing, 
 
 > 📘 Management API
 >
-> Our [Management API](doc:management-api "Management API"), available as a paid add-on feature, enables you to assign or unassign users across multiple projects. You can conveniently list users, retrieve specific user details within a project, or update user roles as needed.
+> Voucherify [Management API](doc:management-api "Management API"), available as a paid add-on feature, enables you to assign or unassign users across multiple projects. You can conveniently list users, retrieve specific user details within a project, or update user roles as needed.

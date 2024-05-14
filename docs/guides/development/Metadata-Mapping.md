@@ -19,6 +19,10 @@ Here are some exemplary scenarios that can be achieved by using metadata:
 - Run distributions based on custom customer attributes,
 - Enforce that new campaigns have proper identifiers provided for reporting.
 
+> 📘 Voucherify Management API
+> 
+> Voucherify [Management API](doc:management-api "Management API"), available as a paid add-on feature, enables you to manage metadata schemas via API. For instance, you can set up new or modify standard metadata schemas under a specific configuration between projects. You can conveniently list metadata schemas, retrieve a specific metadata schema, update, or delete the schemas within a project as needed.
+
 ### Validation purposes
 
 You can use validation rules and apply them to codes or loyalty-earning rules in your campaigns and can encourage customers to specific behaviors, allowing them to redeem the discount only if:
@@ -64,20 +68,20 @@ Voucherify will take care of metadata integrity. This is achieved by a [metadata
 - image URL
 - Object (nested)
 
-|   Object                |            Metadata              |
-| :---------------------: | :------------------------------: |
-| [Customer](ref:customer-object)                |   marital_status (string), subscribed (boolean), billing information (nested), acquisition_channel (string), braze_segment (string) |
-|      [Redemption](ref:redemption-object)         |     voucher_deep_linked (boolean) |
-|      [Product](ref:product-object)   | product_category, expiration_date (true/false), manufacturer_id, brand, flight_destination, booking_date_time|
-| [Order](ref:order-object)  | shipping_country, order_channel, payment_method, store_id, currency  |
-|[Publication](ref:publication-object) | request_source, trigger |
-| [Voucher](ref:voucher-object) | terms_and_conditions, success_banner_url, failure_banner_url, contentful_entities |
-| [Campaign](ref:campaign-object) | target_audience, location, market, campaign_owner
-| Order line item | category, manufacturer_id, origin, flight_number |
-| [Loyalty tier](ref:loyalty-tier-object) | exposed_tier_name, tier_banner_URL |
-| [Promotion tier](ref:promotion-tier-object) | exposed_tier_name, tier_banner_URL, location, market, campaign_owner |
-| [Earning rule](ref:earning-rule-object) | terms_and_conditions, earning_rule_splash_screen_url |
-| [Reward](ref:reward-object) | place_of_collection, terms_and_conditions |
+|                   Object                    |                                                             Metadata                                                              |
+| :-----------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------: |
+|       [Customer](ref:customer-object)       | marital_status (string), subscribed (boolean), billing information (nested), acquisition_channel (string), braze_segment (string) |
+|     [Redemption](ref:redemption-object)     |                                                   voucher_deep_linked (boolean)                                                   |
+|        [Product](ref:product-object)        |           product_category, expiration_date (true/false), manufacturer_id, brand, flight_destination, booking_date_time           |
+|          [Order](ref:order-object)          |                                shipping_country, order_channel, payment_method, store_id, currency                                |
+|    [Publication](ref:publication-object)    |                                                      request_source, trigger                                                      |
+|        [Voucher](ref:voucher-object)        |                         terms_and_conditions, success_banner_url, failure_banner_url, contentful_entities                         |
+|       [Campaign](ref:campaign-object)       |                                         target_audience, location, market, campaign_owner                                         |
+|               Order line item               |                                         category, manufacturer_id, origin, flight_number                                          |
+|   [Loyalty tier](ref:loyalty-tier-object)   |                                                exposed_tier_name, tier_banner_URL                                                 |
+| [Promotion tier](ref:promotion-tier-object) |                               exposed_tier_name, tier_banner_URL, location, market, campaign_owner                                |
+|   [Earning rule](ref:earning-rule-object)   |                                       terms_and_conditions, earning_rule_splash_screen_url                                        |
+|         [Reward](ref:reward-object)         |                                             place_of_collection, terms_and_conditions                                             |
 
 ## Customer PII
 
