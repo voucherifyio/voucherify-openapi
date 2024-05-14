@@ -32,3 +32,7 @@ User management starts with mapping how various departments, such as marketing, 
 > Each project can have separate access options. Voucherify also does not limit the number of users within the account.
 
 ![team management](https://files.readme.io/f1d446d-guides_integration_blueprint_team_management_user_roles.png)
+
+> 📘 Management API
+>
+> Our [Management API](doc:management-api "Management API"), available as a paid add-on feature, enables you to assign or unassign users across multiple projects. You can conveniently list users, retrieve specific user details within a project, or update user roles as needed.
