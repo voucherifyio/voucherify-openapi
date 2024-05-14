@@ -7,11 +7,13 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
-## 2024-04-24
+## 2024-05-14
 
-- Changes to Project endpoints
-- Changes to List Customer Redeemables
-- Added Custom Metadata Schema endpoints – hidden for now
+- Updated the "Webhooks v2024-01-01" article in view of the newly added events.
+
+## 2024-05-09
+
+- "Management API" article – updated given the complete documentation
 
 ## 2024-04-19
 
