@@ -14,9 +14,6 @@ Voucherify supports free shipping discounts which are a specific use case of a [
 
 Initially, the price of the shipping is set to 0. 
 
-<!-- ![Product catalog](../../assets/img/guides_discount_recipes_free_shipping_discount_product_catalog_1.png "Product catalog") -->
-![Product Catalog](https://files.readme.io/348e81a-free-shipping1.png "Product Catalog")
-
 To add a new shipping charge, open the product details, and choose edit (the pencil icon). Then, set up a new price and confirm with Save. 
 
 If you want to set up a shipping charge via API, you need to [Update the Product](ref:update-product). To do that, copy the shipping ID from the dashboard and specify the new product (shipping) price in the request (remember to multiply the value by 100):

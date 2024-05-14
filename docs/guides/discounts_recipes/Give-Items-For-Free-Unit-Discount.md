@@ -17,9 +17,6 @@ As a result, when a customer is eligible for a promotion and redeems a code, the
 
 To set up a unit discount via the dashboard, you need to provide the following information:
 
-<!-- ![Unit type discount](../../assets/img/guides_discount_recipes_free_items_unit_discount_1.png "Unit type discount") -->
-![Unit type discount](https://files.readme.io/2cf64fc-unit_discount.png "Unit type discount")
-
 **Unit value** defines the number of free items attached to the code.
 **Unit type **is a product offered for free chosen from your Product Inventory.
 
