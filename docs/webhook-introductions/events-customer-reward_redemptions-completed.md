@@ -1,4 +1,4 @@
-The `EVENTS.CUSTOMER.REWARDED.LOYALTY_POINTS` event indicates that a customer received loyalty points on one of their loyalty cards. The webhook contains the details of the number of points the customer received.
+The `EVENTS.CUSTOMER.REWARD_REDEMPTIONS.COMPLETED` event indicates that redemption of a reward has been completed.
 
 If this event is sent as a notification in a Loyalty campaign, it is also sent with the `publication` object.
 

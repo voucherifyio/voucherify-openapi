@@ -1,11 +1,11 @@
 ---
-title: Get Stacking Rules [Beta]
+title: Delete Brand [Beta]
 type: endpoint
 categorySlug: voucherify-api
-slug: get-stacking-rules
+slug: delete-brand
 parentDocSlug: management
 hidden: false
-order: 230
+order: 350
 ---
 [block:html]
 {

@@ -1,11 +1,11 @@
 ---
-title: Get Stacking Rules [Beta]
+title: List Webhooks [Beta]
 type: endpoint
 categorySlug: voucherify-api
-slug: get-stacking-rules
+slug: list-webhooks
 parentDocSlug: management
 hidden: false
-order: 230
+order: 270
 ---
 [block:html]
 {
