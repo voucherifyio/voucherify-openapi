@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-05-14
+
+- Updated the "Webhooks v2024-01-01" article in view of the newly added events.
+
 ## 2024-05-09
 
 - "Management API" article – updated given the complete documentation

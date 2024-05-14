@@ -4,6 +4,14 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-05-14
+
+- Event documentation:
+  - Added three new events:
+    - `customer.reward_redemptions.created`
+    - `customer.reward_redemptions.pending`
+    - `customer.reward_redemptions.completed`
+
 ## 2024-05-10
 
 - Added Management API endpoints for:
