@@ -4,7 +4,7 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
-## 2024-05-XX
+## 2024-05-15
 
 - Removed the `mode` parameters from Qualifications. For now, the only mode is `BASIC`, it is a default one, and the `ADVANCED` mode will not be developed any time soon.
 

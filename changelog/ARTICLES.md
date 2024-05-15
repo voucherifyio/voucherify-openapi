@@ -7,7 +7,7 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
-# 2024-05-XX
+# 2024-05-15
 
 - Added info about the Management API to the following articles:
   - Metadata Mapping
