@@ -13,6 +13,8 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
   - Metadata Mapping
   - Multi-Brand Management And Internationalization
   - Team Management
+- Removed images showing the old UI
+- Removed the info about `BASIC` and `ADVANCED` modes in qualifications/check eligibility
 
 ## 2024-05-14
 
