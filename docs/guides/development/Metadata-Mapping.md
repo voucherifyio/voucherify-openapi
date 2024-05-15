@@ -21,7 +21,7 @@ Here are some exemplary scenarios that can be achieved by using metadata:
 
 > 📘 Voucherify Management API
 > 
-> Voucherify [Management API](doc:management-api "Management API"), available as a paid add-on feature, enables you to manage metadata schemas via API. For instance, you can set up new or modify standard metadata schemas under a specific configuration between projects. You can conveniently list metadata schemas, retrieve a specific metadata schema, update, or delete the schemas within a project as needed.
+> Voucherify [Management API](doc:management-api "Management API"), available as an Enterprise feature, enables you to manage metadata schemas via API. For instance, you can set up new or modify standard metadata schemas under a specific configuration between projects. You can conveniently list metadata schemas, retrieve a specific metadata schema, update, or delete the schemas within a project as needed.
 
 ### Validation purposes
 
