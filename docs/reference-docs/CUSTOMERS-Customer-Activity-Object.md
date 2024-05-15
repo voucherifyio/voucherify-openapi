@@ -637,7 +637,7 @@ All of:
 All of:
 
 1. [Order Response Base](#order-response-base)
-2. <h3>Order Calculated</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left">One of: <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">One of: <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
+2. <h3>Order Calculated</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left">One of: <a href="#customer-with-summary-loyalty-referrals">Customer With Summary Loyalty Referrals</a>, <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">One of: <a href="#referrer-with-summary-loyalty-referrals">Referrer With Summary Loyalty Referrals</a>, <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
 
 ## Voucher Transaction
 | Attributes |  Description |
@@ -990,6 +990,9 @@ One of:
 |:-----|:--------|
 | id</br>`string` | <p>A unique identifier of an existing customer.</p> |
 | object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `customer` |
+
+## Referrer With Summary Loyalty Referrals
+[Customer With Summary Loyalty Referrals](#customer-with-summary-loyalty-referrals)
 
 ## Referrer Id
 [Customer Id](#customer-id)

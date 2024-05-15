@@ -37,12 +37,6 @@ Added examples to Custom metadata schema endpoints
 - Improvements to existing Management API endpoints
 - Deleted deprecated `Get Member Activities` endpoints
 
-## 2024-04-24
-
-- Changes to Project endpoints
-- Changes to List Customer Redeemables
-- Added Custom Metadata Schema endpoints – hidden for now
-
 ## 2024-04-19
 
 - Added Management API endpoints for:
