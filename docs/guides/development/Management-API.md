@@ -18,6 +18,8 @@ Management API introduces API endpoints that let you perform account-related ope
 - [Stacking rules](ref:create-stacking-rules "Create Stacking Rules"),
 - [Webhooks](ref:create-webhook "Create Webhook Configuration"),
 - [Branding](ref:create-brand "Create Brand").
+
+**All the above-mentioned endpoints must be sent to the following URL: https://{cluster}.voucherify.io/management/v1/**
  
 The three main advantages of the Management API are:
 
