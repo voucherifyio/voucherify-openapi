@@ -7,6 +7,15 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+# 2024-05-15
+
+- Added info about the Management API to the following articles:
+  - Metadata Mapping
+  - Multi-Brand Management And Internationalization
+  - Team Management
+- Removed images showing the old UI
+- Removed the info about `BASIC` and `ADVANCED` modes in qualifications/check eligibility
+
 ## 2024-05-14
 
 - Updated the "Webhooks v2024-01-01" article in view of the newly added events.

@@ -59,9 +59,6 @@ Creating a distribution in the Distribution Manager is a 4-step process:
 
 You can choose between the following distribution purposes:
 
-<!-- ![Distribution purpose](../../assets/img/guides_distributions_recipes_messaging_automation_conditions_1.png "Distribution purpose") -->
-![Distribution purpose](https://files.readme.io/de743fa-distribution-conditions.png "Distribution purpose")
-
   * Notify customers about promotion – share details of the particular in-cart promotion (promotion tier).
   * Send and publish unique codes from the campaign – each receiver gets a unique code from the chosen campaign assigned (published) automatically to their profile.
   * Send a plain message to customers – plain message with no promo codes included. 
@@ -123,15 +120,9 @@ Here are email customization options:
 
 Setting up the distribution starts from running the Manager. Go to the Distributions and click the plus. 
 
-<!-- ![Plus button](../../assets/img/guides_distributions_recipes_messaging_automation_plus_2.png "Plus button") -->
-![Plus button](https://files.readme.io/c22cdc7-plus.png "Plus button")
-
 ### Manual Distribution
 
 Manual distribution delivers messages once you confirm its settings with **Save and send**. Please note that each manual distribution is sent with a 10-minute delay, so you can introduce edits or stop the message delivery within this time.
-
-<!-- ![Manual message](../../assets/img/guides_distributions_recipes_messaging_automation_manual_message_3.png "Manual message") -->
-![Manual message](https://files.readme.io/529d532-manua-message.png "Manual message")
 
 If you chose a customer segment as your audience, 10 minutes countdown starts when the segment is fully synced. Syncing ends once all customers were validated against segment criteria. Syncing status is displayed next to the segment name so you can monitor if the segment is already synced or if syncing is in progress.
 
@@ -174,9 +165,6 @@ Using Consents, you can set which marketing permissions are required to send mes
 ### Channels choice & messages
 
 The next step is about channel(s) configuration. First, enable channel settings as in the screen below. Note that you can enable many channels within a single distribution.
-
-<!-- ![Channel choice](../../assets/img/guides_distributions_recipes_messaging_automation_channel_choice_4.png "Channel choice") -->
-![Channel choice](https://files.readme.io/a07ad63-enable-channel.png "Channel choice")
 
 The detailed message setup depends on the chosen channel. Please follow the [dedicated tutorial](https://support.voucherify.io/category/396-distribution-manager) to see how to configure the message.
 

@@ -593,10 +593,7 @@ POST https://URL/v1/redemptions/r_5J38i6KjSnkHYw3bwLB4v72j/rollbacks
 
 ## Dashboard tracking
 
-Redemption of more than one redeemable can be only called via API. In your dashboard, you have an overview of all redemptions including stacked discounts. You can see child redemptions of single redeemables and parent redemptions that gather details of all child redemptions executed within the same API request. 
-
-<!-- ![Parent and child redemptions](../../assets/img/guides_discount_recipes_stackable_discounts_api_child_redemptions_1.png "Parent and child redemptions") -->
-![Parent and child redemptions](https://files.readme.io/300a301-stacking-redemption-UI.png "Parent and child redemptions")
+Redemption of more than one redeemable can be only called via API. In your dashboard, you have an overview of all redemptions including stacked discounts. You can see child redemptions of single redeemables and parent redemptions that gather details of all child redemptions executed within the same API request.
 
 ## Apply discount to the already created order
 

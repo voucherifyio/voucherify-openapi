@@ -4,6 +4,11 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-05-15
+
+- Removed the `mode` parameters from Qualifications. For now, the only mode is `BASIC`, it is a default one, and the `ADVANCED` mode will not be developed any time soon
+- Changed the Validation Rule Assignment request to a new form: `"related_object_type"` and `"related_object_id"`
+
 ## 2024-05-14
 
 - Event documentation:
@@ -38,6 +43,7 @@ Added examples to Custom metadata schema endpoints
 - Changes to Project endpoints
 - Changes to List Customer Redeemables
 - Added Custom Metadata Schema endpoints – hidden for now
+
 
 ## 2024-04-19
 
