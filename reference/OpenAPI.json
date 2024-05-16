@@ -808,8 +808,8 @@
         "properties": {
           "id": {
             "type": "object",
+            "description": "Unique identifier of the bin entry.",
             "properties": {
-              "description": "Unique identifier of the bin entry.",
               "conditions": {
                 "$ref": "#/components/schemas/FilterConditionsString"
               },
@@ -820,10 +820,73 @@
           },
           "resource_type": {
             "type": "object",
-            "description": "Resource type of the soft-deleted resource.",
+            "description": "Resource type of the resource moved to the bin.",
             "properties": {
               "conditions": {
-                "$ref": "#/components/schemas/FilterConditionsString"
+                "properties": {
+                  "$in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "campaign",
+                        "product",
+                        "sku",
+                        "voucher"
+                      ]
+                    }
+                  },
+                  "$not_in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "campaign",
+                        "product",
+                        "sku",
+                        "voucher"
+                      ]
+                    }
+                  },
+                  "$is": {
+                    "type": "string",
+                    "description": "Value is exactly this value (single value).",
+                    "enum": [
+                      "campaign",
+                      "product",
+                      "sku",
+                      "voucher"
+                    ]
+                  },
+                  "$is_not": {
+                    "type": "string",
+                    "description": "Results omit this value (single value).",
+                    "enum": [
+                      "campaign",
+                      "product",
+                      "sku",
+                      "voucher"
+                    ]
+                  },
+                  "$has_value": {
+                    "type": "string",
+                    "description": "Value is NOT null. The value for this parameter is an empty string."
+                  },
+                  "$is_unknown": {
+                    "type": "string",
+                    "description": "Value is null. The value for this parameter is an empty string."
+                  },
+                  "$starts_with": {
+                    "type": "string",
+                    "description": "Value starts with the specified string."
+                  },
+                  "$ends_with": {
+                    "type": "string",
+                    "description": "Value ends with the specified string."
+                  }
+                }
               },
               "junction": {
                 "$ref": "#/components/schemas/Junction"
@@ -832,7 +895,7 @@
           },
           "resource_name": {
             "type": "object",
-            "description": "Name of the soft-deleted resource: the name of the campaign, voucher, product or SKU.",
+            "description": "Name of the resource moved to the bin: the name of the campaign, voucher, product, or SKU.",
             "properties": {
               "conditions": {
                 "$ref": "#/components/schemas/FilterConditionsString"
@@ -844,7 +907,7 @@
           },
           "resource_id": {
             "type": "object",
-            "description": "Unique identifier of the soft-deleted resource.",
+            "description": "Unique identifier of the resource moved to the bin.",
             "properties": {
               "conditions": {
                 "$ref": "#/components/schemas/FilterConditionsString"
@@ -79611,15 +79674,15 @@
           "Bin"
         ],
         "summary": "Get Bin",
-        "description": "",
+        "description": "Retrieves resources moved to the bin. The following resources can be moved to the bin:\n- campaigns\n- vouchers\n- products\n- SKUs\n\nTo use this endpoint, you must have the following permissions:\n- `vouchers.read`\n- `campaigns.read`\n- `products.read`",
         "parameters": [
           {
             "schema": {
-              "$ref": "#/components/schemas/ParameterFiltersListBin"
+              "$ref": "#/components/schemas/ParameterInteger"
             },
             "in": "query",
-            "name": "filters",
-            "description": ""
+            "name": "limit",
+            "description": "A limit on the number of objects to be returned. Limit can range between 1 and 100 items."
           },
           {
             "schema": {
@@ -79627,7 +79690,7 @@
             },
             "in": "query",
             "name": "order",
-            "description": "Apply this filter to order the bin entries according the date and time when it was soft-deleted or the ID of the bin entry. The dash `-` preceding a sorting option means sorting in a descending order."
+            "description": "Apply this filter to order the bin entries according the date and time when they were moved to the bin or to the ID of the bin entry. The dash `-` preceding a sorting option means sorting in a descending order."
           },
           {
             "schema": {
@@ -79636,6 +79699,16 @@
             "in": "query",
             "name": "starting_after_id",
             "description": "Sorts the results to get resources starting after the given bin entry ID."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListBin"
+            },
+            "in": "query",
+            "name": "filters",
+            "description": "",
+            "style": "deepObject",
+            "explode": true
           }
         ],
         "security": [
