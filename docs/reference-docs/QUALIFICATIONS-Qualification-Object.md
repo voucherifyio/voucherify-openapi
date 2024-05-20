@@ -23,12 +23,12 @@ order: 1
 ## Redeemables
 | Attributes |  Description |
 |:-----|:--------|
-| object</br>`string` | <p>The type of object represented by JSON. Default is <code>list</code>.</p> Available values: `list` |
+| object</br>`string` | <p>The type of the object represented by JSON. Default is <code>list</code>.</p> Available values: `list` |
 | data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of qualified redeemables.</p> Available values: `data` |
 | data</br>`array` | <p>Array of qualified redeemables.</p> Array of [Combined response of redeemable object and multiple redeemables within](#combined-response-of-redeemable-object-and-multiple-redeemables-within) |
 | total</br>`integer` | <p>The number of redeemables returned in the API request.</p> **Example:** <p>5</p> |
-| has_more</br>`boolean` | <p>As results are always limited, the <code>has_more</code> flag indicates whether there are more records for given parameters. This lets you know if you can run another request (with different options) to get more records returned in the results.</p> |
-| more_starting_after</br>`string` | <p>Timestamp representing the date and time to use in starting_after cursor to get more redeemables.</p> **Example:** <p>2023-10-31T12:13:16.374Z</p> |
+| has_more</br>`boolean` | <p>As results are always limited, the <code>has_more</code> flag indicates if there are more records for given parameters. This lets you know if you can run another request (with different options) to get more records returned in the results.</p> |
+| more_starting_after</br>`string` | <p>Timestamp representing the date and time to use in <code>starting_after</code> cursor to get more redeemables.</p> **Example:** <p>2023-10-31T12:13:16.374Z</p> |
 
 ## Order Calculated
 All of:
@@ -75,14 +75,14 @@ All of:
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.</p> |
 | customer_id</br>`string`, `null` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
 | referrer_id</br>`string`, `null` | <p>Unique referrer ID.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `order` |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `order` |
 | redemptions</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#order-redemptions">Order Redemptions</a></td></tr></tbody></table> |
 
 ## Customer Id
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>A unique identifier of an existing customer.</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `customer` |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `customer` |
 
 ## Referrer Id
 [Customer Id](#customer-id)
@@ -125,7 +125,7 @@ All of:
 | subtotal_amount</br>`integer` | <p>Final order item amount after the applied item-level discount.  If there are no item-level discounts applied, this item is equal to the <code>amount</code>.<br><code>subtotal_amount</code>=<code>amount</code>-<code>applied_discount_amount</code></p> |
 | product</br>`object` | <p>An object containing details of the related product.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier that represents the product and is assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant’s product ID (if it is different than Voucherify's product ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.</p></td></tr><tr><td style="text-align:left">override</br><code>boolean</code></td><td style="text-align:left"><p>The override set to <code>true</code> is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Product name.</p></td></tr><tr><td style="text-align:left">metadata</br><code>object</code></td><td style="text-align:left"><p>A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format.</p></td></tr><tr><td style="text-align:left">price</br><code>number</code></td><td style="text-align:left"><p>Product price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
 | sku</br>`object` | <p>An object containing details of the related SKU.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier that represents the SKU and is assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant’s SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.</p></td></tr><tr><td style="text-align:left">override</br><code>boolean</code></td><td style="text-align:left"><p>The override set to <code>true</code> is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.</p></td></tr><tr><td style="text-align:left">sku</br><code>string</code></td><td style="text-align:left"><p>The SKU name.</p></td></tr><tr><td style="text-align:left">price</br><code>number</code></td><td style="text-align:left"><p>SKU price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `order_item` |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `order_item` |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format.</p> |
 
 ## Order Redemptions
@@ -153,16 +153,16 @@ All of:
 |:-----|:--------|
 | data</br>`array` | <p>Contains array of items to which the discount can apply.</p> Array of [Applicable To](#applicable-to) |
 | total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
-| data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `list` |
+| data_ref</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `data` |
 
 ## Inapplicable To Result List
 | Attributes |  Description |
 |:-----|:--------|
 | data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> Array of [Inapplicable To](#inapplicable-to) |
 | total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
-| data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `list` |
+| data_ref</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `data` |
 
 ## Category
 | Attributes |  Description |
@@ -170,7 +170,7 @@ All of:
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
 | name</br>`string` | <p>Category name.</p> |
 | hierarchy</br>`integer` | <p>Category hierarchy.</p> |
-| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
+| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the category was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
 | stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
@@ -178,7 +178,7 @@ All of:
 ## Validation Rules Assignments List
 | Attributes |  Description |
 |:-----|:--------|
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about validation rules assignments.</p> Available values: `list` |
+| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about validation rules assignments.</p> Available values: `list` |
 | data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of validation rules assignments.</p> Available values: `data` |
 | data</br>`array` | <p>Contains array of validation rules assignments.</p> Array of [Business Validation Rule Assignment](#business-validation-rule-assignment) |
 | total</br>`integer` | <p>Total number of validation rules assignments.</p> |
@@ -246,7 +246,7 @@ One of:
 | related_object_type</br>`string` | <p>The type of related object</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the object was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-03-09T11:19:04.819Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the object was last updated in ISO 8601 format.</p> **Example:** <p>2022-03-09T11:19:04.819Z</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `validation_rules_assignment` |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `validation_rules_assignment` |
 | validation_status</br>`string` | <p>The validation status of the assignment</p> Available values: `VALID`, `PARTIALLY_VALID`, `INVALID` |
 | validation_omitted_rules</br>`array` | <p>The list of omitted rules</p> |
 

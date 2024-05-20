@@ -17,7 +17,7 @@ order: 1
 | allow_defined_only</br>`boolean` | <p>Restricts the creation of metadata fields when set to <code>true</code>. In other words, it indicates whether or not you are allowed to create new metadata definitions; for example, in the campaign manager or publication manager. If it is set to true, then only the defined fields will be available for assigning values.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the metadata schema was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-03T13:33:44.556Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the metadata schema was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-11T08:05:30.695Z</p> |
-| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the metadata schema.</p> |
+| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the metadata schema.</p> |
 
 [block:html]
 {

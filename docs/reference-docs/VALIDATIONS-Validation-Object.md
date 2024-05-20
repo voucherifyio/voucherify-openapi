@@ -51,16 +51,16 @@ One of:
 |:-----|:--------|
 | data</br>`array` | <p>Contains array of items to which the discount can apply.</p> Array of [Applicable To](#applicable-to) |
 | total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
-| data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `list` |
+| data_ref</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `data` |
 
 ## Inapplicable To Result List
 | Attributes |  Description |
 |:-----|:--------|
 | data</br>`array` | <p>Contains array of items to which the discount cannot apply.</p> Array of [Inapplicable To](#inapplicable-to) |
 | total</br>`integer` | <p>Total number of objects defining included products, SKUs, or product collections.</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `list` |
-| data_ref</br>`string` | <p>The type of object represented by JSON.</p> Available values: `data` |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `list` |
+| data_ref</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `data` |
 
 ## Discount
 <p>Contains information about discount.</p>
@@ -181,14 +181,14 @@ All of:
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.</p> |
 | customer_id</br>`string`, `null` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
 | referrer_id</br>`string`, `null` | <p>Unique referrer ID.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `order` |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `order` |
 | redemptions</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#order-redemptions">Order Redemptions</a></td></tr></tbody></table> |
 
 ## Customer Id
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>A unique identifier of an existing customer.</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `customer` |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `customer` |
 
 ## Referrer Id
 [Customer Id](#customer-id)
@@ -251,7 +251,7 @@ Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
 | subtotal_amount</br>`integer` | <p>Final order item amount after the applied item-level discount.  If there are no item-level discounts applied, this item is equal to the <code>amount</code>.<br><code>subtotal_amount</code>=<code>amount</code>-<code>applied_discount_amount</code></p> |
 | product</br>`object` | <p>An object containing details of the related product.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier that represents the product and is assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant’s product ID (if it is different than Voucherify's product ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.</p></td></tr><tr><td style="text-align:left">override</br><code>boolean</code></td><td style="text-align:left"><p>The override set to <code>true</code> is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Product name.</p></td></tr><tr><td style="text-align:left">metadata</br><code>object</code></td><td style="text-align:left"><p>A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format.</p></td></tr><tr><td style="text-align:left">price</br><code>number</code></td><td style="text-align:left"><p>Product price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
 | sku</br>`object` | <p>An object containing details of the related SKU.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier that represents the SKU and is assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant’s SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.</p></td></tr><tr><td style="text-align:left">override</br><code>boolean</code></td><td style="text-align:left"><p>The override set to <code>true</code> is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.</p></td></tr><tr><td style="text-align:left">sku</br><code>string</code></td><td style="text-align:left"><p>The SKU name.</p></td></tr><tr><td style="text-align:left">price</br><code>number</code></td><td style="text-align:left"><p>SKU price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `order_item` |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `order_item` |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format.</p> |
 
 ## Order Redemptions

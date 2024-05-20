@@ -28,12 +28,12 @@ All of:
 | image_url</br>`string`, `null` | <p>The HTTPS URL pointing to the .png or .jpg file that will be used to render the product image.</p> **Example:** <p>https://images.com/original.jpg</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the product was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-05-23T06:52:55.008Z</p> |
 | updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the product was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-05-23T09:24:07.405Z</p> |
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the product.</p> Available values: `product` |
+| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the product.</p> Available values: `product` |
 
 ## Skus List For Product
 | Attributes |  Description |
 |:-----|:--------|
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about SKUs.</p> |
+| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about SKUs.</p> |
 | data_ref</br>`string` | <p>Identifies the name of the JSON property that contains the array of SKUs.</p> |
 | data</br>`array` | <p>A dictionary that contains an array of SKUs.</p> Array of [SKU Object](#sku-object) |
 | total</br>`integer` | <p>Total number of SKUs in the product.</p> |
@@ -52,7 +52,7 @@ All of:
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the SKU. A set of key/value pairs that you can attach to a SKU object. It can be useful for storing additional information about the SKU in a structured format.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the SKU was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-05-17T10:36:30.187Z</p> |
 | updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the SKU was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-05-17T10:55:09.137Z</p> |
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>SKU</code>.</p> Available values: `sku` |
+| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the <code>SKU</code>.</p> Available values: `sku` |
 
 [block:html]
 {

@@ -21,7 +21,7 @@ All of:
 | reward_id</br>`string` | <p>Associated reward ID.</p> **Example:** <p>rew_C7wS9eHFDN4CIbXI5PpLSkGY</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the reward assignment was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-11T14:49:22.586Z</p> |
 | updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the reward assignment was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-11T16:01:34.885Z</p> |
-| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the reward assignment.</p> Available values: `reward_assignment` |
+| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the reward assignment.</p> Available values: `reward_assignment` |
 | related_object_id</br>`string` | <p>Related object ID to which the reward was assigned.</p> **Example:** <p>camp_wciTvaOfYmAa3EmIIW3QpXXZ</p> |
 | related_object_type</br>`string` | <p>Related object type to which the reward was assigned.</p> Available values: `campaign` |
 
