@@ -3,7 +3,7 @@ title: Migration Guide
 type: basic
 categorySlug: events
 slug: migration-guide
-hidden: false
+hidden: true
 order: -1
 ---
 
