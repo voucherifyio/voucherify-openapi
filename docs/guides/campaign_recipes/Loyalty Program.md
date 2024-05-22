@@ -18,18 +18,18 @@ In this tutorial, you’ll learn how to use Voucherify API to build a loyalty pr
 
 ## Prerequisites
 To create a `loyalty campaign`, you need two prerequisites:
-* **Custom Events**
-* **Orders**
+- Tracking **Custom Events** in Voucherify
+- Synchronizing **Orders**
 
-Synchronizing `orders` allows the use of the `Order Paid Earning Rule`, and synchronizing `custom events` allows us to reward customers with points for the custom events.
+Synchronizing `orders` allows the use of the `Order Paid Earning Rule`, and synchronizing `custom events` allows us to reward customers with points for custom actions.
 
 ## Creating Rewards
 
 In Voucherify’s dashboard, you have access to a [rewards catalog](https://app.voucherify.io/#/app/core/rewards) where you can add new rewards and see all the current rewards that are being used throughout your campaigns. Voucherify offers the following options when it comes to rewards:
 
-* Digital rewards - this can be a unique discount coupon or gift card credits,
-* Material rewards - available only in referral/ loyalty programs
-* Pay with points reward - available only in loyalty programs
+- Digital rewards - this can be a unique discount coupon or gift card credits,
+- Material rewards - available only in referral/ loyalty programs
+- Pay with points reward - available only in loyalty programs
 
 While creating a new loyalty campaign in the dashboard, you can tap into existing discount coupons and gift cards or you can create a new one during the campaign creation process. 
 
@@ -51,21 +51,21 @@ The first step is to [create a loyalty](https://www.postman.com/voucherify/works
 
 You can create eight types of [earning rules](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/699307-e52569c9-7b88-4638-a1f3-b8bebe8ee58a?tab=body) in Voucherify based on: 
 
-* customer segments, 
-* paid orders, 
-* custom events that customers perform in your application/website,
-* customer joining the loyalty tier structure,
-* customer leaving the loyalty tier structure,
-* customer's loyalty tier upgrade,
-* customer's loyalty tier downgrade,
-* customer's loyalty tier prolongation.
+- customer segments, 
+- paid orders, 
+- custom events that customers perform in your application/website,
+- customer joining the loyalty tier structure,
+- customer leaving the loyalty tier structure,
+- customer's loyalty tier upgrade,
+- customer's loyalty tier downgrade,
+- customer's loyalty tier prolongation.
 
 Here are some ideas of the earning rules that you can use in your loyalty campaigns:
 
 1. 100 points for customer's birthday,
 2. 250 points after not making any orders in the last 365 days (to encourage customers to make a purchase),
 3. 500 points for joining the Gold Loyalty Tier,
-4. 10 points for every 10$ spent if your purchase is below $50,
+4. 10 points for every 10$ spent if your purchase is above $50,
 5. 5 points for every $1 spent on the new collection,
 6. 10 points for leaving a 5/5 star review.
 
