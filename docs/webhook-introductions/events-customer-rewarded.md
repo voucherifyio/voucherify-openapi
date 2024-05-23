@@ -1,4 +1,4 @@
-The `PROMOTION.TIER.DELETED` event indicates that the promotion tier was deleted.
+The `EVENTS.CUSTOMER.REWARDED` event indicates that a customer received a reward in exchange for points in a loyalty campaign. The action is usually a manual process started by the customer.
 
 > 📘 Webhook documentation
 >

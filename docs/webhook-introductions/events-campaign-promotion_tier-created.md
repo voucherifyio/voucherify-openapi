@@ -1,4 +1,4 @@
-The `PROMOTION.TIER.DISABLED` event indicates that the promotion tier was disabled.
+The `EVENTS.CAMPAIGN.PROMOTION_TIER.CREATED` event indicates that the promotion tier was created.
 
 > 📘 Webhook documentation
 >

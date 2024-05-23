@@ -1,4 +1,4 @@
-The `EVENTS.CUSTOMER.REWARDED.MAIN` event indicates that a customer received a reward in exchange for points in a loyalty campaign. The action is usually a manual process started by the customer.
+The `EVENTS.CAMPAIGN.PROMOTION_TIER.DISABLED` event indicates that the promotion tier was disabled.
 
 > 📘 Webhook documentation
 >

@@ -1,4 +1,4 @@
-The `PROMOTION.TIER.CREATED` event indicates that the promotion tier was created.
+The `EVENTS.CAMPAIGN.PROMOTION_TIER.DELETED` event indicates that the promotion tier was deleted.
 
 > 📘 Webhook documentation
 >

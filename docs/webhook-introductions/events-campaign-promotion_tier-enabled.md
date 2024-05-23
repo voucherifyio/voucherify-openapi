@@ -1,4 +1,4 @@
-The `EVENTS.CAMPAIGN.DISABLED` event indicates that the campaign is temporarily or permanently inactive and cannot be used during that period.
+The `EVENTS.CAMPAIGN.PROMOTION_TIER.ENABLED` event indicates that the promotion tier was enabled.
 
 > 📘 Webhook documentation
 >

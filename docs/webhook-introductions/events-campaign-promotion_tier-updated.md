@@ -1,4 +1,4 @@
-The `PROMOTION.TIER.ENABLED` event indicates that the promotion tier was enabled.
+The `EVENTS.CAMPAIGN.PROMOTION_TIER.UPDATED` event indicates that the promotion tier was updated.
 
 > 📘 Webhook documentation
 >
