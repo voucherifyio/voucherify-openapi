@@ -1,6 +1,6 @@
 ---
 title: Loyalty Program
-excerpt: null
+excerpt: Learn how to use Voucherify API to build a loyalty program
 categorySlug: campaigns-recipes
 slug: loyalty-program
 type: basic
@@ -8,9 +8,7 @@ hidden: false
 order: 5
 ---
 
-Learn how to use Voucherify API to build a loyalty program.
-
-> 👍 Recommended
+> 👍 Before you start
 >
 > Read the [loyalty program user guide](https://support.voucherify.io/article/177-how-to-create-loyalty-program-step-by-step) to get an overview of this campaign type.
 >
@@ -18,10 +16,10 @@ Learn how to use Voucherify API to build a loyalty program.
 
 ## Prerequisites
 To create a loyalty campaign, you need to:
-- [Track **Custom Events**](ref:track-custom-event "Track Custom Event Endpoint") in Voucherify,
-- [Synchronize **Orders**](doc:data-synchronization#order-synchronization "Order Synchronization").
+- [Track Custom Events](ref:track-custom-event "Track Custom Event Endpoint") in Voucherify,
+- [Synchronize Orders](doc:data-synchronization#order-synchronization "Order Synchronization").
 
-By synchronizing orders, you can use the `Order Paid Earning Rule`. 
+By synchronizing orders, you can use the Order Paid Earning Rule. 
 
 By tracking custom events, you can reward customers with points for custom actions.
 

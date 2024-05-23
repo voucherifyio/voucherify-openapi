@@ -10,7 +10,7 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 ## 2024-05-23
 
 - Updated the "Loyalty Program" article
-- Hidden the Webhook "Migration Guide" article
+- Hid the Webhook "Migration Guide" article
 - Removed the reference to the "Migration Guide" from the "Webhooks v2024-01-01" article
 - Added references to 5 new events in the "Webhooks v2024-01-01" article
 
