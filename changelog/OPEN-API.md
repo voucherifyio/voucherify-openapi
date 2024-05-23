@@ -4,6 +4,20 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-05-23
+
+- OpenAPIWebhooks.json:
+  - Added the following events:
+    - `EVENTS.CAMPAIGN.PROMOTION_TIER.CREATED`
+    - `EVENTS.CAMPAIGN.PROMOTION_TIER.DELETED`
+    - `EVENTS.CAMPAIGN.PROMOTION_TIER.DISABLED`
+    - `EVENTS.CAMPAIGN.PROMOTION_TIER.ENABLED`
+    - `EVENTS.CAMPAIGN.PROMOTION_TIER.UPDATED`
+    - Removed the `.MAIN` suffix from the `CUSTOMER.REWARDED` event
+- OpenAPI.json:
+  - Changed the keys from `default` to `example` in `1_obj_voucher_object_discount_{discountType}_POST` schemas
+  - Added missing `type` property to the `1_obj_voucher_object_discount_percentage_PUT` schema
+
 ## 2024-05-15
 
 - Removed the `mode` parameters from Qualifications. For now, the only mode is `BASIC`, it is a default one, and the `ADVANCED` mode will not be developed any time soon
