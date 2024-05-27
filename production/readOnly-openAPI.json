@@ -219,7 +219,7 @@
         "schema": {
           "$ref": "#/components/schemas/ParameterLimit"
         },
-        "description": "Limits the number of objects to be returned. The limit can range between 1 and 100 items."
+        "description": "Limits the number of objects to be returned. The limit can range between 1 and 100 items. If no limit is set, it returns 10 items."
       },
       "page": {
         "name": "page",
@@ -301,6 +301,14 @@
           "$ref": "#/components/schemas/ParameterDate"
         },
         "description": "Timestamp representing the date and time to use in starting_after cursor to get more data. Represented in ISO 8601 format."
+      },
+      "starting_after_id": {
+        "name": "starting_after_id",
+        "in": "query",
+        "description": "A cursor for pagination. It retrieves the results starting after the given ID.",
+        "schema": {
+          "$ref": "#/components/schemas/ParameterString"
+        }
       },
       "campaign_type": {
         "name": "campaign_type",
@@ -38775,9 +38783,9 @@
           "joint_categories"
         ]
       },
-      "TrashBinEntity": {
+      "TrashBinEntry": {
         "type": "object",
-        "title": "Trash Bin Entity",
+        "title": "Trash Bin Entry",
         "description": "Resource moved to the bin, i.e. a campaign, product, SKU, or voucher.",
         "properties": {
           "id": {
@@ -38788,7 +38796,8 @@
           "created_at": {
             "type": "string",
             "description": "Timestamp representing the date and time when the resource was moved to the bin. The value for this parameter is shown in the ISO 8601 format.",
-            "example": "2024-03-27T19:24:26.142Z"
+            "example": "2024-03-27T19:24:26.142Z",
+            "format": "date-time"
           },
           "deleted_by_user_id": {
             "type": "string",
@@ -38826,7 +38835,13 @@
           "object": {
             "type": "string",
             "description": "The type of the object represented by JSON. It is equal to the `resource_type`.",
-            "example": "voucher"
+            "example": "voucher",
+            "enum": [
+              "campaign",
+              "product",
+              "sku",
+              "voucher"
+            ]
           }
         },
         "required": [
@@ -38865,7 +38880,7 @@
             "type": "array",
             "description": "Array of bin entry objects.",
             "items": {
-              "$ref": "#/components/schemas/TrashBinEntity"
+              "$ref": "#/components/schemas/TrashBinEntry"
             }
           },
           "total": {
@@ -38878,7 +38893,7 @@
           },
           "more_starting_after": {
             "type": "string",
-            "description": "Returns an ID that can be used to return another page of results. Use the ID in the `starting_after_id` query parameter to display another page of the results occuring after the field with that ID."
+            "description": "If `has_more` is `true`, it returns an ID that can be used to return another page of results. Use the ID in the `starting_after_id` query parameter to display another page of the results occuring after the field with that ID."
           }
         },
         "required": [
@@ -45002,7 +45017,7 @@
           "Vouchers"
         ],
         "summary": "Delete Voucher",
-        "description": "Deletes a voucher. This operation cannot be undone. Additionally, this operation removes any redemptions on the voucher.",
+        "description": "Deletes a voucher. This operation cannot be undone. Additionally, this operation removes any redemptions on the voucher.\n\nIf the `force` parameter is not set to `true`, the voucher will be moved to [the bin](ref:list-bin).",
         "parameters": [
           {
             "schema": {
@@ -45010,7 +45025,7 @@
             },
             "in": "query",
             "name": "force",
-            "description": "If this flag is set to `true`, the voucher will be removed permanently. Going forward, the user will be able to create another voucher with exactly the same code."
+            "description": "If this flag is set to `true`, the voucher will be removed permanently. If it is set to `false` or not set at all, the voucher will be moved to the bin. Going forward, the user will be able to create another voucher with exactly the same code."
           }
         ],
         "security": [
@@ -48335,14 +48350,14 @@
           "Campaigns"
         ],
         "summary": "Delete Campaign",
-        "description": "Permanently deletes a campaign and all related vouchers. This action cannot be undone. Also, this method immediately removes any redemptions on the voucher.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
+        "description": "Deletes a campaign and all related vouchers. This action cannot be undone. Also, this method immediately removes any redemptions on the voucher.\n\nIf the `force` parameter is not set to `true`, the campaign and all related vouchers will be moved to [the bin](ref:list-bin).\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
         "parameters": [
           {
             "schema": {
               "$ref": "#/components/schemas/ParameterBoolean"
             },
             "in": "query",
-            "description": "If this flag is set to `true`, the campaign and related vouchers will be removed permanently. Going forward, the user will be able to create the next campaign with exactly the same name.",
+            "description": "If this flag is set to `true`, the campaign and related vouchers will be removed permanently. If it is set to `false` or not set at all, the campaign and related vouchers will be moved to the bin. Going forward, the user will be able to create the next campaign with exactly the same name.",
             "name": "force"
           }
         ],
@@ -60835,7 +60850,7 @@
           "Loyalties"
         ],
         "summary": "Delete Loyalty Campaign",
-        "description": "This method permanently deletes a loyalty campaign and all related loyalty cards. This action cannot be undone. Also, it immediately removes any redemptions on loyalty cards.",
+        "description": "Deletes a loyalty campaign and all related loyalty cards. This action cannot be undone. Also, it immediately removes any redemptions on loyalty cards.n\nIf the `force` parameter is not set to `true`, the loyalty campaign and all related loyalty cards will be moved to [the bin](ref:list-bin).",
         "parameters": [
           {
             "schema": {
@@ -60843,7 +60858,7 @@
             },
             "in": "query",
             "name": "force",
-            "description": "If this flag is set to `true`, the campaign and related vouchers will be removed permanently. Going forward, the user will be able to create the next campaign with the same name."
+            "description": "If this flag is set to `true`, the campaign and related vouchers will be removed permanently. If it is set to `false` or not set at all, the loyalty campaign and all related loyalty cards will be moved to the bin. Going forward, the user will be able to create the next campaign with the same name."
           }
         ],
         "security": [
@@ -61512,12 +61527,7 @@
             "description": "Apply this filter to order the events according the date and time when it was created. The dash `-` preceding a sorting option means sorting in a descending order."
           },
           {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterString"
-            },
-            "in": "query",
-            "name": "starting_after_id",
-            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+            "$ref": "#/components/parameters/starting_after_id"
           }
         ],
         "security": [
@@ -61572,12 +61582,7 @@
             "description": "Apply this filter to order the events according the date and time when it was created. The dash `-` preceding a sorting option means sorting in a descending order."
           },
           {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterString"
-            },
-            "in": "query",
-            "name": "starting_after_id",
-            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+            "$ref": "#/components/parameters/starting_after_id"
           }
         ],
         "security": [
@@ -70964,12 +70969,7 @@
             "description": "Apply this filter to order the events according the date and time when it was created. "
           },
           {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterString"
-            },
-            "in": "query",
-            "name": "starting_after_id",
-            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+            "$ref": "#/components/parameters/starting_after_id"
           },
           {
             "name": "start_date",
@@ -73485,7 +73485,7 @@
           "Products"
         ],
         "summary": "Delete Product",
-        "description": "This method deletes a product.",
+        "description": "Deletes a product and all related SKUs. This operation cannot be undone. \n\nIf the `force` parameter is not set to `true`, the product and all related SKUs will be moved to [the bin](ref:list-bin).",
         "parameters": [
           {
             "schema": {
@@ -73493,7 +73493,7 @@
             },
             "in": "query",
             "name": "force",
-            "description": "If this flag is set to `true`, the product will be removed permanently. Going forward, the user will be able to create another product with exactly the same `source_id`."
+            "description": "If this flag is set to `true`, the product and all related SKUs will be removed permanently. If it is set to `false` or not set at all, the product and all related SKUs will be moved to the bin. Going forward, the user will be able to create another product with exactly the same `source_id`."
           }
         ],
         "security": [
@@ -74151,7 +74151,7 @@
           "Products"
         ],
         "summary": "Delete SKU",
-        "description": "This method deletes a product SKU.",
+        "description": "Deletes a product SKU. This operation cannot be undone. \n\nIf the `force` parameter is not set to `true`, the SKU will be moved to [the bin](ref:list-bin).",
         "parameters": [
           {
             "schema": {
@@ -74159,7 +74159,7 @@
             },
             "in": "query",
             "name": "force",
-            "description": "If this flag is set to `true`, the SKU will be removed permanently. Going forward, the user will be able to create another SKU with exactly the same `source_id`."
+            "description": "If this flag is set to `true`, the SKU will be removed permanently. If it is set to `false` or not set at all, the SKU will be moved to the bin. Going forward, the user will be able to create another SKU with exactly the same `source_id`."
           }
         ],
         "security": [
@@ -79797,7 +79797,7 @@
     },
     "/v1/trash-bin": {
       "get": {
-        "operationId": "list-bin",
+        "operationId": "list-bin-entries",
         "tags": [
           "Bin"
         ],
@@ -79805,12 +79805,7 @@
         "description": "Retrieves a list of resources moved to the bin. The following resources can be moved to the bin:\n- campaigns\n- vouchers\n- products\n- SKUs\n\nTo use this endpoint, you must have the following permissions:\n- `vouchers.read`\n- `campaigns.read`\n- `products.read`",
         "parameters": [
           {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterInteger"
-            },
-            "in": "query",
-            "name": "limit",
-            "description": "Limits the number of bin entry objects to be returned. The limit can range between 1 and 100 items. If no limit is set, it returns 10 entries."
+            "$ref": "#/components/parameters/limit"
           },
           {
             "schema": {
@@ -79821,12 +79816,7 @@
             "description": "Orders the bin entries according the date and time when they were moved to the bin or according to the bin entry ID. The dash `-` preceding a sorting option means sorting in a descending order."
           },
           {
-            "schema": {
-              "$ref": "#/components/schemas/ParameterString"
-            },
-            "in": "query",
-            "name": "starting_after_id",
-            "description": "A cursor for pagination. It retrieves the results starting after the given bin entry ID."
+            "$ref": "#/components/parameters/starting_after_id"
           },
           {
             "schema": {
@@ -79862,17 +79852,17 @@
                         {
                           "id": "tbe_0eb6515f758ae37126",
                           "created_at": "2024-05-07T09:15:13.218Z",
-                          "deleted_by_user_id": "user_ypzfEcSAphSONMGJRlj6trzXKsh7FGX7",
+                          "deleted_by_user_id": "user_JjB45t4Rpl4t1n0oMRlj6trzXKsh7FGX7",
                           "resource_id": "v_JPfnb5ChY1HdNnaMkA0ikra4gIg0dja6",
                           "resource_type": "voucher",
-                          "resource_name": "Plain-Discount-86",
+                          "resource_name": "Trash-Discount-123",
                           "resource_parent_id": "camp_ITQtKkrPOxL1a55uSU7tqbCL",
                           "object": "voucher"
                         },
                         {
                           "id": "tbe_0eb651ca7b8ae37184",
                           "created_at": "2024-05-07T09:17:02.827Z",
-                          "deleted_by_user_id": "user_ypzfEcSAphSONMGJRlj6trzXKsh7FGX7",
+                          "deleted_by_user_id": "user_JjB45t4Rpl4t1n0oMRlj6trzXKsh7FGX7",
                           "resource_id": "sku_0eb651c09e0ae37178",
                           "resource_type": "sku",
                           "resource_name": "Trash container icy blue",
@@ -79919,7 +79909,7 @@
           "Bin"
         ],
         "summary": "Delete Bin Entry",
-        "description": "Deletes permanently a bin entry with a given ID.\n\nTo use this endpoint, you must have the following permissions:\n- `vouchers.delete`\n- `campaigns.delete`\n- `products.delete`",
+        "description": "Deletes permanently a bin entry with a given ID.The following resources can be moved to the bin and permanently deleted:\n- campaigns\n- vouchers\n- products\n- SKUs\n\n\n\nTo use this endpoint, you must have the following permissions:\n- `vouchers.delete`\n- `campaigns.delete`\n- `products.delete`",
         "parameters": [
           {
             "schema": {
@@ -85137,7 +85127,7 @@
           },
           {
             "schema": {
-              "$ref": "#/components/schemas/ParameterInteger"
+              "$ref": "#/components/schemas/ParameterLimit"
             },
             "in": "query",
             "name": "limit",
