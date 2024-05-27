@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-05-27
+
+Removed references to giveaway campaigns in the documentation.
+
 ## 2024-05-23
 
 - Updated the "Loyalty Program" article

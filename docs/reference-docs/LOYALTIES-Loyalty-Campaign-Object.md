@@ -36,7 +36,7 @@ order: 10
 | category_id</br>`string` | <p>Unique category ID that this campaign belongs to.</p> **Example:** <p>cat_0b688929a2476386a7</p> |
 | categories | See: [Category](#category) |
 | loyalty_tiers_expiration</br>`object` | <p>Defines the expiration mechanism for loyalty tiers.</p> One of: [Balance](#balance), [Points in Period](#points-in-period) |
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the campaign.</p> |
+| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the campaign.</p> |
 
 ## Loyalty Card
 | Attributes |  Description |
@@ -53,7 +53,7 @@ order: 10
 | id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
 | name</br>`string` | <p>Category name.</p> |
 | hierarchy</br>`integer` | <p>Category hierarchy.</p> |
-| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
+| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the category was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
 | stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |

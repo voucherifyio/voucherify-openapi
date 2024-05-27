@@ -4,6 +4,12 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-05-27
+
+Added the two bin endpoints:
+- GET List Bin Entries
+- DELETE Delete Bin Entry
+
 ## 2024-05-23
 
 - OpenAPIWebhooks.json:

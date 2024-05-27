@@ -20,7 +20,7 @@ order: 1
 | request_id</br>`string` | <p>Unique request ID.</p> **Example:** <p>v-0b45cee140c3c9b5ca</p> |
 | processing_time</br>`integer` | <p>The length of time it took to process the request in milliseconds.</p> **Example:** <p>1217</p> |
 | progress</br>`integer` | <p>% progress to completion of the asynchronous action.</p> |
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the <code>async_action</code>.</p> |
+| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the <code>async_action</code>.</p> |
 
 ## CAMPAIGN.VOUCHERS_IMPORT
 | Attributes |  Description |
