@@ -4,6 +4,22 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-06-13
+
+- OpenAPI.json:
+  - Added Validity Hours to schemas. 
+  - Expanded `Campaign Base` model with Validity Hours object.
+  - Expanded `Voucher` model with Validity Hours object.
+  - Expanded `Promotion Tier` model with Validity Hours object.
+  - Expanded `Earning Rule ` model with Validity Hours object.
+
+ - OpenAPIWebhooks.json:
+  - Added Validity Hours to schemas. 
+  - Expanded `Campaign Base` model with Validity Hours object.
+  - Expanded `Voucher` model with Validity Hours object.
+  - Expanded `Promotion Tier` model with Validity Hours object.
+  - Expanded `Earning Rule ` model with Validity Hours object.
+
 ## 2024-05-27
 
 Added the two bin endpoints:
