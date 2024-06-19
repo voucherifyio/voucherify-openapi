@@ -4,6 +4,12 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-06-19
+
+Added two Referral endpoints:
+- GET `/v1/referrals/members/{memberId}/holders`
+- GET `/v1/referrals/{campaignId}/members/{memberId}/holders`
+
 ## 2024-05-27
 
 Added the two bin endpoints:
