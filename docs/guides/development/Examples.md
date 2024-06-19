@@ -4,7 +4,7 @@ excerpt: Here are some exemplary integrations and third-party guides for you to 
 categorySlug: development
 slug: examples
 type: basic
-hidden: false
+hidden: true
 order: 160
 ---
 
