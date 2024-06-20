@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-06-19
+
+- Hid the Examples page in the Development section
+
 ## 2024-05-27
 
 Removed references to giveaway campaigns in the documentation.
