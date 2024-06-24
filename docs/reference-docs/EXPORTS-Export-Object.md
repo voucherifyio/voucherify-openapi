@@ -112,7 +112,7 @@ All of:
 Available values: `-created_at`, `created_at`, `-updated_at`, `updated_at`, `-code`, `code`
 
 ## Export Voucher Fields
-Available values: `code`, `voucher_type`, `value`, `discount_type`, `campaign`, `category`, `start_date`, `expiration_date`, `gift_balance`, `loyalty_balance`, `redemption_quantity`, `redemption_count`, `active`, `qr_code`, `bar_code`, `metadata`, `id`, `is_referral_code`, `created_at`, `updated_at`, `validity_timeframe_interval`, `validity_timeframe_duration`, `validity_day_of_week`, `discount_amount_limit`, `campaign_id`, `additional_info`, `customer_id`, `discount_unit_type`, `discount_unit_effect`, `customer_source_id`
+Available values: `code`, `voucher_type`, `value`, `formula`, `discount_type`, `campaign`, `category`, `start_date`, `expiration_date`, `gift_balance`, `loyalty_balance`, `redemption_quantity`, `redemption_count`, `active`, `qr_code`, `bar_code`, `metadata`, `id`, `is_referral_code`, `created_at`, `updated_at`, `validity_timeframe_interval`, `validity_timeframe_duration`, `validity_day_of_week`, `discount_amount_limit`, `campaign_id`, `additional_info`, `customer_id`, `discount_effect`, `discount_unit_type`, `discount_unit_effect`, `validation_rules_id`, `customer_source_id`
 
 ## Export Voucher Filters
 | Attributes |  Description |

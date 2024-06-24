@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-06-24
+
+- Added link to the Airship integration article in `Distributions.md`
+
 ## 2024-06-19
 
 - Hid the Examples page in the Development section
