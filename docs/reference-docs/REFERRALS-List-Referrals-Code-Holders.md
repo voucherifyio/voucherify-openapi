@@ -1,8 +1,8 @@
 ---
-title: List Member Holders [Beta]
+title: List Referral Code Holders [Beta]
 type: endpoint
 categorySlug: voucherify-api
-slug: referrals-member-holders
+slug: referrals-code-holders
 parentDocSlug: referrals
 hidden: false
 order: 10

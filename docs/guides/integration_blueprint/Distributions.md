@@ -31,7 +31,7 @@ Both push and pull modes can be used with third party platforms:
 - [Klaviyo](https://support.voucherify.io/article/598-klaviyo-integration "Voucherify and Klaviyo integration article")
 - [MoEngage](https://support.voucherify.io/article/596-moengage-integration "Voucherify and MoEngage integration article")
 - [Iterable](https://support.voucherify.io/article/594-iterable-integration "Voucherify and Iterable integration article")
-- Airship
+- [Airship](https://support.voucherify.io/article/617-airship-integration "Voucherify and Airship integration article")
 - [ActiveCampaign](https://support.voucherify.io/article/165-activecampaign "Voucherify and ActiveCampaign integration article")
 - [Batch](https://support.voucherify.io/article/614-batch-integration "Voucherify and Batch integration article")
 

@@ -4,11 +4,42 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-06-24
+
+`OpenAPI.json`:
+- POST `v1/exports` – voucher export – added `discount_effect`, `formula`, and `validation_rules_id` fields
+- GET List `v1/async-actions` and GET `/v1/async-actions/{asyncActionId}` – added `operation_status` field to responses
+- Added `validity_hours` to various schemas regarding campaigns, earning rules, promotions, and vouchers
+- Unified descriptions and `enum` for `validity_day_of_week`
+- Changes to GET `List Member Holders [Beta]`:
+  - Changed to `List Referral Code Holders [Beta]`
+  - Changed descriptions
+  - Removed `campaign_id`, `campaign_type`, `redeemable_id`, `redeemable_object`, `voucher_type`
+
+`OpenAPIWebhooks.json`:
+- Added `validity_hours` to various schemas regarding campaigns, earning rules, promotions, and vouchers
+
 ## 2024-06-19
 
 Added two Referral endpoints:
 - GET `/v1/referrals/members/{memberId}/holders`
 - GET `/v1/referrals/{campaignId}/members/{memberId}/holders`
+
+## 2024-06-13
+
+- OpenAPI.json:
+  - Added Validity Hours to schemas. 
+  - Expanded `Campaign Base` model with Validity Hours object.
+  - Expanded `Voucher` model with Validity Hours object.
+  - Expanded `Promotion Tier` model with Validity Hours object.
+  - Expanded `Earning Rule ` model with Validity Hours object.
+
+ - OpenAPIWebhooks.json:
+  - Added Validity Hours to schemas. 
+  - Expanded `Campaign Base` model with Validity Hours object.
+  - Expanded `Voucher` model with Validity Hours object.
+  - Expanded `Promotion Tier` model with Validity Hours object.
+  - Expanded `Earning Rule ` model with Validity Hours object.
 
 ## 2024-05-27
 
