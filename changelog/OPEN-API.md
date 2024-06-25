@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-06-25
+
+- Changed the order of tags – `Referrals` is now under `Loyalties`
+
 ## 2024-06-24
 
 `OpenAPI.json`:
