@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: update-loyalty-program
 parentDocSlug: loyalties
 hidden: false
-order: 8
+order: 80
 ---
 [block:html]
 {

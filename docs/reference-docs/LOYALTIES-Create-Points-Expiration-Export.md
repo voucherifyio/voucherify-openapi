@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: create-points-expiration-export
 parentDocSlug: loyalties
 hidden: false
-order: 24
+order: 240
 ---
 [block:html]
 {

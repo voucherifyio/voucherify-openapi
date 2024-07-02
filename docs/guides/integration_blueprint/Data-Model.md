@@ -50,11 +50,9 @@ TIER Mobility uses free unlocks and free minutes as incentives. The custom attri
 
 # Sample data models
 
-| Industry      | Ecommerce    | Services    | Travel    | QSR & Food Delivery   |
-| :---:         |    :---:     |     :---:   |    :---:  |       :---:           |
-| User traits   | locale, currency, lifetime value, order count | device, app version, session duration, subscription group, notification preferences | traveler status, age range, destinations, travel companions, booking channel | order history, favorite items, delivery address, dietary preferences, favorite restaurants, delivery instructions |               
-| Custom events | product_viewed, product_added, checkout_started, order_completed, cart_abandoned | account_set, user_login, searches, feature_usage | destination_search, car_rental, booking_type, booking_date | menu_item_view, app_rating, menu_search, order_tracking, delivery_completed |
+|   Industry    |                                    Ecommerce                                     |                                      Services                                       |                                    Travel                                    |                                                QSR & Food Delivery                                                |
+| :-----------: | :------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------: | :--------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------: |
+|  User traits  |                  locale, currency, lifetime value, order count                   | device, app version, session duration, subscription group, notification preferences | traveler status, age range, destinations, travel companions, booking channel | order history, favorite items, delivery address, dietary preferences, favorite restaurants, delivery instructions |
+| Custom events | product_viewed, product_added, checkout_started, order_completed, cart_abandoned |                  account_set, user_login, searches, feature_usage                   |          destination_search, car_rental, booking_type, booking_date          |                    menu_item_view, app_rating, menu_search, order_tracking, delivery_completed                    |
 
-Learn more about [tracking custom events](ref:custom-event-object) 
-
-![Sample Data Models](https://files.readme.io/c1910d6-guides_integration_blueprint_data_model_sample_data_models.png)
+Learn more about [tracking custom events](ref:custom-event-object)

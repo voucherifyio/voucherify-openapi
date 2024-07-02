@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: export-loyalty-card-transactions-1
 parentDocSlug: loyalties
 hidden: false
-order: 22
+order: 220
 ---
 [block:html]
 {

@@ -27,6 +27,12 @@ const main = async () => {
   await uploadReferenceDocsWithMaxNumberOfAttempts(version, 2);
   console.log(colors.green("UPDATING DOCS TITLES..."));
   await updateWebhooksDocumentationTitles(version);
+  console.log(colors.green("UPLOAD CUSTOM PAGES..."));
+  await runCliProcess({
+    command: `rdme docs ./docs/custom-webhook-sites --version=${version}`,
+    stdoutIncludes: "successfully updated",
+    resolveErrorAsFalse: true,
+  });
   console.log(colors.green("DONE!"));
 };
 

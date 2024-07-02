@@ -1,6 +1,6 @@
 ---
 title: Loyalty Program
-excerpt: null
+excerpt: Learn how to use Voucherify API to build a loyalty program
 categorySlug: campaigns-recipes
 slug: loyalty-program
 type: basic
@@ -8,312 +8,90 @@ hidden: false
 order: 5
 ---
 
-In this tutorial, you’ll learn how to use Voucherify API to build a loyalty program.
-
-> 👍 Recommended
+> 👍 Before you start
 >
 > Read the [loyalty program user guide](https://support.voucherify.io/article/177-how-to-create-loyalty-program-step-by-step) to get an overview of this campaign type.
-
-
-# Prerequisites
-To create a `loyalty campaign`, you need two prerequisites:
-* **Events** that enable customers to collect points. 
-* **Campaigns** or **Products**, which will serve as rewards.
-
-We’ll use `events` to describe earning rules (how your `customers` can collect points) and `campaigns` to define available `rewards`.  
-
-## Earning events
-Voucherify accepts three event types of earning rules:
-* Customer entered a segment.
-* Order paid event.
-* Custom event.
-
-The loyalty campaign will detect the first two events automatically when a customer enters a segment or when **any** of customer’s [orders](doc:orders) will be changed to `PAID`. 
-
-Trigger the third option with [Track Custom Event](ref:track-custom-event) endpoint.
-
-```json
-{
-  "event":"submit_review",
-  "customer":{
-    "source_id":"alice@morgan.com"
-  },
-  "metadata":{
-    "url":"http://example.com/reviews/ACM3",
-    "rank":5
-  }
-}
-```
-
-> 📘 Event schema
-> 
-> To use a custom event in a loyalty program, you need to define it in the [Schema](https://support.voucherify.io/article/163-how-to-track-custom-events-and-use-them-in-referral-campaigns-events-schema) beforehand.
-
-## Creating rewards
-
-While creating a new loyalty campaign with the dashboard, you can tap into existing discount coupons and gift cards or you can create a new one on the fly. 
-
-With the API, you can first create a reward object with a dedicated [endpoint](ref:create-reward) and then you can assign it to a specific campaign using another dedicated [endpoint](ref:create-reward-assignment).
-
-
-```json
-{
-  "name":"5$ discount",
-  "parameters":{
-    "campaign":{
-      "id":"camp_gtNM5oQJybruzANwYv1mgHk6"
-    }
-  }
-}
-```
-
-# Creating a loyalty campaign
-
-## Campaign container
-
-The first step is to define the loyalty program in terms of size and timeframe. To do so, you can use [Create Loyalty Program](ref:create-loyalty-program) endpoint. 
-
-> 🚧 Time limits
 >
-> A campaign is only active between the start and end dates. You can also use [validity timeframes](https://support.voucherify.io/article/132-time-limits-for-vouchers) to define the time when points are collected.
+> You can also check out the Voucherify [Loyalties scenario Postman Collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-c89902a3-6211-48dc-8844-103249c92177).
 
-```json
-{
-  "name":"ACME Loyalty Program",
-  "start_date":"2018-10-26T00:00:00Z",
-  "vouchers_count":1000,
-  "voucher":{
-    "type":"LOYALTY_CARD",
-    "loyalty_card":{
-      "points":0
-    },
-    "code_config":{
-      "pattern":"ACME-CARD-#######"
-    }
-  },
-  "metadata":{
-    "test":true
-  },
-  "type":"AUTO-UPDATE"
-}
-```
+## Prerequisites
+To create a loyalty campaign, you need to:
+- [Track Custom Events](ref:track-custom-event "Track Custom Event Endpoint") in Voucherify,
+- [Synchronize Orders](doc:data-synchronization#order-synchronization "Order Synchronization").
 
-The `LOYALTY_CARD` voucher type is responsible for creating loyalty cards of the initial number defined with `vouchers_count`. If `type` is `AUTO-UPDATE`, the number will be incremented automatically even if you ran out of the initial pool. 
+By synchronizing orders, you can use the Order Paid Earning Rule. 
 
-See [vouchers](doc:vouchers) to learn more about features a loyalty card can carry.
+By tracking custom events, you can reward customers with points for custom actions.
 
-## Rewards and their cost in points
+## Creating Rewards
 
-Assuming you’ve created at least one coupon/gift card campaign, let’s see how we can use it as a loyalty reward.
+In the Voucherify dashboard, go to the [rewards catalog](https://app.voucherify.io/#/app/core/rewards). There, you can add new rewards and see all the current rewards that are used throughout your campaigns. Voucherify offers the following reward options:
 
-This is a simple process and comes down to creating a `Reward Assignment`. You need three parameters to create one: a campaign id, a reward id, and the number of points that will be deducted from a customer’s account when he or she decides to exchange points for the reward.
+- Digital rewards - this can be a unique discount coupon or gift card credits,
+- Material rewards - available only in referral and loyalty programs,
+- Pay with points reward - available only in loyalty programs.
 
-https://api.voucherify.io/v1/loyalties/camp_MgpTUyabvEVaGvbUKAOiSVwL/rewards
+While creating a new loyalty campaign in the dashboard, you can use existing discount coupons and gift cards or you can create a new one when you create the campaign.
 
-```json
-[
-  {
-    "reward":"rew_2yGflHThU2yJwFECEFKrXBI2",
-    "parameters":{
-      "loyalty":{
-        "points":15
-      }
-    }
-  }
-]
-```
+With the API, you can first create a reward object with a dedicated [Create Reward endpoint](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/699307-ee3bedd0-981b-4dfc-baee-42e9b311f6bd "Create Reward in the Voucherify Postman Collection"). Then, you can assign the reward to a specific campaign with the [Create Reward Assignment endpoint](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/699307-136170a1-ebd3-49d7-92b0-f5de31e5261d "Create Reward Assignment in the Voucherify Postman Collection").
 
-**Notes**
-* A customer can redeem points only for these rewards which have been linked with the campaign as shown above.
-* All these rewards will show up in a customer’s cockpit.  
-* You can add as many rewards as you want. 
+## Create Loyalty Campaign
 
-## Adding program participants
+Loyalty campaigns consist of several key elements:
 
-Customers can join a program if you invite them or automatically if they perform any of the earning rules. To do so, you can issue a loyalty card via the dashboard, or use a specific API endpoint. 
+1. **Earning Rules** - earning rules define actions that customers must take to receive loyalty points and, as a result, redeem points for loyalty rewards. Using validation rules, you can extend each earning rule with metadata and additional constraints.
 
-In this case, you should call [Create Member](ref:add-member) by providing a campaign id and a customer joining the program.
+2. **Rewards** - the rewards catalog collects all rewards that your customers can exchange points for. To define your catalog, prepare rewards beforehand in the Rewards tab in the Voucherify dashboard, use the [Create Reward API endpoint](ref:create-reward "Create Reward API Endpoint Documentation"), or add new rewards on the spot while creating a loyalty campaign.
 
-https://api.voucherify.io/v1/loyalties/{campaignId}/members
+3. **Tiers** - with the tier functionality, you can create different membership levels in your loyalty program. Customers have two options for qualifying for a tier: points-based and time-based. Each tier has its rewards and earning rules mapping. It means that the same earning rules and rewards can be assigned to a different point value.
 
-```json 
-{
-  "customer":{
-    "source_id":"test-user@voucherify.io",
-    "email":"test-user@voucherify.io",
-    "name":"Test User"
-  },
-  "metadata":{
-    "test":true,
-    "provider":"Shop Admin"
-  }
-}
-```
+The first step is to [create a loyalty campaign](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/699307-9858c31e-13bf-453e-aa18-647184c3395a "Create Loyalty Campaign Endpoint in the Voucherify Postman Collection") that defines the code structure, loyalty card assignment behavior, and name a few of the most important parameters.
 
-In response, you'll get a unique loyalty card from the campaign.
+## Create Earning Rules
 
-```json
-{
-  "id": "v_GqbkSoXI6WDi3WTFJ76xXyrGRSQxYXbD",
-  "code": "ACME-CARD-3ug8G2E",
-  "campaign": "Loyalty Campaign",
-  "campaign_id": "camp_Zgj5HFIPcb70SWJ4IjBNta2F",
-  "category": null,
-  "type": "LOYALTY_CARD",
-  "discount": null,
-  "gift": null,
-  "loyalty_card": {
-    "points": 0,
-    "balance": 0
-  },
-  "start_date": "2016-10-26T00:00:00Z",
-  "expiration_date": null,
-  "validity_timeframe": null,
-  "validity_day_of_week": null,
-  "publish": {
-    "object": "list",
-    "count": 1,
-    "url": "/v1/vouchers/ACME-CARD-3ug8G2E/publications?page=1&limit=10"
-  },
-  "redemption": {
-    "object": "list",
-    "quantity": null,
-    "redeemed_quantity": 0,
-    "url": "/v1/vouchers/ACME-CARD-3ug8G2E/redemptions?page=1&limit=10"
-  },
-  "active": true,
-  "additional_info": null,
-  "metadata": {
-    "test": true
-  },
-  "is_referral_code": false,
-  "holder_id": "cust_ySv6heq8iPQhzt0HjGCFlMni",
-  "updated_at": null
-}
-```
+You can create eight types of [earning rules](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/699307-e52569c9-7b88-4638-a1f3-b8bebe8ee58a?tab=body "Create Earning Rule Endpoint in the Voucherify Postman Collection") in Voucherify based on: 
 
-Alternatively, you can assign a loyalty card to a customer and invite them to the projects with [Create Publication](ref:create-publication) endpoint.
+- customer segments, 
+- paid orders, 
+- custom events that customers perform in your application or website,
+- customer joining the loyalty tier structure,
+- customer leaving the loyalty tier structure,
+- customer's loyalty tier upgrade,
+- customer's loyalty tier downgrade,
+- customer's loyalty tier prolongation.
 
-You can [List Members](ref:list-members) to check who’s enrolled at the moment.
+Here are some ideas of the earning rules that you can use in your loyalty campaigns:
 
-## Earning points
+1. 100 points on the customer's birthday,
+2. 250 points after not making any orders in the last 365 days to encourage customers to make a purchase,
+3. 500 points for joining the Gold Loyalty Tier,
+4. 10 points for every $10 spent if your purchase is above $50,
+5. 5 points for every $1 spent on the new collection,
+6. 10 points for leaving a 5/5 star review.
 
-Let’s see how you can use the Loyalties API to manage points earning. Having your events set up, as shown above, you can start creating [earning rules](ref:create-earning-rule). A typical rule ties an event with a number of points to be earned by a customer. 
+## Assigning Rewards
 
-Sometimes, you might want to impose extra limitations on customers who perform a given event. You can do this by attaching [validation rules object](doc:validation-rules) to your earning rules.
+You can assign multiple rewards to a loyalty program by using the [Create Reward Assignment](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/699307-c3e60c24-99c8-4236-9f0e-11dd4a43bc98?tab=body "Create Reward Assignment Endpoint in the Voucherify Postman Collection") API call. 
 
-https://api.voucherify.io/v1/loyalties/camp_Zgj5HFIPcb70SWJ4IjBNta2F/earning-rules
+## Tiers 
 
-```json
-[
-  {
-    "event":"order.paid",
-    "validation_rule_id":null,
-    "loyalty":{
-      "points":5
-    },
-    "source":{
-      "banner":"Get 5 points for every order!"
-    }
-  }
-]
-```
+You can create tiers during the campaign creation process in the dashboard or by using the [Create Loyalty Tiers](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/699307-5361f9d7-fa58-4ef5-b1e3-e1dac5be5913?tab=body "Create Loyalty Tier Endpoint in the Voucherify Postman Collection") API call.
 
-## Redeeming points for rewards
+## Customer Experience
 
-Now, that we’ve put together all necessary elements of a loyalty campaign, we can see how to handle points redemption. To do so, just call the [Redeem Reward](ref:redeem-reward-1) by providing a campaign, participant, and reward id.
-	https://api.voucherify.io/v1/loyalties/camp_yGEDLqgb9Es1ldwqU3K9PYv0/members/HVqWlozp/redemption or a similar [Redeem Reward](ref:redeem-reward) endpoint that does not require the campaign ID in the path.
+The customer experience flow is based on the [Loyalties Scenario Postman Collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-e54d9b37-8d0b-4e2e-8ca6-47878e52daba "Loyalties Scenario in the Voucherify Postman Collection").
 
-```json
-{
-  "reward":{
-    "id":"rew_2yGflHThU2yJwFECEFKrXBI2"
-  },
-  "metadata":{
-    "locale":"en-GB"
-  }
-}
-```
+1. Assign Customers to a Loyalty Campaign
 
-Voucherify will calculate if a customer is eligible for redemption, checking both points balance and validation rules (if specified).
+You can add customers manually in the Voucherify dashboard from a selected campaign view or with the [Add Member](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/31663208-1a9eb97d-3d6c-49af-9642-2749d35bf6ef "Add Member Endpoint in the Voucherify Postman Collection") API endpoint. Customers can also join loyalty program automatically after fulfilling any earning rule.
 
-In case of success, it creates a redemption object.
+2. Earn Points
 
-```json
-{
-  "id":"r_sLUnotINY8ML9dfuwlmWm9q9",
-  "object":"redemption",
-  "date":"2019-04-19T13:17:04Z",
-  "customer_id":"cust_PiguvGHitud7xXJ6vHxTCONi",
-  "tracking_id":"test-user@voucherify.io",
-  "amount":50,
-  "reward":{
-    "id":"rew_2yGflHThU2yJwFECEFKrXBI2",
-    "assignment_id":"rewa_ilF45izuc5BS1mp6ydyivfXs"
-  },
-  "metadata":{
-    "locale":"en-GB"
-  },
-  "result":"SUCCESS",
-  "voucher":{
-    "id":"v_n7ysN4Cs8XPagkulUgtKbNGoZmbbLi5X",
-    "code":"HVqWlozp",
-    "campaign":"Loyalty program 1",
-    "campaign_id":"camp_yGEDLqgb9Es1ldwqU3K9PYv0",
-    "category":null,
-    "type":"LOYALTY_CARD",
-    "discount":null,
-    "gift":null,
-    "loyalty_card":{
-      "points":2000,
-      "balance":1950
-    },
-    "start_date":null,
-    "expiration_date":null,
-    "validity_timeframe":null,
-    "validity_day_of_week":null,
-    "publish":{
-      "object":"list",
-      "count":1,
-      "url":"/v1/vouchers/HVqWlozp/publications?page=1&limit=10"
-    },
-    "redemption":{
-      "object":"list",
-      "quantity":null,
-      "redeemed_quantity":1,
-      "url":"/v1/vouchers/HVqWlozp/redemptions?page=1&limit=10",
-      "redeemed_points":50
-    },
-    "active":true,
-    "additional_info":null,
-    "metadata":null,
-    "is_referral_code":false,
-    "holder_id":"cust_PiguvGHitud7xXJ6vHxTCONi",
-    "updated_at":"2019-04-19T13:17:04Z",
-    "object":"voucher"
-  }
-}
-```
+Points can be earned in multiple ways. In the above-mentioned Loyalties Scenario, the customer is rewarded 10 points for every $10 spent. It is an `order paid` event so it is necessary to [create an order](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/31663208-11e7ce18-1501-4d74-a67c-039da0dbac68 "Create Order Endpoint in the Voucherify Postman Collection").
 
-When a customer gains the required number of points, the reward is automatically published in their cockpit (it's active). Then, they can exchange them for rewards with a corresponding button. 
-
-If the customer chooses to transfer points for the reward, Voucherify updates their points balance.
-
-# Maintenance
-
-If you need to set a customer’s balance manually, you can do it with [this endpoint](ref:add-remove-loyalty-card-balance-1) or this [endpoint](ref:add-remove-loyalty-card-balance).
-
-https://api.voucherify.io/v1/loyalties/camp_Zgj5HFIPcb70SWJ4IjBNta2F/members/L-CARD-3ug8G2E/balance
-
-
-```json
-{
-  "points": 2000
-}
-```
-
-Note that any `reward`, `reward assignment`, `loyalty campaigns`, and its `members` can be modified via the API. Explore the Rewards and Loyalty APIs to learn the CRUD methods:
-
-| **Rewards API** | **Loyalties API** |
-|---|---|
-| [The reward object](ref:get-reward) <br>[List Rewards](ref:list-rewards) <br>[Create Reward](ref:create-reward) <br>[Get Reward](ref:get-reward) <br>[Update Reward](ref:update-reward) <br>[Delete Reward](ref:delete-reward) <br>-<br>[The reward assignment object](ref:get-reward-assignment) <br>[List Reward Assignments](ref:list-reward-assignments)<br>[Create Reward Assignment](ref:create-reward-assignment)<br>[Update Reward Assignment](ref:update-reward-assignment)<br>[Delete Reward Assignment](ref:delete-reward-assignment) | [List Loyalty Programs](ref:list-loyalty-programs)<br>[Create Loyalty Program](ref:create-loyalty-program)<br>[Get Loyalty Program](ref:get-loyalty-program)<br>[Update Loyalty Program](ref:update-loyalty-program)<br>[Delete Loyalty Campaign](ref:delete-loyalty-program)<br>-<br><br>[List Reward Assignments](ref:list-reward-assignments-1)<br>[Create Reward Assignment](ref:create-reward-assignment-1)<br>[Update Reward Assignment](ref:update-reward-assignment-1)<br>[Delete Reward Assignment](ref:delete-reward-assignment-1)<br>-<br><br>[The earning rule object](ref:get-earning-rule)<br>[List Earning Rules](ref:list-earning-rules)<br>[Create Earning Rule](ref:create-earning-rule)<br>[Update Earning Rule](ref:update-earning-rule)<br>[Delete Earning Rule](ref:delete-earning-rule)<br>-<br><br>[List Members](ref:list-members) <br>[Add Member](ref:add-member) <br>[Get Member](ref:get-member) <br>[Add or Remove Loyalty Card Balance](ref:add-remove-loyalty-card-balance-1) <br>[Redeem Reward](ref:redeem-reward) |
+3. Show the details of the program:
+   1. Show Earning Rules - you can use the [List Earing Rules](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/31663208-f1af855a-9095-4239-9ecb-196cea530b5d?tab=body "List Earning Rules Endpoint in the Voucherify Postman Collection") API endpoint to display all available actions that will reward customers with points. 
+   2. Show Rewards - when it comes to displaying rewards, you can either show [all available rewards](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/31663208-9d395784-64b0-4465-98f0-7c1086b3335d "List Member Rewards – All Endpoint in the Voucherify Postman Collection"), or only the [currently affordable rewards](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/31663208-796277fc-2e37-4fa1-a542-54cbe8638fcc "List Member Rewards – Affordable Only Endpoint in the Voucherify Postman Collection").
+   3. Show Tiers - using the [List Member's Loyalty Tiers](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/31663208-535ac8dc-a91c-4836-92e4-3a972219e6d2?tab=body "List Member's Loyalty Tiers Endpoint in the Voucherify Postman Collection") API endpoint, you can inform your customer about tier(s) they are currently in. Another possibility is to [List Loyalty Tiers](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/699307-d744a047-ff33-4e0d-b3a4-0db6923bbe02?tab=body "List Loyalty Tiers Endpoint in the Voucherify Postman Collection") from a given campaign.
+   4. Paying with Points - if the `pay with points` reward is active in the loyalty program, you can use the [Redeem Reward](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/699307-80ca2389-7b89-4d2f-b0b0-843e52d4f126 "Redeem Reward Endpoint in the Voucherify Postman Collection") API endpoint to specify how many points are going to be used.
+   5. Reedeming Points for Rewards - you can use the [Redeem Reward](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/31663208-36b2ab68-a684-4d85-97f7-e628e39b42da?tab=body "Redeem Reward – Voucher Endpoint in the Voucherify Postman Collection") API endpoint to spend loyalty points on different rewards available in the loyalty program.

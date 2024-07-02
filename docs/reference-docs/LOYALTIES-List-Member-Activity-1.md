@@ -1,11 +1,11 @@
 ---
-title: Get Member Activities
+title: List Member Activity
 type: endpoint
 categorySlug: voucherify-api
-slug: get-member-activities-1
+slug: list-member-activity-1
 parentDocSlug: loyalties
 hidden: false
-order: 15
+order: 110
 ---
 [block:html]
 {

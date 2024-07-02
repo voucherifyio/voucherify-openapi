@@ -267,3 +267,5 @@ The following table presents the type of sessions that can be established.
 
 You can always release established sessions by calling [Release Validation Session](ref:release-validation-session) endpoint. 
 
+**We have prepared a [Postman Collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/folder/31663208-fae2e349-67d4-4d5f-a5aa-1414871197b5), where you can test the Locking Validation Session mechanism.**
+

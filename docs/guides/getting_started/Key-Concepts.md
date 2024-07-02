@@ -30,8 +30,7 @@ There are six basic campaign types, which create:
 - [gift vouchers](doc:prepaid-gift-cards),
 - [referral codes](doc:referral-program),
 - [promotions](doc:stacking-promotion-tiers),
-- [loyalty cards](doc:loyalty-program),
-- [giveaways](https://support.voucherify.io/article/187-how-to-create-a-giveaways-program).
+- [loyalty cards](doc:loyalty-program).
 
 For voucher-based campaigns, each campaign has a set of unique voucher codes, which have the same purpose.
 
@@ -50,8 +49,7 @@ A voucher is used in the following types of campaigns:
 - [discount coupons](doc:discount-effects),
 - [gift vouchers](doc:prepaid-gift-cards),
 - [referral codes](doc:referral-program),
-- [loyalty cards](doc:loyalty-program),
-- [giveaways](https://support.voucherify.io/article/187-how-to-create-a-giveaways-program).
+- [loyalty cards](doc:loyalty-program).
 
 > 📘 Learn more
 > - [Voucher](ref:voucher-object) API reference

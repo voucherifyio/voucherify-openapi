@@ -1,11 +1,11 @@
 ---
-title: Get Member Activities
+title: List Bin Entries
 type: endpoint
 categorySlug: voucherify-api
-slug: get-member-activities
-parentDocSlug: loyalties
+slug: list-bin-entries
+parentDocSlug: bin
 hidden: false
-order: 14
+order: 10
 ---
 [block:html]
 {

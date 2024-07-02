@@ -53,11 +53,11 @@ The effect is an optional discount property that is applied to coupon, in-cart, 
 
 Here's a list of all effects that you can add to different discount types. 
 
-| Discount Type | **Effects** |
-|:---|:---|
-| **Amount discount** | “APPLY_TO_ORDER”<br>“APPLY_TO_ITEMS”<br>"APPLY_TO_ITEMS_PROPORTIONALLY”<br>"APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY"<br>"APPLY_TO_ITEMS_BY_QUANTITY" |
-| **Percentage discount** | “APPLY_TO_ORDER”<br>“APPLY_TO_ITEMS” |
-| **Unit discount** | “ADD_NEW_ITEMS”<br>“ADD_MISSING_ITEMS”<br>"ADD_MANY_ITEMS" |
+| Discount Type           | **Effects**                                                                                                                                            |
+| :---------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Amount discount**     | “APPLY_TO_ORDER”<br>“APPLY_TO_ITEMS”<br>"APPLY_TO_ITEMS_PROPORTIONALLY”<br>"APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY"<br>"APPLY_TO_ITEMS_BY_QUANTITY" |
+| **Percentage discount** | “APPLY_TO_ORDER”<br>“APPLY_TO_ITEMS”                                                                                                                   |
+| **Unit discount**       | “ADD_NEW_ITEMS”<br>“ADD_MISSING_ITEMS”<br>"ADD_MANY_ITEMS"                                                                                             |
 
 ---
 
@@ -271,11 +271,11 @@ Using this effect, the discount is applied to the total order amount.
     "assets": {
       "qr": {
         "id": "U2FsdGVkX1+zqEmMyhXJSJH/Izws68zhFgjlFSBKwwKzVROD/BmMSrapZdCSGr0CrZliF8ArVsUOiehaLbYQ/zLxH5nvy/I8jP7LFfj81GOwVdVWRwUkKAEgo2nRnHE1cfaL1F3sH2lR/t0J9fCEew==",
-        "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2BzqEmMyhXJSJH%2FIzws68zhFgjlFSBKwwKzVROD%2FBmMSrapZdCSGr0CrZliF8ArVsUOiehaLbYQ%2FzLxH5nvy%2FI8jP7LFfj81GOwVdVWRwUkKAEgo2nRnHE1cfaL1F3sH2lR%2Ft0J9fCEew%3D%3D"
+        "url": "{{voucherify_url}}"
       },
       "barcode": {
         "id": "U2FsdGVkX19vpIBorwMefY5zXSwav6QfLt31/GPt7c/K43cUKdeZxNS+0/kB/gV87lblNyIi3u7pEWrPVwxkLk4gbPznOLIJe8LDNq3vr48Pr7XieSm5V45+zDJNvwMxhpzinnoa7mnlsMcs5Z8NvQ==",
-        "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX19vpIBorwMefY5zXSwav6QfLt31%2FGPt7c%2FK43cUKdeZxNS%2B0%2FkB%2FgV87lblNyIi3u7pEWrPVwxkLk4gbPznOLIJe8LDNq3vr48Pr7XieSm5V45%2BzDJNvwMxhpzinnoa7mnlsMcs5Z8NvQ%3D%3D"
+        "url": "{{voucherify_url}}"
       }
     },
     "is_referral_code": false,
@@ -353,22 +353,6 @@ Create a voucher, campaign, or cart-level promotion with the *apply to items* di
 
 **Step 3: Assign validation rules**
 [Create Validation Rules Assignment](ref:create-validation-rule-assignment) to attach validation rules with discounted products to the created discount. If you create a campaign in the dashboard, you can create new rules on the spot or select existing rules from the list. Choosing the rules in the Manager automatically assigns them to the campaign. [Read more about validation rules](https://support.voucherify.io/article/529-validation-rules-campaign-limits)
-
-<!-- ![Validation Rules](../../assets/img/guides_discount_recipes_discount_effects_create_validation_rule_1.png "Validation rules") -->
-[block:image]
-{
-  "images": [
-    {
-      "image": [
-        "https://files.readme.io/d8c53cc-Screenshot_2022-12-29_at_11.20.52.png",
-        null,
-        ""
-      ],
-      "sizing": "400px"
-    }
-  ]
-}
-[/block]
 
 **Redemption**
 While redeeming the code, each item defined in the validation rules will be discounted. 
@@ -570,11 +554,11 @@ While redeeming the code, each item defined in the validation rules will be disc
         "assets": {
             "qr": {
                 "id": "U2FsdGVkX1+5Y2CizWaLhrkcca2uGPuj7cWhN8WVcXVk889pbJinwnLFNf9TqLYvT6WsqHR0+h93yjLjL/jTdkLy/ZZ8t2KY7ElMRVyCA4W9MTTLQxeXTYR6Ho6aDj3cGWqpFlRKsK2OISvy0NC8Cw==",
-                "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2B5Y2CizWaLhrkcca2uGPuj7cWhN8WVcXVk889pbJinwnLFNf9TqLYvT6WsqHR0%2Bh93yjLjL%2FjTdkLy%2FZZ8t2KY7ElMRVyCA4W9MTTLQxeXTYR6Ho6aDj3cGWqpFlRKsK2OISvy0NC8Cw%3D%3D"
+                "url": "{{voucherify_url}}"
             },
             "barcode": {
                 "id": "U2FsdGVkX18yLYOnK0rO0I5hv0zUEv4qb8UW+HkearNxAJg/8LZgrzdF1MeaEs/Kjc9rexj6GHiKLXMD/hIgOdnl8mZ+hCRPKMda3cx6kJMYy3Xw1c1d00LJ+EYco7uI7zittjNeLnJKvU1OVVKvOg==",
-                "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX18yLYOnK0rO0I5hv0zUEv4qb8UW%2BHkearNxAJg%2F8LZgrzdF1MeaEs%2FKjc9rexj6GHiKLXMD%2FhIgOdnl8mZ%2BhCRPKMda3cx6kJMYy3Xw1c1d00LJ%2BEYco7uI7zittjNeLnJKvU1OVVKvOg%3D%3D"
+                "url": "{{voucherify_url}}"
             }
         },
         "is_referral_code": false,
@@ -864,11 +848,11 @@ While redeeming the code, each item defined in validation rules will be discount
         "assets": {
             "qr": {
                 "id": "U2FsdGVkX19MFqqkayhlvnIzbdPhqbKpT7uTLmqScqifnR0ukaAwhA4I35GrG8l/vg4tgqDCHaQu1nAfBrddJU5KpOYvLD6YJBDhDt+nGSzapZqjsZMZwYFIBE4K3aIXgGAYZ8VoVrEI3WnTIB3297L6Q0m+OXRbsy8mk3MEDx4=",
-                "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX19MFqqkayhlvnIzbdPhqbKpT7uTLmqScqifnR0ukaAwhA4I35GrG8l%2Fvg4tgqDCHaQu1nAfBrddJU5KpOYvLD6YJBDhDt%2BnGSzapZqjsZMZwYFIBE4K3aIXgGAYZ8VoVrEI3WnTIB3297L6Q0m%2BOXRbsy8mk3MEDx4%3D"
+                "url": "{{voucherify_url}}"
             },
             "barcode": {
                 "id": "U2FsdGVkX19QZlajVSj9fEB+f6YrkojgP8aIp5hSh/w66sDMBP2nxvaFyGtue25PX2mLEpSCL45on7zkIgXVB5JhkhqGEK3GCq0ybSTnr2aNDhXa/S25iobEv++8ciasxVONgXHTrz8YPHfOmZJ7E7XUW1XfxMjTS2EFT3k6NWA=",
-                "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX19QZlajVSj9fEB%2Bf6YrkojgP8aIp5hSh%2Fw66sDMBP2nxvaFyGtue25PX2mLEpSCL45on7zkIgXVB5JhkhqGEK3GCq0ybSTnr2aNDhXa%2FS25iobEv%2B%2B8ciasxVONgXHTrz8YPHfOmZJ7E7XUW1XfxMjTS2EFT3k6NWA%3D"
+                "url": "{{voucherify_url}}"
             }
         },
         "is_referral_code": false,
@@ -1025,11 +1009,11 @@ The discount gives multiple types of free item(s) to customers. Free item units 
 
 Here are the default effects that API adds in the case you won't define it in your discounts.
 
-| **Discount Type** | **Default Effect** |
-|:---|:---|
-| AMOUNT | - If you define included or excluded products: "APPLY_TO_ITEMS"<br>- If you don't define included or excluded products: "APPLY_TO_ORDER" |
-| PERCENT | - If you define included or excluded products: "APPLY_TO_ITEMS"<br>- If you don't define included or excluded products: "APPLY_TO_ORDER" |
-| UNIT | "ADD_MISSING_ITEMS"<br>"ADD_NEW_ITEMS" |
+| **Discount Type** | **Default Effect**                                                                                                                       |
+| :---------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| AMOUNT            | - If you define included or excluded products: "APPLY_TO_ITEMS"<br>- If you don't define included or excluded products: "APPLY_TO_ORDER" |
+| PERCENT           | - If you define included or excluded products: "APPLY_TO_ITEMS"<br>- If you don't define included or excluded products: "APPLY_TO_ORDER" |
+| UNIT              | "ADD_MISSING_ITEMS"<br>"ADD_NEW_ITEMS"                                                                                                   |
 
 ### Effects and Validation Rules
 

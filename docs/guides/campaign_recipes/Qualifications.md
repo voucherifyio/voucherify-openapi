@@ -85,7 +85,6 @@ Since we cannot identify the customer, we can not show redeemables that are out 
 ```json Request
 {
     "scenario": "ALL",
-    "mode": "BASIC",
     "order": {
         "items": [
             {
@@ -246,7 +245,6 @@ This would then return the following:
 ```json Request
 {
     "scenario": "ALL",
-    "mode": "BASIC",
     "customer": {
         "source_id": "GUID_123_john_wayne",
         "name": "John Wayne",
@@ -663,7 +661,6 @@ Only the voucher codes assigned to the customer will be returned. `"scenario": "
 ```json Request
 {
     "scenario": "CUSTOMER_WALLET",
-    "mode": "BASIC",
     "customer": {
         "source_id": "GUID_123_john_wayne",
         "name": "John Wayne",
@@ -911,7 +908,6 @@ Only a promotion that is applicable to items in the cart. `"scenario": "PRODUCTS
 ```json Request
 {
     "scenario": "PRODUCTS_DISCOUNT",
-    "mode": "BASIC",
     "customer": {
         "source_id": "GUID_123_john_wayne",
         "name": "John Wayne",

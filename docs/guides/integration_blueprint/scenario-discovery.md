@@ -27,7 +27,6 @@ order: 4
 - Loyalty programs (earn & burn points, tiers, cashback, paid membership, and more) – [See tutorial](https://support.voucherify.io/article/491-getting-started-with-loyalty-programs "Getting Started with Loyalty Programs")
 - Cart-level discounts (strike-through promotions and bundling) – [See tutorial](https://support.voucherify.io/article/519-create-cart-level-promotions "Cart-level Promotion")
 - Gift cards – [See tutorial](https://support.voucherify.io/article/47-prepaid-gift-cards-campaign "Gift Cards Campaign")
-- Giveaways – [See tutorial](https://support.voucherify.io/article/187-how-to-create-a-giveaways-program "Getting Started with Giveaways Campaign")
 
 Each campaign type follows a different flow, but all of them can be **parametrized with customer attributes, order structure, or any custom data (metadata)**. 
 

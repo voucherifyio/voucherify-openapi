@@ -140,7 +140,7 @@ Available values: `code`, `voucher_type`, `value`, `discount_type`, `campaign`, 
 Available values: `-id`, `id`, `-voucher_code`, `voucher_code`, `-tracking_id`, `tracking_id`, `-customer_id`, `customer_id`, `-created_at`, `created_at`
 
 ## Export Redemption Fields
-Available values: `id`, `object`, `date`, `voucher_code`, `campaign`, `promotion_tier_id`, `customer_id`, `customer_source_id`, `customer_name`, `tracking_id`, `order_amount`, `gift_amount`, `loyalty_points`, `result`, `failure_code`, `failure_message`, `metadata`
+Available values: `id`, `object`, `date`, `voucher_code`, `campaign`, `promotion_tier_id`, `customer_id`, `customer_source_id`, `customer_name`, `tracking_id`, `order_id`, `order_amount`, `gift_amount`, `loyalty_points`, `result`, `failure_code`, `failure_message`, `metadata`
 
 ## Export Redemption Filters
 | Attributes |  Description |
@@ -175,6 +175,7 @@ Available values: `name`, `id`, `description`, `email`, `source_id`, `created_at
 |:-----|:--------|
 | junction | See: [Junction](#junction) |
 | created_at</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">conditions</br><code>object</code></td><td style="text-align:left"><h4>Filters Condition</h4><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">$after</td><td style="text-align:left">See: <a href="#any">Any</a></td></tr><tr><td style="text-align:left">$before</td><td style="text-align:left">See: <a href="#any">Any</a></td></tr></tbody></table></td></tr></tbody></table> |
+| updated_at</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">conditions</br><code>object</code></td><td style="text-align:left"><h4>Filters Condition</h4><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">$after</br><code>array</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">$before</br><code>array</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">$is</br><code>array</code></td><td style="text-align:left"></td></tr></tbody></table></td></tr></tbody></table> |
 | email | See: [Field Conditions](#field-conditions) |
 | name | See: [Field Conditions](#field-conditions) |
 | city</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">conditions</br><code>object</code></td><td style="text-align:left"><h4>Filters Condition</h4><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">$is</td><td style="text-align:left">See: <a href="#any">Any</a></td></tr></tbody></table></td></tr></tbody></table> |

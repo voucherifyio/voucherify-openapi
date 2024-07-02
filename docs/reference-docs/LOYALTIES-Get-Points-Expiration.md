@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: list-points-expiration
 parentDocSlug: loyalties
 hidden: false
-order: 23
+order: 230
 ---
 [block:html]
 {

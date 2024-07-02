@@ -8,7 +8,7 @@ hidden: false
 order: 30
 ---
 
-## Authorization overview
+## Authorization Overview
 
 Voucherify uses two pairs of keys — one for server applications (*back-end*) and one for publicly available client applications (*mobile apps* and *web applications*).
 
@@ -16,9 +16,15 @@ Voucherify uses two pairs of keys — one for server applications (*back-end*) a
 >
 > In addition to the keys, you will need to choose suitable [API endpoints](doc:api-endpoints).
 
-## Application authentication
+## Application Authentication
 
 To get access to the Voucherify API, the client application needs to pass `Application ID` and `Application Secret Key`. You can get (and reset) these tokens in the *Project settings*.
+
+> 🚧 Time limit for token visibility
+>
+> The primary secret key is visible for 14 days only when it is generated for the first time and for 15 minutes when the token is regenerated. Secondary secret keys are visible for 15 minutes when they are generated for the first time or regenerated.
+> 
+> Write your secret keys down and keep them in a safe place.
 
 By default, there are two pairs of authentication keys. The first, Application Keys, are meant to authorize your requests to Voucherify API. You can create more Application Keys for each user.
 
@@ -35,7 +41,7 @@ Most likely, you will not have to send your keys manually. See [SDKs](doc:sdks) 
 > 
 > It is essential that you keep your keys secure and not share them with others. Treat it as your application's password to Voucherify.
 
-## Client-side authentication
+## Client-Side Authentication
 
 The other authentication mechanism uses publishable keys. They are meant to be used by the public (web and mobile) clients to access a subset of the API (labeled with `(client-side)` in the [API reference](doc:api-reference)).
 
@@ -45,7 +51,7 @@ See [voucherify.js](doc:client-side-api) as an example.
 > 
 > Remember to whitelist your domain/mobile app origin in the Project settings > Client-side Settings to allow client-side connections.
 
-### Client-side request headers
+### Client-Side Request Headers
 
 For client-side HTTP requests, you need to provide the following headers:
 
