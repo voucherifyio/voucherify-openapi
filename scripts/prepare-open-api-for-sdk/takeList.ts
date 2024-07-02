@@ -102,7 +102,7 @@ export const takeList: { endpoint: string; methods: string[] }[] = [
   },
   {
     endpoint: "/v1/loyalties/{campaignId}/rewards/{assignmentId}",
-    methods: ["get", "put", "delete"],
+    methods: ["get", "delete"],
   },
   {
     endpoint: "/v1/loyalties/{campaignId}/members/{memberId}/redemption",
