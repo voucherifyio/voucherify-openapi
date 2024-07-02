@@ -2,6 +2,11 @@ import fsPromises from "fs/promises";
 import fs from "fs";
 import path from "path";
 import { parseNullsToNullableObjects } from "./prepare-open-api-for-sdk/utils";
+import {getPathsWithoutDeprecated} from "./prepare-open-api-for-sdk/get-paths-without-deprecated";
+import {removeNotYetRefactoredPaths} from "./prepare-open-api-for-sdk/remove-not-yet-refactored-paths";
+import openAPIContent from "../reference/OpenAPI.json";
+import {removedNotUsedParameters} from "./prepare-open-api-for-sdk/removed-not-used-parameters";
+import {removeNotUsedSchemas} from "./prepare-open-api-for-sdk/remove-not-used-schemas";
 
 function isObject(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -22,12 +27,24 @@ const main = async () => {
   const openAPIContent = JSON.parse(
     (await fsPromises.readFile(openApiPath)).toString()
   );
-
   removeKey(openAPIContent, "x-stoplight");
+    const paths = removeNotYetRefactoredPaths(openAPIContent.paths);
+    const parameters = removedNotUsedParameters(
+        openAPIContent.components.parameters,
+        paths,
+        {}
+    );
+    let schemasWithoutNotUsed = removeNotUsedSchemas(
+        openAPIContent.components,
+        paths,
+        {},
+        {}
+    );
 
-  openAPIContent.components.schemas = parseNullsToNullableObjects(
+
+    schemasWithoutNotUsed = parseNullsToNullableObjects(
     Object.fromEntries(
-      Object.entries(openAPIContent.components.schemas)
+      Object.entries(schemasWithoutNotUsed)
         .map((entry) => {
           const [name, object] = entry;
           delete object["x-tags"];
@@ -44,6 +61,15 @@ const main = async () => {
         )
     )
   );
+    const newOpenApiFile = {
+        ...openAPIContent,
+        components: {
+            ...openAPIContent.components,
+            schemas: schemasWithoutNotUsed,
+            parameters,
+        },
+        paths,
+    };
 
   const pathToProductionReferenceFolder = path.join(__dirname, `../production`);
   if (!fs.existsSync(pathToProductionReferenceFolder)) {
@@ -52,7 +78,7 @@ const main = async () => {
 
   await fsPromises.writeFile(
     path.join(__dirname, `../production/readOnly-openAPI.json`),
-    JSON.stringify(openAPIContent, null, 2)
+    JSON.stringify(newOpenApiFile, null, 2)
   );
 };
 

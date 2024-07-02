@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import minimist from "minimist";
 import colors from "colors";
-import { removedDeprecatedPaths } from "./removed-deprecated-paths";
+import { removeNotYetRefactoredPaths } from "./remove-not-yet-refactored-paths";
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 import openAPIContent from "../../reference/OpenAPI.json";
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
@@ -71,7 +71,7 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 const main = async (languageOptions: LanguageOptions) => {
   removeStoplightTag(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
-    removedDeprecatedPaths(openAPIContent.paths),
+    removeNotYetRefactoredPaths(openAPIContent.paths),
     languageOptions.okResponseMustBeOnlyOne
   );
   const parameters = removedNotUsedParameters(
