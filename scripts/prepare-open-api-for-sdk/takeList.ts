@@ -171,7 +171,7 @@ export const takeList: { endpoint: string; methods: string[] }[] = [
   { endpoint: "/v1/validation-rules-assignments", methods: ["get"] },
   {
     endpoint: "/v1/validation-rules/{validationRuleId}/assignments",
-    methods: ["get"],
+    methods: ["get", "post"],
   },
   {
     endpoint:
