@@ -1,17 +1,18 @@
-import { skipList } from "./skipList";
+import { takeList } from "./takeList";
 
-export const removedDeprecatedPaths = (paths: object) => {
+export const removeNotYetRefactoredPaths = (paths: object) => {
   const newPaths = {};
   const pathsKeys = Object.keys(paths);
   for (const pathKey of pathsKeys) {
-    const skip = skipList.find((skip) => skip.endpoint === pathKey);
+    const take = takeList.find((take) => take.endpoint === pathKey);
+    if(!take){
+      continue;
+    }
     const path = {};
     const methods = Object.keys(paths[pathKey]);
     for (const method of methods) {
       if (
-        paths[pathKey][method]?.deprecated ||
-        skip?.methods === true ||
-        (skip?.methods && skip.methods.includes(method))
+        !([...take.methods, 'parameters'].includes(method.toLowerCase()))
       ) {
         continue;
       }

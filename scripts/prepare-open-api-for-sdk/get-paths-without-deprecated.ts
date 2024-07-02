@@ -1,4 +1,4 @@
-import { removedDeprecatedPaths } from "./removed-deprecated-paths";
+import { removeNotYetRefactoredPaths } from "./remove-not-yet-refactored-paths";
 import openAPIContent from "../../reference/OpenAPI.json";
 import { mergeMultipleOkResponsesIntoOne } from "./merge-multiple-ok-responses-into-one";
 
@@ -8,13 +8,13 @@ export const getPathsWithoutDeprecated = (
 ) => {
   if (!okResponseMustBeOnlyOne) {
     return {
-      paths: removedDeprecatedPaths(openAPIContent.paths),
+      paths: removeNotYetRefactoredPaths(openAPIContent.paths),
       newSchemas: {},
     };
   }
   const { paths, newSchemas } = mergeMultipleOkResponsesIntoOne(allPaths);
   return {
-    paths: removedDeprecatedPaths(paths),
+    paths: removeNotYetRefactoredPaths(paths),
     newSchemas,
   };
 };
