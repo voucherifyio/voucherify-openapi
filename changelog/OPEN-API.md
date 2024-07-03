@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-07-03
+
+- added `stacking_rules` to response `/v1/validations`(ValidationsValidateResponseBody)
+
 ## 2024-06-25
 
 - Changed the order of tags – `Referrals` is now under `Loyalties`
