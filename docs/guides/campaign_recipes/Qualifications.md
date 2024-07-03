@@ -1258,3 +1258,13 @@ Only a promotion that is applicable to items in the cart. `"scenario": "PRODUCTS
 > Case 3 Summary
 >
 > Voucherify will return all the discounts that apply to the products you sent in the order. When a customer is browsing your products and is shown the product listing page, you can send, in the payload, the list of all the products the customer is presented and Voucherify will return all the discounts that apply to these products. The returned results can be visualized, for example, by a striked-through price.
+
+---
+### Case 4 - Upselling
+
+The upsell scenario displays all the incentives within customer's reach in their cart view and encourages them to purchase additional products. `"scenario": "Upselling"`
+
+![Upselling](../../assets/img/guides-campaign_recipes_qualification_checking_eligibility_upselling.png "Upselling")
+
+```json Request
+

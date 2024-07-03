@@ -476,14 +476,14 @@ All of:
 | campaign_type</br>`string` | <p>Type of campaign.</p> |
 | type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation.</p><ul><li><code>AUTO_UPDATE</code>: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).</li><li><code>STATIC</code>: vouchers need to be manually published.</li></ul> Available values: `AUTO_UPDATE`, `STATIC` |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
-| voucher</br>`object` | See: [Simple Campaign Voucher](#simple-campaign-voucher) |
+| voucher | See: [Simple Campaign Voucher](#simple-campaign-voucher) |
 | lucky_draw</br>`object` | [Lucky Draw](#lucky-draw) |
 | referral_program | See: [Referral Program](#referral-program) |
 | auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join the campaign if any earning rule is fulfilled.</p> |
 | join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once.</p> |
 | active</br>`boolean` | <p>Indicates whether the campaign is active.</p> |
 | category</br>`string` | <p>Unique category name.</p> |
-| category_id | <p>The unique category ID that this campaign belongs to.</p> |
+| category_id</br>`string`, `null` | <p>The unique category ID that this campaign belongs to.</p> |
 | categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a campaign. The metadata object stores all custom attributes assigned to the campaign.</p> |
 | start_date</br>`string` | <p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is inactive <em>before</em> this date.</p> **Example:** <p>2022-09-20T00:00:00.000Z</p> |
