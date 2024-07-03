@@ -4,17 +4,18 @@ import { mergeMultipleOkResponsesIntoOne } from "./merge-multiple-ok-responses-i
 
 export const getPathsWithoutDeprecated = (
   allPaths: any,
-  okResponseMustBeOnlyOne?: true
+  okResponseMustBeOnlyOne?: true,
+  lng?: string,
 ) => {
   if (!okResponseMustBeOnlyOne) {
     return {
-      paths: removeNotYetRefactoredPaths(openAPIContent.paths),
+      paths: removeNotYetRefactoredPaths(openAPIContent.paths, lng),
       newSchemas: {},
     };
   }
   const { paths, newSchemas } = mergeMultipleOkResponsesIntoOne(allPaths);
   return {
-    paths: removeNotYetRefactoredPaths(paths),
+    paths: removeNotYetRefactoredPaths(paths, lng),
     newSchemas,
   };
 };

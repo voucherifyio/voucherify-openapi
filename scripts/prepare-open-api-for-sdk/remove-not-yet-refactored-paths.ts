@@ -1,19 +1,17 @@
 import { takeList } from "./takeList";
 
-export const removeNotYetRefactoredPaths = (paths: object) => {
+export const removeNotYetRefactoredPaths = (paths: object, lng?: string) => {
   const newPaths = {};
   const pathsKeys = Object.keys(paths);
   for (const pathKey of pathsKeys) {
-    const take = takeList.find((take) => take.endpoint === pathKey);
-    if(!take){
+    const take = takeList(lng).find((take) => take.endpoint === pathKey);
+    if (!take) {
       continue;
     }
     const path = {};
     const methods = Object.keys(paths[pathKey]);
     for (const method of methods) {
-      if (
-        !([...take.methods, 'parameters'].includes(method.toLowerCase()))
-      ) {
+      if (![...take.methods, "parameters"].includes(method.toLowerCase())) {
         continue;
       }
       path[method] = paths[pathKey][method];
@@ -22,7 +20,7 @@ export const removeNotYetRefactoredPaths = (paths: object) => {
           Object.entries(path[method].responses).filter((httpCodeAndSchema) => {
             const [httpCode, schema] = httpCodeAndSchema;
             return !isNaN(parseInt(httpCode)) && parseInt(httpCode) < 300;
-          })
+          }),
         );
       }
     }

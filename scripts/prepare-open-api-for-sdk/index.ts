@@ -10,7 +10,6 @@ import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
 import { removeAllOneOfs } from "./removeOneOfs";
 import { putNotObjectSchemasIntoObjectSchemas } from "./put-not-object-schemas-into-object-schemas";
-import { removeNotYetRefactoredPaths } from "./remove-not-yet-refactored-paths";
 
 const options = minimist(process.argv.slice(2));
 
@@ -71,8 +70,9 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 const main = async (languageOptions: LanguageOptions) => {
   removeStoplightTag(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
-    removeNotYetRefactoredPaths(openAPIContent.paths),
+    openAPIContent.paths,
     languageOptions.okResponseMustBeOnlyOne,
+    languageOptions.name,
   );
   const parameters = removedNotUsedParameters(
     openAPIContent.components.parameters,
