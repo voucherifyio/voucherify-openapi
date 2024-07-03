@@ -1258,3 +1258,74 @@ Only a promotion that is applicable to items in the cart. `"scenario": "PRODUCTS
 > Case 3 Summary
 >
 > Voucherify will return all the discounts that apply to the products you sent in the order. When a customer is browsing your products and is shown the product listing page, you can send, in the payload, the list of all the products the customer is presented and Voucherify will return all the discounts that apply to these products. The returned results can be visualized, for example, by a striked-through price.
+
+---
+### Case 4 - Upselling (audience only)
+
+The upsell scenario displays all the incentives within customer's reach in their cart view and encourages them to purchase additional products. `"scenario": "Upselling"`
+
+![Upselling](https://files.readme.io/8f5b50c-guides_campaign_recipes_qualification_checking_eligibility_upselling.png "Upselling")
+
+```json Request
+
+{
+    "scenario": "AUDIENCE_ONLY",
+    "customer": {
+        "source_id": "test_customer_id_1",
+        "name": "John Doe",
+        "metadata": {
+            "subscribed": true
+        },
+        "order": {
+            "status": "CREATED",
+            "metadata": {
+                "currency": "USD"
+            },
+            "items": [
+                {
+                    "quantity": 1,
+                    "price": 10000,
+                    "amount": 10000,
+                    "source_id": "GDR_Drill",
+                    "related_object": "product",
+                    "product": {
+                        "name": "Bosch Drill",
+                        "metadata": {
+                            "cateogry": "tools",
+                            "brand": "GDR",
+                            "star_rating": 4,
+                            "SKU": 10280472384
+                        }
+                    }
+                },
+                {
+                    "quantity": 1,
+                    "price": 40000,
+                    "amount": 40000,
+                    "source_id": "GRW_Stirring_Mech",
+                    "related_object": "product",
+                    "product": {
+                        "name": "Bosch Stirring Mechanism",
+                        "metadata": {
+                            "cateogry": "tools",
+                            "brand": "GRW",
+                            "star_rating": 5,
+                            "SKU": 10294856379
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "options": {
+        "limit": 30,
+        "expand": [
+            "redeemable"
+        ]
+    }
+}
+```
+```json Response
+
+
+
