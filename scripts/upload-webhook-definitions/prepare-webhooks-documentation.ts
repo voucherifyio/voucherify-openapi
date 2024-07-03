@@ -91,9 +91,17 @@ export const prepareWebhooksDocumentation = async () => {
   );
 
   const PATH_TO_WEBHOOKS_DOCS = [__dirname, "../../docs/webhooks"];
+  const PATH_TO_WEBHOOKS_INSTRUCTIONS_DOCS = [
+    __dirname,
+    "../../docs/webhook-introductions",
+  ];
 
   if (!fs.existsSync(path.join(...PATH_TO_WEBHOOKS_DOCS))) {
     fs.mkdirSync(path.join(...PATH_TO_WEBHOOKS_DOCS));
+  }
+
+  if (!fs.existsSync(path.join(...PATH_TO_WEBHOOKS_INSTRUCTIONS_DOCS))) {
+    fs.mkdirSync(path.join(...PATH_TO_WEBHOOKS_INSTRUCTIONS_DOCS));
   }
 
   for (const dataStructures of Object.values(dataStructuresByGroup)) {
@@ -106,11 +114,16 @@ export const prepareWebhooksDocumentation = async () => {
         operationId,
         examples,
       } = singleDataStructure;
+
       const mdComment = [];
       mdComment.push("---");
-      mdComment.push(`title: ${capitalize(title)}`);
+      mdComment.push(
+        `title: ${title
+          .replaceAll("_", " ")
+          .replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase())}`
+      );
       mdComment.push(`type: endpoint`);
-      mdComment.push(`categorySlug: webhooks`);
+      mdComment.push(`categorySlug: events`);
       mdComment.push(
         `parentDocSlug: ${group.toLowerCase().replaceAll(" ", "-")}`
       );
@@ -119,12 +132,23 @@ export const prepareWebhooksDocumentation = async () => {
       mdComment.push(`order: ${index + 1}`);
       mdComment.push("---");
       const mdText = [];
-      mdText.push(
-        `# EVENT: "${pathName.replaceAll(
-          "/",
-          ""
-        )}"<br />HTTP method: ${method.toUpperCase()}`
-      );
+      mdText.push(`# EVENT: "${pathName.replaceAll("/", "")}"`);
+      const fileName = `${operationId.replaceAll(".", "-")}.md`;
+      if (
+        fs.existsSync(
+          path.join(...PATH_TO_WEBHOOKS_INSTRUCTIONS_DOCS, fileName)
+        )
+      ) {
+        const webhookInstructionsFile = (
+          await fsPromises.readFile(
+            path.join(...PATH_TO_WEBHOOKS_INSTRUCTIONS_DOCS, fileName)
+          )
+        ).toString();
+        mdText.push("\n\n");
+        mdText.push(webhookInstructionsFile);
+        mdText.push("\n");
+      }
+
       if (examples && Object.keys(examples).length > 0) {
         Object.entries(examples).map(([exampleName, example]) => {
           mdText.push(`#### Example: ${exampleName.replaceAll("_", " ")}`);
@@ -134,10 +158,7 @@ export const prepareWebhooksDocumentation = async () => {
         });
       }
       await fsPromises.writeFile(
-        path.join(
-          ...PATH_TO_WEBHOOKS_DOCS,
-          `${operationId.replaceAll(".", "-")}.md`
-        ),
+        path.join(...PATH_TO_WEBHOOKS_DOCS, fileName),
         [...mdComment, ...mdText].join(EOL) +
           `${EOL}${EOL}[block:html]${EOL}` +
           `{${EOL}` +

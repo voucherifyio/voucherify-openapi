@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: list-promotion-tiers-client-side
 parentDocSlug: client-side
 hidden: false
-order: 2
+order: 5
 ---
 [block:html]
 {

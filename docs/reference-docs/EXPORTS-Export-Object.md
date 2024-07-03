@@ -112,7 +112,7 @@ All of:
 Available values: `-created_at`, `created_at`, `-updated_at`, `updated_at`, `-code`, `code`
 
 ## Export Voucher Fields
-Available values: `code`, `voucher_type`, `value`, `discount_type`, `campaign`, `category`, `start_date`, `expiration_date`, `gift_balance`, `loyalty_balance`, `redemption_quantity`, `redemption_count`, `active`, `qr_code`, `bar_code`, `metadata`, `id`, `is_referral_code`, `created_at`, `updated_at`, `validity_timeframe_interval`, `validity_timeframe_duration`, `validity_day_of_week`, `discount_amount_limit`, `campaign_id`, `additional_info`, `customer_id`, `discount_unit_type`, `discount_unit_effect`, `customer_source_id`
+Available values: `code`, `voucher_type`, `value`, `formula`, `discount_type`, `campaign`, `category`, `start_date`, `expiration_date`, `gift_balance`, `loyalty_balance`, `redemption_quantity`, `redemption_count`, `active`, `qr_code`, `bar_code`, `metadata`, `id`, `is_referral_code`, `created_at`, `updated_at`, `validity_timeframe_interval`, `validity_timeframe_duration`, `validity_day_of_week`, `discount_amount_limit`, `campaign_id`, `additional_info`, `customer_id`, `discount_effect`, `discount_unit_type`, `discount_unit_effect`, `validation_rules_id`, `customer_source_id`
 
 ## Export Voucher Filters
 | Attributes |  Description |
@@ -140,7 +140,7 @@ Available values: `code`, `voucher_type`, `value`, `discount_type`, `campaign`, 
 Available values: `-id`, `id`, `-voucher_code`, `voucher_code`, `-tracking_id`, `tracking_id`, `-customer_id`, `customer_id`, `-created_at`, `created_at`
 
 ## Export Redemption Fields
-Available values: `id`, `object`, `date`, `voucher_code`, `campaign`, `promotion_tier_id`, `customer_id`, `customer_source_id`, `customer_name`, `tracking_id`, `order_amount`, `gift_amount`, `loyalty_points`, `result`, `failure_code`, `failure_message`, `metadata`
+Available values: `id`, `object`, `date`, `voucher_code`, `campaign`, `promotion_tier_id`, `customer_id`, `customer_source_id`, `customer_name`, `tracking_id`, `order_id`, `order_amount`, `gift_amount`, `loyalty_points`, `result`, `failure_code`, `failure_message`, `metadata`
 
 ## Export Redemption Filters
 | Attributes |  Description |
@@ -175,6 +175,7 @@ Available values: `name`, `id`, `description`, `email`, `source_id`, `created_at
 |:-----|:--------|
 | junction | See: [Junction](#junction) |
 | created_at</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">conditions</br><code>object</code></td><td style="text-align:left"><h4>Filters Condition</h4><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">$after</td><td style="text-align:left">See: <a href="#any">Any</a></td></tr><tr><td style="text-align:left">$before</td><td style="text-align:left">See: <a href="#any">Any</a></td></tr></tbody></table></td></tr></tbody></table> |
+| updated_at</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">conditions</br><code>object</code></td><td style="text-align:left"><h4>Filters Condition</h4><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">$after</br><code>array</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">$before</br><code>array</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">$is</br><code>array</code></td><td style="text-align:left"></td></tr></tbody></table></td></tr></tbody></table> |
 | email | See: [Field Conditions](#field-conditions) |
 | name | See: [Field Conditions](#field-conditions) |
 | city</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">conditions</br><code>object</code></td><td style="text-align:left"><h4>Filters Condition</h4><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">$is</td><td style="text-align:left">See: <a href="#any">Any</a></td></tr></tbody></table></td></tr></tbody></table> |

@@ -1,5 +1,5 @@
 ---
-title: Free shipping disount
+title: Free shipping discount
 excerpt: How to use free shipping discounts?
 categorySlug: discounts-recipes
 slug: free-shipping-discount
@@ -8,21 +8,15 @@ hidden: false
 order: 4
 ---
 
-Voucherify supports free shipping discount which is a specific use case of a [unit discount](doc:give-item-for-free-unit-discount). In this tutorial, we're going to show you how to specify the shipping charge and use it in your promotional campaigns.
+Voucherify supports free shipping discounts which are a specific use case of a [unit discount](doc:give-item-for-free-unit-discount). Learn how to specify the shipping charge and use it in your promotional campaigns.
 
-## Define shipping charge
+## Define Shipping Charge
 
 Initially, the price of the shipping is set to 0. 
 
-<!-- ![Product catalog](../../assets/img/guides_discount_recipes_free_shipping_discount_product_catalog_1.png "Product catalog") -->
-![Product catalog](https://files.readme.io/348e81a-free-shipping1.png "Product catalog")
-
 To add a new shipping charge, open the product details, and choose edit (the pencil icon). Then, set up a new price and confirm with Save. 
 
-<!-- ![New Price](../../assets/img/guides_discount_recipes_free_shipping_discount_new_price_2.png "New price") -->
-![New price](https://files.readme.io/7dc6d2f-shipping_free.png "New price")
-
-If you want to set up a shipping charge via API, you need to [Update the Product](ref:update-product). To do that, copy the shipping id from the dashboard and specify the new product (shipping) price in the request (remember to multiply the value by 100):
+If you want to set up a shipping charge via API, you need to [Update the Product](ref:update-product). To do that, copy the shipping ID from the dashboard and specify the new product (shipping) price in the request (remember to multiply the value by 100):
 
 ```json Update shipping price
 {
@@ -63,60 +57,38 @@ We're going to create a unique codes campaign and a cart-level promotion, both w
 >
 > If you're not familiar with Vocherify Campaign Manager, please follow [this short guide](https://support.voucherify.io/article/17-how-do-i-create-my-first-campaign) to learn the basics.
 
-Open the Campaign Manager with the Plus.
+Open the Campaign Manager with the Plus button.
 
-<!-- ![Create campaign](../../assets/img/guides_discount_recipes_free_shipping_discount_create_campaign_3.png "Create campaign") -->
-![Create campaign](https://files.readme.io/601d775-shipping_free2.png "Create campaign")
+In the next step, you need to choose between discount coupons (codes with free shipping) or a promotion (free shipping applied automatically).
 
-In the next step, you need to choose between discount coupons (codes with free shipping) or promotion (free shipping automatically applied). Let's go with discount coupons first.
+#### Discount Codes
 
-- Discount codes
-
-<!-- ![Create campaign](../../assets/img/guides_discount_recipes_free_shipping_discount_choose_campaign_type_4.png "Create campaign") -->
-![Create campaign](https://files.readme.io/cf3ab21-shipping_free3.png "Create campaign")
-
-In the first section, add Campaign details:
+1. Add campaign details:
 
 - Choose between bulk unique codes (campaign) or a single standalone code.
 - Add the campaign name.
 - Define code redemption limit and code count.
 
-<!-- ![Campaign details](../../assets/img/guides_discount_recipes_free_shipping_discount_campaign_details_5.png "Campaign details") -->
-![Campaign details](https://files.readme.io/fbd9d7a-shipping_free4.png "Campaign details")
+2. Go to the next step and add time limits (optional).
 
-When campaign details are ready, go to the next step and add time limits (optional).
+3. Define a discount type. To offer shipping for free, choose Free Shipping.
 
-<!-- ![Campaign timeframe](../../assets/img/guides_discount_recipes_free_shipping_discount_timeframe_6.png "Campaign timeframe") -->
-![Campaign timeframe](https://files.readme.io/ef1fe1d-shipping_free6.png "Campaign timeframe")
+You can attach additional limits and rules to free shipping discounts by adding [validation rules](https://support.voucherify.io/article/53-validation-rules "Validation Rules").
 
-The third step is crucial for setting up a free shipping discount. In this section, you can define a discount type. To offer shipping for free, choose Free Shipping.
+4. Go to the next step and add [metadata attributes](https://support.voucherify.io/article/99-schema-validation-metadata) (optional).
 
-<!-- ![Free shipping discount](../../assets/img/guides_discount_recipes_free_shipping_discount_type_7.png "Free shipping discount") -->
-![Free shipping discount](https://files.readme.io/f9cc92a-shipping_free7.png "Free shipping discount")
 
-You can attach additional limits and rules to free shipping discounts by adding [validation rules](https://support.voucherify.io/article/53-validation-rules).
+5. The last section shows the summary of the created campaign. If everything is fine, click Save.
 
-<!-- ![Validation rule](../../assets/img/guides_discount_recipes_free_shipping_discount_validation_rule_8.png "Validation rule") -->
-![Validation rule](https://files.readme.io/de9d0a5-shipping_free8.png "Validation rule")
+#### Cart-Level Promotion
 
-When ready, go to the next step. In the fourth section, you can add [metadata attributes](https://support.voucherify.io/article/99-schema-validation-metadata).
+For [cart-level promotions](https://support.voucherify.io/article/519-create-cart-level-promotions "Cart level promotions"), the free shipping discount is defined in the second section of the Campaign Manager, as a part of the level settings.
 
-<!-- ![Campaign metadata](../../assets/img/guides_discount_recipes_free_shipping_discount_metadata_9.png "Campaign metadata") -->
-![Campaign metadata](https://files.readme.io/c07da7b-shipping_free9.png "Campaign metadata")
+If you want to offer only free shipping in this promotion, you need only one promotion level.
 
-The last section shows a summary of the created campaign, if everything is fine, click Save and it's ready.
+### Free Shipping Discount Created with API
 
-- Cart-level promotion
-
-In the case of [cart-level promotion](https://support.voucherify.io/article/519-create-cart-level-promotions), the free shipping discount is defined in the second section of the Campaign Manager, as a part of the level settings. If you want to offer only free shipping in this promotion, then you need only one promotion level.
-
-<!-- >
-![Free shipping promotion](../../assets/img/guides_discount_recipes_free_shipping_discount_promotion_10.png "Free shipping promotion") -->
-![Free shipping promotion](https://files.readme.io/32c2c7d-shipping_free_promotion.png "Free shipping promotion")
-
-### Free shipping discount created via API
-
-You can achieve the same effect via API and create a unique codes [campaign](https://docs.voucherify.io/reference#create-campaign) and a cart-level promotion, both with the same free shipping discount. 
+You can achieve the same effect with API and create a unique code [campaign](https://docs.voucherify.io/reference#create-campaign) and a cart-level promotion, both with the same free shipping discount. 
 
 
 ```json Unique codes campaign
@@ -282,11 +254,9 @@ You can achieve the same effect via API and create a unique codes [campaign](htt
 }
 ```
 
-Now, let's use one of the unique codes while making an order.
+## Validation of a Free Shipping Code
 
-## Validation of a free shipping code
-
-Before we redeem the code, let's use the [Validate Voucher](ref:validate-voucher) method to check if redemption is possible with our exemplary order.
+Before redeeming the code, you can use the [Validate Voucher](ref:validate-stacked-discounts) method to check if the redemption is possible with the sample order.
 
 ```json Validate voucher
 {
@@ -526,11 +496,11 @@ In the response body, you can see that the shipping was added to the order items
         "assets": {
             "qr": {
                 "id": "U2FsdGVkX19MVu5gUhxybE4ydszHXEwjMDooQ1h5Kv90RYsrYB1xZNJlFGgs5bfc2fij2IDNMCV55smZMVVwF0/yQ3DrhFgexbztI3FzsT1PgKu3LB6yQktUrwOJxbA7J9ebuvJQEGYDNBe/VGL5Mm42dH0uIJi1PzJ6zzF3pfw=",
-                "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX19MVu5gUhxybE4ydszHXEwjMDooQ1h5Kv90RYsrYB1xZNJlFGgs5bfc2fij2IDNMCV55smZMVVwF0%2FyQ3DrhFgexbztI3FzsT1PgKu3LB6yQktUrwOJxbA7J9ebuvJQEGYDNBe%2FVGL5Mm42dH0uIJi1PzJ6zzF3pfw%3D"
+                "url": "{{voucherify.resource.url}}"
             },
             "barcode": {
                 "id": "U2FsdGVkX189dQyWzAqrqV04z7UqmAq96q63i6RAdsOdbJpXYSR5WJKKE9eChRozUQ+VxqPE/GUpEx89H25JuFbJhR9fg3zqH010e7e69GCOVAKPPB+TUXcHBQo9ZrtqLmXBry6MpaN907yzZiL6AqUnRO9YlUfoXT24HccGEMc=",
-                "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX189dQyWzAqrqV04z7UqmAq96q63i6RAdsOdbJpXYSR5WJKKE9eChRozUQ%2BVxqPE%2FGUpEx89H25JuFbJhR9fg3zqH010e7e69GCOVAKPPB%2BTUXcHBQo9ZrtqLmXBry6MpaN907yzZiL6AqUnRO9YlUfoXT24HccGEMc%3D"
+                "url": "{{voucherify.resource.url}}"
             }
         },
         "is_referral_code": false,

@@ -3,7 +3,6 @@ import fs from "fs";
 import path from "path";
 import minimist from "minimist";
 import colors from "colors";
-import { removedDeprecatedPaths } from "./removed-deprecated-paths";
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 import openAPIContent from "../../reference/OpenAPI.json";
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
@@ -63,37 +62,38 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
   }
   const pathToTmpReferenceLanguage = path.join(
     __dirname,
-    `../../tmp/reference/${lang}`
+    `../../tmp/reference/${lang}`,
   );
   if (!fs.existsSync(pathToTmpReferenceLanguage)) {
     fs.mkdirSync(pathToTmpReferenceLanguage);
   }
   await fsPromises.writeFile(
     path.join(__dirname, `../../tmp/reference/${lang}/OpenAPI.json`),
-    JSON.stringify(openAPI, null, 2)
+    JSON.stringify(openAPI, null, 2),
   );
 };
 
 const main = async (languageOptions: LanguageOptions) => {
   removeStoplightTag(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
-    removedDeprecatedPaths(openAPIContent.paths),
-    languageOptions.okResponseMustBeOnlyOne
+    openAPIContent.paths,
+    languageOptions.okResponseMustBeOnlyOne,
+    languageOptions.name,
   );
   const parameters = removedNotUsedParameters(
     openAPIContent.components.parameters,
     paths,
-    languageOptions
+    languageOptions,
   );
   let schemasWithoutNotUsed = removeNotUsedSchemas(
     openAPIContent.components,
     paths,
     languageOptions,
-    newSchemas
+    newSchemas,
   );
   if (languageOptions.putNotObjectSchemasIntoObjectSchemas) {
     schemasWithoutNotUsed = putNotObjectSchemasIntoObjectSchemas(
-      schemasWithoutNotUsed
+      schemasWithoutNotUsed,
     );
   }
   const schemas = languageOptions.mergeOneOfs
@@ -101,7 +101,7 @@ const main = async (languageOptions: LanguageOptions) => {
         schemasWithoutNotUsed,
         paths,
         openAPIContent.components.parameters,
-        languageOptions
+        languageOptions,
       )
     : schemasWithoutNotUsed;
 
@@ -134,11 +134,11 @@ if (!("language" in options)) {
   console.log(
     colors.red(
       `invalid language arguments, supported languages are ${Object.keys(
-        supportedLanguages
+        supportedLanguages,
       )
         .map((language) => `"${language}"`)
-        .join(", ")}`
-    )
+        .join(", ")}`,
+    ),
   );
 } else {
   main(supportedLanguages[options.language]);

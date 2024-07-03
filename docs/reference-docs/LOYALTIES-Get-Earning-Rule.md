@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: get-earning-rule
 parentDocSlug: loyalties
 hidden: false
-order: 26
+order: 260
 ---
 [block:html]
 {

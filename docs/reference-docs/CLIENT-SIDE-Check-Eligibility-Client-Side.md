@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 parentDocSlug: client-side
 slug: check-eligibility-client-side
 hidden: false
-order: 9
+order: 2
 ---
 
 [block:html]

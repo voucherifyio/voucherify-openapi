@@ -9,9 +9,10 @@ Are slightly modified from the original ones for our needs.
 
 ## Requirements
 
-- Node.js v16+ and npm
+- Node.js ^16 || ^18 and npm
 - installed `@openapitools/openapi-generator-cli` globally
 - docker (optional)
+- java runtime
 
 ## How to generate sdk
 
