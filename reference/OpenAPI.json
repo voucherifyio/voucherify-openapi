@@ -10910,12 +10910,7 @@
                 "type": "string",
                 "description": "Unique identifier of the distribution."
               }
-            },
-            "required": [
-              "source_type",
-              "source_id",
-              "distribution_id"
-            ]
+            }
           },
           "channel": {
             "type": "string",
@@ -10929,9 +10924,17 @@
           "customer": {
             "$ref": "#/components/schemas/CustomerWithSummaryLoyaltyReferrals"
           },
+          "vouchers": {
+            "type": "array",
+            "description": "Contains the voucher IDs that was assigned by Voucherify.",
+            "items": {
+              "type": "string",
+              "example": "ZFMKNAEK"
+            }
+          },
           "vouchers_id": {
             "type": "array",
-            "description": "Contains the unique internal voucher ID that was assigned by Voucherify.",
+            "description": "Contains the unique internal voucher IDs that was assigned by Voucherify.",
             "items": {
               "type": "string",
               "example": "v_Bw3qWZWv47yb1Onra8F2LlFI1enLakfA"
@@ -14475,7 +14478,7 @@
             "items": {
               "allOf": [
                 {
-                  "$ref": "#/components/schemas/ValidationsRedeemableInapplicable"
+                  "$ref": "#/components/schemas/ValidationsRedeemableSkipped"
                 }
               ]
             }
@@ -14575,7 +14578,8 @@
               "$ref": "#/components/schemas/Category"
             }
           }
-        }
+        },
+        "required":  ["status", "id", "object", "result"]
       },
       "ValidationsRedeemableInapplicable": {
         "type": "object",
@@ -14606,10 +14610,24 @@
             "properties": {
               "error": {
                 "$ref": "#/components/schemas/Error"
+              },
+              "details":  {
+                "type": "object"
               }
             }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable."
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
           }
-        }
+        },
+        "required":  ["status", "id", "object", "result"]
       },
       "ValidationsRedeemableSkipped": {
         "type": "object",
@@ -14656,8 +14674,19 @@
                 "$ref": "#/components/schemas/ValidationsRedeemableSkippedResultPrecedingValidationFailed"
               }
             ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable."
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            }
           }
-        }
+        },
+        "required":  ["status", "id", "object", "result"]
       },
       "ValidationsRedeemableSkippedResultLimitExceeded": {
         "type": "object",
@@ -31686,6 +31715,13 @@
             "maximum": 30,
             "minimum": 1
           },
+          "applicable_redeemables_per_category_limit": {
+            "type": "integer",
+            "description": "Defines how many redeemables per category can be applied in one request.",
+            "default": 1,
+            "maximum": 5,
+            "minimum": 1
+          },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
             "description": "Defines how many redeemables with an exclusive category can be applied in one request.",
@@ -31693,9 +31729,9 @@
             "maximum": 5,
             "minimum": 1
           },
-          "applicable_redeemables_per_category_limit": {
+          "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables per category can be applied in one request.",
+            "description": "Defines how many redeemables with an exclusive category per category in stacking rules can be applied in one request.",
             "default": 1,
             "maximum": 5,
             "minimum": 1
@@ -31738,7 +31774,6 @@
           "redeemables_limit",
           "applicable_redeemables_limit",
           "applicable_exclusive_redeemables_limit",
-          "applicable_redeemables_per_category_limit",
           "exclusive_categories",
           "joint_categories",
           "redeemables_application_mode",
