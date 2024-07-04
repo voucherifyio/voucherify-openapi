@@ -12,7 +12,7 @@ Are slightly modified from the original ones for our needs.
 - Node.js ^16 || ^18 and npm
 - installed `@openapitools/openapi-generator-cli` globally
 - docker (optional)
-- java runtime
+- java runtime v18 or higher
 
 ## How to generate sdk
 
