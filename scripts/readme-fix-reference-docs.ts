@@ -3,7 +3,6 @@ import path from "path";
 import dotenv from "dotenv";
 import minimist from "minimist";
 import { getFiles } from "./helpers/getFiles";
-import { asyncMap } from "./helpers/asyncMap";
 
 dotenv.config();
 const { version } = minimist(process.argv.slice(2));
@@ -37,7 +36,7 @@ const readmeFixReferenceDocs = async () => {
     dataToProcess.push({ slug, order, pathToFile, type });
   }
   for (const chunk of chunkArray(dataToProcess, 10)) {
-    await asyncMap(chunk, updateDoc);
+    await updateDoc(chunk);
   }
   console.log("Done!");
 };
