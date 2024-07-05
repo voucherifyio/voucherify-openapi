@@ -37,7 +37,7 @@ const removeSpecialCharacters = (inputString) => {
   const regex = /[{}\/\\]/g;
 
   return inputString.replace(regex, "");
-}
+};
 
 const filterApiMethodsFromEndpointElements = (elements: any): Object => {
   let allowedKeys = ["get", "post", "update", "delete", "put"];
@@ -50,7 +50,7 @@ const filterApiMethodsFromEndpointElements = (elements: any): Object => {
     }, {});
 };
 
-const writeRequests = (method: Method) => {
+const writeRequests = (method: Method, sdk?: keyof SdkLink) => {
   let result = "- **RequestSupported:** ";
 
   if (method.requestNotApplicable) {
@@ -58,15 +58,23 @@ const writeRequests = (method: Method) => {
   } else if (!method.requestSupported) {
     result += "❌";
   } else {
-    Object.keys(method.sdkRequestLinks).map((key) => {
-      result += `\n  - [${key}](${method.sdkRequestLinks[key]}) ✅`;
-    });
+    if (sdk) {
+      const shortenedLink = method.sdkResponseLinks[sdk].replace(
+        `/sdks/${sdk}`,
+        "",
+      );
+      result += `[link](${shortenedLink}) ✅`;
+    } else {
+      Object.keys(method.sdkRequestLinks).map((key) => {
+        result += `\n  - [${key}](${method.sdkRequestLinks[key]}) ✅`;
+      });
+    }
   }
 
   return result;
 };
 
-const writeResponses = (method: Method) => {
+const writeResponses = (method: Method, sdk?: keyof SdkLink) => {
   let result = "- **ResponseSupported:** ";
 
   if (method.responseNotApplicable) {
@@ -74,19 +82,26 @@ const writeResponses = (method: Method) => {
   } else if (!method.responseSupported) {
     result += "❌";
   } else {
-    Object.keys(method.sdkResponseLinks).map((key) => {
-      result += `\n  - [${key}](${method.sdkResponseLinks[key]}) ✅`;
-    });
+    if (sdk) {
+      const shortenedLink = method.sdkResponseLinks[sdk].replace(
+        `/sdks/${sdk}`,
+        "",
+      );
+      result += `[link](${shortenedLink}) ✅`;
+    } else {
+      Object.keys(method.sdkResponseLinks).map((key) => {
+        result += `\n  - [${key}](${method.sdkResponseLinks[key]}) ✅`;
+      });
+    }
   }
 
   return result;
 };
 
-const generateEndpoints = (collection: Collection) => {
+const generateEndpoints = (collection: Collection, sdk?: keyof SdkLink) => {
   let readmeContent = `\n# Endpoints\n`;
 
   Object.keys(collection).forEach((key) => {
-
     readmeContent += `
 ## ${key}`;
     collection[key].forEach((endpoint) => {
@@ -99,13 +114,13 @@ const generateEndpoints = (collection: Collection) => {
         readmeContent += `\n### ${endpoint.endpoint}`;
       }
       endpoint.methods.forEach((method) => {
-        if(method.isDeprecated) {
+        if (method.isDeprecated) {
           readmeContent += `\n#### ~~❗${method.summary} (${method.method})❗~~`;
         } else {
           readmeContent += `
 #### ${method.summary} (${method.method})
-${writeRequests(method)}
-${writeResponses(method)}`;
+${writeRequests(method, sdk)}
+${writeResponses(method, sdk)}`;
         }
       });
     });
@@ -121,8 +136,14 @@ const generateTableOfContents = (collection: Collection) => {
     readmeContent += `
 - [${key}](#${key.toLowerCase()})`;
     collection[key].forEach((endpoint) => {
+      let link = removeSpecialCharacters(endpoint.endpoint.toLowerCase());
+
+      if (endpoint.methods[0].isDeprecated) {
+        link += "-deprecated";
+      }
+
       readmeContent += `
-  - [${endpoint.endpoint}](#${removeSpecialCharacters(endpoint.endpoint.toLowerCase())})`;
+  - [${endpoint.endpoint}](#${link})`;
     });
   });
 
@@ -137,6 +158,23 @@ const generateReadme = (collection: Collection) => {
 
   const readmePath = path.join(__dirname, "../ENDPOINTS-COVERAGE.md");
   fs.writeFile(readmePath, readmeContent);
+
+  const sdkLinks: SdkLink = {
+    java: "./sdks/java",
+    php: "./sdks/php",
+    python: "./sdks/python",
+    ruby: "./sdks/ruby",
+  };
+
+  Object.keys(sdkLinks).map((key: keyof SdkLink) => {
+    readmeContent = `# Endpoints Coverage\n`;
+
+    readmeContent += generateTableOfContents(collection);
+    readmeContent += generateEndpoints(collection, key);
+
+    const readmePath = path.join(`${sdkLinks[key]}/ENDPOINTS-COVERAGE.md`);
+    fs.writeFile(readmePath, readmeContent);
+  });
 };
 
 const checkIsNewName = (name: string): boolean => {

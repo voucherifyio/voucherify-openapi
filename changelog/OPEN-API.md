@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
+## 2024-07-03
+
+- added `stacking_rules` to response `/v1/validations`(ValidationsValidateResponseBody)
+
 ## 2024-06-25
 
 - Changed the order of tags – `Referrals` is now under `Loyalties`
@@ -224,6 +228,17 @@ Added the following webhooks to OpenAPIWebhooks.json:
 
 - Added an introductory page for webhooks.
 - Fixes to `CUSTOMER.CREATED` and `CUSTOMER.DELETED` schemas
+
+## 2024-02-12
+
+Added the following webhooks to OpenAPIWebhooks.json:
+- EVENTS.VOUCHER.PUBLISHED
+- EVENTS.VOUCHER.UPDATED
+- EVENTS.VOUCHER.DELETED
+- EVENTS.VOUCHER.CREATED
+- EVENTS.VOUCHER.ENABLED
+- EVENTS.VOUCHER.DISABLED
+- EVENTS.VOUCHER.LOYALTY_CARD.POINTS_ADDED
 
 ## 2024-02-08
 

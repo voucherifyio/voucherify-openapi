@@ -12,7 +12,7 @@ Are slightly modified from the original ones for our needs.
 - Node.js ^16 || ^18 and npm
 - installed `@openapitools/openapi-generator-cli` globally
 - docker (optional)
-- java runtime
+- java runtime v18 or higher
 
 ## How to generate sdk
 
@@ -21,7 +21,6 @@ Are slightly modified from the original ones for our needs.
 - `npm run generate-sdk-ruby`/`generate-sdk-python`/`generate-sdk-java`/`generate-sdk-php`
 
 SDK will be generated in `./sdks` directory in associated language folder.
-
 
 ## Commands explanation
 
@@ -47,15 +46,16 @@ SDK will be generated in `./sdks` directory in associated language folder.
 - **generate-sdks** - script for concurrently generating all sdks
 - **test** - tests are used to check openapi schema didn't change after scripts refactoring
 
-## Uploading new versions
+## Creating changes 
 
-Creating new version of the SDKs required a few manual steps:
-1. Ensure that all SDKs generation without errors.
-2. Ensure that all SDKs tests are passing.
-3. Add/change tests for all SDKs containing all changes.
-4. Decide whether the changes concern the minor, major or patch version.
-5. Commit all generated changes to submodules. 
-6. Publish new version of the SDKs to repositories manager
+1. Init all submodules `git submodule update --init --recursive`.
+2. Create a new branch: `git checkout -b MY_BRANCH_NAME`
+3. Add changes (sticking to the rules from [CONTRIBUTING.md](./CONTRIBUTING.md))
+4. [Generate SDKs](#how-to-generate-sdk)
+5. Create new ones for Your changes and [ensure everything run without errors](#running-tests)
+6. Commit all changes to main repo and submodules
+7. Push your branch and create a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork) against `main` branch
+8. When the changes are merged, [publish new version to remote repositories](#publishing-for-remote-repositories-).
 
 ### Running tests
 
@@ -69,6 +69,16 @@ For running SDK separately or on Your local machine without docker go in to the 
 
 **Note that running tests will affect your Voucherify project data. Run tests only on development projects.**
 
+## Uploading new versions
+
+Manual steps checklist:
+- [ ] Ensure that all SDKs were generated without error.
+- [ ] Ensure new tests were created for changes.
+- [ ] Ensure that all SDKs tests passed.
+- [ ] Decide whether the changes concern the minor, major or patch version.
+- [ ] Commit all generated changes to submodules and main module.
+- [ ] Publish new version of the SDKs to repositories manager
+
 ### Versioning 
 
 - **patch** - backward compatible changes - bug fixes, small changes, refactoring
@@ -78,4 +88,10 @@ For running SDK separately or on Your local machine without docker go in to the 
 
 ### Publishing for remote repositories 
 
-TODO
+#### Ruby
+
+1. Ensure changes are on main branch and all tests has passed.
+2. Ensure that all data are correct in the `VoucherifySdk.gemspec` file. 
+3. Ensure which version You want to build.
+4. Use command `git tag vx.y.z` to add tag
+5. Use command `git push origin vx.y.z` this will run GitHub action that will publish new version of ruby SDK
