@@ -1258,3 +1258,208 @@ Only a promotion that is applicable to items in the cart. `"scenario": "PRODUCTS
 > Case 3 Summary
 >
 > Voucherify will return all the discounts that apply to the products you sent in the order. When a customer is browsing your products and is shown the product listing page, you can send, in the payload, the list of all the products the customer is presented and Voucherify will return all the discounts that apply to these products. The returned results can be visualized, for example, by a striked-through price.
+
+---
+### Case 4 - Upselling (audience only)
+
+The upsell scenario displays all the incentives within customer's reach in their cart view and encourages them to purchase additional products. `"scenario": "Upselling"`
+
+![Upselling](https://files.readme.io/8f5b50c-guides_campaign_recipes_qualification_checking_eligibility_upselling.png "Upselling")
+
+```json Request
+
+{
+    "scenario": "AUDIENCE_ONLY",
+    "customer": {
+        "source_id": "test_customer_id_1",
+        "name": "John Doe",
+        "metadata": {
+            "subscribed": true
+        },
+        "order": {
+            "status": "CREATED",
+            "metadata": {
+                "currency": "USD"
+            },
+            "items": [
+                {
+                    "quantity": 1,
+                    "price": 10000,
+                    "amount": 10000,
+                    "source_id": "GDR_Drill",
+                    "related_object": "product",
+                    "product": {
+                        "name": "Bosch Drill",
+                        "metadata": {
+                            "cateogry": "tools",
+                            "brand": "GDR",
+                            "star_rating": 4,
+                            "SKU": 10280472384
+                        }
+                    }
+                },
+                {
+                    "quantity": 1,
+                    "price": 40000,
+                    "amount": 40000,
+                    "source_id": "GRW_Stirring_Mech",
+                    "related_object": "product",
+                    "product": {
+                        "name": "Bosch Stirring Mechanism",
+                        "metadata": {
+                            "cateogry": "tools",
+                            "brand": "GRW",
+                            "star_rating": 5,
+                            "SKU": 10294856379
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "options": {
+        "limit": 30,
+        "expand": [
+            "redeemable"
+        ]
+    }
+}
+```
+```json Response
+
+{
+    "redeemables": {
+        "object": "list",
+        "data_ref": "data",
+        "data": [
+            {
+                "id": "camp_wh33be7BHtYtyoIdeS5TM7ZO",
+                "object": "campaign",
+                "created_at": "2024-07-03T14:01:45.254Z",
+                "result": {
+                    "discount": {
+                        "type": "PERCENT",
+                        "effect": "APPLY_TO_ITEMS",
+                        "percent_off": 25
+                    }
+                },
+                "applicable_to": {
+                    "data": [
+                        {
+                            "object": "product",
+                            "id": "prod_0efff4bd5b88dc03ee",
+                            "source_id": "23787597244",
+                            "strict": false,
+                            "effect": "APPLY_TO_EVERY"
+                        }
+                    ],
+                    "total": 1,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "inapplicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "metadata": {},
+                "name": "Mix it Up with Power"
+            },
+            {
+                "id": "camp_y5sKLTJThlKa2xzSg0dpdMuZ",
+                "object": "campaign",
+                "created_at": "2024-07-03T13:56:18.389Z",
+                "result": {
+                    "discount": {
+                        "type": "PERCENT",
+                        "effect": "APPLY_TO_ORDER",
+                        "percent_off": 15
+                    }
+                },
+                "applicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "inapplicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "metadata": {},
+                "name": "Complete Your Set"
+            },
+            {
+                "id": "camp_Y5ZRGz534MNt4Hk0PgmGC5aw",
+                "object": "campaign",
+                "created_at": "2024-07-03T13:51:21.481Z",
+                "result": {
+                    "discount": {
+                        "type": "UNIT",
+                        "effect": "ADD_MISSING_ITEMS",
+                        "unit_off": 1,
+                        "unit_type": "prod_0efff23a1648dc2df0"
+                    }
+                },
+                "applicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "inapplicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "metadata": {},
+                "name": "Stay Charged"
+            },
+            {
+                "id": "camp_OCSDKKQoC4h6MwWJ9TcJ79bu",
+                "object": "campaign",
+                "created_at": "2024-07-03T13:39:26.731Z",
+                "result": {
+                    "discount": {
+                        "type": "PERCENT",
+                        "effect": "APPLY_TO_ITEMS",
+                        "percent_off": 20
+                    }
+                },
+                "applicable_to": {
+                    "data": [
+                        {
+                            "object": "products_collection",
+                            "id": "pc_BKKzXVL6vaLQXn1ASFsvi3FP",
+                            "strict": false,
+                            "effect": "APPLY_TO_EVERY"
+                        }
+                    ],
+                    "total": 1,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "inapplicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "metadata": {},
+                "name": "Enhance Your Workshop"
+                   }
+        ],
+        "total": 4,
+        "has_more": false
+    },
+}
+```
+
+> Case 4 Summary
+>
+> Based on the customer order, Voucherify will encourage customers to buy a more expensive version of a product or add extra products from a matching theme adding various incentives. This process focuses on enhancing the customer's purchase to increase the total sale.
+

@@ -12,7 +12,7 @@ import { removeAllOneOfs } from "./removeOneOfs";
 import { putNotObjectSchemasIntoObjectSchemas } from "./put-not-object-schemas-into-object-schemas";
 import {
   removeBuggedTagsFromOpenAPIParameters,
-  removeBuggedTagsFromOpenAPIPaths
+  removeBuggedTagsFromOpenAPIPaths,
 } from "./remove-bugged-tags-from-open-api";
 
 const options = minimist(process.argv.slice(2));
@@ -24,7 +24,7 @@ type LanguageOptions = {
   okResponseMustBeOnlyOne?: true; //default: false
   mergeOneOfs?: true; //default: false
   putNotObjectSchemasIntoObjectSchemas?: true; //default: false
-  removeBuggedTagsFromOpenAPIPaths?: boolean
+  removeBuggedTagsFromOpenAPIPaths?: boolean;
 };
 
 const supportedLanguages: {
@@ -37,7 +37,7 @@ const supportedLanguages: {
   },
   ruby: {
     name: "ruby",
-    removeBuggedTagsFromOpenAPIPaths: true
+    removeBuggedTagsFromOpenAPIPaths: true,
   },
   php: {
     name: "php",
@@ -48,6 +48,7 @@ const supportedLanguages: {
     name: "java",
     mergeOneOfs: true,
     okResponseMustBeOnlyOne: true,
+    mergeOneOfs: true,
     removeRequiredOnNullable: true,
   },
 };
@@ -107,10 +108,15 @@ const main = async (languageOptions: LanguageOptions) => {
     : schemasWithoutNotUsed;
 
   const newPaths = languageOptions.removeBuggedTagsFromOpenAPIPaths
-      ? removeBuggedTagsFromOpenAPIPaths(paths) : paths
+    ? removeBuggedTagsFromOpenAPIPaths(paths)
+    : paths;
 
-  openAPIContent.components.parameters = languageOptions.removeBuggedTagsFromOpenAPIPaths
-      ? removeBuggedTagsFromOpenAPIParameters(openAPIContent.components.parameters) : openAPIContent.components.parameters
+  openAPIContent.components.parameters =
+    languageOptions.removeBuggedTagsFromOpenAPIPaths
+      ? removeBuggedTagsFromOpenAPIParameters(
+          openAPIContent.components.parameters,
+        )
+      : openAPIContent.components.parameters;
 
   // Building all together
   const newOpenApiFile = {

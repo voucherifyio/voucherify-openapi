@@ -12,7 +12,6 @@ import { updateWebhooksDocumentationTitles } from "./update-webhooks-documentati
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-//logic to be moved to manage-project!!!
 export const main = async ({ _version }: { _version: string }) => {
   if (_version) {
     version = _version;
