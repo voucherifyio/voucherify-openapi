@@ -7,6 +7,8 @@ import fs from "fs";
 import fsPromises from "fs/promises";
 import "./build-production-openapi";
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 dotenv.config();
 const options = minimist(process.argv.slice(2));
 const versionTag = options.versionTag || options.vt;
@@ -17,6 +19,7 @@ const mainVersion = "v2018-08-01";
 const version =
   versionOption || versionTag ? `${mainVersion}-${versionTag}` : undefined;
 import { removeAdditionalPropertiesFromSchemas } from "./remove-additional-properties-for-some-schemas";
+import { main as uploadWebhookDefinitions } from "./upload-webhook-definitions";
 
 const listOfGuideCategories = [
   "Getting started",
@@ -42,6 +45,7 @@ const main = async ({
   update?: boolean;
 }) => {
   if (!(await validate({ help, version, create, update }))) {
+    console.log(0);
     return;
   }
   if (create) {
@@ -51,23 +55,55 @@ const main = async ({
   await uploadOpenApiFileWithMaxNumberOfAttempts(version, 1);
   console.log(
     colors.green(
-      `BUILDING AND UPDATING MD TABLES FROM OPEN API... PLEASE WAIT...`
-    )
+      `BUILDING AND UPDATING MD TABLES FROM OPEN API... PLEASE WAIT...`,
+    ),
   );
   await buildAndUpdateMdTables();
   await uploadImagesUsedInMdFiles();
   await uploadGuideFiles(version);
   await uploadReferenceDocsWithMaxNumberOfAttempts(version, 2);
+  await uploadWebhookDefinitions();
+};
+
+const uploadOpenApiFileWithMaxNumberOfAttempts = async (
+  version,
+  maxNumberOfUploadingAttempts = 3,
+) => {
+  await createOpenAPIVersionToUpload();
   console.log(
-    colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`)
+    colors.green(
+      "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE",
+    ),
   );
+  for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
+    const { success, error } = await runCliProcess({
+      command: `rdme openapi ./tmp/referenceToUpload/OpenAPI.json --version=${version} --create`,
+      stderrIncludes: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`,
+      stdoutIncludes: `You've successfully uploaded a new OpenAPI file to your ReadMe project!`,
+      resolveErrorAsFalse: true,
+    });
+    if (success) {
+      console.log(colors.green("OPEN API FILE WAS UPLOADED"));
+      break;
+    }
+    if (i === maxNumberOfUploadingAttempts) {
+      console.log(
+        colors.red(
+          "OPEN API FILE COULD BE NOT UPLOADED! CHECK LOGS ABOVE AND VERIFY RESULT ON THE WEB.",
+        ),
+      );
+      break;
+    }
+    await sleep(20000);
+  }
+  return;
 };
 
 const uploadImagesUsedInMdFiles = async () => {
   console.log(
     colors.green(
-      "LOOKING FOR NOT UPLOADED IMAGES IN MD FILES, UPLOADING IF NEEDED..."
-    )
+      "LOOKING FOR NOT UPLOADED IMAGES IN MD FILES, UPLOADING IF NEEDED...",
+    ),
   );
   await runCliProcess({
     command: `npm run readme-upload-missing-images`,
@@ -86,7 +122,7 @@ const isVersionExists = async (version: string) => {
             "x-readme-version": version,
             authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
           },
-        }
+        },
       )
     ).status === 200
   );
@@ -94,12 +130,12 @@ const isVersionExists = async (version: string) => {
 
 const createOpenAPIVersionToUpload = async () => {
   console.log(
-    colors.green("CREATING OPEN API FILE TO UPLOAD... PLEASE WAIT...")
+    colors.green("CREATING OPEN API FILE TO UPLOAD... PLEASE WAIT..."),
   );
 
   const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
   const openAPIContent = JSON.parse(
-    (await fsPromises.readFile(openApiPath)).toString()
+    (await fsPromises.readFile(openApiPath)).toString(),
   );
 
   const pathToTmp = path.join(__dirname, "../tmp");
@@ -109,7 +145,7 @@ const createOpenAPIVersionToUpload = async () => {
 
   const pathToTmpReferenceToUpload = path.join(
     __dirname,
-    "../tmp/referenceToUpload"
+    "../tmp/referenceToUpload",
   );
   if (!fs.existsSync(pathToTmpReferenceToUpload)) {
     fs.mkdirSync(pathToTmpReferenceToUpload);
@@ -121,7 +157,7 @@ const createOpenAPIVersionToUpload = async () => {
       ...openAPIContent.components,
       schemas: removeAdditionalPropertiesFromSchemas(
         openAPIContent.components.schemas,
-        ["ExportsCreateRequestBody", "ExportsCreateResponseBody"]
+        ["ExportsCreateRequestBody", "ExportsCreateResponseBody"],
       ),
     },
   };
@@ -129,47 +165,16 @@ const createOpenAPIVersionToUpload = async () => {
 
   await fsPromises.writeFile(
     path.join(__dirname, "../tmp/referenceToUpload/OpenAPI.json"),
-    JSON.stringify(newOpenApiFile, null, 2)
+    JSON.stringify(newOpenApiFile, null, 2),
   );
-};
-
-const uploadOpenApiFileWithMaxNumberOfAttempts = async (
-  version,
-  maxNumberOfUploadingAttempts = 3
-) => {
-  await createOpenAPIVersionToUpload();
-
-  console.log(
-    colors.green(
-      "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE"
-    )
-  );
-
-  for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
-    const { success, error } = await runCliProcess({
-      command: `rdme openapi ./tmp/referenceToUpload/OpenAPI.json --version=${version} --create`,
-      stderrIncludes: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`,
-      stdoutIncludes: `You've successfully uploaded a new OpenAPI file to your ReadMe project!`,
-      resolveErrorAsFalse: true,
-    });
-    if (success) {
-      console.log(colors.green("OPEN API FILE WAS UPLOADED"));
-      break;
-    }
-    if (i === maxNumberOfUploadingAttempts) {
-      console.log(error);
-      throw new Error("OPEN API FILE WAS NOT UPLOADED!");
-    }
-  }
-  return;
 };
 
 const uploadReferenceDocsWithMaxNumberOfAttempts = async (
   version,
-  maxNumberOfUploadingAttempts = 3
+  maxNumberOfUploadingAttempts = 3,
 ) => {
   console.log(colors.green("UPLOADING REFERENCE DOC FILES..."));
-  await new Promise((r) => setTimeout(r, 60000));
+  await sleep(60000);
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
     const { success, error } = await runCliProcess({
       command: `rdme docs ./docs/reference-docs --version=${version}`,
@@ -181,10 +186,14 @@ const uploadReferenceDocsWithMaxNumberOfAttempts = async (
       break;
     }
     if (i === maxNumberOfUploadingAttempts) {
-      console.log(error);
-      throw new Error("REFERENCE DOC FILES WERE NOT UPLOADED!");
+      console.log(
+        colors.red(
+          "REFERENCE DOC FILES COULD BE NOT UPLOADED! CHECK LOGS ABOVE AND VERIFY RESULT ON THE WEB.",
+        ),
+      );
+      break;
     }
-    await new Promise((r) => setTimeout(r, 10000));
+    await sleep(20000);
   }
   return;
 };
@@ -213,15 +222,13 @@ const runCliProcess = async ({
       if (resolveErrorAsFalse) {
         return resolve({ success: false, error: `Error: \n${stderr}` });
       }
-      if (stderr) {
-        console.log(`Error: \n${stderr}`);
-      }
       throw error;
     });
   });
 };
 
 const uploadGuideFiles = async (version) => {
+  await sleep(10000);
   console.log(colors.green("UPLOADING GUIDES DOC FILES..."));
   await runCliProcess({
     command: `rdme docs ./docs/guides --version=${version}`,
@@ -239,7 +246,6 @@ const buildAndUpdateMdTables = async () => {
 };
 
 const createNewVersion = async (version) => {
-  console.log(colors.green("CREATING NEW VERSION"));
   try {
     const response = await fetch(`https://dash.readme.com/api/v1/version`, {
       method: "POST",
@@ -259,7 +265,7 @@ const createNewVersion = async (version) => {
     });
     if (response.status !== 200 && !(await isVersionExists(version))) {
       throw new Error(
-        `Response status: ${response.status}, maybe this versionTag is already created?`
+        `Response status: ${response.status}, maybe this versionTag is already created?`,
       );
     }
     console.log(colors.green(`FORK CREATED! VERSION "${version}"`));
@@ -275,7 +281,7 @@ const cleanProject = async (version) => {
   //delete all categories
   await asyncMap(
     categoriesToDelete,
-    async (category) => await deleteCategory(version, category.slug)
+    async (category) => await deleteCategory(version, category.slug),
   );
   console.log(colors.green(`OLD CATEGORIES DELETED!`));
   //create categories one by one (creation order is important)
@@ -294,14 +300,14 @@ const cleanProject = async (version) => {
       await updateCategory(
         version,
         allCategories.find((category) => category.title === categoryTitle).slug,
-        { type: "reference" }
-      )
+        { type: "reference" },
+      ),
   );
   console.log(colors.green(`REFERENCE CATEGORIES UPDATED!`));
   const allApiSpecifications = await getAllApiSpecifications(version);
-  await asyncMap(allApiSpecifications, (apiSpecification) =>
-    deleteSpecification(apiSpecification.id)
-  );
+  for (const apiSpecification of allApiSpecifications) {
+    await deleteSpecification(apiSpecification.id);
+  }
   console.log(colors.green(`API SPECIFICATIONS DELETED!`));
   console.log(colors.green(`VERSION "${version}" IS CLEANED UP!`));
   return;
@@ -330,7 +336,7 @@ const getAllCategories = async (version) =>
           "x-readme-version": version,
           authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
         },
-      }
+      },
     )
   ).json();
 
@@ -368,7 +374,7 @@ const getAllApiSpecifications = async (version) =>
           "x-readme-version": version,
           authorization: "Basic " + btoa(process.env.README_IO_AUTH + ":"),
         },
-      }
+      },
     )
   ).json();
 
@@ -399,7 +405,7 @@ const validate = async ({
 }) => {
   if (process.env.README_IO_AUTH?.length < 10) {
     console.log(
-      colors.red("`README_IO_AUTH` was not provided in `.env` file :/")
+      colors.red("`README_IO_AUTH` was not provided in `.env` file :/"),
     );
     return;
   }
@@ -410,40 +416,40 @@ const validate = async ({
   if (!version) {
     console.log(
       colors.red(
-        "invalid arguments, missing `version` or `versionTag`, check `help` for more information\nrun 'npm run manage-project -- --help'"
-      )
+        "invalid arguments, missing `version` or `versionTag`, check `help` for more information\nrun 'npm run manage-project -- --help'",
+      ),
     );
     return false;
   }
   if (!create && !update) {
     console.log(
       colors.red(
-        "invalid arguments, missing `update` or `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
-      )
+        "invalid arguments, missing `update` or `create`, check `help` for more information\nrun 'npm run manage-project -- --help'",
+      ),
     );
     return false;
   }
   if (create && update) {
     console.log(
       colors.red(
-        "invalid arguments, you provided conflicting arguments `update` and `create`, check `help` for more information\nrun 'npm run manage-project -- --help'"
-      )
+        "invalid arguments, you provided conflicting arguments `update` and `create`, check `help` for more information\nrun 'npm run manage-project -- --help'",
+      ),
     );
     return false;
   }
   if (update && !(await isVersionExists(version))) {
     console.log(
       colors.red(
-        `Version ${version} does not exist! Create it first. Use parameter --create instead of --update`
-      )
+        `Version ${version} does not exist! Create it first. Use parameter --create instead of --update`,
+      ),
     );
     return false;
   }
   if (create && (await isVersionExists(version))) {
     console.log(
       colors.red(
-        `Version ${version} already exist! Update it instead. Use parameter --update instead of --create`
-      )
+        `Version ${version} already exist! Update it instead. Use parameter --update instead of --create`,
+      ),
     );
     return false;
   }
@@ -464,14 +470,16 @@ const printHelp = () => {
         `\nnpm run manage-project -- --vt=piotr-123 --create` +
         `\nnpm run manage-project -- --v=v2018-08-01-piotr-123 --create` +
         `\nnpm run manage-project -- --vt=piotr-123 --update` +
-        `\nnpm run manage-project -- --v=v2018-08-01-piotr-123 --update`
-    )
+        `\nnpm run manage-project -- --v=v2018-08-01-piotr-123 --update`,
+    ),
   );
 };
 
-main({
-  help,
-  version,
-  create,
-  update,
-});
+(async () => {
+  await main({
+    help,
+    version,
+    create,
+    update,
+  });
+})();

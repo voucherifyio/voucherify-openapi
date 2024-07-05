@@ -545,7 +545,7 @@ All of:
 | order | See: [Order Calculated](#order-calculated) |
 | previous_order | See: [Order Calculated](#order-calculated) |
 | reward | See: [Redemption Reward Result](#redemption-reward-result) |
-| amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.</p> **Example:** <p>10000</p> |
+| amount</br>`integer` | <p>For gift cards, this is a positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the number of redeemed credits.<br>For loyalty cards, this is the number of loyalty points used in the transaction.</p> **Example:** <p>10000</p> |
 | reason</br>`string` | <p>System generated cause for the redemption being invalid in the context of the provided parameters.</p> |
 | result</br>`string` | <p>Redemption result.</p> Available values: `SUCCESS`, `FAILURE` |
 | status</br>`string` | <p>Redemption status.</p> Available values: `SUCCEEDED`, `FAILED` |
@@ -690,7 +690,7 @@ All of:
 | customer_id</br>`string`, `null` | <p>Unique customer ID of the redeeming customer.</p> **Example:** <p>cust_i8t5Tt6eiKG5K79KQlJ0Vs64</p> |
 | tracking_id</br>`string` | <p>Hashed customer source ID.</p> |
 | date</br>`string` | <p>Timestamp representing the date and time when the redemption was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
-| amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.</p> **Example:** <p>10000</p> |
+| amount</br>`integer` | <p>For gift cards, this is a positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the number of redeemed credits.<br>For loyalty cards, this is the number of loyalty points used in the transaction.<br>In the case of redemption rollback, the numbers are expressed as negative integers.</p> **Example:** <p>10000</p> |
 | order | See: [Simple Order](#simple-order) |
 | reward | See: [Simple Redemption Reward Result](#simple-redemption-reward-result) |
 | customer | See: [Simple Customer](#simple-customer) |

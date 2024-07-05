@@ -26,7 +26,7 @@ order: 1
 | customer_id</br>`string`, `null` | <p>Unique customer ID of the redeeming customer.</p> **Example:** <p>cust_i8t5Tt6eiKG5K79KQlJ0Vs64</p> |
 | tracking_id</br>`string`, `null` | <p>Hashed customer source ID.</p> |
 | metadata</br>`object`, `null` | <p>The metadata object stores all custom attributes assigned to the redemption.</p> |
-| amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the amount of redeemed credits on a gift card.</p> **Example:** <p>10000</p> |
+| amount</br>`integer` | <p>For gift cards, this is a positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the number of redeemed credits.<br>For loyalty cards, this is the number of loyalty points used in the transaction.</p> **Example:** <p>10000</p> |
 | redemption</br>`string`, `null` | <p>Unique redemption ID of the parent redemption.</p> **Example:** <p>r_0c656311b5878a2031</p> |
 | result</br>`string` | <p>Redemption result.</p> Available values: `SUCCESS`, `FAILURE` |
 | status</br>`string` | <p>Redemption status.</p> Available values: `SUCCEEDED`, `FAILED`, `ROLLED_BACK` |
@@ -42,8 +42,8 @@ order: 1
 2. [Voucher Holder](#voucher-holder) |
 | promotion_tier | <p>Contains details of the promotion tier and the parent campaign.</p> [Promotion Tier](#promotion-tier) |
 | reward | See: [Redemption Reward Result](#redemption-reward-result) |
-| gift</br>`object` | <p>Contains the amount being subtracted from the gift card for the redemption.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">amount</br><code>integer</code></td><td style="text-align:left"><p>The amount subtracted from the gift card expressed as the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
-| loyalty_card</br>`object` | <p>Stores the number of points being added back to the loyalty card for the reward redemption rollback.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points being added back to the loyalty card for the reward redemption rollback.</p></td></tr></tbody></table> |
+| gift</br>`object` | <p>Contains the amount subtracted from the gift card for the redemption.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">amount</br><code>integer</code></td><td style="text-align:left"><p>Amount subtracted from the gift card as a result of the redemption. The amount is expressed as the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
+| loyalty_card</br>`object` | <p>Contains the number of points subtracted from the loyalty card for the redemption.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points subtracted from the loyalty card as a result of the redemption.</p></td></tr></tbody></table> |
 
 ## Order Calculated
 All of:
