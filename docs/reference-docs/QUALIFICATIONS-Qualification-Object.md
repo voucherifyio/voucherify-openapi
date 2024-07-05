@@ -41,9 +41,8 @@ All of:
 |:-----|:--------|
 | redeemables_limit</br>`integer` | <p>Defines how many redeemables can be sent in one stacking request (note: more redeemables means more processing time!).</p> |
 | applicable_redeemables_limit</br>`integer` | <p>Defines how many of the sent redeemables will be applied to the order. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be labelled as SKIPPED.</p> |
-| applicable_redeemables_per_category_limit</br>`integer` | <p>Defines how many redeemables per category can be applied in one request.</p> |
 | applicable_exclusive_redeemables_limit</br>`integer` | <p>Defines how many redeemables with an exclusive category can be applied in one request.</p> |
-| applicable_exclusive_redeemables_per_category_limit</br>`integer` | <p>Defines how many redeemables with an exclusive category per category in stacking rules can be applied in one request.</p> |
+| applicable_redeemables_per_category_limit</br>`integer` | <p>Defines how many redeemables per category can be applied in one request.</p> |
 | exclusive_categories</br>`array` | <p>Lists all exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.</p> |
 | joint_categories</br>`array` | <p>Lists all joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.</p> |
 | redeemables_application_mode</br>`string` | <p>Defines redeemables application mode.</p> Available values: `ALL`, `PARTIAL` |

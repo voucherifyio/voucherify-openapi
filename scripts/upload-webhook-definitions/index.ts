@@ -4,23 +4,26 @@ const options = minimist(process.argv.slice(2));
 const versionTag = options.versionTag || options.vt;
 const versionOption = options.version || options.v;
 const mainVersion = "v2018-08-01";
-let version =
+const version =
   versionOption || versionTag ? `${mainVersion}-${versionTag}` : undefined;
 import colors from "colors";
 import { exec } from "child_process";
 import { updateWebhooksDocumentationTitles } from "./update-webhooks-documentation-titles";
 
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
 //logic to be moved to manage-project!!!
-export const main = async ({ _version }: { _version: string }) => {
-  if (_version) {
-    version = _version;
+const main = async () => {
+  if (!version) {
+    console.log(
+      colors.red(
+        "invalid arguments, missing `version` or `versionTag`, check `help` for more information"
+      )
+    );
+    return false;
   }
   await prepareWebhooksDocumentation();
   await uploadOpenApiFileWithMaxNumberOfAttempts(version, 1);
   console.log(colors.green("Sleeping 10s"));
-  await sleep(10000);
+  await new Promise((r) => setTimeout(r, 10000));
   await uploadReferenceDocsWithMaxNumberOfAttempts(version, 2);
   console.log(colors.green("UPDATING DOCS TITLES..."));
   await updateWebhooksDocumentationTitles(version);
@@ -30,19 +33,17 @@ export const main = async ({ _version }: { _version: string }) => {
     stdoutIncludes: "successfully updated",
     resolveErrorAsFalse: true,
   });
-  console.log(
-    colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`),
-  );
+  console.log(colors.green("DONE!"));
 };
 
 const uploadOpenApiFileWithMaxNumberOfAttempts = async (
   version,
-  maxNumberOfUploadingAttempts = 3,
+  maxNumberOfUploadingAttempts = 3
 ) => {
   console.log(
     colors.green(
-      "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE",
-    ),
+      "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE"
+    )
   );
 
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
@@ -57,19 +58,15 @@ const uploadOpenApiFileWithMaxNumberOfAttempts = async (
       break;
     }
     if (i === maxNumberOfUploadingAttempts) {
-      console.log(
-        colors.red(
-          "OPEN API FILE COULD BE NOT UPLOADED! CHECK LOGS ABOVE AND VERIFY RESULT ON THE WEB.",
-        ),
-      );
-      break;
+      console.log(error);
+      throw new Error("OPEN API FILE WAS NOT UPLOADED!");
     }
   }
   return;
 };
 const uploadReferenceDocsWithMaxNumberOfAttempts = async (
   version,
-  maxNumberOfUploadingAttempts = 3,
+  maxNumberOfUploadingAttempts = 3
 ) => {
   console.log(colors.green("UPLOADING REFERENCE DOC FILES..."));
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
@@ -83,14 +80,10 @@ const uploadReferenceDocsWithMaxNumberOfAttempts = async (
       break;
     }
     if (i === maxNumberOfUploadingAttempts) {
-      console.log(
-        colors.red(
-          "REFERENCE DOC FILES COULD BE NOT UPLOADED! CHECK LOGS ABOVE AND VERIFY RESULT ON THE WEB.",
-        ),
-      );
-      return;
+      console.log(error);
+      throw new Error("REFERENCE DOC FILES WERE NOT UPLOADED!");
     }
-    await sleep(10000);
+    await new Promise((r) => setTimeout(r, 10000));
   }
   return;
 };
@@ -116,7 +109,6 @@ const runCliProcess = async ({
       ) {
         return resolve({ success: true });
       }
-      console.log({ stdout, stderr });
       if (resolveErrorAsFalse) {
         return resolve({ success: false, error: `Error: \n${stderr}` });
       }
@@ -127,3 +119,5 @@ const runCliProcess = async ({
     });
   });
 };
+
+main();
