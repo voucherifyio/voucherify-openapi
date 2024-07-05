@@ -57,7 +57,9 @@ All of:
 | status</br>`string` | <p>Indicates whether the redeemable can be applied or not applied based on the validation rules.</p> Available values: `INAPPLICABLE` |
 | id</br>`string` | <p>Redeemable ID, i.e. the voucher code.</p> |
 | object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
-| result</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">error</td><td style="text-align:left">See: <a href="#error-object">Error Object</a></td></tr></tbody></table> |
+| result</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">error</td><td style="text-align:left">See: <a href="#error-object">Error Object</a></td></tr><tr><td style="text-align:left">details</br><code>object</code></td><td style="text-align:left"></td></tr></tbody></table> |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
+| categories</br>`array` | Array of [Category](#category) |
 
 ## Skipped Redeemable
 | Attributes |  Description |
@@ -65,7 +67,9 @@ All of:
 | status</br>`string` | <p>Indicates whether the redeemable can be applied or not applied based on the validation rules.</p> Available values: `SKIPPED` |
 | id</br>`string` | <p>Redeemable ID, i.e. the voucher code.</p> |
 | object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
-| result</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead></table> |
+| result | One of: [Validations Redeemable Skipped Result Limit Exceeded](#validations-redeemable-skipped-result-limit-exceeded), [Validations Redeemable Skipped Result Category Limit Exceeded](#validations-redeemable-skipped-result-category-limit-exceeded), [Validations Redeemable Skipped Result Redeemables Limit Exceeded](#validations-redeemable-skipped-result-redeemables-limit-exceeded), [Validations Redeemable Skipped Result Redeemables Category Limit Exceeded](#validations-redeemable-skipped-result-redeemables-category-limit-exceeded), [Validations Redeemable Skipped Result Exclusion Rules Not Met](#validations-redeemable-skipped-result-exclusion-rules-not-met), [Validations Redeemable Skipped Result Preceding Validation Failed](#validations-redeemable-skipped-result-preceding-validation-failed) |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
+| categories</br>`array` | Array of [Category](#category) |
 
 ## Order Calculated No Customer Data
 All of:
@@ -218,6 +222,42 @@ All of:
 | created_at</br>`string` | <p>Timestamp representing the date and time when the category was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
 | stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
+
+## Validations Redeemable Skipped Result Limit Exceeded
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `applicable_redeemables_limit_exceeded` |
+| message</br>`string` | Available values: `Applicable redeemables limit exceeded` |
+
+## Validations Redeemable Skipped Result Category Limit Exceeded
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `applicable_redeemables_per_category_limit_exceeded` |
+| message</br>`string` | Available values: `Applicable redeemables limit per category exceeded` |
+
+## Validations Redeemable Skipped Result Redeemables Limit Exceeded
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `applicable_exclusive_redeemables_limit_exceeded` |
+| message</br>`string` | Available values: `Applicable exclusive redeemables limit exceeded` |
+
+## Validations Redeemable Skipped Result Redeemables Category Limit Exceeded
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `applicable_exclusive_redeemables_per_category_limit_exceeded` |
+| message</br>`string` | Available values: `Applicable exclusive redeemables limit per category exceeded` |
+
+## Validations Redeemable Skipped Result Exclusion Rules Not Met
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `exclusion_rules_not_met` |
+| message</br>`string` | Available values: `Redeemable cannot be applied due to exclusion rules` |
+
+## Validations Redeemable Skipped Result Preceding Validation Failed
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `preceding_validation_failed` |
+| message</br>`string` | Available values: `Redeemable cannot be applied due to preceding validation failure` |
 
 ## Discount
 <p>Contains information about discount.</p>
