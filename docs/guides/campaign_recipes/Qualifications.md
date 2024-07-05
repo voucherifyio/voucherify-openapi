@@ -1327,5 +1327,139 @@ The upsell scenario displays all the incentives within customer's reach in their
 ```
 ```json Response
 
+{
+    "redeemables": {
+        "object": "list",
+        "data_ref": "data",
+        "data": [
+            {
+                "id": "camp_wh33be7BHtYtyoIdeS5TM7ZO",
+                "object": "campaign",
+                "created_at": "2024-07-03T14:01:45.254Z",
+                "result": {
+                    "discount": {
+                        "type": "PERCENT",
+                        "effect": "APPLY_TO_ITEMS",
+                        "percent_off": 25
+                    }
+                },
+                "applicable_to": {
+                    "data": [
+                        {
+                            "object": "product",
+                            "id": "prod_0efff4bd5b88dc03ee",
+                            "source_id": "23787597244",
+                            "strict": false,
+                            "effect": "APPLY_TO_EVERY"
+                        }
+                    ],
+                    "total": 1,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "inapplicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "metadata": {},
+                "name": "Mix it Up with Power"
+            },
+            {
+                "id": "camp_y5sKLTJThlKa2xzSg0dpdMuZ",
+                "object": "campaign",
+                "created_at": "2024-07-03T13:56:18.389Z",
+                "result": {
+                    "discount": {
+                        "type": "PERCENT",
+                        "effect": "APPLY_TO_ORDER",
+                        "percent_off": 15
+                    }
+                },
+                "applicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "inapplicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "metadata": {},
+                "name": "Complete Your Set"
+            },
+            {
+                "id": "camp_Y5ZRGz534MNt4Hk0PgmGC5aw",
+                "object": "campaign",
+                "created_at": "2024-07-03T13:51:21.481Z",
+                "result": {
+                    "discount": {
+                        "type": "UNIT",
+                        "effect": "ADD_MISSING_ITEMS",
+                        "unit_off": 1,
+                        "unit_type": "prod_0efff23a1648dc2df0"
+                    }
+                },
+                "applicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "inapplicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "metadata": {},
+                "name": "Stay Charged"
+            },
+            {
+                "id": "camp_OCSDKKQoC4h6MwWJ9TcJ79bu",
+                "object": "campaign",
+                "created_at": "2024-07-03T13:39:26.731Z",
+                "result": {
+                    "discount": {
+                        "type": "PERCENT",
+                        "effect": "APPLY_TO_ITEMS",
+                        "percent_off": 20
+                    }
+                },
+                "applicable_to": {
+                    "data": [
+                        {
+                            "object": "products_collection",
+                            "id": "pc_BKKzXVL6vaLQXn1ASFsvi3FP",
+                            "strict": false,
+                            "effect": "APPLY_TO_EVERY"
+                        }
+                    ],
+                    "total": 1,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "inapplicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "metadata": {},
+                "name": "Enhance Your Workshop"
+                   }
+        ],
+        "total": 4,
+        "has_more": false
+    },
+}
+```
 
+> Case 4 Summary
+>
+> Based on the customer order, Voucherify will encourage customers to buy a more expensive version of a product or add extra products from a matching theme adding various incentives. This process focuses on enhancing the customer's purchase to increase the total sale.
 
