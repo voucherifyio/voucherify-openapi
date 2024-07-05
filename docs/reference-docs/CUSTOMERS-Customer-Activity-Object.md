@@ -476,14 +476,14 @@ All of:
 | campaign_type</br>`string` | <p>Type of campaign.</p> |
 | type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation.</p><ul><li><code>AUTO_UPDATE</code>: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).</li><li><code>STATIC</code>: vouchers need to be manually published.</li></ul> Available values: `AUTO_UPDATE`, `STATIC` |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
-| voucher</br>`object` | See: [Simple Campaign Voucher](#simple-campaign-voucher) |
+| voucher | See: [Simple Campaign Voucher](#simple-campaign-voucher) |
 | lucky_draw</br>`object` | [Lucky Draw](#lucky-draw) |
 | referral_program | See: [Referral Program](#referral-program) |
 | auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join the campaign if any earning rule is fulfilled.</p> |
 | join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once.</p> |
 | active</br>`boolean` | <p>Indicates whether the campaign is active.</p> |
 | category</br>`string` | <p>Unique category name.</p> |
-| category_id | <p>The unique category ID that this campaign belongs to.</p> |
+| category_id</br>`string`, `null` | <p>The unique category ID that this campaign belongs to.</p> |
 | categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a campaign. The metadata object stores all custom attributes assigned to the campaign.</p> |
 | start_date</br>`string` | <p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is inactive <em>before</em> this date.</p> **Example:** <p>2022-09-20T00:00:00.000Z</p> |
@@ -545,7 +545,7 @@ All of:
 | order | See: [Order Calculated](#order-calculated) |
 | previous_order | See: [Order Calculated](#order-calculated) |
 | reward | See: [Redemption Reward Result](#redemption-reward-result) |
-| amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.</p> **Example:** <p>10000</p> |
+| amount</br>`integer` | <p>For gift cards, this is a positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the number of redeemed credits.<br>For loyalty cards, this is the number of loyalty points used in the transaction.</p> **Example:** <p>10000</p> |
 | reason</br>`string` | <p>System generated cause for the redemption being invalid in the context of the provided parameters.</p> |
 | result</br>`string` | <p>Redemption result.</p> Available values: `SUCCESS`, `FAILURE` |
 | status</br>`string` | <p>Redemption status.</p> Available values: `SUCCEEDED`, `FAILED` |
@@ -690,7 +690,7 @@ All of:
 | customer_id</br>`string`, `null` | <p>Unique customer ID of the redeeming customer.</p> **Example:** <p>cust_i8t5Tt6eiKG5K79KQlJ0Vs64</p> |
 | tracking_id</br>`string` | <p>Hashed customer source ID.</p> |
 | date</br>`string` | <p>Timestamp representing the date and time when the redemption was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
-| amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.</p> **Example:** <p>10000</p> |
+| amount</br>`integer` | <p>For gift cards, this is a positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the number of redeemed credits.<br>For loyalty cards, this is the number of loyalty points used in the transaction.<br>In the case of redemption rollback, the numbers are expressed as negative integers.</p> **Example:** <p>10000</p> |
 | order | See: [Simple Order](#simple-order) |
 | reward | See: [Simple Redemption Reward Result](#simple-redemption-reward-result) |
 | customer | See: [Simple Customer](#simple-customer) |
@@ -1012,7 +1012,8 @@ Available values: `POINTS_ACCRUAL`, `POINTS_CANCELLATION`, `POINTS_REDEMPTION`, 
 | channel</br>`string` | <p>How the publication was originated. It can be your own custom channel or an example value provided here.</p> |
 | source_id</br>`string`, `null` | <p>The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.</p> |
 | customer | See: [Customer With Summary Loyalty Referrals](#customer-with-summary-loyalty-referrals) |
-| vouchers_id</br>`array` | <p>Contains the unique internal voucher ID that was assigned by Voucherify.</p> |
+| vouchers</br>`array` | <p>Contains the voucher IDs that was assigned by Voucherify.</p> |
+| vouchers_id</br>`array` | <p>Contains the unique internal voucher IDs that was assigned by Voucherify.</p> |
 
 ## List Publications Item Voucher
 | Attributes |  Description |
@@ -1044,7 +1045,9 @@ Available values: `POINTS_ACCRUAL`, `POINTS_CANCELLATION`, `POINTS_REDEMPTION`, 
 | status</br>`string` | <p>Indicates whether the redeemable can be applied or not applied based on the validation rules.</p> Available values: `INAPPLICABLE` |
 | id</br>`string` | <p>Redeemable ID, i.e. the voucher code.</p> |
 | object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
-| result</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">error</td><td style="text-align:left">See: <a href="#error-object">Error Object</a></td></tr></tbody></table> |
+| result</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">error</td><td style="text-align:left">See: <a href="#error-object">Error Object</a></td></tr><tr><td style="text-align:left">details</br><code>object</code></td><td style="text-align:left"></td></tr></tbody></table> |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
+| categories</br>`array` | Array of [Category](#category) |
 
 ## Skipped Redeemable
 | Attributes |  Description |
@@ -1052,7 +1055,9 @@ Available values: `POINTS_ACCRUAL`, `POINTS_CANCELLATION`, `POINTS_REDEMPTION`, 
 | status</br>`string` | <p>Indicates whether the redeemable can be applied or not applied based on the validation rules.</p> Available values: `SKIPPED` |
 | id</br>`string` | <p>Redeemable ID, i.e. the voucher code.</p> |
 | object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
-| result</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead></table> |
+| result | One of: [Validations Redeemable Skipped Result Limit Exceeded](#validations-redeemable-skipped-result-limit-exceeded), [Validations Redeemable Skipped Result Category Limit Exceeded](#validations-redeemable-skipped-result-category-limit-exceeded), [Validations Redeemable Skipped Result Redeemables Limit Exceeded](#validations-redeemable-skipped-result-redeemables-limit-exceeded), [Validations Redeemable Skipped Result Redeemables Category Limit Exceeded](#validations-redeemable-skipped-result-redeemables-category-limit-exceeded), [Validations Redeemable Skipped Result Exclusion Rules Not Met](#validations-redeemable-skipped-result-exclusion-rules-not-met), [Validations Redeemable Skipped Result Preceding Validation Failed](#validations-redeemable-skipped-result-preceding-validation-failed) |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
+| categories</br>`array` | Array of [Category](#category) |
 
 ## Simple Order
 | Attributes |  Description |
@@ -1339,6 +1344,42 @@ Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `cus
 | request_id</br>`string` | <p>This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team.</p> **Example:** <p>v-0a885062c80375740f</p> |
 | resource_id</br>`string` | <p>Unique resource ID that can be used in another endpoint to get more details.</p> **Example:** <p>rf_0c5d710a87c8a31f86</p> |
 | resource_type</br>`string` | <p>The resource type.</p> **Example:** <p>voucher</p> |
+
+## Validations Redeemable Skipped Result Limit Exceeded
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `applicable_redeemables_limit_exceeded` |
+| message</br>`string` | Available values: `Applicable redeemables limit exceeded` |
+
+## Validations Redeemable Skipped Result Category Limit Exceeded
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `applicable_redeemables_per_category_limit_exceeded` |
+| message</br>`string` | Available values: `Applicable redeemables limit per category exceeded` |
+
+## Validations Redeemable Skipped Result Redeemables Limit Exceeded
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `applicable_exclusive_redeemables_limit_exceeded` |
+| message</br>`string` | Available values: `Applicable exclusive redeemables limit exceeded` |
+
+## Validations Redeemable Skipped Result Redeemables Category Limit Exceeded
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `applicable_exclusive_redeemables_per_category_limit_exceeded` |
+| message</br>`string` | Available values: `Applicable exclusive redeemables limit per category exceeded` |
+
+## Validations Redeemable Skipped Result Exclusion Rules Not Met
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `exclusion_rules_not_met` |
+| message</br>`string` | Available values: `Redeemable cannot be applied due to exclusion rules` |
+
+## Validations Redeemable Skipped Result Preceding Validation Failed
+| Attributes |  Description |
+|:-----|:--------|
+| key</br>`string` | Available values: `preceding_validation_failed` |
+| message</br>`string` | Available values: `Redeemable cannot be applied due to preceding validation failure` |
 
 ## Simple Order Item
 | Attributes |  Description |
