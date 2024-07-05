@@ -62,7 +62,7 @@ const main = async ({
   await uploadImagesUsedInMdFiles();
   await uploadGuideFiles(version);
   await uploadReferenceDocsWithMaxNumberOfAttempts(version, 2);
-  await uploadWebhookDefinitions();
+  await uploadWebhookDefinitions({ _version: version });
 };
 
 const uploadOpenApiFileWithMaxNumberOfAttempts = async (
