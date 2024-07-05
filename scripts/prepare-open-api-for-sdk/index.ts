@@ -48,7 +48,6 @@ const supportedLanguages: {
     name: "java",
     mergeOneOfs: true,
     okResponseMustBeOnlyOne: true,
-    mergeOneOfs: true,
     removeRequiredOnNullable: true,
   },
 };
