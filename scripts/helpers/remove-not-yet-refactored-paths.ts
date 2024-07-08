@@ -1,10 +1,10 @@
-import { takeList } from "./takeList";
+import { getTakeList } from "./get-take-list";
 
 export const removeNotYetRefactoredPaths = (paths: object, lng?: string) => {
   const newPaths = {};
   const pathsKeys = Object.keys(paths);
   for (const pathKey of pathsKeys) {
-    const take = takeList(lng).find((take) => take.endpoint === pathKey);
+    const take = getTakeList(lng).find((take) => take.endpoint === pathKey);
     if (!take) {
       continue;
     }
