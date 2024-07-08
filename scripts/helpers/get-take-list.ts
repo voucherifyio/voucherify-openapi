@@ -205,7 +205,7 @@ export const getTakeList = (
       put: ["default", "ruby", "java"],
     },
     "/v1/customers/{customerId}/activities": {
-      get: ["default", "ruby"],
+      get: ["ruby"],
     },
     "/v1/customers/{customerId}/segments": {
       get: ["default", "ruby", "java"],
