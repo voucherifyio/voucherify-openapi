@@ -53,23 +53,26 @@ const supportedLanguages: {
 };
 
 const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
-  const pathToRootFolder = path.join(__dirname, "../../");
-  if (!fs.existsSync(pathToRootFolder)) {
-    fs.mkdirSync(pathToRootFolder);
+  const pathToReference = path.join(__dirname, "../../reference");
+  if (!fs.existsSync(pathToReference)) {
+    fs.mkdirSync(pathToReference);
   }
-  const pathToTmpReference = path.join(__dirname, "../../reference");
-  if (!fs.existsSync(pathToTmpReference)) {
-    fs.mkdirSync(pathToTmpReference);
-  }
-  const pathToTmpReferenceLanguage = path.join(
+  const pathToReferenceReadonlySdks = path.join(
     __dirname,
-    `../../reference/${lang}`,
+    "../../reference/readonly-sdks",
   );
-  if (!fs.existsSync(pathToTmpReferenceLanguage)) {
-    fs.mkdirSync(pathToTmpReferenceLanguage);
+  if (!fs.existsSync(pathToReferenceReadonlySdks)) {
+    fs.mkdirSync(pathToReferenceReadonlySdks);
+  }
+  const pathToReferenceReadonlySdksLanguage = path.join(
+    __dirname,
+    `../../reference/readonly-sdks/${lang}`,
+  );
+  if (!fs.existsSync(pathToReferenceReadonlySdksLanguage)) {
+    fs.mkdirSync(pathToReferenceReadonlySdksLanguage);
   }
   await fsPromises.writeFile(
-    path.join(__dirname, `../../reference/${lang}/OpenAPI.json`),
+    path.join(__dirname, `../../reference/readonly-sdks/${lang}/OpenAPI.json`),
     JSON.stringify(openAPI, null, 2),
   );
 };
