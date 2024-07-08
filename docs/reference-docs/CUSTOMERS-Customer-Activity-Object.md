@@ -1367,7 +1367,7 @@ Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `cus
 | Attributes |  Description |
 |:-----|:--------|
 | key</br>`string` | Available values: `applicable_exclusive_redeemables_per_category_limit_exceeded` |
-| message</br>`string` | Available values: `Applicable exclusive redeemables limit per category exceeded` |
+| message</br>`string` | **Example:** <p>Applicable exclusive redeemables limit per category exceeded</p> |
 
 ## Validations Redeemable Skipped Result Exclusion Rules Not Met
 | Attributes |  Description |
