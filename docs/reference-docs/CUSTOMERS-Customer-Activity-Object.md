@@ -1349,19 +1349,19 @@ Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `cus
 | Attributes |  Description |
 |:-----|:--------|
 | key</br>`string` | Available values: `applicable_redeemables_limit_exceeded` |
-| message</br>`string` | Available values: `Applicable redeemables limit exceeded` |
+| message</br>`string` | **Example:** <p>Applicable redeemables limit exceeded</p> |
 
 ## Validations Redeemable Skipped Result Category Limit Exceeded
 | Attributes |  Description |
 |:-----|:--------|
 | key</br>`string` | Available values: `applicable_redeemables_per_category_limit_exceeded` |
-| message</br>`string` | Available values: `Applicable redeemables limit per category exceeded` |
+| message</br>`string` | **Example:** <p>Applicable redeemables limit per category exceeded</p> |
 
 ## Validations Redeemable Skipped Result Redeemables Limit Exceeded
 | Attributes |  Description |
 |:-----|:--------|
 | key</br>`string` | Available values: `applicable_exclusive_redeemables_limit_exceeded` |
-| message</br>`string` | Available values: `Applicable exclusive redeemables limit exceeded` |
+| message</br>`string` | **Example:** <p>Applicable exclusive redeemables limit exceeded</p> |
 
 ## Validations Redeemable Skipped Result Redeemables Category Limit Exceeded
 | Attributes |  Description |
@@ -1373,13 +1373,13 @@ Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `cus
 | Attributes |  Description |
 |:-----|:--------|
 | key</br>`string` | Available values: `exclusion_rules_not_met` |
-| message</br>`string` | Available values: `Redeemable cannot be applied due to exclusion rules` |
+| message</br>`string` | **Example:** <p>Redeemable cannot be applied due to exclusion rules</p> |
 
 ## Validations Redeemable Skipped Result Preceding Validation Failed
 | Attributes |  Description |
 |:-----|:--------|
 | key</br>`string` | Available values: `preceding_validation_failed` |
-| message</br>`string` | Available values: `Redeemable cannot be applied due to preceding validation failure` |
+| message</br>`string` | **Example:** <p>Redeemable cannot be applied due to preceding validation failure</p> |
 
 ## Simple Order Item
 | Attributes |  Description |
