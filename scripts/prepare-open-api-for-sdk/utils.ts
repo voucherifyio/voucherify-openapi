@@ -131,7 +131,7 @@ export const removeRequiredOnNullableAttributes = (schemaPartial: any) => {
   return schemaPartial;
 };
 
-export const removeAllRequired = (schemaPartial: any) => {
+export const makeEverythingNullable = (schemaPartial: any) => {
   if (!isObject(schemaPartial)) {
     return schemaPartial;
   }
@@ -143,20 +143,19 @@ export const removeAllRequired = (schemaPartial: any) => {
   //ONLY FOR ALL OF BECAUSE WE ENSURE ALL ONE OF CONTAINS LIST OF REFS
   if (schemaPartial?.allOf) {
     schemaPartial.allOf = schemaPartial.allOf.map((item: any) =>
-      removeAllRequired(item),
+      makeEverythingNullable(item),
     );
   }
 
   if (schemaPartial.properties) {
     Object.keys(schemaPartial.properties).forEach((key) => {
-      schemaPartial.properties[key] = removeAllRequired(
+      if (typeof schemaPartial.properties[key]?.type === "string") {
+        schemaPartial.properties[key].nullable = true;
+      }
+      schemaPartial.properties[key] = makeEverythingNullable(
         schemaPartial.properties[key],
       );
     });
-
-    const required = schemaPartial.required ?? [];
-
-    schemaPartial.required = undefined;
   }
 
   return schemaPartial;

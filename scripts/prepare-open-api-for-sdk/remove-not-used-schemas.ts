@@ -1,6 +1,6 @@
 import {
+  makeEverythingNullable,
   removeAdditionalProperties,
-  removeAllRequired,
   removeRequiredOnNullableAttributes,
 } from "./utils";
 
@@ -10,7 +10,7 @@ type Components = {
 };
 
 type LanguageOptions = {
-  removeAllRequired?: boolean;
+  makeEverythingNullable?: boolean;
   removeRequiredOnNullable?: boolean;
   simplifyAllObjectsThatHaveAdditionalProperties?: boolean;
 };
@@ -84,9 +84,9 @@ export const removeNotUsedSchemas = (
     }
   }
 
-  languageOptions.removeAllRequired &&
+  languageOptions.makeEverythingNullable &&
     Object.keys(schemas).forEach((schemaName) => {
-      schemas[schemaName] = removeAllRequired(schemas[schemaName]);
+      schemas[schemaName] = makeEverythingNullable(schemas[schemaName]);
     });
 
   languageOptions.removeRequiredOnNullable &&
