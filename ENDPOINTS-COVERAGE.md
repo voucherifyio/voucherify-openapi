@@ -62,8 +62,8 @@
   - [/v1/loyalties/{campaignId}/members](#v1loyaltiescampaignidmembers)
   - [/v1/loyalties/{campaignId}/members/{memberId}](#v1loyaltiescampaignidmembersmemberid)
   - [/v1/loyalties/members/{memberId}](#v1loyaltiesmembersmemberid)
-  - [/v1/loyalties/{campaignId}/members/{memberId}/activities](#v1loyaltiescampaignidmembersmemberidactivities)
-  - [/v1/loyalties/members/{memberId}/activities](#v1loyaltiesmembersmemberidactivities)
+  - [/v1/loyalties/{campaignId}/members/{memberId}/activity](#v1loyaltiescampaignidmembersmemberidactivity)
+  - [/v1/loyalties/members/{memberId}/activity](#v1loyaltiesmembersmemberidactivity)
   - [/v1/loyalties/{campaignId}/members/{memberId}/balance](#v1loyaltiescampaignidmembersmemberidbalance)
   - [/v1/loyalties/members/{memberId}/balance](#v1loyaltiesmembersmemberidbalance)
   - [/v1/loyalties/{campaignId}/members/{memberId}/transfers](#v1loyaltiescampaignidmembersmemberidtransfers)
@@ -98,8 +98,10 @@
   - [/v1/customers/bulk/async](#v1customersbulkasync)
   - [/v1/customers/metadata/async](#v1customersmetadataasync)
   - [/v1/customers/{customerId}/consents](#v1customerscustomeridconsents)
+  - [/v1/customers/{customerId}/activity](#v1customerscustomeridactivity)
   - [/v1/customers/{customerId}/activities](#v1customerscustomeridactivities)
   - [/v1/customers/{customerId}/segments](#v1customerscustomeridsegments)
+  - [/v1/customers/{customerId}/redeemables](#v1customerscustomeridredeemables)
 - [Orders](#orders)
   - [/v1/orders](#v1orders)
   - [/v1/orders/{orderId}](#v1ordersorderid)
@@ -148,6 +150,27 @@
 - [Locations](#locations)
   - [/v1/locations](#v1locations)
   - [/v1/locations/{locationId}](#v1locationslocationid)
+- [Referrals](#referrals)
+  - [/v1/referrals/{campaignId}/members/{memberId}/holders](#v1referralscampaignidmembersmemberidholders)
+  - [/v1/referrals/members/{memberId}/holders](#v1referralsmembersmemberidholders)
+- [Bin](#bin)
+  - [/v1/trash-bin](#v1trash-bin)
+  - [/v1/trash-bin/{binEntryId}](#v1trash-binbinentryid)
+- [Management](#management)
+  - [/management/v1/projects](#managementv1projects)
+  - [/management/v1/projects/{projectId}](#managementv1projectsprojectid)
+  - [/management/v1/projects/{projectId}/users](#managementv1projectsprojectidusers)
+  - [/management/v1/projects/{projectId}/users/{userId}](#managementv1projectsprojectidusersuserid)
+  - [/management/v1/projects/{projectId}/stacking-rules](#managementv1projectsprojectidstacking-rules)
+  - [/management/v1/projects/{projectId}/stacking-rules/{stackingRulesId}](#managementv1projectsprojectidstacking-rulesstackingrulesid)
+  - [/management/v1/projects/{projectId}/metadata-schemas](#managementv1projectsprojectidmetadata-schemas)
+  - [/management/v1/projects/{projectId}/metadata-schemas/{metadataSchemaId}](#managementv1projectsprojectidmetadata-schemasmetadataschemaid)
+  - [/management/v1/projects/{projectId}/custom-event-schemas](#managementv1projectsprojectidcustom-event-schemas)
+  - [/management/v1/projects/{projectId}/custom-event-schemas/{customEventSchemaId}](#managementv1projectsprojectidcustom-event-schemascustomeventschemaid)
+  - [/management/v1/projects/{projectId}/webhooks](#managementv1projectsprojectidwebhooks)
+  - [/management/v1/projects/{projectId}/webhooks/{webhookId}](#managementv1projectsprojectidwebhookswebhookid)
+  - [/management/v1/projects/{projectId}/branding](#managementv1projectsprojectidbranding)
+  - [/management/v1/projects/{projectId}/branding/{brandingId}](#managementv1projectsprojectidbrandingbrandingid)
 - [Client-side](#client-side)
   - [/client/v1/qualifications](#clientv1qualifications)
   - [/client/v1/promotions/tiers](#clientv1promotionstiers)
@@ -158,6 +181,7 @@
   - [/client/v1/consents](#clientv1consents)
   - [/client/v1/validate](#clientv1validate-deprecated)
   - [/client/v1/redeem](#clientv1redeem-deprecated)
+  - [/client/v1/publish](#clientv1publish)
 # Endpoints
 
 ## Publications
@@ -669,14 +693,22 @@
 #### Get Member (get)
 - **RequestSupported:** *Not applicable*
 - **ResponseSupported:** ❌
-### /v1/loyalties/{campaignId}/members/{memberId}/activities
-#### Get Member Activities (get)
+### /v1/loyalties/{campaignId}/members/{memberId}/activity
+#### List Member Activity (get)
 - **RequestSupported:** *Not applicable*
-- **ResponseSupported:** ❌
-### /v1/loyalties/members/{memberId}/activities
-#### Get Member Activities (get)
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/LoyaltiesMemberActivityListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/LoyaltiesMemberActivityListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/loyalties_member_activity_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/loyalties_member_activity_list_response_body.rb) ✅
+### /v1/loyalties/members/{memberId}/activity
+#### List Member Activity (get)
 - **RequestSupported:** *Not applicable*
-- **ResponseSupported:** ❌
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/LoyaltiesMemberActivityListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/LoyaltiesMemberActivityListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/loyalties_member_activity_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/loyalties_member_activity_list_response_body.rb) ✅
 ### /v1/loyalties/{campaignId}/members/{memberId}/balance
 #### Add or Remove Loyalty Card Balance (post)
 - **RequestSupported:** 
@@ -1016,6 +1048,14 @@
   - [python](./sdks/python/voucherify_client/models/customers_consents_update_request_body.py) ✅
   - [ruby](./sdks/ruby/lib/VoucherifySDK/models/customers_consents_update_request_body.rb) ✅
 - **ResponseSupported:** *Not applicable*
+### /v1/customers/{customerId}/activity
+#### List Customer Activity (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/CustomersActivityListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/CustomersActivityListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/customers_activity_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/customers_activity_list_response_body.rb) ✅
 ### /v1/customers/{customerId}/activities
 #### List Customer Activities (get)
 - **RequestSupported:** *Not applicable*
@@ -1032,6 +1072,14 @@
   - [php](./sdks/php/src/Model/CustomersSegmentsListResponseBody.php) ✅
   - [python](./sdks/python/voucherify_client/models/customers_segments_list_response_body.py) ✅
   - [ruby](./sdks/ruby/lib/VoucherifySDK/models/customers_segments_list_response_body.rb) ✅
+### /v1/customers/{customerId}/redeemables
+#### List Customer's Redeemables [Beta] (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/CustomersRedeemablesListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/CustomersRedeemablesListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/customers_redeemables_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/customers_redeemables_list_response_body.rb) ✅
 ## Orders
 ### /v1/orders
 #### List Orders (get)
@@ -1309,8 +1357,16 @@
   - [python](./sdks/python/voucherify_client/models/validation_rules_assignments_list_response_body.py) ✅
   - [ruby](./sdks/ruby/lib/VoucherifySDK/models/validation_rules_assignments_list_response_body.rb) ✅
 #### Create Validation Rules Assignments (post)
-- **RequestSupported:** ❌
-- **ResponseSupported:** ❌
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ValidationRulesAssignmentsCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ValidationRulesAssignmentsCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/validation_rules_assignments_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/validation_rules_assignments_create_request_body.rb) ✅
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ValidationRulesAssignmentsCreateResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ValidationRulesAssignmentsCreateResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/validation_rules_assignments_create_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/validation_rules_assignments_create_response_body.rb) ✅
 ### /v1/validation-rules/{validationRuleId}/assignments/{assignmentId}
 #### Delete Validation Rule Assignment (delete)
 - **RequestSupported:** *Not applicable*
@@ -1441,6 +1497,272 @@
 #### Get Location (get)
 - **RequestSupported:** *Not applicable*
 - **ResponseSupported:** ❌
+## Referrals
+### /v1/referrals/{campaignId}/members/{memberId}/holders
+#### List Referral Code Holders [Beta] (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ReferralsRedeemableHoldersListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ReferralsRedeemableHoldersListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/referrals_redeemable_holders_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/referrals_redeemable_holders_list_response_body.rb) ✅
+### /v1/referrals/members/{memberId}/holders
+#### List Referral Code Holders [Beta] (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ReferralsRedeemableHoldersListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ReferralsRedeemableHoldersListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/referrals_redeemable_holders_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/referrals_redeemable_holders_list_response_body.rb) ✅
+## Bin
+### /v1/trash-bin
+#### List Bin Entries (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/TrashBinListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/TrashBinListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/trash_bin_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/trash_bin_list_response_body.rb) ✅
+### /v1/trash-bin/{binEntryId}
+#### Delete Bin Entry (delete)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** *Not applicable*
+## Management
+### /management/v1/projects
+#### Create Project (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_create_request_body.rb) ✅
+- **ResponseSupported:** ❌
+#### List Projects (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_project_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_project_list_response_body.rb) ✅
+### /management/v1/projects/{projectId}
+#### Get Project (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_response_body.rb) ✅
+#### Update Project (put)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsUpdateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsUpdateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_update_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_update_request_body.rb) ✅
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_response_body.rb) ✅
+#### Delete Project (delete)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** *Not applicable*
+### /management/v1/projects/{projectId}/users
+#### Assign User (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsUserCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsUserCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_user_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_user_create_request_body.rb) ✅
+- **ResponseSupported:** ❌
+#### List Users (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsUserListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsUserListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_user_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_user_list_response_body.rb) ✅
+### /management/v1/projects/{projectId}/users/{userId}
+#### Get User (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsUserResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsUserResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_user_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_user_response_body.rb) ✅
+#### Update User (put)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsUserUpdateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsUserUpdateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_user_update_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_user_update_request_body.rb) ✅
+- **ResponseSupported:** ❌
+#### Unassign User (delete)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** *Not applicable*
+### /management/v1/projects/{projectId}/stacking-rules
+#### Create Stacking Rules (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsStackingRulesCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsStackingRulesCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_stacking_rules_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_stacking_rules_create_request_body.rb) ✅
+- **ResponseSupported:** ❌
+#### List Stacking Rules (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsStackingRulesListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsStackingRulesListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_stacking_rules_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_stacking_rules_list_response_body.rb) ✅
+### /management/v1/projects/{projectId}/stacking-rules/{stackingRulesId}
+#### Get Stacking Rules (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsStackingRulesResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsStackingRulesResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_stacking_rules_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_stacking_rules_response_body.rb) ✅
+#### Update Stacking Rules (put)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsStackingRulesBase.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsStackingRulesBase.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_stacking_rules_base.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_stacking_rules_base.rb) ✅
+- **ResponseSupported:** ❌
+#### Delete Stacking Rules (delete)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** *Not applicable*
+### /management/v1/projects/{projectId}/metadata-schemas
+#### Create Metadata Schema (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsMetadataSchemaCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsMetadataSchemaCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_metadata_schema_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_metadata_schema_create_request_body.rb) ✅
+- **ResponseSupported:** ❌
+#### List Metadata Schemas (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsMetadataSchemaListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsMetadataSchemaListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_metadata_schema_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_metadata_schema_list_response_body.rb) ✅
+### /management/v1/projects/{projectId}/metadata-schemas/{metadataSchemaId}
+#### Get Metadata Schema (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsMetadataSchemaResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsMetadataSchemaResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_metadata_schema_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_metadata_schema_response_body.rb) ✅
+#### Update Metadata Schema (put)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsMetadataSchemaUpdateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsMetadataSchemaUpdateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_metadata_schema_update_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_metadata_schema_update_request_body.rb) ✅
+- **ResponseSupported:** ❌
+#### Delete Metadata Schema (delete)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** *Not applicable*
+### /management/v1/projects/{projectId}/custom-event-schemas
+#### Create Custom Event Schema (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsCustomEventSchemaCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsCustomEventSchemaCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_custom_event_schema_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_custom_event_schema_create_request_body.rb) ✅
+- **ResponseSupported:** ❌
+#### List Custom Event Schemas (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsCustomEventSchemaListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsCustomEventSchemaListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_custom_event_schema_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_custom_event_schema_list_response_body.rb) ✅
+### /management/v1/projects/{projectId}/custom-event-schemas/{customEventSchemaId}
+#### Get Custom Event Schema (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsCustomEventSchemaResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsCustomEventSchemaResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_custom_event_schema_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_custom_event_schema_response_body.rb) ✅
+#### Update Custom Event Schema (put)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsCustomEventSchemaBase.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsCustomEventSchemaBase.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_custom_event_schema_base.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_custom_event_schema_base.rb) ✅
+- **ResponseSupported:** ❌
+#### Delete Custom Event Schema (delete)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** *Not applicable*
+### /management/v1/projects/{projectId}/webhooks
+#### Create Webhook (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsWebhooksCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsWebhooksCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_webhooks_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_webhooks_create_request_body.rb) ✅
+- **ResponseSupported:** ❌
+#### List Webhooks (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsWebhooksListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsWebhooksListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_webhooks_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_webhooks_list_response_body.rb) ✅
+### /management/v1/projects/{projectId}/webhooks/{webhookId}
+#### Get Webhook (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsWebhooksResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsWebhooksResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_webhooks_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_webhooks_response_body.rb) ✅
+#### Update Webhook (put)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsWebhooks.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsWebhooks.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_webhooks.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_webhooks.rb) ✅
+- **ResponseSupported:** ❌
+#### Delete Webhook (delete)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** *Not applicable*
+### /management/v1/projects/{projectId}/branding
+#### Create Brand (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsBrandingCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsBrandingCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_branding_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_branding_create_request_body.rb) ✅
+- **ResponseSupported:** ❌
+#### List Brands (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsBrandingListResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsBrandingListResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_branding_list_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_branding_list_response_body.rb) ✅
+### /management/v1/projects/{projectId}/branding/{brandingId}
+#### Get Brand (get)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsBrandingResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsBrandingResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_branding_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_branding_response_body.rb) ✅
+#### Update Brand (put)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ManagementProjectsBranding.java) ✅
+  - [php](./sdks/php/src/Model/ManagementProjectsBranding.php) ✅
+  - [python](./sdks/python/voucherify_client/models/management_projects_branding.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/management_projects_branding.rb) ✅
+- **ResponseSupported:** ❌
+#### Delete Brand (delete)
+- **RequestSupported:** *Not applicable*
+- **ResponseSupported:** *Not applicable*
 ## Client-side
 ### /client/v1/qualifications
 #### Check Eligibility (client-side) (post)
@@ -1506,3 +1828,15 @@
 #### ~~❗Validate Voucher (client-side) [Deprecated] (get)❗~~
 ### ~~❗/client/v1/redeem [Deprecated]❗~~
 #### ~~❗Redeem Voucher (client-side) [Deprecated] (post)❗~~
+### /client/v1/publish
+#### Create Publication (client-side) (post)
+- **RequestSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientPublicationsCreateRequestBody.java) ✅
+  - [php](./sdks/php/src/Model/ClientPublicationsCreateRequestBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/client_publications_create_request_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_publications_create_request_body.rb) ✅
+- **ResponseSupported:** 
+  - [java](./sdks/java/src/main/java/voucherify/client/model/ClientPublicationsCreateResponseBody.java) ✅
+  - [php](./sdks/php/src/Model/ClientPublicationsCreateResponseBody.php) ✅
+  - [python](./sdks/python/voucherify_client/models/client_publications_create_response_body.py) ✅
+  - [ruby](./sdks/ruby/lib/VoucherifySDK/models/client_publications_create_response_body.rb) ✅
