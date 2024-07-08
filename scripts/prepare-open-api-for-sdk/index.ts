@@ -24,7 +24,8 @@ type LanguageOptions = {
   okResponseMustBeOnlyOne?: true; //default: false
   mergeOneOfs?: true; //default: false
   putNotObjectSchemasIntoObjectSchemas?: true; //default: false
-  removeBuggedTagsFromOpenAPIPaths?: boolean;
+  removeBuggedTagsFromOpenAPIPaths?: true; //default: false
+  removeAllRequired?: true; //default: false
 };
 
 const supportedLanguages: {
@@ -48,7 +49,7 @@ const supportedLanguages: {
     name: "java",
     mergeOneOfs: true,
     okResponseMustBeOnlyOne: true,
-    removeRequiredOnNullable: true,
+    removeAllRequired: true,
   },
 };
 
