@@ -53,23 +53,23 @@ const supportedLanguages: {
 };
 
 const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
-  const pathToTmp = path.join(__dirname, "../../tmp");
-  if (!fs.existsSync(pathToTmp)) {
-    fs.mkdirSync(pathToTmp);
+  const pathToRootFolder = path.join(__dirname, "../../");
+  if (!fs.existsSync(pathToRootFolder)) {
+    fs.mkdirSync(pathToRootFolder);
   }
-  const pathToTmpReference = path.join(__dirname, "../../tmp/reference");
+  const pathToTmpReference = path.join(__dirname, "../../reference");
   if (!fs.existsSync(pathToTmpReference)) {
     fs.mkdirSync(pathToTmpReference);
   }
   const pathToTmpReferenceLanguage = path.join(
     __dirname,
-    `../../tmp/reference/${lang}`,
+    `../../reference/${lang}`,
   );
   if (!fs.existsSync(pathToTmpReferenceLanguage)) {
     fs.mkdirSync(pathToTmpReferenceLanguage);
   }
   await fsPromises.writeFile(
-    path.join(__dirname, `../../tmp/reference/${lang}/OpenAPI.json`),
+    path.join(__dirname, `../../reference/${lang}/OpenAPI.json`),
     JSON.stringify(openAPI, null, 2),
   );
 };
