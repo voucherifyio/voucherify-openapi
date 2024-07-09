@@ -1,7 +1,13 @@
 import path from "path";
 import fs from "fs/promises";
-import { snakeCase } from "lodash";
-import { getTakeList, rawTakeList } from "./helpers/get-take-list";
+import { rawTakeList } from "./helpers/get-take-list";
+import minimist from "minimist";
+const options = minimist(process.argv.slice(2));
+const generateForOptions: GenerateForOption[] = ["java", "ruby", "default"];
+type GenerateForOption = "java" | "ruby" | "default";
+const generateFor =
+  generateForOptions.includes(options.generateFor) && options.generateFor;
+import colors from "colors";
 
 type SdkLink = {
   java?: string;
@@ -48,7 +54,10 @@ const filterApiMethodsFromEndpointElements = (elements: any): Object => {
     }, {});
 };
 
-const writeSupported = (method: Method, sdk?: keyof SdkLink) => {
+const writeSupported = (
+  method: Method,
+  sdk: "java" | "ruby" | "default" = "default",
+) => {
   const generateFor = sdk || "default";
   const supported = " **Supported ✅** ";
   const notSupported = " **Not supported ❌** ";
@@ -56,7 +65,7 @@ const writeSupported = (method: Method, sdk?: keyof SdkLink) => {
   return method.supported[generateFor] ? supported : notSupported;
 };
 
-const generateEndpoints = (collection: Collection, sdk?: keyof SdkLink) => {
+const generateEndpoints = (collection: Collection, sdk?: GenerateForOption) => {
   let readmeContent = `\n# Endpoints\n`;
 
   Object.keys(collection).forEach((key) => {
@@ -107,72 +116,32 @@ const generateTableOfContents = (collection: Collection) => {
   return readmeContent;
 };
 
-const generateReadme = (collection: Collection) => {
+const generateReadme = (
+  collection: Collection,
+  generateFor: GenerateForOption,
+) => {
   let readmeContent = `# Endpoints Coverage\n`;
 
   readmeContent += generateTableOfContents(collection);
-  readmeContent += generateEndpoints(collection);
+  readmeContent += generateEndpoints(collection, generateFor);
 
-  const readmePath = path.join(__dirname, "../ENDPOINTS-COVERAGE.md");
-  fs.writeFile(readmePath, readmeContent);
-
-  const sdkLinks: SdkLink = {
-    java: "./sdks/java",
-    // php: "./sdks/php",
-    // python: "./sdks/python",
-    ruby: "./sdks/ruby",
-  };
-
-  Object.keys(sdkLinks).map((key: keyof SdkLink) => {
-    readmeContent = `# Endpoints Coverage\n`;
-
-    readmeContent += generateTableOfContents(collection);
-    readmeContent += generateEndpoints(collection, key);
-
-    const readmePath = path.join(`${sdkLinks[key]}/ENDPOINTS-COVERAGE.md`);
-    fs.writeFile(readmePath, readmeContent);
-  });
+  const readmePath =
+    generateFor === "default"
+      ? path.join(__dirname, "../production/ENDPOINTS-COVERAGE.md")
+      : path.join(`./sdks/${generateFor}/ENDPOINTS-COVERAGE.md`);
+  fs.writeFile(readmePath, readmeContent)
+    .then((data) => {
+      console.log(
+        colors.green(`ENDPOINTS-COVERAGE.md generated for ${generateFor}`),
+      );
+    })
+    .catch((err) => {
+      console.log(colors.red(err.message));
+      console.log(err);
+    });
 };
 
-const checkIsNewName = (name: string): boolean => {
-  if (!name) {
-    return true;
-  }
-
-  return !/[0-9_]/.test(name);
-};
-
-const checkAllResponsesAreCorrect = (responses: Object): boolean => {
-  return Object.keys(responses).every((key) => {
-    const response = responses[key];
-
-    if (!response.content) {
-      return true;
-    }
-
-    return checkIsNewName(
-      responses[key].content["application/json"]?.schema?.$ref
-        ?.split("/")
-        .pop(),
-    );
-  });
-};
-
-const getAllNamesFromResponses = (responses: Object): string[] => {
-  return Object.keys(responses).map((key) => {
-    const response = responses[key];
-
-    if (!response.content) {
-      return null;
-    }
-
-    return responses[key].content["application/json"]?.schema?.$ref
-      ?.split("/")
-      .pop();
-  });
-};
-
-const main = async () => {
+const main = async (generateFor: GenerateForOption) => {
   const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
   const openAPIContent = JSON.parse(
     (await fs.readFile(openApiPath)).toString(),
@@ -184,11 +153,6 @@ const main = async () => {
     const endpointMethods: Method[] = [];
     const apiMethods = filterApiMethodsFromEndpointElements(elements);
     Object.entries(apiMethods).forEach(([method, methodContent]) => {
-      const methodName =
-        methodContent.requestBody?.content["application/json"]?.schema?.$ref
-          ?.split("/")
-          .pop() ?? "";
-
       const methodObj: Method = {
         method,
         tags: methodContent.tags,
@@ -220,7 +184,17 @@ const main = async () => {
     ];
   });
 
-  generateReadme(collectionsWithEndpoints);
+  generateReadme(collectionsWithEndpoints, generateFor);
 };
 
-main();
+if (!generateFor) {
+  console.log(
+    colors.red(
+      `Provided argument \`generateFor\` is missing or not valid. Must be one of ${generateForOptions.join(
+        ", ",
+      )}`,
+    ),
+  );
+} else {
+  main(generateFor);
+}
