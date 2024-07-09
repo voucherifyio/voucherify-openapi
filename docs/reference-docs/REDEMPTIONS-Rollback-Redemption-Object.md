@@ -40,7 +40,7 @@ order: 2
 All of:
 
 1. [Order Response Base](#order-response-base)
-2. <h3>Order Customer And Referrer Ids Objects</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</br><code>object</code></td><td style="text-align:left">See: <a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</br><code>object</code></td><td style="text-align:left">See: <a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
+2. <h3>Order Customer And Referrer Ids Objects</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">customer</td><td style="text-align:left"><a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left"><a href="#referrer-id">Referrer Id</a></td></tr></tbody></table>
 
 ## Simple Customer
 | Attributes |  Description |
