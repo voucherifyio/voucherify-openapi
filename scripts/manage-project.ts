@@ -45,7 +45,6 @@ const main = async ({
   update?: boolean;
 }) => {
   if (!(await validate({ help, version, create, update }))) {
-    console.log(0);
     return;
   }
   if (create) {
