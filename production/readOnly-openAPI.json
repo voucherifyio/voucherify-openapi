@@ -8425,6 +8425,9 @@
         "type": "string",
         "example": "MmFAzfDe"
       },
+      "ParameterObject": {
+        "type": "object"
+      },
       "ParameterOrder": {
         "type": "string",
         "enum": [
@@ -8597,6 +8600,10 @@
       "ParameterRewardId": {
         "type": "string",
         "example": "rew_2erjvECLs92GYzKbak3QkyTV"
+      },
+      "ParameterSegmentId": {
+        "type": "string",
+        "example": "seg_DNAOhUtJffvX0f57ajLMFBYR"
       },
       "ParameterSkuId": {
         "type": "string",
@@ -15228,6 +15235,171 @@
     }
   },
   "paths": {
+    "/v1/publications/create": {
+      "get": {
+        "operationId": "create-publication-1",
+        "tags": [
+          "Publications"
+        ],
+        "summary": "Create Publication",
+        "description": "This method selects vouchers that are suitable for publication, adds a publish entry and returns the publication.\n\nA voucher is suitable for publication when it's active and hasn't been published yet.\n> ❗️ Limited access\n>\n> Access to this endpoint is limited. This endpoint is designed for specific integrations and the API keys need to be configured to access this endpoint. Navigate to the **Dashboard** &rarr; **Project Settings** &rarr; **General** &rarr; **Integration Keys** to set up a pair of API keys and use them to send the request.  \n\n<!-- theme: warning -->\n> 🚧 Clearly define the source of the voucher\n>\n> You must clearly define which source you want to publish the voucher code from. It can either be a code from a campaign or a specific voucher identified by a code.  \n<!-- theme: warning -->\n> 🚧 Publish multiple vouchers\n> This endpoint does not support the publishing of multiple vouchers from a single campaign. In case you want to publish multiple vouchers within a single publication, you need to use a [dedicated endpoint](ref:create-publication).  \n\n<!-- theme: info -->\n\n> 📘 Auto-update campaign\n>\n> In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use an **auto-update** campaign.  \n\n## Example Request \n```markdown Publication Query \n/publications/create?campaign[name]=BlackFriday&customer[source_id]=Customer_Source_ID \n```  \n\n<!-- theme: danger -->\n> ❗️ Required  \n>\n> Query param `voucher` OR `campaign` MUST be filled out. If you provide both, `campaign` param will be skipped.",
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterBoolean"
+            },
+            "in": "query",
+            "name": "join_once",
+            "description": "Through this flag, you can control if a particular person gets only one and always the same code even if the app sends multiple publication requests. It means that if you have a referral program, a referrer is assigned only to one code if an integration sends publication requests more than once for the same customer."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCode"
+            },
+            "in": "query",
+            "name": "voucher",
+            "description": "Code of voucher being published."
+          },
+          {
+            "name": "campaign",
+            "in": "query",
+            "description": "Create publication with campaign.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/CreatePublicationCampaign"
+            }
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "source_id",
+            "description": "The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.\nIf `source_id` is provided only 1 voucher can be published per request."
+          },
+          {
+            "name": "customer",
+            "in": "query",
+            "required": true,
+            "description": "Contains information about the customer to whom the publication was directed.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/Customer"
+            }
+          },
+          {
+            "name": "metadata",
+            "in": "query",
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.",
+            "style": "deepObject",
+            "explode": true,
+            "schema": {
+              "$ref": "#/components/schemas/ParameterObject"
+            }
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a publication object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicationsCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "pub_ocaXCa023ayJ3WL1ARxUeKgIvg3JcEGh",
+                      "object": "publication",
+                      "created_at": "2022-09-30T16:30:32.924Z",
+                      "customer_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                      "tracking_id": "pub_source_customer_5",
+                      "metadata": {
+                        "year": 2022
+                      },
+                      "channel": "myown",
+                      "source_id": "publication_source_ID_10",
+                      "result": "SUCCESS",
+                      "customer": {
+                        "id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                        "name": "Bob Jones",
+                        "email": "bob.smith@email.com",
+                        "source_id": "pub_source_customer_5",
+                        "metadata": {
+                          "lang": "en",
+                          "test": true
+                        },
+                        "object": "customer"
+                      },
+                      "voucher": {
+                        "id": "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf",
+                        "code": "cEsMn0uA",
+                        "campaign": "Test - Discount Effect - Amount - Items",
+                        "campaign_id": "camp_dphuwqH7BOVkgh4JmpDtS32l",
+                        "category": null,
+                        "category_id": null,
+                        "type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "amount_off": 300,
+                          "effect": "APPLY_TO_ITEMS"
+                        },
+                        "gift": null,
+                        "loyalty_card": null,
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_day_of_week": null,
+                        "active": true,
+                        "additional_info": null,
+                        "metadata": {},
+                        "assets": {
+                          "qr": {
+                            "id": "U2FsdGVkX188XVmOotyCyR2j3G8sJR8HzS3DQ+6J1OElPWSmjlEnthuJc7rkc7WIVxjT4pTl1JVVkHEuGXNXdzRik11H8S18HQeQFJFiuwLZ2mzEC2zZitEinyUxtZwhnEHoi0eGAgYCG7iVMNuOQA==",
+                            "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX188XVmOotyCyR2j3G8sJR8HzS3DQ%2B6J1OElPWSmjlEnthuJc7rkc7WIVxjT4pTl1JVVkHEuGXNXdzRik11H8S18HQeQFJFiuwLZ2mzEC2zZitEinyUxtZwhnEHoi0eGAgYCG7iVMNuOQA%3D%3D"
+                          },
+                          "barcode": {
+                            "id": "U2FsdGVkX18wDd9CcLM0Ef7aBfUSXZUoCQpuNpk4CHGOipbn+wFkfzcIZGBtUlxrI2KsXciCqF+c93AKzsymq5Yw8eEAFF/FK5f94z4/sgzaLDvyBmPCXHuS11Ew9S4ZEMjdTkUJftER2IlxWaCARA==",
+                            "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX18wDd9CcLM0Ef7aBfUSXZUoCQpuNpk4CHGOipbn%2BwFkfzcIZGBtUlxrI2KsXciCqF%2Bc93AKzsymq5Yw8eEAFF%2FFK5f94z4%2FsgzaLDvyBmPCXHuS11Ew9S4ZEMjdTkUJftER2IlxWaCARA%3D%3D"
+                          }
+                        },
+                        "is_referral_code": false,
+                        "created_at": "2022-09-30T16:30:32.956Z",
+                        "updated_at": null,
+                        "holder_id": "cust_BB6F97yf0XqCe7hxVUV7M4sS",
+                        "redemption": {
+                          "quantity": 1,
+                          "redeemed_quantity": 0,
+                          "object": "list",
+                          "url": "/v1/vouchers/cEsMn0uA/redemptions?page=1&limit=10"
+                        },
+                        "publish": {
+                          "object": "list",
+                          "count": 1,
+                          "url": "/v1/vouchers/cEsMn0uA/publications?page=1&limit=10"
+                        },
+                        "object": "voucher"
+                      },
+                      "vouchers_id": [
+                        "v_6Hy5FdNlu3dP65fJu5BgXma31Sl3rgkf"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/qualifications": {
       "post": {
         "operationId": "check-eligibility",
@@ -17869,6 +18041,49 @@
         }
       }
     },
+    "/v1/vouchers/{code}/sessions/{sessionKey}": {
+      "parameters": [
+        {
+          "name": "code",
+          "in": "path",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCode"
+          },
+          "description": "A **code** that identifies the voucher or a unique voucher ID assigned by Voucherify.",
+          "required": true
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterString"
+          },
+          "example": "ssn_yQGMTeKBSw8OOuFPwlBEjzGy8d8VA9Ts",
+          "name": "sessionKey",
+          "in": "path",
+          "required": true,
+          "description": "A unique session identifier."
+        }
+      ],
+      "delete": {
+        "operationId": "release-validation-session",
+        "tags": [
+          "Vouchers"
+        ],
+        "summary": "Release Validation Session",
+        "description": "Manually release a validation session that has been set up for the voucher. This method undos the actions that are explained in our guide on how a validation session was established, you can read more [here](doc:locking-validation-session). \n\n> 📘 Release Session using Dashboard\n>\n> You can also use the Validations Manager in the Dashboard to unlock sessions. [Read more](https://support.voucherify.io/article/16-dashboard-sections#validations).",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if the validation session was released successfully."
+          }
+        }
+      }
+    },
     "/v1/campaigns": {
       "post": {
         "operationId": "create-campaign",
@@ -19928,6 +20143,26 @@
             }
           }
         }
+      },
+      "delete": {
+        "operationId": "delete-promotion-tier",
+        "tags": [
+          "Promotions"
+        ],
+        "summary": "Delete Promotion Tier",
+        "description": "This method deletes a promotion tier.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          }
+        }
       }
     },
     "/v1/promotions/tiers/{promotionTierId}/enable": {
@@ -20621,6 +20856,39 @@
         ],
         "summary": "Delete Promotion Stack",
         "description": "This method deletes a promotion stack.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          }
+        }
+      }
+    },
+    "/v1/rewards/{rewardId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterRewardId"
+          },
+          "name": "rewardId",
+          "in": "path",
+          "required": true,
+          "description": "A unique reward ID."
+        }
+      ],
+      "delete": {
+        "operationId": "delete-reward",
+        "tags": [
+          "Rewards"
+        ],
+        "summary": "Delete Reward",
+        "description": "Delete a reward.",
         "parameters": [],
         "security": [
           {
@@ -25812,6 +26080,26 @@
                 }
               }
             }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-earning-rule",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "Delete Earning Rule",
+        "description": "This method deletes an earning rule for a specific loyalty campaign.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if deletion is successful."
           }
         }
       }
@@ -34713,6 +35001,39 @@
         ],
         "summary": "Delete Validation Rule Assignment",
         "description": "This method deletes a validation rule assignment.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          }
+        }
+      }
+    },
+    "/v1/segments/{segmentId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterSegmentId"
+          },
+          "name": "segmentId",
+          "in": "path",
+          "required": true,
+          "description": "A unique customer segment ID."
+        }
+      ],
+      "delete": {
+        "operationId": "delete-segment",
+        "tags": [
+          "Segments"
+        ],
+        "summary": "Delete Segment",
+        "description": "This method deletes a customer segment.",
         "parameters": [],
         "security": [
           {
