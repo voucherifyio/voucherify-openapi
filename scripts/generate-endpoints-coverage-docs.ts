@@ -1,11 +1,12 @@
 import path from "path";
 import fs from "fs/promises";
 import { snakeCase } from "lodash";
+import { getTakeList, rawTakeList } from "./helpers/get-take-list";
 
 type SdkLink = {
   java?: string;
-  php?: string;
-  python?: string;
+  // php?: string;
+  // python?: string;
   ruby?: string;
 };
 
@@ -14,14 +15,11 @@ type Method = {
   summary: string;
   tags: string[];
   isDeprecated: boolean;
-  requestName: string;
-  requestSupported: boolean;
-  requestNotApplicable: boolean;
-  responseName: string;
-  responseSupported: boolean;
-  responseNotApplicable: boolean;
-  sdkRequestLinks?: SdkLink;
-  sdkResponseLinks?: SdkLink;
+  supported: {
+    default: boolean;
+    java: boolean;
+    ruby: boolean;
+  };
 };
 
 type Endpoint = {
@@ -50,52 +48,12 @@ const filterApiMethodsFromEndpointElements = (elements: any): Object => {
     }, {});
 };
 
-const writeRequests = (method: Method, sdk?: keyof SdkLink) => {
-  let result = "- **RequestSupported:** ";
+const writeSupported = (method: Method, sdk?: keyof SdkLink) => {
+  const generateFor = sdk || "default";
+  const supported = " **Supported ✅** ";
+  const notSupported = " **Not supported ❌** ";
 
-  if (method.requestNotApplicable) {
-    result += "*Not applicable*";
-  } else if (!method.requestSupported) {
-    result += "❌";
-  } else {
-    if (sdk) {
-      const shortenedLink = method.sdkResponseLinks[sdk].replace(
-        `/sdks/${sdk}`,
-        "",
-      );
-      result += `[link](${shortenedLink}) ✅`;
-    } else {
-      Object.keys(method.sdkRequestLinks).map((key) => {
-        result += `\n  - [${key}](${method.sdkRequestLinks[key]}) ✅`;
-      });
-    }
-  }
-
-  return result;
-};
-
-const writeResponses = (method: Method, sdk?: keyof SdkLink) => {
-  let result = "- **ResponseSupported:** ";
-
-  if (method.responseNotApplicable) {
-    result += "*Not applicable*";
-  } else if (!method.responseSupported) {
-    result += "❌";
-  } else {
-    if (sdk) {
-      const shortenedLink = method.sdkResponseLinks[sdk].replace(
-        `/sdks/${sdk}`,
-        "",
-      );
-      result += `[link](${shortenedLink}) ✅`;
-    } else {
-      Object.keys(method.sdkResponseLinks).map((key) => {
-        result += `\n  - [${key}](${method.sdkResponseLinks[key]}) ✅`;
-      });
-    }
-  }
-
-  return result;
+  return method.supported[generateFor] ? supported : notSupported;
 };
 
 const generateEndpoints = (collection: Collection, sdk?: keyof SdkLink) => {
@@ -119,8 +77,7 @@ const generateEndpoints = (collection: Collection, sdk?: keyof SdkLink) => {
         } else {
           readmeContent += `
 #### ${method.summary} (${method.method})
-${writeRequests(method, sdk)}
-${writeResponses(method, sdk)}`;
+${writeSupported(method, sdk)}`;
         }
       });
     });
@@ -161,8 +118,8 @@ const generateReadme = (collection: Collection) => {
 
   const sdkLinks: SdkLink = {
     java: "./sdks/java",
-    php: "./sdks/php",
-    python: "./sdks/python",
+    // php: "./sdks/php",
+    // python: "./sdks/python",
     ruby: "./sdks/ruby",
   };
 
@@ -237,37 +194,12 @@ const main = async () => {
         tags: methodContent.tags,
         summary: methodContent.summary,
         isDeprecated: methodContent.summary.includes("Deprecated"),
-        requestName: methodName,
-        requestSupported: checkIsNewName(methodName),
-        requestNotApplicable: methodName === "",
-        responseName: getAllNamesFromResponses(methodContent.responses)[0],
-        responseNotApplicable:
-          (getAllNamesFromResponses(methodContent.responses)[0] ?? "") === "",
-        responseSupported:
-          checkIsNewName(methodName) &&
-          checkAllResponsesAreCorrect(methodContent.responses),
-      };
-
-      methodObj.sdkRequestLinks = {
-        java: `./sdks/java/src/main/java/voucherify/client/model/${methodObj.requestName}.java`,
-        php: `./sdks/php/src/Model/${methodObj.requestName}.php`,
-        python: `./sdks/python/voucherify_client/models/${snakeCase(
-          methodObj.requestName,
-        )}.py`,
-        ruby: `./sdks/ruby/lib/VoucherifySDK/models/${snakeCase(
-          methodObj.requestName,
-        )}.rb`,
-      };
-
-      methodObj.sdkResponseLinks = {
-        java: `./sdks/java/src/main/java/voucherify/client/model/${methodObj.responseName}.java`,
-        php: `./sdks/php/src/Model/${methodObj.responseName}.php`,
-        python: `./sdks/python/voucherify_client/models/${snakeCase(
-          methodObj.responseName,
-        )}.py`,
-        ruby: `./sdks/ruby/lib/VoucherifySDK/models/${snakeCase(
-          methodObj.responseName,
-        )}.rb`,
+        supported: {
+          default:
+            rawTakeList?.[endpoint]?.[method]?.includes("default") || false,
+          java: rawTakeList?.[endpoint]?.[method]?.includes("java") || false,
+          ruby: rawTakeList?.[endpoint]?.[method]?.includes("ruby") || false,
+        },
       };
 
       endpointMethods.push(methodObj);
