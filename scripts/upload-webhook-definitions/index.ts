@@ -18,8 +18,8 @@ export const main = async ({ _version }: { _version: string }) => {
   }
   await prepareWebhooksDocumentation();
   await uploadOpenApiFileWithMaxNumberOfAttempts(version, 1);
-  console.log(colors.green("Sleeping 10s"));
-  await sleep(10000);
+  console.log(colors.green("Sleeping 25s"));
+  await sleep(25000);
   await uploadReferenceDocsWithMaxNumberOfAttempts(version, 2);
   console.log(colors.green("UPDATING DOCS TITLES..."));
   await updateWebhooksDocumentationTitles(version);

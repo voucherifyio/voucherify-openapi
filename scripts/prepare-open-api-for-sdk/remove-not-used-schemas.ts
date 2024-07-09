@@ -1,4 +1,5 @@
 import {
+  makeEverythingNullable,
   removeAdditionalProperties,
   removeRequiredOnNullableAttributes,
 } from "./utils";
@@ -9,6 +10,7 @@ type Components = {
 };
 
 type LanguageOptions = {
+  makeEverythingNullable?: boolean;
   removeRequiredOnNullable?: boolean;
   simplifyAllObjectsThatHaveAdditionalProperties?: boolean;
 };
@@ -17,7 +19,7 @@ export const removeNotUsedSchemas = (
   components: Components,
   paths: {},
   languageOptions: LanguageOptions,
-  schemas: Record<string, any>
+  schemas: Record<string, any>,
 ) => {
   const schemasNamesFoundInPaths = JSON.stringify(paths)
     .match(/"#\/components\/schemas\/.*?"/g)
@@ -27,7 +29,7 @@ export const removeNotUsedSchemas = (
   const usedParameters = JSON.stringify(paths)
     .match(/"#\/components\/parameters\/.*?"/g)
     .map((match) =>
-      match.replace('"#/components/parameters/', "").slice(0, -1)
+      match.replace('"#/components/parameters/', "").slice(0, -1),
     );
   const schemasNamesFoundInPathsParameters: string[] = [];
   for (const parameter of usedParameters) {
@@ -35,7 +37,7 @@ export const removeNotUsedSchemas = (
       continue;
     }
     const schemasNamesFoundInParameter = JSON.stringify(
-      components.parameters[parameter]
+      components.parameters[parameter],
     )
       .match(/"#\/components\/schemas\/.*?"/g)
       .map((match) => match.replace('"#/components/schemas/', "").slice(0, -1));
@@ -47,7 +49,6 @@ export const removeNotUsedSchemas = (
     ...schemasNamesFoundInPathsParameters,
   ];
 
-
   for (const schemaName of allSchemasNames) {
     if (!components.schemas?.[schemaName]) {
       console.log(`not found ${schemaName} in schemas`);
@@ -55,7 +56,7 @@ export const removeNotUsedSchemas = (
     }
     schemas[schemaName] = removeAdditionalProperties(
       components.schemas[schemaName],
-      !languageOptions.simplifyAllObjectsThatHaveAdditionalProperties
+      !languageOptions.simplifyAllObjectsThatHaveAdditionalProperties,
     );
   }
 
@@ -78,14 +79,21 @@ export const removeNotUsedSchemas = (
       }
       schemas[schemaName] = removeAdditionalProperties(
         components.schemas[schemaName],
-        !languageOptions.simplifyAllObjectsThatHaveAdditionalProperties
+        !languageOptions.simplifyAllObjectsThatHaveAdditionalProperties,
       );
     }
   }
 
+  languageOptions.makeEverythingNullable &&
+    Object.keys(schemas).forEach((schemaName) => {
+      schemas[schemaName] = makeEverythingNullable(schemas[schemaName]);
+    });
+
   languageOptions.removeRequiredOnNullable &&
     Object.keys(schemas).forEach((schemaName) => {
-      schemas[schemaName] = removeRequiredOnNullableAttributes(schemas[schemaName]);
+      schemas[schemaName] = removeRequiredOnNullableAttributes(
+        schemas[schemaName],
+      );
     });
 
   return schemas;

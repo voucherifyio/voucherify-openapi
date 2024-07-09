@@ -24,7 +24,8 @@ type LanguageOptions = {
   okResponseMustBeOnlyOne?: true; //default: false
   mergeOneOfs?: true; //default: false
   putNotObjectSchemasIntoObjectSchemas?: true; //default: false
-  removeBuggedTagsFromOpenAPIPaths?: boolean;
+  removeBuggedTagsFromOpenAPIPaths?: true; //default: false
+  makeEverythingNullable?: true; //default: false
 };
 
 const supportedLanguages: {
@@ -48,29 +49,32 @@ const supportedLanguages: {
     name: "java",
     mergeOneOfs: true,
     okResponseMustBeOnlyOne: true,
-    mergeOneOfs: true,
     removeRequiredOnNullable: true,
+    makeEverythingNullable: true,
   },
 };
 
 const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
-  const pathToTmp = path.join(__dirname, "../../tmp");
-  if (!fs.existsSync(pathToTmp)) {
-    fs.mkdirSync(pathToTmp);
+  const pathToReference = path.join(__dirname, "../../reference");
+  if (!fs.existsSync(pathToReference)) {
+    fs.mkdirSync(pathToReference);
   }
-  const pathToTmpReference = path.join(__dirname, "../../tmp/reference");
-  if (!fs.existsSync(pathToTmpReference)) {
-    fs.mkdirSync(pathToTmpReference);
-  }
-  const pathToTmpReferenceLanguage = path.join(
+  const pathToReferenceReadonlySdks = path.join(
     __dirname,
-    `../../tmp/reference/${lang}`,
+    "../../reference/readonly-sdks",
   );
-  if (!fs.existsSync(pathToTmpReferenceLanguage)) {
-    fs.mkdirSync(pathToTmpReferenceLanguage);
+  if (!fs.existsSync(pathToReferenceReadonlySdks)) {
+    fs.mkdirSync(pathToReferenceReadonlySdks);
+  }
+  const pathToReferenceReadonlySdksLanguage = path.join(
+    __dirname,
+    `../../reference/readonly-sdks/${lang}`,
+  );
+  if (!fs.existsSync(pathToReferenceReadonlySdksLanguage)) {
+    fs.mkdirSync(pathToReferenceReadonlySdksLanguage);
   }
   await fsPromises.writeFile(
-    path.join(__dirname, `../../tmp/reference/${lang}/OpenAPI.json`),
+    path.join(__dirname, `../../reference/readonly-sdks/${lang}/OpenAPI.json`),
     JSON.stringify(openAPI, null, 2),
   );
 };

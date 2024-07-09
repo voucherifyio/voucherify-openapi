@@ -27,7 +27,7 @@ const checkProperties = (schema, title, schemas) => {
           removeOneOf(
             entry,
             schemas,
-            addSpacesInTitle(title + upperFirst(camelCase(propertyName)))
+            addSpacesInTitle(title + upperFirst(camelCase(propertyName))),
           ).schema,
         ];
       }
@@ -44,14 +44,14 @@ const checkProperties = (schema, title, schemas) => {
               entry.items,
               schemas,
               addSpacesInTitle(
-                title + upperFirst(camelCase(propertyName)) + "Item"
-              )
+                title + upperFirst(camelCase(propertyName)) + "Item",
+              ),
             ).schema,
           },
         ];
       }
       return [propertyName, entry];
-    })
+    }),
   );
   return { ...schema, properties };
 };
@@ -68,7 +68,7 @@ const removeOneOf = (schema, schemas, title) => {
         const { removed: _removed, schema } = removeOneOf(
           schemaItem,
           schemas,
-          addSpacesInTitle(title)
+          addSpacesInTitle(title),
         );
         if (_removed) {
           removed = true;
@@ -91,7 +91,7 @@ const removeOneOf = (schema, schemas, title) => {
           const { removed: _removed, schema } = removeOneOf(
             schemaItem,
             schemas,
-            title
+            title,
           );
           if (_removed) {
             removed = true;
@@ -111,7 +111,7 @@ const removeOneOf = (schema, schemas, title) => {
     return { removed: false, schema };
   }
   const oneOf = schema["oneOf"].map((data) =>
-    data.$ref ? schemas[data.$ref?.split("/")?.at(-1)] : "any"
+    data.$ref ? schemas[data.$ref?.split("/")?.at(-1)] : "any",
   );
   if (oneOf.find((item) => item === "any")) {
     return { removed: true, schema: { title: addSpacesInTitle(title) } };
@@ -184,7 +184,7 @@ const removeSingleOneOf = (schemas) => {
         removed = true;
       }
       return [schemaName, result.schema];
-    })
+    }),
   );
   return {
     removed,
@@ -196,7 +196,7 @@ const propertiesIntersection = (
   currentProperties,
   newProperties,
   title,
-  schemas
+  schemas,
 ) => {
   const allPropertyKeys = uniq([
     ...Object.keys(currentProperties),
@@ -212,15 +212,15 @@ const propertiesIntersection = (
         !p2
           ? p1
           : !p1
-          ? p2
-          : typeIntersection(
-              p1,
-              p2,
-              title + upperFirst(camelCase(key)),
-              schemas
-            ),
+            ? p2
+            : typeIntersection(
+                p1,
+                p2,
+                title + upperFirst(camelCase(key)),
+                schemas,
+              ),
       ];
-    })
+    }),
   );
 };
 
@@ -250,7 +250,7 @@ const typeIntersection = (p1, p2, title, schemas) => {
         ...p2Local.oneOf.map((object) => getObject(object, schemas)),
       ],
       schemas,
-      title
+      title,
     );
   }
   if (p1Local.oneOf) {
@@ -261,13 +261,13 @@ const typeIntersection = (p1, p2, title, schemas) => {
           ...p2Local.allOf.map((object) => getObject(object, schemas)),
         ],
         schemas,
-        title
+        title,
       );
     }
     return mergeAllOfObjects(
       [...p1Local.oneOf.map((object) => getObject(object, schemas)), p2Local],
       schemas,
-      title
+      title,
     );
   }
   if (p2Local.oneOf) {
@@ -278,13 +278,13 @@ const typeIntersection = (p1, p2, title, schemas) => {
           ...p1Local.allOf.map((object) => getObject(object, schemas)),
         ],
         schemas,
-        title
+        title,
       );
     }
     return mergeAllOfObjects(
       [...p2Local.oneOf.map((object) => getObject(object, schemas)), p1Local],
       schemas,
-      title
+      title,
     );
   }
   if (
@@ -309,9 +309,11 @@ const typeIntersection = (p1, p2, title, schemas) => {
     return p1Local;
   }
   if (p1Local.type === "string") {
-    let enum_ = p1Local.enum || p2Local.enum || undefined;
-    if (p1Local.enum && p2Local.enum) {
+    let enum_;
+    if (p1Local.enum?.length > 0 && p2Local.enum?.length > 0) {
       enum_ = uniq([p1Local.enum, p2Local.enum].flat());
+    } else {
+      enum_ = undefined;
     }
     let default_;
     if (p1Local.default && p1Local.default === p2Local.default) {
@@ -322,10 +324,10 @@ const typeIntersection = (p1, p2, title, schemas) => {
       !default_ && !enum_
         ? ["enum", "default"]
         : !enum_
-        ? ["default"]
-        : !default_
-        ? ["default"]
-        : []
+          ? ["default"]
+          : !default_
+            ? ["default"]
+            : [],
     );
   }
   const nullable = p1Local?.nullable || p2Local?.nullable;
@@ -346,15 +348,15 @@ const typeIntersection = (p1, p2, title, schemas) => {
           p1Local.items,
           p2Local.items,
           title + "Item",
-          schemas
+          schemas,
         ),
       },
-      compact([nullable ? "nullable" : undefined])
+      compact([nullable ? "nullable" : undefined]),
     );
   }
   return omit(
     { nullable, descriptions, type: p1Local.type },
-    compact([nullable ? "nullable" : undefined])
+    compact([nullable ? "nullable" : undefined]),
   );
 };
 
@@ -363,7 +365,7 @@ const mergeAllOfObjects = (allAreObjects, schemas, title) => {
     return allAreObjects[0];
   }
   const allAreObjectsLocal = allAreObjects.map((object) =>
-    getObject(object, schemas)
+    getObject(object, schemas),
   );
   const areAllObjectsObjects = allAreObjectsLocal.reduce(
     (accumulator, currentValue) => {
@@ -372,7 +374,7 @@ const mergeAllOfObjects = (allAreObjects, schemas, title) => {
       }
       return false;
     },
-    true
+    true,
   );
   if (areAllObjectsObjects) {
     const result = allAreObjectsLocal.reduce((accumulator, currentValue) => {
@@ -388,11 +390,11 @@ const mergeAllOfObjects = (allAreObjects, schemas, title) => {
         accumulator.properties,
         currentValue?.properties || {},
         title,
-        schemas
+        schemas,
       );
       const required = intersection(
         accumulator.required,
-        currentValue?.required || []
+        currentValue?.required || [],
       );
       return { ...accumulator, properties, required };
     }, undefined);
@@ -401,7 +403,7 @@ const mergeAllOfObjects = (allAreObjects, schemas, title) => {
       compact([
         result.required.length === 0 ? "required" : undefined,
         Object.keys(result.properties).length === 0 ? "properties" : undefined,
-      ])
+      ]),
     );
   }
   return allAreObjectsLocal
@@ -409,7 +411,7 @@ const mergeAllOfObjects = (allAreObjects, schemas, title) => {
     .reduce(
       (accumulator, currentValue) =>
         typeIntersection(accumulator, currentValue, title, schemas),
-      allAreObjectsLocal[0]
+      allAreObjectsLocal[0],
     );
 };
 
@@ -417,7 +419,7 @@ export const removeAllOneOfs = (
   schemas,
   paths,
   parameters,
-  languageOptions
+  languageOptions,
 ) => {
   let localSchemas = { ...schemas };
   do {
@@ -432,8 +434,8 @@ export const removeAllOneOfs = (
       { schemas: localSchemas, parameters },
       paths,
       languageOptions,
-      {}
-    )
+      {},
+    ),
   );
 };
 
@@ -453,19 +455,19 @@ const cleanUpDescriptionsInEntireObject = (object: any) => {
           {
             descriptions,
           },
-          "\n"
+          "\n",
         );
       }
       return omit(
         { ...object, description: descriptions.join(" and ") },
-        "descriptions"
+        "descriptions",
       );
     }
     return Object.fromEntries(
       Object.entries(object).map((keyAndEntry) => {
         const [key, entry] = keyAndEntry;
         return [key, cleanUpDescriptionsInEntireObject(entry)];
-      })
+      }),
     );
   }
   return object;

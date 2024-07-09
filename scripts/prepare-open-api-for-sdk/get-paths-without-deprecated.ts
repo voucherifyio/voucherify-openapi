@@ -1,4 +1,4 @@
-import { removeNotYetRefactoredPaths } from "./remove-not-yet-refactored-paths";
+import { removeNotYetRefactoredPaths } from "../helpers/remove-not-yet-refactored-paths";
 import openAPIContent from "../../reference/OpenAPI.json";
 import { mergeMultipleOkResponsesIntoOne } from "./merge-multiple-ok-responses-into-one";
 
