@@ -1,4 +1,16 @@
 export const rawTakeList = {
+  "/v1/segments/{segmentId}": {
+    delete: ["default", "ruby", "java"],
+  },
+  "/v1/publications/create": {
+    get: ["default", "ruby", "java"],
+  },
+  "/v1/rewards/{rewardId}": {
+    delete: ["default", "ruby", "java"],
+  },
+  "/v1/vouchers/{code}/sessions/{sessionKey}": {
+    delete: ["default", "ruby", "java"],
+  },
   "/v1/publications": {
     get: ["default", "ruby", "java"],
     post: ["default", "ruby", "java"],
@@ -78,6 +90,7 @@ export const rawTakeList = {
   },
   "/v1/promotions/tiers/{promotionTierId}": {
     get: ["default", "ruby", "java"],
+    delete: ["default", "ruby", "java"],
   },
   "/v1/promotions/tiers/{promotionTierId}/enable": {
     post: ["default", "ruby", "java"],
@@ -135,6 +148,7 @@ export const rawTakeList = {
   },
   "/v1/loyalties/{campaignId}/earning-rules/{earningRuleId}": {
     get: ["default", "ruby", "java"],
+    delete: ["default", "ruby", "java"],
   },
   "/v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable": {
     post: ["default", "ruby", "java"],
