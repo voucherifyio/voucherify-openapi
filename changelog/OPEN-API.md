@@ -5,6 +5,8 @@
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2024-07-10
+- added schemas `ValidityTimeframe` and `ValidityDayOfWeek`, replaced everywhere `validity_day_of_week` with ref to `ValidityDayOfWeek`, replaced everywhere `validity_timeframe` with ref to `ValidityTimeframe`
+
 
 - fixed invalid schemas
 - ListPublicationsItemBase[metadata] removed all required
