@@ -4,9 +4,14 @@
 
 Older changes in [DEPRECATED.md](DEPRECATED.md)
 
-## 2024-07-03
+## 2024-07-10
 
-- added `stacking_rules` to response `/v1/validations`(ValidationsValidateResponseBody)
+`OpenAPI.json`:
+- OrderCalculatedBase updated property items[array] ref from `OrderItemCalculated` to `OrderItem`
+- OrderItem added property `object` - enum `order_item`
+- OrderItem added properties `applied_discount_amount`, `applied_discount_quantity`, `applied_quantity`, `applied_quantity_amount`, `subtotal_amount`
+- SimpleOrderItem added properties `id`, `applied_quantity`, `applied_quantity_amount`, `applied_discount_quantity`, `subtotal_amount`
+- SimpleRedemption added property `status`
 
 ## 2024-06-25
 
