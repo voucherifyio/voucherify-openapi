@@ -38,6 +38,10 @@ const supportedLanguages: {
   },
   ruby: {
     name: "ruby",
+    mergeOneOfs: true,
+    okResponseMustBeOnlyOne: true,
+    removeRequiredOnNullable: true,
+    makeEverythingNullable: true,
     removeBuggedTagsFromOpenAPIPaths: true,
   },
   php: {
