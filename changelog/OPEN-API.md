@@ -7,7 +7,7 @@ Older changes in [DEPRECATED.md](DEPRECATED.md)
 ## 2024-07-10
 
 `OpenAPI.json` and `OpenAPIWebhooks.json`:
-- Added `AccessSettingsAssignmentsList` and `AreaStoreCampaignAssignment` schemas for the Areas and Stores feature
+- Added `AccessSettingsCampaignAssignmentsList` and `AreaStoreCampaignAssignment` schemas for the Areas and Stores feature
 - Added `access_settings_assignments` field to the `Campaign` schema
 
 ## 2024-06-25
