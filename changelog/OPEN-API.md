@@ -20,6 +20,12 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - StackingRules added properties: `applicable_redeemables_per_category_limit`, `applicable_exclusive_redeemables_per_category_limit`, and added required on `redeemables_application_mode` and `redeemables_sorting_rule`
 - fixed ManagementProjectsMetadataSchema and its usages.
 
+## 2024-07-10
+
+`OpenAPI.json` and `OpenAPIWebhooks.json`:
+- Added `AccessSettingsAssignmentsList` and `AreaStoreCampaignAssignment` schemas for the Areas and Stores feature
+- Added `access_settings_assignments` field to the `Campaign` schema
+
 ## 2024-06-25
 
 - Changed the order of tags – `Referrals` is now under `Loyalties`
