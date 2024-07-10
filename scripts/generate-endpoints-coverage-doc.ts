@@ -40,7 +40,7 @@ type Collection = {
 const removeSpecialCharacters = (inputString) => {
   const regex = /[{}\/\\]/g;
 
-  return inputString.replace(regex, "");
+  return inputString.replace(regex, "").replaceAll(" ", "");
 };
 
 const filterApiMethodsFromEndpointElements = (elements: any): Object => {
@@ -65,65 +65,61 @@ const writeSupported = (
   return method.supported[generateFor] ? supported : notSupported;
 };
 
-const generateEndpoints = (collection: Collection, sdk?: GenerateForOption) => {
+const generateEndpoints = async (
+  collection: Collection,
+  sdk?: GenerateForOption,
+) => {
+  const { markdownTable } = await import("markdown-table");
   let readmeContent = `\n# Endpoints\n`;
 
   Object.keys(collection).forEach((key) => {
     readmeContent += `
 ## ${key}`;
-    collection[key].forEach((endpoint) => {
-      const allMethodsDeprecated = endpoint.methods.every(
-        (method) => method.isDeprecated,
-      );
-      if (allMethodsDeprecated) {
-        readmeContent += `\n### ~~❗${endpoint.endpoint} [Deprecated]❗~~`;
-      } else {
-        readmeContent += `\n### ${endpoint.endpoint}`;
-      }
-      endpoint.methods.forEach((method) => {
-        if (method.isDeprecated) {
-          readmeContent += `\n#### ~~❗${method.summary} (${method.method})❗~~`;
-        } else {
-          readmeContent += `
-#### ${method.summary} (${method.method})
-${writeSupported(method, sdk)}`;
-        }
+    const mdTable = [
+      ["endpoint", "method", "summary", "is supported", "is deprecated"],
+    ];
+    collection[key].forEach(({ endpoint, methods }) => {
+      methods.forEach((methodData) => {
+        const method = methodData.method;
+        const summary = methodData.summary;
+        const supported = sdk ? methodData.supported[sdk] || false : false;
+        const isDeprecated = methodData.isDeprecated || false;
+        mdTable.push([
+          endpoint,
+          method,
+          summary,
+          (supported && `<font color='green'>supported</font>`) || ``,
+          (isDeprecated && ` <font color='red'>deprecated</font>`) || ``,
+        ]);
       });
     });
+    readmeContent += `
+${markdownTable(mdTable)}`;
   });
 
   return readmeContent;
 };
 
 const generateTableOfContents = (collection: Collection) => {
-  let readmeContent = `# Table of Contents\n`;
+  let readmeContent = `
+## Table of Content\n`;
 
   Object.keys(collection).forEach((key) => {
     readmeContent += `
-- [${key}](#${key.toLowerCase()})`;
-    collection[key].forEach((endpoint) => {
-      let link = removeSpecialCharacters(endpoint.endpoint.toLowerCase());
-
-      if (endpoint.methods[0].isDeprecated) {
-        link += "-deprecated";
-      }
-
-      readmeContent += `
-  - [${endpoint.endpoint}](#${link})`;
-    });
+- [${key}](#${key.toLowerCase().replace(" ", "-")})`;
   });
 
   return readmeContent;
 };
 
-const generateReadme = (
+const generateReadme = async (
   collection: Collection,
   generateFor: GenerateForOption,
 ) => {
   let readmeContent = `# Endpoints Coverage\n`;
 
   readmeContent += generateTableOfContents(collection);
-  readmeContent += generateEndpoints(collection, generateFor);
+  readmeContent += await generateEndpoints(collection, generateFor);
 
   const readmePath =
     generateFor === "default"
@@ -157,7 +153,8 @@ const main = async (generateFor: GenerateForOption) => {
         method,
         tags: methodContent.tags,
         summary: methodContent.summary,
-        isDeprecated: methodContent.summary.includes("Deprecated"),
+        isDeprecated:
+          methodContent.summary.toLowerCase().includes("deprecated") || false,
         supported: {
           default:
             rawTakeList?.[endpoint]?.[method]?.includes("default") || false,
@@ -184,7 +181,7 @@ const main = async (generateFor: GenerateForOption) => {
     ];
   });
 
-  generateReadme(collectionsWithEndpoints, generateFor);
+  await generateReadme(collectionsWithEndpoints, generateFor);
 };
 
 if (!generateFor) {
