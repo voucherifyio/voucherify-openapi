@@ -40906,6 +40906,47 @@
           "is_owner"
         ]
       },
+      "ManagementProjectsUserInviteCreateRequestBody": {
+        "type": "object",
+        "description": "Request body schema for **POST** `/management/v1/projects/users/invite`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsUserInviteParameters"
+          }
+        ]
+      },
+      "ManagementProjectsUserInviteParameters": {
+        "type": "object",
+        "title": "",
+        "description": "",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": ""
+          },
+          "first_name": {
+            "type": "string",
+            "description": ""
+          },
+          "last_name": {
+            "type": "string",
+            "description": ""
+          },
+          "projects": {
+            "type": "objects",
+            "description": "",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "email",
+          "first_name",
+          "last_name",
+          "projects"
+        ]
+      },
       "ManagementProjectsStackingRulesCreateRequestBody": {
         "type": "object",
         "description": "",
@@ -82692,6 +82733,201 @@
                       "request_id": "v-0e9a1b4b98c0a98ffc",
                       "resource_id": "user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
                       "resource_type": "user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/users/invite": {
+      "parameters": [],
+      "post": {
+        "operationId": "invite-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Invite a New Voucherify User",
+        "description": "Sends an invitation to an email address of a person who is not a Voucherify user.\n\nYou can specify the projects to which the person will be assigned and define their roles.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the details of the invitation and the project and roles to which the person will be assigned.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsUserInviteCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Returns no content if the invitation has been sent successfully."
+          },
+          "400": {
+            "description": "Returns an error if the payload includes all three keys or the required data is missing.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-0e9389ccac8da56f55"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "list-users",
+        "tags": [
+          "Management"
+        ],
+        "summary": "List Users",
+        "description": "Lists all users assigned to the project.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the list of all the users assigned to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsUserListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "user_FgEAjOw6riObJdy81s2yZXdqZNiAV1pM",
+                          "login": "name@youremaildomain.com",
+                          "email": "name@youremaildomain.com",
+                          "first_name": "Sammy",
+                          "last_name": "Jones",
+                          "projects": {
+                            "proj_9KeAhZB1": "USER",
+                            "proj_npnFzPr9": "USER",
+                            "proj_pEP3NO9s": "USER",
+                            "proj_zsPdrUIw": "ADMIN"
+                          },
+                          "is_owner": false
+                        },
+                        {
+                          "id": "user_11sYvPrOj3XE573FO1cAzzk1p4k92wLL",
+                          "login": "name@youremaildomain.com",
+                          "email": "name@youremaildomain.com",
+                          "first_name": "Alex",
+                          "last_name": "Smith",
+                          "projects": {
+                            "proj_3CNHbOe0": "ADMIN"
+                          },
+                          "is_owner": true
+                        }
+                      ],
+                      "total": 2
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
                     }
                   }
                 }
