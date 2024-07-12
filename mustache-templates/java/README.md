@@ -52,10 +52,10 @@ Add this dependency to your project's POM:
 
 ```xml
 <dependency>
-    <groupId>io.voucherify.client</groupId>
-    <artifactId>voucherify-java-sdk</artifactId>
-    <version>12.0.0</version>
-    <scope>compile</scope>
+  <groupId>io.voucherify.client</groupId>
+  <artifactId>voucherify-java-sdk</artifactId>
+  <version>12.0.0</version>
+  <scope>compile</scope>
 </dependency>
 ```
 
@@ -64,13 +64,13 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```groovy
-repositories {
-mavenCentral()
-}
+  repositories {
+    mavenCentral()
+  }
 
-dependencies {
-implementation "io.voucherify.client:voucherify-java-sdk:12.0.0"
-}
+  dependencies {
+     implementation "io.voucherify.client:voucherify-java-sdk:12.0.0"
+  }
 ```
 
 ### Others
@@ -101,37 +101,37 @@ import voucherify.client.models.*;
 import voucherify.client.api.CampaignsApi;
 
 public class Example {
-public static void main(String[] args) {
-ApiClient defaultClient = Configuration.getDefaultApiClient();
-defaultClient.setBasePath("https://api.voucherify.io");
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath("https://api.voucherify.io");
+    
+    // Configure API key authorization: X-App-Id
+    ApiKeyAuth X-App-Id = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Id");
+    X-App-Id.setApiKey("YOUR API KEY");
+    // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+    //X-App-Id.setApiKeyPrefix("Token");
 
-// Configure API key authorization: X-App-Id
-ApiKeyAuth X-App-Id = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Id");
-X-App-Id.setApiKey("YOUR API KEY");
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//X-App-Id.setApiKeyPrefix("Token");
+    // Configure API key authorization: X-App-Token
+    ApiKeyAuth X-App-Token = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Token");
+    X-App-Token.setApiKey("YOUR API KEY");
+    // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
+    //X-App-Token.setApiKeyPrefix("Token");
 
-// Configure API key authorization: X-App-Token
-ApiKeyAuth X-App-Token = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Token");
-X-App-Token.setApiKey("YOUR API KEY");
-// Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-//X-App-Token.setApiKeyPrefix("Token");
-
-CampaignsApi apiInstance = new CampaignsApi(defaultClient);
-String campaignId = "campaignId_example"; // String | The campaign ID or name of the campaign to which voucher will be added. You can either pass the campaign ID, which was assigned by Voucherify, or the name of the campaign as the path parameter value.
-String code = "code_example"; // String | A custom **code** that identifies the voucher.
-CampaignsVouchersCreateRequestBody campaignsVouchersCreateRequestBody = new CampaignsVouchersCreateRequestBody(); // CampaignsVouchersCreateRequestBody | Specify the voucher parameters that you would like to overwrite.
-try {
-CampaignsVouchersCreateResponseBody result = apiInstance.addVoucherWithSpecificCodeToCampaign(campaignId, code, campaignsVouchersCreateRequestBody);
-System.out.println(result);
-} catch (ApiException e) {
-System.err.println("Exception when calling CampaignsApi#addVoucherWithSpecificCodeToCampaign");
-System.err.println("Status code: " + e.getCode());
-System.err.println("Reason: " + e.getResponseBody());
-System.err.println("Response headers: " + e.getResponseHeaders());
-e.printStackTrace();
-}
-}
+    CampaignsApi apiInstance = new CampaignsApi(defaultClient);
+    String campaignId = "campaignId_example"; // String | The campaign ID or name of the campaign to which voucher will be added. You can either pass the campaign ID, which was assigned by Voucherify, or the name of the campaign as the path parameter value.
+    String code = "code_example"; // String | A custom **code** that identifies the voucher.
+    CampaignsVouchersCreateRequestBody campaignsVouchersCreateRequestBody = new CampaignsVouchersCreateRequestBody(); // CampaignsVouchersCreateRequestBody | Specify the voucher parameters that you would like to overwrite.
+    try {
+      CampaignsVouchersCreateResponseBody result = apiInstance.addVoucherWithSpecificCodeToCampaign(campaignId, code, campaignsVouchersCreateRequestBody);
+      System.out.println(result);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling CampaignsApi#addVoucherWithSpecificCodeToCampaign");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
 }
 
 ```
