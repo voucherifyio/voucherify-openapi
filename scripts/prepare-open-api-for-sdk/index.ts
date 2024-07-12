@@ -55,6 +55,7 @@ const supportedLanguages: {
     okResponseMustBeOnlyOne: true,
     removeRequiredOnNullable: true,
     makeEverythingNullable: true,
+    removeBuggedTagsFromOpenAPIPaths: true,
   },
 };
 
