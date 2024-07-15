@@ -4,6 +4,14 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-07-15
+
+`OpenAPI.json`:
+- Added a new endpoint, Invite a New User (**POST** `/management/v1/projects/users/invite`), and associated schemas:
+  - ManagementProjectsUserInviteCreateRequestBody
+  - ManagementProjectsUserInviteParameters
+- Added the ManagementProjectsSideKeys schema for app ID and app token in the server-side and client-side objects, which are returned in the **POST** `/management/v1/projects/` endpoint
+
 ## 2024-07-10
 
 `OpenAPI.json`:
