@@ -40917,29 +40917,35 @@
       },
       "ManagementProjectsUserInviteParameters": {
         "type": "object",
-        "title": "",
-        "description": "",
+        "title": "New User Invitation Parameters",
+        "description": "Invite a new user to Voucherify and assign projects and roles to them.",
         "properties": {
           "email": {
             "type": "string",
-            "description": ""
+            "description": "Email address to which the invitation will be sent. Must be a valid email address.",
+            "example": "alex.doe@your-domain-name.com"
           },
           "first_name": {
             "type": "string",
-            "description": ""
+            "description": "First name of the person who will receive the invitation. The name will be used in the user profile.",
+            "example": "Alex"
           },
           "last_name": {
             "type": "string",
-            "description": ""
+            "description": "Last name of the person who will receive the invitation. The name will be used in the user profile.",
+            "example": "Doe"
           },
           "projects": {
             "type": "object",
             "title": "Project and Role",
-            "description": "In the key, provide the project ID to which the new user should be assigned. In the value, provide the role the user should have in the project. The predefined Voucherify roles are: `ADMIN`, `USER`, `VIEWER`, `MERCHANT`, `USER_RESTRICTED`. You can use also custom roles.",
+            "description": "In the key, provide the project ID to which the new user will be assigned. In the value, provide the role which the user will have in the project. The predefined Voucherify roles are: `ADMIN`, `USER`, `VIEWER`, `MERCHANT`, `USER_RESTRICTED`. Send a custom role ID (Enterprise feature) to assign a custom role.",
             "additionalProperties": {
               "type": "string",
-              "title": "Project",
-              "description": "Defines the project to which the user will be assigned and the role in the project"
+              "title": "project_id",
+              "description": "Defines the project to which the user will be assigned and the role in the project."
+            },
+            "example": {
+              "proj_ExPr0jID": "USER"
             }
           }
         },
@@ -82752,8 +82758,8 @@
         "tags": [
           "Management"
         ],
-        "summary": "Invite a New Voucherify User",
-        "description": "Sends an invitation to an email address of a person who is not a Voucherify user.\n\nYou can specify the projects to which the person will be assigned and define their roles.",
+        "summary": "Invite a New User",
+        "description": "Sends an invitation to an email address that has not been used yet as a Voucherify user login.\n\nYou can specify the projects to which the invited user will be assigned and define their roles.",
         "parameters": [],
         "security": [
           {
@@ -82762,7 +82768,7 @@
           }
         ],
         "requestBody": {
-          "description": "Defines the details of the invitation and the project and roles to which the person will be assigned.",
+          "description": "Defines the details of the invitation, the project, and roles to which the user will be assigned.",
           "content": {
             "application/json": {
               "schema": {
@@ -82776,7 +82782,7 @@
             "description": "Returns no content if the invitation has been sent successfully."
           },
           "400": {
-            "description": "Returns an error if the payload includes all three keys or the required data is missing.",
+            "description": "Returns an error if the payload includes an incorrect role.",
             "content": {
               "application/json": {
                 "schema": {
@@ -82786,49 +82792,55 @@
                   "Invalid payload": {
                     "value": {
                       "code": 400,
-                      "key": "invalid_payload",
-                      "message": "Invalid payload",
-                      "details": "Payload must have required property 'name'",
-                      "request_id": "v-0e9389ccac8da56f55"
+                      "key": "used_incorrect_role",
+                      "message": "Used incorrect role",
+                      "details": "The role 'VICE_ADMIN' is incorrect",
+                      "request_id": "v-0f0f63a9f00cdbd981"
                     }
                   }
                 }
               }
             }
           },
-          "401": {
-            "description": "Returns an error if an invalid token was provided.",
+          "404": {
+            "description": "Returns an error if the project does not exist or has been deleted.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
-                  "Unauthorized": {
+                  "Not Found": {
                     "value": {
-                      "code": 401,
-                      "message": "Unauthorized",
-                      "key": "unauthorized"
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_4r3Ul0St",
+                      "request_id": "v-0f0f62fe19ccdbd8bc",
+                      "resource_id": "proj_4r3Ul0St",
+                      "resource_type": "project"
                     }
                   }
                 }
               }
             }
           },
-          "402": {
-            "description": "Returns an error if the current plan does not include the Management API feature.",
+          "409": {
+            "description": "Returns an error if the email address belongs to a Voucherify user.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                  "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
-                  "Example": {
+                  "Duplicate Code": {
                     "value": {
-                      "code": 402,
-                      "message": "Payment required",
-                      "details": "Your current plan does not include a feature required to perform this operation.",
-                      "key": "missing_required_feature"
+                      "code": 409,
+                      "key": "duplicate_found",
+                      "message": "Duplicated resource found",
+                      "details": "Duplicated user exists with email your.email@domain.com",
+                      "resource_id": "your.email@domain.com",
+                      "resource_type": "user"
                     }
                   }
                 }
