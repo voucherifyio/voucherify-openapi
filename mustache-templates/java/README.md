@@ -30,7 +30,7 @@ Building the API client library requires:
 1. Java 1.8+
 2. Maven (3.8.3+)/Gradle (7.2+)
 
-## ⚙️ Installation
+## Installation
 
 To install the API client library to your local Maven repository, simply execute:
 
@@ -102,7 +102,7 @@ import voucherify.client.api.CampaignsApi;
 public class Example {
     public static void main(String[] args) {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
-        defaultClient.setBasePath("https://api.voucherify.io");
+        defaultClient.setBasePath("https://us1.api.voucherify.io"); //(defaults to "https://api.voucherify.io")
         
         // Configure API key authorization: X-App-Id
         ApiKeyAuth X-App-Id = (ApiKeyAuth) defaultClient.getAuthentication("X-App-Id");
