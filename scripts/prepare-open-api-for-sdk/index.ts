@@ -12,7 +12,7 @@ import { removeAllOneOfs } from "./removeOneOfs";
 import { putNotObjectSchemasIntoObjectSchemas } from "./put-not-object-schemas-into-object-schemas";
 import {
   removeBuggedTagsFromOpenAPIParameters,
-  removeBuggedTagsFromOpenAPIPaths
+  removeBuggedTagsFromOpenAPIPaths,
 } from "./remove-bugged-tags-from-open-api";
 
 const options = minimist(process.argv.slice(2));
@@ -24,7 +24,8 @@ type LanguageOptions = {
   okResponseMustBeOnlyOne?: true; //default: false
   mergeOneOfs?: true; //default: false
   putNotObjectSchemasIntoObjectSchemas?: true; //default: false
-  removeBuggedTagsFromOpenAPIPaths?: boolean
+  removeBuggedTagsFromOpenAPIPaths?: true; //default: false
+  makeEverythingNullable?: true; //default: false
 };
 
 const supportedLanguages: {
@@ -37,7 +38,11 @@ const supportedLanguages: {
   },
   ruby: {
     name: "ruby",
-    removeBuggedTagsFromOpenAPIPaths: true
+    mergeOneOfs: true,
+    okResponseMustBeOnlyOne: true,
+    removeRequiredOnNullable: true,
+    makeEverythingNullable: true,
+    removeBuggedTagsFromOpenAPIPaths: true,
   },
   php: {
     name: "php",
@@ -49,27 +54,31 @@ const supportedLanguages: {
     mergeOneOfs: true,
     okResponseMustBeOnlyOne: true,
     removeRequiredOnNullable: true,
+    makeEverythingNullable: true,
   },
 };
 
 const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
-  const pathToTmp = path.join(__dirname, "../../tmp");
-  if (!fs.existsSync(pathToTmp)) {
-    fs.mkdirSync(pathToTmp);
+  const pathToReference = path.join(__dirname, "../../reference");
+  if (!fs.existsSync(pathToReference)) {
+    fs.mkdirSync(pathToReference);
   }
-  const pathToTmpReference = path.join(__dirname, "../../tmp/reference");
-  if (!fs.existsSync(pathToTmpReference)) {
-    fs.mkdirSync(pathToTmpReference);
-  }
-  const pathToTmpReferenceLanguage = path.join(
+  const pathToReferenceReadonlySdks = path.join(
     __dirname,
-    `../../tmp/reference/${lang}`,
+    "../../reference/readonly-sdks",
   );
-  if (!fs.existsSync(pathToTmpReferenceLanguage)) {
-    fs.mkdirSync(pathToTmpReferenceLanguage);
+  if (!fs.existsSync(pathToReferenceReadonlySdks)) {
+    fs.mkdirSync(pathToReferenceReadonlySdks);
+  }
+  const pathToReferenceReadonlySdksLanguage = path.join(
+    __dirname,
+    `../../reference/readonly-sdks/${lang}`,
+  );
+  if (!fs.existsSync(pathToReferenceReadonlySdksLanguage)) {
+    fs.mkdirSync(pathToReferenceReadonlySdksLanguage);
   }
   await fsPromises.writeFile(
-    path.join(__dirname, `../../tmp/reference/${lang}/OpenAPI.json`),
+    path.join(__dirname, `../../reference/readonly-sdks/${lang}/OpenAPI.json`),
     JSON.stringify(openAPI, null, 2),
   );
 };
@@ -107,10 +116,15 @@ const main = async (languageOptions: LanguageOptions) => {
     : schemasWithoutNotUsed;
 
   const newPaths = languageOptions.removeBuggedTagsFromOpenAPIPaths
-      ? removeBuggedTagsFromOpenAPIPaths(paths) : paths
+    ? removeBuggedTagsFromOpenAPIPaths(paths)
+    : paths;
 
-  openAPIContent.components.parameters = languageOptions.removeBuggedTagsFromOpenAPIPaths
-      ? removeBuggedTagsFromOpenAPIParameters(openAPIContent.components.parameters) : openAPIContent.components.parameters
+  openAPIContent.components.parameters =
+    languageOptions.removeBuggedTagsFromOpenAPIPaths
+      ? removeBuggedTagsFromOpenAPIParameters(
+          openAPIContent.components.parameters,
+        )
+      : openAPIContent.components.parameters;
 
   // Building all together
   const newOpenApiFile = {

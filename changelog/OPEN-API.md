@@ -2,11 +2,29 @@
 
 --------------------
 
-Older changes in [DEPRECATED.md](DEPRECATED.md)
+Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-## 2024-07-03
+## 2024-07-10
 
-- added `stacking_rules` to response `/v1/validations`(ValidationsValidateResponseBody)
+`OpenAPI.json`:
+- fixed invalid schemas
+- ListPublicationsItemBase[metadata] removed all required
+- ListPublicationsItemBase added new property `vouchers`
+- ValidationsValidateResponseBody[skipped_redeemables] fixed (replaced ValidationsRedeemableInapplicable with ValidationsRedeemableSkipped)
+- ValidationsValidateResponseBody added new property `stacking_rules` with flag required
+- added required `"required": ["status","id","object","result"]` on `ValidationsRedeemableSkipped`, `ValidationsRedeemableInapplicable` and `ValidationsRedeemableApplicable`
+- ValidationsRedeemableInapplicable[result] added new property `details`
+- ValidationsRedeemableInapplicable added new properties `metadata` and `categories`
+- ValidationsRedeemableSkipped[result] added new property `details`
+- ValidationsRedeemableSkipped added new properties `metadata` and `categories`
+- added schemas `ValidationsRedeemableSkippedResultLimitExceeded`, `ValidationsRedeemableSkippedResultCategoryLimitExceeded`, `ValidationsRedeemableSkippedResultRedeemablesLimitExceeded`, `ValidationsRedeemableSkippedResultRedeemablesCategoryLimitExceeded`, `ValidationsRedeemableSkippedResultExclusionRulesNotMet`, `ValidationsRedeemableSkippedResultPrecedingValidationFailed`
+- StackingRules added properties: `applicable_redeemables_per_category_limit`, `applicable_exclusive_redeemables_per_category_limit`, and added required on `redeemables_application_mode` and `redeemables_sorting_rule`
+- fixed ManagementProjectsMetadataSchema and its usages.
+- OrderCalculatedBase updated property items[array] ref from `OrderItemCalculated` to `OrderItem`
+- OrderItem added property `object` - enum `order_item`
+- OrderItem added properties `applied_discount_amount`, `applied_discount_quantity`, `applied_quantity`, `applied_quantity_amount`, `subtotal_amount`
+- SimpleOrderItem added properties `id`, `applied_quantity`, `applied_quantity_amount`, `applied_discount_quantity`, `subtotal_amount`
+- SimpleRedemption added property `status`
 
 ## 2024-06-25
 

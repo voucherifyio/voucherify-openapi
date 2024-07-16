@@ -27,7 +27,7 @@ The qualifications API can be applied (among others) for:
 There are two dedicated API Endpoints for checking eligibility:
 
 | **Endpoint**                         | **Link**                                                                               |
-|:-------------------------------------|:---------------------------------------------------------------------------------------|
+| :----------------------------------- | :------------------------------------------------------------------------------------- |
 | **POST** `/v1/qualifications`        | Check eligibility using the [server-side endpoint](ref:check-eligibility).             |
 | **POST** `/client/v1/qualifications` | Check eligibility using the [client-side endpoint](ref:check-eligibility-client-side). |
 
@@ -37,16 +37,16 @@ You can find a description of the qualification object schema in the data model 
 
 To specify the types of promotions and codes that you would like to reveal to your customers, we introduced the option of including a scenario. A scenario defines the type of content that you would like to return from all the available campaigns and standalone codes that you've created in Voucherify.
 
-| **Scenario** | **Possible Use Case** |
-|:---|:---|
-| ALL | Returns all redeemables available for the customer in one API request. |
-| CUSTOMER_WALLET | returns vouchers applicable to the customer’s cart based on the vouchers assigned to the customer’s profile. |
-| AUDIENCE_ONLY | Returns all vouchers, promotion tiers, and campaigns available to the customer. Voucherify validates the rules based on the customer profile only. |
-| PRODUCTS | Returns all promotions available for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule). |
-| PRODUCTS_DISCOUNT | Returns all promotions available for products when a discount is defined as applicable to specific item(s). |
-| PROMOTION_STACKS | Returns the applicable promotion stacks. |
-| PRODUCTS_BY_CUSTOMER | Returns all promotions available for a customer for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule). |
-| PRODUCTS_DISCOUNT_BY_CUSTOMER | Returns all promotions available for a customer for products when a discount is defined as applicable to specific item(s). |
+| **Scenario**                  | **Possible Use Case**                                                                                                                                                        |
+| :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ALL                           | Returns all redeemables available for the customer in one API request.                                                                                                       |
+| CUSTOMER_WALLET               | returns vouchers applicable to the customer’s cart based on the vouchers assigned to the customer’s profile.                                                                 |
+| AUDIENCE_ONLY                 | Returns all vouchers, promotion tiers, and campaigns available to the customer. Voucherify validates the rules based on the customer profile only.                           |
+| PRODUCTS                      | Returns all promotions available for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).                |
+| PRODUCTS_DISCOUNT             | Returns all promotions available for products when a discount is defined as applicable to specific item(s).                                                                  |
+| PROMOTION_STACKS              | Returns the applicable promotion stacks.                                                                                                                                     |
+| PRODUCTS_BY_CUSTOMER          | Returns all promotions available for a customer for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule). |
+| PRODUCTS_DISCOUNT_BY_CUSTOMER | Returns all promotions available for a customer for products when a discount is defined as applicable to specific item(s).                                                   |
 
 In the request, you can add [options](ref:check-eligibility) to configure the parameters returned in the response, e.g. filters for types of redeemables or sorting rules like `BEST_DEAL` or `LEAST_DEAL`.
 
@@ -58,10 +58,10 @@ To show a couple of the use cases that are possible with the qualifications API,
 
 The customer is assigned 2 vouchers.
 
-| **Campaign** | **Details** |
-|:---|:---|
-| Gift card campaign | The gift voucher maIxGd5r can be used by the owner of the code only |
-| Discount campaign<br>camp_f78wOLL9cE2WCSdtliT0UIh0  | Voucher code vm3HkNF2 from a 10% discount for BOSCH products redeemable by the owners of the code. |
+| **Campaign**                                       | **Details**                                                                                        |
+| :------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
+| Gift card campaign                                 | The gift voucher maIxGd5r can be used by the owner of the code only                                |
+| Discount campaign<br>camp_f78wOLL9cE2WCSdtliT0UIh0 | Voucher code vm3HkNF2 from a 10% discount for BOSCH products redeemable by the owners of the code. |
 
 ### Promotions
 The use case assumes there are also two promotions available.
@@ -233,12 +233,12 @@ Once we know who the customer is, the Qualifications API can now return the prom
 
 This would then return the following:
 
-| **Campaign** | **Details** |
-|:---|:---|
-| Gift card campaign | The gift voucher maIxGd5r can be used by the owner of the code only |
-| Discount campaign<br>10% discount for BOSCH products  | Voucher code vm3HkNF2 from a 10% discount for BOSCH products redeemable by the owners of the code |
-| 10% for everyone on entire order | The promotion is available for anyone and gives a 10% discount |
-| 20% for Digital books for VIP customers  | The promotion is available to customers who are VIP customers and is applicable to digital books only |
+| **Campaign**                                         | **Details**                                                                                           |
+| :--------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| Gift card campaign                                   | The gift voucher maIxGd5r can be used by the owner of the code only                                   |
+| Discount campaign<br>10% discount for BOSCH products | Voucher code vm3HkNF2 from a 10% discount for BOSCH products redeemable by the owners of the code     |
+| 10% for everyone on entire order                     | The promotion is available for anyone and gives a 10% discount                                        |
+| 20% for Digital books for VIP customers              | The promotion is available to customers who are VIP customers and is applicable to digital books only |
 
 ![Offers Available for logged in customers](https://files.readme.io/fff83fa-campaign_recipes_qualification_checking_eligibility_availableOffersLoggedIn.png "Offers Available for logged in customers")
 

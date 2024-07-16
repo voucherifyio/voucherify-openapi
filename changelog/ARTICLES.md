@@ -3,7 +3,7 @@
 
 --------------------
 
-Older changes in [DEPRECATED.md](DEPRECATED.md)
+Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 

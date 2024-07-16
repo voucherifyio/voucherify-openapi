@@ -17,7 +17,7 @@ export const buildUpdateMdTablesFromOpenapi = async () => {
   const stm = new SchemaToMarkdownTable(
     openApi.components.schemas,
     RenderMode.List,
-    ExamplesRenderedAs.PartOfDescription
+    ExamplesRenderedAs.PartOfDescription,
   );
   let doneSuccessfully = true;
 
@@ -26,7 +26,7 @@ export const buildUpdateMdTablesFromOpenapi = async () => {
       const fileName = `${objectName}.md`;
       await fs.writeFile(
         path.join(...PATH_TO_GERENATED_TABLES, fileName),
-        stm.render(objectName)
+        stm.render(objectName),
       );
       console.log(`Generated markdown table in ${fileName}`);
     } catch (e) {
@@ -53,18 +53,18 @@ export const updateMdTablesInDoc = async () => {
 
       // Find block with table by part of the markdown table syntax
       const contentBlockIndexWithTableToReplace = fileContentBlocks.findIndex(
-        (block) => block.indexOf("|:-----") >= 0
+        (block) => block.indexOf("|:-----") >= 0,
       );
 
       if (contentBlockIndexWithTableToReplace < 0) {
         throw new Error(
-          `Could not find table to replace in file ${docFile} (object: ${objectName}) `
+          `Could not find table to replace in file ${docFile} (object: ${objectName}) `,
         );
       }
 
       const additionalBlockquotes =
         fileContentBlocks[contentBlockIndexWithTableToReplace].match(
-          /^\>.*$/gm
+          /^\>.*$/gm,
         );
 
       const contentBeforeTable = fileContentBlocks
@@ -76,7 +76,7 @@ export const updateMdTablesInDoc = async () => {
 
       const newTable = (
         await fs.readFile(
-          path.join(...PATH_TO_GENERATED_TABLES, `${objectName}.md`)
+          path.join(...PATH_TO_GENERATED_TABLES, `${objectName}.md`),
         )
       ).toString();
       // .replace((/^\# .*$/m), ''); // Remove first header as in readme.io it already exists
@@ -104,7 +104,7 @@ export const updateMdTablesInDoc = async () => {
 
   if (!doneSuccessfully) {
     console.log("Failed to build md tables from openapi");
-    return;
+    throw new Error("Failed to build md tables from openapi");
   }
 
   await updateMdTablesInDoc();

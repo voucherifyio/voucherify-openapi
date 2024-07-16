@@ -12,15 +12,14 @@ import { updateWebhooksDocumentationTitles } from "./update-webhooks-documentati
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-//logic to be moved to manage-project!!!
 export const main = async ({ _version }: { _version: string }) => {
   if (_version) {
     version = _version;
   }
   await prepareWebhooksDocumentation();
   await uploadOpenApiFileWithMaxNumberOfAttempts(version, 1);
-  console.log(colors.green("Sleeping 10s"));
-  await sleep(10000);
+  console.log(colors.green("Sleeping 25s"));
+  await sleep(25000);
   await uploadReferenceDocsWithMaxNumberOfAttempts(version, 2);
   console.log(colors.green("UPDATING DOCS TITLES..."));
   await updateWebhooksDocumentationTitles(version);

@@ -45,7 +45,6 @@ const main = async ({
   update?: boolean;
 }) => {
   if (!(await validate({ help, version, create, update }))) {
-    console.log(0);
     return;
   }
   if (create) {
@@ -59,10 +58,12 @@ const main = async ({
     ),
   );
   await buildAndUpdateMdTables();
+  console.log(colors.green("Sleeping 90s"));
+  await sleep(90000);
   await uploadImagesUsedInMdFiles();
   await uploadGuideFiles(version);
   await uploadReferenceDocsWithMaxNumberOfAttempts(version, 2);
-  await uploadWebhookDefinitions();
+  await uploadWebhookDefinitions({ _version: version });
 };
 
 const uploadOpenApiFileWithMaxNumberOfAttempts = async (
@@ -174,7 +175,6 @@ const uploadReferenceDocsWithMaxNumberOfAttempts = async (
   maxNumberOfUploadingAttempts = 3,
 ) => {
   console.log(colors.green("UPLOADING REFERENCE DOC FILES..."));
-  await sleep(60000);
   for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
     const { success, error } = await runCliProcess({
       command: `rdme docs ./docs/reference-docs --version=${version}`,

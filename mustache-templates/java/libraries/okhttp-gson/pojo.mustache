@@ -453,11 +453,6 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
   * @throws IOException if the JSON Element is invalid with respect to {{classname}}
   */
   public static void validateJsonElement(JsonElement jsonElement) throws IOException {
-      if (jsonElement == null) {
-        if (!{{classname}}.openapiRequiredFields.isEmpty()) { // has required fields but JSON element is null
-          throw new IllegalArgumentException(String.format("The required field(s) %s in {{{classname}}} is not found in the empty JSON string", {{classname}}.openapiRequiredFields.toString()));
-        }
-      }
       {{^hasChildren}}
       {{^isAdditionalPropertiesTrue}}
 
@@ -471,13 +466,6 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
       {{/isAdditionalPropertiesTrue}}
       {{#requiredVars}}
       {{#-first}}
-
-      // check to make sure all required properties/fields are present in the JSON string
-      for (String requiredField : {{classname}}.openapiRequiredFields) {
-        if (jsonElement.getAsJsonObject().get(requiredField) == null) {
-          throw new IllegalArgumentException(String.format("The required field `%s` is not found in the JSON string: %s", requiredField, jsonElement.toString()));
-        }
-      }
       {{/-first}}
       {{/requiredVars}}
       {{/hasChildren}}
@@ -489,10 +477,6 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
       {{#isArray}}
       {{#items.isModel}}
       {{#required}}
-      // ensure the json data is an array
-      if (!jsonObj.get("{{{baseName}}}").isJsonArray()) {
-        throw new IllegalArgumentException(String.format("Expected the field `{{{baseName}}}` to be an array in the JSON string but got `%s`", jsonObj.get("{{{baseName}}}").toString()));
-      }
 
       JsonArray jsonArray{{name}} = jsonObj.getAsJsonArray("{{{baseName}}}");
       // validate the required field `{{{baseName}}}` (array)
@@ -501,43 +485,19 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
       };
       {{/required}}
       {{^required}}
-      if (jsonObj.get("{{{baseName}}}") != null && !jsonObj.get("{{{baseName}}}").isJsonNull()) {
-        JsonArray jsonArray{{name}} = jsonObj.getAsJsonArray("{{{baseName}}}");
-        if (jsonArray{{name}} != null) {
-          // ensure the json data is an array
-          if (!jsonObj.get("{{{baseName}}}").isJsonArray()) {
-            throw new IllegalArgumentException(String.format("Expected the field `{{{baseName}}}` to be an array in the JSON string but got `%s`", jsonObj.get("{{{baseName}}}").toString()));
-          }
-
-          // validate the optional field `{{{baseName}}}` (array)
-          for (int i = 0; i < jsonArray{{name}}.size(); i++) {
-            {{{items.dataType}}}.validateJsonElement(jsonArray{{name}}.get(i));
-          };
-        }
-      }
       {{/required}}
       {{/items.isModel}}
       {{^items.isModel}}
       {{^required}}
-      // ensure the optional json data is an array if present
-      if (jsonObj.get("{{{baseName}}}") != null && !jsonObj.get("{{{baseName}}}").isJsonNull() && !jsonObj.get("{{{baseName}}}").isJsonArray()) {
-        throw new IllegalArgumentException(String.format("Expected the field `{{{baseName}}}` to be an array in the JSON string but got `%s`", jsonObj.get("{{{baseName}}}").toString()));
-      }
       {{/required}}
       {{#required}}
-      // ensure the required json array is present
-      if (jsonObj.get("{{{baseName}}}") == null) {
-        throw new IllegalArgumentException("Expected the field `linkedContent` to be an array in the JSON string but got `null`");
-      } else if (!jsonObj.get("{{{baseName}}}").isJsonArray()) {
-        throw new IllegalArgumentException(String.format("Expected the field `{{{baseName}}}` to be an array in the JSON string but got `%s`", jsonObj.get("{{{baseName}}}").toString()));
-      }
       {{/required}}
       {{/items.isModel}}
       {{/isArray}}
       {{^isContainer}}
       {{#isString}}
       if ({{#notRequiredOrIsNullable}}(jsonObj.get("{{{baseName}}}") != null && !jsonObj.get("{{{baseName}}}").isJsonNull()) && {{/notRequiredOrIsNullable}}!jsonObj.get("{{{baseName}}}").isJsonPrimitive()) {
-        throw new IllegalArgumentException(String.format("Expected the field `{{{baseName}}}` to be a primitive type in the JSON string but got `%s`", jsonObj.get("{{{baseName}}}").toString()));
+        return;
       }
       {{/isString}}
       {{#isEnum}}
@@ -547,12 +507,10 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
         if (objectElement != null && !objectElement.isJsonNull()) {
           {{datatypeWithEnum}}.fromValue(objectElement.getAsString());
         } else {
-          throw new IllegalArgumentException("Expected the field `{{{baseName}}}` to be not null");
+          return;
         }
       } catch (IllegalArgumentException e) {
-        if(jsonObj.get("{{{baseName}}}") != null) {
-          throw new IllegalArgumentException(String.format("Expected the field `{{{baseName}}}` to be a valid element of {{datatypeWithEnum}} enum got `%s` instead", jsonObj.get("{{{baseName}}}").toString()));
-        }
+          return;
       }
       {{/isEnum}}
       {{#isModel}}
@@ -581,7 +539,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
           break;
       {{/mappedModels}}
         default:
-          throw new IllegalArgumentException(String.format("The value of the `{{{propertyBaseName}}}` field `%s` does not match any key defined in the discriminator's mapping.", discriminatorValue));
+          return;
       }
       {{/discriminator}}
       {{/hasChildren}}
@@ -643,7 +601,7 @@ public class {{classname}} {{#parent}}extends {{{.}}} {{/parent}}{{#vendorExtens
                    else if (entry.getValue().getAsJsonPrimitive().isBoolean())
                      instance.putAdditionalProperty(entry.getKey(), entry.getValue().getAsBoolean());
                    else
-                     throw new IllegalArgumentException(String.format("The field `%s` has unknown primitive type. Value: %s", entry.getKey(), entry.getValue().toString()));
+                     return null;
                  } else if (entry.getValue().isJsonArray()) {
                      instance.putAdditionalProperty(entry.getKey(), gson.fromJson(entry.getValue(), List.class));
                  } else { // JSON object
