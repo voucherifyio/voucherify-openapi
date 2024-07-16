@@ -1264,7 +1264,7 @@ Only a promotion that is applicable to items in the cart. `"scenario": "PRODUCTS
 
 The upsell scenario displays all the incentives within customer's reach in their cart view and encourages them to purchase additional products. `"scenario": "Upselling"`
 
-![Upselling](https://files.readme.io/8f5b50c-guides_campaign_recipes_qualification_checking_eligibility_upselling.png "Upselling")
+![Upselling](https://files.readme.io/accc476-guides_campaign_recipes_qualification_checking_eligibility_upselling.png "Upselling")
 
 ```json Request
 {
