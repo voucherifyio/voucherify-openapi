@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-07-17
+
+- Added "Case 4 - Upselling (audience only)" to the "Qualification – Checking Eligibility" article
+
 ## 2024-06-24
 
 - Added link to the Airship integration article in `Distributions.md`

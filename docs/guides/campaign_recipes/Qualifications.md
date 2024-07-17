@@ -27,7 +27,7 @@ The qualifications API can be applied (among others) for:
 There are two dedicated API Endpoints for checking eligibility:
 
 | **Endpoint**                         | **Link**                                                                               |
-|:-------------------------------------|:---------------------------------------------------------------------------------------|
+| :----------------------------------- | :------------------------------------------------------------------------------------- |
 | **POST** `/v1/qualifications`        | Check eligibility using the [server-side endpoint](ref:check-eligibility).             |
 | **POST** `/client/v1/qualifications` | Check eligibility using the [client-side endpoint](ref:check-eligibility-client-side). |
 
@@ -37,16 +37,16 @@ You can find a description of the qualification object schema in the data model 
 
 To specify the types of promotions and codes that you would like to reveal to your customers, we introduced the option of including a scenario. A scenario defines the type of content that you would like to return from all the available campaigns and standalone codes that you've created in Voucherify.
 
-| **Scenario** | **Possible Use Case** |
-|:---|:---|
-| ALL | Returns all redeemables available for the customer in one API request. |
-| CUSTOMER_WALLET | returns vouchers applicable to the customer’s cart based on the vouchers assigned to the customer’s profile. |
-| AUDIENCE_ONLY | Returns all vouchers, promotion tiers, and campaigns available to the customer. Voucherify validates the rules based on the customer profile only. |
-| PRODUCTS | Returns all promotions available for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule). |
-| PRODUCTS_DISCOUNT | Returns all promotions available for products when a discount is defined as applicable to specific item(s). |
-| PROMOTION_STACKS | Returns the applicable promotion stacks. |
-| PRODUCTS_BY_CUSTOMER | Returns all promotions available for a customer for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule). |
-| PRODUCTS_DISCOUNT_BY_CUSTOMER | Returns all promotions available for a customer for products when a discount is defined as applicable to specific item(s). |
+| **Scenario**                  | **Possible Use Case**                                                                                                                                                        |
+| :---------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ALL                           | Returns all redeemables available for the customer in one API request.                                                                                                       |
+| CUSTOMER_WALLET               | returns vouchers applicable to the customer’s cart based on the vouchers assigned to the customer’s profile.                                                                 |
+| AUDIENCE_ONLY                 | Returns all vouchers, promotion tiers, and campaigns available to the customer. Voucherify validates the rules based on the customer profile only.                           |
+| PRODUCTS                      | Returns all promotions available for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule).                |
+| PRODUCTS_DISCOUNT             | Returns all promotions available for products when a discount is defined as applicable to specific item(s).                                                                  |
+| PROMOTION_STACKS              | Returns the applicable promotion stacks.                                                                                                                                     |
+| PRODUCTS_BY_CUSTOMER          | Returns all promotions available for a customer for the products (when a discount is defined to be applied to the item or when the item is required in the validation rule). |
+| PRODUCTS_DISCOUNT_BY_CUSTOMER | Returns all promotions available for a customer for products when a discount is defined as applicable to specific item(s).                                                   |
 
 In the request, you can add [options](ref:check-eligibility) to configure the parameters returned in the response, e.g. filters for types of redeemables or sorting rules like `BEST_DEAL` or `LEAST_DEAL`.
 
@@ -58,10 +58,10 @@ To show a couple of the use cases that are possible with the qualifications API,
 
 The customer is assigned 2 vouchers.
 
-| **Campaign** | **Details** |
-|:---|:---|
-| Gift card campaign | The gift voucher maIxGd5r can be used by the owner of the code only |
-| Discount campaign<br>camp_f78wOLL9cE2WCSdtliT0UIh0  | Voucher code vm3HkNF2 from a 10% discount for BOSCH products redeemable by the owners of the code. |
+| **Campaign**                                       | **Details**                                                                                        |
+| :------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
+| Gift card campaign                                 | The gift voucher maIxGd5r can be used by the owner of the code only                                |
+| Discount campaign<br>camp_f78wOLL9cE2WCSdtliT0UIh0 | Voucher code vm3HkNF2 from a 10% discount for BOSCH products redeemable by the owners of the code. |
 
 ### Promotions
 The use case assumes there are also two promotions available.
@@ -233,12 +233,12 @@ Once we know who the customer is, the Qualifications API can now return the prom
 
 This would then return the following:
 
-| **Campaign** | **Details** |
-|:---|:---|
-| Gift card campaign | The gift voucher maIxGd5r can be used by the owner of the code only |
-| Discount campaign<br>10% discount for BOSCH products  | Voucher code vm3HkNF2 from a 10% discount for BOSCH products redeemable by the owners of the code |
-| 10% for everyone on entire order | The promotion is available for anyone and gives a 10% discount |
-| 20% for Digital books for VIP customers  | The promotion is available to customers who are VIP customers and is applicable to digital books only |
+| **Campaign**                                         | **Details**                                                                                           |
+| :--------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| Gift card campaign                                   | The gift voucher maIxGd5r can be used by the owner of the code only                                   |
+| Discount campaign<br>10% discount for BOSCH products | Voucher code vm3HkNF2 from a 10% discount for BOSCH products redeemable by the owners of the code     |
+| 10% for everyone on entire order                     | The promotion is available for anyone and gives a 10% discount                                        |
+| 20% for Digital books for VIP customers              | The promotion is available to customers who are VIP customers and is applicable to digital books only |
 
 ![Offers Available for logged in customers](https://files.readme.io/fff83fa-campaign_recipes_qualification_checking_eligibility_availableOffersLoggedIn.png "Offers Available for logged in customers")
 
@@ -1262,86 +1262,143 @@ Only a promotion that is applicable to items in the cart. `"scenario": "PRODUCTS
 ---
 ### Case 4 - Upselling (audience only)
 
-The upsell scenario displays all the incentives within customer's reach in their cart view and encourages them to purchase additional products. `"scenario": "Upselling"`
+The upsell scenario displays all the incentives within customer's reach in their cart view and encourages them to purchase additional products. `"scenario": "AUDIENCE_ONLY"`
 
-![Upselling](https://files.readme.io/8f5b50c-guides_campaign_recipes_qualification_checking_eligibility_upselling.png "Upselling")
+![Upselling](https://files.readme.io/accc476-guides_campaign_recipes_qualification_checking_eligibility_upselling.png "Upselling")
 
 ```json Request
-
 {
     "scenario": "AUDIENCE_ONLY",
-    "customer": {
-        "source_id": "test_customer_id_1",
-        "name": "John Doe",
+    "customer": { 
+        "source_id": "15072024", 
+        "name": "John Toolman", 
+        "email": "john.toolman@voucherify.io", 
         "metadata": {
-            "subscribed": true
-        },
-        "order": {
-            "status": "CREATED",
-            "metadata": {
-                "currency": "USD"
-            },
-            "items": [
-                {
-                    "quantity": 1,
-                    "price": 10000,
-                    "amount": 10000,
-                    "source_id": "GDR_Drill",
-                    "related_object": "product",
-                    "product": {
-                        "name": "Bosch Drill",
-                        "metadata": {
-                            "cateogry": "tools",
-                            "brand": "GDR",
-                            "star_rating": 4,
-                            "SKU": 10280472384
-                        }
-                    }
-                },
-                {
-                    "quantity": 1,
-                    "price": 40000,
-                    "amount": 40000,
-                    "source_id": "GRW_Stirring_Mech",
-                    "related_object": "product",
-                    "product": {
-                        "name": "Bosch Stirring Mechanism",
-                        "metadata": {
-                            "cateogry": "tools",
-                            "brand": "GRW",
-                            "star_rating": 5,
-                            "SKU": 10294856379
-                        }
+            "subscribed": false
+        }
+    },
+    "order": {
+        "items": [
+            {
+                "quantity": 1, 
+                "price": 10000,  
+                "amount": 10000,
+                "source_id": "23425235", 
+                "name": "GDR Drill",
+                "related_object": "product",
+                "product": {
+                    "metadata": {
+                        "category": "Tools",
+                        "vendor": "Bosch",
+                        "color": "gray"
                     }
                 }
-            ]
-        }
+            },
+            {
+                "quantity": 1,
+                "price": 40000,
+                "amount": 40000, 
+                "source_id": "327583490",
+                "name": "GRW Stirring Mech.", 
+                "related_object": "product",
+                "product": {
+                    "metadata": {
+                        "category": "Tools",
+                        "vendor": "Bosch",
+                        "color": "dark_green"
+                    }
+                }
+            }
+        ]
     },
     "options": {
         "limit": 30,
+        "starting_after": "null", 
+        "sorting_rule": "DEFAULT",
         "expand": [
-            "redeemable"
-        ]
+            "redeemable",
+            "validation_rules",
+            "category"
+        ],
+        "filters": {
+            "resource_type": {
+                "conditions": {
+                    "$is": [
+                        "promotion_tier"
+                    ]
+                }
+            }
+        }
     }
 }
 ```
 ```json Response
-
 {
     "redeemables": {
         "object": "list",
         "data_ref": "data",
         "data": [
             {
-                "id": "camp_wh33be7BHtYtyoIdeS5TM7ZO",
-                "object": "campaign",
-                "created_at": "2024-07-03T14:01:45.254Z",
+                "id": "promo_zEvnqe70cvuC1UZ4Dwpc8HIN",
+                "object": "promotion_tier",
+                "created_at": "2024-07-12T13:40:07.596Z",
                 "result": {
                     "discount": {
                         "type": "PERCENT",
                         "effect": "APPLY_TO_ITEMS",
-                        "percent_off": 25
+                        "percent_off": 25,
+                        "is_dynamic": false
                     }
+                },
+                "order": {
+                    "amount": 50000,
+                    "total_amount": 50000,
+                    "items": [
+                        {
+                            "object": "order_item",
+                            "source_id": "23425235",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 10000,
+                            "price": 10000,
+                            "subtotal_amount": 10000,
+                            "product": {
+                                "id": "prod_0efff3875308dc5ab8",
+                                "source_id": "23425235",
+                                "name": "GDR Drill",
+                                "metadata": {
+                                    "category": "Tools",
+                                    "vendor": "Bosch",
+                                    "color": "gray"
+                                },
+                                "price": 10000
+                            }
+                        },
+                        {
+                            "object": "order_item",
+                            "source_id": "327583490",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 40000,
+                            "price": 40000,
+                            "subtotal_amount": 40000,
+                            "product": {
+                                "id": "prod_0efff55b6308dc189f",
+                                "source_id": "327583490",
+                                "name": "GRW Stirring Mech.",
+                                "metadata": {
+                                    "category": "Tools",
+                                    "vendor": "Bosch",
+                                    "color": "dark_green"
+                                },
+                                "price": 40000
+                            }
+                        }
+                    ],
+                    "metadata": {},
+                    "customer_id": null,
+                    "referrer_id": null,
+                    "object": "order"
                 },
                 "applicable_to": {
                     "data": [
@@ -1350,7 +1407,8 @@ The upsell scenario displays all the incentives within customer's reach in their
                             "id": "prod_0efff4bd5b88dc03ee",
                             "source_id": "23787597244",
                             "strict": false,
-                            "effect": "APPLY_TO_EVERY"
+                            "effect": "APPLY_TO_EVERY",
+                            "aggregated_quantity_limit": 1
                         }
                     ],
                     "total": 1,
@@ -1363,19 +1421,103 @@ The upsell scenario displays all the incentives within customer's reach in their
                     "data_ref": "data",
                     "object": "list"
                 },
-                "metadata": {},
-                "name": "Mix it Up with Power"
+                "metadata": {
+                    "button_link": "https://www.diytoolkit.com/products/mixing-accessories/bosch",
+                    "button_text": "ADD MIXING ACCESSORIES",
+                    "terms_and_conditions": [
+                        "Discount applies only to BOSCH mixing accessories with the purchase of the BOSCH Stirring Mechanism.",
+                        "Limit one discounted accessory per customer."
+                    ]
+                },
+                "categories": [],
+                "name": "Mix it Up with Power",
+                "banner": "Buy any Bosch stirring mechanisms and get <b>25% off any Bosch mixing accessories</b>.",
+                "campaign_id": "camp_BpaPSw3Ij0T0Hd7McHZn5hPF",
+                "campaign_name": "Upselling",
+                "validation_rules_assignments": {
+                    "object": "list",
+                    "data_ref": "data",
+                    "data": [
+                        {
+                            "id": "asgm_kPomkMQRhDGCSnsf",
+                            "rule_id": "val_Znc2zJvKopJm",
+                            "related_object_id": "promo_zEvnqe70cvuC1UZ4Dwpc8HIN",
+                            "related_object_type": "promotion_tier",
+                            "object": "validation_rules_assignment",
+                            "validation_status": "PARTIALLY_VALID",
+                            "validation_omitted_rules": [
+                                "1"
+                            ]
+                        }
+                    ],
+                    "total": 1
+                }
             },
             {
-                "id": "camp_y5sKLTJThlKa2xzSg0dpdMuZ",
-                "object": "campaign",
-                "created_at": "2024-07-03T13:56:18.389Z",
+                "id": "promo_NNdPNMKlHqBWLEOMD7F29Zbh",
+                "object": "promotion_tier",
+                "created_at": "2024-07-12T13:40:07.161Z",
                 "result": {
                     "discount": {
                         "type": "PERCENT",
                         "effect": "APPLY_TO_ORDER",
-                        "percent_off": 15
+                        "percent_off": 15,
+                        "is_dynamic": false
                     }
+                },
+                "order": {
+                    "amount": 50000,
+                    "discount_amount": 7500,
+                    "total_discount_amount": 7500,
+                    "total_amount": 42500,
+                    "applied_discount_amount": 7500,
+                    "total_applied_discount_amount": 7500,
+                    "items": [
+                        {
+                            "object": "order_item",
+                            "source_id": "23425235",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 10000,
+                            "price": 10000,
+                            "subtotal_amount": 10000,
+                            "product": {
+                                "id": "prod_0efff3875308dc5ab8",
+                                "source_id": "23425235",
+                                "name": "GDR Drill",
+                                "metadata": {
+                                    "category": "Tools",
+                                    "vendor": "Bosch",
+                                    "color": "gray"
+                                },
+                                "price": 10000
+                            }
+                        },
+                        {
+                            "object": "order_item",
+                            "source_id": "327583490",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 40000,
+                            "price": 40000,
+                            "subtotal_amount": 40000,
+                            "product": {
+                                "id": "prod_0efff55b6308dc189f",
+                                "source_id": "327583490",
+                                "name": "GRW Stirring Mech.",
+                                "metadata": {
+                                    "category": "Tools",
+                                    "vendor": "Bosch",
+                                    "color": "dark_green"
+                                },
+                                "price": 40000
+                            }
+                        }
+                    ],
+                    "metadata": {},
+                    "customer_id": null,
+                    "referrer_id": null,
+                    "object": "order"
                 },
                 "applicable_to": {
                     "data": [],
@@ -1389,20 +1531,142 @@ The upsell scenario displays all the incentives within customer's reach in their
                     "data_ref": "data",
                     "object": "list"
                 },
-                "metadata": {},
-                "name": "Complete Your Set"
+                "metadata": {
+                    "button_link": "https://www.diytoolkit.com/products/tools/bosch",
+                    "button_text": "ADD ADDITIONAL BOSCH TOOL",
+                    "terms_and_conditions": [
+                        "Discount applies to the entire purchase.",
+                        "Must buy 3 BOSCH power tools to qualify.",
+                        "Cannot be combined with other coupons or promotions."
+                    ]
+                },
+                "categories": [
+                    {
+                        "id": "cat_0f00fcef1f89b84497",
+                        "name": "Exclusive",
+                        "hierarchy": 1,
+                        "created_at": "2024-07-04T09:12:22.909Z",
+                        "object": "category",
+                        "stacking_rules_type": "EXCLUSIVE"
+                    }
+                ],
+                "name": "Complete Your Set",
+                "banner": "Add 3 Bosch power tools to your cart and <b>save 15% on the entire purchase</b>.",
+                "campaign_id": "camp_BpaPSw3Ij0T0Hd7McHZn5hPF",
+                "campaign_name": "Upselling",
+                "validation_rules_assignments": {
+                    "object": "list",
+                    "data_ref": "data",
+                    "data": [
+                        {
+                            "id": "asgm_wPUdL0bcM0a6ghsz",
+                            "rule_id": "val_1UieF6chm4ZG",
+                            "related_object_id": "promo_NNdPNMKlHqBWLEOMD7F29Zbh",
+                            "related_object_type": "promotion_tier",
+                            "object": "validation_rules_assignment",
+                            "validation_status": "PARTIALLY_VALID",
+                            "validation_omitted_rules": [
+                                "1"
+                            ]
+                        }
+                    ],
+                    "total": 1
+                }
             },
             {
-                "id": "camp_Y5ZRGz534MNt4Hk0PgmGC5aw",
-                "object": "campaign",
-                "created_at": "2024-07-03T13:51:21.481Z",
+                "id": "promo_efLUWNBKOeKvfMwrDCU6QdKH",
+                "object": "promotion_tier",
+                "created_at": "2024-07-12T13:40:06.969Z",
                 "result": {
                     "discount": {
                         "type": "UNIT",
                         "effect": "ADD_MISSING_ITEMS",
                         "unit_off": 1,
-                        "unit_type": "prod_0efff23a1648dc2df0"
+                        "unit_type": "prod_0efff23a1648dc2df0",
+                        "product": {
+                            "id": "prod_0efff23a1648dc2df0",
+                            "source_id": "2857934875983543",
+                            "name": "Bosch Rapid Charger"
+                        },
+                        "is_dynamic": false
                     }
+                },
+                "order": {
+                    "amount": 53500,
+                    "initial_amount": 50000,
+                    "items_discount_amount": 3500,
+                    "total_discount_amount": 3500,
+                    "total_amount": 50000,
+                    "items_applied_discount_amount": 3500,
+                    "total_applied_discount_amount": 3500,
+                    "items": [
+                        {
+                            "object": "order_item",
+                            "source_id": "23425235",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 10000,
+                            "price": 10000,
+                            "subtotal_amount": 10000,
+                            "product": {
+                                "id": "prod_0efff3875308dc5ab8",
+                                "source_id": "23425235",
+                                "name": "GDR Drill",
+                                "metadata": {
+                                    "category": "Tools",
+                                    "vendor": "Bosch",
+                                    "color": "gray"
+                                },
+                                "price": 10000
+                            }
+                        },
+                        {
+                            "object": "order_item",
+                            "source_id": "327583490",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 40000,
+                            "price": 40000,
+                            "subtotal_amount": 40000,
+                            "product": {
+                                "id": "prod_0efff55b6308dc189f",
+                                "source_id": "327583490",
+                                "name": "GRW Stirring Mech.",
+                                "metadata": {
+                                    "category": "Tools",
+                                    "vendor": "Bosch",
+                                    "color": "dark_green"
+                                },
+                                "price": 40000
+                            }
+                        },
+                        {
+                            "object": "order_item",
+                            "product_id": "prod_0efff23a1648dc2df0",
+                            "quantity": 1,
+                            "discount_quantity": 1,
+                            "initial_quantity": 0,
+                            "amount": 3500,
+                            "discount_amount": 3500,
+                            "initial_amount": 0,
+                            "applied_discount_amount": 3500,
+                            "applied_discount_quantity": 1,
+                            "applied_quantity": 1,
+                            "applied_quantity_amount": 3500,
+                            "price": 3500,
+                            "subtotal_amount": 0,
+                            "product": {
+                                "id": "prod_0efff23a1648dc2df0",
+                                "source_id": "2857934875983543",
+                                "name": "Bosch Rapid Charger",
+                                "price": 3500
+                            }
+                        }
+                    ],
+                    "metadata": {},
+                    "customer_id": null,
+                    "referrer_id": null,
+                    "object": "order"
                 },
                 "applicable_to": {
                     "data": [],
@@ -1416,30 +1680,103 @@ The upsell scenario displays all the incentives within customer's reach in their
                     "data_ref": "data",
                     "object": "list"
                 },
-                "metadata": {},
-                "name": "Stay Charged"
+                "metadata": {
+                    "button_link": "https://www.diytoolkit.com/products/cordless-tool-kits",
+                    "button_text": "ADD CORDLESS TOOL KIT.",
+                    "terms_and_conditions": [
+                        "Free charger with purchase of cordless tool kits only.",
+                        "Limit one free charger per customer."
+                    ]
+                },
+                "categories": [],
+                "name": "Stay charged",
+                "banner": "Buy any cordless tool kit and receive a <b>free rapid charger</b>.",
+                "campaign_id": "camp_BpaPSw3Ij0T0Hd7McHZn5hPF",
+                "campaign_name": "Upselling",
+                "validation_rules_assignments": {
+                    "object": "list",
+                    "data_ref": "data",
+                    "data": [
+                        {
+                            "id": "asgm_w7NCg6C4f2Hqrlo4",
+                            "rule_id": "val_ZrnfCjDiSvIm",
+                            "related_object_id": "promo_efLUWNBKOeKvfMwrDCU6QdKH",
+                            "related_object_type": "promotion_tier",
+                            "object": "validation_rules_assignment",
+                            "validation_status": "PARTIALLY_VALID",
+                            "validation_omitted_rules": [
+                                "1"
+                            ]
+                        }
+                    ],
+                    "total": 1
+                }
             },
             {
-                "id": "camp_OCSDKKQoC4h6MwWJ9TcJ79bu",
-                "object": "campaign",
-                "created_at": "2024-07-03T13:39:26.731Z",
+                "id": "promo_z0mYFqqnYo8eR8LW7HC2dWTk",
+                "object": "promotion_tier",
+                "created_at": "2024-07-12T13:40:06.805Z",
                 "result": {
                     "discount": {
                         "type": "PERCENT",
                         "effect": "APPLY_TO_ITEMS",
-                        "percent_off": 20
+                        "percent_off": 20,
+                        "is_dynamic": false
                     }
                 },
-                "applicable_to": {
-                    "data": [
+                "order": {
+                    "amount": 50000,
+                    "total_amount": 50000,
+                    "items": [
                         {
-                            "object": "products_collection",
-                            "id": "pc_BKKzXVL6vaLQXn1ASFsvi3FP",
-                            "strict": false,
-                            "effect": "APPLY_TO_EVERY"
+                            "object": "order_item",
+                            "source_id": "23425235",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 10000,
+                            "price": 10000,
+                            "subtotal_amount": 10000,
+                            "product": {
+                                "id": "prod_0efff3875308dc5ab8",
+                                "source_id": "23425235",
+                                "name": "GDR Drill",
+                                "metadata": {
+                                    "category": "Tools",
+                                    "vendor": "Bosch",
+                                    "color": "gray"
+                                },
+                                "price": 10000
+                            }
+                        },
+                        {
+                            "object": "order_item",
+                            "source_id": "327583490",
+                            "related_object": "product",
+                            "quantity": 1,
+                            "amount": 40000,
+                            "price": 40000,
+                            "subtotal_amount": 40000,
+                            "product": {
+                                "id": "prod_0efff55b6308dc189f",
+                                "source_id": "327583490",
+                                "name": "GRW Stirring Mech.",
+                                "metadata": {
+                                    "category": "Tools",
+                                    "vendor": "Bosch",
+                                    "color": "dark_green"
+                                },
+                                "price": 40000
+                            }
                         }
                     ],
-                    "total": 1,
+                    "metadata": {},
+                    "customer_id": null,
+                    "referrer_id": null,
+                    "object": "order"
+                },
+                "applicable_to": {
+                    "data": [],
+                    "total": 0,
                     "data_ref": "data",
                     "object": "list"
                 },
@@ -1449,13 +1786,109 @@ The upsell scenario displays all the incentives within customer's reach in their
                     "data_ref": "data",
                     "object": "list"
                 },
-                "metadata": {},
-                "name": "Enhance Your Workshop"
-                   }
+                "metadata": {
+                    "button_link": "https://www.diytoolkit.com/products/stands-and-tables",
+                    "button_text": "ADD BENCH TOOL",
+                    "terms_and_conditions": [
+                        "Discount applies only to tool stands and tables.",
+                        "Cannot be combined with other coupons or promotions."
+                    ]
+                },
+                "categories": [
+                    {
+                        "id": "cat_0f00fcef1f89b84497",
+                        "name": "Exclusive",
+                        "hierarchy": 1,
+                        "created_at": "2024-07-04T09:12:22.909Z",
+                        "object": "category",
+                        "stacking_rules_type": "EXCLUSIVE"
+                    }
+                ],
+                "name": "Enhance Your Workshop",
+                "banner": "Purchase a bench tool and get <b>20% discount</b> on tool stands and tables.",
+                "campaign_id": "camp_BpaPSw3Ij0T0Hd7McHZn5hPF",
+                "campaign_name": "Upselling",
+                "validation_rules_assignments": {
+                    "object": "list",
+                    "data_ref": "data",
+                    "data": [
+                        {
+                            "id": "asgm_jGuPwTMgwN2A871D",
+                            "rule_id": "val_S82j82DYDf5H",
+                            "related_object_id": "promo_z0mYFqqnYo8eR8LW7HC2dWTk",
+                            "related_object_type": "promotion_tier",
+                            "object": "validation_rules_assignment",
+                            "validation_status": "PARTIALLY_VALID",
+                            "validation_omitted_rules": [
+                                "1"
+                            ]
+                        }
+                    ],
+                    "total": 1
+                }
+            }
         ],
         "total": 4,
-        "has_more": false
+        "has_more": false,
     },
+    "tracking_id": "track_6G9+vdeGnx+Zf09lzSq5dw==",
+    "order": {
+        "items": [
+            {
+                "object": "order_item",
+                "source_id": "23425235",
+                "related_object": "product",
+                "quantity": 1,
+                "amount": 10000,
+                "price": 10000,
+                "product": {
+                    "id": "prod_0efff3875308dc5ab8",
+                    "source_id": "23425235",
+                    "name": "GDR Drill",
+                    "metadata": {
+                        "category": "Tools",
+                        "vendor": "Bosch",
+                        "color": "gray"
+                    },
+                    "price": 10000
+                }
+            },
+            {
+                "object": "order_item",
+                "source_id": "327583490",
+                "related_object": "product",
+                "quantity": 1,
+                "amount": 40000,
+                "price": 40000,
+                "product": {
+                    "id": "prod_0efff55b6308dc189f",
+                    "source_id": "327583490",
+                    "name": "GRW Stirring Mech.",
+                    "metadata": {
+                        "category": "Tools",
+                        "vendor": "Bosch",
+                        "color": "dark_green"
+                    },
+                    "price": 40000
+                }
+            }
+        ],
+        "metadata": {},
+        "customer_id": null,
+        "referrer_id": null,
+        "object": "order"
+    },
+    "stacking_rules": {
+        "redeemables_limit": 30,
+        "applicable_redeemables_limit": 5,
+        "applicable_exclusive_redeemables_limit": 1,
+        "exclusive_categories": [
+            "cat_0f00fcef1f89b84497"
+        ],
+        "joint_categories": [],
+        "redeemables_application_mode": "ALL",
+        "redeemables_sorting_rule": "REQUESTED_ORDER"
+    }
 }
 ```
 
