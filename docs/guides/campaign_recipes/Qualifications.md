@@ -1262,13 +1262,12 @@ Only a promotion that is applicable to items in the cart. `"scenario": "PRODUCTS
 ---
 ### Case 4 - Upselling (audience only)
 
-The upsell scenario displays all the incentives within customer's reach in their cart view and encourages them to purchase additional products. `"scenario": "Upselling"`
+The upsell scenario displays all the incentives within customer's reach in their cart view and encourages them to purchase additional products. `"scenario": "AUDIENCE_ONLY"`
 
 ![Upselling](https://files.readme.io/accc476-guides_campaign_recipes_qualification_checking_eligibility_upselling.png "Upselling")
 
 ```json Request
 {
-   {
     "scenario": "AUDIENCE_ONLY",
     "customer": { 
         "source_id": "15072024", 
@@ -1318,7 +1317,8 @@ The upsell scenario displays all the incentives within customer's reach in their
         "sorting_rule": "DEFAULT",
         "expand": [
             "redeemable",
-            "validation_rules"
+            "validation_rules",
+            "category"
         ],
         "filters": {
             "resource_type": {
@@ -1333,7 +1333,6 @@ The upsell scenario displays all the incentives within customer's reach in their
 }
 ```
 ```json Response
-
 {
     "redeemables": {
         "object": "list",
@@ -1430,6 +1429,7 @@ The upsell scenario displays all the incentives within customer's reach in their
                         "Limit one discounted accessory per customer."
                     ]
                 },
+                "categories": [],
                 "name": "Mix it Up with Power",
                 "banner": "Buy any Bosch stirring mechanisms and get <b>25% off any Bosch mixing accessories</b>.",
                 "campaign_id": "camp_BpaPSw3Ij0T0Hd7McHZn5hPF",
@@ -1540,6 +1540,16 @@ The upsell scenario displays all the incentives within customer's reach in their
                         "Cannot be combined with other coupons or promotions."
                     ]
                 },
+                "categories": [
+                    {
+                        "id": "cat_0f00fcef1f89b84497",
+                        "name": "Exclusive",
+                        "hierarchy": 1,
+                        "created_at": "2024-07-04T09:12:22.909Z",
+                        "object": "category",
+                        "stacking_rules_type": "EXCLUSIVE"
+                    }
+                ],
                 "name": "Complete Your Set",
                 "banner": "Add 3 Bosch power tools to your cart and <b>save 15% on the entire purchase</b>.",
                 "campaign_id": "camp_BpaPSw3Ij0T0Hd7McHZn5hPF",
@@ -1678,6 +1688,7 @@ The upsell scenario displays all the incentives within customer's reach in their
                         "Limit one free charger per customer."
                     ]
                 },
+                "categories": [],
                 "name": "Stay charged",
                 "banner": "Buy any cordless tool kit and receive a <b>free rapid charger</b>.",
                 "campaign_id": "camp_BpaPSw3Ij0T0Hd7McHZn5hPF",
@@ -1783,6 +1794,16 @@ The upsell scenario displays all the incentives within customer's reach in their
                         "Cannot be combined with other coupons or promotions."
                     ]
                 },
+                "categories": [
+                    {
+                        "id": "cat_0f00fcef1f89b84497",
+                        "name": "Exclusive",
+                        "hierarchy": 1,
+                        "created_at": "2024-07-04T09:12:22.909Z",
+                        "object": "category",
+                        "stacking_rules_type": "EXCLUSIVE"
+                    }
+                ],
                 "name": "Enhance Your Workshop",
                 "banner": "Purchase a bench tool and get <b>20% discount</b> on tool stands and tables.",
                 "campaign_id": "camp_BpaPSw3Ij0T0Hd7McHZn5hPF",
@@ -1808,7 +1829,7 @@ The upsell scenario displays all the incentives within customer's reach in their
             }
         ],
         "total": 4,
-        "has_more": false
+        "has_more": false,
     },
     "tracking_id": "track_6G9+vdeGnx+Zf09lzSq5dw==",
     "order": {
