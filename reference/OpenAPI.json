@@ -40674,6 +40674,9 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsResponseBase"
+          },
+          {
+            "$ref": "#/components/schemas/ManagementProjectsSideKeys"
           }
         ]
       },
@@ -40772,6 +40775,47 @@
         "required": [
           "default_code_config"
         ]
+      },
+      "ManagementProjectsSideKeys": {
+        "type": "object",
+        "title": "Project and Side Keys",
+        "description": "Returns `app_id` and `app_token` for the server-side and client-side authentication.",
+        "properties": {
+          "server_side_key": {
+            "type": "object",
+            "title": "`server_side_key`",
+            "description": "Contains the `app_id` and `app_token` to authenticate server-side requests.",
+            "properties": {
+              "app_id": {
+                "type": "string",
+                "title": "`app_id`",
+                "description": "Application ID to be used as `X-App-Id` header in every HTTP request."
+              },
+              "app_token": {
+                "type": "string",
+                "title": "`app_token`",
+                "description": "Application token to be used as `X-App-Token` header in every HTTP request.\n\nThe application token (secret key) for the server-side authentication is visible in the Project Settings for 14 days when it is first generated in a newly-created project. Write your application token down and keep it in a safe place."
+              }
+            }
+          },
+          "client_side_key": {
+            "type": "object",
+            "title": "`client_side_key`",
+            "description": "Contains the `app_id` and `app_token` to authenticate client-side requests.",
+            "properties": {
+              "app_id": {
+                "type": "string",
+                "title": "`app_id`",
+                "description": "Application ID to be used as `X-App-Id` header in every HTTP request."
+              },
+              "app_token": {
+                "type": "string",
+                "title": "`app_token`",
+                "description": "Application token to be used as `X-App-Token` header in every HTTP request.\n\nThe application token (secret key) for the client-side authentication is visible in the Project Settings for 14 days when it is first generated in a newly-created project. Write your application token down and keep it in a safe place."
+              }
+            }
+          }
+        }
       },
       "ManagementProjectsUserCreateRequestBody": {
         "type": "object",
@@ -40884,7 +40928,7 @@
           },
           "projects": {
             "type": "object",
-            "description": "Lists key-value pairs, where the key is the project to which the user is assigned. The value is the role assigned in a given project.",
+            "description": "Lists key-value pairs, where the key is the project to which the user is assigned. The value is the role assigned in a given project. The predefined Voucherify roles are: `ADMIN`, `USER`, `VIEWER`, `MERCHANT`, `USER_RESTRICTED`",
             "additionalProperties": {
               "type": "string",
               "description": "Returns the role the user has in the project."
@@ -40904,6 +40948,56 @@
           "projects",
           "role",
           "is_owner"
+        ]
+      },
+      "ManagementProjectsUserInviteCreateRequestBody": {
+        "type": "object",
+        "description": "Request body schema for **POST** `/management/v1/projects/users/invite`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ManagementProjectsUserInviteParameters"
+          }
+        ]
+      },
+      "ManagementProjectsUserInviteParameters": {
+        "type": "object",
+        "title": "New User Invitation Parameters",
+        "description": "Invite a new user to Voucherify and assign projects and roles to them.",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address to which the invitation will be sent. Must be a valid email address.",
+            "example": "alex.doe@your-domain-name.com"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "First name of the person who will receive the invitation. The name will be used in the user profile.",
+            "example": "Alex"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "Last name of the person who will receive the invitation. The name will be used in the user profile.",
+            "example": "Doe"
+          },
+          "projects": {
+            "type": "object",
+            "title": "Project and Role",
+            "description": "In the key, provide the project ID to which the new user will be assigned. In the value, provide the role which the user will have in the project. The predefined Voucherify roles are: `ADMIN`, `USER`, `VIEWER`, `MERCHANT`, `USER_RESTRICTED`. Send a custom role ID (Enterprise feature) to assign a custom role.",
+            "additionalProperties": {
+              "type": "string",
+              "title": "project_id",
+              "description": "Defines the project to which the user will be assigned and the role in the project."
+            },
+            "example": {
+              "proj_ExPr0jID": "USER"
+            }
+          }
+        },
+        "required": [
+          "email",
+          "first_name",
+          "last_name",
+          "projects"
         ]
       },
       "ManagementProjectsStackingRulesCreateRequestBody": {
@@ -82691,6 +82785,105 @@
                       "details": "Cannot find user with id user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
                       "request_id": "v-0e9a1b4b98c0a98ffc",
                       "resource_id": "user_VNBwrq3d4OaxJjoykkwIRTbqgnYgjCl",
+                      "resource_type": "user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/users/invite": {
+      "parameters": [],
+      "post": {
+        "operationId": "invite-user",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Invite a New User",
+        "description": "Sends an invitation to an email address that has not been used yet as a Voucherify user login.\n\nYou can specify the projects to which the invited user will be assigned and define their roles.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Defines the details of the invitation, the project, and roles to which the user will be assigned.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsUserInviteCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Returns no content if the invitation has been sent successfully."
+          },
+          "400": {
+            "description": "Returns an error if the payload includes an incorrect role.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "used_incorrect_role",
+                      "message": "Used incorrect role",
+                      "details": "The role 'VICE_ADMIN' is incorrect",
+                      "request_id": "v-0f0f63a9f00cdbd981"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the project does not exist or has been deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_4r3Ul0St",
+                      "request_id": "v-0f0f62fe19ccdbd8bc",
+                      "resource_id": "proj_4r3Ul0St",
+                      "resource_type": "project"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns an error if the email address belongs to a Voucherify user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Duplicate Code": {
+                    "value": {
+                      "code": 409,
+                      "key": "duplicate_found",
+                      "message": "Duplicated resource found",
+                      "details": "Duplicated user exists with email your.email@domain.com",
+                      "resource_id": "your.email@domain.com",
                       "resource_type": "user"
                     }
                   }
