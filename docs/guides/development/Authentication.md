@@ -18,17 +18,18 @@ Voucherify uses two pairs of keys — one for server applications (*back-end*) a
 
 ## Application Authentication
 
-To get access to the Voucherify API, the client application needs to pass `Application ID` and `Application Secret Key`. You can get (and reset) these tokens in the *Project settings*.
+To access Voucherify API, the client application needs to pass `Application ID` and `Application Secret Key`. To find your keys, head to the Project Settings and in the General tab scroll down to the Application Keys section. Below that section, you can generate your integration keys and see the client-side keys.
 
-> 🚧 Time limit for token visibility
+By default, there are two pairs of authentication keys. The first, Application Keys, are meant to authorize your requests to Voucherify API. You can create more Application Keys for each user. The second, Client-Side Keys, are meant for publicly available client applications (mobile apps and web applications).
+
+A generated pair of Application ID and Application Secret Key must be attached to every HTTP request as custom headers: `X-App-Id`, `X-App-Token`.
+
+> 🚧 API keys visibility
 >
-> The primary secret key is visible for 14 days only when it is generated for the first time and for 15 minutes when the token is regenerated. Secondary secret keys are visible for 15 minutes when they are generated for the first time or regenerated.
-> 
+> The primary secret key is visible for 14 days only when it is generated for the first time and for 15 minutes when the token is
+> regenerated. Secondary secret keys are visible for 15 minutes when they are generated for the first time or regenerated.
+>
 > Write your secret keys down and keep them in a safe place.
-
-By default, there are two pairs of authentication keys. The first, Application Keys, are meant to authorize your requests to Voucherify API. You can create more Application Keys for each user.
-
-A generated pair of `Application ID` and `Application Secret Key` must be attached to every HTTP request as custom headers: `X-App-Id`, `X-App-Token`.
 
 ```markdown App Keys
 X-App-Id: 3XXXXXXa-125l-XXXr-qXXX-3XXXX8092e70    
@@ -40,6 +41,32 @@ Most likely, you will not have to send your keys manually. See [SDKs](doc:sdks) 
 > ❗ Security threat
 > 
 > It is essential that you keep your keys secure and not share them with others. Treat it as your application's password to Voucherify.
+
+### Integrations Keys
+
+To generate integrations keys, head to the Project Settings and in the General tab scroll down to the Integrations Keys section. Select the plus icon on the right to add new keys. Choose the name and select the user role for the integration. 
+
+Available inbound integrations:
+
+- Braze
+- Commercetools
+- MoEngage
+- Iterable
+- mParticle
+- Segment
+- Bloomreach
+- Contentful
+- Amplience
+- Airship
+- Bloomreach Engagement
+
+> 🚧
+> API Keys for following integrations: ActiveCampaign, BigCommerce, Shopify are automatically managed by Voucherify therefore you can
+> not create them manually.
+
+If you wish to add integrations keys from other platforms to Voucherify, go to the Home section and select Integrations tab. Choose the integration from the list and paste your key.
+
+These keys enable an outbound integration which provides a continuous data flow from a given platform to Voucherify.
 
 ## Client-Side Authentication
 

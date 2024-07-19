@@ -30,6 +30,21 @@ Manage your team roles and invite your team members:
 3. Go to **Roles** to manage the roles.
 4. Go to **Team** to invite members and assign roles to them. <!-- I'm leaving this as simple as that because a new V% user won't have many projects -->
 
+## Get your API keys
+
+To access Voucherify API, the client application needs to pass `Application ID` and `Application Secret Key`. To find your keys, head to the Project Settings and in the General tab scroll down to the Application Keys section. Below that section, you can generate your integration keys and see the client-side keys.
+
+By default, there are two pairs of authentication keys. The first, Application Keys, are meant to authorize your requests to Voucherify API. You can create more Application Keys for each user. The second, Client-Side Keys, are meant for publicly available client applications (mobile apps and web applications).
+
+A generated pair of Application ID and Application Secret Key must be attached to every HTTP request as custom headers: `X-App-Id`, `X-App-Token`.
+
+> 🚧 API keys visibility
+>
+> The primary secret key is visible for 14 days only when it is generated for the first time and for 15 minutes when the token is
+> regenerated. Secondary secret keys are visible for 15 minutes when they are generated for the first time or regenerated.
+>
+> Write your secret keys down and keep them in a safe place.
+
 ## Testing your first campaign
 
 Take a look at the [Sandbox project and the Demo Shop](https://support.voucherify.io/article/538-sandbox) to test your first campaigns. Use the already created test campaigns with pre-defined validation rules to learn Voucherify possibilities or create your own campaigns and experiment with the platform.
