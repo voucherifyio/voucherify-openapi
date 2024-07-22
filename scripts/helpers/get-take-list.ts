@@ -87,9 +87,11 @@ export const rawTakeList = {
     post: ["default", "ruby", "java"],
   },
   "/v1/promotions/{campaignId}/tiers": {
+    post: ["default", "ruby", "java"],
     get: ["default", "ruby", "java"],
   },
   "/v1/promotions/tiers/{promotionTierId}": {
+    put: ["default", "ruby", "java"],
     get: ["default", "ruby", "java"],
     delete: ["default", "ruby", "java"],
   },
