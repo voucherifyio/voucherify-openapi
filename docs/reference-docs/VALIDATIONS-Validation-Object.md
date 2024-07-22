@@ -85,8 +85,8 @@ All of:
 ## Session
 | Attributes |  Description |
 |:-----|:--------|
-| key</br>`string` | <p>The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated.</p> Available values: `LOCK` |
-| type</br>`string` | <p>This parameter is required to establish a new session. The session locks the redemption quantity by 1.</p> Available values: `LOCK` |
+| key</br>`string` | <p>The session unique ID assigned by Voucherify or your own unique session ID. Sending an existing ID will result in overwriting an existing session. If no session key is provided, then a new ID will be generated.</p> |
+| type</br>`string` | <p>This parameter is required to establish a new session.</p> Available values: `LOCK` |
 | ttl</br>`number` | <p>Value for the period of time that the session is active. Units for this parameter are defined by the session.ttl_unit parameter.</p> |
 | ttl_unit</br>`string` | <p>Defines the type of unit in which the session time is counted.</p> Available values: `DAYS`, `HOURS`, `MICROSECONDS`, `MILLISECONDS`, `MINUTES`, `NANOSECONDS`, `SECONDS` |
 
