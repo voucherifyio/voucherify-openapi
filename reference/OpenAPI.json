@@ -28842,9 +28842,10 @@
             "description": "Role of the holder.",
             "enum": [
               "OWNER",
-              "REFERRER"
+              "REFERRER",
+              "REFEREE"
             ],
-            "default": "OWNER",
+            "default": "REFERRER",
             "example": "OWNER"
           },
           "campaign_id": {
@@ -37625,7 +37626,7 @@
           "holders": {
             "type": "array",
             "title": "Holder Array",
-            "description": "Array of holders to be added to a referral card. You have to send at least one object in the array up to maximum of 100 objects. You can send either a `source_id` or `id`, or both; however, at least one of them is required.",
+            "description": "Array of holders to be added to a referral card as referees. You have to send at least one object in the array up to maximum of 100 objects. You can send either a `source_id` or `id`, or both; however, at least one of them is required. If both are sent, Voucherify checks `id` to upsert that customer's data.",
             "items": {
               "$ref": "#/components/schemas/Customer"
             }
@@ -37642,10 +37643,11 @@
       "ReferralsMembersHoldersCreateInBulkResponseBody": {
         "type": "object",
         "title": "Add Referral Code Holder Response Body",
-        "description": "TO BE CREATED IN FULL BUT USE THE REF BELOW!",
+        "description": "Returns an array of referee card holders.",
         "properties": {
           "holders": {
             "type": "array",
+            "description": "Contains an array of referee card holders for the customers sent in the request.",
             "items": {
               "$ref": "#/components/schemas/RedeemableHolder"
             }
@@ -80911,7 +80913,7 @@
           "Referrals"
         ],
         "summary": "Add Referral Code Holders",
-        "description": "Adds new referral code holders to a referral code. The holders become referees.The data sent in the request are upserted into the customer data.\n\nTo use this endpoint, you must have the following permissions:\n- `customers.modify`\n- `vouchers.publish",
+        "description": "Adds new referral code holders to a referral code. The holders become referees. The data sent in the request is upserted into the customer data.\n\nTo use this endpoint, you must have the following permissions:\n- `customers.modify`\n- `vouchers.publish`\n\nIf the request returns an error even for one customer, you have to resend the whole request. Customer data is upserted if the data for all customers is correct.",
         "parameters": [],
         "security": [
           {
@@ -80920,55 +80922,32 @@
           }
         ],
         "requestBody": {
-          "description": "",
+          "description": "Specify the customer data to be upserted as redeemable holders.",
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/ReferralsMembersHoldersCreateInBulkRequestBody"
               },
               "examples": {
-                "Using source ID": {
+                "Example": {
                   "value": {
-                    "customer": "source_customer_1",
+                    "holders": [
+                      {
+                        "source_id": "cst-prsn01",
+                        "name": "Alex Doe",
+                        "email": "alex-doe@your.domain.com",
+                        "country": "England"
+                      },
+                      {
+                        "source_id": "cst-prsn02",
+                        "name": "Alex Joe",
+                        "email": "alex-joe@your.domain.com",
+                        "country": "Wales"
+                      }
+                    ],
                     "metadata": {
-                      "year": 2022
-                    },
-                    "channel": "postman",
-                    "voucher": "KpzbHUY5"
-                  }
-                },
-                "Using unique Voucherify assigned ID": {
-                  "value": {
-                    "customer": "cust_8KQmHxAERpgebYcFhSpZRr37",
-                    "metadata": {
-                      "year": 2022
-                    },
-                    "channel": "postman",
-                    "voucher": "KpzbHUY5"
-                  }
-                },
-                "Using source ID in object": {
-                  "value": {
-                    "customer": {
-                      "source_id": "source_customer_1"
-                    },
-                    "metadata": {
-                      "year": 2022
-                    },
-                    "channel": "postman",
-                    "voucher": "KpzbHUY5"
-                  }
-                },
-                "Using unique Voucherify assigned ID in object": {
-                  "value": {
-                    "customer": {
-                      "id": "cust_8KQmHxAERpgebYcFhSpZRr37"
-                    },
-                    "metadata": {
-                      "year": 2022
-                    },
-                    "channel": "postman",
-                    "voucher": "KpzbHUY5"
+                      "influencer_code": true
+                    }
                   }
                 }
               }
@@ -80977,7 +80956,7 @@
         },
         "responses": {
           "200": {
-            "description": "",
+            "description": "Returns a list of redeemable holder objects.",
             "content": {
               "application/json": {
                 "schema": {
@@ -80985,29 +80964,154 @@
                 },
                 "examples": {
                   "Example": {
-                    "value": {}
+                    "value": {
+                      "holders": [
+                        {
+                          "id": "rh_0f198761748966ffab",
+                          "created_at": "2024-07-23T10:40:48.579Z",
+                          "redeemable_id": "v_uOrG9tQresN9X51gbAoo0a2vY4MLV9lS",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_vVk4unz3k4gA023fk9XoSiTh",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_r8yoJtgAAF2pqU1yuICtk9bv",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder",
+                          "metadata": {
+                            "influencer_code": true
+                          }
+                        },
+                        {
+                          "id": "rh_0f198761748966ffac",
+                          "created_at": "2024-07-23T10:40:48.579Z",
+                          "redeemable_id": "v_uOrG9tQresN9X51gbAoo0a2vY4MLV9lS",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_vVk4unz3k4gA023fk9XoSiTh",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_uCLPtbQkQayw6t40O9IMPQzV",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder",
+                          "metadata": {
+                            "influencer_code": true
+                          }
+                        }
+                      ]
+                    }
                   }
                 }
               }
             }
           },
-          "404": {
-            "description": "Returns an error if a resource is not found.",
+          "400": {
+            "description": "Returns an error if the payload is incorrect.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
                 },
                 "examples": {
-                  "Resource not found": {
+                  "Invalid Payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .holders must NOT have fewer than 1 items",
+                      "request_id": "v-0f19a8ee60d0ae80a6"
+                    }
+                  },
+                  "Voucher Not Published Yet": {
+                    "value": {
+                      "code": 400,
+                      "key": "not_published",
+                      "message": "Voucher is not published",
+                      "details": "Referral code must be first published to Referrer before assigning it to Referee",
+                      "request_id": "v-0f19a97f5d50ae817c"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if the user is missing permissions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Missing Permissions": {
+                    "value": {
+                      "code": 403,
+                      "message": "Missing permission",
+                      "details": "User does not have a required permission to perform this operation.",
+                      "key": "missing_required_permission"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error indicating that the referral code with a given ID was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Voucher Not Found": {
                     "value": {
                       "code": 404,
                       "key": "not_found",
                       "message": "Resource not found",
-                      "details": "Cannot find voucher with id v_wnd4fslUpkLnZH0KthYDxouBSgn24Yr",
-                      "request_id": "v-0eed8b989da91a1622",
-                      "resource_id": "v_wnd4fslUpkLnZH0KthYDxouBSgn24Yr",
+                      "details": "Cannot find voucher with id REFAPI-mk",
+                      "request_id": "v-0f19a95d5610ae8144",
+                      "resource_id": "REFAPI-mk",
                       "resource_type": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns an error if a voucher code already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Duplicate Customer ID or Source ID": {
+                    "value": {
+                      "code": 409,
+                      "key": "duplicate_found",
+                      "message": "Duplicated resource found",
+                      "details": "Duplicated customer exists with id tst-prsn10",
+                      "request_id": "v-0f19adcc3c50ae87a4",
+                      "resource_id": "tst-prsn10",
+                      "resource_type": "customer"
+                    }
+                  },
+                  "Customer Already Assigned": {
+                    "value": {
+                      "code": 409,
+                      "key": "holder_assignement_duplication",
+                      "message": "Customer is already assigned to given redeemable",
+                      "request_id": "v-0f19ae50d750ae886b"
+                    }
+                  },
+                  "Customer ID and Source ID Used Twice in the Request": {
+                    "value": {
+                      "code": 409,
+                      "key": "duplicate_found",
+                      "message": "Duplicated resource found",
+                      "details": "Duplicated customer exists with id cust_xftM9R2mTRT5Zu2wVtHSQMJH",
+                      "request_id": "v-0f19aeae0005a981f0",
+                      "resource_id": "cust_xftM9R2mTRT5Zu2wVtHSQMJH",
+                      "resource_type": "customer"
                     }
                   }
                 }
