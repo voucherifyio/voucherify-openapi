@@ -26,8 +26,7 @@ A generated pair of Application ID and Application Secret Key must be attached t
 
 > 🚧 API keys visibility
 >
-> The primary secret key is visible for 14 days only when it is generated for the first time and for 15 minutes when the token is
-> regenerated. Secondary secret keys are visible for 15 minutes when they are generated for the first time or regenerated.
+> The primary secret key is visible for 14 days only when it is generated for the first time and for 15 minutes when the token is regenerated. Secondary secret keys are visible for 15 minutes when they are generated for the first time or regenerated.
 >
 > Write your secret keys down and keep them in a safe place.
 
@@ -42,31 +41,51 @@ Most likely, you will not have to send your keys manually. See [SDKs](doc:sdks) 
 > 
 > It is essential that you keep your keys secure and not share them with others. Treat it as your application's password to Voucherify.
 
-### Integrations Keys
+### Integration Keys
 
-To generate integrations keys, head to the Project Settings and in the General tab scroll down to the Integrations Keys section. Select the plus icon on the right to add new keys. Choose the name and select the user role for the integration. 
+Voucherify can be integrated with different platforms, which receive data from Voucherify or which send data to Voucherify.
 
-Available inbound integrations:
+#### Platforms That Send Data to Voucherify
 
-- Braze
-- Commercetools
-- MoEngage
-- Iterable
-- mParticle
-- Segment
-- Bloomreach
-- Contentful
-- Amplience
-- Airship
-- Bloomreach Engagement
+To generate keys for integration platforms that send data to Voucherify, head to the Project Settings and in the General tab, scroll down to the Integration Keys section. Select the plus icon on the right to add new keys. Choose the name and select the user role for the integration. 
+
+Available integration platforms:
+
+- [Airship](https://support.voucherify.io/article/617-airship-integration "Airship Integration")
+- [Amplience](https://support.voucherify.io/article/607-amplience-integration "Amplience Integration")
+- [Bloomreach](https://support.voucherify.io/article/600-bloomreach-cms-integration "Bloomreach CMS Integration")
+- [Bloomreach Engagement](https://support.voucherify.io/article/613-bloomreach-engagement-integration "Bloomreach Engagement Integration")
+- [Braze](https://support.voucherify.io/article/588-braze-integration "Braze Integration")
+- [commercetools](https://support.voucherify.io/article/581-commercetools "commercetools integartions")
+- [Contentful](https://support.voucherify.io/article/599-contentful-integration "Contentful Integration")
+- [Iterable](https://support.voucherify.io/article/594-iterable-integration "Iterable Integration")
+- [MoEngage](https://support.voucherify.io/article/596-moengage-integration "MoEngage Integration")
+- [mParticle](https://support.voucherify.io/article/590-mparticle "mParticle Integration")
+- [Segment](https://support.voucherify.io/article/272-segment "Segment Integration")
 
 > 🚧
-> API Keys for following integrations: ActiveCampaign, BigCommerce, Shopify are automatically managed by Voucherify therefore you can
-> not create them manually.
+> The API keys for the integration platforms are visible for 15 minutes when they are generated for the first time or regenerated.
 
-If you wish to add integrations keys from other platforms to Voucherify, go to the Home section and select Integrations tab. Choose the integration from the list and paste your key.
+#### Platforms That Receive Voucherify Data
 
-These keys enable an outbound integration which provides a continuous data flow from a given platform to Voucherify.
+To add integration keys from the platforms that receive data from Voucherify, go to the Home section and select the Integrations tab. Choose the integration from the list and paste your key. The following platforms are supported:
+- [ActiveCampaign](https://support.voucherify.io/article/165-activecampaign "ActiveCampaign Integration")
+- [Batch](https://support.voucherify.io/article/614-batch-integration "Batch Integration")
+- [BigCommerce](https://support.voucherify.io/article/141-bigcommerce "BigCommerce Integration")
+- [Bloomreach Engagement](https://support.voucherify.io/article/613-bloomreach-engagement-integration "Bloomreach Engagement Integration")
+- [Braze](https://support.voucherify.io/article/588-braze-integration "Braze Integration")
+- [CM Telecom](https://support.voucherify.io/article/89-integrations-for-distributions#CM-telecom "CM Telecom Integration")
+- Google Analytics
+- [Intercom](https://support.voucherify.io/article/104-intercom-send-in-app-messages-from-voucherify-dashboard-to-intercom-customers "Intercom Integration")
+- [Klaviyo](https://support.voucherify.io/article/598-klaviyo-integration "Klaviyo Integration")
+- [Mailchimp](https://support.voucherify.io/article/43-mailchimp-distribution "Mailchimp Integration")
+- [Mailgun](https://support.voucherify.io/article/89-integrations-for-distributions#mailgun "Mailgun Integration")
+- [Mandrill](https://support.voucherify.io/article/89-integrations-for-distributions#mandrill "Mandrill Integration")
+- [mParticle](https://support.voucherify.io/article/590-mparticle "mParticle Integration")
+- [Segment](https://support.voucherify.io/article/272-segment "Segment Integration")
+- [SendGrid](https://support.voucherify.io/article/578-sendgrid "SendGrid Integration")
+- [Textlocal](https://support.voucherify.io/article/89-integrations-for-distributions#textlocal "Textlocal Integration")
+- [Twilio](https://support.voucherify.io/article/89-integrations-for-distributions#twilio "Twilio Integration")
 
 ## Client-Side Authentication
 
