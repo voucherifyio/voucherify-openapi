@@ -113,10 +113,10 @@
 ## Rewards
 | endpoint                                          | method | summary                  | is supported                         | is deprecated |
 | ------------------------------------------------- | ------ | ------------------------ | ------------------------------------ | ------------- |
-| /v1/rewards                                       | get    | List Rewards             |                                      |               |
-| /v1/rewards                                       | post   | Create Reward            |                                      |               |
-| /v1/rewards/{rewardId}                            | get    | Get Reward               |                                      |               |
-| /v1/rewards/{rewardId}                            | put    | Update Reward            |                                      |               |
+| /v1/rewards                                       | get    | List Rewards             | <font color='green'>supported</font> |               |
+| /v1/rewards                                       | post   | Create Reward            | <font color='green'>supported</font> |               |
+| /v1/rewards/{rewardId}                            | get    | Get Reward               | <font color='green'>supported</font> |               |
+| /v1/rewards/{rewardId}                            | put    | Update Reward            | <font color='green'>supported</font> |               |
 | /v1/rewards/{rewardId}                            | delete | Delete Reward            | <font color='green'>supported</font> |               |
 | /v1/rewards/{rewardId}/assignments                | get    | List Reward Assignments  | <font color='green'>supported</font> |               |
 | /v1/rewards/{rewardId}/assignments                | post   | Create Reward Assignment | <font color='green'>supported</font> |               |

@@ -6063,6 +6063,41 @@
           "has_more"
         ]
       },
+      "RewardsListResponseBody": {
+        "title": "Rewards List Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/rewards`.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of transaction objects."
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Reward"
+            },
+            "description": "A dictionary that contains an array of rewards. Each entry in the array is a separate transaction object."
+          },
+          "total": {
+            "type": "integer",
+            "example": 20,
+            "description": "Returns how many rewards in the project meet the limits defined by the query parameter definitions."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "total"
+        ]
+      },
       "VoucherTransactionsExportParameters": {
         "description": "List of available fields and filters that can be exported with a gift card or loyalty card transactions export along with the sorting order of the returned data.",
         "title": "Export Transactions",
@@ -9491,10 +9526,6 @@
             "type": "integer",
             "description": "The promotions hierarchy defines the order in which the discounts from different tiers will be applied to a customer's order. If a customer qualifies for discounts from more than one tier, discounts will be applied in the order defined in the hierarchy."
           },
-          "active": {
-            "type": "boolean",
-            "description": "A flag to toggle the promotion tier on or off. You can disable a promotion tier even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* promotion tier\n- `false` indicates an *inactive* promotion tier"
-          },
           "start_date": {
             "type": "string",
             "description": "Activation timestamp defines when the promotion tier starts to be active in ISO 8601 format. Promotion tier is *inactive before* this date. ",
@@ -9889,22 +9920,22 @@
           }
         }
       },
-      "4_req_create_reward": {
+      "RewardsCreateRequestBody": {
         "title": "Create Reward Request Body",
         "description": "Request body schema for **POST** `/rewards`.",
         "oneOf": [
           {
-            "$ref": "#/components/schemas/4_req_create_reward_CAMPAIGN"
+            "$ref": "#/components/schemas/RewardsCreateRequestBodyDigital"
           },
           {
-            "$ref": "#/components/schemas/4_req_create_reward_MATERIAL"
+            "$ref": "#/components/schemas/RewardsCreateRequestBodyMaterial"
           },
           {
-            "$ref": "#/components/schemas/4_req_create_reward_COIN"
+            "$ref": "#/components/schemas/RewardsCreateRequestBodyPayWithPoints"
           }
         ]
       },
-      "4_req_create_reward_CAMPAIGN": {
+      "RewardsCreateRequestBodyDigital": {
         "title": "Digital Reward",
         "type": "object",
         "description": "Request body schema for creating a digital reward using **POST** `/rewards`.",
@@ -9913,24 +9944,23 @@
             "type": "string",
             "description": "Reward name."
           },
-          "type": {
-            "type": "string",
-            "default": "CAMPAIGN",
-            "enum": [
-              "CAMPAIGN"
-            ],
-            "description": "Reward type."
-          },
           "parameters": {
-            "$ref": "#/components/schemas/4_req_reward_parameters_CAMPAIGN"
+            "$ref": "#/components/schemas/RewardsCreateRequestBodyDigitalParameters"
+          },
+          "attributes": {
+            "type": "object",
+            "description": "Reward attributes"
           },
           "metadata": {
-            "type": "string",
+            "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format."
           }
-        }
+        },
+        "required": [
+          "parameters"
+        ]
       },
-      "4_req_create_reward_COIN": {
+      "RewardsCreateRequestBodyPayWithPoints": {
         "title": "Pay with Points Reward",
         "type": "object",
         "description": "Request body schema for creating a pay with points reward using **POST** `/rewards`.",
@@ -9939,24 +9969,23 @@
             "type": "string",
             "description": "Reward name."
           },
-          "type": {
-            "type": "string",
-            "default": "COIN",
-            "enum": [
-              "COIN"
-            ],
-            "description": "Reward type."
-          },
           "parameters": {
-            "$ref": "#/components/schemas/4_req_reward_parameters_COIN"
+            "$ref": "#/components/schemas/RewardsCreateRequestBodyPayWithPointsParameters"
+          },
+          "attributes": {
+            "type": "object",
+            "description": "Reward attributes"
           },
           "metadata": {
-            "type": "string",
+            "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format."
           }
-        }
+        },
+        "required": [
+          "parameters"
+        ]
       },
-      "4_req_create_reward_MATERIAL": {
+      "RewardsCreateRequestBodyMaterial": {
         "title": "Material Reward",
         "type": "object",
         "description": "Request body schema to create a material reward using\n **POST** `/rewards`.",
@@ -9965,16 +9994,8 @@
             "type": "string",
             "description": "Reward name."
           },
-          "type": {
-            "type": "string",
-            "default": "MATERIAL",
-            "enum": [
-              "MATERIAL"
-            ],
-            "description": "Reward type."
-          },
           "parameters": {
-            "$ref": "#/components/schemas/4_req_reward_parameters_MATERIAL"
+            "$ref": "#/components/schemas/RewardsCreateRequestBodyMaterialParameters"
           },
           "stock": {
             "type": "integer",
@@ -9982,40 +10003,33 @@
           },
           "attributes": {
             "type": "object",
-            "description": "These properties are configurable for material rewards.",
-            "properties": {
-              "image_url": {
-                "type": "string",
-                "description": "The HTTPS URL pointing to the .png or .jpg file."
-              },
-              "description": {
-                "type": "string",
-                "description": "An arbitrary string that you can attach to a material reward."
-              }
-            }
+            "description": "Reward attributes"
           },
           "metadata": {
-            "type": "string",
+            "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format."
           }
-        }
+        },
+        "required": [
+          "parameters"
+        ]
       },
-      "4_req_update_reward": {
+      "RewardsUpdateRequestBody": {
         "title": "Update Reward Request Body",
         "description": "Request body schema for **PUT** `/rewards/{rewardId}`.",
         "oneOf": [
           {
-            "$ref": "#/components/schemas/4_req_update_reward_CAMPAIGN"
+            "$ref": "#/components/schemas/RewardsUpdateRequestBodyDigital"
           },
           {
-            "$ref": "#/components/schemas/4_req_update_reward_COIN"
+            "$ref": "#/components/schemas/RewardsUpdateRequestBodyMaterial"
           },
           {
-            "$ref": "#/components/schemas/4_req_update_reward_MATERIAL"
+            "$ref": "#/components/schemas/RewardsUpdateRequestBodyPayWithPoints"
           }
         ]
       },
-      "4_req_update_reward_CAMPAIGN": {
+      "RewardsUpdateRequestBodyDigital": {
         "title": "Digital Reward",
         "type": "object",
         "description": "Request body schema for updating a digital reward using **PUT** `/rewards/{rewardId}`.",
@@ -10025,15 +10039,19 @@
             "description": "Reward name."
           },
           "parameters": {
-            "$ref": "#/components/schemas/4_req_reward_parameters_CAMPAIGN"
+            "$ref": "#/components/schemas/RewardsUpdateRequestBodyDigitalParameters"
+          },
+          "attributes": {
+            "type": "object",
+            "description": "Reward attributes"
           },
           "metadata": {
-            "type": "string",
+            "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format."
           }
         }
       },
-      "4_req_update_reward_COIN": {
+      "RewardsUpdateRequestBodyPayWithPoints": {
         "title": "Pay with Points Reward",
         "type": "object",
         "description": "Request body schema for updating a pay with points reward using **PUT** `/rewards/{rewardId}`.",
@@ -10043,25 +10061,29 @@
             "description": "Reward name."
           },
           "parameters": {
-            "$ref": "#/components/schemas/4_req_reward_parameters_COIN"
+            "$ref": "#/components/schemas/RewardsUpdateRequestBodyPayWithPointsParameters"
+          },
+          "attributes": {
+            "type": "object",
+            "description": "Reward attributes"
           },
           "metadata": {
-            "type": "string",
+            "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format."
           }
         }
       },
-      "4_req_update_reward_MATERIAL": {
+      "RewardsUpdateRequestBodyMaterial": {
         "title": "Material Reward",
         "type": "object",
-        "description": "Request body schema for updating a material reward using **PUT** `/rewards/{rewardId}`.",
+        "description": "Request body schema to update a material reward using **PUT** `/rewards/{rewardId}`.",
         "properties": {
           "name": {
             "type": "string",
             "description": "Reward name."
           },
           "parameters": {
-            "$ref": "#/components/schemas/4_req_reward_parameters_MATERIAL"
+            "$ref": "#/components/schemas/RewardsUpdateRequestBodyMaterialParameters"
           },
           "stock": {
             "type": "integer",
@@ -10069,25 +10091,15 @@
           },
           "attributes": {
             "type": "object",
-            "description": "These properties are configurable for material rewards.",
-            "properties": {
-              "image_url": {
-                "type": "string",
-                "description": "The HTTPS URL pointing to the .png or .jpg file."
-              },
-              "description": {
-                "type": "string",
-                "description": "An arbitrary string that you can attach to a material reward."
-              }
-            }
+            "description": "Reward attributes"
           },
           "metadata": {
-            "type": "string",
+            "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the reward. A set of key/value pairs that you can attach to a reward object. It can be useful for storing additional information about the reward in a structured format."
           }
         }
       },
-      "4_req_reward_parameters_CAMPAIGN_LOYALTY_PROGRAM": {
+      "RewardsUpdateRequestBodyDigitalParametersLoyaltyProgram": {
         "title": "Points on loyalty card",
         "type": "object",
         "description": "Configure a reward that adds points to a loyalty card. This type of reward is a subset of a Digital (CAMPAIGN) reward.",
@@ -10101,9 +10113,13 @@
             "type": "integer",
             "description": "The incremental points to be added to the current balance on the loyalty card."
           }
-        }
+        },
+        "required": [
+          "id",
+          "balance"
+        ]
       },
-      "4_req_reward_parameters_CAMPAIGN_GIFT_VOUCHERS": {
+      "RewardsUpdateRequestBodyDigitalParametersGiftVouchers": {
         "title": "Gift Vouchers",
         "type": "object",
         "description": "Configure a reward that adds cash to a gift card. This type of reward is a subset of a Digital (CAMPAIGN) reward.",
@@ -10117,9 +10133,13 @@
             "type": "integer",
             "description": "The incremental amout to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
           }
-        }
+        },
+        "required": [
+          "id",
+          "balance"
+        ]
       },
-      "4_req_reward_parameters_CAMPAIGN_DISCOUNT_COUPONS": {
+      "RewardsUpdateRequestBodyDigitalParametersDiscountCoupons": {
         "title": "Discount Coupons",
         "type": "object",
         "description": "Configure a reward that provides a discount coupon. This type of reward is a subset of a Digital (CAMPAIGN) reward.",
@@ -10129,9 +10149,12 @@
             "description": "Assign the reward to the campaign that contains the vouchers that will be the source of the reward. Provide the unique campaign ID, assigned by Voucherify.",
             "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
           }
-        }
+        },
+        "required": [
+          "id"
+        ]
       },
-      "4_req_reward_parameters_CAMPAIGN": {
+      "RewardsUpdateRequestBodyDigitalParameters": {
         "title": "Digital Reward",
         "type": "object",
         "description": "Configure a digital (CAMPAIGN) reward. These can be in the form of discount coupons, gift card credits, or loyalty point credits.",
@@ -10140,19 +10163,22 @@
             "description": "Objects stores information about the campaign related to the reward.",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/4_req_reward_parameters_CAMPAIGN_LOYALTY_PROGRAM"
+                "$ref": "#/components/schemas/RewardsUpdateRequestBodyDigitalParametersLoyaltyProgram"
               },
               {
-                "$ref": "#/components/schemas/4_req_reward_parameters_CAMPAIGN_GIFT_VOUCHERS"
+                "$ref": "#/components/schemas/RewardsUpdateRequestBodyDigitalParametersGiftVouchers"
               },
               {
-                "$ref": "#/components/schemas/4_req_reward_parameters_CAMPAIGN_DISCOUNT_COUPONS"
+                "$ref": "#/components/schemas/RewardsUpdateRequestBodyDigitalParametersDiscountCoupons"
               }
             ]
           }
-        }
+        },
+        "required": [
+          "campaign"
+        ]
       },
-      "4_req_reward_parameters_MATERIAL": {
+      "RewardsUpdateRequestBodyMaterialParameters": {
         "title": "Material Reward",
         "type": "object",
         "description": "Configure parameters representing products as a (MATERIAL) reward.",
@@ -10172,11 +10198,17 @@
                 "description": "Unique SKU ID, assigned by Voucherify, of the SKU given as a reward.",
                 "example": "sku_0b7d7dfb090be5c619"
               }
-            }
+            },
+            "required": [
+              "id"
+            ]
           }
-        }
+        },
+        "required": [
+          "product"
+        ]
       },
-      "4_req_reward_parameters_COIN": {
+      "RewardsUpdateRequestBodyPayWithPointsParameters": {
         "title": "Pay with Points Reward",
         "type": "object",
         "description": "Configure parameters representing a Pay with Points (COIN) reward. ",
@@ -10193,37 +10225,151 @@
                 "type": "string",
                 "description": "The number of loyalty points that will map to the predefined cash amount defined by the `exchange_ratio` property."
               }
-            }
+            },
+            "required": [
+              "exchange_ratio"
+            ]
           }
-        }
+        },
+        "required": [
+          "coin"
+        ]
       },
-      "4_res_list_rewards": {
+      "RewardsCreateRequestBodyDigitalParametersLoyaltyProgram": {
+        "title": "Points on loyalty card",
         "type": "object",
-        "description": "Response body schema for **GET** `/rewards`.",
-        "title": "List Rewards Response Body",
+        "description": "Configure a reward that adds points to a loyalty card. This type of reward is a subset of a Digital (CAMPAIGN) reward.",
         "properties": {
-          "object": {
+          "id": {
             "type": "string",
-            "description": "The type of the object represented by JSON. This object stores information about rewards in a dictionary.",
-            "default": "list"
+            "description": "Assign the reward to the campaign that contains the loyalty cards that will be replenished by the reward. Provide the unique campaign ID, assigned by Voucherify.",
+            "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
           },
-          "data_ref": {
-            "type": "string",
-            "description": "Identifies the name of the attribute that contains the array of rewards.",
-            "default": "data"
-          },
-          "data": {
-            "type": "array",
-            "description": "Contains array of reward objects.",
-            "items": {
-              "$ref": "#/components/schemas/4_obj_reward_object"
-            }
-          },
-          "total": {
+          "balance": {
             "type": "integer",
-            "description": "Total number of rewards."
+            "description": "The incremental points to be added to the current balance on the loyalty card."
           }
-        }
+        },
+        "required": [
+          "id",
+          "balance"
+        ]
+      },
+      "RewardsCreateRequestBodyDigitalParametersGiftVouchers": {
+        "title": "Gift Vouchers",
+        "type": "object",
+        "description": "Configure a reward that adds cash to a gift card. This type of reward is a subset of a Digital (CAMPAIGN) reward.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Assign the reward to the campaign that contains the gift cards that will be replenished by the reward. Provide the unique campaign ID, assigned by Voucherify.",
+            "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
+          },
+          "balance": {
+            "type": "integer",
+            "description": "The incremental amout to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+          }
+        },
+        "required": [
+          "id",
+          "balance"
+        ]
+      },
+      "RewardsCreateRequestBodyDigitalParametersDiscountCoupons": {
+        "title": "Discount Coupons",
+        "type": "object",
+        "description": "Configure a reward that provides a discount coupon. This type of reward is a subset of a Digital (CAMPAIGN) reward.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Assign the reward to the campaign that contains the vouchers that will be the source of the reward. Provide the unique campaign ID, assigned by Voucherify.",
+            "example": "camp_13BbZ0kQsNinhqsX3wUts2UP"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "RewardsCreateRequestBodyDigitalParameters": {
+        "title": "Digital Reward",
+        "type": "object",
+        "description": "Configure a digital (CAMPAIGN) reward. These can be in the form of discount coupons, gift card credits, or loyalty point credits.",
+        "properties": {
+          "campaign": {
+            "description": "Objects stores information about the campaign related to the reward.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/RewardsCreateRequestBodyDigitalParametersLoyaltyProgram"
+              },
+              {
+                "$ref": "#/components/schemas/RewardsCreateRequestBodyDigitalParametersGiftVouchers"
+              },
+              {
+                "$ref": "#/components/schemas/RewardsCreateRequestBodyDigitalParametersDiscountCoupons"
+              }
+            ]
+          }
+        },
+        "required": [
+          "campaign"
+        ]
+      },
+      "RewardsCreateRequestBodyMaterialParameters": {
+        "title": "Material Reward",
+        "type": "object",
+        "description": "Configure parameters representing products as a (MATERIAL) reward.",
+        "properties": {
+          "product": {
+            "type": "object",
+            "description": "Define the product given as a reward.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "prod_0b7d7dfb05cbe5c616",
+                "description": "Unique product ID, assigned by Voucherify, given as a reward."
+              },
+              "sku_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique SKU ID, assigned by Voucherify, of the SKU given as a reward.",
+                "example": "sku_0b7d7dfb090be5c619"
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        },
+        "required": [
+          "product"
+        ]
+      },
+      "RewardsCreateRequestBodyPayWithPointsParameters": {
+        "title": "Pay with Points Reward",
+        "type": "object",
+        "description": "Configure parameters representing a Pay with Points (COIN) reward. ",
+        "properties": {
+          "coin": {
+            "type": "object",
+            "description": "Define the ratio by mapping the number of loyalty points in `points_ratio` to a predefined cash amount in `exchange_ratio`.",
+            "properties": {
+              "exchange_ratio": {
+                "type": "string",
+                "description": "The cash equivalent of the points defined in the `points_ratio` property."
+              },
+              "points_ratio": {
+                "type": "string",
+                "description": "The number of loyalty points that will map to the predefined cash amount defined by the `exchange_ratio` property."
+              }
+            },
+            "required": [
+              "exchange_ratio"
+            ]
+          }
+        },
+        "required": [
+          "coin"
+        ]
       },
       "4_obj_reward_assignment_object": {
         "title": "Reward Assignment Object",
@@ -33222,8 +33368,7 @@
           "product": {
             "type": "object",
             "required": [
-              "id",
-              "sku_id"
+              "id"
             ],
             "description": "Contains information about the product given as a reward.",
             "properties": {
@@ -50988,7 +51133,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/4_res_list_rewards"
+                  "$ref": "#/components/schemas/RewardsListResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -51124,7 +51269,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/4_req_create_reward"
+                "$ref": "#/components/schemas/RewardsCreateRequestBody"
               },
               "examples": {
                 "Gift card credits": {
@@ -51216,7 +51361,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/4_obj_reward_object"
+                  "$ref": "#/components/schemas/Reward"
                 },
                 "examples": {
                   "Material": {
@@ -51283,7 +51428,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/4_obj_reward_object"
+                  "$ref": "#/components/schemas/Reward"
                 }
               }
             }
@@ -51332,7 +51477,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/4_req_update_reward"
+                "$ref": "#/components/schemas/RewardsUpdateRequestBody"
               },
               "examples": {
                 "Gift card credits": {
@@ -51419,7 +51564,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/4_obj_reward_object"
+                  "$ref": "#/components/schemas/Reward"
                 },
                 "examples": {
                   "Material": {

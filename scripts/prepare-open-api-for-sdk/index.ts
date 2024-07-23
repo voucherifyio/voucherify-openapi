@@ -48,6 +48,10 @@ const supportedLanguages: {
     name: "php",
     mergeOneOfs: true,
     putNotObjectSchemasIntoObjectSchemas: true,
+    removeRequiredOnNullable: true,
+    okResponseMustBeOnlyOne: true,
+    makeEverythingNullable: true,
+    removeBuggedTagsFromOpenAPIPaths: true,
   },
   java: {
     name: "java",
