@@ -20,6 +20,7 @@ const version =
   versionOption || versionTag ? `${mainVersion}-${versionTag}` : undefined;
 import { removeAdditionalPropertiesFromSchemas } from "./remove-additional-properties-for-some-schemas";
 import { main as uploadWebhookDefinitions } from "./upload-webhook-definitions";
+import { readmeReplaceTitle } from "./readme-replace-title";
 
 const listOfGuideCategories = [
   "Getting started",
@@ -44,6 +45,8 @@ const main = async ({
   create?: boolean;
   update?: boolean;
 }) => {
+  await createOpenAPIVersionToUpload();
+  return;
   if (!(await validate({ help, version, create, update }))) {
     return;
   }
@@ -152,7 +155,7 @@ const createOpenAPIVersionToUpload = async () => {
     fs.mkdirSync(pathToTmpReferenceToUpload);
   }
 
-  const newOpenApiFile = {
+  let newOpenApiFile = {
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
@@ -163,6 +166,9 @@ const createOpenAPIVersionToUpload = async () => {
     },
   };
   newOpenApiFile.openapi = "3.1.0";
+
+  //replaceTitles
+  newOpenApiFile = readmeReplaceTitle(newOpenApiFile);
 
   await fsPromises.writeFile(
     path.join(__dirname, "../tmp/referenceToUpload/OpenAPI.json"),
