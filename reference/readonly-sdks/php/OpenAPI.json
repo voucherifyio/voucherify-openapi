@@ -172,16 +172,6 @@
         "type": "apiKey",
         "name": "X-Client-Application-Id",
         "in": "header"
-      },
-      "X-Management-Id": {
-        "type": "apiKey",
-        "name": "X-Management-Id",
-        "in": "header"
-      },
-      "X-Management-Token": {
-        "type": "apiKey",
-        "name": "X-Management-Token",
-        "in": "header"
       }
     },
     "parameters": {
@@ -286,6 +276,47 @@
       }
     },
     "schemas": {
+      "AsyncActionGetResponseBody": {
+        "title": "Async Action Get Response Body",
+        "description": "Response body schema for **GET** `/async-actions/{asyncActionId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AsyncAction"
+          }
+        ]
+      },
+      "AsyncActionsListResponseBody": {
+        "description": "Response body schema for **GET** `/async-actions`.",
+        "type": "object",
+        "title": "Async Actions List Response Body",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about asynchronous actions.",
+            "default": "list",
+            "enum": [
+              "list"
+            ],
+            "nullable": true
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "async_actions",
+            "description": "Identifies the name of the JSON property that contains the array of asynchronous actions.",
+            "enum": [
+              "async_actions"
+            ],
+            "nullable": true
+          },
+          "async_actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AsyncActionBase"
+            },
+            "nullable": true
+          }
+        }
+      },
       "CampaignsCreateRequestBody": {
         "type": "object",
         "title": "CampaignsCreateRequestBody",
@@ -3671,6 +3702,10 @@
             "$ref": "#/components/schemas/OrderCalculated"
           }
         ]
+      },
+      "ParameterAsyncActionId": {
+        "type": "string",
+        "example": "aa_0afb3d009a55814a48"
       },
       "ParameterBoolean": {
         "type": "boolean"
@@ -8600,6 +8635,97 @@
           }
         },
         "required": []
+      },
+      "AsyncAction": {
+        "title": "Async Action",
+        "description": "This is an object representing an asynchronous action.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AsyncActionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "result": {
+                "type": "object",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "AsyncActionBase": {
+        "title": "Async Action Base",
+        "type": "object",
+        "description": "This is an object representing an asynchronous action.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "aa_0adad13d6f057f088e",
+            "description": "Async action unique ID.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of async action. Examples: \"CAMPAIGN.VOUCHERS_IMPORT\", \"CAMPAIGN.VOUCHERS_IMPORT_CSV\", \"CAMPAIGN.VOUCHERS_UPDATE\", \"CAMPAIGN.VOUCHERS_DELETE\", \"CAMPAIGN.VOUCHERS_GENERATE\", \"CAMPAIGNS.METADATA_KEY_PURGE\", \"CUSTOMERS.IMPORT_CSV\", \"CUSTOMERS.BULK_UPDATE\", \"CUSTOMERS.METADATA_UPDATE\", \"CUSTOMERS.METADATA_KEY_PURGE\", \"PRODUCTS.BULK_UPDATE\", \"PRODUCTS.METADATA_UPDATE\", \"PRODUCTS.METADATA_KEY_PURGE\", \"PRODUCTS.IMPORT_CSV\", \"SKUS.IMPORT_CSV\", \"VOUCHERS.IMPORT\", \"VOUCHERS.IMPORT_CSV\", \"VOUCHERS.BULK_UPDATE\", \"VOUCHERS.METADATA_UPDATE\", \"VOUCHERS.METADATA_KEY_PURGE\", \"ORDERS.IMPORT\", \"ORDERS.METADATA_KEY_PURGE\"",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of async action. Informs you whether the async action has already been completed.",
+            "enum": [
+              "ENQUEUED",
+              "IN_PROGRESS",
+              "DONE",
+              "FAILED"
+            ],
+            "nullable": true
+          },
+          "operation_status": {
+            "type": "string",
+            "description": "Status of async action processing. Informs about the async action status, whether it failed, succeeded, or the status is unknown. Examples: \"FAILED\", \"SUCCESS\"",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the async action was scheduled in ISO 8601 format.",
+            "example": "2022-06-23T11:21:45.578Z",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2022-06-23T11:21:46.795Z",
+            "description": "Timestamp representing the date and time when the async action was updated. The value is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "request_id": {
+            "type": "string",
+            "example": "v-0b45cee140c3c9b5ca",
+            "description": "Unique request ID.",
+            "nullable": true
+          },
+          "processing_time": {
+            "type": "integer",
+            "example": 1217,
+            "description": "The length of time it took to process the request in milliseconds.",
+            "nullable": true
+          },
+          "progress": {
+            "type": "integer",
+            "description": "% progress to completion of the asynchronous action.",
+            "minimum": 0,
+            "maximum": 100,
+            "nullable": true
+          },
+          "object": {
+            "type": "string",
+            "default": "async_action",
+            "description": "The type of the object represented by JSON. This object stores information about the `async_action`.",
+            "nullable": true
+          }
+        }
       },
       "AsyncActions": {
         "type": "object",
@@ -42369,6 +42495,654 @@
                       },
                       "referral": null,
                       "loyalty": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/async-actions": {
+      "get": {
+        "operationId": "list-async-actions",
+        "tags": [
+          "Async Actions"
+        ],
+        "summary": "List Async Actions",
+        "description": "Track asynchronous operations scheduled in your project.  \nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action. If you would like to learn more about importing data into Voucherify, read more [here](https://support.voucherify.io/article/574-data-import).\n\n\n\n\n \n",
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterLimit"
+            },
+            "in": "query",
+            "name": "limit",
+            "description": "Limit the number of asynchronous actions that the API returns in the response."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterDate"
+            },
+            "in": "query",
+            "name": "end_date",
+            "description": "Limits results to actions scheduled before the end_date. The date format needs to be consistent with ISO 8601 format (2016-11-16T14:14:31Z or 2016-11-16). "
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of all scheduled asynchronous actions and detailed information for each scheduled action. Note that a status `DONE`doesn't include the result of the completed action. If you need more information about the result, use the ID of the respective async action to call the <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsyncActionsListResponseBody"
+                },
+                "examples": {
+                  "List Async Actions": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "async_actions",
+                      "async_actions": [
+                        {
+                          "id": "aa_0ba518c55290c6fd62",
+                          "type": "CUSTOMERS.BULK_UPDATE",
+                          "status": "DONE",
+                          "created_at": "2022-09-05T11:40:17.098Z",
+                          "updated_at": "2022-09-05T11:40:17.887Z",
+                          "request_id": "v-0ba518c52bc99858f0",
+                          "progress": 100,
+                          "object": "async_action"
+                        },
+                        {
+                          "id": "aa_0ba50a7ff4d3574568",
+                          "type": "CUSTOMERS.METADATA_UPDATE",
+                          "status": "DONE",
+                          "created_at": "2022-09-05T10:37:56.051Z",
+                          "updated_at": "2022-09-05T10:37:56.862Z",
+                          "request_id": "v-0ba50a7feb49984902",
+                          "progress": 100,
+                          "object": "async_action"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/async-actions/{asyncActionId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterAsyncActionId"
+          },
+          "name": "asyncActionId",
+          "in": "path",
+          "required": true,
+          "description": "Unique ID of the asynchronous operation."
+        }
+      ],
+      "get": {
+        "operationId": "get-async-action",
+        "tags": [
+          "Async Actions"
+        ],
+        "summary": "Get Async Action",
+        "description": "Check the result of a scheduled asynchronous operation.  \nThe table below lists the possible types of async actions. The types are different for each endpoint generating the async action. If you would like to learn more about importing data into Voucherify, read more [here](https://support.voucherify.io/article/574-data-import).\n\n\n\n\n \n",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns detailed information about the async action result.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsyncActionGetResponseBody"
+                },
+                "examples": {
+                  "CAMPAIGN.VOUCHERS_IMPORT": {
+                    "value": {
+                      "id": "aa_0af9b22296cf473a10",
+                      "type": "CAMPAIGN.VOUCHERS_IMPORT",
+                      "status": "DONE",
+                      "result": {
+                        "message": "0 voucher(s) imported successfully, 3 failed.",
+                        "failed": [
+                          {
+                            "code": "CODE9",
+                            "reason": "unit: must be a number, property is required (actual value is 'EUR')"
+                          },
+                          {
+                            "code": "CODE8",
+                            "reason": "unit: must be a number, property is required (actual value is 'EUR')"
+                          },
+                          {
+                            "code": "CODE7",
+                            "reason": "unit: must be a number, property is required (actual value is 'EUR')"
+                          }
+                        ],
+                        "done_count": 0,
+                        "failed_count": 3
+                      },
+                      "created_at": "2023-01-20T07:23:43.289Z",
+                      "updated_at": "2023-01-20T07:23:44.044Z",
+                      "request_id": "v-0c553fdb325688d510",
+                      "progress": 100,
+                      "processing_time": 755,
+                      "object": "async_action"
+                    }
+                  },
+                  "CAMPAIGN.VOUCHERS_IMPORT_CSV": {
+                    "value": {
+                      "id": "aa_0c5543f00797b6113f",
+                      "type": "CUSTOMERS.IMPORT_CSV",
+                      "status": "DONE",
+                      "result": {
+                        "message": "0 customer(s) imported successfully, 2 failed.",
+                        "failed": [
+                          {
+                            "source_id": "test-user@voucherify.io",
+                            "row": 1,
+                            "reason": "acquisition_channel: must be a string, property is required, must be equal to one of Facebook,Twitter,Website (actual value is 'snap')"
+                          },
+                          {
+                            "source_id": "",
+                            "row": 2,
+                            "reason": "acquisition_channel: must be a string, property is required, must be equal to one of Facebook,Twitter,Website (actual value is 'insta')"
+                          }
+                        ],
+                        "done_count": 0,
+                        "failed_count": 2
+                      },
+                      "created_at": "2023-01-20T07:41:33.086Z",
+                      "updated_at": "2023-01-20T07:41:33.216Z",
+                      "request_id": "v-0c5543eff2cb0f547f",
+                      "progress": 100,
+                      "processing_time": 130,
+                      "object": "async_action"
+                    }
+                  },
+                  "CAMPAIGN.VOUCHERS_DELETE": {
+                    "value": {
+                      "id": "aa_0c553853d957b67bd4",
+                      "type": "CAMPAIGN.VOUCHERS_DELETE",
+                      "status": "DONE",
+                      "result": {
+                        "message": "Deleted 2 vouchers.",
+                        "done_count": 2
+                      },
+                      "created_at": "2023-01-20T06:50:49.573Z",
+                      "updated_at": "2023-01-20T06:50:50.053Z",
+                      "request_id": "v-0c553853b5c418c826",
+                      "progress": 100,
+                      "processing_time": 480,
+                      "object": "async_action"
+                    }
+                  },
+                  "CAMPAIGN.VOUCHERS_UPDATE": {
+                    "value": {
+                      "id": "aa_0c5440c25c0e5728d0",
+                      "type": "CAMPAIGN.VOUCHERS_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "message": "Updated 1 vouchers.",
+                        "done_count": 1
+                      },
+                      "created_at": "2023-01-19T12:49:11.024Z",
+                      "updated_at": "2023-01-19T12:49:11.852Z",
+                      "request_id": "v-0c5440c24304189e44",
+                      "progress": 100,
+                      "processing_time": 828,
+                      "object": "async_action"
+                    }
+                  },
+                  "CAMPAIGN.VOUCHERS_GENERATE": {
+                    "value": {
+                      "id": "aa_0c54441d14d7b60014",
+                      "type": "CAMPAIGN.VOUCHERS_GENERATE",
+                      "status": "DONE",
+                      "result": {
+                        "message": "Generated 2 vouchers.",
+                        "done_count": 2
+                      },
+                      "created_at": "2023-01-19T13:03:50.355Z",
+                      "updated_at": "2023-01-19T13:03:51.030Z",
+                      "request_id": "v-0c54441d0e4418b647",
+                      "progress": 100,
+                      "processing_time": 675,
+                      "object": "async_action"
+                    }
+                  },
+                  "CAMPAIGNS.METADATA_KEY_PURGE": {
+                    "value": {
+                      "id": "aa_0c554b22664a0eb5fc",
+                      "type": "CAMPAIGNS.METADATA_KEY_PURGE",
+                      "status": "DONE",
+                      "result": {
+                        "message": "Updated 0 campaigns.",
+                        "done_count": 0
+                      },
+                      "created_at": "2023-01-20T08:12:59.673Z",
+                      "updated_at": "2023-01-20T08:13:00.638Z",
+                      "request_id": "w-0c554b225f8a0eb5fb",
+                      "progress": 100,
+                      "processing_time": 965,
+                      "object": "async_action"
+                    }
+                  },
+                  "CUSTOMERS.IMPORT_CSV": {
+                    "value": {
+                      "id": "aa_0c5543f00797b6113f",
+                      "type": "CUSTOMERS.IMPORT_CSV",
+                      "status": "DONE",
+                      "result": {
+                        "message": "0 customer(s) imported successfully, 2 failed.",
+                        "failed": [
+                          {
+                            "source_id": "test-user@voucherify.io",
+                            "row": 1,
+                            "reason": "acquisition_channel: must be a string, property is required, must be equal to one of Facebook,Twitter,Website (actual value is 'snap')"
+                          },
+                          {
+                            "source_id": "",
+                            "row": 2,
+                            "reason": "acquisition_channel: must be a string, property is required, must be equal to one of Facebook,Twitter,Website (actual value is 'insta')"
+                          }
+                        ],
+                        "done_count": 0,
+                        "failed_count": 2
+                      },
+                      "created_at": "2023-01-20T07:41:33.086Z",
+                      "updated_at": "2023-01-20T07:41:33.216Z",
+                      "request_id": "v-0c5543eff2cb0f547f",
+                      "progress": 100,
+                      "processing_time": 130,
+                      "object": "async_action"
+                    }
+                  },
+                  "CUSTOMERS.BULK_UPDATE": {
+                    "value": {
+                      "id": "aa_0c5547cc5e17b617b6",
+                      "type": "CUSTOMERS.BULK_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "results": [
+                          {
+                            "source_id": "source_id_1",
+                            "updated": true,
+                            "found": true
+                          },
+                          {
+                            "source_id": "source_id_2",
+                            "updated": true,
+                            "found": true
+                          },
+                          {
+                            "source_id": "source_id_3",
+                            "updated": true,
+                            "found": true
+                          }
+                        ],
+                        "done_count": 3
+                      },
+                      "created_at": "2023-01-20T07:58:25.144Z",
+                      "updated_at": "2023-01-20T07:58:25.869Z",
+                      "request_id": "v-0c5547cc4d8b0f5be4",
+                      "progress": 100,
+                      "processing_time": 725,
+                      "object": "async_action"
+                    }
+                  },
+                  "CUSTOMERS.METADATA_UPDATE": {
+                    "value": {
+                      "id": "aa_0c554a92030e576181",
+                      "type": "CUSTOMERS.METADATA_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "results": [
+                          {
+                            "source_id": "source_1",
+                            "updated": true,
+                            "found": true
+                          },
+                          {
+                            "source_id": "source_2",
+                            "updated": true,
+                            "found": true
+                          }
+                        ],
+                        "done_count": 2
+                      },
+                      "created_at": "2023-01-20T08:10:31.821Z",
+                      "updated_at": "2023-01-20T08:10:32.564Z",
+                      "request_id": "v-0c554a91fb4b0f61a2",
+                      "progress": 100,
+                      "processing_time": 743,
+                      "object": "async_action"
+                    }
+                  },
+                  "CUSTOMERS.METADATA_KEY_PURGE": {
+                    "value": {
+                      "id": "aa_0c5551f2ab0a0ebf0e",
+                      "type": "CUSTOMERS.METADATA_KEY_PURGE",
+                      "status": "DONE",
+                      "result": {
+                        "message": "Updated 0 customers.",
+                        "done_count": 0
+                      },
+                      "created_at": "2023-01-20T08:42:45.804Z",
+                      "updated_at": "2023-01-20T08:42:46.079Z",
+                      "request_id": "w-0c5551f2a38a0ebf0d",
+                      "progress": 100,
+                      "processing_time": 275,
+                      "object": "async_action"
+                    }
+                  },
+                  "PRODUCTS.BULK_UPDATE": {
+                    "value": {
+                      "id": "aa_0c5553f0f457b6328e",
+                      "type": "PRODUCTS.BULK_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "results": [
+                          {
+                            "source_id": "first_product",
+                            "updated": false,
+                            "found": true
+                          },
+                          {
+                            "source_id": "second_product",
+                            "updated": false,
+                            "found": true
+                          }
+                        ],
+                        "done_count": 2
+                      },
+                      "created_at": "2023-01-20T08:51:28.337Z",
+                      "updated_at": "2023-01-20T08:51:28.439Z",
+                      "request_id": "v-0c5553f0e94b0f7502",
+                      "progress": 100,
+                      "processing_time": 102,
+                      "object": "async_action"
+                    }
+                  },
+                  "PRODUCTS.METADATA_UPDATE": {
+                    "value": {
+                      "id": "aa_0c5554869b97b633b4",
+                      "type": "PRODUCTS.METADATA_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "results": [
+                          {
+                            "source_id": "123-567-3433",
+                            "updated": false,
+                            "found": true
+                          },
+                          {
+                            "source_id": "test_volleyball",
+                            "updated": false,
+                            "found": true
+                          }
+                        ],
+                        "done_count": 2
+                      },
+                      "created_at": "2023-01-20T08:54:01.582Z",
+                      "updated_at": "2023-01-20T08:54:02.436Z",
+                      "request_id": "v-0c55548694c418f9dd",
+                      "progress": 100,
+                      "processing_time": 854,
+                      "object": "async_action"
+                    }
+                  },
+                  "PRODUCTS.METADATA_KEY_PURGE": {
+                    "value": {
+                      "id": "aa_0c5552d997ca0ec03a",
+                      "type": "PRODUCTS.METADATA_KEY_PURGE",
+                      "status": "DONE",
+                      "result": {
+                        "message": "Updated 2 products.",
+                        "done_count": 2
+                      },
+                      "created_at": "2023-01-20T08:46:42.271Z",
+                      "updated_at": "2023-01-20T08:46:43.240Z",
+                      "request_id": "w-0c5552d98e8a0ec039",
+                      "progress": 100,
+                      "processing_time": 969,
+                      "object": "async_action"
+                    }
+                  },
+                  "VOUCHERS.IMPORT": {
+                    "value": {
+                      "id": "aa_0c5559be44d7b63c06",
+                      "type": "VOUCHERS.IMPORT",
+                      "status": "DONE",
+                      "result": {
+                        "message": "0 voucher(s) imported successfully, 3 failed.",
+                        "failed": [
+                          {
+                            "code": "PROMO-CODE31",
+                            "reason": "unit: must be a number, must be equal to one of 1,2 (actual value is 'EUR')"
+                          },
+                          {
+                            "code": "PROMO-CODE21",
+                            "reason": "unit: must be a number, must be equal to one of 1,2 (actual value is 'EUR')"
+                          },
+                          {
+                            "code": "GIFT-CARD-100-1",
+                            "reason": "unit: must be a number, must be equal to one of 1,2 (actual value is 'EUR')"
+                          }
+                        ],
+                        "done_count": 0,
+                        "failed_count": 3
+                      },
+                      "created_at": "2023-01-20T09:16:49.299Z",
+                      "updated_at": "2023-01-20T09:16:50.238Z",
+                      "request_id": "v-0c5559be25c418824a",
+                      "progress": 100,
+                      "processing_time": 939,
+                      "object": "async_action"
+                    }
+                  },
+                  "VOUCHERS.IMPORT_CSV": {
+                    "value": {
+                      "id": "aa_0c555db3d697b643e1",
+                      "type": "VOUCHERS.IMPORT_CSV",
+                      "status": "DONE",
+                      "result": {
+                        "message": "0 voucher(s) imported successfully, 2 failed.",
+                        "failed": [
+                          {
+                            "code": "FALL2023",
+                            "row": 1,
+                            "reason": "Voucher Type is required"
+                          },
+                          {
+                            "code": "FALL2024",
+                            "row": 2,
+                            "reason": "Voucher Type is required"
+                          }
+                        ],
+                        "done_count": 0,
+                        "failed_count": 2
+                      },
+                      "created_at": "2023-01-20T09:34:07.194Z",
+                      "updated_at": "2023-01-20T09:34:07.367Z",
+                      "request_id": "v-0c555db3ba8b0f0767",
+                      "progress": 100,
+                      "processing_time": 173,
+                      "object": "async_action"
+                    }
+                  },
+                  "VOUCHERS.BULK_UPDATE": {
+                    "value": {
+                      "id": "aa_0c555e8115d7b64504",
+                      "type": "VOUCHERS.BULK_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "results": [
+                          {
+                            "code": "PROMO-CODE81019",
+                            "updated": false,
+                            "found": false
+                          },
+                          {
+                            "code": "PROMO-CODE7264786",
+                            "updated": false,
+                            "found": false
+                          }
+                        ],
+                        "done_count": 2
+                      },
+                      "created_at": "2023-01-20T09:37:37.367Z",
+                      "updated_at": "2023-01-20T09:37:37.520Z",
+                      "request_id": "v-0c555e810904188aa4",
+                      "progress": 100,
+                      "processing_time": 153,
+                      "object": "async_action"
+                    }
+                  },
+                  "VOUCHERS.METADATA_UPDATE": {
+                    "value": {
+                      "id": "aa_0c555ed40857b6463a",
+                      "type": "VOUCHERS.METADATA_UPDATE",
+                      "status": "DONE",
+                      "result": {
+                        "results": [
+                          {
+                            "code": "v_TzD19aeNiqGc9LWciMWknyEZT8IW7u4u",
+                            "updated": false,
+                            "found": false
+                          },
+                          {
+                            "code": "LOYALTY-CARD-xLPbpbXR",
+                            "updated": false,
+                            "found": false
+                          }
+                        ],
+                        "done_count": 2
+                      },
+                      "created_at": "2023-01-20T09:39:02.305Z",
+                      "updated_at": "2023-01-20T09:39:02.640Z",
+                      "request_id": "v-0c555ed40084188b55",
+                      "progress": 100,
+                      "processing_time": 335,
+                      "object": "async_action"
+                    }
+                  },
+                  "VOUCHERS.METADATA_KEY_PURGE": {
+                    "value": {
+                      "id": "aa_0c55534bd64a0ec0e0",
+                      "type": "VOUCHERS.METADATA_KEY_PURGE",
+                      "status": "DONE",
+                      "result": {
+                        "message": "Updated 9 vouchers.",
+                        "done_count": 9
+                      },
+                      "created_at": "2023-01-20T08:48:39.257Z",
+                      "updated_at": "2023-01-20T08:48:40.503Z",
+                      "request_id": "w-0c55534bcfca0ec0df",
+                      "progress": 100,
+                      "processing_time": 1246,
+                      "object": "async_action"
+                    }
+                  },
+                  "SKUS.IMPORT_CSV": {
+                    "value": {
+                      "id": "aa_0c5558728d0e577e67",
+                      "type": "SKUS.IMPORT_CSV",
+                      "status": "DONE",
+                      "result": {
+                        "message": "4 sku(s) imported successfully, 0 failed.",
+                        "failed": [],
+                        "done_count": 4,
+                        "failed_count": 0
+                      },
+                      "created_at": "2023-01-20T09:11:09.620Z",
+                      "updated_at": "2023-01-20T09:11:10.270Z",
+                      "request_id": "v-0c5558726f0b0f7d82",
+                      "progress": 100,
+                      "processing_time": 650,
+                      "object": "async_action"
+                    }
+                  },
+                  "PRODUCTS.IMPORT_CSV": {
+                    "value": {
+                      "id": "aa_0c55578e914e577cf1",
+                      "type": "PRODUCTS.IMPORT_CSV",
+                      "status": "DONE",
+                      "result": {
+                        "message": "1 product(s) imported successfully, 1 failed.",
+                        "failed": [
+                          {
+                            "row": 1,
+                            "reason": "vendor: must be a string, property is required, must be equal to one of Vendor 1,Vendor 2 (actual value is 'Vendor 3')"
+                          }
+                        ],
+                        "done_count": 1,
+                        "failed_count": 1
+                      },
+                      "created_at": "2023-01-20T09:07:16.165Z",
+                      "updated_at": "2023-01-20T09:07:17.025Z",
+                      "request_id": "v-0c55578e7a0418fef5",
+                      "progress": 100,
+                      "processing_time": 860,
+                      "object": "async_action"
+                    }
+                  },
+                  "ORDERS.METADATA_KEY_PURGE": {
+                    "value": {
+                      "id": "aa_0c555fda50472c83a8",
+                      "type": "ORDERS.METADATA_KEY_PURGE",
+                      "status": "DONE",
+                      "result": {
+                        "message": "Updated 1 orders.",
+                        "done_count": 1
+                      },
+                      "created_at": "2023-01-20T09:43:30.881Z",
+                      "updated_at": "2023-01-20T09:43:31.217Z",
+                      "request_id": "w-0c555fda45c72c83a7",
+                      "progress": 100,
+                      "processing_time": 336,
+                      "object": "async_action"
+                    }
+                  },
+                  "ORDERS.IMPORT": {
+                    "value": {
+                      "id": "aa_0c5564b67d0e571534",
+                      "type": "ORDERS.IMPORT",
+                      "status": "DONE",
+                      "result": {
+                        "message": "1 order(s) imported successfully, 1 failed.",
+                        "failed": [
+                          {
+                            "source_id": null,
+                            "reason": "Internal error"
+                          }
+                        ],
+                        "done_count": 1,
+                        "failed_count": 1
+                      },
+                      "created_at": "2023-01-20T10:04:44.916Z",
+                      "updated_at": "2023-01-20T10:04:46.102Z",
+                      "request_id": "v-0c5564b6688b0f155d",
+                      "progress": 100,
+                      "processing_time": 1186,
+                      "object": "async_action"
                     }
                   }
                 }
