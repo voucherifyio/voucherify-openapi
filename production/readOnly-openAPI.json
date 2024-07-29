@@ -13833,6 +13833,135 @@
           "product"
         ]
       },
+      "Segment": {
+        "title": "Segment",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "seg_1wc52c5z6r1kQ81brO8j9Hk2",
+            "description": "Unique segment ID."
+          },
+          "name": {
+            "type": "string",
+            "description": "Segment name."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2022-05-12T13:01:56.896Z",
+            "description": "Timestamp representing the date and time when the segment was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "auto-update",
+              "static"
+            ],
+            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers)."
+          },
+          "filter": {
+            "type": "object",
+            "nullable": true,
+            "description": "Defines a set of criteria for an `auto-update` segment type.  "
+          },
+          "initial_sync_status": {
+            "type": "string",
+            "enum": [
+              "IN_PROGRESS",
+              "DONE"
+            ]
+          },
+          "object": {
+            "type": "string",
+            "default": "segment",
+            "description": "The type of the object represented by JSON. This object stores information about the customer segment.",
+            "enum": [
+              "segment"
+            ]
+          }
+        },
+        "description": "This is an object representing a customer segment."
+      },
+      "SegmentsCreateRequestBody": {
+        "title": "Create Customer Segment Request Body",
+        "description": "Request body schema for **POST** `/segments`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SegmentsCreateRequestBodyStatic"
+          },
+          {
+            "$ref": "#/components/schemas/SegmentsCreateRequestBodyDynamic"
+          }
+        ]
+      },
+      "SegmentsCreateRequestBodyDynamic": {
+        "title": "Dynamic Customer Segment",
+        "type": "object",
+        "description": "Request body schema for creating a dynamic customer segment in **POST** `/segments`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Segment name."
+          },
+          "type": {
+            "type": "string",
+            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).",
+            "default": "auto-update",
+            "enum": [
+              "auto-update"
+            ]
+          },
+          "filter": {
+            "type": "object",
+            "description": "Defines a set of criteria for an `auto-update` segment type."
+          }
+        }
+      },
+      "SegmentsCreateRequestBodyStatic": {
+        "title": "Static Customer Segment",
+        "type": "object",
+        "description": "Request body schema for creating a static customer segment in **POST** `/segments`.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Segment name."
+          },
+          "type": {
+            "type": "string",
+            "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).",
+            "default": "static",
+            "enum": [
+              "static"
+            ]
+          },
+          "customers": {
+            "type": "array",
+            "description": "Array of customer IDs.",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SegmentsCreateResponseBody": {
+        "title": "Create Customer Segment Response Body",
+        "description": "Response body schema for **POST** `/segments`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Segment"
+          }
+        ]
+      },
+      "SegmentsGetResponseBody": {
+        "title": "Create Customer Segment Response Body",
+        "description": "Response body schema for **GET** `/v1/segments/{segmentId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Segment"
+          }
+        ]
+      },
       "Session": {
         "type": "object",
         "title": "Session",
@@ -37138,6 +37267,55 @@
           "description": "A unique customer segment ID."
         }
       ],
+      "get": {
+        "operationId": "get-segment",
+        "tags": [
+          "Segments"
+        ],
+        "summary": "Get Segment",
+        "description": "Retrieves the segment with given segment ID.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns segment object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SegmentsGetResponseBody"
+                },
+                "examples": {
+                  "Tier Segment": {
+                    "value": {
+                      "id": "seg_Mv5w1b2FIEbiCCO5ioT8TfI2",
+                      "name": "Tiers 2 - Senior",
+                      "created_at": "2022-06-09T13:21:26.656Z",
+                      "type": "auto-update",
+                      "filter": {
+                        "junction": "and",
+                        "loyalty_points.campaigns.Tiers 2.points": {
+                          "conditions": {
+                            "$more_than_equal": [
+                              41
+                            ]
+                          }
+                        }
+                      },
+                      "initial_sync_status": "DONE",
+                      "object": "segment"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "operationId": "delete-segment",
         "tags": [
@@ -37155,6 +37333,106 @@
         "responses": {
           "204": {
             "description": "Returns no content if deletion is successful."
+          }
+        }
+      }
+    },
+    "/v1/segments": {
+      "post": {
+        "operationId": "create-segment",
+        "tags": [
+          "Segments"
+        ],
+        "summary": "Create Segment",
+        "description": "Create a customer segment.\n\n> 🚧 Limit on Static Segments\n>\n> There is a cap on the number of customers that you can assign to a static segment: **20,000**. If you would like to create a bigger segment, then you can use the unlimited auto-update segment instead and use some customer metadata to build this segment.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the boundary conditions for the customer segment.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SegmentsCreateRequestBody"
+              },
+              "examples": {
+                "Static Segment": {
+                  "value": {
+                    "name": "Customers in a new Segment",
+                    "type": "static",
+                    "customers": [
+                      "cust_iajsExT2QB4sGWzABY85WRqV",
+                      "cust_sehkNIi8Uq2qQuRqSr7xn4Zi"
+                    ]
+                  }
+                },
+                "Dynamic": {
+                  "value": {
+                    "name": "Customers in a new Dynamic Segment",
+                    "type": "auto-update",
+                    "filter": {
+                      "junction": "and",
+                      "created_at": {
+                        "conditions": {
+                          "$after": [
+                            "2021-12-01T00:00:00.000Z"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a customer segment object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SegmentsCreateResponseBody"
+                },
+                "examples": {
+                  "Static": {
+                    "value": {
+                      "id": "seg_vC8iOSCqUG02EsPzsHynLv8i",
+                      "name": "Customers in a new Segment",
+                      "created_at": "2022-09-13T08:57:15.801Z",
+                      "type": "static",
+                      "filter": null,
+                      "initial_sync_status": "DONE",
+                      "object": "segment"
+                    }
+                  },
+                  "Dynamic": {
+                    "value": {
+                      "id": "seg_nZULMFHhVWIFm9vQ0dytg83Q",
+                      "name": "Customers in a new Dynamic Segment",
+                      "created_at": "2022-09-13T09:03:32.764Z",
+                      "type": "auto-update",
+                      "filter": {
+                        "junction": "and",
+                        "created_at": {
+                          "conditions": {
+                            "$after": [
+                              "2021-12-01T00:00:00.000Z"
+                            ]
+                          }
+                        }
+                      },
+                      "initial_sync_status": "IN_PROGRESS",
+                      "object": "segment"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

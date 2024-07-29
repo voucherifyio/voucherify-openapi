@@ -236,9 +236,9 @@
 ## Segments
 | endpoint                 | method | summary        | is supported                         | is deprecated |
 | ------------------------ | ------ | -------------- | ------------------------------------ | ------------- |
-| /v1/segments/{segmentId} | get    | Get Segment    |                                      |               |
+| /v1/segments/{segmentId} | get    | Get Segment    | <font color='green'>supported</font> |               |
 | /v1/segments/{segmentId} | delete | Delete Segment | <font color='green'>supported</font> |               |
-| /v1/segments             | post   | Create Segment |                                      |               |
+| /v1/segments             | post   | Create Segment | <font color='green'>supported</font> |               |
 ## Events
 | endpoint   | method | summary            | is supported                         | is deprecated |
 | ---------- | ------ | ------------------ | ------------------------------------ | ------------- |

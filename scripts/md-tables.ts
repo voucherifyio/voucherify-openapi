@@ -30,7 +30,7 @@ export const mdTables: [string, string?][] = [
     "ValidationRuleAssignment",
     "VALIDATION-RULES-Validation-Rule-Assignment-Object.md",
   ],
-  ["14_obj_segment_object", "SEGMENTS-Customer-Segment-Object.md"],
+  ["Segment", "SEGMENTS-Customer-Segment-Object.md"],
   ["EventsCreateRequestBody", "EVENTS-Custom-Event-Object.md"],
   ["18_res_list_consents_GET", "CONSENTS-Consents-Object.md"],
   ["AsyncAction", "ASYNC-ACTIONS-Async-Action-Object.md"],

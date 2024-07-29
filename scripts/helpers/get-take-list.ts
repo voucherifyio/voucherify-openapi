@@ -3,7 +3,11 @@ export const rawTakeList = {
   "/v1/async-actions/{asyncActionId}": {
     get: ["default", "ruby", "java", "php"],
   },
-  "/v1/segments/{segmentId}": { delete: ["default", "ruby", "java", "php"] },
+  "/v1/segments": { post: ["default", "ruby", "java", "php"] },
+  "/v1/segments/{segmentId}": {
+    delete: ["default", "ruby", "java", "php"],
+    get: ["default", "ruby", "java", "php"],
+  },
   "/v1/publications/create": { get: ["default", "ruby", "java", "php"] },
   "/v1/vouchers/{code}/sessions/{sessionKey}": {
     delete: ["default", "ruby", "java", "php"],
