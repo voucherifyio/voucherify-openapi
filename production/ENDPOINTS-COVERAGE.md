@@ -301,6 +301,7 @@
 | /management/v1/projects/{projectId}/users/{userId}                             | get    | Get User                   |              |               |
 | /management/v1/projects/{projectId}/users/{userId}                             | put    | Update User                |              |               |
 | /management/v1/projects/{projectId}/users/{userId}                             | delete | Unassign User              |              |               |
+| /management/v1/projects/users/invite                                           | post   | Invite a New User          |              |               |
 | /management/v1/projects/{projectId}/stacking-rules                             | post   | Create Stacking Rules      |              |               |
 | /management/v1/projects/{projectId}/stacking-rules                             | get    | List Stacking Rules        |              |               |
 | /management/v1/projects/{projectId}/stacking-rules/{stackingRulesId}           | get    | Get Stacking Rules         |              |               |

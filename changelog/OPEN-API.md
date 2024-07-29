@@ -4,10 +4,19 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-07-15
+
+`OpenAPI.json`:
+- Added a new endpoint, Invite a New User (**POST** `/management/v1/projects/users/invite`), and associated schemas:
+  - ManagementProjectsUserInviteCreateRequestBody
+  - ManagementProjectsUserInviteParameters
+- Added the ManagementProjectsSideKeys schema for app ID and app token in the server-side and client-side objects, which are returned in the **POST** `/management/v1/projects/` endpoint
+
 ## 2024-07-10
 - added schemas `ValidityTimeframe` and `ValidityDayOfWeek`, replaced everywhere `validity_day_of_week` with ref to `ValidityDayOfWeek`, replaced everywhere `validity_timeframe` with ref to `ValidityTimeframe`
 
 
+`OpenAPI.json`:
 - fixed invalid schemas
 - ListPublicationsItemBase[metadata] removed all required
 - ListPublicationsItemBase added new property `vouchers`
@@ -21,6 +30,11 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - added schemas `ValidationsRedeemableSkippedResultLimitExceeded`, `ValidationsRedeemableSkippedResultCategoryLimitExceeded`, `ValidationsRedeemableSkippedResultRedeemablesLimitExceeded`, `ValidationsRedeemableSkippedResultRedeemablesCategoryLimitExceeded`, `ValidationsRedeemableSkippedResultExclusionRulesNotMet`, `ValidationsRedeemableSkippedResultPrecedingValidationFailed`
 - StackingRules added properties: `applicable_redeemables_per_category_limit`, `applicable_exclusive_redeemables_per_category_limit`, and added required on `redeemables_application_mode` and `redeemables_sorting_rule`
 - fixed ManagementProjectsMetadataSchema and its usages.
+- OrderCalculatedBase updated property items[array] ref from `OrderItemCalculated` to `OrderItem`
+- OrderItem added property `object` - enum `order_item`
+- OrderItem added properties `applied_discount_amount`, `applied_discount_quantity`, `applied_quantity`, `applied_quantity_amount`, `subtotal_amount`
+- SimpleOrderItem added properties `id`, `applied_quantity`, `applied_quantity_amount`, `applied_discount_quantity`, `subtotal_amount`
+- SimpleRedemption added property `status`
 
 ## 2024-07-10
 

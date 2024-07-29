@@ -41,7 +41,7 @@ All of:
 | tracking_id</br>`string` | <p>Customer's <code>source_id</code>.</p> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.</p> |
 | channel</br>`string` | <p>How the publication was originated. It can be your own custom channel or an example value provided here.</p> Available values: `API` |
-| source_id</br>`string`, `null` | <p>The merchant’s publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.</p> |
+| source_id</br>`string`, `null` | <p>The merchant's publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.</p> |
 | result</br>`string` | <p>Status of the publication attempt.</p> Available values: `SUCCESS` |
 | customer | See: [Customer With Summary Loyalty Referrals](#customer-with-summary-loyalty-referrals) |
 | vouchers_id</br>`array` | <p>Contains the unique internal voucher ID that was assigned by Voucherify.</p> |
