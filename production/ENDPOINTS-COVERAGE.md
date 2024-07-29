@@ -248,10 +248,10 @@
 | ------------ | ------ | ------------- | ------------ | ------------- |
 | /v1/consents | get    | List Consents |              |               |
 ## Async Actions
-| endpoint                          | method | summary            | is supported | is deprecated |
-| --------------------------------- | ------ | ------------------ | ------------ | ------------- |
-| /v1/async-actions                 | get    | List Async Actions |              |               |
-| /v1/async-actions/{asyncActionId} | get    | Get Async Action   |              |               |
+| endpoint                          | method | summary            | is supported                         | is deprecated |
+| --------------------------------- | ------ | ------------------ | ------------------------------------ | ------------- |
+| /v1/async-actions                 | get    | List Async Actions | <font color='green'>supported</font> |               |
+| /v1/async-actions/{asyncActionId} | get    | Get Async Action   | <font color='green'>supported</font> |               |
 ## Exports
 | endpoint                | method | summary         | is supported                         | is deprecated |
 | ----------------------- | ------ | --------------- | ------------------------------------ | ------------- |

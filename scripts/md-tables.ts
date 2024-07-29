@@ -8,10 +8,7 @@ export const mdTables: [string, string?][] = [
   ["VouchersValidateResponseBody", "VALIDATIONS-Validation-Object.md"],
   ["Redemption", "REDEMPTIONS-Redemption-Object.md"],
   ["RedemptionRollback", "REDEMPTIONS-Rollback-Redemption-Object.md"],
-  [
-    "RedemptionsRedeemResponseBody",
-    "REDEMPTIONS-Redemption-Object.md",
-  ],
+  ["RedemptionsRedeemResponseBody", "REDEMPTIONS-Redemption-Object.md"],
   ["8_obj_loyalty_campaign_object", "LOYALTIES-Loyalty-Campaign-Object.md"],
   [
     "8_obj_loyalty_card_object_non_expanded_categories",
@@ -36,7 +33,7 @@ export const mdTables: [string, string?][] = [
   ["14_obj_segment_object", "SEGMENTS-Customer-Segment-Object.md"],
   ["EventsCreateRequestBody", "EVENTS-Custom-Event-Object.md"],
   ["18_res_list_consents_GET", "CONSENTS-Consents-Object.md"],
-  ["17_obj_async_action_object", "ASYNC-ACTIONS-Async-Action-Object.md"],
+  ["AsyncAction", "ASYNC-ACTIONS-Async-Action-Object.md"],
   ["Export", "EXPORTS-Export-Object.md"],
   ["Category", "CATEGORIES-Category-Object.md"],
   [

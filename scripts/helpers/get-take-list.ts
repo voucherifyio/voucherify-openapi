@@ -1,4 +1,8 @@
 export const rawTakeList = {
+  "/v1/async-actions": { get: ["default", "ruby", "java", "php"] },
+  "/v1/async-actions/{asyncActionId}": {
+    get: ["default", "ruby", "java", "php"],
+  },
   "/v1/segments/{segmentId}": { delete: ["default", "ruby", "java", "php"] },
   "/v1/publications/create": { get: ["default", "ruby", "java", "php"] },
   "/v1/vouchers/{code}/sessions/{sessionKey}": {
