@@ -617,16 +617,17 @@ All of:
 |:-----|:--------|
 | customer | See: [Simple Customer](#simple-customer) |
 | assignment_id</br>`string` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
-| voucher | <p>Defines of the voucher.</p> [Simple Voucher](#simple-voucher) |
-| product | <p>Defines of the product.</p> [Simple Product](#simple-product) |
-| sku | <p>Defines of the sku.</p> [Simple Sku](#simple-sku) |
+| voucher | [Simple Voucher](#simple-voucher) |
+| product | [Simple Product](#simple-product) |
+| sku | [Simple Sku](#simple-sku) |
 | loyalty_tier_id</br>`string` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 | id</br>`string` | <p>Unique reward ID, assigned by Voucherify.</p> **Example:** <p>rew_nIy4gHpQHle2c3pNMwuj7G6j</p> |
-| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the reward.</p> Available values: `reward` |
+| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the reward.</p> Available values: `reward` |
 | name</br>`string` | <p>Reward name.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the reward was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-11T14:49:22.586Z</p> |
-| updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the reward was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-11T16:01:34.885Z</p> |
-| parameters</br>`object` | <p>Defines how the reward is generated.</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the reward was created in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the reward was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| parameters</br>`object` | <p>Defines how the reward is generated.</p> One of: [Digital](#digital), [Pay with Points](#pay-with-points), [Material](#material) |
+| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a reward. The metadata object stores all custom attributes assigned to the reward.</p> |
 | type</br>`string` | <p>Reward type.</p> Available values: `CAMPAIGN`, `COIN`, `MATERIAL` |
 
 ## Simple Referral Tier
@@ -878,6 +879,7 @@ One of:
 | created_at</br>`string` | <p>Timestamp representing the date and time when the redemption was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | updated_at</br>`string` | <p>Timestamp in ISO 8601 format indicating when the reward was updated.</p> **Example:** <p>2022-10-03T12:24:58.008Z</p> |
 | parameters</br>`object` | <p>These are parameters representing a material reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">campaign</br><code>object</code></td><td style="text-align:left"><p>Defines the product redeemed as a reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Campaign unique ID.</p> <strong>Example:</strong> <p>camp_13BbZ0kQsNinhqsX3wUts2UP</p></td></tr><tr><td style="text-align:left">balance</br><code>integer</code></td><td style="text-align:left"><p>Points available for reward redemption.</p></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Defines the type of the campaign.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">product</br><code>object</code></td><td style="text-align:left"><p>Defines the product redeemed as a reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique product ID, assigned by Voucherify.</p> <strong>Example:</strong> <p>prod_0b7d7dfb05cbe5c616</p></td></tr><tr><td style="text-align:left">sku_id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the SKU. It is assigned by Voucherify.</p> <strong>Example:</strong> <p>sku_0a41e31c7b41c28358</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">coin</br><code>object</code></td><td style="text-align:left"><p>Defines the ratio by mapping the number of loyalty points in <code>points_ratio</code> to a predefined cash amount in <code>exchange_ratio</code>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">exchange_ratio</br><code>integer</code></td><td style="text-align:left"><p>The cash equivalent of the points defined in the <code>points_ratio</code> property.</p></td></tr><tr><td style="text-align:left">points_ratio</br><code>integer</code></td><td style="text-align:left"><p>The number of loyalty points that will map to the predefined cash amount defined by the <code>exchange_ratio</code> property.</p></td></tr></tbody></table></td></tr></tbody></table> |
+| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a reward. The metadata object stores all custom attributes assigned to the reward.</p> |
 | type</br>`string` | <p>Reward type.</p> Available values: `CAMPAIGN`, `COIN`, `MATERIAL` |
 
 ## Voucher
@@ -957,6 +959,21 @@ One of:
 | id</br>`string` | <p>Unique sku ID.</p> |
 | source_id</br>`string` | <p>Sku source id.</p> |
 | sku</br>`string` | <p>Sku name.</p> |
+
+## Digital
+| Attributes |  Description |
+|:-----|:--------|
+| campaign | <p>Objects stores information about the campaign related to the reward.</p> One of: [Discount Coupons](#discount-coupons), [Gift Vouchers](#gift-vouchers), [Points on loyalty card](#points-on-loyalty-card) |
+
+## Pay with Points
+| Attributes |  Description |
+|:-----|:--------|
+| coin</br>`object` | <p>Defines the ratio by mapping the number of loyalty points in <code>points_ratio</code> to a predefined cash amount in <code>exchange_ratio</code>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">exchange_ratio</br><code>integer</code></td><td style="text-align:left"><p>The cash equivalent of the points defined in the <code>points_ratio</code> property.</p></td></tr><tr><td style="text-align:left">points_ratio</br><code>integer</code></td><td style="text-align:left"><p>The number of loyalty points that will map to the predefined cash amount defined by the <code>exchange_ratio</code> property.</p></td></tr></tbody></table> |
+
+## Material
+| Attributes |  Description |
+|:-----|:--------|
+| product</br>`object` | <p>Contains information about the product given as a reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique product ID, assigned by Voucherify.</p> <strong>Example:</strong> <p>prod_0b7d7dfb05cbe5c616</p></td></tr><tr><td style="text-align:left">sku_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Unique SKU ID, assigned by Voucherify, of the SKU given as a reward.</p> <strong>Example:</strong> <p>sku_0b7d7dfb090be5c619</p></td></tr></tbody></table> |
 
 ## Loyalty Tier Base
 | Attributes |  Description |
@@ -1271,6 +1288,26 @@ All of:
 | data_ref</br>`string` | <p>Identifies the name of the JSON property that contains the array of validation rule assignments.</p> |
 | data</br>`array` | <p>A dictionary that contains an array of validation rule assignments.</p> Array of [Validation Rule Assignment](#validation-rule-assignment) |
 | total</br>`integer` | <p>Total number of validation rule assignments.</p> |
+
+## Discount Coupons
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_13BbZ0kQsNinhqsX3wUts2UP</p> |
+| type</br>`string` | <p>Campaign type.</p> |
+
+## Gift Vouchers
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_13BbZ0kQsNinhqsX3wUts2UP</p> |
+| balance</br>`integer` | <p>The incremental amout to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
+| type</br>`string` | <p>Campaign type.</p> |
+
+## Points on loyalty card
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_13BbZ0kQsNinhqsX3wUts2UP</p> |
+| balance</br>`integer` | <p>The incremental points to be added to the current balance on the loyalty card.</p> |
+| type</br>`string` | <p>Campaign type.</p> |
 
 ## MappingPoints
 One of:

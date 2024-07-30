@@ -86,16 +86,17 @@ All of:
 |:-----|:--------|
 | customer | See: [Simple Customer](#simple-customer) |
 | assignment_id</br>`string` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
-| voucher | <p>Defines of the voucher.</p> [Simple Voucher](#simple-voucher) |
-| product | <p>Defines of the product.</p> [Simple Product](#simple-product) |
-| sku | <p>Defines of the sku.</p> [Simple Sku](#simple-sku) |
+| voucher | [Simple Voucher](#simple-voucher) |
+| product | [Simple Product](#simple-product) |
+| sku | [Simple Sku](#simple-sku) |
 | loyalty_tier_id</br>`string` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 | id</br>`string` | <p>Unique reward ID, assigned by Voucherify.</p> **Example:** <p>rew_nIy4gHpQHle2c3pNMwuj7G6j</p> |
-| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the reward.</p> Available values: `reward` |
+| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the reward.</p> Available values: `reward` |
 | name</br>`string` | <p>Reward name.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the reward was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-11T14:49:22.586Z</p> |
-| updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the reward was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-11T16:01:34.885Z</p> |
-| parameters</br>`object` | <p>Defines how the reward is generated.</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the reward was created in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the reward was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| parameters</br>`object` | <p>Defines how the reward is generated.</p> One of: [Digital](#digital), [Pay with Points](#pay-with-points), [Material](#material) |
+| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a reward. The metadata object stores all custom attributes assigned to the reward.</p> |
 | type</br>`string` | <p>Reward type.</p> Available values: `CAMPAIGN`, `COIN`, `MATERIAL` |
 
 ## Simple Customer
@@ -267,6 +268,21 @@ All of:
 | source_id</br>`string` | <p>Sku source id.</p> |
 | sku</br>`string` | <p>Sku name.</p> |
 
+## Digital
+| Attributes |  Description |
+|:-----|:--------|
+| campaign | <p>Objects stores information about the campaign related to the reward.</p> One of: [Discount Coupons](#discount-coupons), [Gift Vouchers](#gift-vouchers), [Points on loyalty card](#points-on-loyalty-card) |
+
+## Pay with Points
+| Attributes |  Description |
+|:-----|:--------|
+| coin</br>`object` | <p>Defines the ratio by mapping the number of loyalty points in <code>points_ratio</code> to a predefined cash amount in <code>exchange_ratio</code>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">exchange_ratio</br><code>integer</code></td><td style="text-align:left"><p>The cash equivalent of the points defined in the <code>points_ratio</code> property.</p></td></tr><tr><td style="text-align:left">points_ratio</br><code>integer</code></td><td style="text-align:left"><p>The number of loyalty points that will map to the predefined cash amount defined by the <code>exchange_ratio</code> property.</p></td></tr></tbody></table> |
+
+## Material
+| Attributes |  Description |
+|:-----|:--------|
+| product</br>`object` | <p>Contains information about the product given as a reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique product ID, assigned by Voucherify.</p> <strong>Example:</strong> <p>prod_0b7d7dfb05cbe5c616</p></td></tr><tr><td style="text-align:left">sku_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Unique SKU ID, assigned by Voucherify, of the SKU given as a reward.</p> <strong>Example:</strong> <p>sku_0b7d7dfb090be5c619</p></td></tr></tbody></table> |
+
 ## Gift
 | Attributes |  Description |
 |:-----|:--------|
@@ -324,6 +340,26 @@ One of:
 | related_object_parent_id</br>`string` | <p>Represent's the campaign ID of the voucher if the redemption was based on a voucher that was part of bulk codes generated within a campaign. In case of a promotion tier, this represents the campaign ID of the promotion tier's parent campaign.</p> |
 | stacked</br>`array` | <p>Contains a list of unique IDs of child redemptions, which belong to the stacked incentives.</p> |
 | rollback_stacked</br>`array` | <p>Lists the rollback redemption IDs of the particular child redemptions.</p> |
+
+## Discount Coupons
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_13BbZ0kQsNinhqsX3wUts2UP</p> |
+| type</br>`string` | <p>Campaign type.</p> |
+
+## Gift Vouchers
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_13BbZ0kQsNinhqsX3wUts2UP</p> |
+| balance</br>`integer` | <p>The incremental amout to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
+| type</br>`string` | <p>Campaign type.</p> |
+
+## Points on loyalty card
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_13BbZ0kQsNinhqsX3wUts2UP</p> |
+| balance</br>`integer` | <p>The incremental points to be added to the current balance on the loyalty card.</p> |
+| type</br>`string` | <p>Campaign type.</p> |
 
 ## Amount
 | Attributes |  Description |
