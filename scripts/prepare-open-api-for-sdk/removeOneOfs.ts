@@ -32,7 +32,14 @@ const checkProperties = (schema, title, schemas) => {
         ];
       }
       if (entry?.properties) {
-        return [propertyName, checkProperties(entry, title, schemas)];
+        return [
+          propertyName,
+          checkProperties(
+            entry,
+            title + upperFirst(camelCase(propertyName)),
+            schemas,
+          ),
+        ];
       }
       if (entry.items?.oneOf) {
         return [

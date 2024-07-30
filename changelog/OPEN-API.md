@@ -19,6 +19,8 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - Added the ManagementProjectsSideKeys schema for app ID and app token in the server-side and client-side objects, which are returned in the **POST** `/management/v1/projects/` endpoint
 
 ## 2024-07-10
+- added schemas `ValidityTimeframe` and `ValidityDayOfWeek`, replaced everywhere `validity_day_of_week` with ref to `ValidityDayOfWeek`, replaced everywhere `validity_timeframe` with ref to `ValidityTimeframe`
+
 
 `OpenAPI.json`:
 - fixed invalid schemas
@@ -39,6 +41,12 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - OrderItem added properties `applied_discount_amount`, `applied_discount_quantity`, `applied_quantity`, `applied_quantity_amount`, `subtotal_amount`
 - SimpleOrderItem added properties `id`, `applied_quantity`, `applied_quantity_amount`, `applied_discount_quantity`, `subtotal_amount`
 - SimpleRedemption added property `status`
+
+## 2024-07-10
+
+`OpenAPI.json` and `OpenAPIWebhooks.json`:
+- Added `AccessSettingsCampaignAssignmentsList` and `AreaStoreCampaignAssignment` schemas for the Areas and Stores feature
+- Added `access_settings_assignments` field to the `Campaign` schema
 
 ## 2024-06-25
 

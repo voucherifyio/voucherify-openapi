@@ -48,6 +48,10 @@ const supportedLanguages: {
     name: "php",
     mergeOneOfs: true,
     putNotObjectSchemasIntoObjectSchemas: true,
+    removeRequiredOnNullable: true,
+    okResponseMustBeOnlyOne: true,
+    makeEverythingNullable: true,
+    removeBuggedTagsFromOpenAPIPaths: true,
   },
   java: {
     name: "java",
@@ -55,6 +59,7 @@ const supportedLanguages: {
     okResponseMustBeOnlyOne: true,
     removeRequiredOnNullable: true,
     makeEverythingNullable: true,
+    removeBuggedTagsFromOpenAPIPaths: true,
   },
 };
 
@@ -85,6 +90,18 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 
 const main = async (languageOptions: LanguageOptions) => {
   removeStoplightTag(openAPIContent);
+  //OVERRIDE
+  openAPIContent.components.schemas.AsyncAction.allOf.map((schema) => {
+    if (schema?.properties?.result) {
+      schema.properties.result = {
+        // @ts-ignore
+        type: "object",
+      };
+    }
+  });
+  delete openAPIContent.components.securitySchemes["X-Management-Id"];
+  delete openAPIContent.components.securitySchemes["X-Management-Token"];
+  //
   const { paths, newSchemas } = getPathsWithoutDeprecated(
     openAPIContent.paths,
     languageOptions.okResponseMustBeOnlyOne,

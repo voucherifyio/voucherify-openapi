@@ -1,8 +1,7 @@
 
-version X.X.X
-- (date)
-  - 1st change
-  - 2nd change
+version 13.0.0
+- 22.07.2024
+  - Session.key is now String - not Enum
 
 changes since version 12.0.0
 
