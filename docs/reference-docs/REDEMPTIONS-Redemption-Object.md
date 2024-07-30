@@ -101,11 +101,11 @@ All of:
 ## Simple Customer
 | Attributes |  Description |
 |:-----|:--------|
-| id</br>`string` | <p>The ID of an existing customer that will be linked to redemption in this request.</p> |
-| source_id</br>`string` | <p>A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.</p> |
+| id</br>`string` | <p>Unique identifier of an existing customer. It is assigned by Voucherify.</p> |
 | name</br>`string` | <p>Customer's first and last name.</p> |
 | email</br>`string` | <p>Customer's email address.</p> |
-| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.</p> |
+| source_id</br>`string` | <p>A unique identifier of the customer. It can be a customer ID or email from a CRM system, database, or a third-party service.</p> |
+| metadata</br>`object` | <p>A set of custom key/value pairs that are attached to the customer. It stores all custom attributes assigned to the customer.</p> |
 | object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `customer` |
 
 ## Simple Voucher
@@ -120,18 +120,18 @@ All of:
 | campaign</br>`string` | <p>Campaign name.</p> |
 | campaign_id</br>`string` | <p>Campaign unique ID.</p> |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
-| holder_id</br>`string` | <p>Unique customer ID of the campaign owner.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
+| holder_id</br>`string` | <p>Unique customer identifier of the redeemable holder.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
 | referrer_id</br>`string` | <p>Unique identifier of the referrer assigned by Voucherify.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
 | category_id</br>`string`, `null` | <p>Unique identifier of the category that this voucher belongs to.</p> **Example:** <p>cat_0b6152ce12414820dc</p> |
 | categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | active</br>`boolean` | <p>Shows whether the voucher is on or off. <code>true</code> indicates an <em>active</em> voucher and <code>false</code> indicates an <em>inactive</em> voucher.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the order was created. Timestamp is presented in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the order was created in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
 | redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code>, <code>null</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr><tr><td style="text-align:left">redeemed_quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher has already been redeemed.</p> <strong>Example:</strong> <p>1</p></td></tr></tbody></table> |
 | start_date</br>`string` | <p>Activation timestamp defines when the code starts to be active in ISO 8601 format. Voucher is <em>inactive before</em> this date.</p> **Example:** <p>2021-12-01T00:00:00.000Z</p> |
 | expiration_date</br>`string` | <p>Expiration timestamp defines when the code expires in ISO 8601 format.  Voucher is <em>inactive after</em> this date.</p> **Example:** <p>2021-12-31T00:00:00.000Z</p> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a voucher. The metadata object stores all custom attributes assigned to the voucher.</p> |
-| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `voucher` |
+| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `voucher` |
 
 ## Simple Promotion Tier
 | Attributes |  Description |
