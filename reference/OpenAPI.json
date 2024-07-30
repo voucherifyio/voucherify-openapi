@@ -2920,16 +2920,13 @@
         }
       },
       "SimpleCustomer": {
-        "type": "object",
         "title": "Simple Customer",
+        "type": "object",
+        "description": "Simplified customer data.",
         "properties": {
           "id": {
             "type": "string",
-            "description": "The ID of an existing customer that will be linked to redemption in this request."
-          },
-          "source_id": {
-            "type": "string",
-            "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
+            "description": "Unique identifier of an existing customer. It is assigned by Voucherify."
           },
           "name": {
             "type": "string",
@@ -2939,14 +2936,17 @@
             "type": "string",
             "description": "Customer's email address."
           },
+          "source_id": {
+            "type": "string",
+            "description": "A unique identifier of the customer. It can be a customer ID or email from a CRM system, database, or a third-party service."
+          },
           "metadata": {
             "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
+            "description": "A set of custom key/value pairs that are attached to the customer. It stores all custom attributes assigned to the customer."
           },
           "object": {
             "type": "string",
             "description": "The type of the object represented by JSON.",
-            "default": "customer",
             "enum": [
               "customer"
             ]
@@ -24852,7 +24852,7 @@
           "holder_id": {
             "type": "string",
             "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
-            "description": "Unique customer ID of the campaign owner."
+            "description": "Unique customer identifier of the redeemable holder."
           },
           "referrer_id": {
             "type": "string",
@@ -24879,7 +24879,7 @@
           "created_at": {
             "type": "string",
             "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the order was created. Timestamp is presented in the ISO 8601 format.",
+            "description": "Timestamp representing the date and time when the order was created in the ISO 8601 format.",
             "format": "date-time"
           },
           "updated_at": {
@@ -24926,7 +24926,7 @@
           },
           "object": {
             "type": "string",
-            "description": "The type of the object represented by JSON.",
+            "description": "The type of object represented by JSON.",
             "default": "voucher",
             "enum": [
               "voucher"
@@ -24937,7 +24937,6 @@
           "type",
           "code",
           "created_at",
-          "inapplicable_to",
           "object"
         ]
       },
@@ -24971,6 +24970,7 @@
             "description": "Flag indicating whether this voucher is a referral code; `true` for campaign type `REFERRAL_PROGRAM`."
           },
           "voucher": {
+            "type": "object",
             "$ref": "#/components/schemas/SimpleCampaignVoucher"
           },
           "lucky_draw": {
@@ -24996,14 +24996,14 @@
             "type": "boolean",
             "description": "Indicates whether the campaign is active."
           },
+          "category_id": {
+            "nullable": true,
+            "type:": "string",
+            "description": "The unique category ID that this campaign belongs to."
+          },
           "category": {
             "type": "string",
             "description": "Unique category name."
-          },
-          "category_id": {
-            "nullable": true,
-            "type": "string",
-            "description": "The unique category ID that this campaign belongs to."
           },
           "categories": {
             "type": "array",
@@ -25035,7 +25035,7 @@
           "created_at": {
             "type": "string",
             "example": "2024-01-01T11:11:11.111Z",
-            "description": "Timestamp representing the date and time when the campaign was created. Timestamp is presented in the ISO 8601 format.",
+            "description": "Timestamp representing the date and time when the campaign was created in the ISO 8601 format.",
             "format": "date-time"
           },
           "updated_at": {
@@ -25050,7 +25050,7 @@
             "enum": [
               "campaign"
             ],
-            "description": "The type of the object represented by JSON. This object stores information about the campaign."
+            "description": "The type of object represented by JSON. This object stores information about the campaign."
           }
         }
       },
@@ -25328,7 +25328,9 @@
               "customer.loyalty.tier.prolonged",
               "customer.loyalty.tier.expiration.changed",
               "customer.loyalty.tier.joined",
-              "customer.loyalty.tier.left"
+              "customer.loyalty.tier.left",
+              "customer.holder.assignment.created",
+              "customer.holder.assignment.deleted"
             ]
           },
           "data": {
@@ -25614,6 +25616,12 @@
           },
           {
             "$ref": "#/components/schemas/EventCustomerLoyaltyTierLeft"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerHolderAssignmentCreated"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerHolderAssignmentDeleted"
           }
         ]
       },
@@ -26843,6 +26851,54 @@
               "loyalty_tier"
             ]
           }
+        ]
+      },
+      "EventCustomerHolderAssignmentCreated": {
+        "title": "Event Customer Holder Assignment Created",
+        "description": "Event data object schema for `customer.holder.assignment.created`.",
+        "properties": {
+          "holder": {
+            "$ref": "#/components/schemas/SimpleRedeemableHolder"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          }
+        },
+        "required": [
+          "holder",
+          "voucher",
+          "campaign",
+          "customer"
+        ]
+      },
+      "EventCustomerHolderAssignmentDeleted": {
+        "title": "Event Customer Holder Assignment Deleted",
+        "description": "Event data object schema for `customer.holder.assignment.deleted`.",
+        "properties": {
+          "holder": {
+            "$ref": "#/components/schemas/SimpleRedeemableHolder"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          }
+        },
+        "required": [
+          "holder",
+          "voucher",
+          "campaign",
+          "customer"
         ]
       },
       "CustomersMetadataUpdateInBulkRequestBody": {
@@ -28891,6 +28947,103 @@
           "campaign_id",
           "campaign_type",
           "voucher_type",
+          "object"
+        ]
+      },
+      "SimpleRedeemableHolder": {
+        "type": "object",
+        "title": "Customer Redeemable",
+        "description": "Single customer's redeemable",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the redeemable holder.",
+            "example": "rh_0e7b8db4700106a852"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the redeemable was assigned. Timestamp is presented in the ISO 8601 format.",
+            "example": "2024-03-22T17:48:25.910Z"
+          },
+          "redeemable_id": {
+            "type": "string",
+            "description": "Identifier of the redeemable item.",
+            "example": "v_GXVguPhq2khgFxH7GrRXWA91gDr1LiA1"
+          },
+          "redeemable_object": {
+            "type": "string",
+            "description": "Type of the redeemable.",
+            "example": "voucher",
+            "enum": [
+              "voucher"
+            ]
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unique identifier of the campaign as assigned by Voucherify.",
+            "example": "camp_weer1c3p5ZgktqfW56RfoNaG"
+          },
+          "campaign_type": {
+            "type": "string",
+            "description": "Defines the type of the campaign.",
+            "default": "REFERRAL_PROGRAM",
+            "enum": [
+              "REFERRAL_PROGRAM"
+            ],
+            "example": "REFERRAL_PROGRAM"
+          },
+          "voucher_type": {
+            "type": "string",
+            "description": "Defines the type of the voucher.",
+            "enum": [
+              "GIFT_VOUCHER",
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD"
+            ],
+            "default": "DISCOUNT_VOUCHER",
+            "example": "DISCOUNT_VOUCHER"
+          },
+          "publication_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique identifier of the publication."
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Unique identifier of the customer.",
+            "example": "cust_p1ufreYbVbwZ1x70nFkH9rF9"
+          },
+          "holder_role": {
+            "type": "string",
+            "description": "Role of the holder.",
+            "enum": [
+              "OWNER",
+              "REFERRER",
+              "REFEREE"
+            ],
+            "example": "REFERRER"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "default": "redeemable_holder",
+            "enum": [
+              "redeemable_holder"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "redeemable_id",
+          "redeemable_object",
+          "campaign_id",
+          "campaign_type",
+          "voucher_type",
+          "publication_id",
+          "customer_id",
+          "holder_role",
           "object"
         ]
       },
