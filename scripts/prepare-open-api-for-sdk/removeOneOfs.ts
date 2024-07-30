@@ -446,7 +446,7 @@ export const removeAllOneOfs = (
   );
 };
 
-const cleanUpDescriptionsInEntireObject = (object: any) => {
+export const cleanUpDescriptionsInEntireObject = (object: any) => {
   if (Array.isArray(object)) {
     return object.map((value) => cleanUpDescriptionsInEntireObject(value));
   }

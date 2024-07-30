@@ -9,7 +9,10 @@ let openAPIContent = originalOpenAPIContent;
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
-import { removeAllOneOfs } from "./removeOneOfs";
+import {
+  cleanUpDescriptionsInEntireObject,
+  removeAllOneOfs,
+} from "./removeOneOfs";
 import { putNotObjectSchemasIntoObjectSchemas } from "./put-not-object-schemas-into-object-schemas";
 import {
   removeBuggedTagsFromOpenAPIParameters,
@@ -49,11 +52,11 @@ const supportedLanguages: {
   php: {
     name: "php",
     mergeOneOfs: true,
-    putNotObjectSchemasIntoObjectSchemas: true,
-    removeRequiredOnNullable: true,
     okResponseMustBeOnlyOne: true,
+    removeRequiredOnNullable: true,
     makeEverythingNullable: true,
     removeBuggedTagsFromOpenAPIPaths: true,
+    putNotObjectSchemasIntoObjectSchemas: true,
   },
   java: {
     name: "java",
@@ -147,7 +150,7 @@ const main = async (languageOptions: LanguageOptions) => {
       : openAPIContent.components.parameters;
 
   // Building all together
-  const newOpenApiFile = {
+  const newOpenApiFile = cleanUpDescriptionsInEntireObject({
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
@@ -155,7 +158,7 @@ const main = async (languageOptions: LanguageOptions) => {
       parameters,
     },
     paths: newPaths,
-  };
+  });
 
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
 };

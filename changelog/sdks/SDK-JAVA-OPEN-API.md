@@ -1,7 +1,8 @@
 
-version 13.0.0
-- 22.07.2024
-  - Session.key is now String - not Enum
+version X.X.X
+- (date)
+  - 1st change
+  - 2nd change
 
-changes since version 12.0.0
+changes since version 14.0.0
 
