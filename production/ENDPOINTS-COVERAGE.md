@@ -279,10 +279,14 @@
 | /v1/locations              | get    | List Locations |              |               |
 | /v1/locations/{locationId} | get    | Get Location   |              |               |
 ## Referrals
-| endpoint                                              | method | summary                           | is supported | is deprecated |
-| ----------------------------------------------------- | ------ | --------------------------------- | ------------ | ------------- |
-| /v1/referrals/{campaignId}/members/{memberId}/holders | get    | List Referral Code Holders [Beta] |              |               |
-| /v1/referrals/members/{memberId}/holders              | get    | List Referral Code Holders [Beta] |              |               |
+| endpoint                                                         | method | summary                           | is supported | is deprecated |
+| ---------------------------------------------------------------- | ------ | --------------------------------- | ------------ | ------------- |
+| /v1/referrals/{campaignId}/members/{memberId}/holders            | post   | Add Referral Code Holders         |              |               |
+| /v1/referrals/{campaignId}/members/{memberId}/holders            | get    | List Referral Code Holders [Beta] |              |               |
+| /v1/referrals/{campaignId}/members/{memberId}/holders/{holderId} | delete | Remove Referral Card Holder       |              |               |
+| /v1/referrals/members/{memberId}/holders                         | post   | Add Referral Code Holders         |              |               |
+| /v1/referrals/members/{memberId}/holders                         | get    | List Referral Code Holders [Beta] |              |               |
+| /v1/referrals/members/{memberId}/holders/{holderId}              | delete | Remove Referral Card Holder       |              |               |
 ## Bin
 | endpoint                   | method | summary          | is supported | is deprecated |
 | -------------------------- | ------ | ---------------- | ------------ | ------------- |

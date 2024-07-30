@@ -4,7 +4,8 @@ import path from "path";
 import minimist from "minimist";
 import colors from "colors";
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
-import openAPIContent from "../../reference/OpenAPI.json";
+import originalOpenAPIContent from "../../reference/OpenAPI.json";
+let openAPIContent = originalOpenAPIContent;
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
@@ -14,6 +15,7 @@ import {
   removeBuggedTagsFromOpenAPIParameters,
   removeBuggedTagsFromOpenAPIPaths,
 } from "./remove-bugged-tags-from-open-api";
+import { removeUnwantedProperties } from "./remove-unwanted-properties";
 
 const options = minimist(process.argv.slice(2));
 
@@ -90,6 +92,7 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 
 const main = async (languageOptions: LanguageOptions) => {
   removeStoplightTag(openAPIContent);
+  openAPIContent = removeUnwantedProperties(openAPIContent, ["readmeTitle"]);
   //OVERRIDE
   openAPIContent.components.schemas.AsyncAction.allOf.map((schema) => {
     if (schema?.properties?.result) {

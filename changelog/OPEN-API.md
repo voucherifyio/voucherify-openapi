@@ -6,8 +6,8 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2024-07-29
 
-- Added POST `v1/referrals/{campaignId}/members/{memberId}/holders` and `v1/referrals/{members/{memberId}/holders`
-- Added DELETE `v1/referrals/{campaignId}/members/{memberId}/holders/{holderId}` and `v1/referrals/{members/{memberId}/holders/{holderId}`
+- Added POST `v1/referrals/{campaignId}/members/{memberId}/holders` and `v1/referrals/members/{memberId}/holders`
+- Added DELETE `v1/referrals/{campaignId}/members/{memberId}/holders/{holderId}` and `v1/referrals/members/{memberId}/holders/{holderId}`
 - Added a `holder_role` filter to Qualifications
 
 ## 2024-07-15
