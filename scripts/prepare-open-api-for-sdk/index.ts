@@ -96,7 +96,8 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 const main = async (languageOptions: LanguageOptions) => {
   removeStoplightTag(openAPIContent);
   openAPIContent = removeUnwantedProperties(openAPIContent, ["readmeTitle"]);
-  //OVERRIDE
+  //////////////////////////////////////////////////////////////////////////////
+  //Simplify AsyncAction.result
   openAPIContent.components.schemas.AsyncAction.allOf.map((schema) => {
     if (schema?.properties?.result) {
       schema.properties.result = {
@@ -105,9 +106,34 @@ const main = async (languageOptions: LanguageOptions) => {
       };
     }
   });
+  //Delete unused Security schemas
   delete openAPIContent.components.securitySchemes["X-Management-Id"];
   delete openAPIContent.components.securitySchemes["X-Management-Token"];
-  //
+  //Fix voucher - to prevent breaking changes
+  openAPIContent.components.schemas.Voucher["type"] = "object";
+  openAPIContent.components.schemas.Voucher["properties"] =
+    openAPIContent.components.schemas.Voucher.allOf.reduce(
+      (accumulator, currentValue) => {
+        if (typeof currentValue?.$ref === "string") {
+          accumulator = {
+            ...accumulator,
+            ...(openAPIContent.components.schemas?.[
+              currentValue?.$ref.split("/").at(-1)
+            ]?.properties || {}),
+          };
+        } else {
+          accumulator = {
+            ...accumulator,
+            // @ts-ignore
+            ...(currentValue.properties || {}),
+          };
+        }
+        return accumulator;
+      },
+      {},
+    );
+  delete openAPIContent.components.schemas.Voucher.allOf;
+  //////////////////////////////////////////////////////////////////////////////
   const { paths, newSchemas } = getPathsWithoutDeprecated(
     openAPIContent.paths,
     languageOptions.okResponseMustBeOnlyOne,
