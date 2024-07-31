@@ -105,6 +105,7 @@ const main = async (languageOptions: LanguageOptions) => {
       };
     }
   });
+  delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
   delete openAPIContent.components.securitySchemes["X-Management-Id"];
   delete openAPIContent.components.securitySchemes["X-Management-Token"];
   //
