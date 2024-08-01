@@ -4,6 +4,24 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-07-30
+
+- Added parameter `ParameterRedeemableHolderId`
+- Schema `Session` - property `key` is no longer `enum`
+- Added `RewardsListResponseBody`, `PromotionsTiersCreateRequestBody`, `PromotionsTiersCreateResponseBody`, `PromotionsTiersUpdateRequestBody`, `PromotionsTiersUpdateResponseBody`, `PromotionTierUpdate`, `PromotionTierCreateParams`, `RewardsCreateRequestBodyMaterial`, `RewardsCreateRequestBodyDigital`, `RewardsCreateRequestBodyDigitalParameters`, `RewardsCreateRequestBodyPayWithPoints`,  `RewardsUpdateRequestBody`, `RewardsUpdateRequestBodyDigital`, `RewardsUpdateRequestBodyPayWithPoints`, `RewardsUpdateRequestBodyMaterial`, `RewardsUpdateRequestBodyDigitalParametersLoyaltyProgram`, `RewardsUpdateRequestBodyDigitalParametersGiftVouchers`, `RewardsUpdateRequestBodyDigitalParametersDiscountCoupons`, `RewardsUpdateRequestBodyDigitalParameters`, `RewardsUpdateRequestBodyMaterialParameters`, `RewardsUpdateRequestBodyPayWithPointsParameters`, `RewardsCreateRequestBodyDigitalParametersLoyaltyProgram`, `RewardsCreateRequestBodyDigitalParametersGiftVouchers`, `RewardsCreateRequestBodyDigitalParametersDiscountCoupons`, `RewardsCreateRequestBodyMaterialParameters`, `RewardsCreateRequestBodyPayWithPointsParameters`,`SegmentsCreateRequestBodyStatic`,  `SegmentsCreateRequestBody`, `SegmentsGetResponseBody`, `SegmentsCreateResponseBody`, `SegmentsCreateRequestBodyDynamic`, `AsyncActionGetResponseBody`, `AsyncAction`, `AsyncActionsListResponseBody`, `ReferralsMembersHoldersCreateInBulkRequestBody`, `ReferralsMembersHoldersCreateInBulkResponseBody`, `RedemptionEntry`, `ClientPromotionsTiersListResponseBody`
+- Deleted `CodeConfigRequiredLengthCharsetPattern`
+- Deleted ordering by `created_at` and `-created_at` from `ParameterOrderListRedeemables` for endpoints with `redeemable_holders`
+
+  `OpenAPI.json` and `OpenAPIWebhooks.json`:
+- Added `AccessSettingsCampaignAssignmentsList` and `AreaStoreCampaignAssignment` schemas for the Areas and Stores feature
+- Added `access_settings_assignments` field to the `Campaign` schema
+
+## 2024-07-29
+
+- Added POST `v1/referrals/{campaignId}/members/{memberId}/holders` and `v1/referrals/members/{memberId}/holders`
+- Added DELETE `v1/referrals/{campaignId}/members/{memberId}/holders/{holderId}` and `v1/referrals/members/{memberId}/holders/{holderId}`
+- Added a `holder_role` filter to Qualifications
+
 ## 2024-07-15
 
 `OpenAPI.json`:
@@ -13,6 +31,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - Added the ManagementProjectsSideKeys schema for app ID and app token in the server-side and client-side objects, which are returned in the **POST** `/management/v1/projects/` endpoint
 
 ## 2024-07-10
+- added schemas `ValidityTimeframe` and `ValidityDayOfWeek`, replaced everywhere `validity_day_of_week` with ref to `ValidityDayOfWeek`, replaced everywhere `validity_timeframe` with ref to `ValidityTimeframe`
 
 `OpenAPI.json`:
 - fixed invalid schemas
