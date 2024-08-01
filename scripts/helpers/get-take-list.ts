@@ -32,6 +32,9 @@ export const rawTakeList = {
   "/v1/redemptions/{parentRedemptionId}/rollbacks": {
     post: ["default", "ruby", "java", "php"],
   },
+  "/v1/vouchers": {
+    get: ["default", "ruby", "java", "php"],
+  },
   "/v1/vouchers/{code}": {
     get: ["default", "ruby", "java", "php"],
     delete: ["default", "ruby", "java", "php"],
