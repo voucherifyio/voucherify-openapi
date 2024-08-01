@@ -7,6 +7,12 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-07-24
+
+- Updated the following article files with the information about API keys and integration keys:
+  - `Authentication.md`
+  - `project-setup-guide.md`
+
 ## 2024-07-17
 
 - Added "Case 4 - Upselling (audience only)" to the "Qualification – Checking Eligibility" article

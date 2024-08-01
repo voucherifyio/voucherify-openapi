@@ -4,16 +4,21 @@ import path from "path";
 import minimist from "minimist";
 import colors from "colors";
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
-import openAPIContent from "../../reference/OpenAPI.json";
+import originalOpenAPIContent from "../../reference/OpenAPI.json";
+let openAPIContent = originalOpenAPIContent;
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";
-import { removeAllOneOfs } from "./removeOneOfs";
+import {
+  cleanUpDescriptionsInEntireObject,
+  removeAllOneOfs,
+} from "./removeOneOfs";
 import { putNotObjectSchemasIntoObjectSchemas } from "./put-not-object-schemas-into-object-schemas";
 import {
   removeBuggedTagsFromOpenAPIParameters,
   removeBuggedTagsFromOpenAPIPaths,
 } from "./remove-bugged-tags-from-open-api";
+import { removeUnwantedProperties } from "./remove-unwanted-properties";
 
 const options = minimist(process.argv.slice(2));
 
@@ -47,6 +52,10 @@ const supportedLanguages: {
   php: {
     name: "php",
     mergeOneOfs: true,
+    okResponseMustBeOnlyOne: true,
+    removeRequiredOnNullable: true,
+    makeEverythingNullable: true,
+    removeBuggedTagsFromOpenAPIPaths: true,
     putNotObjectSchemasIntoObjectSchemas: true,
   },
   java: {
@@ -55,6 +64,7 @@ const supportedLanguages: {
     okResponseMustBeOnlyOne: true,
     removeRequiredOnNullable: true,
     makeEverythingNullable: true,
+    removeBuggedTagsFromOpenAPIPaths: true,
   },
 };
 
@@ -85,6 +95,20 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 
 const main = async (languageOptions: LanguageOptions) => {
   removeStoplightTag(openAPIContent);
+  openAPIContent = removeUnwantedProperties(openAPIContent, ["readmeTitle"]);
+  //OVERRIDE
+  openAPIContent.components.schemas.AsyncAction.allOf.map((schema) => {
+    if (schema?.properties?.result) {
+      schema.properties.result = {
+        // @ts-ignore
+        type: "object",
+      };
+    }
+  });
+  delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
+  delete openAPIContent.components.securitySchemes["X-Management-Id"];
+  delete openAPIContent.components.securitySchemes["X-Management-Token"];
+  //
   const { paths, newSchemas } = getPathsWithoutDeprecated(
     openAPIContent.paths,
     languageOptions.okResponseMustBeOnlyOne,
@@ -127,7 +151,7 @@ const main = async (languageOptions: LanguageOptions) => {
       : openAPIContent.components.parameters;
 
   // Building all together
-  const newOpenApiFile = {
+  const newOpenApiFile = cleanUpDescriptionsInEntireObject({
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
@@ -135,7 +159,7 @@ const main = async (languageOptions: LanguageOptions) => {
       parameters,
     },
     paths: newPaths,
-  };
+  });
 
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
 };

@@ -20,6 +20,7 @@ const version =
   versionOption || versionTag ? `${mainVersion}-${versionTag}` : undefined;
 import { removeAdditionalPropertiesFromSchemas } from "./remove-additional-properties-for-some-schemas";
 import { main as uploadWebhookDefinitions } from "./upload-webhook-definitions";
+import { readmeReplaceTitle } from "./readme-replace-title";
 
 const listOfGuideCategories = [
   "Getting started",
@@ -44,6 +45,13 @@ const main = async ({
   create?: boolean;
   update?: boolean;
 }) => {
+  const { error } = await runCliProcess({
+    command: `npm run create-open-api-version-to-upload`,
+    resolveErrorAsFalse: true,
+  });
+  if (error) {
+    console.log(colors.red("Could not build openApi file to upload!"));
+  }
   if (!(await validate({ help, version, create, update }))) {
     return;
   }
@@ -70,7 +78,6 @@ const uploadOpenApiFileWithMaxNumberOfAttempts = async (
   version,
   maxNumberOfUploadingAttempts = 3,
 ) => {
-  await createOpenAPIVersionToUpload();
   console.log(
     colors.green(
       "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE",
@@ -126,47 +133,6 @@ const isVersionExists = async (version: string) => {
         },
       )
     ).status === 200
-  );
-};
-
-const createOpenAPIVersionToUpload = async () => {
-  console.log(
-    colors.green("CREATING OPEN API FILE TO UPLOAD... PLEASE WAIT..."),
-  );
-
-  const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
-  const openAPIContent = JSON.parse(
-    (await fsPromises.readFile(openApiPath)).toString(),
-  );
-
-  const pathToTmp = path.join(__dirname, "../tmp");
-  if (!fs.existsSync(pathToTmp)) {
-    fs.mkdirSync(pathToTmp);
-  }
-
-  const pathToTmpReferenceToUpload = path.join(
-    __dirname,
-    "../tmp/referenceToUpload",
-  );
-  if (!fs.existsSync(pathToTmpReferenceToUpload)) {
-    fs.mkdirSync(pathToTmpReferenceToUpload);
-  }
-
-  const newOpenApiFile = {
-    ...openAPIContent,
-    components: {
-      ...openAPIContent.components,
-      schemas: removeAdditionalPropertiesFromSchemas(
-        openAPIContent.components.schemas,
-        ["ExportsCreateRequestBody", "ExportsCreateResponseBody"],
-      ),
-    },
-  };
-  newOpenApiFile.openapi = "3.1.0";
-
-  await fsPromises.writeFile(
-    path.join(__dirname, "../tmp/referenceToUpload/OpenAPI.json"),
-    JSON.stringify(newOpenApiFile, null, 2),
   );
 };
 

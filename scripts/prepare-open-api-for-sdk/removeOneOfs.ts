@@ -32,7 +32,14 @@ const checkProperties = (schema, title, schemas) => {
         ];
       }
       if (entry?.properties) {
-        return [propertyName, checkProperties(entry, title, schemas)];
+        return [
+          propertyName,
+          checkProperties(
+            entry,
+            title + upperFirst(camelCase(propertyName)),
+            schemas,
+          ),
+        ];
       }
       if (entry.items?.oneOf) {
         return [
@@ -439,7 +446,7 @@ export const removeAllOneOfs = (
   );
 };
 
-const cleanUpDescriptionsInEntireObject = (object: any) => {
+export const cleanUpDescriptionsInEntireObject = (object: any) => {
   if (Array.isArray(object)) {
     return object.map((value) => cleanUpDescriptionsInEntireObject(value));
   }
