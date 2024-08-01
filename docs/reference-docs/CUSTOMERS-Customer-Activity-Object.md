@@ -455,7 +455,7 @@ All of:
 ## Event Customer Holder Assignment Created
 | Attributes |  Description |
 |:-----|:--------|
-| holder | See: [Customer Redeemable](#customer-redeemable) |
+| holder | See: [Redeemable Holder](#redeemable-holder) |
 | voucher | See: [Simple Voucher](#simple-voucher) |
 | campaign | See: [Simple Campaign](#simple-campaign) |
 | customer | See: [Simple Customer](#simple-customer) |
@@ -463,7 +463,7 @@ All of:
 ## Event Customer Holder Assignment Deleted
 | Attributes |  Description |
 |:-----|:--------|
-| holder | See: [Customer Redeemable](#customer-redeemable) |
+| holder | See: [Redeemable Holder](#redeemable-holder) |
 | voucher | See: [Simple Voucher](#simple-voucher) |
 | campaign | See: [Simple Campaign](#simple-campaign) |
 | customer | See: [Simple Customer](#simple-customer) |
@@ -492,22 +492,22 @@ All of:
 | campaign_type</br>`string` | <p>Type of campaign.</p> |
 | type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation.</p><ul><li><code>AUTO_UPDATE</code>: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).</li><li><code>STATIC</code>: vouchers need to be manually published.</li></ul> Available values: `AUTO_UPDATE`, `STATIC` |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
-| voucher</br>`object` | See: [Simple Campaign Voucher](#simple-campaign-voucher) |
+| voucher | See: [Simple Campaign Voucher](#simple-campaign-voucher) |
 | lucky_draw</br>`object` | [Lucky Draw](#lucky-draw) |
 | referral_program | See: [Referral Program](#referral-program) |
 | auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join the campaign if any earning rule is fulfilled.</p> |
 | join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once.</p> |
 | active</br>`boolean` | <p>Indicates whether the campaign is active.</p> |
-| category_id | <p>The unique category ID that this campaign belongs to.</p> |
+| category_id</br>`string`, `null` | <p>The unique category ID that this campaign belongs to.</p> |
 | category</br>`string` | <p>Unique category name.</p> |
 | categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a campaign. The metadata object stores all custom attributes assigned to the campaign.</p> |
 | start_date</br>`string` | <p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is inactive <em>before</em> this date.</p> **Example:** <p>2022-09-20T00:00:00.000Z</p> |
 | expiration_date</br>`string` | <p>Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is inactive <em>after</em> this date.</p> **Example:** <p>2022-09-30T00:00:00.000Z</p> |
 | description</br>`string` | <p>An optional field to keep extra textual information about the campaign such as a campaign description and details.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the campaign was created in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the campaign was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the campaign was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
-| object</br>`string` | <p>The type of object represented by JSON. This object stores information about the campaign.</p> Available values: `campaign` |
+| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the campaign.</p> Available values: `campaign` |
 
 ## Simple Voucher
 | Attributes |  Description |
@@ -527,12 +527,12 @@ All of:
 | categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | active</br>`boolean` | <p>Shows whether the voucher is on or off. <code>true</code> indicates an <em>active</em> voucher and <code>false</code> indicates an <em>inactive</em> voucher.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the order was created in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
-| updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
 | redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code>, <code>null</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr><tr><td style="text-align:left">redeemed_quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher has already been redeemed.</p> <strong>Example:</strong> <p>1</p></td></tr></tbody></table> |
 | start_date</br>`string` | <p>Activation timestamp defines when the code starts to be active in ISO 8601 format. Voucher is <em>inactive before</em> this date.</p> **Example:** <p>2021-12-01T00:00:00.000Z</p> |
 | expiration_date</br>`string` | <p>Expiration timestamp defines when the code expires in ISO 8601 format.  Voucher is <em>inactive after</em> this date.</p> **Example:** <p>2021-12-31T00:00:00.000Z</p> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a voucher. The metadata object stores all custom attributes assigned to the voucher.</p> |
-| object</br>`string` | <p>The type of object represented by JSON.</p> Available values: `voucher` |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `voucher` |
 
 ## Custom Event
 | Attributes |  Description |
@@ -544,7 +544,7 @@ All of:
 | referral</br>`object` | <p>Referral object.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">referrer_id</br><code>string</code></td><td style="text-align:left"><p>Unique referrer ID.</p> <strong>Example:</strong> <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p></td></tr><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Voucher code.</p></td></tr><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique voucher ID.</p></td></tr></tbody></table> |
 | loyalty</br>`object` | <p>Loyalty object.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Loyalty card code.</p></td></tr></tbody></table> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer object.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the custom event was created. Timestamp is presented in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the custom event was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 
 ## Redemption Internal
 | Attributes |  Description |
@@ -622,10 +622,10 @@ All of:
 | sku | [Simple Sku](#simple-sku) |
 | loyalty_tier_id</br>`string` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 | id</br>`string` | <p>Unique reward ID, assigned by Voucherify.</p> **Example:** <p>rew_nIy4gHpQHle2c3pNMwuj7G6j</p> |
-| object</br>`string` | <p>The type of object represented by the JSON. This object stores information about the reward.</p> Available values: `reward` |
+| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the reward.</p> Available values: `reward` |
 | name</br>`string` | <p>Reward name.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the reward was created in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
-| updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the reward was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the reward was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the reward was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
 | parameters</br>`object` | <p>Defines how the reward is generated.</p> One of: [Digital](#digital), [Pay with Points](#pay-with-points), [Material](#material) |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a reward. The metadata object stores all custom attributes assigned to the reward.</p> |
 | type</br>`string` | <p>Reward type.</p> Available values: `CAMPAIGN`, `COIN`, `MATERIAL` |
@@ -751,11 +751,11 @@ All of:
 | customer | See: [Simple Customer](#simple-customer) |
 | campaign | See: [Simple Campaign](#simple-campaign) |
 
-## Customer Redeemable
+## Redeemable Holder
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique identifier of the redeemable holder.</p> **Example:** <p>rh_0e7b8db4700106a852</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the redeemable was assigned. Timestamp is presented in the ISO 8601 format.</p> **Example:** <p>2024-03-22T17:48:25.910Z</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the redeemable was assigned. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-03-22T17:48:25.910Z</p> |
 | redeemable_id</br>`string` | <p>Identifier of the redeemable item.</p> **Example:** <p>v_GXVguPhq2khgFxH7GrRXWA91gDr1LiA1</p> |
 | redeemable_object</br>`string` | <p>Type of the redeemable.</p> Available values: `voucher` **Example:** <p>voucher</p> |
 | campaign_id</br>`string` | <p>Unique identifier of the campaign as assigned by Voucherify.</p> **Example:** <p>camp_weer1c3p5ZgktqfW56RfoNaG</p> |
@@ -869,9 +869,9 @@ One of:
 |:-----|:--------|
 | customer | [Simple Customer](#simple-customer) |
 | assignment_id</br>`string`, `null` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
-| voucher | <p>Defines of the voucher.</p> [Voucher](#voucher) |
-| product | <p>Defines of the product.</p> [Product](#product) |
-| sku | <p>Defines of the sku.</p> [SKU Object](#sku-object) |
+| voucher | [Voucher](#voucher) |
+| product | [Product](#product) |
+| sku | [SKU Object](#sku-object) |
 | loyalty_tier_id</br>`string`, `null` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 | id</br>`string` | <p>Unique reward ID.</p> **Example:** <p>rew_0bc92f81a6801f9bca</p> |
 | name</br>`string` | <p>Name of the reward.</p> **Example:** <p>Reward Name</p> |

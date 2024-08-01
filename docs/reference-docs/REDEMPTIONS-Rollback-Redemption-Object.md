@@ -116,9 +116,9 @@ All of:
 |:-----|:--------|
 | customer | [Simple Customer](#simple-customer) |
 | assignment_id</br>`string`, `null` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
-| voucher | <p>Defines of the voucher.</p> [Voucher](#voucher) |
-| product | <p>Defines of the product.</p> [Product](#product) |
-| sku | <p>Defines of the sku.</p> [SKU Object](#sku-object) |
+| voucher | [Voucher](#voucher) |
+| product | [Product](#product) |
+| sku | [SKU Object](#sku-object) |
 | loyalty_tier_id</br>`string`, `null` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 | id</br>`string` | <p>Unique reward ID.</p> **Example:** <p>rew_0bc92f81a6801f9bca</p> |
 | name</br>`string` | <p>Name of the reward.</p> **Example:** <p>Reward Name</p> |
