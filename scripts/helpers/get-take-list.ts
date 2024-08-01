@@ -34,9 +34,12 @@ export const rawTakeList = {
   },
   "/v1/vouchers": {
     get: ["default", "ruby", "java", "php"],
+    post: ["default", "ruby", "java", "php"],
   },
   "/v1/vouchers/{code}": {
     get: ["default", "ruby", "java", "php"],
+    post: ["default", "ruby", "java", "php"],
+    put: ["default", "ruby", "java", "php"],
     delete: ["default", "ruby", "java", "php"],
   },
   "/v1/vouchers/{code}/enable": { post: ["default", "ruby", "java", "php"] },
