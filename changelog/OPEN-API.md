@@ -4,6 +4,19 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-08-01
+
+Added the following to `OpenAPIWebhooks.json`:
+- `voucher.loyalty_card.transaction.created`
+- `voucher.loyalty_card.points_expired`
+- `voucher.gift.transaction.created`
+- metadata to `RedemptionRewardResult` schema
+
+Added the following to `OpenAPI.json`:
+- `customer.holder.assignment.created` – OpenAPI.json
+- `customer.holder.assignment.deleted` – OpenAPI.json
+- metadata to `RedemptionRewardResult` schema
+
 ## 2024-07-15
 
 `OpenAPI.json`:
