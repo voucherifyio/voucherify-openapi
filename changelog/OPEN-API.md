@@ -4,8 +4,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-08-02
+
+`OpenAPI.json`
+- refactored `/v1/vouchers` GET and POST
+- refactored `/v1/vouchers/{code}` POST and PUT
+- Added `VoucherWithCategories`, `VoucherBase`, `VouchersCreateRequestBody`, `VoucherCreateLoyaltyCard`, `VoucherCreateGiftWithSpecificCodeOrCodeConfig`, `VoucherCreateGiftWithSpecificCode`, `VoucherCreateGiftWithCodeConfig`, `VoucherUpdateGift`, `VoucherCreateGift`, `VoucherCreateDiscountWithSpecificCodeOrCodeConfig`, `VoucherCreateDiscountWithSpecificCode`, `VoucherCreateDiscountWithCodeConfig`, `VoucherCreateDiscount`, `VoucherUpdateDiscount`, `VoucherCreateBase`, `VouchersListResponseBody`, `VoucherUpdateBase`, `VouchersUpdateRequestBody`, `CodeConfigBase`
+- `Voucher` is now created from `VoucherBase` 
+
 ## 2024-07-30
 
+  `OpenAPI.json`
 - Added parameter `ParameterRedeemableHolderId`
 - Schema `Session` - property `key` is no longer `enum`
 - Added `RewardsListResponseBody`, `PromotionsTiersCreateRequestBody`, `PromotionsTiersCreateResponseBody`, `PromotionsTiersUpdateRequestBody`, `PromotionsTiersUpdateResponseBody`, `PromotionTierUpdate`, `PromotionTierCreateParams`, `RewardsCreateRequestBodyMaterial`, `RewardsCreateRequestBodyDigital`, `RewardsCreateRequestBodyDigitalParameters`, `RewardsCreateRequestBodyPayWithPoints`,  `RewardsUpdateRequestBody`, `RewardsUpdateRequestBodyDigital`, `RewardsUpdateRequestBodyPayWithPoints`, `RewardsUpdateRequestBodyMaterial`, `RewardsUpdateRequestBodyDigitalParametersLoyaltyProgram`, `RewardsUpdateRequestBodyDigitalParametersGiftVouchers`, `RewardsUpdateRequestBodyDigitalParametersDiscountCoupons`, `RewardsUpdateRequestBodyDigitalParameters`, `RewardsUpdateRequestBodyMaterialParameters`, `RewardsUpdateRequestBodyPayWithPointsParameters`, `RewardsCreateRequestBodyDigitalParametersLoyaltyProgram`, `RewardsCreateRequestBodyDigitalParametersGiftVouchers`, `RewardsCreateRequestBodyDigitalParametersDiscountCoupons`, `RewardsCreateRequestBodyMaterialParameters`, `RewardsCreateRequestBodyPayWithPointsParameters`,`SegmentsCreateRequestBodyStatic`,  `SegmentsCreateRequestBody`, `SegmentsGetResponseBody`, `SegmentsCreateResponseBody`, `SegmentsCreateRequestBodyDynamic`, `AsyncActionGetResponseBody`, `AsyncAction`, `AsyncActionsListResponseBody`, `ReferralsMembersHoldersCreateInBulkRequestBody`, `ReferralsMembersHoldersCreateInBulkResponseBody`, `RedemptionEntry`, `ClientPromotionsTiersListResponseBody`
