@@ -147,9 +147,14 @@ export const rawTakeList = {
   "/v1/loyalties/{campaignId}/members/{memberId}/points-expiration": {
     get: ["default", "ruby", "java", "php"],
   },
+  "/v1/loyalties/{campaignId}/earning-rules": {
+    get: ["default", "ruby", "java", "php"],
+    post: ["default", "ruby", "java", "php"],
+  },
   "/v1/loyalties/{campaignId}/earning-rules/{earningRuleId}": {
     get: ["default", "ruby", "java", "php"],
     delete: ["default", "ruby", "java", "php"],
+    put: ["default", "ruby", "java", "php"],
   },
   "/v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable": {
     post: ["default", "ruby", "java", "php"],

@@ -21738,134 +21738,117 @@
           }
         }
       },
-      "8_obj_earning_rule_object": {
-        "description": "This is an object representing an earning rule.",
-        "title": "Earning Rule Object",
-        "example": {
-          "id": "ern_taClaOIiaGNdmdby8xS0lCcy",
-          "created_at": "2022-02-04T13:27:50.665Z",
-          "updated_at": "2022-02-07T08:19:44.198Z",
-          "validation_rule_id": null,
-          "loyalty": {
-            "points": 1000,
-            "type": "FIXED"
-          },
-          "event": "order.paid",
-          "source": {
-            "banner": "Order paid 1000 points",
-            "object_id": "camp_Pfja7X91b1GoyH5wnpzCwlP3",
-            "object_type": "campaign"
-          },
-          "active": true,
-          "start_date": "2022-02-02T13:00:00.000Z",
-          "expiration_date": "2022-03-03T14:30:00.000Z",
-          "validity_timeframe": {
-            "duration": "PT1H",
-            "interval": "P1D"
-          },
-          "validity_day_of_week": [
-            4
-          ],
-          "object": "earning_rule",
-          "automation_id": "auto_RjBuwpeFQZ7TyQ5LP2LFVZYG"
-        },
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/8_obj_earning_rule_object_order_paid"
-          },
-          {
-            "$ref": "#/components/schemas/8_obj_earning_rule_object_custom_event"
-          },
-          {
-            "$ref": "#/components/schemas/8_obj_earning_rule_object_entered_segment"
-          },
-          {
-            "$ref": "#/components/schemas/8_obj_earning_rule_object_tier"
-          }
-        ]
-      },
-      "8_obj_earning_rule_object_order_paid": {
-        "description": "This is an object representing an earning rule for a paid order.",
+      "EarningRuleBase": {
+        "title": "EarningRuleBase",
         "type": "object",
-        "title": "Earning Rule Object for Order Paid",
         "properties": {
           "id": {
             "type": "string",
-            "example": "ern_P6MWOFGsv63sbTaTZBp0IHGK",
             "description": "Assigned by the Voucherify API, identifies the earning rule object."
           },
           "created_at": {
             "type": "string",
-            "description": "Timestamp representing the date and time when the earning rule was created. The value is shown in the ISO 8601 format.",
-            "example": "2022-02-02T13:18:32.557Z",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the earning rule was last updated in ISO 8601 format.",
-            "example": "2022-02-03T13:09:27.206Z",
-            "format": "date-time"
-          },
-          "validation_rule_id": {
-            "type": "string",
-            "example": "val_248vs7tUjlIE",
-            "description": "A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance."
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the earning rule was created. The value is shown in the ISO 8601 format."
           },
           "loyalty": {
-            "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/8_obj_fixed_points"
+                "$ref": "#/components/schemas/EarningRuleFixed"
               },
               {
-                "$ref": "#/components/schemas/8_obj_calculate_points_proportionally_order_paid"
+                "$ref": "#/components/schemas/EarningRuleProportional"
               }
             ]
           },
           "event": {
-            "type": "string",
-            "default": "order.paid",
-            "enum": [
-              "order.paid"
-            ],
-            "description": "Defines the event which triggers the earning rule to add points to a loyalty card.  \n\n- `order.paid` an event defined by the Voucherify API corresponding to an order status `PAID`. "
+            "description": "Defines the event which triggers the earning rule to add points to a loyalty card.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EarningRuleEvent"
+              }
+            ]
+          },
+          "custom_event": {
+            "type": "object",
+            "properties": {
+              "schema_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "schema_id"
+            ]
+          },
+          "segment": {
+            "type": "object",
+            "description": "Contains the ID of a customer segment. Required for the customer.segment.entered option in event.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Contains a unique identifier of a customer segment. Assigned by the Voucherify API."
+              }
+            },
+            "required": [
+              "id"
+            ]
+          },
+          "loyalty_tier": {
+            "type": "object",
+            "description": "Defines the tier associated with the earning rule definition.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique loyalty tier ID associated with the earning rule.    \n\n- `__ANY__`: any loyalty tier within the campaign",
+                "example": "ltr_pudTGWasuIqxdiDM0go31OV1"
+              }
+            }
           },
           "source": {
             "type": "object",
+            "required": [
+              "object_id",
+              "object_type"
+            ],
             "description": "Contains the custom earning rule name and parent campaign.",
             "properties": {
               "banner": {
                 "type": "string",
-                "example": "Order Paid - You will get 100 points",
                 "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
               },
               "object_id": {
                 "type": "string",
-                "example": "camp_Pfja7X91b1GoyH5wnpzCwlP3",
                 "description": "A unique campaign identifier assigned by the Voucherify API."
               },
               "object_type": {
                 "type": "string",
+                "description": "Defines the object associated with the earning rule. Defaults to `campaign`.",
                 "default": "campaign",
-                "description": "Defines the object associated with the earning rule. Defaults to `campaign`."
+                "enum": [
+                  "campaign"
+                ]
               }
             }
           },
-          "active": {
-            "type": "boolean",
-            "description": "A flag to toggle the earning rule on or off. You can disable an earning rule even though it's within the active period defined by the `start_date` and `expiration_date` of the campaign or the earning rule's own `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* earning rule\n- `false` indicates an *inactive* earning rule"
+          "object": {
+            "type": "string",
+            "default": "earning_rule",
+            "enum": [
+              "earning_rule"
+            ],
+            "description": "The type of the object represented by JSON. Default is earning_rule."
+          },
+          "automation_id": {
+            "type": "string",
+            "description": "For internal use by Voucherify."
           },
           "start_date": {
             "type": "string",
-            "example": "2022-02-02T13:00:00.000Z",
-            "format": "date-time",
-            "description": "Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. Earning rule is *inactive before* this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default. "
+            "description": "Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. Earning rule is inactive before this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default."
           },
           "expiration_date": {
             "type": "string",
-            "format": "date-time",
-            "example": "2022-03-03T14:30:00.000Z",
-            "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default."
+            "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format. Earning rule is inactive after this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default."
           },
           "validity_timeframe": {
             "$ref": "#/components/schemas/ValidityTimeframe"
@@ -21876,23 +21859,55 @@
           "validity_hours": {
             "$ref": "#/components/schemas/ValidityHours"
           },
-          "object": {
-            "type": "string",
-            "default": "earning_rule",
-            "description": "The type of the object represented by JSON. Default is `earning_rule`."
-          },
-          "automation_id": {
-            "type": "string",
-            "description": "For internal use by Voucherify.",
-            "example": "auto_4jH1yq9WJS0oJ8suagCrltyb"
-          },
           "metadata": {
             "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format."
           }
-        }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "loyalty",
+          "source",
+          "object",
+          "automation_id",
+          "metadata"
+        ]
       },
-      "8_req_earning_rule_object_order_paid": {
+      "EarningRule": {
+        "title": "Earning Rule",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRuleBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "validation_rule_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance."
+              },
+              "updated_at": {
+                "type": "string",
+                "nullable": true,
+                "format": "date-time",
+                "description": "Timestamp representing the date and time when the earning rule was last updated in ISO 8601 format."
+              },
+              "active": {
+                "type": "boolean",
+                "description": "A flag to toggle the earning rule on or off. You can disable an earning rule even though it's within the active period defined by the start_date and expiration_date of the campaign or the earning rule's own start_date and expiration_date.\n\n- `true` indicates an active earning rule\n- `false` indicates an inactive earning rule"
+              }
+            },
+            "required": [
+              "validation_rule_id",
+              "updated_at",
+              "active"
+            ]
+          }
+        ]
+      },
+      "LoyaltiesEarningRulesCreateOrderPaidRequestBody": {
         "description": "This is an object representing an earning rule for a paid order.",
         "type": "object",
         "title": "Earning Rule Object for Order Paid",
@@ -21906,10 +21921,13 @@
             "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/8_obj_fixed_points"
+                "$ref": "#/components/schemas/EarningRuleFixed"
               },
               {
-                "$ref": "#/components/schemas/8_obj_calculate_points_proportionally_order_paid"
+                "$ref": "#/components/schemas/EarningRuleProportionalOrder"
+              },
+              {
+                "$ref": "#/components/schemas/EarningRuleProportionalOrderItems"
               }
             ]
           },
@@ -21963,10 +21981,9 @@
           }
         }
       },
-      "8_req_update_earning_rule_object_order_paid": {
-        "description": "This is an object representing an earning rule for a paid order.",
+      "LoyaltiesEarningRulesUpdateRequestBody": {
         "type": "object",
-        "title": "Earning Rule Object for Order Paid",
+        "title": "Loyalties Earning Rules Update Request Body",
         "properties": {
           "validation_rule_id": {
             "type": "string",
@@ -21977,10 +21994,10 @@
             "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/8_obj_fixed_points"
+                "$ref": "#/components/schemas/EarningRuleFixed"
               },
               {
-                "$ref": "#/components/schemas/8_obj_calculate_points_proportionally_order_paid"
+                "$ref": "#/components/schemas/EarningRuleProportional"
               }
             ]
           },
@@ -22026,7 +22043,7 @@
           }
         }
       },
-      "8_req_earning_rule_object_entered_segment": {
+      "LoyaltiesEarningRulesCreateEnteredSegmentRequestBody": {
         "description": "This is an object representing an earning rule for entering a customer segment.",
         "type": "object",
         "title": "Earning Rule Object for Entered Segment",
@@ -22040,10 +22057,10 @@
             "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/8_obj_fixed_points"
+                "$ref": "#/components/schemas/EarningRuleFixed"
               },
               {
-                "$ref": "#/components/schemas/8_obj_calculate_points_proportionally_customer_metadata"
+                "$ref": "#/components/schemas/EarningRuleProportionalCustomerMetadata"
               }
             ]
           },
@@ -22107,91 +22124,11 @@
           }
         }
       },
-      "8_req_update_earning_rule_object_entered_segment": {
-        "description": "This is an object representing an earning rule for entering a customer segment.",
-        "type": "object",
-        "title": "Earning Rule Object for Entered Segment",
-        "properties": {
-          "validation_rule_id": {
-            "type": "string",
-            "example": "val_248vs7tUjlIE",
-            "description": "A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance."
-          },
-          "loyalty": {
-            "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/8_obj_fixed_points"
-              },
-              {
-                "$ref": "#/components/schemas/8_obj_calculate_points_proportionally_customer_metadata"
-              }
-            ]
-          },
-          "source": {
-            "type": "object",
-            "description": "Contains the custom earning rule name and parent campaign.",
-            "properties": {
-              "banner": {
-                "type": "string",
-                "example": "Order Paid - You will get 100 points",
-                "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
-              }
-            }
-          },
-          "active": {
-            "type": "boolean",
-            "description": "A flag to toggle the earning rule on or off. You can disable an earning rule even though it's within the active period defined by the `start_date` and `expiration_date` of the campaign or the earning rule's own `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* earning rule\n- `false` indicates an *inactive* earning rule"
-          },
-          "start_date": {
-            "type": "string",
-            "example": "2022-02-02T13:00:00.000Z",
-            "format": "date-time",
-            "description": "Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. Earning rule is *inactive before* this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default. "
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2022-03-03T14:30:00.000Z",
-            "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default."
-          },
-          "validity_timeframe": {
-            "$ref": "#/components/schemas/ValidityTimeframe"
-          },
-          "validity_day_of_week": {
-            "$ref": "#/components/schemas/ValidityDayOfWeek"
-          },
-          "validity_hours": {
-            "$ref": "#/components/schemas/ValidityHours"
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format."
-          }
-        }
-      },
-      "8_obj_earning_rule_object_custom_event": {
+      "LoyaltiesEarningRulesCreateCustomEventRequestBody": {
         "description": "This is an object representing an earning rule triggered by a custom event.",
         "type": "object",
         "title": "Earning Rule Object for Custom Event",
         "properties": {
-          "id": {
-            "type": "string",
-            "example": "ern_P6MWOFGsv63sbTaTZBp0IHGK",
-            "description": "Assigned by the Voucherify API, identifies the earning rule object."
-          },
-          "created_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the earning rule was created. The value is shown in the ISO 8601 format.",
-            "example": "2022-02-02T13:18:32.557Z",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "Timestamp representing the date and time when the earning rule was last updated in ISO 8601 format.",
-            "example": "2022-02-03T13:09:27.206Z",
-            "format": "date-time"
-          },
           "validation_rule_id": {
             "type": "string",
             "example": "val_248vs7tUjlIE",
@@ -22201,13 +22138,10 @@
             "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/8_obj_fixed_points"
+                "$ref": "#/components/schemas/EarningRuleFixed"
               },
               {
-                "$ref": "#/components/schemas/8_obj_calculate_points_proportionally_custom_event_metadata"
-              },
-              {
-                "$ref": "#/components/schemas/8_obj_calculate_points_proportionally_customer_metadata"
+                "$ref": "#/components/schemas/EarningRuleProportionalCustomEvent"
               }
             ]
           },
@@ -22224,182 +22158,7 @@
           },
           "event": {
             "type": "string",
-            "default": "custom_event_defined_in_EVENT_SCHEMA",
-            "enum": [
-              "custom_event_defined_in_EVENT_SCHEMA"
-            ],
             "description": "Defines the event which triggers the earning rule to add points to a loyalty card.  \n\n- `custom_event_name` the name of a custom event defined in the Dashboard &rarr; **Project Settings** &rarr; **EVENT SCHEMA** &rarr; **Add event definition**. Read more on defining [custom events](https://support.voucherify.io/article/111-custom-events). "
-          },
-          "source": {
-            "type": "object",
-            "description": "Contains the custom earning rule name and parent campaign.",
-            "properties": {
-              "banner": {
-                "type": "string",
-                "example": "Order Paid - You will get 100 points",
-                "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
-              },
-              "object_id": {
-                "type": "string",
-                "example": "camp_Pfja7X91b1GoyH5wnpzCwlP3",
-                "description": "A unique campaign identifier assigned by the Voucherify API."
-              },
-              "object_type": {
-                "type": "string",
-                "default": "campaign",
-                "description": "Defines the object associated with the earning rule. Defaults to `campaign`."
-              }
-            }
-          },
-          "active": {
-            "type": "boolean",
-            "description": "A flag to toggle the earning rule on or off. You can disable an earning rule even though it's within the active period defined by the `start_date` and `expiration_date` of the campaign or the earning rule's own `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* earning rule\n- `false` indicates an *inactive* earning rule"
-          },
-          "start_date": {
-            "type": "string",
-            "example": "2022-02-02T13:00:00.000Z",
-            "format": "date-time",
-            "description": "Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. Earning rule is *inactive before* this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default. "
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2022-03-03T14:30:00.000Z",
-            "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default."
-          },
-          "validity_timeframe": {
-            "$ref": "#/components/schemas/ValidityTimeframe"
-          },
-          "validity_day_of_week": {
-            "$ref": "#/components/schemas/ValidityDayOfWeek"
-          },
-          "validity_hours": {
-            "$ref": "#/components/schemas/ValidityHours"
-          },
-          "object": {
-            "type": "string",
-            "default": "earning_rule",
-            "description": "The type of the object represented by JSON. Default is `earning_rule`."
-          },
-          "automation_id": {
-            "type": "string",
-            "description": "For internal use by Voucherify.",
-            "example": "auto_4jH1yq9WJS0oJ8suagCrltyb"
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format."
-          }
-        }
-      },
-      "8_req_earning_rule_object_custom_event": {
-        "description": "This is an object representing an earning rule triggered by a custom event.",
-        "type": "object",
-        "title": "Earning Rule Object for Custom Event",
-        "properties": {
-          "validation_rule_id": {
-            "type": "string",
-            "example": "val_248vs7tUjlIE",
-            "description": "A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance."
-          },
-          "loyalty": {
-            "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/8_obj_fixed_points"
-              },
-              {
-                "$ref": "#/components/schemas/8_obj_calculate_points_proportionally_custom_event_metadata"
-              },
-              {
-                "$ref": "#/components/schemas/8_obj_calculate_points_proportionally_customer_metadata"
-              }
-            ]
-          },
-          "custom_event": {
-            "type": "object",
-            "description": "Contains the schema id of a custom event. **Required** for the custom event option in `event`.",
-            "properties": {
-              "schema_id": {
-                "type": "string",
-                "description": "Contains a unique identifier of a custom event schema. Assigned by the Voucherify API.",
-                "example": "ms_gn4Qe4xsFPf7orCArCiNVY13"
-              }
-            }
-          },
-          "event": {
-            "type": "string",
-            "default": "custom_event_defined_in_EVENT_SCHEMA",
-            "enum": [
-              "custom_event_defined_in_EVENT_SCHEMA"
-            ],
-            "description": "Defines the event which triggers the earning rule to add points to a loyalty card.  \n\n- `custom_event_name` the name of a custom event defined in the Dashboard &rarr; **Project Settings** &rarr; **EVENT SCHEMA** &rarr; **Add event definition**. Read more on defining [custom events](https://support.voucherify.io/article/111-custom-events). "
-          },
-          "source": {
-            "type": "object",
-            "description": "Contains the custom earning rule name and parent campaign.",
-            "properties": {
-              "banner": {
-                "type": "string",
-                "example": "Order Paid - You will get 100 points",
-                "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
-              }
-            }
-          },
-          "active": {
-            "type": "boolean",
-            "description": "A flag to toggle the earning rule on or off. You can disable an earning rule even though it's within the active period defined by the `start_date` and `expiration_date` of the campaign or the earning rule's own `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* earning rule\n- `false` indicates an *inactive* earning rule"
-          },
-          "start_date": {
-            "type": "string",
-            "example": "2022-02-02T13:00:00.000Z",
-            "format": "date-time",
-            "description": "Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. Earning rule is *inactive before* this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default. "
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date-time",
-            "example": "2022-03-03T14:30:00.000Z",
-            "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default."
-          },
-          "validity_timeframe": {
-            "$ref": "#/components/schemas/ValidityTimeframe"
-          },
-          "validity_day_of_week": {
-            "$ref": "#/components/schemas/ValidityDayOfWeek"
-          },
-          "validity_hours": {
-            "$ref": "#/components/schemas/ValidityHours"
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format."
-          }
-        }
-      },
-      "8_req_update_earning_rule_object_custom_event": {
-        "description": "This is an object representing an earning rule triggered by a custom event.",
-        "type": "object",
-        "title": "Earning Rule Object for Custom Event",
-        "properties": {
-          "validation_rule_id": {
-            "type": "string",
-            "example": "val_248vs7tUjlIE",
-            "description": "A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance."
-          },
-          "loyalty": {
-            "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/8_obj_fixed_points"
-              },
-              {
-                "$ref": "#/components/schemas/8_obj_calculate_points_proportionally_custom_event_metadata"
-              },
-              {
-                "$ref": "#/components/schemas/8_obj_calculate_points_proportionally_customer_metadata"
-              }
-            ]
           },
           "source": {
             "type": "object",
@@ -22565,7 +22324,7 @@
           }
         }
       },
-      "8_req_earning_rule_object_tier": {
+      "LoyaltiesEarningRulesCreateTierChangeRequestBody": {
         "description": "This is an object representing an earning rule for tiers.",
         "type": "object",
         "title": "Earning Rule Object for Tiers",
@@ -22579,10 +22338,7 @@
             "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
             "oneOf": [
               {
-                "$ref": "#/components/schemas/8_obj_fixed_points"
-              },
-              {
-                "$ref": "#/components/schemas/8_obj_calculate_points_proportionally_customer_metadata"
+                "$ref": "#/components/schemas/EarningRuleFixed"
               }
             ]
           },
@@ -22650,7 +22406,7 @@
           }
         }
       },
-      "8_req_update_earning_rule_object_tier": {
+      "LoyaltiesEarningRulesUpdateTierChangeRequestBody": {
         "description": "This is an object representing an earning rule for tiers.",
         "type": "object",
         "title": "Earning Rule Object for Tiers",
@@ -23699,46 +23455,28 @@
           }
         }
       },
-      "8_req_create_earning_rules": {
+      "LoyaltiesEarningRulesCreateRequestBody": {
         "description": "This data model represents the Request body schema for the `/loyalties/{campaignId}/earning-rules` endpoint.",
         "title": "Create Earning Rule Request Body",
         "type": "array",
         "items": {
           "oneOf": [
             {
-              "$ref": "#/components/schemas/8_req_earning_rule_object_order_paid"
+              "$ref": "#/components/schemas/LoyaltiesEarningRulesCreateOrderPaidRequestBody"
             },
             {
-              "$ref": "#/components/schemas/8_req_earning_rule_object_entered_segment"
+              "$ref": "#/components/schemas/LoyaltiesEarningRulesCreateEnteredSegmentRequestBody"
             },
             {
-              "$ref": "#/components/schemas/8_req_earning_rule_object_custom_event"
+              "$ref": "#/components/schemas/LoyaltiesEarningRulesCreateCustomEventRequestBody"
             },
             {
-              "$ref": "#/components/schemas/8_req_earning_rule_object_tier"
+              "$ref": "#/components/schemas/LoyaltiesEarningRulesCreateTierChangeRequestBody"
             }
           ]
         }
       },
-      "8_req_update_earning_rule": {
-        "description": "Request body schema for updating earning rules using **PUT** `/loyalties/{campaignId}/earning-rules/{earningRuleId}` endpoint.",
-        "title": "Update Earning Rule Request Body",
-        "oneOf": [
-          {
-            "$ref": "#/components/schemas/8_req_update_earning_rule_object_order_paid"
-          },
-          {
-            "$ref": "#/components/schemas/8_req_update_earning_rule_object_entered_segment"
-          },
-          {
-            "$ref": "#/components/schemas/8_req_update_earning_rule_object_custom_event"
-          },
-          {
-            "$ref": "#/components/schemas/8_req_update_earning_rule_object_tier"
-          }
-        ]
-      },
-      "8_res_list_earning_rules": {
+      "LoyaltiesEarningRulesListResponseBody": {
         "description": "Response body schema for listing earning rules using **GET** `/loyalties/{campaignId}/earning-rules` endpoint.",
         "type": "object",
         "title": "List Earning Rules Response Body",
@@ -23746,7 +23484,10 @@
           "object": {
             "type": "string",
             "description": "The type of the object represented by JSON. This object stores information about earning rules in a dictionary.",
-            "default": "list"
+            "default": "list",
+            "enum": [
+              "list"
+            ]
           },
           "data_ref": {
             "type": "string",
@@ -23757,7 +23498,7 @@
             "type": "array",
             "description": "Contains array of earning rule objects.",
             "items": {
-              "$ref": "#/components/schemas/8_obj_earning_rule_object"
+              "$ref": "#/components/schemas/EarningRule"
             }
           },
           "total": {
@@ -32493,6 +32234,26 @@
           }
         }
       },
+      "LoyaltiesEarningRulesCreateResponseBody": {
+        "type": "object",
+        "title": "Loyalties Earning Rules Get Response Body",
+        "description": "Response body schema for **POST** `/loyalties/{campaignId}/earning-rules`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRule"
+          }
+        ]
+      },
+      "LoyaltiesEarningRulesUpdateResponseBody": {
+        "type": "object",
+        "title": "Loyalties Earning Rules Get Response Body",
+        "description": "Response body schema for **PUT** `/loyalties/{campaignId}/earning-rules/{earningRuleId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EarningRule"
+          }
+        ]
+      },
       "LoyaltiesEarningRulesGetResponseBody": {
         "type": "object",
         "title": "Loyalties Earning Rules Get Response Body",
@@ -32561,144 +32322,10 @@
           }
         ]
       },
-      "EarningRuleBase": {
-        "title": "EarningRuleBase",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Assigned by the Voucherify API, identifies the earning rule object."
-          },
-          "created_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp representing the date and time when the earning rule was created. The value is shown in the ISO 8601 format."
-          },
-          "loyalty": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleFixed"
-              },
-              {
-                "$ref": "#/components/schemas/EarningRuleProportional"
-              }
-            ]
-          },
-          "event": {
-            "description": "Defines the event which triggers the earning rule to add points to a loyalty card.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/EarningRuleEvent"
-              }
-            ]
-          },
-          "custom_event": {
-            "type": "object",
-            "properties": {
-              "schema_id": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "schema_id"
-            ]
-          },
-          "segment": {
-            "type": "object",
-            "description": "Contains the ID of a customer segment. Required for the customer.segment.entered option in event.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Contains a unique identifier of a customer segment. Assigned by the Voucherify API."
-              }
-            },
-            "required": [
-              "id"
-            ]
-          },
-          "source": {
-            "type": "object",
-            "required": [
-              "object_id",
-              "object_type"
-            ],
-            "description": "Contains the custom earning rule name and parent campaign.",
-            "properties": {
-              "banner": {
-                "type": "string",
-                "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
-              },
-              "object_id": {
-                "type": "string",
-                "description": "A unique campaign identifier assigned by the Voucherify API."
-              },
-              "object_type": {
-                "type": "string",
-                "description": "Defines the object associated with the earning rule. Defaults to `campaign`.",
-                "default": "campaign",
-                "enum": [
-                  "campaign"
-                ]
-              }
-            }
-          },
-          "object": {
-            "type": "string",
-            "default": "earning_rule",
-            "enum": [
-              "earning_rule"
-            ],
-            "description": "The type of the object represented by JSON. Default is earning_rule."
-          },
-          "automation_id": {
-            "type": "string",
-            "description": "For internal use by Voucherify."
-          },
-          "start_date": {
-            "type": "string",
-            "description": "Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. Earning rule is inactive before this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default."
-          },
-          "expiration_date": {
-            "type": "string",
-            "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format. Earning rule is inactive after this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default."
-          },
-          "validity_timeframe": {
-            "$ref": "#/components/schemas/ValidityTimeframe"
-          },
-          "validity_day_of_week": {
-            "$ref": "#/components/schemas/ValidityDayOfWeek"
-          },
-          "validity_hours": {
-            "$ref": "#/components/schemas/ValidityHours"
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format."
-          }
-        },
-        "required": [
-          "id",
-          "created_at",
-          "loyalty",
-          "source",
-          "object",
-          "automation_id",
-          "metadata"
-        ]
-      },
       "EarningRuleEvent": {
         "title": "Earning Rule Event",
-        "type": "string",
-        "enum": [
-          "order.paid",
-          "customer.segment.entered",
-          "custom_event",
-          "customer.loyalty.tier.upgraded",
-          "customer.loyalty.tier.downgraded",
-          "customer.loyalty.tier.prolonged",
-          "customer.loyalty.tier.joined",
-          "customer.loyalty.tier.left"
-        ]
+        "example": "\"order.paid\", \"customer.segment.entered\", \"customer.loyalty.tier.upgraded\", \"customer.loyalty.tier.downgraded\", \"customer.loyalty.tier.prolonged\", \"customer.loyalty.tier.joined\", \"customer.loyalty.tier.left\"",
+        "type": "string"
       },
       "EarningRuleFixed": {
         "title": "Define fixed amount of points",
@@ -32716,7 +32343,11 @@
             "type": "integer",
             "description": "Defines how the points will be added to the loyalty card. FIXED adds a fixed number of points."
           }
-        }
+        },
+        "required": [
+          "type",
+          "points"
+        ]
       },
       "EarningRuleProportionalOrder": {
         "oneOf": [
@@ -35630,39 +35261,6 @@
           "data_ref",
           "data",
           "total"
-        ]
-      },
-      "EarningRule": {
-        "title": "Earning Rule",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EarningRuleBase"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "validation_rule_id": {
-                "type": "string",
-                "nullable": true,
-                "description": "A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance."
-              },
-              "updated_at": {
-                "type": "string",
-                "nullable": true,
-                "format": "date-time",
-                "description": "Timestamp representing the date and time when the earning rule was last updated in ISO 8601 format."
-              },
-              "active": {
-                "type": "boolean",
-                "description": "A flag to toggle the earning rule on or off. You can disable an earning rule even though it's within the active period defined by the start_date and expiration_date of the campaign or the earning rule's own start_date and expiration_date.\n\n- `true` indicates an active earning rule\n- `false` indicates an inactive earning rule"
-              }
-            },
-            "required": [
-              "validation_rule_id",
-              "updated_at",
-              "active"
-            ]
-          }
         ]
       },
       "LoyaltiesTiersEarningRulesListResponseBody": {
@@ -64170,7 +63768,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_res_list_earning_rules"
+                  "$ref": "#/components/schemas/LoyaltiesEarningRulesListResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -64720,7 +64318,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/8_req_create_earning_rules"
+                "$ref": "#/components/schemas/LoyaltiesEarningRulesCreateRequestBody"
               },
               "examples": {
                 "Example": {
@@ -65241,7 +64839,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/8_obj_earning_rule_object"
+                    "$ref": "#/components/schemas/LoyaltiesEarningRulesCreateResponseBody"
                   }
                 },
                 "examples": {
@@ -66213,7 +65811,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/8_req_update_earning_rule"
+                "$ref": "#/components/schemas/LoyaltiesEarningRulesUpdateRequestBody"
               },
               "examples": {
                 "Example": {
@@ -66256,7 +65854,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/8_obj_earning_rule_object"
+                  "$ref": "#/components/schemas/LoyaltiesEarningRulesUpdateResponseBody"
                 },
                 "examples": {
                   "Example": {
