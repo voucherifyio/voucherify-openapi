@@ -185,6 +185,7 @@ const main = async (languageOptions: LanguageOptions) => {
       ...openAPIContent.components,
       schemas: moveSchemasOnTheBack(parseNullsToNullableObjects(schemas), [
         "LoyaltiesEarningRulesUpdateRequestBody",
+        "CampaignsVouchersCreateBaseRequestBody",
       ]),
       parameters,
     },
