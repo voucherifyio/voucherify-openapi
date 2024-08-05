@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-08-05
+`OpenAPI.json`
+- renamed `ParameterCategory` into `ParameterActivityCategory`
+
 ## 2024-08-02-02
 `OpenAPI.json`
 - New schemas: `VouchersImportCreateRequestBody`, `VouchersImportCreateRequestBodyItem`, `VoucherImportLoyaltyCard`, `VoucherImportGift`, `VoucherImportDiscount`, `VouchersImportGiftVoucherRequestBody`, `VouchersImportDiscountVoucherRequestBody`, `VoucherImportBase`, `CampaignsImportVoucherItem`
@@ -11,10 +15,6 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 ## 2024-08-02-02
 `OpenAPI.json`
 - New schemas: `VouchersMetadataUpdateInBulkRequestBody`, `EarningRuleBase`
-
-## 2024-08-05
-`OpenAPI.json`
-- renamed `ParameterCategory` into `ParameterActivityCategory`
 
 ## 2024-08-02
 
