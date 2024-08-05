@@ -1,4 +1,7 @@
 export const rawTakeList = {
+  "/v1/vouchers/import": {
+    post: ["default", "ruby", "java", "php"],
+  },
   "/v1/vouchers/metadata/async": {
     post: ["default", "ruby", "java", "php"],
   },
