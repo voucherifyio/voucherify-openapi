@@ -2108,83 +2108,17 @@
         ]
       },
       "CampaignsImportVoucherItem": {
-        "type": "object",
-        "title": "Import Vouchers to Campaign",
-        "description": "Import Vouchers to Campaign",
-        "properties": {
-          "code": {
-            "type": "string",
-            "description": "Unique custom voucher code."
+        "title": "Campaigns Import Voucher Item",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/VoucherImportLoyaltyCard"
           },
-          "type": {
-            "type": "string",
-            "description": "Type of voucher.",
-            "enum": [
-              "DISCOUNT_VOUCHER",
-              "GIFT_VOUCHER",
-              "LOYALTY_CARD",
-              "LUCKY_DRAW_CODE"
-            ]
+          {
+            "$ref": "#/components/schemas/VoucherImportGift"
           },
-          "redemption": {
-            "type": "object",
-            "description": "Stores the quantity of redemptions that can be applied to the voucher.",
-            "properties": {
-              "quantity": {
-                "type": "integer",
-                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
-              }
-            }
-          },
-          "active": {
-            "type": "boolean",
-            "description": "A flag to toggle the voucher on or off. You can disable a voucher even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* voucher\n- `false` indicates an *inactive* voucher"
-          },
-          "metadata": {
-            "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the voucher. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
-          },
-          "category": {
-            "type": "string",
-            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`."
-          },
-          "additional_info": {
-            "type": "string",
-            "description": "An optional field to keep any extra textual information about the code such as a code description and details."
-          },
-          "gift": {
-            "description": "Defines the voucher gift details.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Gift"
-              }
-            ]
-          },
-          "loyalty_card": {
-            "description": "Defines the voucher loyalty card details.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/CampaignsImportVoucherLoyaltyCard"
-              }
-            ]
+          {
+            "$ref": "#/components/schemas/VoucherImportDiscount"
           }
-        },
-        "required": [
-          "code"
-        ]
-      },
-      "CampaignsImportVoucherLoyaltyCard": {
-        "type": "object",
-        "description": "Schema model for a campaign loyalty card.",
-        "title": "Campaigns Import Voucher Loyalty Card",
-        "properties": {
-          "points": {
-            "type": "integer",
-            "description": "The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card."
-          }
-        },
-        "required": [
-          "points"
         ]
       },
       "CampaignsListResponseBody": {
@@ -16897,6 +16831,152 @@
           }
         }
       },
+      "VoucherImportBase": {
+        "title": "Voucher Import Base",
+        "type": "object",
+        "description": "Object model for gift voucher object being imported.",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Value representing the imported code."
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Stores the quantity of redemptions that can be applied to the voucher.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited.",
+                "example": 10
+              }
+            }
+          },
+          "active": {
+            "type": "boolean",
+            "description": "A flag to toggle the voucher on or off. You can disable a voucher even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* voucher\n- `false` indicates an *inactive* voucher"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
+          },
+          "category": {
+            "type": "string",
+            "description": "Tag defining the category that this voucher belongs to. Useful when listing vouchers using the [List Vouchers](ref:list-vouchers) endpoint."
+          },
+          "start_date": {
+            "type": "string",
+            "description": "Activation timestamp presented in the ISO 8601 format. Voucher is *inactive before* this date. Start date defines when the code starts to be active.\nAllowed date formats are:\n- YYYY-MM-DD\n- YYYY-MM-DDTHH\n- YYYY-MM-DDTHH:mm\n- YYYY-MM-DDTHH:mm:ss\n- YYYY-MM-DDTHH:mm:ssZ\n- YYYY-MM-DDTHH:mm:ss.SSSZ",
+            "format": "date-time",
+            "example": "2020-12-28T12:49:16.272Z"
+          },
+          "expiration_date": {
+            "type": "string",
+            "description": "Expiration date defines when the code expires. Expiration timestamp is presented in the ISO 8601 format.  Voucher is *inactive after* this date.\nAllowed date formats are:\n- YYYY-MM-DD\n- YYYY-MM-DDTHH\n- YYYY-MM-DDTHH:mm\n- YYYY-MM-DDTHH:mm:ss\n- YYYY-MM-DDTHH:mm:ssZ\n- YYYY-MM-DDTHH:mm:ss.SSSZ",
+            "format": "date-time",
+            "example": "2053-12-28T12:49:16.272Z"
+          },
+          "validity_timeframe": {
+            "$ref": "#/components/schemas/ValidityTimeframe"
+          },
+          "validity_day_of_week": {
+            "$ref": "#/components/schemas/ValidityDayOfWeek"
+          },
+          "additional_info": {
+            "type": "string",
+            "description": "An optional field to keep any extra textual information about the code such as a code description and details."
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "VoucherImportDiscount": {
+        "title": "Voucher Import Discount",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "default": "DISCOUNT_VOUCHER",
+                "enum": [
+                  "DISCOUNT_VOUCHER"
+                ],
+                "description": "Defines the type of the voucher. "
+              },
+              "discount": {
+                "$ref": "#/components/schemas/Discount"
+              }
+            },
+            "required": [
+              "type",
+              "discount"
+            ]
+          }
+        ]
+      },
+      "VoucherImportGift": {
+        "title": "Voucher Import Gift",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "default": "GIFT_VOUCHER",
+                "enum": [
+                  "GIFT_VOUCHER"
+                ],
+                "description": "Defines the type of the voucher. "
+              },
+              "gift": {
+                "$ref": "#/components/schemas/Gift"
+              }
+            },
+            "required": [
+              "type",
+              "gift"
+            ]
+          }
+        ]
+      },
+      "VoucherImportLoyaltyCard": {
+        "title": "Voucher Import Loyalty Card",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherImportBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "default": "LOYALTY_CARD",
+                "enum": [
+                  "LOYALTY_CARD"
+                ],
+                "description": "Defines the type of the voucher. "
+              },
+              "loyalty_card": {
+                "$ref": "#/components/schemas/SimpleLoyaltyCard"
+              }
+            },
+            "required": [
+              "type",
+              "loyalty_card"
+            ]
+          }
+        ]
+      },
       "VouchersBalanceUpdateRequestBody": {
         "title": "Vouchers Balance Update Request Body",
         "type": "object",
@@ -17062,6 +17142,34 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/Voucher"
+          }
+        ]
+      },
+      "VouchersImportCreateRequestBody": {
+        "title": "Vouchers Import Request Body",
+        "type": "array",
+        "description": "Request body schema for **POST** `/vouchers/import`.",
+        "items": {
+          "$ref": "#/components/schemas/VouchersImportCreateRequestBodyItem"
+        }
+      },
+      "VouchersImportCreateRequestBodyItem": {
+        "title": "Vouchers Import Request Body Item",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/VoucherImportGift"
+          },
+          {
+            "$ref": "#/components/schemas/VoucherImportDiscount"
+          }
+        ]
+      },
+      "VouchersImportCreateResponseBody": {
+        "title": "Vouchers Import Create Response Body",
+        "description": "Response body schema for **POST** `/vouchers/import`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AsyncActions"
           }
         ]
       },
@@ -22522,6 +22630,279 @@
                       },
                       "result": null,
                       "user_id": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/vouchers/import": {
+      "post": {
+        "operationId": "import-vouchers",
+        "tags": [
+          "Vouchers"
+        ],
+        "summary": "Import Vouchers",
+        "description": "Import standalone vouchers and gift cards into the repository.\n\n<!-- theme: info -->\n\n> 📘 Important notes\n>\n> - **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify Project.\n\nAny parameters not provided in the payload will be left blank or null.\n\nFor both **standalone discount vouchers and gift cards**, you can import the following fields:  \n\n- code\n- category\n- active\n- type\n- start_date\n- expiration_date\n- redemption.quantity\n- additional_info\n- metadata\n\nFor **gift cards**, you can also import the following field:\n\n- gift.amount\n\nFor **discount vouchers**, you can import the `discount` object. The object will slightly vary depending on the type of discount. Each discount type **requires** the `type` to be defined in the import.\n\n| **Discount Type** | **Required fields** |\n|:---|:---|\n| Amount | amount_off, effect |\n| Percent | percent_off, effect |\n| Fixed | fixed_amount, effect |\n| Unit - One item | unit_off, unit_type, effect |\n| Unit - Multiple items | unit_off, unit_type, effect |\n| Shipping | unit_off, unit_type, effect |\n\nFields other than the ones listed above won't be imported. Even if provided, they will be silently skipped.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The request body is an array of objects. Each object contains details about a specific voucher. ",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VouchersImportCreateRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": [
+                    {
+                      "code": "PROMO-CODE30OFF-NO-EFFECT",
+                      "category": "new customer acquisition",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": true,
+                      "discount": {
+                        "amount_off": 3000,
+                        "type": "AMOUNT"
+                      },
+                      "start_date": "2020-12-01T23:00:00Z",
+                      "expiration_date": "2023-12-19T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code1"
+                    },
+                    {
+                      "code": "PROMO-CODE30-PERCENT-NO-EFFECT",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "percent_off": 30,
+                        "type": "PERCENT"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "GIFT-CARD-100",
+                      "type": "GIFT_VOUCHER",
+                      "active": true,
+                      "category": "new customer acquisition",
+                      "gift": {
+                        "amount": 10000
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 5
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-GIFT-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-PERCENT-EFFECT-ORDER",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "percent_off": 30,
+                        "type": "PERCENT",
+                        "effect": "APPLY_TO_ORDER"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE2-PERCENT-EFFECT-ITEM",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "percent_off": 30,
+                        "type": "PERCENT",
+                        "effect": "APPLY_TO_ITEMS"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-PERCENT-NO-EFFECT-REDEEMED-QUANTITY-ATTRIBUTE-DOESNT-GET-PASSED",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "percent_off": 30,
+                        "type": "PERCENT"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1,
+                        "redeemed_quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-AMOUNT-EFFECT-ITEMS-PROPORTIONALLY",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "amount_off": 30,
+                        "type": "AMOUNT",
+                        "effect": "APPLY_TO_ITEMS_PROPORTIONALLY"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-FIXED-EFFECT-ORDER",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "fixed_amount": 30,
+                        "type": "FIXED",
+                        "effect": "APPLY_TO_ORDER"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-UNIT-SINGLE-ITEM-EFFECT-MISSING",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "unit_off": 1,
+                        "unit_type": "prod_0a9f9aeddb019a42db",
+                        "type": "UNIT",
+                        "effect": "ADD_MISSING_ITEMS"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE2-UNIT-MULTIPLE-ITEMS",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": true,
+                      "discount": {
+                        "type": "UNIT",
+                        "effect": "ADD_MANY_ITEMS",
+                        "units": [
+                          {
+                            "unit_off": 1,
+                            "unit_type": "prod_0a9f9aeddb019a42db",
+                            "effect": "ADD_MISSING_ITEMS"
+                          },
+                          {
+                            "unit_off": 1,
+                            "unit_type": "prod_0a9f9aeddb019a42db",
+                            "effect": "ADD_NEW_ITEMS"
+                          }
+                        ]
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    },
+                    {
+                      "code": "PROMO-CODE1-SHIPPING",
+                      "type": "DISCOUNT_VOUCHER",
+                      "active": false,
+                      "discount": {
+                        "type": "UNIT",
+                        "unit_off": 1,
+                        "unit_type": "prod_5h1pp1ng",
+                        "effect": "ADD_MISSING_ITEMS"
+                      },
+                      "start_date": "2020-12-10T23:00:00Z",
+                      "expiration_date": "2023-12-31T23:00:00Z",
+                      "redemption": {
+                        "quantity": 1
+                      },
+                      "metadata": {
+                        "unit": "EUR"
+                      },
+                      "additional_info": "secret-code2"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and vouchers will be added to the repository asynchronously. To check the import status and result, copy the `async_action_id` from the response and pass it using the <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VouchersImportCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "async_action_id": "aa_0aac93c6af84485df3"
                     }
                   }
                 }
