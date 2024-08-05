@@ -75,7 +75,7 @@
 | /v1/vouchers/import                       | post   | Import Vouchers                    |                                      |                                      |
 | /v1/vouchers/importCSV                    | post   | Import Vouchers using CSV          | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/bulk/async                   | post   | Update Vouchers in bulk            |                                      |                                      |
-| /v1/vouchers/metadata/async               | post   | Update Vouchers' metadata in bulk  |                                      |                                      |
+| /v1/vouchers/metadata/async               | post   | Update Vouchers' metadata in bulk  | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/{code}/sessions/{sessionKey} | delete | Release Validation Session         | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/qualification                | post   | Examine Qualification [Deprecated] |                                      |  <font color='red'>deprecated</font> |
 ## Campaigns
@@ -146,10 +146,10 @@
 | /v1/loyalties/{campaignId}/members/{memberId}/transactions/export   | post   | Export Loyalty Card Transactions   | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/members/{memberId}/points-expiration     | get    | Get Points Expiration              | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/points-expiration/export                 | post   | Create Points Expiration Export    |                                      |               |
-| /v1/loyalties/{campaignId}/earning-rules                            | get    | List Earning Rules                 |                                      |               |
-| /v1/loyalties/{campaignId}/earning-rules                            | post   | Create Earning Rule                |                                      |               |
+| /v1/loyalties/{campaignId}/earning-rules                            | get    | List Earning Rules                 | <font color='green'>supported</font> |               |
+| /v1/loyalties/{campaignId}/earning-rules                            | post   | Create Earning Rule                | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}            | get    | Get Earning Rule                   | <font color='green'>supported</font> |               |
-| /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}            | put    | Update Earning Rule                |                                      |               |
+| /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}            | put    | Update Earning Rule                | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}            | delete | Delete Earning Rule                | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable     | post   | Enable Earning Rule                | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable    | post   | Disable Earning Rule               | <font color='green'>supported</font> |               |
