@@ -78,7 +78,7 @@ All of:
 | is_referral_code</br>`boolean`, `null` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the voucher was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was last updated in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:14:45.316Z</p> |
-| holder_id</br>`string` | <p>Unique identifier of the customer who owns the voucher.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
+| holder_id</br>`string` | <p>Unique customer identifier of the redeemable holder. It equals to the customer ID assigned by Voucherify.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
 | referrer_id</br>`string` | <p>Unique identifier of the referring person.</p> **Example:** <p>cust_Vzck5i8U3OhcEUFY6MKhN9Rv</p> |
 | object</br>`string` | <p>The type of the object represented by JSON. Default is <code>voucher</code>.</p> |
 | validation_rules_assignments | See: [Validation Rules Assignments List](#validation-rules-assignments-list) |
