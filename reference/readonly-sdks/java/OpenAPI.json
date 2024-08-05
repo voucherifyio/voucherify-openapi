@@ -8626,6 +8626,23 @@
         },
         "required": []
       },
+      "VouchersUpdateInBulkRequestBody": {
+        "title": "Vouchers Update In Bulk Request Body",
+        "type": "array",
+        "description": "Request body schema for **POST** `/vouchers/bulk/async`.",
+        "items": {
+          "$ref": "#/components/schemas/VouchersUpdateInBulkRequestBodyItem"
+        }
+      },
+      "VouchersUpdateInBulkResponseBody": {
+        "title": "Vouchers Update In Bulk Response Body",
+        "description": "Response body schema for **POST** `/vouchers/bulk/async`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AsyncActions"
+          }
+        ]
+      },
       "VouchersUpdateRequestBody": {
         "type": "object",
         "title": "VouchersUpdateRequestBody",
@@ -16860,6 +16877,23 @@
           }
         }
       },
+      "VouchersUpdateInBulkRequestBodyItem": {
+        "title": "Vouchers Update In Bulk Request Body Item",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Unique voucher code.",
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format.",
+            "nullable": true
+          }
+        },
+        "required": []
+      },
       "AccessSettingsCampaignAssignmentsList": {
         "title": "Access Settings Campaign Assignments List",
         "type": "object",
@@ -24313,6 +24347,76 @@
                     "value": {
                       "async_action_id": "aa_0a875d56c805df6601"
                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/vouchers/bulk/async": {
+      "post": {
+        "operationId": "update-vouchers-in-bulk",
+        "tags": [
+          "Vouchers"
+        ],
+        "summary": "Update Vouchers in bulk",
+        "description": "Use this endpoint to update specific metadata parameters for each code, respectively. You can update each codes metadata property separately.    \n- Update up to **100 records** in one request.\n- Upserts are not supported.  \n 🚧 \n \n Currently only **metadata** updates are supported.\nThis API request starts a process that affects Voucherify data in bulk. \nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the IN_PROGRESS status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \nThe result will return the async ID. You can verify the status of your request via this API request.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "List of objects, each containing a code that is being updated and the metadata key/value pairs for that code.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VouchersUpdateInBulkRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": [
+                    {
+                      "code": "example_code",
+                      "metadata": {
+                        "lang": "en",
+                        "test": false,
+                        "MetadataTest": "Update metadata",
+                        "update_value": 1,
+                        "next_update_date": "2022-11-11T09:00:00.000Z"
+                      }
+                    },
+                    {
+                      "code": "example_code2",
+                      "metadata": {
+                        "lang": "pl",
+                        "test": false,
+                        "MetadataTest": "Update metadata",
+                        "update_value": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Returns the ID of the scheduled asynchronous action, informing you that your request has been accepted and the voucher(s) will be updated in the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and pass it using <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VouchersUpdateInBulkResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "$ref": "#/components/examples/res_async_actions"
                   }
                 }
               }
