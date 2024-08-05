@@ -136,6 +136,12 @@ const main = async (languageOptions: LanguageOptions) => {
       {},
     );
   delete openAPIContent.components.schemas.Voucher.allOf;
+  //Fix `CustomerActivity`
+  delete openAPIContent.components.schemas.CustomerActivity.properties.type
+    .enum;
+  delete openAPIContent.components.schemas.CustomerActivity.properties.data
+    .properties;
+  delete openAPIContent.components.schemas.ParameterCustomerEvent.enum;
   //////////////////////////////////////////////////////////////////////////////
   const { paths, newSchemas } = getPathsWithoutDeprecated(
     openAPIContent.paths,
