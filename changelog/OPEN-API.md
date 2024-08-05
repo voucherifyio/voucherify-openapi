@@ -12,6 +12,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 `OpenAPI.json`
 - New schemas: `VouchersMetadataUpdateInBulkRequestBody`, `EarningRuleBase`
 
+## 2024-08-05
+`OpenAPI.json`
+- renamed `ParameterCategory` into `ParameterActivityCategory`
+
 ## 2024-08-02
 
 `OpenAPI.json`
