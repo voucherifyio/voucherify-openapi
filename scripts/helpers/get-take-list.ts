@@ -188,9 +188,11 @@ export const rawTakeList = {
   },
   "/v1/loyalties/{campaignId}/rewards": {
     get: ["default", "ruby", "java", "php"],
+    post: ["default", "ruby", "java", "php"],
   },
   "/v1/loyalties/{campaignId}/rewards/{assignmentId}": {
     get: ["default", "ruby", "java", "php"],
+    put: ["default", "ruby", "java", "php"],
     delete: ["default", "ruby", "java", "php"],
   },
   "/v1/loyalties/{campaignId}/members/{memberId}/redemption": {
