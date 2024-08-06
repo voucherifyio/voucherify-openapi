@@ -134,10 +134,14 @@ export const rawTakeList = {
     delete: ["default", "ruby", "java", "php"],
     get: ["default", "ruby", "java", "php"],
   },
-  "/v1/loyalties/{campaignId}": { delete: ["default", "ruby", "java", "php"] },
+  "/v1/loyalties/{campaignId}": {
+    delete: ["default", "ruby", "java", "php"],
+    put: ["default", "ruby", "java", "php"],
+  },
   "/v1/loyalties/{campaignId}/members/{memberId}/balance": {
     post: ["default", "ruby", "java", "php"],
   },
+  "/v1/loyalties": { post: ["default", "ruby", "java", "php"] },
   "/v1/loyalties/members/{memberId}/balance": {
     post: ["default", "ruby", "java", "php"],
   },
