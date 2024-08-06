@@ -183,6 +183,12 @@ export const rawTakeList = {
   "/v1/loyalties/{campaignId}/reward-assignments/{assignmentId}": {
     get: ["default", "ruby", "java", "php"],
   },
+  "/v1/loyalties/{campaignId}/reward-assignments": {
+    get: ["default", "ruby", "java", "php"],
+  },
+  "/v1/loyalties/{campaignId}/rewards": {
+    get: ["default", "ruby", "java", "php"],
+  },
   "/v1/loyalties/{campaignId}/rewards/{assignmentId}": {
     get: ["default", "ruby", "java", "php"],
     delete: ["default", "ruby", "java", "php"],

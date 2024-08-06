@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-08-06
+`OpenAPI.json`
+- New schemas: `LoyaltiesRewardsListAssignmentsResponseBody`, `LoyaltiesRewardAssignmentsListResponseBody`
+
 ## 2024-08-05
 `OpenAPI.json`
 - New schemas: `VouchersUpdateInBulkRequestBody`, `VouchersUpdateInBulkRequestBodyItem`
