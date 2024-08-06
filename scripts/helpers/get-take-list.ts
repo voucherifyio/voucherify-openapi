@@ -5,6 +5,12 @@ export const rawTakeList = {
   "/v1/vouchers/metadata/async": {
     post: ["default", "ruby", "java", "php"],
   },
+  "/v1/customers/{customerId}/activity": {
+    get: ["default", "ruby", "java", "php"],
+  },
+  "/v1/vouchers/bulk/async": {
+    post: ["default", "ruby", "java", "php"],
+  },
   "/client/v1/promotions/tiers": { get: ["default", "ruby", "java", "php"] },
   "/v1/promotions/tiers": { get: ["default", "ruby", "java", "php"] },
   "/v1/async-actions": { get: ["default", "ruby", "java", "php"] },
