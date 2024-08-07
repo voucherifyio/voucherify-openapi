@@ -2746,6 +2746,47 @@
           }
         }
       },
+      "LoyaltiesMemberActivityListResponseBody": {
+        "type": "object",
+        "title": "Member Activity List Response Body",
+        "description": "Response body schema for retrieving member activity.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON. This object stores information about member activities in a dictionary.",
+            "enum": [
+              "list"
+            ],
+            "nullable": true
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of member activity objects.",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of member activity objects.",
+            "items": {
+              "$ref": "#/components/schemas/MemberActivity"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request with a `starting_after_id` query or a different limit to get more records returned in the results.",
+            "nullable": true
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an ID that can be used to return another page of results. Use the event id in the `starting_after_id` query parameter to display another page of the results starting after the event with that ID.",
+            "nullable": true
+          }
+        },
+        "required": []
+      },
       "LoyaltiesMembersBalanceUpdateRequestBody": {
         "description": "Request Body schema for **POST** `/loyalties/members/{memberId}/balance` and **POST** `/loyalties/{campaignId}/members/{memberId}/balance`.",
         "title": "Loyalties Members Balance Update Request Body",
@@ -12542,6 +12583,42 @@
           "unique_winners": {
             "description": "Specifies whether each participant can win only once across multiple draws.",
             "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "MemberActivity": {
+        "title": "Member Activity",
+        "type": "object",
+        "description": "This is an object representing member activity.  \n\nThis is a general object which presents moments from members' activity. There are all types of different events that members perform during their journey once they participate in a loyalty program. Events describe moments when the members redeem loyalty cards and earn points or rewards. The list of all types of activities is listed below.\n\nThe details describing the activity are collected in an array property named `data`. In this object, software integrators can find all further information explaining the event context.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique event ID, assigned by Voucherify.",
+            "example": "evcus_0c150c51730c6b60b1",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Event type.",
+            "nullable": true
+          },
+          "data": {
+            "type": "object",
+            "description": "Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the member activity occurred in ISO 8601 format.",
+            "example": "2022-08-30T09:14:07.660Z",
+            "format": "date-time",
+            "nullable": true
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Unique identifier of the request that caused the event.",
+            "example": "w-0e30613abc1f044513",
             "nullable": true
           }
         }
@@ -33971,6 +34048,135 @@
                       "object": "voucher"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/{campaignId}/members/{memberId}/activity": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "description": "Unique campaign ID."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "A code that identifies the loyalty card."
+        }
+      ],
+      "get": {
+        "operationId": "list-member-activity-1",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "List Member Activity",
+        "description": "Retrieves the list of activities for the given member ID related to a voucher and customer who is the holder of the voucher.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderCreatedAt"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Apply this filter to order the events according the date and time when it was created. The dash - preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of event objects related to the loyalty card.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMemberActivityListResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/members/{memberId}/activity": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty card assigned to a particular customer."
+        }
+      ],
+      "get": {
+        "operationId": "list-member-activity",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "List Member Activity",
+        "description": "\n 📘 Alternative endpoint\n This endpoint is an alternative to this endpoint. The URL was re-designed to allow you to get member activities without having to provide the campaignId as a path parameter.\nRetrieves the list of activities for the given member ID related to a voucher and customer who is the holder of the voucher.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderCreatedAt"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Apply this filter to order the events according the date and time when it was created. The dash - preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of event objects related to the loyalty card.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMemberActivityListResponseBody"
                 }
               }
             }

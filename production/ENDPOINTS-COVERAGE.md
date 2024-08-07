@@ -135,8 +135,8 @@
 | /v1/loyalties/{campaignId}/members                                  | post   | Add Member                         |                                      |               |
 | /v1/loyalties/{campaignId}/members/{memberId}                       | get    | Get Member                         | <font color='green'>supported</font> |               |
 | /v1/loyalties/members/{memberId}                                    | get    | Get Member                         | <font color='green'>supported</font> |               |
-| /v1/loyalties/{campaignId}/members/{memberId}/activity              | get    | List Member Activity               |                                      |               |
-| /v1/loyalties/members/{memberId}/activity                           | get    | List Member Activity               |                                      |               |
+| /v1/loyalties/{campaignId}/members/{memberId}/activity              | get    | List Member Activity               | <font color='green'>supported</font> |               |
+| /v1/loyalties/members/{memberId}/activity                           | get    | List Member Activity               | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/members/{memberId}/balance               | post   | Add or Remove Loyalty Card Balance | <font color='green'>supported</font> |               |
 | /v1/loyalties/members/{memberId}/balance                            | post   | Add or Remove Loyalty Card Balance | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/members/{memberId}/transfers             | post   | Transfer Loyalty Points            | <font color='green'>supported</font> |               |
