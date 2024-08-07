@@ -17,6 +17,10 @@ Added the following to `OpenAPI.json`:
 - `customer.holder.assignment.deleted` – OpenAPI.json
 - metadata to `RedemptionRewardResult` schema
 
+Removed the `[Beta]` tag from the following endpoints:
+- List Customer's Redeemables
+- List Referral Code Holders
+
 ## 2024-07-30
 
 - Added parameter `ParameterRedeemableHolderId`

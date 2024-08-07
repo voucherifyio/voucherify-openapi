@@ -186,7 +186,7 @@
 | /v1/customers/{customerId}/activity           | get    | List Customer Activity                |                                      |               |
 | /v1/customers/{customerId}/activities         | get    | List Customer Activities              |                                      |               |
 | /v1/customers/{customerId}/segments           | get    | List Customer's Segments              | <font color='green'>supported</font> |               |
-| /v1/customers/{customerId}/redeemables        | get    | List Customer's Redeemables [Beta]    |                                      |               |
+| /v1/customers/{customerId}/redeemables        | get    | List Customer's Redeemables           |                                      |               |
 ## Orders
 | endpoint             | method | summary              | is supported                         | is deprecated |
 | -------------------- | ------ | -------------------- | ------------------------------------ | ------------- |
@@ -279,14 +279,14 @@
 | /v1/locations              | get    | List Locations |              |               |
 | /v1/locations/{locationId} | get    | Get Location   |              |               |
 ## Referrals
-| endpoint                                                         | method | summary                           | is supported | is deprecated |
-| ---------------------------------------------------------------- | ------ | --------------------------------- | ------------ | ------------- |
-| /v1/referrals/{campaignId}/members/{memberId}/holders            | post   | Add Referral Code Holders         |              |               |
-| /v1/referrals/{campaignId}/members/{memberId}/holders            | get    | List Referral Code Holders [Beta] |              |               |
-| /v1/referrals/{campaignId}/members/{memberId}/holders/{holderId} | delete | Remove Referral Card Holder       |              |               |
-| /v1/referrals/members/{memberId}/holders                         | post   | Add Referral Code Holders         |              |               |
-| /v1/referrals/members/{memberId}/holders                         | get    | List Referral Code Holders [Beta] |              |               |
-| /v1/referrals/members/{memberId}/holders/{holderId}              | delete | Remove Referral Card Holder       |              |               |
+| endpoint                                                         | method | summary                     | is supported | is deprecated |
+| ---------------------------------------------------------------- | ------ | --------------------------- | ------------ | ------------- |
+| /v1/referrals/{campaignId}/members/{memberId}/holders            | post   | Add Referral Code Holders   |              |               |
+| /v1/referrals/{campaignId}/members/{memberId}/holders            | get    | List Referral Code Holders  |              |               |
+| /v1/referrals/{campaignId}/members/{memberId}/holders/{holderId} | delete | Remove Referral Card Holder |              |               |
+| /v1/referrals/members/{memberId}/holders                         | post   | Add Referral Code Holders   |              |               |
+| /v1/referrals/members/{memberId}/holders                         | get    | List Referral Code Holders  |              |               |
+| /v1/referrals/members/{memberId}/holders/{holderId}              | delete | Remove Referral Card Holder |              |               |
 ## Bin
 | endpoint                   | method | summary          | is supported | is deprecated |
 | -------------------------- | ------ | ---------------- | ------------ | ------------- |
