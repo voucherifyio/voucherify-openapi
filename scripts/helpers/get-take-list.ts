@@ -142,6 +142,12 @@ export const rawTakeList = {
   "/v1/loyalties/{campaignId}/members/{memberId}/balance": {
     post: ["default", "ruby", "java", "php"],
   },
+  "/v1/loyalties/{campaignId}/members/{memberId}": {
+    get: ["default", "ruby", "java", "php"],
+  },
+  "/v1/loyalties/{campaignId}/members": {
+    get: ["default", "ruby", "java", "php"],
+  },
   "/v1/loyalties": {
     get: ["default", "ruby", "java", "php"],
     post: ["default", "ruby", "java", "php"],

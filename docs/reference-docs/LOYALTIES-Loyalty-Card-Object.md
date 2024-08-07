@@ -15,7 +15,7 @@ order: 20
 | code</br>`string` | <p>A code that identifies a voucher. Pattern can use all letters of the English alphabet, Arabic numerals, and special characters.</p> **Example:** <p>WVPblOYX</p> |
 | campaign</br>`string` | <p>A unique campaign name, identifies the voucher's parent campaign.</p> **Example:** <p>Loyalty Card Campaign</p> |
 | campaign_id</br>`string` | <p>Assigned by the Voucherify API, identifies the voucher's parent campaign.</p> **Example:** <p>camp_FNYR4jhqZBM9xTptxDGgeNBV</p> |
-| category</br>`string` | <p>Tag defining the category that this voucher belongs to. Useful when listing vouchers using the List Vouchers endpoint.</p> |
+| category</br>`string` | <p>Tag defining the category that this voucher belongs to.</p> |
 | category_id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> **Example:** <p>cat_0bb343dee3cdb5ec0c</p> |
 | categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `LOYALTY_CARD` |
