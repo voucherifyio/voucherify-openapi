@@ -6,7 +6,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2024-08-07
 `OpenAPI.json`
-- New schemas: `LoyaltiesGetCampaignResponseBody`, `LoyaltiesListCampaignsResponseBody`
+- New schemas: `LoyaltiesGetCampaignResponseBody`, `LoyaltiesListCampaignsResponseBody`, `ParameterCode`, `ParameterIds`, `LoyaltyMember`, `LoyaltiesListMembersResponseBody`, `LoyaltiesMembersGetResponseBody`
 
 ## 2024-08-06
 `OpenAPI.json`
