@@ -2982,6 +2982,37 @@
         },
         "required": []
       },
+      "LoyaltiesMembersCreateRequestBody": {
+        "title": "Loyalties Members Create Request Body",
+        "type": "object",
+        "description": "Request body schema for assigning a loyalty card to a customer using **POST** `/loyalties/{campaignId}/members`.",
+        "allOf": [
+          {
+            "title": "Voucher code",
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "description": "Code of voucher being published.",
+                "type": "string",
+                "nullable": true
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/CreatePublicationBase"
+          }
+        ]
+      },
+      "LoyaltiesMembersCreateResponseBody": {
+        "title": "Loyalties Members Create Response Body",
+        "type": "object",
+        "description": "Respone body schema for assigning a loyalty card to a customer using **POST** `/loyalties/{campaignId}/members`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/LoyaltyMember"
+          }
+        ]
+      },
       "LoyaltiesMembersGetResponseBody": {
         "title": "Loyalties Members Get Response Body",
         "type": "object",
@@ -5549,6 +5580,11 @@
           "metadata": {
             "type": "object",
             "title": "PublicationsCreateRequestBodyMetadata",
+            "nullable": true
+          },
+          "channel": {
+            "type": "string",
+            "description": "Specify the distribution channel.",
             "nullable": true
           },
           "campaign": {
@@ -10050,6 +10086,39 @@
             "nullable": true
           }
         }
+      },
+      "CreatePublicationBase": {
+        "title": "Create Publication Base",
+        "type": "object",
+        "description": "Create publication",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "The merchant's publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.\nIf `source_id` is provided only 1 voucher can be published per request.",
+            "nullable": true
+          },
+          "customer": {
+            "description": "Contains information about the customer to whom the publication was directed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.",
+            "nullable": true
+          },
+          "channel": {
+            "type": "string",
+            "description": "Specify the distribution channel.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "customer"
+        ]
       },
       "CustomerActivity": {
         "title": "Customer Activity",
@@ -34544,6 +34613,153 @@
                         }
                       ],
                       "total": 2
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "add-member",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "Add Member",
+        "description": "This method assigns a loyalty card to a customer. It selects a loyalty card suitable for publication, adds a publish entry, and returns the published voucher.  \nA voucher is suitable for publication when its active and hasnt been published yet.  \n 📘 Auto-update campaign\n In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use **auto-update** campaign.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Provide details to whom the loyalty card should be assigned.    \nYou can choose to either specify the exact loyalty card code that you want to publish from existin (non-assigned) codes, or choose not to specify a voucher code. If you choose not to specify a code in the request paylaod, then the system will choose the next available voucher code available to be assigned to a customer.  \nYou can also include metadata in the request payload. This metadata will be assigned to the publication object, but will not be returned in the response to this endpoint. To see of publications (assignments of particular codes to customers) and publication metadata, use the List Publications endpoint.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoyaltiesMembersCreateRequestBody"
+              },
+              "examples": {
+                "Using source ID": {
+                  "value": {
+                    "customer": "source_customer_1",
+                    "metadata": {
+                      "year": 2022
+                    },
+                    "channel": "postman",
+                    "voucher": "KpzbHUY5"
+                  }
+                },
+                "Using unique Voucherify assigned ID": {
+                  "value": {
+                    "customer": "cust_8KQmHxAERpgebYcFhSpZRr37",
+                    "metadata": {
+                      "year": 2022
+                    },
+                    "channel": "postman",
+                    "voucher": "KpzbHUY5"
+                  }
+                },
+                "Using source ID in object": {
+                  "value": {
+                    "customer": {
+                      "source_id": "source_customer_1"
+                    },
+                    "metadata": {
+                      "year": 2022
+                    },
+                    "channel": "postman",
+                    "voucher": "KpzbHUY5"
+                  }
+                },
+                "Using unique Voucherify assigned ID in object": {
+                  "value": {
+                    "customer": {
+                      "id": "cust_8KQmHxAERpgebYcFhSpZRr37"
+                    },
+                    "metadata": {
+                      "year": 2022
+                    },
+                    "channel": "postman",
+                    "voucher": "KpzbHUY5"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the voucher object that was published to the customer provided in the request payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMembersCreateResponseBody"
+                },
+                "examples": {
+                  "Loyalty Card": {
+                    "value": {
+                      "id": "v_0TxKw1bm0oZuS5lwA8526vze1OBMV1OH",
+                      "code": "KpzbHUY5",
+                      "campaign": "Loyalty Campaign",
+                      "campaign_id": "camp_eTIsUtuzkRXQT6rsUQqrS5Gw",
+                      "category": "New Customers",
+                      "category_id": "cat_0b6152ce12414820dc",
+                      "categories": [
+                        {
+                          "id": "cat_0b6152ce12414820dc",
+                          "name": "New Customers",
+                          "hierarchy": 0,
+                          "created_at": "2022-07-14T20:17:07.657Z",
+                          "object": "category"
+                        }
+                      ],
+                      "type": "LOYALTY_CARD",
+                      "discount": null,
+                      "gift": null,
+                      "loyalty_card": {
+                        "points": 0,
+                        "balance": 0
+                      },
+                      "start_date": null,
+                      "expiration_date": null,
+                      "validity_timeframe": null,
+                      "validity_day_of_week": null,
+                      "active": true,
+                      "additional_info": null,
+                      "metadata": {
+                        "Season": "Fall"
+                      },
+                      "assets": {
+                        "qr": {
+                          "id": "U2FsdGVkX1+hdZfzUaz448vIsyf7WpvXiDyqFbyw0+P5wMu12w3B5DyYwA7LCSK+Nr7TA7PKGuHOTGxfBieqrhvJo81HiaIJimDOhk+ecEOisMRmHf6XsNckVlyBHmkpBiXWNm8UDwZnXOAG75Usdw==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2BhdZfzUaz448vIsyf7WpvXiDyqFbyw0%2BP5wMu12w3B5DyYwA7LCSK%2BNr7TA7PKGuHOTGxfBieqrhvJo81HiaIJimDOhk%2BecEOisMRmHf6XsNckVlyBHmkpBiXWNm8UDwZnXOAG75Usdw%3D%3D"
+                        },
+                        "barcode": {
+                          "id": "U2FsdGVkX19VRXApVvZ9/ArwBd0wNg7s2KZBXrFvPXZdDQyzGj0HbbEIx5TAoXNR9zaE5kzIj9BElzgK82aOMMVnc1sqvr93xw+YeYMnqGqHRZfM78pYC8560Zc3U6IELtxzaJJ0x2uDUe6Dc9XYeg==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX19VRXApVvZ9%2FArwBd0wNg7s2KZBXrFvPXZdDQyzGj0HbbEIx5TAoXNR9zaE5kzIj9BElzgK82aOMMVnc1sqvr93xw%2BYeYMnqGqHRZfM78pYC8560Zc3U6IELtxzaJJ0x2uDUe6Dc9XYeg%3D%3D"
+                        }
+                      },
+                      "is_referral_code": false,
+                      "created_at": "2022-11-21T15:48:57.860Z",
+                      "updated_at": "2022-11-21T15:49:36.671Z",
+                      "holder_id": "cust_8KQmHxAERpgebYcFhSpZRr37",
+                      "redemption": {
+                        "quantity": null,
+                        "redeemed_quantity": 0,
+                        "redeemed_points": 0,
+                        "object": "list",
+                        "url": "/v1/vouchers/KpzbHUY5/redemptions?page=1&limit=10"
+                      },
+                      "publish": {
+                        "object": "list",
+                        "count": 1,
+                        "url": "/v1/vouchers/KpzbHUY5/publications?page=1&limit=10"
+                      },
+                      "object": "voucher"
                     }
                   }
                 }

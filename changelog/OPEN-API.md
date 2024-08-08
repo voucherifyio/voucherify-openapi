@@ -6,7 +6,8 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2024-08-07
 `OpenAPI.json`
-
+- New shemas `CreatePublicationWithoutSpecifyingVoucher`, `LoyaltiesMembersCreateResponseBody`
+- Added property `channel` to `CreatePublicationBase`
 
 ## 2024-08-07
 `OpenAPI.json`
