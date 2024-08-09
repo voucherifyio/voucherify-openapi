@@ -28,7 +28,7 @@ All of:
 | request_id</br>`string` | <p>Unique request ID.</p> **Example:** <p>v-0b45cee140c3c9b5ca</p> |
 | processing_time</br>`integer` | <p>The length of time it took to process the request in milliseconds.</p> **Example:** <p>1217</p> |
 | progress</br>`integer` | <p>% progress to completion of the asynchronous action.</p> |
-| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the <code>async_action</code>.</p> |
+| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the <code>async_action</code>.</p> Available values: `async_action` |
 
 ## CAMPAIGN.VOUCHERS_IMPORT
 | Attributes |  Description |
@@ -79,16 +79,14 @@ All of:
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
 
 ## CUSTOMERS.BULK_UPDATE
-| Attributes |  Description |
-|:-----|:--------|
-| results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique customer <code>source_id</code>.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
-| done_count</br>`integer` | <p>Number or resources processed successfully.</p> |
+All of:
+
+1. [Async Action Voucher Customer Product Bulk Update Result](#async-action-voucher-customer-product-bulk-update-result)
 
 ## CUSTOMERS.METADATA_UPDATE
-| Attributes |  Description |
-|:-----|:--------|
-| results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique customer <code>source_id</code>.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
-| done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+All of:
+
+1. [Async Action Voucher Customer Product Bulk Update Result](#async-action-voucher-customer-product-bulk-update-result)
 
 ## CUSTOMERS.METADATA_KEY_PURGE
 | Attributes |  Description |
@@ -97,16 +95,14 @@ All of:
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
 
 ## PRODUCTS.BULK_UPDATE
-| Attributes |  Description |
-|:-----|:--------|
-| results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique product <code>source_id</code>.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
-| done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+All of:
+
+1. [Async Action Voucher Customer Product Bulk Update Result](#async-action-voucher-customer-product-bulk-update-result)
 
 ## PRODUCTS.METADATA_UPDATE
-| Attributes |  Description |
-|:-----|:--------|
-| results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Unique product <code>source_id</code>.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
-| done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+All of:
+
+1. [Async Action Voucher Customer Product Bulk Update Result](#async-action-voucher-customer-product-bulk-update-result)
 
 ## PRODUCTS.IMPORT_CSV
 | Attributes |  Description |
@@ -147,16 +143,14 @@ All of:
 | failed_count</br>`integer` | <p>Number of resources failed to process.</p> |
 
 ## VOUCHERS.BULK_UPDATE
-| Attributes |  Description |
-|:-----|:--------|
-| results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Unique voucher code.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
-| done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+All of:
+
+1. [Async Action Voucher Customer Product Bulk Update Result](#async-action-voucher-customer-product-bulk-update-result)
 
 ## VOUCHERS.METADATA_UPDATE
-| Attributes |  Description |
-|:-----|:--------|
-| results</br>`array` | <p>An array of statuses for each record.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Unique voucher code.</p></td></tr><tr><td style="text-align:left">updated</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was updated.</p></td></tr><tr><td style="text-align:left">found</br><code>boolean</code></td><td style="text-align:left"><p>Indicates whether the record was found.</p></td></tr></tbody></table> |
-| done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+All of:
+
+1. [Async Action Voucher Customer Product Bulk Update Result](#async-action-voucher-customer-product-bulk-update-result)
 
 ## VOUCHERS.METADATA_KEY_PURGE
 | Attributes |  Description |
@@ -177,6 +171,26 @@ All of:
 |:-----|:--------|
 | message</br>`string` | <p>A human-readable message providing a short description about the result.</p> |
 | done_count</br>`integer` | <p>Number of resources processed successfully.</p> |
+
+## Async Action Voucher Customer Product Bulk Update Result
+| Attributes |  Description |
+|:-----|:--------|
+| done_count</br>`integer` | <p>Number of items successfully processed.</p> |
+| failed_count</br>`integer` | <p>Number of items that failed to process.</p> |
+| reports</br>`array` | <p>List of URLs to report files.</p> |
+| reports_available_till</br>`string` | <p>Timestamp until the reports are available.</p> |
+| errors</br>`array` | <p>List of errors encountered during processing.</p> Array of [Error Object](#error-object) |
+
+## Error Object
+| Attributes |  Description |
+|:-----|:--------|
+| code</br>`integer` | <p>Error's HTTP status code.</p> |
+| key</br>`string` | <p>Short string describing the kind of error which occurred.</p> |
+| message</br>`string` | <p>A human-readable message providing a short description about the error.</p> |
+| details</br>`string` | <p>A human-readable message providing more details about the error.</p> |
+| request_id</br>`string` | <p>This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team.</p> **Example:** <p>v-0a885062c80375740f</p> |
+| resource_id</br>`string` | <p>Unique resource ID that can be used in another endpoint to get more details.</p> **Example:** <p>rf_0c5d710a87c8a31f86</p> |
+| resource_type</br>`string` | <p>The resource type.</p> **Example:** <p>voucher</p> |
 
 [block:html]
 {
