@@ -2,7 +2,6 @@ The `EVENTS.VOUCHER.LOYALTY_CARD.TRANSACTION.CREATED` event indicates that a tra
 
 The following transaction types trigger the event:
 - `POINTS_ACCRUAL`
-- `POINTS_CANCELLATION` 
 - `POINTS_REDEMPTION`
 - `POINTS_REFUND`
 - `POINTS_ADDITION`

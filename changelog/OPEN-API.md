@@ -4,6 +4,15 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-08-09
+
+- Deprecated the following endpoints:
+  - PUT `/v1/customers/{customerId}/consents`
+  - GET `/v1/consents`
+  - PUT `/client/v1/customers/{customerId}/consents`
+  - GET `/client/v1/consents`
+- Removed `POINTS_CANCELLATION` from types of loyalty card transactions
+
 ## 2024-08-01
 
 Added the following to `OpenAPIWebhooks.json`:

@@ -12,7 +12,7 @@ order: 1
 All of:
 
 1. [Campaign Base](#campaign-base)
-2. <h3>Campaign Additional Data</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">promotion</td><td style="text-align:left">See: <a href="#promotion-tiers">Promotion Tiers</a></td></tr><tr><td style="text-align:left">validation_rules_assignments</td><td style="text-align:left">See: <a href="#validation-rules-assignments-list">Validation Rules Assignments List</a></td></tr><tr><td style="text-align:left">access_settings_assignments</td><td style="text-align:left">See: <a href="#access-settings-campaign-assignments-list">Access Settings Campaign Assignments List</a></td></tr></tbody></table>
+2. <h3>Campaign Additional Data</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">promotion</td><td style="text-align:left">See: <a href="#promotion-tiers">Promotion Tiers</a></td></tr><tr><td style="text-align:left">validation_rules_assignments</td><td style="text-align:left">See: <a href="#validation-rules-assignments-list">Validation Rules Assignments List</a></td></tr></tbody></table>
 
 ## Campaign Base
 | Attributes |  Description |
@@ -63,14 +63,6 @@ All of:
 | data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of validation rules assignments.</p> Available values: `data` |
 | data</br>`array` | <p>Contains array of validation rules assignments.</p> Array of [Business Validation Rule Assignment](#business-validation-rule-assignment) |
 | total</br>`integer` | <p>Total number of validation rules assignments.</p> |
-
-## Access Settings Campaign Assignments List
-| Attributes |  Description |
-|:-----|:--------|
-| object</br>`string` | <p>The type of the object represented by JSON. Default is <code>list</code>. This object stores information about campaign assignments to areas and stores</p> Available values: `list` |
-| data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of campaign assignments.</p> Available values: `data` |
-| data</br>`array` | <p>Contains an array of campaign assignments.</p> Array of [Areas and Stores Campain Assignment](#areas-and-stores-campain-assignment) |
-| total</br>`integer` | <p>Total number of areas and stores to which the campaign is assigned.</p> |
 
 ## Campaign Voucher
 | Attributes |  Description |
@@ -166,15 +158,6 @@ All of:
 | object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `validation_rules_assignment` |
 | validation_status</br>`string` | <p>The validation status of the assignment</p> Available values: `VALID`, `PARTIALLY_VALID`, `INVALID` |
 | validation_omitted_rules</br>`array` | <p>The list of omitted rules</p> |
-
-## Areas and Stores Campain Assignment
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique identifier of the campaign assignment.</p> **Example:** <p>arsca_0ef5ee192117ae2416</p> |
-| area_id</br>`string` | <p>Unique identifier of the area to which the campaign is assigned.</p> **Example:** <p>ar_0ea6cd7b781b8f857f</p> |
-| area_store_id</br>`string` | <p>Unique identifier of the store to which the campaign is assigned.</p> **Example:** <p>ars_0ec347e2016bed85f4</p> |
-| created_at</br>`string` | <p>Date and time when the assignment was made. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-06-25T19:04:16.260Z</p> |
-| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the campaign assignment to areas or stores.</p> Available values: `area_store_campaign_assignment` |
 
 ## Discount
 <p>Contains information about discount.</p>
