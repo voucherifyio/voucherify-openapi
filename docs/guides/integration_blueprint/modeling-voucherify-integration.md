@@ -30,6 +30,8 @@ As a developer-first tool, Voucherify exposes several integration paths:
 
     [Discover our Technology Partners](https://www.voucherify.io/integrations "Supercharge promotions with powerful Voucherify integrations")
 
+To learn more, get familiar with our [Open Source Loyalty Accelerator for Omnichannel Retail](https://www.voucherify.io/blog/open-source-loyalty-accelerator-for-omnichannel-retail).
+
 ---
 
 The scope of campaign flexibility and personalization you can achieve with Voucherify is made possible by feeding Voucherify with appropriate data. 
