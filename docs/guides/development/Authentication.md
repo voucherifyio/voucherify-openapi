@@ -29,6 +29,9 @@ A generated pair of Application ID and Application Secret Key must be attached t
 > The primary secret key is visible for 14 days only when it is generated for the first time and for 15 minutes when the token is regenerated. Secondary secret keys are visible for 15 minutes when they are generated for the first time or regenerated.
 >
 > Write your secret keys down and keep them in a safe place.
+>
+> **Please note that the API keys in the Sandbox Project are never hidden.**
+
 
 ```markdown App Keys
 X-App-Id: 3XXXXXXa-125l-XXXr-qXXX-3XXXX8092e70    
