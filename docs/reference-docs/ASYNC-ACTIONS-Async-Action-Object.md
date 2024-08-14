@@ -21,8 +21,8 @@ All of:
 |:-----|:--------|
 | id</br>`string` | <p>Async action unique ID.</p> **Example:** <p>aa_0adad13d6f057f088e</p> |
 | type</br>`string` | <p>Type of async action.</p> Available values: `CAMPAIGN.VOUCHERS_IMPORT`, `CAMPAIGN.VOUCHERS_IMPORT_CSV`, `CAMPAIGN.VOUCHERS_UPDATE`, `CAMPAIGN.VOUCHERS_DELETE`, `CAMPAIGN.VOUCHERS_GENERATE`, `CAMPAIGNS.METADATA_KEY_PURGE`, `CUSTOMERS.IMPORT_CSV`, `CUSTOMERS.BULK_UPDATE`, `CUSTOMERS.METADATA_UPDATE`, `CUSTOMERS.METADATA_KEY_PURGE`, `PRODUCTS.BULK_UPDATE`, `PRODUCTS.METADATA_UPDATE`, `PRODUCTS.METADATA_KEY_PURGE`, `PRODUCTS.IMPORT_CSV`, `SKUS.IMPORT_CSV`, `VOUCHERS.IMPORT`, `VOUCHERS.IMPORT_CSV`, `VOUCHERS.BULK_UPDATE`, `VOUCHERS.METADATA_UPDATE`, `VOUCHERS.METADATA_KEY_PURGE`, `ORDERS.IMPORT`, `ORDERS.METADATA_KEY_PURGE` |
-| status</br>`string` | <p>Status of async action. Informs you whether the async action has already been completed.</p> Available values: `ENQUEUED`, `IN_PROGRESS`, `DONE`, `FAILED` |
-| operation_status</br>`string` | <p>Status of async action processing. Informs about the async action status, whether it failed, succeeded, or the status is unknown. Examples: &quot;FAILED&quot;, &quot;SUCCESS&quot;</p> |
+| status</br>`string` | <p>Status of the async action. Informs you whether the async action has already been completed.</p> Available values: `DONE`, `ENQUEUED`, `FAILED`, `IN_PROGRESS` |
+| operation_status</br>`string` | <p>Status of async action processing. Informs about the async action status, whether it failed, succeeded, or the status is unknown.</p> Available values: `FAILED`, `SUCCESS`, `UNKNOWN` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the async action was scheduled in ISO 8601 format.</p> **Example:** <p>2022-06-23T11:21:45.578Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the async action was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-06-23T11:21:46.795Z</p> |
 | request_id</br>`string` | <p>Unique request ID.</p> **Example:** <p>v-0b45cee140c3c9b5ca</p> |
@@ -176,7 +176,7 @@ All of:
 | Attributes |  Description |
 |:-----|:--------|
 | done_count</br>`integer` | <p>Number of items successfully processed.</p> |
-| failed_count</br>`integer` | <p>Number of items that failed to process.</p> |
+| failed_count</br>`integer` | <p>Number of items that failed to be processed.</p> |
 | reports</br>`array` | <p>List of URLs to report files.</p> |
 | reports_available_till</br>`string` | <p>Timestamp until the reports are available.</p> |
 | errors</br>`array` | <p>List of errors encountered during processing.</p> Array of [Error Object](#error-object) |
