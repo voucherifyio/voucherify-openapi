@@ -30743,7 +30743,7 @@
           },
           "failed_count": {
             "type": "integer",
-            "description": "Number of items that failed to process."
+            "description": "Number of items that failed to be processed."
           },
           "reports": {
             "type": "array",
@@ -47314,7 +47314,7 @@
           "Vouchers"
         ],
         "summary": "Update Vouchers in bulk",
-        "description": "Use this endpoint to update specific metadata parameters for each code, respectively. You can update each code's metadata property separately.    \n\n- Update up to **100 records** in one request.\n- Upserts are not supported.  \n\n> 🚧 \n> \n> Currently only **metadata** updates are supported.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
+        "description": "Updates specific metadata parameters for each code, respectively, in one asynchronous operation.\n\nThe request can include up to **10 MB** of data.\n\n> 🚧\n> \n> Currently, only **metadata** updates are supported.\n\nThe response returns a unique asynchronous action ID. Use this ID in the query paramater of the [GET Async Action](ref:get-async-action) endpoint to check the status of your request (in queue, in progress, done, or failed).\n\nThis API request starts a process that affects Voucherify data in bulk. In the case of small jobs (like bulk update), the request is put into a queue and processed when every other bulk request placed in the queue prior to this request is finished. However, when a job takes a longer time (like vouchers generation), then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window.",
         "parameters": [],
         "security": [
           {
@@ -47360,7 +47360,7 @@
         },
         "responses": {
           "202": {
-            "description": "Returns the ID of the scheduled asynchronous action, informing you that your request has been accepted and the voucher(s) will be updated in the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and pass it using <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint.",
+            "description": "Returns the ID of the scheduled asynchronous action. The response informs you that the request has been accepted and the resources will be updated in the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and use it as a query parameter in the [GET Async Action](ref:get-async-action) endpoint.",
             "content": {
               "application/json": {
                 "schema": {
@@ -71230,7 +71230,7 @@
           "Customers"
         ],
         "summary": "Update Customers in bulk",
-        "description": "Update several customers in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier.  \n\nIf a requested customer object is not found, then an **upsert** occurs. This is reflected in the <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
+        "description": "Updates customers in one asynchronous operation.\n\nThe request can include up to **10 MB** of data.\n\nThe response returns a unique asynchronous action ID. Use this ID in the query paramater of the [GET Async Action](ref:get-async-action) endpoint to check the status of your request (in queue, in progress, done, or failed).\n\nIf a customer object is not found, it is **upserted**. This is shown in the report file returned in the response of the GET Async Action endpoint. The upserted resources have value `false` in the `found` column and `true` in the `updated` column.\n\nThis API request starts a process that affects Voucherify data in bulk. In the case of small jobs (like bulk update), the request is put into a queue and processed when every other bulk request placed in the queue prior to this request is finished. However, when a job takes a longer time (like vouchers generation), then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window.",
         "parameters": [],
         "security": [
           {
@@ -71321,41 +71321,11 @@
         },
         "responses": {
           "202": {
-            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and customers will be updated in the repository asynchronously. To check the update status and result, copy the `async_action_id` from the response and pass it using the <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint.",
+            "description": "Returns the ID of the scheduled asynchronous action. The response informs you that the request has been accepted and the resources will be updated in the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and use it as a query parameter in the [GET Async Action](ref:get-async-action) endpoint.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CustomersUpdateInBulkResponseBody"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Returns an error if metadata fields are incorrect data type or a customer's source ID is missing in the request body.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "examples": {
-                  "Metadata validation failed": {
-                    "value": {
-                      "code": 400,
-                      "key": "metadata_validation_failed",
-                      "message": "Metadata validation failed",
-                      "details": "acquisition_channel: must be a string, property is required, must be equal to one of Facebook,Twitter,Website (actual value is 'true')",
-                      "request_id": "v-0afb29d91094432cea"
-                    }
-                  },
-                  "Invalid payload": {
-                    "value": {
-                      "code": 400,
-                      "key": "invalid_payload",
-                      "message": "Invalid payload",
-                      "details": "Payload should have required property 'source_id'",
-                      "request_id": "v-0ba51a2f5ec3bf76de"
-                    }
-                  }
                 }
               }
             }
@@ -74172,7 +74142,7 @@
           "Products"
         ],
         "summary": "Update Products in bulk",
-        "description": "Update several products in one asynchronous operation. \n\nIn one request, it is possible to update a maximum of **100** records. In the response body, you get a unique async action identifier. If a requested product object is not found, then an **upsert** occurs. This is reflected in the <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint as follows:  \n\n<!--\ntitle: \"Response\"\nlineNumbers: true\n-->\n```json\n{\n    \"found\": false,\n    \"updated\": true\n}\n```\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
+        "description": "Update products in one asynchronous operation.\n\nThe request can include up to **10 MB** of data.\n\nThe response returns a unique asynchronous action ID. Use this ID in the query paramater of the [GET Async Action](ref:get-async-action) endpoint to check the status of your request (in queue, in progress, done, or failed).\n\nIf a product object is not found, it is **upserted**. This is shown in the report file returned in the response of the GET Async Action endpoint. The upserted resources have value `false` in the `found` column and `true` in the `updated` column.\n\nThis API request starts a process that affects Voucherify data in bulk. In the case of small jobs (like bulk update), the request is put into a queue and processed when every other bulk request placed in the queue prior to this request is finished. However, when a job takes a longer time (like vouchers generation), then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window.",
         "parameters": [],
         "security": [
           {
@@ -74231,7 +74201,7 @@
         },
         "responses": {
           "202": {
-            "description": "Returns ID of the scheduled async action. The response informs you that your request has been accepted and updates will be added to the repository asynchronously. To check the update status and result, copy the `async_action_id` from the response and pass it using the <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint.",
+            "description": "Returns the ID of the scheduled asynchronous action. The response informs you that the request has been accepted and the resources will be updated in the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and use it as a query parameter in the [GET Async Action](ref:get-async-action) endpoint.",
             "content": {
               "application/json": {
                 "schema": {
@@ -74241,27 +74211,6 @@
                   "Example": {
                     "value": {
                       "async_action_id": "aa_0a875d56c805df6601"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Returns an error if the required parameters are not included in the request body.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "examples": {
-                  "Example": {
-                    "value": {
-                      "code": 400,
-                      "key": "invalid_payload",
-                      "message": "Invalid payload",
-                      "details": "Payload should have required property 'source_id'",
-                      "request_id": "v-0bae44e063cca61aff"
                     }
                   }
                 }
