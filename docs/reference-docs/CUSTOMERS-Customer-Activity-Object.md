@@ -1134,7 +1134,7 @@ Available values: `POINTS_ACCRUAL`, `POINTS_REDEMPTION`, `POINTS_REFUND`, `POINT
 | name</br>`string` | <p>Name of the promotion stack.</p> |
 | category_id</br>`string` | <p>Unique identifier of the category of the promotion stack.</p> |
 | campaign</br>`object` | <p>Represents simplified promotion stack campaign data.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the campaign.</p></td></tr></tbody></table> |
-| tiers</br>`object` | <p>Contains the tier configuration.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">ids</br><code>array</code></td><td style="text-align:left"><p>Contains the list of tiers in a pre-defined sequence.</p></td></tr><tr><td style="text-align:left">hierarchy_mode</br><code>string</code></td><td style="text-align:left">Available values: <code>MANUAL</code></td></tr></tbody></table> |
+| tiers</br>`object` | <p>Contains the tier configuration. A promotion stack can include up to 30 tiers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">ids</br><code>array</code></td><td style="text-align:left"><p>Contains the list of tiers in a pre-defined sequence.</p></td></tr><tr><td style="text-align:left">hierarchy_mode</br><code>string</code></td><td style="text-align:left">Available values: <code>MANUAL</code></td></tr></tbody></table> |
 
 ## Simple Consent
 | Attributes |  Description |
