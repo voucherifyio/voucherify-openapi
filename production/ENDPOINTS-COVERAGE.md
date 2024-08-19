@@ -294,9 +294,9 @@
 | /v1/trash-bin              | get    | List Bin Entries |              |               |
 | /v1/trash-bin/{binEntryId} | delete | Delete Bin Entry |              |               |
 ## Templates
-| endpoint                  | method | summary                 | is supported | is deprecated |
-| ------------------------- | ------ | ----------------------- | ------------ | ------------- |
-| /templates/campaigns/list | get    | List Campaign Templates |              |               |
+| endpoint             | method | summary                 | is supported | is deprecated |
+| -------------------- | ------ | ----------------------- | ------------ | ------------- |
+| /templates/campaigns | get    | List Campaign Templates |              |               |
 ## Management
 | endpoint                                                                       | method | summary                    | is supported | is deprecated |
 | ------------------------------------------------------------------------------ | ------ | -------------------------- | ------------ | ------------- |

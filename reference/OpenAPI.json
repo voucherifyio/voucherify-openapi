@@ -821,6 +821,13 @@
           "-id"
         ]
       },
+      "ParameterTemplatesList": {
+        "type": "string",
+        "enum": [
+          "id",
+          "-id"
+        ]
+      },
       "ParameterFiltersListBin": {
         "type": "object",
         "properties": {
@@ -1502,6 +1509,23 @@
           "customer_id": {
             "type": "object",
             "description": "Unique customer ID, i.e. `cust_sehkNIi8Uq2qQuRqSr7xn4Zi`.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              },
+              "junction": {
+                "$ref": "#/components/schemas/Junction"
+              }
+            }
+          }
+        }
+      },
+      "ParameterFiltersListTemplates": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "object",
+            "description": "Unique template name, e.g. `camp_tpl_cR8va5Ga2nAi4Nxoi1I1qR8S`.",
             "properties": {
               "conditions": {
                 "$ref": "#/components/schemas/FilterConditionsString"
@@ -41976,6 +42000,112 @@
           "in_app"
         ]
       },
+      "TemplatesCampaignListResponseBody": {
+        "type": "object",
+        "title": "Templates Campaign Template List Response Body",
+        "description": "Response body schema for **GET** `/templates/campaign`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TemplatesCampaignTemplateList"
+          }
+        ]
+      },
+      "TemplatesCampaignTemplateList": {
+        "type": "object",
+        "title": "Campaign Template List",
+        "description": "List of campaign templates",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about campaign templates.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "Identifies the name of the JSON property that contains the array of campaign templates.",
+            "enum": [
+              "campaign_templates"
+            ]
+          },
+          "campaign_template": {
+            "type": "array",
+            "description": "Dictionary that contains an array of campaign templates.",
+            "items": {
+              "$ref": "#/components/schemas/TemplatesCampaignTemplateBody"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of templates, regardless of the applied query parameters. Displayed only if the `include_total` query paremeter is set to `true`."
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request (with a different page or a different start date filter) to get more records returned in the results."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "campaign_template",
+          "has_more"
+        ]
+      },
+      "TemplatesCampaignTemplateBody": {
+        "type": "object",
+        "title": "Campaign Template",
+        "description": "Stores details about a campaign template.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the campaign template.",
+            "example": "camp_tpl_eR9NsNJ5gqJRN2TG3fqCvbVl"
+          },
+          "name": {
+            "type": "string",
+            "description": "User-defined name of the campaign template."
+          },
+          "description": {
+            "type": "string",
+            "description": "User-defined description of the campaign template."
+          },
+          "campaign_type": {
+            "type": "string",
+            "description": "User-defined description of the campaign template.",
+            "enum": [
+              "DISCOUNT_COUPONS",
+              "GIFT_VOUCHERS"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the campaign template was created. The value is shown in the ISO 8601 format.",
+            "example": "2024-07-16T09:05:53.175Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the campaign template was last updated. The value is shown in the ISO 8601 format.",
+            "example": "2024-07-17T06:25:21.500Z"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "enum": [
+              "campaign_template"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "campaign_type",
+          "created_at",
+          "object"
+        ]
+      },
       "TrashBinListResponseBody": {
         "type": "object",
         "title": "List Bin Entities",
@@ -81583,20 +81713,46 @@
         }
       }
     },
-    "/templates/campaigns/list": {
+    "/templates/campaigns": {
       "get": {
         "operationId": "list-campaign-templates",
         "tags": [
           "Templates"
         ],
         "summary": "List Campaign Templates",
-        "description": "",
+        "description": "Lists all campaign templates available in the project.",
         "parameters": [
           {
             "$ref": "#/components/parameters/limit"
           },
           {
             "$ref": "#/components/parameters/starting_after_id"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterTemplatesList"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash - preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterBoolean"
+            },
+            "in": "query",
+            "name": "include_total",
+            "description": "If set to `true`, the response returns the number of all campaign templates, regardless of the applied filters or limits. Set to `false` by default."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListTemplates"
+            },
+            "description": "Filters for listing templates by name.",
+            "style": "deepObject",
+            "explode": true
           }
         ],
         "security": [
@@ -81607,15 +81763,38 @@
         ],
         "responses": {
           "200": {
-            "description": "",
+            "description": "Returns a dictionary of campaign template objects. The templates are returned by creation date by default. The most recent objects appear last unless specified otherwise with the `order` parameter.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrashBinListResponseBody"
+                  "$ref": "#/components/schemas/TemplatesCampaignListResponseBody"
                 },
                 "examples": {
                   "Example": {
-                    "value": {}
+                    "value": {
+                      "object": "list",
+                      "data_ref": "campaign_templates",
+                      "campaign_templates": [
+                        {
+                          "id": "camp_tpl_hFK6hpVc9WKsWaBv4mz7uZn8",
+                          "name": "DISCOUNT-CAMPAIGN-TEMPLATE",
+                          "description": "New discount for Q4",
+                          "campaign_type": "DISCOUNT_COUPONS",
+                          "created_at": "2024-06-21T13:03:09.431Z",
+                          "object": "campaign_template"
+                        },
+                        {
+                          "id": "camp_tpl_cR8va5Ga2nAi4Nxoi1I1qR8S",
+                          "name": "GIFT-CAMPAIGN-TEMPLATE",
+                          "campaign_type": "GIFT_VOUCHERS",
+                          "created_at": "2024-07-05T14:26:31.600Z",
+                          "updated_at": "2024-07-05T14:27:02.905Z",
+                          "object": "campaign_template"
+                        }
+                      ],
+                      "total": 14,
+                      "has_more": true
+                    }
                   }
                 }
               }
