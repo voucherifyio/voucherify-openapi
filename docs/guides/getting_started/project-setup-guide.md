@@ -44,7 +44,7 @@ A generated pair of Application ID and Application Secret Key must be attached t
 >
 > Write your secret keys down and keep them in a safe place.
 >
-> **Please note that the API keys in the Sandbox Project are never hidden.**
+> **The API keys in the Sandbox Project are never hidden.**
 
 ## Testing Your First Campaign
 
