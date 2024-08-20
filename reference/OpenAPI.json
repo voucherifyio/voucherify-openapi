@@ -42000,6 +42000,39 @@
           "in_app"
         ]
       },
+      "TemplatesCampaignCreateRequestBody": {
+        "type": "object",
+        "title": "Templates Campaign Template Create Request Body",
+        "description": "Request body schema for **POST** `/templates/campaign`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TemplatesCampaignCreate"
+          }
+        ]
+      },
+      "TemplatesCampaignCreate": {
+        "type": "object",
+        "title": "Create Campaign Template Request",
+        "description": "Request body for creating a campaign template.",
+        "properties": {
+          "campaign_id": {
+            "type": "string",
+            "description": "Unique identifier of the campaign that will create a template."
+          },
+          "name": {
+            "type": "string",
+            "description": "User-defined name of the campaign template. It must be unique."
+          },
+          "description": {
+            "type": "string",
+            "description": "User-defined description of the campaign template."
+          }
+        },
+        "required": [
+          "campaign_id",
+          "name"
+        ]
+      },
       "TemplatesCampaignListResponseBody": {
         "type": "object",
         "title": "Templates Campaign Template List Response Body",
@@ -42026,14 +42059,14 @@
             "type": "string",
             "description": "Identifies the name of the JSON property that contains the array of campaign templates.",
             "enum": [
-              "campaign_templates"
+              "data"
             ]
           },
-          "campaign_template": {
+          "data": {
             "type": "array",
             "description": "Dictionary that contains an array of campaign templates.",
             "items": {
-              "$ref": "#/components/schemas/TemplatesCampaignTemplateBody"
+              "$ref": "#/components/schemas/TemplatesGetCampaignTemplateBody"
             }
           },
           "total": {
@@ -42052,9 +42085,9 @@
           "has_more"
         ]
       },
-      "TemplatesCampaignTemplateBody": {
+      "TemplatesCampaignTemplateBase": {
         "type": "object",
-        "title": "Campaign Template",
+        "title": "Campaign Template Base",
         "description": "Stores details about a campaign template.",
         "properties": {
           "id": {
@@ -42084,12 +42117,6 @@
             "description": "Timestamp representing the date and time when the campaign template was created. The value is shown in the ISO 8601 format.",
             "example": "2024-07-16T09:05:53.175Z"
           },
-          "updated_at": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp representing the date and time when the campaign template was last updated. The value is shown in the ISO 8601 format.",
-            "example": "2024-07-17T06:25:21.500Z"
-          },
           "object": {
             "type": "string",
             "description": "The type of the object represented by JSON.",
@@ -42104,6 +42131,24 @@
           "campaign_type",
           "created_at",
           "object"
+        ]
+      },
+      "TemplatesGetCampaignTemplateBody": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TemplatesCampaignTemplateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp representing the date and time when the campaign template was last updated. The value is shown in the ISO 8601 format.",
+                "example": "2024-07-17T06:25:21.500Z"
+              }
+            }
+          }
         ]
       },
       "TrashBinListResponseBody": {
@@ -81713,7 +81758,7 @@
         }
       }
     },
-    "/templates/campaigns": {
+    "/v1/templates/campaigns": {
       "get": {
         "operationId": "list-campaign-templates",
         "tags": [
@@ -81794,6 +81839,107 @@
                       ],
                       "total": 14,
                       "has_more": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "create-campaign-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Create Campaign Template",
+        "description": "Creates a template for a discount or gift campaign.\n\nA template stores campaign configuration without the following details:\n- Campaign name\n- Category\n- Code count\n\nThe following elements are not supported by campaign templates:\n- Redeeming API keys\n- Redeeming users\n- Customer loyalty tier\n- Static segments\n\n> 📘 Campaign Template Documentation\n>\n>Read the [Campaign Templates documentation]() to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Provide details for a campaign template",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatesCampaignCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details of a created campaign template.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignTemplateBase"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload is missing required properties in the request or the campaign includes features not supported by campaign templates.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "campaign_type_is_not_supported_by_campaign_template",
+                      "message": "Campaign of the given type is not supported by campaign template",
+                      "request_id": "v-0f3d6a65bb929f94f1"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
                     }
                   }
                 }
