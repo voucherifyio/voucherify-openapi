@@ -75,7 +75,7 @@
 | /v1/vouchers/import                       | post   | Import Vouchers                    |                                      |                                      |
 | /v1/vouchers/importCSV                    | post   | Import Vouchers using CSV          | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/bulk/async                   | post   | Update Vouchers in Bulk            |                                      |                                      |
-| /v1/vouchers/metadata/async               | post   | Update Vouchers' mMtadata in Bulk  |                                      |                                      |
+| /v1/vouchers/metadata/async               | post   | Update Vouchers' Metadata in Bulk  |                                      |                                      |
 | /v1/vouchers/{code}/sessions/{sessionKey} | delete | Release Validation Session         | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/qualification                | post   | Examine Qualification [Deprecated] |                                      |  <font color='red'>deprecated</font> |
 ## Campaigns
