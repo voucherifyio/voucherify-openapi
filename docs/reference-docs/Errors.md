@@ -91,6 +91,7 @@ The table below shows a list of errors that may be returned along with a brief d
 | `promotion_not_active_now` | promotion is not active in the given timeframe |
 | `quantity_exceeded` | voucher's redemptions limit has been exceeded |
 | `query_too_large` | request body payload too large or query string too large |
+| `redemption_rules_violated` | the redemption did not match validation rules |
 | `referrer_not_permitted_to_redeem` | the referral code is being redeemed by the referrer |
 | `resource_not_found` | voucher with given code does not exist |
 | `voucher_disabled` | voucher has been disabled (active: false) |
