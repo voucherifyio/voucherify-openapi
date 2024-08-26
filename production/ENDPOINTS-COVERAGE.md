@@ -26,6 +26,7 @@
 - [Locations](#locations)
 - [Referrals](#referrals)
 - [Bin](#bin)
+- [Templates](#templates)
 - [Management](#management)
 - [Client-side](#client-side)
 # Endpoints
@@ -292,6 +293,11 @@
 | -------------------------- | ------ | ---------------- | ------------ | ------------- |
 | /v1/trash-bin              | get    | List Bin Entries |              |               |
 | /v1/trash-bin/{binEntryId} | delete | Delete Bin Entry |              |               |
+## Templates
+| endpoint                | method | summary                  | is supported | is deprecated |
+| ----------------------- | ------ | ------------------------ | ------------ | ------------- |
+| /v1/templates/campaigns | get    | List Campaign Templates  |              |               |
+| /v1/templates/campaigns | post   | Create Campaign Template |              |               |
 ## Management
 | endpoint                                                                       | method | summary                    | is supported | is deprecated |
 | ------------------------------------------------------------------------------ | ------ | -------------------------- | ------------ | ------------- |

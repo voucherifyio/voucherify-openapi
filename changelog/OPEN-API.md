@@ -4,6 +4,13 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+
+## 2024-08-26
+
+- Added the `Templates` tag and the following endpoints:
+  - GET `/v1/templates/campaigns`
+  - POST `/v1/templates/campaigns`
+
 ## 2024-08-21
 
 - Added the `AsyncActionsVoucherCustomerProductBulkUpdateResult` schema for the results of the GET Async Action endpoint for the following bulk update actions:
