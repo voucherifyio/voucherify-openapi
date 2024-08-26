@@ -4,6 +4,12 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-08-26
+
+- Added the `Templates` tag and the following endpoints:
+  - GET `/v1/templates/campaigns`
+  - POST `/v1/templates/campaigns`
+
 ## 2024-08-13
 
 - Added updated the description to `PromotionStackBase`, `PromotionsStacksUpdateRequestBody`, and `SimplePromotionStack` with the info about 30 promotion tiers in one stack
