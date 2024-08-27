@@ -4,38 +4,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-## 2024-08-13
+## 2024-08-02
 
-- Added updated the description to `PromotionStackBase`, `PromotionsStacksUpdateRequestBody`, and `SimplePromotionStack` with the info about 30 promotion tiers in one stack
-
-## 2024-08-09
-
-- Deprecated the following endpoints:
-  - PUT `/v1/customers/{customerId}/consents`
-  - GET `/v1/consents`
-  - PUT `/client/v1/customers/{customerId}/consents`
-  - GET `/client/v1/consents`
-- Removed `POINTS_CANCELLATION` from types of loyalty card transactions
-
-## 2024-08-01
-
-Added the following to `OpenAPIWebhooks.json`:
-- `voucher.loyalty_card.transaction.created`
-- `voucher.loyalty_card.points_expired`
-- `voucher.gift.transaction.created`
-- metadata to `RedemptionRewardResult` schema
-
-Added the following to `OpenAPI.json`:
-- `customer.holder.assignment.created` – OpenAPI.json
-- `customer.holder.assignment.deleted` – OpenAPI.json
-- metadata to `RedemptionRewardResult` schema
-
-Removed the `[Beta]` tag from the following endpoints:
-- List Customer's Redeemables
-- List Referral Code Holders
+`OpenAPI.json`
+- refactored `/v1/vouchers` GET and POST
+- refactored `/v1/vouchers/{code}` POST and PUT
+- Added `VoucherWithCategories`, `VoucherBase`, `VouchersCreateRequestBody`, `VoucherCreateLoyaltyCard`, `VoucherCreateGiftWithSpecificCodeOrCodeConfig`, `VoucherCreateGiftWithSpecificCode`, `VoucherCreateGiftWithCodeConfig`, `VoucherUpdateGift`, `VoucherCreateGift`, `VoucherCreateDiscountWithSpecificCodeOrCodeConfig`, `VoucherCreateDiscountWithSpecificCode`, `VoucherCreateDiscountWithCodeConfig`, `VoucherCreateDiscount`, `VoucherUpdateDiscount`, `VoucherCreateBase`, `VouchersListResponseBody`, `VoucherUpdateBase`, `VouchersUpdateRequestBody`, `CodeConfigBase`
+- `Voucher` is now created from `VoucherBase` 
 
 ## 2024-07-30
 
+  `OpenAPI.json`
 - Added parameter `ParameterRedeemableHolderId`
 - Schema `Session` - property `key` is no longer `enum`
 - Added `RewardsListResponseBody`, `PromotionsTiersCreateRequestBody`, `PromotionsTiersCreateResponseBody`, `PromotionsTiersUpdateRequestBody`, `PromotionsTiersUpdateResponseBody`, `PromotionTierUpdate`, `PromotionTierCreateParams`, `RewardsCreateRequestBodyMaterial`, `RewardsCreateRequestBodyDigital`, `RewardsCreateRequestBodyDigitalParameters`, `RewardsCreateRequestBodyPayWithPoints`,  `RewardsUpdateRequestBody`, `RewardsUpdateRequestBodyDigital`, `RewardsUpdateRequestBodyPayWithPoints`, `RewardsUpdateRequestBodyMaterial`, `RewardsUpdateRequestBodyDigitalParametersLoyaltyProgram`, `RewardsUpdateRequestBodyDigitalParametersGiftVouchers`, `RewardsUpdateRequestBodyDigitalParametersDiscountCoupons`, `RewardsUpdateRequestBodyDigitalParameters`, `RewardsUpdateRequestBodyMaterialParameters`, `RewardsUpdateRequestBodyPayWithPointsParameters`, `RewardsCreateRequestBodyDigitalParametersLoyaltyProgram`, `RewardsCreateRequestBodyDigitalParametersGiftVouchers`, `RewardsCreateRequestBodyDigitalParametersDiscountCoupons`, `RewardsCreateRequestBodyMaterialParameters`, `RewardsCreateRequestBodyPayWithPointsParameters`,`SegmentsCreateRequestBodyStatic`,  `SegmentsCreateRequestBody`, `SegmentsGetResponseBody`, `SegmentsCreateResponseBody`, `SegmentsCreateRequestBodyDynamic`, `AsyncActionGetResponseBody`, `AsyncAction`, `AsyncActionsListResponseBody`, `ReferralsMembersHoldersCreateInBulkRequestBody`, `ReferralsMembersHoldersCreateInBulkResponseBody`, `RedemptionEntry`, `ClientPromotionsTiersListResponseBody`

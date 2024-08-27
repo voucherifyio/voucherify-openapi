@@ -3929,7 +3929,7 @@
       "VouchersCreateResponseBody": {
         "type": "object",
         "title": "Vouchers Create Response Body",
-        "description": "Response body schema for **POST** `/vouchers/{code}`.",
+        "description": "Response body schema for **POST** `/vouchers` and `/vouchers/{code}`",
         "allOf": [
           {
             "$ref": "#/components/schemas/Voucher"
@@ -3956,10 +3956,56 @@
           }
         ]
       },
+      "VoucherWithCategories": {
+        "title": "Voucher With Categories",
+        "description": "This is an object representing a voucher with categories.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "categories": {
+                "type": "array",
+                "description": "Contains details about the category.",
+                "items": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          }
+        ]
+      },
       "Voucher": {
         "title": "Voucher",
-        "type": "object",
+        "readmeTitle": "Voucher with categories and validation rules assignments",
+        "description": "This is an object representing a voucher with categories and validation rules assignments.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "categories": {
+                "type": "array",
+                "description": "Contains details about the category.",
+                "items": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              },
+              "validation_rules_assignments": {
+                "$ref": "#/components/schemas/ValidationRulesAssignmentsList"
+              }
+            }
+          }
+        ]
+      },
+      "VoucherBase": {
+        "title": "Voucher Base",
         "description": "This is an object representing a voucher.",
+        "type": "object",
         "properties": {
           "id": {
             "type": "string",
@@ -3989,13 +4035,6 @@
             "type": "string",
             "description": "Unique category ID assigned by Voucherify.",
             "example": "cat_0bb343dee3cdb5ec0c"
-          },
-          "categories": {
-            "type": "array",
-            "description": "Contains details about the category.",
-            "items": {
-              "$ref": "#/components/schemas/Category"
-            }
           },
           "type": {
             "type": "string",
@@ -4128,12 +4167,9 @@
             "description": "The type of the object represented by JSON. Default is `voucher`.",
             "default": "voucher"
           },
-          "validation_rules_assignments": {
-            "$ref": "#/components/schemas/ValidationRulesAssignmentsList"
-          },
           "publish": {
             "type": "object",
-            "description": "This object stores a summary of publish events: an events counter and an endpoint which can be called to return details of each event.  A publication is required for loyalty cards and referral codes. This object gets updated whenever a voucher has been published. Publication means assigning a code to a particular customer. Typically, a publication is made by distributing your codes to your customers, e.g. through Export to MailChimp or <!-- [publish voucher](OpenAPI.json/paths/~1publications/post) -->[publish voucher](ref:create-publication) API method. \n\n<!-- title: My Table Title -->\n\n| Required | Optional |\n| -------- | :------: |\n| `type`:`LOYALTY_CARD` |  `type`:`DISCOUNT_VOUCHER`   | \n| `is_referral_code`:`true`      |    `type`:`GIFT_VOUCHER`   |\n",
+            "description": "Stores a summary of publication events: an event counter and endpoint to return details of each event. Publication is an assignment of a code to a customer, e.g. through a distribution.",
             "properties": {
               "object": {
                 "type": "string",
@@ -4736,20 +4772,373 @@
           }
         }
       },
-      "1_req_vouchers__POST": {
-        "title": "Create Voucher Request Body",
+      "VouchersCreateRequestBody": {
+        "title": "Vouchers Create Request Body",
         "type": "object",
-        "description": "Request body schema for creating a voucher.",
-        "properties": {
-          "code": {
-            "type": "string",
-            "example": "WVPblOYX",
-            "description": "A code that identifies a voucher. Pattern can use all letters of the English alphabet, Arabic numerals, and special characters. Pass this attribute in the request body if you want to deliberately create a distinct code. Otherwise, either use the `code_config` object to design rules that the Voucherify API should use to create a random code or don't pass any code and the application will generate a random code."
+        "description": "Request body schema for **POST** `/vouchers`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateLoyaltyCardWithSpecificCodeOrCodeConfig"
           },
+          {
+            "$ref": "#/components/schemas/VoucherCreateGiftWithSpecificCodeOrCodeConfig"
+          },
+          {
+            "$ref": "#/components/schemas/VoucherCreateDiscountWithSpecificCodeOrCodeConfig"
+          }
+        ]
+      },
+      "VouchersCreateWithSpecificCodeRequestBody": {
+        "title": "Vouchers Create With Specific Code Request Body",
+        "type": "object",
+        "description": "Request body schema for **POST** `/vouchers/{code}`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateLoyaltyCard"
+          },
+          {
+            "$ref": "#/components/schemas/VoucherCreateGift"
+          },
+          {
+            "$ref": "#/components/schemas/VoucherCreateDiscount"
+          }
+        ]
+      },
+      "VoucherCreateLoyaltyCardWithSpecificCodeOrCodeConfig": {
+        "title": "Voucher Create Loyalty Card With Specific Code Or Code Config",
+        "readmeTitle": "Create loyalty card",
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateLoyaltyCardWithSpecificCode"
+          },
+          {
+            "$ref": "#/components/schemas/VoucherCreateLoyaltyCardWithCodeConfig"
+          }
+        ]
+      },
+      "VoucherCreateLoyaltyCardWithSpecificCode": {
+        "title": "Voucher Create Loyalty Card With Specific Code",
+        "readmeTitle": "Create loyalty card with specific code",
+        "type": "object",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "example": "WVPblOYX",
+                "description": "Code that identifies a voucher. The pattern can use all the letters of the English alphabet, Arabic numerals, and special characters. Pass this attribute in the request body to create a distinct code. Otherwise, either use the `code_config` object to set the rules that the Voucherify API will use to create a random code, or don't pass any code and Voucherify will generate a random code."
+              }
+            },
+            "required": [
+              "code"
+            ]
+          },
+          {
+            "$ref": "#/components/schemas/VoucherCreateLoyaltyCard"
+          }
+        ]
+      },
+      "VoucherCreateLoyaltyCardWithCodeConfig": {
+        "title": "Voucher Create Loyalty Card With Code Config",
+        "readmeTitle": "Create loyalty card with code config",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateLoyaltyCard"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "code_config": {
+                "$ref": "#/components/schemas/CodeConfig"
+              }
+            }
+          }
+        ]
+      },
+      "VoucherUpdateLoyaltyCard": {
+        "title": "Voucher Update Loyalty Card",
+        "readmeTitle": "Update loyalty card",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherUpdateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "LOYALTY_CARD"
+                ],
+                "description": "Defines the type of the voucher. "
+              },
+              "loyalty_card": {
+                "$ref": "#/components/schemas/SimpleLoyaltyCard"
+              }
+            }
+          }
+        ]
+      },
+      "VoucherCreateLoyaltyCard": {
+        "title": "Voucher Create Loyalty Card",
+        "readmeTitle": "Create loyalty card",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "LOYALTY_CARD"
+                ],
+                "description": "Defines the type of the voucher. "
+              },
+              "loyalty_card": {
+                "$ref": "#/components/schemas/SimpleLoyaltyCard"
+              }
+            },
+            "required": [
+              "type",
+              "loyalty_card"
+            ]
+          }
+        ]
+      },
+      "VoucherCreateGiftWithSpecificCodeOrCodeConfig": {
+        "title": "Voucher Create Gift With Specific Code Or Code Config",
+        "readmeTitle": "Create gift card",
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateGiftWithSpecificCode"
+          },
+          {
+            "$ref": "#/components/schemas/VoucherCreateGiftWithCodeConfig"
+          }
+        ]
+      },
+      "VoucherCreateGiftWithSpecificCode": {
+        "title": "Voucher Create Gift With Specific Code",
+        "readmeTitle": "Create gift card with specific code",
+        "type": "object",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "example": "WVPblOYX",
+                "description": "Code that identifies a voucher. The pattern can use all the letters of the English alphabet, Arabic numerals, and special characters. Pass this attribute in the request body to create a distinct code. Otherwise, either use the `code_config` object to set the rules that the Voucherify API will use to create a random code, or don't pass any code and Voucherify will generate a random code."
+              }
+            },
+            "required": [
+              "code"
+            ]
+          },
+          {
+            "$ref": "#/components/schemas/VoucherCreateGift"
+          }
+        ]
+      },
+      "VoucherCreateGiftWithCodeConfig": {
+        "title": "Voucher Create Gift With Code Config",
+        "readmeTitle": "Create gift card with code config",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateGift"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "code_config": {
+                "$ref": "#/components/schemas/CodeConfig"
+              }
+            },
+            "required": [
+              "code_config"
+            ]
+          }
+        ]
+      },
+      "VoucherUpdateGift": {
+        "title": "Voucher Update Gift",
+        "readmeTitle": "Update gift card",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherUpdateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "GIFT_VOUCHER"
+                ],
+                "description": "Defines the type of the voucher. "
+              },
+              "gift": {
+                "$ref": "#/components/schemas/Gift"
+              }
+            }
+          }
+        ]
+      },
+      "VoucherCreateGift": {
+        "title": "Voucher Create Gift",
+        "readmeTitle": "Create gift card",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "GIFT_VOUCHER"
+                ],
+                "description": "Defines the type of the voucher. "
+              },
+              "gift": {
+                "$ref": "#/components/schemas/Gift"
+              }
+            },
+            "required": [
+              "type",
+              "gift"
+            ]
+          }
+        ]
+      },
+      "VoucherCreateDiscountWithSpecificCodeOrCodeConfig": {
+        "title": "Voucher Create Discount With Specific Code Or Code Config",
+        "readmeTitle": "Create voucher in a discound campaign",
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateDiscountWithSpecificCode"
+          },
+          {
+            "$ref": "#/components/schemas/VoucherCreateDiscountWithCodeConfig"
+          }
+        ]
+      },
+      "VoucherCreateDiscountWithSpecificCode": {
+        "title": "Voucher Create Discount With Specific Code",
+        "readmeTitle": "Create voucher in a discound campaign with specific code",
+        "type": "object",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "example": "WVPblOYX",
+                "description": "Code that identifies a voucher. The pattern can use all the letters of the English alphabet, Arabic numerals, and special characters. Pass this attribute in the request body to create a distinct code. Otherwise, either use the `code_config` object to set the rules that the Voucherify API will use to create a random code, or don't pass any code and Voucherify will generate a random code."
+              }
+            },
+            "required": [
+              "code"
+            ]
+          },
+          {
+            "$ref": "#/components/schemas/VoucherCreateDiscount"
+          }
+        ]
+      },
+      "VoucherCreateDiscountWithCodeConfig": {
+        "title": "Voucher Create Discount With Code Config",
+        "readmeTitle": "Create voucher in a discound campaign with code config",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateDiscount"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "code_config": {
+                "$ref": "#/components/schemas/CodeConfig"
+              }
+            }
+          }
+        ]
+      },
+      "VoucherCreateDiscount": {
+        "title": "Voucher Create Discount",
+        "readmeTitle": "Create voucher in a discound campaign",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherCreateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "DISCOUNT_VOUCHER"
+                ],
+                "description": "Defines the type of the voucher. "
+              },
+              "discount": {
+                "$ref": "#/components/schemas/Discount"
+              }
+            },
+            "required": [
+              "type",
+              "discount"
+            ]
+          }
+        ]
+      },
+      "VoucherUpdateDiscount": {
+        "title": "Voucher Update Discount",
+        "readmeTitle": "Update voucher in a discound campaign",
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherUpdateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "DISCOUNT_VOUCHER"
+                ],
+                "description": "Defines the type of the voucher. "
+              },
+              "discount": {
+                "$ref": "#/components/schemas/Discount"
+              }
+            }
+          }
+        ]
+      },
+      "VoucherCreateBase": {
+        "title": "Voucher Create Base",
+        "type": "object",
+        "properties": {
           "campaign": {
             "type": "string",
             "example": "Gift Card Campaign",
-            "description": "Identifies the voucher's parent campaign using a unique campaign name. **Required** for `LOYALTY_CARD` type."
+            "description": "Identifies the voucher's parent campaign using a unique campaign name."
           },
           "campaign_id": {
             "type": "string",
@@ -4758,73 +5147,12 @@
           },
           "category": {
             "type": "string",
-            "description": "The name of the tag defining the category that this voucher belongs to. Useful when listing vouchers using the <!-- [List Vouchers](OpenAPI.json/paths/~1vouchers/get) -->[List Vouchers](ref:list-vouchers) endpoint."
+            "description": "The name of the category that this voucher belongs to. Useful when listing vouchers with the [List Vouchers](ref:list-vouchers) endpoint."
           },
           "category_id": {
             "type": "string",
-            "description": "The unique ID assigned by Voucherify of the tag defining the category that this voucher belongs to. Useful when listing vouchers using the <!-- [List Vouchers](OpenAPI.json/paths/~1vouchers/get) -->[List Vouchers](ref:list-vouchers) endpoint.",
+            "description": "Unique identifier assigned by Voucherify to the name of the category that this voucher belongs to. Useful when listing vouchers with the [List Vouchers](ref:list-vouchers) endpoint.",
             "example": "cat_0b6152ce12414820dc"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "GIFT_VOUCHER",
-              "DISCOUNT_VOUCHER",
-              "LOYALTY_CARD"
-            ],
-            "description": "Defines the type of the voucher. "
-          },
-          "discount": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/1_obj_voucher_object_discount_amount_POST"
-              },
-              {
-                "$ref": "#/components/schemas/1_obj_voucher_object_discount_percentage_POST"
-              },
-              {
-                "$ref": "#/components/schemas/1_obj_voucher_object_discount_fixed_POST"
-              },
-              {
-                "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_one_POST"
-              },
-              {
-                "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_multiple_POST"
-              },
-              {
-                "$ref": "#/components/schemas/1_obj_voucher_object_discount_shipping_POST"
-              }
-            ]
-          },
-          "gift": {
-            "type": "object",
-            "description": "Defines gift card; **required** when type parameter is `GIFT_VOUCHER`.",
-            "properties": {
-              "amount": {
-                "type": "integer",
-                "example": 10000,
-                "description": "Define how many credits the gift card should have initially. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
-              },
-              "effect": {
-                "type": "string",
-                "enum": [
-                  "APPLY_TO_ORDER",
-                  "APPLY_TO_ITEMS"
-                ],
-                "description": "Defines how the credits are applied to the customer's order."
-              }
-            }
-          },
-          "loyalty_card": {
-            "type": "object",
-            "description": "Defines loyalty card; **required** when type parameter is `LOYALTY_CARD`.",
-            "properties": {
-              "points": {
-                "type": "integer",
-                "example": 7000,
-                "description": "Define how many points the loyalty card should have initially."
-              }
-            }
           },
           "start_date": {
             "type": "string",
@@ -4876,32 +5204,6 @@
                 "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
               }
             }
-          },
-          "code_config": {
-            "type": "object",
-            "description": "Defines code's pattern (prefix, suffix, length, charset, etc). Pass this attribute in the request body if you want to design rules that the Voucherify API should use to create a random code. Otherwise, either use the `code` parameter to define a distinct code or don't pass any code and the application will generate a random code.",
-            "properties": {
-              "length": {
-                "type": "integer",
-                "description": "Number of characters in a generated code (excluding prefix and postfix)."
-              },
-              "charset": {
-                "type": "string",
-                "description": "Characters that can appear in the code.  \n\nExamples:\n\n- Alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic Lowercase: `abcdefghijklmnopqrstuvwxyz` \n- Alphabetic Uppercase: `ABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Numbers: `0123456789`  \n- Custom: a custom character set"
-              },
-              "prefix": {
-                "type": "string",
-                "description": "A text appended before the code."
-              },
-              "postfix": {
-                "type": "string",
-                "description": "A text appended after the code."
-              },
-              "pattern": {
-                "type": "string",
-                "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
-              }
-            }
           }
         }
       },
@@ -4922,11 +5224,11 @@
           },
           "category": {
             "type": "string",
-            "description": "The name of the tag defining the category that this voucher belongs to. Useful when listing vouchers using the <!-- [List Vouchers](OpenAPI.json/paths/~1vouchers/get) -->[List Vouchers](ref:list-vouchers) endpoint."
+            "description": "The name of the category that this voucher belongs to. Useful when listing vouchers with the [List Vouchers](ref:list-vouchers) endpoint."
           },
           "category_id": {
             "type": "string",
-            "description": "The unique ID assigned by Voucherify of the tag defining the category that this voucher belongs to. Useful when listing vouchers using the <!-- [List Vouchers](OpenAPI.json/paths/~1vouchers/get) -->[List Vouchers](ref:list-vouchers) endpoint.",
+            "description": "Unique identifier assigned by Voucherify to the name of the category that this voucher belongs to. Useful when listing vouchers with the [List Vouchers](ref:list-vouchers) endpoint.",
             "example": "cat_0b6152ce12414820dc"
           },
           "type": {
@@ -5044,26 +5346,32 @@
           }
         }
       },
-      "1_res_vouchers_GET": {
-        "title": "List vouchers",
+      "VouchersListResponseBody": {
+        "title": "Vouchers List Response Body",
         "type": "object",
-        "description": "Array list of vouchers",
+        "description": "Response body schema for **GET** `/vouchers`.",
         "properties": {
           "object": {
             "type": "string",
             "default": "list",
+            "enum": [
+              "list"
+            ],
             "description": "The type of the object represented by JSON."
           },
           "data_ref": {
             "type": "string",
             "default": "vouchers",
+            "enum": [
+              "vouchers"
+            ],
             "description": "Identifies the name of the attribute that contains the array of voucher objects."
           },
           "vouchers": {
             "type": "array",
             "description": "A dictionary that contains an array of  vouchers. Each entry in the array is a separate voucher object.",
             "items": {
-              "$ref": "#/components/schemas/1_obj_voucher_object_list_vouchers"
+              "$ref": "#/components/schemas/VoucherWithCategories"
             }
           },
           "total": {
@@ -5073,68 +5381,18 @@
           }
         }
       },
-      "1_req_vouchers_code_PUT": {
-        "title": "Update Voucher Request Body",
+      "VoucherUpdateBase": {
+        "title": "Voucher Update Base",
         "type": "object",
-        "description": "Request body schema for updating a voucher.",
         "properties": {
           "category": {
             "type": "string",
-            "description": "The name of the tag defining the category that this voucher belongs to. Useful when listing vouchers using the [List Vouchers](ref:list-vouchers) endpoint."
+            "description": "The name of the category that this voucher belongs to. Useful when listing vouchers with the [List Vouchers](ref:list-vouchers) endpoint."
           },
           "category_id": {
             "type": "string",
-            "description": "The unique ID assigned by Voucherify of the tag defining the category that this voucher belongs to. Useful when listing vouchers using the [List Vouchers](ref:list-vouchers) endpoint.",
+            "description": "Unique identifier assigned by Voucherify to the name of the category that this voucher belongs to. Useful when listing vouchers with the [List Vouchers](ref:list-vouchers) endpoint.",
             "example": "cat_0bb81a481615a37b5e"
-          },
-          "discount": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/1_obj_voucher_object_discount_amount_PUT"
-              },
-              {
-                "$ref": "#/components/schemas/1_obj_voucher_object_discount_percentage_PUT"
-              },
-              {
-                "$ref": "#/components/schemas/1_obj_voucher_object_discount_fixed_PUT"
-              },
-              {
-                "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_one_PUT"
-              },
-              {
-                "$ref": "#/components/schemas/1_obj_voucher_object_discount_unit_multiple_PUT"
-              }
-            ]
-          },
-          "gift": {
-            "type": "object",
-            "description": "Defines gift card; **required** when type parameter is `GIFT_VOUCHER`.",
-            "properties": {
-              "amount": {
-                "type": "integer",
-                "example": 10000,
-                "description": "Update the total voucher income incurred over the lifespan of the gift card. If you set a value higher than the stored value for the `amount` parameter of this gift voucher, then the `balance` parameter of the gift card will increase by the difference. If you set a value lower than the stored value for the `amount` parameter, then the `balance` parameter of the gift gard will decrease by the difference. Remember that the  value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.    \nExpect this result:    \n\n&Delta; `balance` parameter: credits(amount)<sub>in request body</sub> - credits(amount)<sub>stored in Voucherify system</sub>"
-              },
-              "effect": {
-                "type": "string",
-                "enum": [
-                  "APPLY_TO_ORDER",
-                  "APPLY_TO_ITEMS"
-                ],
-                "description": "Defines how the credits are applied to the customer's order"
-              }
-            }
-          },
-          "loyalty_card": {
-            "type": "object",
-            "description": "Defines loyalty card; **required** when the voucher type parameter is `LOYALTY_CARD`.",
-            "properties": {
-              "points": {
-                "type": "integer",
-                "example": 7000,
-                "description": "Update the total points incurred over lifespan of loyalty card. If you set a value higher than the stored value for this parameter, then the `balance` parameter of the loyalty card will increase by the difference. If you set a value lower than the stored value for this parameter, then the `balance` parameter of the loyalty card will decrease by the difference.    \nExpect this result:    \n\n&Delta; `balance` parameter: points<sub>in request body</sub> - points<sub>stored in Voucherify system</sub>"
-              }
-            }
           },
           "start_date": {
             "type": "string",
@@ -5170,6 +5428,22 @@
             "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
           }
         }
+      },
+      "VouchersUpdateRequestBody": {
+        "title": "Update Voucher Request Body",
+        "type": "object",
+        "description": "Request body schema for **PUT** `/vouchers/{code}`.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/VoucherUpdateLoyaltyCard"
+          },
+          {
+            "$ref": "#/components/schemas/VoucherUpdateGift"
+          },
+          {
+            "$ref": "#/components/schemas/VoucherUpdateDiscount"
+          }
+        ]
       },
       "1_req_vouchers_metadata_async": {
         "title": "Update Vouchers' Metadata in Bulk Request Body",
@@ -7310,10 +7584,37 @@
           "is_referral_code"
         ]
       },
+      "CodeConfigBase": {
+        "title": "Code Config Base",
+        "type": "object",
+        "description": "Contains information about the config used for the voucher code. Defines the code's pattern (prefix, postfix, length, charset, etc).",
+        "properties": {
+          "length": {
+            "type": "number",
+            "description": "Number of characters in a generated code (excluding prefix and postfix)."
+          },
+          "charset": {
+            "type": "string",
+            "description": "Characters that can appear in the code.  \n\nExamples:\n\n- Alphanumeric: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Alphabetic Lowercase: `abcdefghijklmnopqrstuvwxyz` \n- Alphabetic Uppercase: `ABCDEFGHIJKLMNOPQRSTUVWXYZ` \n- Numbers: `0123456789`  \n- Custom: a custom character set"
+          },
+          "prefix": {
+            "type": "string",
+            "description": "A text appended before the code."
+          },
+          "postfix": {
+            "type": "string",
+            "description": "A text appended after the code."
+          },
+          "pattern": {
+            "type": "string",
+            "description": "A pattern for codes where hashes (#) will be replaced with random characters. Overrides `length`."
+          }
+        }
+      },
       "CodeConfig": {
         "title": "Code Config",
         "type": "object",
-        "description": "Schema containing information about config used for voucher. Defines code's pattern (prefix, suffix, length, charset, etc).",
+        "description": "Contains information about the config used for the voucher code. Defines the code's pattern (prefix, postfix, length, charset, etc).",
         "properties": {
           "length": {
             "type": "number",
@@ -7337,7 +7638,7 @@
           },
           "initial_count": {
             "type": "integer",
-            "description": "The initial count"
+            "description": "Internal value, does not change anything if provided."
           }
         }
       },
@@ -8843,8 +9144,8 @@
         "properties": {
           "type": {
             "type": "string",
-            "default": "GIFT_VOUCHER",
             "description": "Type of voucher.",
+            "default": "GIFT_VOUCHER",
             "enum": [
               "GIFT_VOUCHER"
             ]
@@ -9999,7 +10300,8 @@
         ]
       },
       "RewardsCreateRequestBodyDigital": {
-        "title": "Digital Reward",
+        "readmeTitle": "Digital Reward",
+        "title": "Rewards Create Request Body Digital",
         "type": "object",
         "description": "Request body schema for creating a digital reward using **POST** `/rewards`.",
         "properties": {
@@ -10020,7 +10322,8 @@
         ]
       },
       "RewardsCreateRequestBodyPayWithPoints": {
-        "title": "Pay with Points Reward",
+        "readmeTitle": "Pay with Points Reward",
+        "title": "Rewards Create Request Body Pay With Points",
         "type": "object",
         "description": "Request body schema for creating a pay with points reward using **POST** `/rewards`.",
         "properties": {
@@ -10041,7 +10344,8 @@
         ]
       },
       "RewardsCreateRequestBodyMaterial": {
-        "title": "Material Reward",
+        "readmeTitle": "Material Reward",
+        "title": "Rewards Create Request Body Material",
         "type": "object",
         "description": "Request body schema to create a material reward using\n **POST** `/rewards`.",
         "properties": {
@@ -37365,16 +37669,6 @@
           }
         ]
       },
-      "VouchersGenerateResponseBody": {
-        "type": "object",
-        "title": "Vouchers Generate Response Body",
-        "description": "Response body schema for **POST** `/vouchers`.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Voucher"
-          }
-        ]
-      },
       "VouchersBalanceUpdateResponseBody": {
         "description": "Response body schema for `vouchers/{code}/balance.`",
         "type": "object",
@@ -38105,7 +38399,6 @@
           },
           "type": {
             "type": "string",
-            "default": "LOYALTY_CARD",
             "enum": [
               "LOYALTY_CARD"
             ],
@@ -43911,7 +44204,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/1_res_vouchers_GET"
+                  "$ref": "#/components/schemas/VouchersListResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -44073,7 +44366,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/1_req_vouchers__POST"
+                "$ref": "#/components/schemas/VouchersCreateRequestBody"
               },
               "examples": {
                 "Percentage Discount": {
@@ -44233,7 +44526,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VouchersGenerateResponseBody"
+                  "$ref": "#/components/schemas/VouchersCreateResponseBody"
                 },
                 "examples": {
                   "Percentage Discount": {
@@ -45145,7 +45438,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/1_req_vouchers_code_PUT"
+                "$ref": "#/components/schemas/VouchersUpdateRequestBody"
               },
               "examples": {
                 "Percent Discount": {
@@ -45762,7 +46055,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/1_req_vouchers_code_POST"
+                "$ref": "#/components/schemas/VouchersCreateWithSpecificCodeRequestBody"
               },
               "examples": {
                 "Percentage Discount": {
