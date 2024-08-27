@@ -4,6 +4,36 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-08-13
+
+- Added updated the description to `PromotionStackBase`, `PromotionsStacksUpdateRequestBody`, and `SimplePromotionStack` with the info about 30 promotion tiers in one stack
+
+## 2024-08-09
+
+- Deprecated the following endpoints:
+  - PUT `/v1/customers/{customerId}/consents`
+  - GET `/v1/consents`
+  - PUT `/client/v1/customers/{customerId}/consents`
+  - GET `/client/v1/consents`
+- Removed `POINTS_CANCELLATION` from types of loyalty card transactions
+
+## 2024-08-01
+
+Added the following to `OpenAPIWebhooks.json`:
+- `voucher.loyalty_card.transaction.created`
+- `voucher.loyalty_card.points_expired`
+- `voucher.gift.transaction.created`
+- metadata to `RedemptionRewardResult` schema
+
+Added the following to `OpenAPI.json`:
+- `customer.holder.assignment.created` – OpenAPI.json
+- `customer.holder.assignment.deleted` – OpenAPI.json
+- metadata to `RedemptionRewardResult` schema
+
+Removed the `[Beta]` tag from the following endpoints:
+- List Customer's Redeemables
+- List Referral Code Holders
+
 ## 2024-07-30
 
 - Added parameter `ParameterRedeemableHolderId`

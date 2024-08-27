@@ -12,7 +12,7 @@ order: 20
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique event ID, assigned by Voucherify.</p> **Example:** <p>evcus_0c150c51730c6b60b1</p> |
-| type</br>`string` | <p>Event type.</p> Available values: `customer.confirmed`, `customer.created`, `customer.updated`, `customer.deleted`, `customer.referred`, `customer.custom_event`, `customer.segment.entered`, `customer.segment.left`, `customer.sms.sent`, `customer.sms.recovered`, `customer.sms.failed`, `customer.email.sent`, `customer.email.recovered`, `customer.email.failed`, `customer.activecampaign.sent`, `customer.activecampaign.recovered`, `customer.activecampaign.failed`, `customer.braze.sent`, `customer.braze.recovered`, `customer.braze.failed`, `customer.mailchimp.sent`, `customer.mailchimp.recovered`, `customer.mailchimp.failed`, `customer.intercom.sent`, `customer.intercom.recovered`, `customer.intercom.failed`, `customer.shopify.sent`, `customer.shopify.recovered`, `customer.shopify.failed`, `customer.klaviyo.sent`, `customer.klaviyo.recovered`, `customer.klaviyo.failed`, `customer.batch.sent`, `customer.batch.recovered`, `customer.batch.failed`, `customer.rewarded`, `customer.rewarded.loyalty_points`, `customer.voucher.gift.balance_added`, `customer.voucher.loyalty_card.points_added`, `customer.voucher.loyalty_card.points_transferred`, `customer.voucher.loyalty_card.points_expired`, `customer.voucher.deleted`, `customer.publication.succeeded`, `customer.publication.failed`, `customer.validation.succeeded`, `customer.validation.failed`, `customer.redemption.failed`, `customer.redemption.succeeded`, `customer.redemption.rollback.failed`, `customer.redemption.rollback.succeeded`, `customer.consents.given`, `customer.consents.revoked`, `customer.order.canceled`, `customer.order.created`, `customer.order.fulfilled`, `customer.order.paid`, `customer.order.processing`, `customer.order.updated`, `customer.reward_redemptions.created`, `customer.reward_redemptions.pending`, `customer.reward_redemptions.completed`, `customer.reward_redemptions.rolledback`, `customer.loyalty.updated`, `customer.loyalty.tier.upgraded`, `customer.loyalty.tier.downgraded`, `customer.loyalty.tier.prolonged`, `customer.loyalty.tier.expiration.changed`, `customer.loyalty.tier.joined`, `customer.loyalty.tier.left` |
+| type</br>`string` | <p>Event type.</p> Available values: `customer.confirmed`, `customer.created`, `customer.updated`, `customer.deleted`, `customer.referred`, `customer.custom_event`, `customer.segment.entered`, `customer.segment.left`, `customer.sms.sent`, `customer.sms.recovered`, `customer.sms.failed`, `customer.email.sent`, `customer.email.recovered`, `customer.email.failed`, `customer.activecampaign.sent`, `customer.activecampaign.recovered`, `customer.activecampaign.failed`, `customer.braze.sent`, `customer.braze.recovered`, `customer.braze.failed`, `customer.mailchimp.sent`, `customer.mailchimp.recovered`, `customer.mailchimp.failed`, `customer.intercom.sent`, `customer.intercom.recovered`, `customer.intercom.failed`, `customer.shopify.sent`, `customer.shopify.recovered`, `customer.shopify.failed`, `customer.klaviyo.sent`, `customer.klaviyo.recovered`, `customer.klaviyo.failed`, `customer.batch.sent`, `customer.batch.recovered`, `customer.batch.failed`, `customer.rewarded`, `customer.rewarded.loyalty_points`, `customer.voucher.gift.balance_added`, `customer.voucher.loyalty_card.points_added`, `customer.voucher.loyalty_card.points_transferred`, `customer.voucher.loyalty_card.points_expired`, `customer.voucher.deleted`, `customer.publication.succeeded`, `customer.publication.failed`, `customer.validation.succeeded`, `customer.validation.failed`, `customer.redemption.failed`, `customer.redemption.succeeded`, `customer.redemption.rollback.failed`, `customer.redemption.rollback.succeeded`, `customer.consents.given`, `customer.consents.revoked`, `customer.order.canceled`, `customer.order.created`, `customer.order.fulfilled`, `customer.order.paid`, `customer.order.processing`, `customer.order.updated`, `customer.reward_redemptions.created`, `customer.reward_redemptions.pending`, `customer.reward_redemptions.completed`, `customer.reward_redemptions.rolledback`, `customer.loyalty.updated`, `customer.loyalty.tier.upgraded`, `customer.loyalty.tier.downgraded`, `customer.loyalty.tier.prolonged`, `customer.loyalty.tier.expiration.changed`, `customer.loyalty.tier.joined`, `customer.loyalty.tier.left`, `customer.holder.assignment.created`, `customer.holder.assignment.deleted` |
 | data</br>`object` | <p>Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">data</td><td style="text-align:left">See: <a href="#customer-activity-data">Customer Activity Data</a></td></tr><tr><td style="text-align:left">event_source</br><code>object</code></td><td style="text-align:left"><p>Contains the source of the object that initiated the sendout.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">channel</br><code>string</code></td><td style="text-align:left"><p>Determines the channel that initiated the sendout.</p> Available values: <code>USER_PORTAL</code>, <code>API</code>, <code>CLIENT_API</code>, <code>INTERNAL</code> <strong>Example:</strong> <p>API</p></td></tr><tr><td style="text-align:left">user</br><code>object</code></td><td style="text-align:left"><p>Defines the user who triggered the event.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the user.</p> <strong>Example:</strong> <p>user_xyzfghSTprSTUVWXYlk6tuvXYst7FGH7</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">api_key</br><code>object</code></td><td style="text-align:left"><p>Determines the API key used to initiate the sendout.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Channel name in the application keys.</p></td></tr><tr><td style="text-align:left">app_id</br><code>string</code></td><td style="text-align:left"><p>Contains the application ID from the Voucherify API key pair.</p> <strong>Example:</strong> <p>1XXXX5XX-0XXX-XXXb-X7XX-XX2XXaXXX6XX</p></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the customer activity occurred in ISO 8601 format.</p> **Example:** <p>2022-08-30T09:14:07.660Z</p> |
 | group_id</br>`string` | <p>Unique identifier of the request that caused the event.</p> **Example:** <p>v-1f36113948e50fc4ge</p> |
@@ -22,7 +22,7 @@ order: 20
 
 One of:
 
-[Event Customer Confirmed](#event-customer-confirmed), [Event Customer Created](#event-customer-created), [Event Customer Updated](#event-customer-updated), [Event Customer Deleted](#event-customer-deleted), [Event Customer Referred](#event-customer-referred), [Event Customer Custom Event](#event-customer-custom-event), [Event Customer Segment Entered](#event-customer-segment-entered), [Event Customer Segment Left](#event-customer-segment-left), [Event Customer SMS Sent](#event-customer-sms-sent), [Event Customer SMS Recovered](#event-customer-sms-recovered), [Event Customer SMS Failed](#event-customer-sms-failed), [Event Customer Email Sent](#event-customer-email-sent), [Event Customer Email Recovered](#event-customer-email-recovered), [Event Customer Email Failed](#event-customer-email-failed), [Event Customer ActiveCampaign Sent](#event-customer-activecampaign-sent), [Event Customer ActiveCampaign Recovered](#event-customer-activecampaign-recovered), [Event Customer ActiveCampaign Failed](#event-customer-activecampaign-failed), [Event Customer Braze Sent](#event-customer-braze-sent), [Event Customer Braze Recovered](#event-customer-braze-recovered), [Event Customer Braze Failed](#event-customer-braze-failed), [Event Customer Mailchimp Sent](#event-customer-mailchimp-sent), [Event Customer Mailchimp Recovered](#event-customer-mailchimp-recovered), [Event Customer Mailchimp Failed](#event-customer-mailchimp-failed), [Event Customer Intercom Sent](#event-customer-intercom-sent), [Event Customer Intercom Recovered](#event-customer-intercom-recovered), [Event Customer Intercom Failed](#event-customer-intercom-failed), [Event Customer Shopify Sent](#event-customer-shopify-sent), [Event Customer Shopify Recovered](#event-customer-shopify-recovered), [Event Customer Shopify Failed](#event-customer-shopify-failed), [Event Customer Klaviyo Sent](#event-customer-klaviyo-sent), [Event Customer Klaviyo Recovered](#event-customer-klaviyo-recovered), [Event Customer Klaviyo Failed](#event-customer-klaviyo-failed), [Event Customer Batch Sent](#event-customer-batch-sent), [Event Customer Batch Recovered](#event-customer-batch-recovered), [Event Customer Batch Failed](#event-customer-batch-failed), [Event Customer Rewarded](#event-customer-rewarded), [Event Customer Rewarded Loyalty Points](#event-customer-rewarded-loyalty-points), [Event Customer Gift Voucher Balance Added](#event-customer-gift-voucher-balance-added), [Event Customer Loyalty Card Points Added](#event-customer-loyalty-card-points-added), [Event Customer Loyalty Card Points Transferred](#event-customer-loyalty-card-points-transferred), [Event Customer Loyalty Card Points Expired](#event-customer-loyalty-card-points-expired), [Event Customer Voucher Deleted](#event-customer-voucher-deleted), [Event Customer Publication Succeeded](#event-customer-publication-succeeded), [Event Customer Publication Failed](#event-customer-publication-failed), [Event Customer Validation Succeeded](#event-customer-validation-succeeded), [Event Customer Validation Failed](#event-customer-validation-failed), [Event Customer Redemption Succeeded](#event-customer-redemption-succeeded), [Event Customer Redemption Failed](#event-customer-redemption-failed), [Event Customer Redemption Rollback Succeeded](#event-customer-redemption-rollback-succeeded), [Event Customer Redemption Rollback Failed](#event-customer-redemption-rollback-failed), [Event Customer Consents Given](#event-customer-consents-given), [Event Customer Consents Revoked](#event-customer-consents-revoked), [Event Customer Order Canceled](#event-customer-order-canceled), [Event Customer Order Created](#event-customer-order-created), [Event Customer Order Fulfilled](#event-customer-order-fulfilled), [Event Customer Order Paid](#event-customer-order-paid), [Event Customer Order Processing](#event-customer-order-processing), [Event Customer Order Updated](#event-customer-order-updated), [Event Customer Reward Redemptions Created](#event-customer-reward-redemptions-created), [Event Customer Reward Redemptions Pending](#event-customer-reward-redemptions-pending), [Event Customer Reward Redemptions Completed](#event-customer-reward-redemptions-completed), [Event Customer Reward Redemptions Rolled Back](#event-customer-reward-redemptions-rolled-back), [Event Customer Loyalty Updated](#event-customer-loyalty-updated), [Event Customer Loyalty Tier Upgraded](#event-customer-loyalty-tier-upgraded), [Event Customer Loyalty Tier Downgraded](#event-customer-loyalty-tier-downgraded), [Event Customer Loyalty Tier Prolonged](#event-customer-loyalty-tier-prolonged), [Event Customer Loyalty Tier Expiration Changed](#event-customer-loyalty-tier-expiration-changed), [Event Customer Loyalty Tier Joined](#event-customer-loyalty-tier-joined), [Event Customer Loyalty Tier Left](#event-customer-loyalty-tier-left)
+[Event Customer Confirmed](#event-customer-confirmed), [Event Customer Created](#event-customer-created), [Event Customer Updated](#event-customer-updated), [Event Customer Deleted](#event-customer-deleted), [Event Customer Referred](#event-customer-referred), [Event Customer Custom Event](#event-customer-custom-event), [Event Customer Segment Entered](#event-customer-segment-entered), [Event Customer Segment Left](#event-customer-segment-left), [Event Customer SMS Sent](#event-customer-sms-sent), [Event Customer SMS Recovered](#event-customer-sms-recovered), [Event Customer SMS Failed](#event-customer-sms-failed), [Event Customer Email Sent](#event-customer-email-sent), [Event Customer Email Recovered](#event-customer-email-recovered), [Event Customer Email Failed](#event-customer-email-failed), [Event Customer ActiveCampaign Sent](#event-customer-activecampaign-sent), [Event Customer ActiveCampaign Recovered](#event-customer-activecampaign-recovered), [Event Customer ActiveCampaign Failed](#event-customer-activecampaign-failed), [Event Customer Braze Sent](#event-customer-braze-sent), [Event Customer Braze Recovered](#event-customer-braze-recovered), [Event Customer Braze Failed](#event-customer-braze-failed), [Event Customer Mailchimp Sent](#event-customer-mailchimp-sent), [Event Customer Mailchimp Recovered](#event-customer-mailchimp-recovered), [Event Customer Mailchimp Failed](#event-customer-mailchimp-failed), [Event Customer Intercom Sent](#event-customer-intercom-sent), [Event Customer Intercom Recovered](#event-customer-intercom-recovered), [Event Customer Intercom Failed](#event-customer-intercom-failed), [Event Customer Shopify Sent](#event-customer-shopify-sent), [Event Customer Shopify Recovered](#event-customer-shopify-recovered), [Event Customer Shopify Failed](#event-customer-shopify-failed), [Event Customer Klaviyo Sent](#event-customer-klaviyo-sent), [Event Customer Klaviyo Recovered](#event-customer-klaviyo-recovered), [Event Customer Klaviyo Failed](#event-customer-klaviyo-failed), [Event Customer Batch Sent](#event-customer-batch-sent), [Event Customer Batch Recovered](#event-customer-batch-recovered), [Event Customer Batch Failed](#event-customer-batch-failed), [Event Customer Rewarded](#event-customer-rewarded), [Event Customer Rewarded Loyalty Points](#event-customer-rewarded-loyalty-points), [Event Customer Gift Voucher Balance Added](#event-customer-gift-voucher-balance-added), [Event Customer Loyalty Card Points Added](#event-customer-loyalty-card-points-added), [Event Customer Loyalty Card Points Transferred](#event-customer-loyalty-card-points-transferred), [Event Customer Loyalty Card Points Expired](#event-customer-loyalty-card-points-expired), [Event Customer Voucher Deleted](#event-customer-voucher-deleted), [Event Customer Publication Succeeded](#event-customer-publication-succeeded), [Event Customer Publication Failed](#event-customer-publication-failed), [Event Customer Validation Succeeded](#event-customer-validation-succeeded), [Event Customer Validation Failed](#event-customer-validation-failed), [Event Customer Redemption Succeeded](#event-customer-redemption-succeeded), [Event Customer Redemption Failed](#event-customer-redemption-failed), [Event Customer Redemption Rollback Succeeded](#event-customer-redemption-rollback-succeeded), [Event Customer Redemption Rollback Failed](#event-customer-redemption-rollback-failed), [Event Customer Consents Given](#event-customer-consents-given), [Event Customer Consents Revoked](#event-customer-consents-revoked), [Event Customer Order Canceled](#event-customer-order-canceled), [Event Customer Order Created](#event-customer-order-created), [Event Customer Order Fulfilled](#event-customer-order-fulfilled), [Event Customer Order Paid](#event-customer-order-paid), [Event Customer Order Processing](#event-customer-order-processing), [Event Customer Order Updated](#event-customer-order-updated), [Event Customer Reward Redemptions Created](#event-customer-reward-redemptions-created), [Event Customer Reward Redemptions Pending](#event-customer-reward-redemptions-pending), [Event Customer Reward Redemptions Completed](#event-customer-reward-redemptions-completed), [Event Customer Reward Redemptions Rolled Back](#event-customer-reward-redemptions-rolled-back), [Event Customer Loyalty Updated](#event-customer-loyalty-updated), [Event Customer Loyalty Tier Upgraded](#event-customer-loyalty-tier-upgraded), [Event Customer Loyalty Tier Downgraded](#event-customer-loyalty-tier-downgraded), [Event Customer Loyalty Tier Prolonged](#event-customer-loyalty-tier-prolonged), [Event Customer Loyalty Tier Expiration Changed](#event-customer-loyalty-tier-expiration-changed), [Event Customer Loyalty Tier Joined](#event-customer-loyalty-tier-joined), [Event Customer Loyalty Tier Left](#event-customer-loyalty-tier-left), [Event Customer Holder Assignment Created](#event-customer-holder-assignment-created), [Event Customer Holder Assignment Deleted](#event-customer-holder-assignment-deleted)
 
 ## Event Customer Confirmed
 | Attributes |  Description |
@@ -452,6 +452,22 @@ All of:
 1. [Event Customer Loyalty Tier Base](#event-customer-loyalty-tier-base)
 2. <h3>Loyalty Tier Left</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">loyalty_tier</td><td style="text-align:left">See: <a href="#loyalty-tier">Loyalty Tier</a></td></tr><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><strong>Example:</strong> <p>2022-02-25T13:32:08.734Z</p></td></tr></tbody></table>
 
+## Event Customer Holder Assignment Created
+| Attributes |  Description |
+|:-----|:--------|
+| holder | See: [Redeemable Holder](#redeemable-holder) |
+| voucher | See: [Simple Voucher](#simple-voucher) |
+| campaign | See: [Simple Campaign](#simple-campaign) |
+| customer | See: [Simple Customer](#simple-customer) |
+
+## Event Customer Holder Assignment Deleted
+| Attributes |  Description |
+|:-----|:--------|
+| holder | See: [Redeemable Holder](#redeemable-holder) |
+| voucher | See: [Simple Voucher](#simple-voucher) |
+| campaign | See: [Simple Campaign](#simple-campaign) |
+| customer | See: [Simple Customer](#simple-customer) |
+
 ## Customer With Summary Loyalty Referrals
 All of:
 
@@ -461,11 +477,11 @@ All of:
 ## Simple Customer
 | Attributes |  Description |
 |:-----|:--------|
-| id</br>`string` | <p>The ID of an existing customer that will be linked to redemption in this request.</p> |
-| source_id</br>`string` | <p>A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.</p> |
+| id</br>`string` | <p>Unique identifier of an existing customer. It is assigned by Voucherify.</p> |
 | name</br>`string` | <p>Customer's first and last name.</p> |
 | email</br>`string` | <p>Customer's email address.</p> |
-| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.</p> |
+| source_id</br>`string` | <p>A unique identifier of the customer. It can be a customer ID or email from a CRM system, database, or a third-party service.</p> |
+| metadata</br>`object` | <p>A set of custom key/value pairs that are attached to the customer. It stores all custom attributes assigned to the customer.</p> |
 | object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `customer` |
 
 ## Simple Campaign
@@ -482,14 +498,14 @@ All of:
 | auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join the campaign if any earning rule is fulfilled.</p> |
 | join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once.</p> |
 | active</br>`boolean` | <p>Indicates whether the campaign is active.</p> |
-| category</br>`string` | <p>Unique category name.</p> |
 | category_id</br>`string`, `null` | <p>The unique category ID that this campaign belongs to.</p> |
+| category</br>`string` | <p>Unique category name.</p> |
 | categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a campaign. The metadata object stores all custom attributes assigned to the campaign.</p> |
 | start_date</br>`string` | <p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is inactive <em>before</em> this date.</p> **Example:** <p>2022-09-20T00:00:00.000Z</p> |
 | expiration_date</br>`string` | <p>Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is inactive <em>after</em> this date.</p> **Example:** <p>2022-09-30T00:00:00.000Z</p> |
 | description</br>`string` | <p>An optional field to keep extra textual information about the campaign such as a campaign description and details.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the campaign was created. Timestamp is presented in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the campaign was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the campaign was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
 | object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the campaign.</p> Available values: `campaign` |
 
@@ -505,13 +521,13 @@ All of:
 | campaign</br>`string` | <p>Campaign name.</p> |
 | campaign_id</br>`string` | <p>Campaign unique ID.</p> |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
-| holder_id</br>`string` | <p>Unique customer ID of the campaign owner.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
+| holder_id</br>`string` | <p>Unique customer identifier of the redeemable holder. It equals to the customer ID assigned by Voucherify.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
 | referrer_id</br>`string` | <p>Unique identifier of the referrer assigned by Voucherify.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
 | category_id</br>`string`, `null` | <p>Unique identifier of the category that this voucher belongs to.</p> **Example:** <p>cat_0b6152ce12414820dc</p> |
 | categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
 | active</br>`boolean` | <p>Shows whether the voucher is on or off. <code>true</code> indicates an <em>active</em> voucher and <code>false</code> indicates an <em>inactive</em> voucher.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the order was created. Timestamp is presented in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
-| updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was updated in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the order was created in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
 | redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code>, <code>null</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr><tr><td style="text-align:left">redeemed_quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher has already been redeemed.</p> <strong>Example:</strong> <p>1</p></td></tr></tbody></table> |
 | start_date</br>`string` | <p>Activation timestamp defines when the code starts to be active in ISO 8601 format. Voucher is <em>inactive before</em> this date.</p> **Example:** <p>2021-12-01T00:00:00.000Z</p> |
 | expiration_date</br>`string` | <p>Expiration timestamp defines when the code expires in ISO 8601 format.  Voucher is <em>inactive after</em> this date.</p> **Example:** <p>2021-12-31T00:00:00.000Z</p> |
@@ -528,7 +544,7 @@ All of:
 | referral</br>`object` | <p>Referral object.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">referrer_id</br><code>string</code></td><td style="text-align:left"><p>Unique referrer ID.</p> <strong>Example:</strong> <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p></td></tr><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Voucher code.</p></td></tr><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique voucher ID.</p></td></tr></tbody></table> |
 | loyalty</br>`object` | <p>Loyalty object.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Loyalty card code.</p></td></tr></tbody></table> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer object.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the custom event was created. Timestamp is presented in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the custom event was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 
 ## Redemption Internal
 | Attributes |  Description |
@@ -601,16 +617,17 @@ All of:
 |:-----|:--------|
 | customer | See: [Simple Customer](#simple-customer) |
 | assignment_id</br>`string` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
-| voucher | <p>Defines of the voucher.</p> [Simple Voucher](#simple-voucher) |
-| product | <p>Defines of the product.</p> [Simple Product](#simple-product) |
-| sku | <p>Defines of the sku.</p> [Simple Sku](#simple-sku) |
+| voucher | [Simple Voucher](#simple-voucher) |
+| product | [Simple Product](#simple-product) |
+| sku | [Simple Sku](#simple-sku) |
 | loyalty_tier_id</br>`string` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 | id</br>`string` | <p>Unique reward ID, assigned by Voucherify.</p> **Example:** <p>rew_nIy4gHpQHle2c3pNMwuj7G6j</p> |
 | object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the reward.</p> Available values: `reward` |
 | name</br>`string` | <p>Reward name.</p> |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the reward was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-11T14:49:22.586Z</p> |
-| updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the reward was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-11T16:01:34.885Z</p> |
-| parameters</br>`object` | <p>Defines how the reward is generated.</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the reward was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the reward was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-01-01T11:11:11.111Z</p> |
+| parameters</br>`object` | <p>Defines how the reward is generated.</p> [Reward type](#reward-type) |
+| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a reward. The metadata object stores all custom attributes assigned to the reward.</p> |
 | type</br>`string` | <p>Reward type.</p> Available values: `CAMPAIGN`, `COIN`, `MATERIAL` |
 
 ## Simple Referral Tier
@@ -734,6 +751,21 @@ All of:
 | customer | See: [Simple Customer](#simple-customer) |
 | campaign | See: [Simple Campaign](#simple-campaign) |
 
+## Redeemable Holder
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique identifier of the redeemable holder.</p> **Example:** <p>rh_0e7b8db4700106a852</p> |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the redeemable was assigned. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-03-22T17:48:25.910Z</p> |
+| redeemable_id</br>`string` | <p>Identifier of the redeemable item.</p> **Example:** <p>v_GXVguPhq2khgFxH7GrRXWA91gDr1LiA1</p> |
+| redeemable_object</br>`string` | <p>Type of the redeemable.</p> Available values: `voucher` **Example:** <p>voucher</p> |
+| campaign_id</br>`string` | <p>Unique identifier of the campaign as assigned by Voucherify.</p> **Example:** <p>camp_weer1c3p5ZgktqfW56RfoNaG</p> |
+| campaign_type</br>`string` | <p>Defines the type of the campaign.</p> Available values: `REFERRAL_PROGRAM` **Example:** <p>REFERRAL_PROGRAM</p> |
+| voucher_type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `GIFT_VOUCHER`, `DISCOUNT_VOUCHER`, `LOYALTY_CARD` **Example:** <p>DISCOUNT_VOUCHER</p> |
+| publication_id</br>`string`, `null` | <p>Unique identifier of the publication.</p> |
+| customer_id</br>`string` | <p>Unique identifier of the customer.</p> **Example:** <p>cust_p1ufreYbVbwZ1x70nFkH9rF9</p> |
+| holder_role</br>`string` | <p>Role of the holder.</p> Available values: `OWNER`, `REFERRER`, `REFEREE` **Example:** <p>REFERRER</p> |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `redeemable_holder` |
+
 ## Customer Summary
 | Attributes |  Description |
 |:-----|:--------|
@@ -837,9 +869,9 @@ One of:
 |:-----|:--------|
 | customer | [Simple Customer](#simple-customer) |
 | assignment_id</br>`string`, `null` | <p>Unique reward assignment ID assigned by Voucherify.</p> |
-| voucher | <p>Defines of the voucher.</p> [Voucher](#voucher) |
-| product | <p>Defines of the product.</p> [Product](#product) |
-| sku | <p>Defines of the sku.</p> [SKU Object](#sku-object) |
+| voucher | [Voucher](#voucher) |
+| product | [Product](#product) |
+| sku | [SKU Object](#sku-object) |
 | loyalty_tier_id</br>`string`, `null` | <p>Unique loyalty tier ID assigned by Voucherify.</p> |
 | id</br>`string` | <p>Unique reward ID.</p> **Example:** <p>rew_0bc92f81a6801f9bca</p> |
 | name</br>`string` | <p>Name of the reward.</p> **Example:** <p>Reward Name</p> |
@@ -847,6 +879,7 @@ One of:
 | created_at</br>`string` | <p>Timestamp representing the date and time when the redemption was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | updated_at</br>`string` | <p>Timestamp in ISO 8601 format indicating when the reward was updated.</p> **Example:** <p>2022-10-03T12:24:58.008Z</p> |
 | parameters</br>`object` | <p>These are parameters representing a material reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">campaign</br><code>object</code></td><td style="text-align:left"><p>Defines the product redeemed as a reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Campaign unique ID.</p> <strong>Example:</strong> <p>camp_13BbZ0kQsNinhqsX3wUts2UP</p></td></tr><tr><td style="text-align:left">balance</br><code>integer</code></td><td style="text-align:left"><p>Points available for reward redemption.</p></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Defines the type of the campaign.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">product</br><code>object</code></td><td style="text-align:left"><p>Defines the product redeemed as a reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique product ID, assigned by Voucherify.</p> <strong>Example:</strong> <p>prod_0b7d7dfb05cbe5c616</p></td></tr><tr><td style="text-align:left">sku_id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the SKU. It is assigned by Voucherify.</p> <strong>Example:</strong> <p>sku_0a41e31c7b41c28358</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">coin</br><code>object</code></td><td style="text-align:left"><p>Defines the ratio by mapping the number of loyalty points in <code>points_ratio</code> to a predefined cash amount in <code>exchange_ratio</code>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">exchange_ratio</br><code>integer</code></td><td style="text-align:left"><p>The cash equivalent of the points defined in the <code>points_ratio</code> property.</p></td></tr><tr><td style="text-align:left">points_ratio</br><code>integer</code></td><td style="text-align:left"><p>The number of loyalty points that will map to the predefined cash amount defined by the <code>exchange_ratio</code> property.</p></td></tr></tbody></table></td></tr></tbody></table> |
+| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a reward. The metadata object stores all custom attributes assigned to the reward.</p> |
 | type</br>`string` | <p>Reward type.</p> Available values: `CAMPAIGN`, `COIN`, `MATERIAL` |
 
 ## Voucher
@@ -875,7 +908,7 @@ One of:
 | is_referral_code</br>`boolean`, `null` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the voucher was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the voucher was last updated in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:14:45.316Z</p> |
-| holder_id</br>`string` | <p>Unique identifier of the customer who owns the voucher.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
+| holder_id</br>`string` | <p>Unique customer identifier of the redeemable holder. It equals to the customer ID assigned by Voucherify.</p> **Example:** <p>cust_eWgXlBBiY6THFRJwX45Iakv4</p> |
 | referrer_id</br>`string` | <p>Unique identifier of the referring person.</p> **Example:** <p>cust_Vzck5i8U3OhcEUFY6MKhN9Rv</p> |
 | object</br>`string` | <p>The type of the object represented by JSON. Default is <code>voucher</code>.</p> |
 | validation_rules_assignments | See: [Validation Rules Assignments List](#validation-rules-assignments-list) |
@@ -926,6 +959,11 @@ One of:
 | id</br>`string` | <p>Unique sku ID.</p> |
 | source_id</br>`string` | <p>Sku source id.</p> |
 | sku</br>`string` | <p>Sku name.</p> |
+
+## Reward type
+One of:
+
+[Digital](#digital), [Pay with Points](#pay-with-points), [Material](#material)
 
 ## Loyalty Tier Base
 | Attributes |  Description |
@@ -999,7 +1037,7 @@ One of:
 [Customer Id](#customer-id)
 
 ## LoyaltyCardTransactionsType
-Available values: `POINTS_ACCRUAL`, `POINTS_CANCELLATION`, `POINTS_REDEMPTION`, `POINTS_REFUND`, `POINTS_ADDITION`, `POINTS_REMOVAL`, `POINTS_EXPIRATION`, `POINTS_TRANSFER_IN`, `POINTS_TRANSFER_OUT`
+Available values: `POINTS_ACCRUAL`, `POINTS_REDEMPTION`, `POINTS_REFUND`, `POINTS_ADDITION`, `POINTS_REMOVAL`, `POINTS_EXPIRATION`, `POINTS_TRANSFER_IN`, `POINTS_TRANSFER_OUT`
 
 ## List Publications Item Base
 | Attributes |  Description |
@@ -1096,7 +1134,7 @@ Available values: `POINTS_ACCRUAL`, `POINTS_CANCELLATION`, `POINTS_REDEMPTION`, 
 | name</br>`string` | <p>Name of the promotion stack.</p> |
 | category_id</br>`string` | <p>Unique identifier of the category of the promotion stack.</p> |
 | campaign</br>`object` | <p>Represents simplified promotion stack campaign data.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the campaign.</p></td></tr></tbody></table> |
-| tiers</br>`object` | <p>Contains the tier configuration.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">ids</br><code>array</code></td><td style="text-align:left"><p>Contains the list of tiers in a pre-defined sequence.</p></td></tr><tr><td style="text-align:left">hierarchy_mode</br><code>string</code></td><td style="text-align:left">Available values: <code>MANUAL</code></td></tr></tbody></table> |
+| tiers</br>`object` | <p>Contains the tier configuration. A promotion stack can include up to 30 tiers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">ids</br><code>array</code></td><td style="text-align:left"><p>Contains the list of tiers in a pre-defined sequence.</p></td></tr><tr><td style="text-align:left">hierarchy_mode</br><code>string</code></td><td style="text-align:left">Available values: <code>MANUAL</code></td></tr></tbody></table> |
 
 ## Simple Consent
 | Attributes |  Description |
@@ -1256,6 +1294,21 @@ All of:
 | data_ref</br>`string` | <p>Identifies the name of the JSON property that contains the array of validation rule assignments.</p> |
 | data</br>`array` | <p>A dictionary that contains an array of validation rule assignments.</p> Array of [Validation Rule Assignment](#validation-rule-assignment) |
 | total</br>`integer` | <p>Total number of validation rule assignments.</p> |
+
+## Digital
+| Attributes |  Description |
+|:-----|:--------|
+| campaign</br>`object` | <p>Objects stores information about the campaign related to the reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique campaign ID, assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">balance</br><code>integer</code></td><td style="text-align:left"><p>The number of points to be added to a loyalty card or the amount to be added to the current balance on the gift card.</p><p>For gift cards, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>Campaign type.</p> Available values: <code>DISCOUNT_COUPONS</code>, <code>GIFT_VOUCHERS</code>, <code>LOYALTY_PROGRAM</code></td></tr></tbody></table> |
+
+## Pay with Points
+| Attributes |  Description |
+|:-----|:--------|
+| coin</br>`object` | <p>Defines the ratio by mapping the number of loyalty points in points_ratio to a predefined cash amount in exchange_ratio.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">exchange_ratio</br><code>number</code></td><td style="text-align:left"><p>The cash equivalent of the points defined in the points_ratio property.</p></td></tr><tr><td style="text-align:left">points_ratio</br><code>integer</code></td><td style="text-align:left"><p>The number of loyalty points that will map to the predefined cash amount defined by the exchange_ratio property.</p></td></tr></tbody></table> |
+
+## Material
+| Attributes |  Description |
+|:-----|:--------|
+| product</br>`object` | <p>Contains information about the product given as a reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique product ID, assigned by Voucherify.</p> <strong>Example:</strong> <p>prod_0b7d7dfb05cbe5c616</p></td></tr><tr><td style="text-align:left">sku_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Unique SKU ID, assigned by Voucherify, of the SKU given as a reward.</p> <strong>Example:</strong> <p>sku_0b7d7dfb090be5c619</p></td></tr></tbody></table> |
 
 ## MappingPoints
 One of:
