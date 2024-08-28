@@ -28,8 +28,8 @@ There are two dedicated API Endpoints for checking eligibility:
 
 | **Endpoint**                         | **Link**                                                                               |
 | :----------------------------------- | :------------------------------------------------------------------------------------- |
-| **POST** `/v1/qualifications`        | Check eligibility using the [server-side endpoint](ref:check-eligibility).             |
-| **POST** `/client/v1/qualifications` | Check eligibility using the [client-side endpoint](ref:check-eligibility-client-side). |
+| **POST** `v1/v1/qualifications`        | Check eligibility using the [server-side endpoint](ref:check-eligibility).             |
+| **POST** `v1/client/v1/qualifications` | Check eligibility using the [client-side endpoint](ref:check-eligibility-client-side). |
 
 You can find a description of the qualification object schema in the data model description [here](ref:qualification-object).
 
