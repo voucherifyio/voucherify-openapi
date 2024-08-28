@@ -2,11 +2,86 @@
 
 --------------------
 
-Older changes in [DEPRECATED.md](DEPRECATED.md)
+Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-## 2024-07-03
+## 2024-08-13
 
-- added `stacking_rules` to response `/v1/validations`(ValidationsValidateResponseBody)
+- Added updated the description to `PromotionStackBase`, `PromotionsStacksUpdateRequestBody`, and `SimplePromotionStack` with the info about 30 promotion tiers in one stack
+
+## 2024-08-09
+
+- Deprecated the following endpoints:
+  - PUT `/v1/customers/{customerId}/consents`
+  - GET `/v1/consents`
+  - PUT `/client/v1/customers/{customerId}/consents`
+  - GET `/client/v1/consents`
+- Removed `POINTS_CANCELLATION` from types of loyalty card transactions
+
+## 2024-08-01
+
+Added the following to `OpenAPIWebhooks.json`:
+- `voucher.loyalty_card.transaction.created`
+- `voucher.loyalty_card.points_expired`
+- `voucher.gift.transaction.created`
+- metadata to `RedemptionRewardResult` schema
+
+Added the following to `OpenAPI.json`:
+- `customer.holder.assignment.created` – OpenAPI.json
+- `customer.holder.assignment.deleted` – OpenAPI.json
+- metadata to `RedemptionRewardResult` schema
+
+Removed the `[Beta]` tag from the following endpoints:
+- List Customer's Redeemables
+- List Referral Code Holders
+
+## 2024-07-30
+
+- Added parameter `ParameterRedeemableHolderId`
+- Schema `Session` - property `key` is no longer `enum`
+- Added `RewardsListResponseBody`, `PromotionsTiersCreateRequestBody`, `PromotionsTiersCreateResponseBody`, `PromotionsTiersUpdateRequestBody`, `PromotionsTiersUpdateResponseBody`, `PromotionTierUpdate`, `PromotionTierCreateParams`, `RewardsCreateRequestBodyMaterial`, `RewardsCreateRequestBodyDigital`, `RewardsCreateRequestBodyDigitalParameters`, `RewardsCreateRequestBodyPayWithPoints`,  `RewardsUpdateRequestBody`, `RewardsUpdateRequestBodyDigital`, `RewardsUpdateRequestBodyPayWithPoints`, `RewardsUpdateRequestBodyMaterial`, `RewardsUpdateRequestBodyDigitalParametersLoyaltyProgram`, `RewardsUpdateRequestBodyDigitalParametersGiftVouchers`, `RewardsUpdateRequestBodyDigitalParametersDiscountCoupons`, `RewardsUpdateRequestBodyDigitalParameters`, `RewardsUpdateRequestBodyMaterialParameters`, `RewardsUpdateRequestBodyPayWithPointsParameters`, `RewardsCreateRequestBodyDigitalParametersLoyaltyProgram`, `RewardsCreateRequestBodyDigitalParametersGiftVouchers`, `RewardsCreateRequestBodyDigitalParametersDiscountCoupons`, `RewardsCreateRequestBodyMaterialParameters`, `RewardsCreateRequestBodyPayWithPointsParameters`,`SegmentsCreateRequestBodyStatic`,  `SegmentsCreateRequestBody`, `SegmentsGetResponseBody`, `SegmentsCreateResponseBody`, `SegmentsCreateRequestBodyDynamic`, `AsyncActionGetResponseBody`, `AsyncAction`, `AsyncActionsListResponseBody`, `ReferralsMembersHoldersCreateInBulkRequestBody`, `ReferralsMembersHoldersCreateInBulkResponseBody`, `RedemptionEntry`, `ClientPromotionsTiersListResponseBody`
+- Deleted `CodeConfigRequiredLengthCharsetPattern`
+- Deleted ordering by `created_at` and `-created_at` from `ParameterOrderListRedeemables` for endpoints with `redeemable_holders`
+
+  `OpenAPI.json` and `OpenAPIWebhooks.json`:
+- Added `AccessSettingsCampaignAssignmentsList` and `AreaStoreCampaignAssignment` schemas for the Areas and Stores feature
+- Added `access_settings_assignments` field to the `Campaign` schema
+
+## 2024-07-29
+
+- Added POST `v1/referrals/{campaignId}/members/{memberId}/holders` and `v1/referrals/members/{memberId}/holders`
+- Added DELETE `v1/referrals/{campaignId}/members/{memberId}/holders/{holderId}` and `v1/referrals/members/{memberId}/holders/{holderId}`
+- Added a `holder_role` filter to Qualifications
+
+## 2024-07-15
+
+`OpenAPI.json`:
+- Added a new endpoint, Invite a New User (**POST** `/management/v1/projects/users/invite`), and associated schemas:
+  - ManagementProjectsUserInviteCreateRequestBody
+  - ManagementProjectsUserInviteParameters
+- Added the ManagementProjectsSideKeys schema for app ID and app token in the server-side and client-side objects, which are returned in the **POST** `/management/v1/projects/` endpoint
+
+## 2024-07-10
+- added schemas `ValidityTimeframe` and `ValidityDayOfWeek`, replaced everywhere `validity_day_of_week` with ref to `ValidityDayOfWeek`, replaced everywhere `validity_timeframe` with ref to `ValidityTimeframe`
+
+`OpenAPI.json`:
+- fixed invalid schemas
+- ListPublicationsItemBase[metadata] removed all required
+- ListPublicationsItemBase added new property `vouchers`
+- ValidationsValidateResponseBody[skipped_redeemables] fixed (replaced ValidationsRedeemableInapplicable with ValidationsRedeemableSkipped)
+- ValidationsValidateResponseBody added new property `stacking_rules` with flag required
+- added required `"required": ["status","id","object","result"]` on `ValidationsRedeemableSkipped`, `ValidationsRedeemableInapplicable` and `ValidationsRedeemableApplicable`
+- ValidationsRedeemableInapplicable[result] added new property `details`
+- ValidationsRedeemableInapplicable added new properties `metadata` and `categories`
+- ValidationsRedeemableSkipped[result] added new property `details`
+- ValidationsRedeemableSkipped added new properties `metadata` and `categories`
+- added schemas `ValidationsRedeemableSkippedResultLimitExceeded`, `ValidationsRedeemableSkippedResultCategoryLimitExceeded`, `ValidationsRedeemableSkippedResultRedeemablesLimitExceeded`, `ValidationsRedeemableSkippedResultRedeemablesCategoryLimitExceeded`, `ValidationsRedeemableSkippedResultExclusionRulesNotMet`, `ValidationsRedeemableSkippedResultPrecedingValidationFailed`
+- StackingRules added properties: `applicable_redeemables_per_category_limit`, `applicable_exclusive_redeemables_per_category_limit`, and added required on `redeemables_application_mode` and `redeemables_sorting_rule`
+- fixed ManagementProjectsMetadataSchema and its usages.
+- OrderCalculatedBase updated property items[array] ref from `OrderItemCalculated` to `OrderItem`
+- OrderItem added property `object` - enum `order_item`
+- OrderItem added properties `applied_discount_amount`, `applied_discount_quantity`, `applied_quantity`, `applied_quantity_amount`, `subtotal_amount`
+- SimpleOrderItem added properties `id`, `applied_quantity`, `applied_quantity_amount`, `applied_discount_quantity`, `subtotal_amount`
+- SimpleRedemption added property `status`
 
 ## 2024-06-25
 

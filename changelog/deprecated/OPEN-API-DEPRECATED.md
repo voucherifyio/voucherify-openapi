@@ -1,4 +1,4 @@
-### This file is closed! PLease check [OPEN-API.md](OPEN-API.md) or [ARTICLES.md](ARTICLES.md) for newer changes
+### This file is closed! PLease check [OPEN-API.md](../OPEN-API.md) or [ARTICLES.md](../ARTICLES.md) for newer changes
 
 ----------------------------------------------------------------
 

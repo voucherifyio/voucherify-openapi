@@ -34,7 +34,7 @@ SDK will be generated in `./sdks` directory in associated language folder.
   - (java) merging multiple response schemas with 2xx status code into one schema
   - (php) merging oneOf schemas into one schema
   - (php) associating each element into object
-- **manage-project** - running `build-update-md-tables-from-openapi` command and uploading openapi file to the server
+- **create-clean-project** - running `build-update-md-tables-from-openapi` command and uploading openapi file to the server
 - **fix-schemas-with-refs** - script for fixing `oneOf` schemas with `$ref`
 - **fix-schemas-properties-with-single-enum** - script for adding default value to schemas with single enum
 - **readme-upload-missing-images** - script for uploading images to the server

@@ -4,14 +4,13 @@ import {
 } from "./utils";
 
 type LanguageOptions = {
-  removeRequiredOnNullable?: true; //default: false
-  simplifyAllObjectsThatHaveAdditionalProperties?: true; //default: false
-  okResponseMustBeOnlyOne?: true; //default: false
+  removeRequiredOnNullable?: boolean; //default: false
+  simplifyAllObjectsThatHaveAdditionalProperties?: boolean; //default: false
 };
 
 export const removedNotUsedParameters = (
-  parameters: {},
-  paths: {},
+  parameters,
+  paths,
   opt: LanguageOptions
 ) => {
   const parametersNames = JSON.stringify(paths)

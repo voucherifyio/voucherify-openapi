@@ -28,8 +28,8 @@ All of:
 | automation_id</br>`string` | <p>For internal use by Voucherify.</p> |
 | start_date</br>`string` | <p>Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. Earning rule is inactive before this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default.</p> |
 | expiration_date</br>`string` | <p>Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format. Earning rule is inactive after this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default.</p> |
-| validity_timeframe</br>`object` | <p>Set recurrent time periods when the earning rule is valid. For example, valid for 1 hour every other day.start_date required when including the <code>validity_timeframe</code>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">duration</br><code>string</code></td><td style="text-align:left"><p>Defines the amount of time an earning rule will be active in ISO 8601 format. For example, an earning rule with a duration of PT1H will be valid for a duration of one hour.</p></td></tr><tr><td style="text-align:left">interval</br><code>string</code></td><td style="text-align:left"><p>Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, an earning rule with an interval of P2D will be valid every other day.</p></td></tr></tbody></table> |
-| validity_day_of_week</br>`array` | <p>Integer array corresponding to the particular days of the week in which the earning rule is valid.</p><ul><li><code>0</code> Sunday</li><li><code>1</code> Monday</li><li><code>2</code> Tuesday</li><li><code>3</code> Wednesday</li><li><code>4</code> Thursday</li><li><code>5</code> Friday</li><li><code>6</code> Saturday</li></ul> |
+| validity_timeframe | See: [Validity Timeframe](#validity-timeframe) |
+| validity_day_of_week | See: [Validity Day Of Week](#validity-day-of-week) |
 | validity_hours | See: [Validity Hours](#validity-hours) |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format.</p> |
 
@@ -46,6 +46,15 @@ One of:
 
 ## Earning Rule Event
 Available values: `order.paid`, `customer.segment.entered`, `custom_event`, `customer.loyalty.tier.upgraded`, `customer.loyalty.tier.downgraded`, `customer.loyalty.tier.prolonged`, `customer.loyalty.tier.joined`, `customer.loyalty.tier.left`
+
+## Validity Timeframe
+| Attributes |  Description |
+|:-----|:--------|
+| duration</br>`string` | <p>Defines the amount of time an earning rule will be active in ISO 8601 format. For example, an earning rule with a <code>duration</code> of <code>PT1H</code> will be valid for a duration of one hour.</p> **Example:** <p>PT1H</p> |
+| interval</br>`string` | <p>Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, an earning rule with an <code>interval</code> of <code>P2D</code> will be valid every other day.</p> **Example:** <p>P2D</p> |
+
+## Validity Day Of Week
+<p>Integer array corresponding to the particular days of the week in which the voucher is valid.</p><ul><li><code>0</code> Sunday</li><li><code>1</code> Monday</li><li><code>2</code> Tuesday</li><li><code>3</code> Wednesday</li><li><code>4</code> Thursday</li><li><code>5</code> Friday</li><li><code>6</code> Saturday</li></ul>
 
 ## Validity Hours
 | Attributes |  Description |

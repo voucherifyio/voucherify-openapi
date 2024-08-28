@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: update-customers-consents-client-side
 parentDocSlug: client-side
 hidden: false
-order: 6
+order: 16
 ---
 [block:html]
 {

@@ -3,9 +3,24 @@
 
 --------------------
 
-Older changes in [DEPRECATED.md](DEPRECATED.md)
+Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
+
+## 2024-08-13
+
+- Added a redirect page to the Open Source Loyalty Accelerator for Omnichannel Retail blog post.
+- Added a link to that article in the Modeling Voucherify Integration page
+
+## 2024-07-24
+
+- Updated the following article files with the information about API keys and integration keys:
+  - `Authentication.md`
+  - `project-setup-guide.md`
+
+## 2024-07-17
+
+- Added "Case 4 - Upselling (audience only)" to the "Qualification – Checking Eligibility" article
 
 ## 2024-06-24
 

@@ -4,7 +4,7 @@ import path from "path";
 import { parseNullsToNullableObjects } from "./prepare-open-api-for-sdk/utils";
 import { removedNotUsedParameters } from "./prepare-open-api-for-sdk/removed-not-used-parameters";
 import { removeNotUsedSchemas } from "./prepare-open-api-for-sdk/remove-not-used-schemas";
-import { removeNotYetRefactoredPaths } from "./prepare-open-api-for-sdk/remove-not-yet-refactored-paths";
+import { removeNotYetRefactoredPaths } from "./helpers/remove-not-yet-refactored-paths";
 
 function isObject(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);

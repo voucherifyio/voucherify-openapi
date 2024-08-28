@@ -12,7 +12,7 @@ order: 1
 All of:
 
 1. [Campaign Base](#campaign-base)
-2. <h3>Campaign Additional Data</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">promotion</td><td style="text-align:left">See: <a href="#promotion-tiers">Promotion Tiers</a></td></tr><tr><td style="text-align:left">validation_rules_assignments</td><td style="text-align:left">See: <a href="#validation-rules-assignments-list">Validation Rules Assignments List</a></td></tr></tbody></table>
+2. <h3>Campaign Additional Data</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">promotion</td><td style="text-align:left">See: <a href="#promotion-tiers">Promotion Tiers</a></td></tr><tr><td style="text-align:left">validation_rules_assignments</td><td style="text-align:left">See: <a href="#validation-rules-assignments-list">Validation Rules Assignments List</a></td></tr><tr><td style="text-align:left">access_settings_assignments</td><td style="text-align:left">See: <a href="#access-settings-campaign-assignments-list">Access Settings Campaign Assignments List</a></td></tr></tbody></table>
 
 ## Campaign Base
 | Attributes |  Description |
@@ -26,8 +26,8 @@ All of:
 | auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled.</p> |
 | join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once.</p> |
 | use_voucher_metadata_schema</br>`boolean` | <p>Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema.</p> |
-| validity_timeframe</br>`object` | <p>Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.<code>start_date</code> <strong>required</strong> when including the <code>validity_timeframe</code>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">interval</br><code>string</code></td><td style="text-align:left"><p>Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an <code>interval</code> of <code>P2D</code> will be active every other day.</p></td></tr><tr><td style="text-align:left">duration</br><code>string</code></td><td style="text-align:left"><p>Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a <code>duration</code> of <code>P1D</code> will be valid for a duration of one day.</p></td></tr></tbody></table> |
-| validity_day_of_week</br>`array` | <p>Integer array corresponding to the particular days of the week in which the campaign is valid.</p><ul><li><code>0</code> Sunday</li><li><code>1</code> Monday</li><li><code>2</code> Tuesday</li><li><code>3</code> Wednesday</li><li><code>4</code> Thursday</li><li><code>5</code> Friday</li><li><code>6</code> Saturday</li></ul> |
+| validity_timeframe | See: [Validity Timeframe](#validity-timeframe) |
+| validity_day_of_week | See: [Validity Day Of Week](#validity-day-of-week) |
 | validity_hours | See: [Validity Hours](#validity-hours) |
 | activity_duration_after_publishing</br>`string` | <p>Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a <code>duration</code> of <code>P24D</code> will be valid for a duration of 24 days.</p> |
 | vouchers_count</br>`integer` | <p>Total number of unique vouchers in campaign.</p> |
@@ -64,6 +64,14 @@ All of:
 | data</br>`array` | <p>Contains array of validation rules assignments.</p> Array of [Business Validation Rule Assignment](#business-validation-rule-assignment) |
 | total</br>`integer` | <p>Total number of validation rules assignments.</p> |
 
+## Access Settings Campaign Assignments List
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>The type of the object represented by JSON. Default is <code>list</code>. This object stores information about campaign assignments to areas and stores</p> Available values: `list` |
+| data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of campaign assignments.</p> Available values: `data` |
+| data</br>`array` | <p>Contains an array of campaign assignments.</p> Array of [Areas and Stores Campain Assignment](#areas-and-stores-campain-assignment) |
+| total</br>`integer` | <p>Total number of areas and stores to which the campaign is assigned.</p> |
+
 ## Campaign Voucher
 | Attributes |  Description |
 |:-----|:--------|
@@ -72,13 +80,22 @@ All of:
 | gift | <p>Defines the voucher gift details.</p> [Gift](#gift) |
 | loyalty_card | <p>Defines the voucher loyalty card details.</p> [Campaign Loyalty Card](#campaign-loyalty-card) |
 | redemption</br>`object` | <p>Defines the redemption limits on vouchers.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code>, <code>null</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr></tbody></table> |
-| code_config | See: [Code Config Required Length Charset Pattern](#code-config-required-length-charset-pattern) |
+| code_config | [Code Config](#code-config) |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 | start_date</br>`string` | <p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is <em>inactive before</em> this date.</p> **Example:** <p>2022-09-20T00:00:00.000Z</p> |
 | expiration_date</br>`string` | <p>Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is <em>inactive after</em> this date.</p> **Example:** <p>2022-09-30T00:00:00.000Z</p> |
-| validity_timeframe</br>`object` | <p>Set recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.<code>start_date</code> <strong>required</strong> when including the <code>validity_timeframe</code>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">interval</br><code>string</code></td><td style="text-align:left"><p>Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an <code>interval</code> of <code>P2D</code> will be active every other day.</p></td></tr><tr><td style="text-align:left">duration</br><code>string</code></td><td style="text-align:left"><p>Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a <code>duration</code> of <code>P1D</code> will be valid for a duration of one day.</p></td></tr></tbody></table> |
-| validity_day_of_week</br>`array` | <p>Integer array corresponding to the particular days of the week in which the voucher is valid.</p><ul><li><code>0</code> Sunday</li><li><code>1</code> Monday</li><li><code>2</code> Tuesday</li><li><code>3</code> Wednesday</li><li><code>4</code> Thursday</li><li><code>5</code> Friday</li><li><code>6</code> Saturday</li></ul> |
+| validity_timeframe | See: [Validity Timeframe](#validity-timeframe) |
+| validity_day_of_week | See: [Validity Day Of Week](#validity-day-of-week) |
 | validity_hours | See: [Validity Hours](#validity-hours) |
+
+## Validity Timeframe
+| Attributes |  Description |
+|:-----|:--------|
+| duration</br>`string` | <p>Defines the amount of time an earning rule will be active in ISO 8601 format. For example, an earning rule with a <code>duration</code> of <code>PT1H</code> will be valid for a duration of one hour.</p> **Example:** <p>PT1H</p> |
+| interval</br>`string` | <p>Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, an earning rule with an <code>interval</code> of <code>P2D</code> will be valid every other day.</p> **Example:** <p>P2D</p> |
+
+## Validity Day Of Week
+<p>Integer array corresponding to the particular days of the week in which the voucher is valid.</p><ul><li><code>0</code> Sunday</li><li><code>1</code> Monday</li><li><code>2</code> Tuesday</li><li><code>3</code> Wednesday</li><li><code>4</code> Thursday</li><li><code>5</code> Friday</li><li><code>6</code> Saturday</li></ul>
 
 ## Validity Hours
 | Attributes |  Description |
@@ -123,13 +140,13 @@ All of:
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the promotion tier. A set of key/value pairs that you can attach to a promotion tier object. It can be useful for storing additional information about the promotion tier in a structured format.</p> |
 | hierarchy</br>`integer` | <p>The promotions hierarchy defines the order in which the discounts from different tiers will be applied to a customer's order. If a customer qualifies for discounts from more than one tier, discounts will be applied in the order defined in the hierarchy.</p> |
 | promotion_id</br>`string` | <p>Promotion unique ID.</p> |
-| campaign</br>`object` | <p>Contains details about promotion tier's parent campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique campaign ID.</p></td></tr><tr><td style="text-align:left">start_date</br><code>string</code></td><td style="text-align:left"><p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is <em>inactive before</em> this date.</p> <strong>Example:</strong> <p>2022-09-22T00:00:00.000Z</p></td></tr><tr><td style="text-align:left">expiration_date</br><code>string</code></td><td style="text-align:left"><p>Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is <em>inactive after</em> this date.</p> <strong>Example:</strong> <p>2022-09-30T00:00:00.000Z</p></td></tr><tr><td style="text-align:left">validity_timeframe</br><code>object</code></td><td style="text-align:left"><p>Recurrent time periods when the campaign is valid. For example, valid for 1 hour every other day.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">interval</br><code>string</code></td><td style="text-align:left"><p>Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a campaign with an <code>interval</code> of <code>P2D</code> will be active every other day.</p></td></tr><tr><td style="text-align:left">duration</br><code>string</code></td><td style="text-align:left"><p>Defines the amount of time the campaign will be active in ISO 8601 format. For example, a campaign with a <code>duration</code> of <code>P1D</code> will be valid for a duration of one day.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">validity_day_of_week</br><code>array</code></td><td style="text-align:left"><p>Integer array corresponding to the particular days of the week in which the campaign is valid.</p><ul><li><code>0</code> Sunday</li><li><code>1</code> Monday</li><li><code>2</code> Tuesday</li><li><code>3</code> Wednesday</li><li><code>4</code> Thursday</li><li><code>5</code> Friday</li><li><code>6</code> Saturday</li></ul></td></tr><tr><td style="text-align:left">validity_hours</td><td style="text-align:left">See: <a href="#validity-hours">Validity Hours</a></td></tr><tr><td style="text-align:left">active</br><code>boolean</code></td><td style="text-align:left"><p>A flag indicating whether the campaign is active or not active. A campaign can be disabled even though it's within the active period defined by the <code>start_date</code> and <code>expiration_date</code> using the <!-- [Disable Campaign](OpenAPI.json/paths/~1campaigns~1{campaignId}~1disable) --><a href="ref:disable-campaign">Disable Campaign</a> endpoint.</p><ul><li><code>true</code> indicates an <em>active</em> campaign</li><li><code>false</code> indicates an <em>inactive</em> campaign</li></ul></td></tr><tr><td style="text-align:left">category_id</br><code>string</code></td><td style="text-align:left"><p>Unique category ID that this campaign belongs to.</p> <strong>Example:</strong> <p>cat_0b688929a2476386a6</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of the object represented by the campaign object. This object stores information about the campaign.</p></td></tr></tbody></table> |
+| campaign</br>`object` | <p>Contains details about promotion tier's parent campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique campaign ID.</p></td></tr><tr><td style="text-align:left">start_date</br><code>string</code></td><td style="text-align:left"><p>Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is <em>inactive before</em> this date.</p> <strong>Example:</strong> <p>2022-09-22T00:00:00.000Z</p></td></tr><tr><td style="text-align:left">expiration_date</br><code>string</code></td><td style="text-align:left"><p>Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is <em>inactive after</em> this date.</p> <strong>Example:</strong> <p>2022-09-30T00:00:00.000Z</p></td></tr><tr><td style="text-align:left">validity_timeframe</td><td style="text-align:left">See: <a href="#validity-timeframe">Validity Timeframe</a></td></tr><tr><td style="text-align:left">validity_day_of_week</td><td style="text-align:left">See: <a href="#validity-day-of-week">Validity Day Of Week</a></td></tr><tr><td style="text-align:left">validity_hours</td><td style="text-align:left">See: <a href="#validity-hours">Validity Hours</a></td></tr><tr><td style="text-align:left">active</br><code>boolean</code></td><td style="text-align:left"><p>A flag indicating whether the campaign is active or not active. A campaign can be disabled even though it's within the active period defined by the <code>start_date</code> and <code>expiration_date</code> using the <!-- [Disable Campaign](OpenAPI.json/paths/~1campaigns~1{campaignId}~1disable) --><a href="ref:disable-campaign">Disable Campaign</a> endpoint.</p><ul><li><code>true</code> indicates an <em>active</em> campaign</li><li><code>false</code> indicates an <em>inactive</em> campaign</li></ul></td></tr><tr><td style="text-align:left">category_id</br><code>string</code></td><td style="text-align:left"><p>Unique category ID that this campaign belongs to.</p> <strong>Example:</strong> <p>cat_0b688929a2476386a6</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of the object represented by the campaign object. This object stores information about the campaign.</p></td></tr></tbody></table> |
 | campaign_id</br>`string` | <p>Promotion tier's parent campaign's unique ID.</p> |
 | active</br>`boolean` | <p>A flag to toggle the promotion tier on or off. You can disable a promotion tier even though it's within the active period defined by the <code>start_date</code> and <code>expiration_date</code>.</p><ul><li><code>true</code> indicates an <em>active</em> promotion tier</li><li><code>false</code> indicates an <em>inactive</em> promotion tier</li></ul> |
 | start_date</br>`string` | <p>Activation timestamp defines when the promotion tier starts to be active in ISO 8601 format. Promotion tier is <em>inactive before</em> this date.</p> **Example:** <p>2022-09-23T00:00:00.000Z</p> |
 | expiration_date</br>`string` | <p>Activation timestamp defines when the promotion tier expires in ISO 8601 format. Promotion tier is <em>inactive after</em> this date.</p> **Example:** <p>2022-09-26T00:00:00.000Z</p> |
-| validity_timeframe</br>`object` | <p>Set recurrent time periods when the promotion tier is valid. For example, valid for 1 hour every other day.<code>start_date</code> <strong>required</strong> when including the <code>validity_timeframe</code>.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">interval</br><code>string</code></td><td style="text-align:left"><p>Defines the intervening time between two time points in ISO 8601 format, expressed as a duration. For example, a promotion tier with an <code>interval</code> of <code>P2D</code> will be active every other day.</p></td></tr><tr><td style="text-align:left">duration</br><code>string</code></td><td style="text-align:left"><p>Defines the amount of time the promotion tier will be active in ISO 8601 format. For example, a promotion tier with a <code>duration</code> of <code>P1D</code> will be valid for a duration of one day.</p></td></tr></tbody></table> |
-| validity_day_of_week</br>`array` | <p>Integer array corresponding to the particular days of the week in which the promotion tier is valid.</p><ul><li><code>0</code> Sunday</li><li><code>1</code> Monday</li><li><code>2</code> Tuesday</li><li><code>3</code> Wednesday</li><li><code>4</code> Thursday</li><li><code>5</code> Friday</li><li><code>6</code> Saturday</li></ul> |
+| validity_timeframe | See: [Validity Timeframe](#validity-timeframe) |
+| validity_day_of_week | See: [Validity Day Of Week](#validity-day-of-week) |
 | validity_hours | See: [Validity Hours](#validity-hours) |
 | summary</br>`object` | <p>Contains statistics about promotion tier redemptions and orders.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">redemptions</br><code>object</code></td><td style="text-align:left"><p>Contains statistics about promotion tier redemptions.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">total_redeemed</br><code>integer</code></td><td style="text-align:left"><p>Number of times the promotion tier was redeemed.</p></td></tr></tbody></table></td></tr><tr><td style="text-align:left">orders</br><code>object</code></td><td style="text-align:left"><p>Contains statistics about orders related to the promotion tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">total_amount</br><code>integer</code></td><td style="text-align:left"><p>Sum of order totals.</p></td></tr><tr><td style="text-align:left">total_discount_amount</br><code>integer</code></td><td style="text-align:left"><p>Sum of total discount applied using the promotion tier.</p></td></tr></tbody></table></td></tr></tbody></table> |
 | object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the promotion tier.</p> |
@@ -149,6 +166,15 @@ All of:
 | object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `validation_rules_assignment` |
 | validation_status</br>`string` | <p>The validation status of the assignment</p> Available values: `VALID`, `PARTIALLY_VALID`, `INVALID` |
 | validation_omitted_rules</br>`array` | <p>The list of omitted rules</p> |
+
+## Areas and Stores Campain Assignment
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique identifier of the campaign assignment.</p> **Example:** <p>arsca_0ef5ee192117ae2416</p> |
+| area_id</br>`string` | <p>Unique identifier of the area to which the campaign is assigned.</p> **Example:** <p>ar_0ea6cd7b781b8f857f</p> |
+| area_store_id</br>`string` | <p>Unique identifier of the store to which the campaign is assigned.</p> **Example:** <p>ars_0ec347e2016bed85f4</p> |
+| created_at</br>`string` | <p>Date and time when the assignment was made. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-06-25T19:04:16.260Z</p> |
+| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the campaign assignment to areas or stores.</p> Available values: `area_store_campaign_assignment` |
 
 ## Discount
 <p>Contains information about discount.</p>
@@ -170,8 +196,15 @@ One of:
 | points</br>`integer` | <p>The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card.</p> |
 | expiration_rules</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">period_type</br><code>string</code></td><td style="text-align:left"><p>Type of period</p></td></tr><tr><td style="text-align:left">period_value</br><code>integer</code></td><td style="text-align:left"><p>Value of the period</p></td></tr><tr><td style="text-align:left">rounding_type</br><code>string</code></td><td style="text-align:left"><p>Type of rounding</p></td></tr><tr><td style="text-align:left">rounding_value</br><code>integer</code></td><td style="text-align:left"><p>Value of rounding</p></td></tr></tbody></table> |
 
-## Code Config Required Length Charset Pattern
-[Code Config](#code-config)
+## Code Config
+| Attributes |  Description |
+|:-----|:--------|
+| length</br>`number` | <p>Number of characters in a generated code (excluding prefix and postfix).</p> |
+| charset</br>`string` | <p>Characters that can appear in the code.</p><p>Examples:</p><ul><li>Alphanumeric: <code>0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic: <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic Lowercase: <code>abcdefghijklmnopqrstuvwxyz</code></li><li>Alphabetic Uppercase: <code>ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Numbers: <code>0123456789</code></li><li>Custom: a custom character set</li></ul> |
+| prefix</br>`string` | <p>A text appended before the code.</p> |
+| postfix</br>`string` | <p>A text appended after the code.</p> |
+| pattern</br>`string` | <p>A pattern for codes where hashes (#) will be replaced with random characters. Overrides <code>length</code>.</p> |
+| initial_count</br>`integer` | <p>The initial count</p> |
 
 ## Validation Rule Assignments List
 | Attributes |  Description |
@@ -229,16 +262,6 @@ One of:
 | fixed_amount_formula</br>`string` |  |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
-
-## Code Config
-| Attributes |  Description |
-|:-----|:--------|
-| length</br>`number` | <p>Number of characters in a generated code (excluding prefix and postfix).</p> |
-| charset</br>`string` | <p>Characters that can appear in the code.</p><p>Examples:</p><ul><li>Alphanumeric: <code>0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic: <code>abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Alphabetic Lowercase: <code>abcdefghijklmnopqrstuvwxyz</code></li><li>Alphabetic Uppercase: <code>ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></li><li>Numbers: <code>0123456789</code></li><li>Custom: a custom character set</li></ul> |
-| prefix</br>`string` | <p>A text appended before the code.</p> |
-| postfix</br>`string` | <p>A text appended after the code.</p> |
-| pattern</br>`string` | <p>A pattern for codes where hashes (#) will be replaced with random characters. Overrides <code>length</code>.</p> |
-| initial_count</br>`integer` | <p>The initial count</p> |
 
 ## Validation Rule Assignment
 | Attributes |  Description |

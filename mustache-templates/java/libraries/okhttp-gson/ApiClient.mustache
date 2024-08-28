@@ -264,7 +264,8 @@ public class ApiClient {
         json = new JSON();
 
         // Set default User-Agent.
-        setUserAgent("{{{httpUserAgent}}}{{^httpUserAgent}}OpenAPI-Generator/{{{artifactVersion}}}/java{{/httpUserAgent}}");
+        setUserAgent("OpenAPI-Java-SDK/{{{artifactVersion}}}");
+        addDefaultHeader("X-Voucherify-Channel", "Java-SDK");
 
         authentications = new HashMap<String, Authentication>();
         {{#dynamicOperations}}
@@ -527,50 +528,19 @@ public class ApiClient {
         return authentications.get(authName);
     }
 
-    {{#hasHttpBearerMethods}}
-        /**
-        * Helper method to set access token for the first Bearer authentication.
-        * @param bearerToken Bearer token
-        */
-    public void setBearerToken(String bearerToken) {
-        for (Authentication auth : authentications.values()) {
-            if (auth instanceof HttpBearerAuth) {
-                ((HttpBearerAuth) auth).setBearerToken(bearerToken);
-                return;
-            }
-        }
-        throw new RuntimeException("No Bearer authentication configured!");
-    }
-    {{/hasHttpBearerMethods}}
-
     /**
-     * Helper method to set username for the first HTTP basic authentication.
-     *
-     * @param username Username
-     */
-    public void setUsername(String username) {
-        for (Authentication auth : authentications.values()) {
-            if (auth instanceof HttpBasicAuth) {
-                ((HttpBasicAuth) auth).setUsername(username);
-                return;
-            }
+      * Set authentication for the given name.
+      *
+      * @param authName The authentication name
+      * @param authValue The authentication value
+      * @return The authentication, null if not found
+      */
+    public Authentication setAuthentication(String authName, String authValue) {
+        ApiKeyAuth apiKeyAuth = (ApiKeyAuth) this.getAuthentication(authName);
+        if (apiKeyAuth != null) {
+            apiKeyAuth.setApiKey(authValue);
         }
-        throw new RuntimeException("No HTTP basic authentication configured!");
-    }
-
-    /**
-     * Helper method to set password for the first HTTP basic authentication.
-     *
-     * @param password Password
-     */
-    public void setPassword(String password) {
-        for (Authentication auth : authentications.values()) {
-            if (auth instanceof HttpBasicAuth) {
-                ((HttpBasicAuth) auth).setPassword(password);
-                return;
-            }
-        }
-        throw new RuntimeException("No HTTP basic authentication configured!");
+        return apiKeyAuth;
     }
 
     /**
@@ -586,60 +556,6 @@ public class ApiClient {
             }
         }
         throw new RuntimeException("No API key authentication configured!");
-    }
-
-    /**
-     * Helper method to set API key prefix for the first API key authentication.
-     *
-     * @param apiKeyPrefix API key prefix
-     */
-    public void setApiKeyPrefix(String apiKeyPrefix) {
-        for (Authentication auth : authentications.values()) {
-            if (auth instanceof ApiKeyAuth) {
-                ((ApiKeyAuth) auth).setApiKeyPrefix(apiKeyPrefix);
-                return;
-            }
-        }
-        throw new RuntimeException("No API key authentication configured!");
-    }
-
-    /**
-     * Helper method to set access token for the first OAuth2 authentication.
-     *
-     * @param accessToken Access token
-     */
-    public void setAccessToken(String accessToken) {
-        {{#hasOAuthMethods}}
-        for (Authentication auth : authentications.values()) {
-            if (auth instanceof OAuth) {
-                ((OAuth) auth).setAccessToken(accessToken);
-                return;
-            }
-        }
-        {{/hasOAuthMethods}}
-        throw new RuntimeException("No OAuth2 authentication configured!");
-    }
-
-    /**
-     * Helper method to set credentials for AWSV4 Signature
-     *
-     * @param accessKey Access Key
-     * @param secretKey Secret Key
-     * @param region Region
-     * @param service Service to access to
-     */
-    public void setAWS4Configuration(String accessKey, String secretKey, String region, String service) {
-        {{#withAWSV4Signature}}
-        for (Authentication auth : authentications.values()) {
-            if (auth instanceof AWS4Auth) {
-                ((AWS4Auth) auth).setCredentials(accessKey, secretKey);
-                ((AWS4Auth) auth).setRegion(region);
-                ((AWS4Auth) auth).setService(service);
-                return;
-            }
-        }
-        {{/withAWSV4Signature}}
-        throw new RuntimeException("No AWS4 authentication configured!");
     }
 
     /**
@@ -1654,10 +1570,10 @@ public class ApiClient {
     /**
      * Add a Content-Disposition Header for the given key and file to the MultipartBody Builder.
      *
-     * @param mpBuilder MultipartBody.Builder 
+     * @param mpBuilder MultipartBody.Builder
      * @param key The key of the Header element
      * @param file The file to add to the Header
-     */ 
+     */
     private void addPartToMultiPartBuilder(MultipartBody.Builder mpBuilder, String key, File file) {
         Headers partHeaders = Headers.of("Content-Disposition", "form-data; name=\"" + key + "\"; filename=\"" + file.getName() + "\"");
         MediaType mediaType = MediaType.parse(guessContentTypeFromFile(file));

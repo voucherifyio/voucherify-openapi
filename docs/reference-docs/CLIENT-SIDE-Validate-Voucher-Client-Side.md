@@ -1,5 +1,5 @@
 ---
-title: Validate Voucher (client-side) [Deprecated]
+title: Validate Voucher (client-side)
 type: endpoint
 categorySlug: voucherify-api
 slug: validate-voucher-client-side
