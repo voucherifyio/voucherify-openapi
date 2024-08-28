@@ -6,6 +6,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2024-08-06
 `OpenAPI.json`
+- New schemas: `LoyaltyCampaign`, `LoyaltyCampaignVoucher`, `LoyaltiesCreateCampaignRequestBody`, `LoyaltiesCreateCampaignResponseBody`, `LoyaltiesUpdateCampaignRequestBody`, `LoyaltiesUpdateCampaignResponseBody`
+
+## 2024-08-06
+`OpenAPI.json`
 - New schemas: `LoyaltiesRewardsCreateAssignmentRequestBody`, `LoyaltiesRewardsCreateAssignmentResponseBody`, `LoyaltiesRewardsCreateAssignmentItemRequestBody`, `LoyaltiesRewardsUpdateAssignmentRequestBody`, `LoyaltiesRewardsUpdateAssignmentResponseBody`
 - Schema renamed:
   - `VouchersImportCreateRequestBodyItem` -> `VouchersImportCreateItemRequestBody`

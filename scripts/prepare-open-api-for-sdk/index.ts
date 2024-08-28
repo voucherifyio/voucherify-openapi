@@ -200,6 +200,7 @@ const main = async (languageOptions: LanguageOptions) => {
       schemas: moveSchemasOnTheBack(parseNullsToNullableObjects(schemas), [
         "LoyaltiesEarningRulesUpdateRequestBody",
         "CampaignsVouchersCreateBaseRequestBody",
+        "CampaignLoyaltyVoucher",
       ]),
       parameters,
     },
