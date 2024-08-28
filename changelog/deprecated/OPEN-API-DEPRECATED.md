@@ -821,8 +821,8 @@ Endpoint change:
 
 # 20231019 - Vouchers
 
-- Vouchers - List Gift Card Transactions  (**GET** `/vouchers/{code}/transactions`) renamed to List Voucher Transactions
-- Vouchers - Export Gift Card Transactions  (**GET** `/vouchers/{code}/transactions/export`) renamed to Export Voucher Transactions
+- Vouchers - List Gift Card Transactions  (**GET** `v1/vouchers/{code}/transactions`) renamed to List Voucher Transactions
+- Vouchers - Export Gift Card Transactions  (**GET** `v1/vouchers/{code}/transactions/export`) renamed to Export Voucher Transactions
 
 **New models**
 - vouchers_list_vouchers_transactions_response_body (old `1_res_vouchers_code_transactions`)
@@ -1277,28 +1277,28 @@ Added script, located in `docs/script/` directory to quickly update order of ref
 
 | **API**        | **Endpoint Name**                               | **Endpoint**                                 | **Slug**                          | **Why**                         |
 | -------------- | ----------------------------------------------- | -------------------------------------------- | --------------------------------- | ------------------------------- |
-| **Vouchers**   | [deprecated] Update Vouchers' metadata in bulk  | **POST** `/vouchers/metdata`                 | update-vouchers-metadata-in-bulk  | deprecated                      |
-|                | [deprecated] Update Vouchers in bulk            | **POST** `/vouchers/bulk`                    | update-vouchers-in-bulk           | deprecated                      |
-| **Promotions** | Create Promotion Campaign                       | **POST** `/campaigns`                        | create-promotion-campaign         | path exists under Campaigns API |
+| **Vouchers**   | [deprecated] Update Vouchers' metadata in bulk  | **POST** `v1/vouchers/metdata`                 | update-vouchers-metadata-in-bulk  | deprecated                      |
+|                | [deprecated] Update Vouchers in bulk            | **POST** `v1/vouchers/bulk`                    | update-vouchers-in-bulk           | deprecated                      |
+| **Promotions** | Create Promotion Campaign                       | **POST** `v1/campaigns`                        | create-promotion-campaign         | path exists under Campaigns API |
 | **Customers**  | [deprecated] Update Customers' metadata in bulk | **POST** `customers/metadata`                | update-customers-metadata-in-bulk | deprecated                      |
 |                | [deprecated] Update Customers in bulk           | **POST** `customers/bulk`                    | update-customers-in-bulk          | deprecated                      |
-| **Orders**     | Download Export                                 | **GET** `/exports/{id}`                      | download-export-1                 | same in Exports API             |
-| **Products**   | [deprecated] Update Products metadata in bulk   | **POST** `/products/metadata`                | update-products-metadata-in-bulk  | deprecated                      |
-|                | [deprecated] Update Products in bulk            | **POST** `/products/bulk`                    | update-products-in-bulk           | deprecated                      |
-|                | Get SKU [deprecated]                            | **GET** `/products/{productId}/skus/{skuId}` | get-sku                           | deprecated                      |
+| **Orders**     | Download Export                                 | **GET** `v1/exports/{id}`                      | download-export-1                 | same in Exports API             |
+| **Products**   | [deprecated] Update Products metadata in bulk   | **POST** `v1/products/metadata`                | update-products-metadata-in-bulk  | deprecated                      |
+|                | [deprecated] Update Products in bulk            | **POST** `v1/products/bulk`                    | update-products-in-bulk           | deprecated                      |
+|                | Get SKU [deprecated]                            | **GET** `v1/products/{productId}/skus/{skuId}` | get-sku                           | deprecated                      |
 
 
 ### Endpoints that were added
 
 | **API**   | **Endpoint Name**                | **Endpoint**                                                              | **Slug**                           |
 | --------- | -------------------------------- | ------------------------------------------------------------------------- | ---------------------------------- |
-| Rewards   | Get Reward Assignment            | **GET** `/rewards/{rewardId}/assignments/{assignmentId}`                  | get-reward-assignment              |
-| Vouchers  | List Gift Card Transactions      | **GET** `/vouchers/{code}/transactions`                                   | list-gift-card-transactions        |
-| Vouchers  | Export Gift Card Transactions    | **POST** `/vouchers/{code}/transactions/export`                           | export-gift-card-transactions      |
-| Loyalties | List Loyalty Card Transactions   | **GET** `/loyalties/{campaignId}/members/{memberId}/transactions`         | list-loyalty-card-transactions-1   |
-| Loyalties | List Loyalty Card Transactions   | **GET** `/loyalties/members/{memberId}/transactions`                      | list-loyalty-card-transactions     |
-| Loyalties | Export Loyalty Card Transactions | **POST** `/loyalties/{campaignId}/members/{memberId}/transactions/export` | export-loyalty-card-transactions-1 |
-| Loyalties | Export Loyalty Card Transactions | **POST** `/loyalties/members/{memberId}/transactions/export`              | export-loyalty-card-transactions   |
+| Rewards   | Get Reward Assignment            | **GET** `v1/rewards/{rewardId}/assignments/{assignmentId}`                  | get-reward-assignment              |
+| Vouchers  | List Gift Card Transactions      | **GET** `v1/vouchers/{code}/transactions`                                   | list-gift-card-transactions        |
+| Vouchers  | Export Gift Card Transactions    | **POST** `v1/vouchers/{code}/transactions/export`                           | export-gift-card-transactions      |
+| Loyalties | List Loyalty Card Transactions   | **GET** `v1/loyalties/{campaignId}/members/{memberId}/transactions`         | list-loyalty-card-transactions-1   |
+| Loyalties | List Loyalty Card Transactions   | **GET** `v1/loyalties/members/{memberId}/transactions`                      | list-loyalty-card-transactions     |
+| Loyalties | Export Loyalty Card Transactions | **POST** `v1/loyalties/{campaignId}/members/{memberId}/transactions/export` | export-loyalty-card-transactions-1 |
+| Loyalties | Export Loyalty Card Transactions | **POST** `v1/loyalties/members/{memberId}/transactions/export`              | export-loyalty-card-transactions   |
 
 
 ### Slugs updated for Object Schemas
