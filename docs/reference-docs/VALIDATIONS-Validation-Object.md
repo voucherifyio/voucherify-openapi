@@ -9,7 +9,7 @@ order: 1
 ---
 
 ## Vouchers Validate Response Body
-<p>Response body schema for <strong>POST</strong> <code>/vouchers/{code}/validate</code>.</p>
+<p>Response body schema for <strong>POST</strong> <code>v1/vouchers/{code}/validate</code>.</p>
 
 One of:
 
