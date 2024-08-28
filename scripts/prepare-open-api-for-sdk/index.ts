@@ -101,9 +101,9 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 };
 
 const main = async (languageOptions: LanguageOptions) => {
+  //////////////////////////////////////////////////////////////////////////////
   removeStoplightTag(openAPIContent);
   openAPIContent = removeUnwantedProperties(openAPIContent, ["readmeTitle"]);
-  //////////////////////////////////////////////////////////////////////////////
   //Simplify AsyncAction.result
   openAPIContent.components.schemas.AsyncAction.allOf.map((schema) => {
     if (schema?.properties?.result) {
