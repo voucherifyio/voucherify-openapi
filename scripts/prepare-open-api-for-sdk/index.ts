@@ -104,6 +104,7 @@ const main = async (languageOptions: LanguageOptions) => {
   //////////////////////////////////////////////////////////////////////////////
   removeStoplightTag(openAPIContent);
   openAPIContent = removeUnwantedProperties(openAPIContent, ["readmeTitle"]);
+  openAPIContent.components.schemas = removeUnwantedProperties(openAPIContent.components.schemas, ["title"]);
   //Simplify AsyncAction.result
   openAPIContent.components.schemas.AsyncAction.allOf.map((schema) => {
     if (schema?.properties?.result) {
@@ -196,12 +197,17 @@ const main = async (languageOptions: LanguageOptions) => {
         )
       : openAPIContent.components.parameters;
 
+
+  Object.fromEntries(Object.entries(schemas).map(([title, schema]) => {
+    return [title, openAPIContent.components.schemas]
+  }));
+
   // Building all together
   const newOpenApiFile = cleanUpDescriptionsInEntireObject({
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
-      schemas: moveSchemasOnTheBack(parseNullsToNullableObjects(schemas), [
+      schemas: moveSchemasOnTheBack(fixSchemasTitles(parseNullsToNullableObjects(schemas)), [
         "LoyaltiesEarningRulesUpdateRequestBody",
         "CampaignsVouchersCreateBaseRequestBody",
         "CampaignLoyaltyVoucher",
@@ -213,6 +219,39 @@ const main = async (languageOptions: LanguageOptions) => {
 
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
 };
+
+const fixSchemasTitles = (schemas) => {
+  return Object.fromEntries(Object.entries(schemas).map(([title, schema]) => {
+    return [title, fixSchemaTitle(schema, title)]
+  }));
+}
+
+const fixSchemaTitle = (schema, title) => {
+  if(schema.$ref){
+    return _.pick(schema,'$ref')
+  }
+  schema.title = title;
+  if(schema.items){
+    schema.items = fixSchemaTitle(schema.items,`${title}Item`)
+  }
+  if(schema.properties){
+    schema.properties = Object.fromEntries(Object.entries(schema.properties).map(([property, schema]:any) => {
+      if(['object','array'].includes(schema.type)) {
+        return [property, fixSchemaTitle(schema, `${title}${(_.startCase(snakeToCamel(property))).replaceAll(' ','')}`)]
+      }
+      return [property, schema]
+    }));
+  }
+  return {title: schema.title, ..._.omit(schema)};
+}
+
+const snakeToCamel = str =>
+    str.toLowerCase().replace(/([-_][a-z])/g, group =>
+        group
+            .toUpperCase()
+            .replace('-', '')
+            .replace('_', '')
+    );
 
 const moveSchemasOnTheBack = (schemas: any, schemasNames: string[]) => ({
   ..._.omit(schemas, schemasNames),
