@@ -147,6 +147,10 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.schemas.CustomerActivity.properties.data
     .properties;
   delete openAPIContent.components.schemas.ParameterCustomerEvent.enum;
+  //Fix `MemberActivity`
+  delete openAPIContent.components.schemas.MemberActivity.properties.type.enum;
+  delete openAPIContent.components.schemas.MemberActivity.properties.data
+    .properties;
   //////////////////////////////////////////////////////////////////////////////
   if (languageOptions.addMissingDefaultsWhenSingleEnumFound) {
     openAPIContent = addMissingDefaults(openAPIContent);

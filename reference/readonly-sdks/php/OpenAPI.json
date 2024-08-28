@@ -2797,7 +2797,7 @@
       "LoyaltiesListMembersResponseBody": {
         "title": "Loyalties List Members Response Body",
         "type": "object",
-        "description": "Response body schema for **GET** `/loyalties/{campaignId}/members`.",
+        "description": "Response body schema for **GET** `v1/loyalties/{campaignId}/members`.",
         "properties": {
           "object": {
             "type": "string",
@@ -2828,6 +2828,47 @@
             "nullable": true
           }
         }
+      },
+      "LoyaltiesMemberActivityListResponseBody": {
+        "type": "object",
+        "title": "Member Activity List Response Body",
+        "description": "Response body schema for retrieving member activity.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON. This object stores information about member activities in a dictionary.",
+            "enum": [
+              "list"
+            ],
+            "nullable": true
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of member activity objects.",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of member activity objects.",
+            "items": {
+              "$ref": "#/components/schemas/MemberActivity"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request with a `starting_after_id` query or a different limit to get more records returned in the results.",
+            "nullable": true
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an ID that can be used to return another page of results. Use the event id in the `starting_after_id` query parameter to display another page of the results starting after the event with that ID.",
+            "nullable": true
+          }
+        },
+        "required": []
       },
       "LoyaltiesMembersBalanceUpdateRequestBody": {
         "description": "Request Body schema for **POST** `v1/loyalties/members/{memberId}/balance` and **POST** `v1/loyalties/{campaignId}/members/{memberId}/balance`.",
@@ -2940,6 +2981,37 @@
           }
         },
         "required": []
+      },
+      "LoyaltiesMembersCreateRequestBody": {
+        "title": "Loyalties Members Create Request Body",
+        "type": "object",
+        "description": "Request body schema for assigning a loyalty card to a customer using **POST** `/loyalties/{campaignId}/members`.",
+        "allOf": [
+          {
+            "title": "Voucher code",
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "description": "Code of voucher being published.",
+                "type": "string",
+                "nullable": true
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/CreatePublicationBase"
+          }
+        ]
+      },
+      "LoyaltiesMembersCreateResponseBody": {
+        "title": "Loyalties Members Create Response Body",
+        "type": "object",
+        "description": "Respone body schema for assigning a loyalty card to a customer using **POST** `/loyalties/{campaignId}/members`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/LoyaltyMember"
+          }
+        ]
       },
       "LoyaltiesMembersGetResponseBody": {
         "title": "Loyalties Members Get Response Body",
@@ -5405,7 +5477,7 @@
         "title": "PublicationsCreateRequestBody",
         "properties": {
           "voucher": {
-            "description": "Code of voucher being published.",
+            "description": "Code of the voucher being published.",
             "type": "string",
             "nullable": true
           },
@@ -5508,6 +5580,11 @@
           "metadata": {
             "type": "object",
             "title": "PublicationsCreateRequestBodyMetadata",
+            "nullable": true
+          },
+          "channel": {
+            "type": "string",
+            "description": "Specify the distribution channel.",
             "nullable": true
           },
           "campaign": {
@@ -9886,7 +9963,7 @@
           {
             "type": "object",
             "title": "Schema that contains unique properties for Loyalty Campaign",
-            "description": "Body schema for creating a campaign of loyalty type using **POST** `/campaigns`.",
+            "description": "Body schema for creating a campaign of loyalty type using **POST** `v1/campaigns`.",
             "properties": {
               "campaign_type": {
                 "type": "string",
@@ -10011,7 +10088,7 @@
           {
             "type": "object",
             "title": "Properties For Loyalty Campaign",
-            "description": "Body schema for update a campaign of loyalty type using **PUT** `/campaigns`.",
+            "description": "Body schema for update a campaign of loyalty type using **PUT** `v1/campaigns`.",
             "properties": {
               "loyalty_tiers_expiration": {
                 "$ref": "#/components/schemas/LoyaltyTiersExpirationAll"
@@ -10122,6 +10199,39 @@
             "nullable": true
           }
         }
+      },
+      "CreatePublicationBase": {
+        "title": "Create Publication Base",
+        "type": "object",
+        "description": "Create publication",
+        "properties": {
+          "source_id": {
+            "type": "string",
+            "description": "The merchant's publication ID if it is different from the Voucherify publication ID. It's an optional tracking identifier of a publication. It is really useful in case of an integration between multiple systems. It can be a publication ID from a CRM system, database or 3rd-party service.\nIf `source_id` is provided only 1 voucher can be published per request.",
+            "nullable": true
+          },
+          "customer": {
+            "description": "Contains information about the customer to whom the publication was directed.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the publication. A set of key/value pairs that you can attach to a publication object. It can be useful for storing additional information about the publication in a structured format.",
+            "nullable": true
+          },
+          "channel": {
+            "type": "string",
+            "description": "Specify the distribution channel.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "customer"
+        ]
       },
       "CustomerActivity": {
         "title": "Customer Activity",
@@ -13087,6 +13197,42 @@
           "unique_winners": {
             "description": "Specifies whether each participant can win only once across multiple draws.",
             "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "MemberActivity": {
+        "title": "Member Activity",
+        "type": "object",
+        "description": "This is an object representing member activity.  \n\nThis is a general object which presents moments from members' activity. There are all types of different events that members perform during their journey once they participate in a loyalty program. Events describe moments when the members redeem loyalty cards and earn points or rewards. The list of all types of activities is listed below.\n\nThe details describing the activity are collected in an array property named `data`. In this object, software integrators can find all further information explaining the event context.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique event ID, assigned by Voucherify.",
+            "example": "evcus_0c150c51730c6b60b1",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Event type.",
+            "nullable": true
+          },
+          "data": {
+            "type": "object",
+            "description": "Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the member activity occurred in ISO 8601 format.",
+            "example": "2022-08-30T09:14:07.660Z",
+            "format": "date-time",
+            "nullable": true
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Unique identifier of the request that caused the event.",
+            "example": "w-0e30613abc1f044513",
             "nullable": true
           }
         }
@@ -18713,7 +18859,7 @@
       "CampaignsCreateBase": {
         "type": "object",
         "title": "Campaign Create Schema Base",
-        "description": "Base body schema for creating a campaign using **POST** `/campaigns`.",
+        "description": "Base body schema for creating a campaign using **POST** `v1/campaigns`.",
         "properties": {
           "name": {
             "type": "string",
@@ -18827,7 +18973,7 @@
       "CampaignsUpdateCouponCampaignBase": {
         "type": "object",
         "title": "Campaigns Update Coupon Campaign Base",
-        "description": "Base body schema for updating a campaign which contains coupon codes using **PUT** `/campaigns`.",
+        "description": "Base body schema for updating a campaign which contains coupon codes using **PUT** `v1/campaigns`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/CampaignsUpdateBase"
@@ -20442,7 +20588,7 @@
       "CampaignsUpdateBase": {
         "type": "object",
         "title": "Campaign Update Schema Base",
-        "description": "Base body schema for creating a campaign using **PUT** `/campaigns`.",
+        "description": "Base body schema for creating a campaign using **PUT** `v1/campaigns`.",
         "properties": {
           "start_date": {
             "type": "string",
@@ -34587,6 +34733,153 @@
             }
           }
         }
+      },
+      "post": {
+        "operationId": "add-member",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "Add Member",
+        "description": "This method assigns a loyalty card to a customer. It selects a loyalty card suitable for publication, adds a publish entry, and returns the published voucher.  \nA voucher is suitable for publication when its active and hasnt been published yet.  \n 📘 Auto-update campaign\n In case you want to ensure the number of publishable codes increases automatically with the number of customers, you should use **auto-update** campaign.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Provide details to whom the loyalty card should be assigned.    \nYou can choose to either specify the exact loyalty card code that you want to publish from existin (non-assigned) codes, or choose not to specify a voucher code. If you choose not to specify a code in the request paylaod, then the system will choose the next available voucher code available to be assigned to a customer.  \nYou can also include metadata in the request payload. This metadata will be assigned to the publication object, but will not be returned in the response to this endpoint. To see of publications (assignments of particular codes to customers) and publication metadata, use the List Publications endpoint.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoyaltiesMembersCreateRequestBody"
+              },
+              "examples": {
+                "Using source ID": {
+                  "value": {
+                    "customer": "source_customer_1",
+                    "metadata": {
+                      "year": 2022
+                    },
+                    "channel": "postman",
+                    "voucher": "KpzbHUY5"
+                  }
+                },
+                "Using unique Voucherify assigned ID": {
+                  "value": {
+                    "customer": "cust_8KQmHxAERpgebYcFhSpZRr37",
+                    "metadata": {
+                      "year": 2022
+                    },
+                    "channel": "postman",
+                    "voucher": "KpzbHUY5"
+                  }
+                },
+                "Using source ID in object": {
+                  "value": {
+                    "customer": {
+                      "source_id": "source_customer_1"
+                    },
+                    "metadata": {
+                      "year": 2022
+                    },
+                    "channel": "postman",
+                    "voucher": "KpzbHUY5"
+                  }
+                },
+                "Using unique Voucherify assigned ID in object": {
+                  "value": {
+                    "customer": {
+                      "id": "cust_8KQmHxAERpgebYcFhSpZRr37"
+                    },
+                    "metadata": {
+                      "year": 2022
+                    },
+                    "channel": "postman",
+                    "voucher": "KpzbHUY5"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the voucher object that was published to the customer provided in the request payload.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMembersCreateResponseBody"
+                },
+                "examples": {
+                  "Loyalty Card": {
+                    "value": {
+                      "id": "v_0TxKw1bm0oZuS5lwA8526vze1OBMV1OH",
+                      "code": "KpzbHUY5",
+                      "campaign": "Loyalty Campaign",
+                      "campaign_id": "camp_eTIsUtuzkRXQT6rsUQqrS5Gw",
+                      "category": "New Customers",
+                      "category_id": "cat_0b6152ce12414820dc",
+                      "categories": [
+                        {
+                          "id": "cat_0b6152ce12414820dc",
+                          "name": "New Customers",
+                          "hierarchy": 0,
+                          "created_at": "2022-07-14T20:17:07.657Z",
+                          "object": "category"
+                        }
+                      ],
+                      "type": "LOYALTY_CARD",
+                      "discount": null,
+                      "gift": null,
+                      "loyalty_card": {
+                        "points": 0,
+                        "balance": 0
+                      },
+                      "start_date": null,
+                      "expiration_date": null,
+                      "validity_timeframe": null,
+                      "validity_day_of_week": null,
+                      "active": true,
+                      "additional_info": null,
+                      "metadata": {
+                        "Season": "Fall"
+                      },
+                      "assets": {
+                        "qr": {
+                          "id": "U2FsdGVkX1+hdZfzUaz448vIsyf7WpvXiDyqFbyw0+P5wMu12w3B5DyYwA7LCSK+Nr7TA7PKGuHOTGxfBieqrhvJo81HiaIJimDOhk+ecEOisMRmHf6XsNckVlyBHmkpBiXWNm8UDwZnXOAG75Usdw==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2BhdZfzUaz448vIsyf7WpvXiDyqFbyw0%2BP5wMu12w3B5DyYwA7LCSK%2BNr7TA7PKGuHOTGxfBieqrhvJo81HiaIJimDOhk%2BecEOisMRmHf6XsNckVlyBHmkpBiXWNm8UDwZnXOAG75Usdw%3D%3D"
+                        },
+                        "barcode": {
+                          "id": "U2FsdGVkX19VRXApVvZ9/ArwBd0wNg7s2KZBXrFvPXZdDQyzGj0HbbEIx5TAoXNR9zaE5kzIj9BElzgK82aOMMVnc1sqvr93xw+YeYMnqGqHRZfM78pYC8560Zc3U6IELtxzaJJ0x2uDUe6Dc9XYeg==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX19VRXApVvZ9%2FArwBd0wNg7s2KZBXrFvPXZdDQyzGj0HbbEIx5TAoXNR9zaE5kzIj9BElzgK82aOMMVnc1sqvr93xw%2BYeYMnqGqHRZfM78pYC8560Zc3U6IELtxzaJJ0x2uDUe6Dc9XYeg%3D%3D"
+                        }
+                      },
+                      "is_referral_code": false,
+                      "created_at": "2022-11-21T15:48:57.860Z",
+                      "updated_at": "2022-11-21T15:49:36.671Z",
+                      "holder_id": "cust_8KQmHxAERpgebYcFhSpZRr37",
+                      "redemption": {
+                        "quantity": null,
+                        "redeemed_quantity": 0,
+                        "redeemed_points": 0,
+                        "object": "list",
+                        "url": "/v1/vouchers/KpzbHUY5/redemptions?page=1&limit=10"
+                      },
+                      "publish": {
+                        "object": "list",
+                        "count": 1,
+                        "url": "/v1/vouchers/KpzbHUY5/publications?page=1&limit=10"
+                      },
+                      "object": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/loyalties/{campaignId}/members/{memberId}": {
@@ -34783,6 +35076,135 @@
                       "object": "voucher"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/{campaignId}/members/{memberId}/activity": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "description": "Unique campaign ID."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "A code that identifies the loyalty card."
+        }
+      ],
+      "get": {
+        "operationId": "list-member-activity-1",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "List Member Activity",
+        "description": "Retrieves the list of activities for the given member ID related to a voucher and customer who is the holder of the voucher.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderCreatedAt"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Apply this filter to order the events according the date and time when it was created. The dash - preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of event objects related to the loyalty card.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMemberActivityListResponseBody"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/members/{memberId}/activity": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty card assigned to a particular customer."
+        }
+      ],
+      "get": {
+        "operationId": "list-member-activity",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "List Member Activity",
+        "description": "\n 📘 Alternative endpoint\n This endpoint is an alternative to this endpoint. The URL was re-designed to allow you to get member activities without having to provide the campaignId as a path parameter.\nRetrieves the list of activities for the given member ID related to a voucher and customer who is the holder of the voucher.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderCreatedAt"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Apply this filter to order the events according the date and time when it was created. The dash - preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of event objects related to the loyalty card.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMemberActivityListResponseBody"
                 }
               }
             }
