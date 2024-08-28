@@ -3131,7 +3131,7 @@
       "CodeConfig": {
         "title": "Code Config",
         "type": "object",
-        "description": "Schema containing information about config used for voucher. Defines code's pattern (prefix, suffix, length, charset, etc).",
+        "description": "Contains information about the config used for the voucher code. Defines the code's pattern (prefix, postfix, length, charset, etc).",
         "properties": {
           "length": {
             "type": "number",
@@ -3155,7 +3155,7 @@
           },
           "initial_count": {
             "type": "integer",
-            "description": "The initial count"
+            "description": "Internal value, does not change anything if provided."
           }
         }
       },
@@ -3355,7 +3355,9 @@
               "customer.loyalty.tier.prolonged",
               "customer.loyalty.tier.expiration.changed",
               "customer.loyalty.tier.joined",
-              "customer.loyalty.tier.left"
+              "customer.loyalty.tier.left",
+              "customer.holder.assignment.created",
+              "customer.holder.assignment.deleted"
             ]
           },
           "data": {
@@ -3641,6 +3643,12 @@
           },
           {
             "$ref": "#/components/schemas/EventCustomerLoyaltyTierLeft"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerHolderAssignmentCreated"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerHolderAssignmentDeleted"
           }
         ]
       },
@@ -4458,7 +4466,7 @@
           "created_at": {
             "type": "string",
             "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the custom event was created. Timestamp is presented in the ISO 8601 format.",
+            "description": "Timestamp representing the date and time when the custom event was created. The value is shown in the ISO 8601 format.",
             "format": "date-time"
           }
         },
@@ -4879,9 +4887,11 @@
             ]
           },
           "custom_event": {
+            "description": "Contains details about the custom event.",
             "type": "object",
             "properties": {
               "schema_id": {
+                "description": "Unique identifier of the custom event schema",
                 "type": "string"
               }
             },
@@ -4891,7 +4901,7 @@
           },
           "segment": {
             "type": "object",
-            "description": "Contains the ID of a customer segment. Required for the customer.segment.entered option in event.",
+            "description": "Contains the ID of a customer segment. Required for the `customer.segment.entered` option in the event.",
             "properties": {
               "id": {
                 "type": "string",
@@ -4953,11 +4963,11 @@
           },
           "start_date": {
             "type": "string",
-            "description": "Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. Earning rule is inactive before this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default."
+            "description": "Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. The earning rule is inactive before this date. If you do not define the start date for an earning rule, it will inherit the campaign start date by default."
           },
           "expiration_date": {
             "type": "string",
-            "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format. Earning rule is inactive after this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default."
+            "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format. The earning rule is inactive after this date. If you do not define the expiration date for an earning rule, it will inherit the campaign expiration date by default."
           },
           "validity_timeframe": {
             "$ref": "#/components/schemas/ValidityTimeframe"
@@ -4985,11 +4995,12 @@
       },
       "EarningRuleEvent": {
         "title": "Earning Rule Event",
-        "example": "\"order.paid\", \"customer.segment.entered\", \"customer.loyalty.tier.upgraded\", \"customer.loyalty.tier.downgraded\", \"customer.loyalty.tier.prolonged\", \"customer.loyalty.tier.joined\", \"customer.loyalty.tier.left\"",
+        "example": "`order.paid`, `customer.segment.entered`, `customer.loyalty.tier.upgraded`, `customer.loyalty.tier.downgraded`, `customer.loyalty.tier.prolonged`, `customer.loyalty.tier.joined`, `customer.loyalty.tier.left`",
         "type": "string"
       },
       "EarningRuleFixed": {
-        "title": "Define fixed amount of points",
+        "title": "EarningRuleFixed",
+        "readmeTitle": "Define fixed amount of points",
         "type": "object",
         "properties": {
           "type": {
@@ -5025,10 +5036,12 @@
             "$ref": "#/components/schemas/EarningRuleProportionalCustomEvent"
           }
         ],
-        "title": "Calculate points proportionally"
+        "readmeTitle": "Calculate points proportionally",
+        "title": "Earning Rule Proportional"
       },
       "EarningRuleProportionalCustomerMetadata": {
-        "title": "Customer Metadata",
+        "title": "Earning Rule Proportional Customer Metadata",
+        "readmeTitle": "Define amount of points proportional to customer metadata",
         "type": "object",
         "properties": {
           "type": {
@@ -5144,6 +5157,7 @@
         ]
       },
       "EarningRuleProportionalOrder": {
+        "readmeTitle": "Define amount of points proportional to the order",
         "oneOf": [
           {
             "$ref": "#/components/schemas/EarningRuleProportionalOrderAmount"
@@ -5155,7 +5169,7 @@
             "$ref": "#/components/schemas/EarningRuleProportionalOrderMetadata"
           }
         ],
-        "title": "Order"
+        "title": "Earning Rule Proportional Order"
       },
       "EarningRuleProportionalOrderAmount": {
         "title": "Order Amount",
@@ -5211,6 +5225,7 @@
         ]
       },
       "EarningRuleProportionalOrderItems": {
+        "readmeTitle": "Define amount of points proportional to order items",
         "oneOf": [
           {
             "$ref": "#/components/schemas/EarningRuleProportionalOrderItemsQuantity"
@@ -5222,10 +5237,11 @@
             "$ref": "#/components/schemas/EarningRuleProportionalOrderItemsSubtotalAmount"
           }
         ],
-        "title": "Order Items"
+        "title": "Earning Rule Proportional Order Items"
       },
       "EarningRuleProportionalOrderItemsAmount": {
-        "title": "Order Items Amount",
+        "title": "Earning Rule Proportional Order Items Amount",
+        "readmeTitle": "Order Items Amount",
         "type": "object",
         "properties": {
           "type": {
@@ -5293,7 +5309,8 @@
         ]
       },
       "EarningRuleProportionalOrderItemsQuantity": {
-        "title": "Order Items Quantity",
+        "title": "Earning Rule Proportional Order Items Quantity",
+        "readmeTitle": "Order Items Quantity",
         "type": "object",
         "properties": {
           "type": {
@@ -5361,7 +5378,8 @@
         ]
       },
       "EarningRuleProportionalOrderItemsSubtotalAmount": {
-        "title": "Order Items Subtotal Amount",
+        "title": "Earning Rule Proportional Order Items Subtotal Amount",
+        "readmeTitle": "Order Items Subtotal Amount",
         "type": "object",
         "properties": {
           "type": {
@@ -5896,6 +5914,54 @@
             "$ref": "#/components/schemas/VoucherTransaction"
           }
         }
+      },
+      "EventCustomerHolderAssignmentCreated": {
+        "title": "Event Customer Holder Assignment Created",
+        "description": "Event data object schema for `customer.holder.assignment.created`.",
+        "properties": {
+          "holder": {
+            "$ref": "#/components/schemas/SimpleRedeemableHolder"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          }
+        },
+        "required": [
+          "holder",
+          "voucher",
+          "campaign",
+          "customer"
+        ]
+      },
+      "EventCustomerHolderAssignmentDeleted": {
+        "title": "Event Customer Holder Assignment Deleted",
+        "description": "Event data object schema for `customer.holder.assignment.deleted`.",
+        "properties": {
+          "holder": {
+            "$ref": "#/components/schemas/SimpleRedeemableHolder"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          }
+        },
+        "required": [
+          "holder",
+          "voucher",
+          "campaign",
+          "customer"
+        ]
       },
       "EventCustomerIntercomFailed": {
         "title": "Event Customer Intercom Failed",
@@ -8145,8 +8211,8 @@
         "properties": {
           "type": {
             "type": "string",
-            "default": "GIFT_VOUCHER",
             "description": "Type of voucher.",
+            "default": "GIFT_VOUCHER",
             "enum": [
               "GIFT_VOUCHER"
             ]
@@ -9600,7 +9666,6 @@
           },
           "type": {
             "type": "string",
-            "default": "LOYALTY_CARD",
             "enum": [
               "LOYALTY_CARD"
             ],
@@ -9775,7 +9840,7 @@
           },
           "holder_id": {
             "type": "string",
-            "description": "Unique identifier of the customer who owns the voucher."
+            "description": "Unique customer identifier of the redeemable holder. It equals to the customer ID assigned by Voucherify."
           },
           "updated_at": {
             "type": "string",
@@ -10440,7 +10505,6 @@
         "type": "string",
         "enum": [
           "POINTS_ACCRUAL",
-          "POINTS_CANCELLATION",
           "POINTS_REDEMPTION",
           "POINTS_REFUND",
           "POINTS_ADDITION",
@@ -12280,7 +12344,7 @@
                   "description": "Product ID for SKUs."
                 },
                 "object": {
-                  "description": "Denotes the type of object represented by the ID.",
+                  "description": "Denotes the type of the object represented by the ID.",
                   "enum": [
                     "sku",
                     "product"
@@ -12402,7 +12466,7 @@
                     "sku",
                     "product"
                   ],
-                  "description": "Denotes the type of object represented by the ID."
+                  "description": "Denotes the type of the object represented by the ID."
                 }
               },
               "required": [
@@ -13095,7 +13159,7 @@
           },
           "tiers": {
             "type": "object",
-            "description": "Contains the tier configuration.",
+            "description": "Contains the tier configuration. A promotion stack can include up to 30 tiers.",
             "properties": {
               "ids": {
                 "type": "array",
@@ -13252,7 +13316,7 @@
             "required": [
               "ids"
             ],
-            "description": "Contains the tier configuration.",
+            "description": "Contains the tier configuration. A promotion stack can include up to 30 tiers.",
             "properties": {
               "ids": {
                 "type": "array",
@@ -15200,7 +15264,6 @@
           },
           "voucher": {
             "nullable": true,
-            "description": "Defines of the voucher.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Voucher"
@@ -15209,7 +15272,6 @@
           },
           "product": {
             "nullable": true,
-            "description": "Defines of the product.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Product"
@@ -15218,7 +15280,6 @@
           },
           "sku": {
             "nullable": true,
-            "description": "Defines of the sku.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Sku"
@@ -15314,6 +15375,10 @@
                 }
               }
             }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a reward. The metadata object stores all custom attributes assigned to the reward."
           },
           "type": {
             "type": "string",
@@ -16609,7 +16674,7 @@
           },
           "balance": {
             "type": "integer",
-            "description": "The incremental amout to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+            "description": "The incremental amount to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
           }
         },
         "required": [
@@ -16789,15 +16854,13 @@
               },
               "balance": {
                 "type": "integer",
-                "description": "The incremental amout to be added to the current balance on the gift card. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
+                "description": "The number of points to be added to a loyalty card or the amount to be added to the current balance on the gift card.\n\nFor gift cards, the value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000."
               },
               "type": {
                 "type": "string",
                 "enum": [
                   "DISCOUNT_COUPONS",
-                  "PROMOTION",
                   "GIFT_VOUCHERS",
-                  "REFERRAL_PROGRAM",
                   "LOYALTY_PROGRAM"
                 ],
                 "description": "Campaign type."
@@ -17083,14 +17146,14 @@
             "type": "boolean",
             "description": "Indicates whether the campaign is active."
           },
-          "category": {
-            "type": "string",
-            "description": "Unique category name."
-          },
           "category_id": {
             "nullable": true,
             "type": "string",
             "description": "The unique category ID that this campaign belongs to."
+          },
+          "category": {
+            "type": "string",
+            "description": "Unique category name."
           },
           "categories": {
             "type": "array",
@@ -17122,7 +17185,7 @@
           "created_at": {
             "type": "string",
             "example": "2024-01-01T11:11:11.111Z",
-            "description": "Timestamp representing the date and time when the campaign was created. Timestamp is presented in the ISO 8601 format.",
+            "description": "Timestamp representing the date and time when the campaign was created. The value is shown in the ISO 8601 format.",
             "format": "date-time"
           },
           "updated_at": {
@@ -17241,16 +17304,13 @@
         ]
       },
       "SimpleCustomer": {
-        "type": "object",
         "title": "Simple Customer",
+        "type": "object",
+        "description": "Simplified customer data.",
         "properties": {
           "id": {
             "type": "string",
-            "description": "The ID of an existing customer that will be linked to redemption in this request."
-          },
-          "source_id": {
-            "type": "string",
-            "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored."
+            "description": "Unique identifier of an existing customer. It is assigned by Voucherify."
           },
           "name": {
             "type": "string",
@@ -17260,14 +17320,17 @@
             "type": "string",
             "description": "Customer's email address."
           },
+          "source_id": {
+            "type": "string",
+            "description": "A unique identifier of the customer. It can be a customer ID or email from a CRM system, database, or a third-party service."
+          },
           "metadata": {
             "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments."
+            "description": "A set of custom key/value pairs that are attached to the customer. It stores all custom attributes assigned to the customer."
           },
           "object": {
             "type": "string",
             "description": "The type of the object represented by JSON.",
-            "default": "customer",
             "enum": [
               "customer"
             ]
@@ -17594,7 +17657,7 @@
             "required": [
               "ids"
             ],
-            "description": "Contains the tier configuration.",
+            "description": "Contains the tier configuration. A promotion stack can include up to 30 tiers.",
             "properties": {
               "ids": {
                 "type": "array",
@@ -17648,6 +17711,100 @@
             "description": "A set of custom key/value pairs that you can attach to a promotion tier. The metadata object stores all custom attributes assigned to the promotion tier."
           }
         }
+      },
+      "SimpleRedeemableHolder": {
+        "type": "object",
+        "title": "Redeemable Holder",
+        "description": "Details about the holder of the redeemable.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the redeemable holder.",
+            "example": "rh_0e7b8db4700106a852"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the redeemable was assigned. The value is shown in the ISO 8601 format.",
+            "example": "2024-03-22T17:48:25.910Z"
+          },
+          "redeemable_id": {
+            "type": "string",
+            "description": "Identifier of the redeemable item.",
+            "example": "v_GXVguPhq2khgFxH7GrRXWA91gDr1LiA1"
+          },
+          "redeemable_object": {
+            "type": "string",
+            "description": "Type of the redeemable.",
+            "example": "voucher",
+            "enum": [
+              "voucher"
+            ]
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unique identifier of the campaign as assigned by Voucherify.",
+            "example": "camp_weer1c3p5ZgktqfW56RfoNaG"
+          },
+          "campaign_type": {
+            "type": "string",
+            "description": "Defines the type of the campaign.",
+            "enum": [
+              "REFERRAL_PROGRAM"
+            ],
+            "example": "REFERRAL_PROGRAM"
+          },
+          "voucher_type": {
+            "type": "string",
+            "description": "Defines the type of the voucher.",
+            "enum": [
+              "GIFT_VOUCHER",
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD"
+            ],
+            "example": "DISCOUNT_VOUCHER"
+          },
+          "publication_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique identifier of the publication."
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Unique identifier of the customer.",
+            "example": "cust_p1ufreYbVbwZ1x70nFkH9rF9"
+          },
+          "holder_role": {
+            "type": "string",
+            "description": "Role of the holder.",
+            "enum": [
+              "OWNER",
+              "REFERRER",
+              "REFEREE"
+            ],
+            "example": "REFERRER"
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "enum": [
+              "redeemable_holder"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "created_at",
+          "redeemable_id",
+          "redeemable_object",
+          "campaign_id",
+          "campaign_type",
+          "voucher_type",
+          "publication_id",
+          "customer_id",
+          "holder_role",
+          "object"
+        ]
       },
       "SimpleRedemption": {
         "type": "object",
@@ -17732,6 +17889,7 @@
       "SimpleRedemptionRewardResult": {
         "title": "Simple Redemption Reward Result",
         "type": "object",
+        "description": "Simplified redemption reward result data",
         "properties": {
           "customer": {
             "$ref": "#/components/schemas/SimpleCustomer"
@@ -17741,7 +17899,6 @@
             "description": "Unique reward assignment ID assigned by Voucherify."
           },
           "voucher": {
-            "description": "Defines of the voucher.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/SimpleVoucher"
@@ -17749,7 +17906,6 @@
             ]
           },
           "product": {
-            "description": "Defines of the product.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/SimpleProduct"
@@ -17757,7 +17913,6 @@
             ]
           },
           "sku": {
-            "description": "Defines of the sku.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/SimpleSku"
@@ -17788,19 +17943,28 @@
           "created_at": {
             "type": "string",
             "description": "Timestamp representing the date and time when the reward was created. The value is shown in the ISO 8601 format.",
-            "example": "2022-08-11T14:49:22.586Z",
+            "example": "2024-01-01T11:11:11.111Z",
             "format": "date-time"
           },
           "updated_at": {
             "type": "string",
             "nullable": true,
             "description": "Timestamp representing the date and time when the reward was updated. The value is shown in the ISO 8601 format.",
-            "example": "2022-08-11T16:01:34.885Z",
+            "example": "2024-01-01T11:11:11.111Z",
             "format": "date-time"
           },
           "parameters": {
             "description": "Defines how the reward is generated.",
-            "type": "object"
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RewardType"
+              }
+            ]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a reward. The metadata object stores all custom attributes assigned to the reward."
           },
           "type": {
             "type": "string",
@@ -17961,7 +18125,7 @@
           "holder_id": {
             "type": "string",
             "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
-            "description": "Unique customer ID of the campaign owner."
+            "description": "Unique customer identifier of the redeemable holder. It equals to the customer ID assigned by Voucherify."
           },
           "referrer_id": {
             "type": "string",
@@ -17988,13 +18152,13 @@
           "created_at": {
             "type": "string",
             "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the order was created. Timestamp is presented in the ISO 8601 format.",
+            "description": "Timestamp representing the date and time when the order was created in the ISO 8601 format.",
             "format": "date-time"
           },
           "updated_at": {
             "type": "string",
             "example": "2024-01-01T11:11:11.111Z",
-            "description": "Timestamp representing the date and time when the voucher was updated in the ISO 8601 format.",
+            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
             "format": "date-time"
           },
           "redemption": {
@@ -18046,7 +18210,6 @@
           "type",
           "code",
           "created_at",
-          "inapplicable_to",
           "object"
         ]
       },
@@ -19611,7 +19774,7 @@
           "holder_id": {
             "type": "string",
             "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
-            "description": "Unique identifier of the customer who owns the voucher."
+            "description": "Unique customer identifier of the redeemable holder. It equals to the customer ID assigned by Voucherify."
           },
           "referrer_id": {
             "type": "string",
@@ -19625,7 +19788,7 @@
           },
           "publish": {
             "type": "object",
-            "description": "This object stores a summary of publish events: an events counter and an endpoint which can be called to return details of each event.  A publication is required for loyalty cards and referral codes. This object gets updated whenever a voucher has been published. Publication means assigning a code to a particular customer. Typically, a publication is made by distributing your codes to your customers, e.g. through Export to MailChimp or <!-- [publish voucher](OpenAPI.json/paths/~1publications/post) -->[publish voucher](ref:create-publication) API method. \n\n<!-- title: My Table Title -->\n\n| Required | Optional |\n| -------- | :------: |\n| `type`:`LOYALTY_CARD` |  `type`:`DISCOUNT_VOUCHER`   | \n| `is_referral_code`:`true`      |    `type`:`GIFT_VOUCHER`   |\n",
+            "description": "Stores a summary of publication events: an event counter and endpoint to return details of each event. Publication is an assignment of a code to a customer, e.g. through a distribution.",
             "properties": {
               "object": {
                 "type": "string",
@@ -19692,11 +19855,11 @@
           },
           "category": {
             "type": "string",
-            "description": "The name of the tag defining the category that this voucher belongs to. Useful when listing vouchers using the <!-- [List Vouchers](OpenAPI.json/paths/~1vouchers/get) -->[List Vouchers](ref:list-vouchers) endpoint."
+            "description": "The name of the category that this voucher belongs to. Useful when listing vouchers with the [List Vouchers](ref:list-vouchers) endpoint."
           },
           "category_id": {
             "type": "string",
-            "description": "The unique ID assigned by Voucherify of the tag defining the category that this voucher belongs to. Useful when listing vouchers using the <!-- [List Vouchers](OpenAPI.json/paths/~1vouchers/get) -->[List Vouchers](ref:list-vouchers) endpoint.",
+            "description": "Unique identifier assigned by Voucherify to the name of the category that this voucher belongs to. Useful when listing vouchers with the [List Vouchers](ref:list-vouchers) endpoint.",
             "example": "cat_0b6152ce12414820dc"
           },
           "start_date": {
@@ -19754,7 +19917,7 @@
       },
       "VoucherCreateDiscount": {
         "title": "Voucher Create Discount",
-        "readmeTitle": "Create voucher in discound campaign",
+        "readmeTitle": "Create voucher in a discound campaign",
         "type": "object",
         "allOf": [
           {
@@ -19765,7 +19928,6 @@
             "properties": {
               "type": {
                 "type": "string",
-                "default": "DISCOUNT_VOUCHER",
                 "enum": [
                   "DISCOUNT_VOUCHER"
                 ],
@@ -19784,7 +19946,7 @@
       },
       "VoucherCreateDiscountWithCodeConfig": {
         "title": "Voucher Create Discount With Code Config",
-        "readmeTitle": "Create voucher in discound campaign with code config",
+        "readmeTitle": "Create voucher in a discound campaign with code config",
         "type": "object",
         "allOf": [
           {
@@ -19802,30 +19964,30 @@
       },
       "VoucherCreateDiscountWithSpecificCode": {
         "title": "Voucher Create Discount With Specific Code",
-        "readmeTitle": "Create voucher in discound campaign with specific code",
+        "readmeTitle": "Create voucher in a discound campaign with specific code",
         "type": "object",
         "allOf": [
-          {
-            "$ref": "#/components/schemas/VoucherCreateDiscount"
-          },
           {
             "type": "object",
             "properties": {
               "code": {
                 "type": "string",
                 "example": "WVPblOYX",
-                "description": "A code that identifies a voucher. Pattern can use all letters of the English alphabet, Arabic numerals, and special characters. Pass this attribute in the request body if you want to deliberately create a distinct code. Otherwise, either use the `code_config` object to design rules that the Voucherify API should use to create a random code or don't pass any code and the application will generate a random code."
+                "description": "Code that identifies a voucher. The pattern can use all the letters of the English alphabet, Arabic numerals, and special characters. Pass this attribute in the request body to create a distinct code. Otherwise, either use the `code_config` object to set the rules that the Voucherify API will use to create a random code, or don't pass any code and Voucherify will generate a random code."
               }
             },
             "required": [
               "code"
             ]
+          },
+          {
+            "$ref": "#/components/schemas/VoucherCreateDiscount"
           }
         ]
       },
       "VoucherCreateDiscountWithSpecificCodeOrCodeConfig": {
         "title": "Voucher Create Discount With Specific Code Or Code Config",
-        "readmeTitle": "Create voucher in discound campaign",
+        "readmeTitle": "Create voucher in a discound campaign",
         "type": "object",
         "oneOf": [
           {
@@ -19849,7 +20011,6 @@
             "properties": {
               "type": {
                 "type": "string",
-                "default": "GIFT_VOUCHER",
                 "enum": [
                   "GIFT_VOUCHER"
                 ],
@@ -19893,20 +20054,20 @@
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/VoucherCreateGift"
-          },
-          {
             "type": "object",
             "properties": {
               "code": {
                 "type": "string",
                 "example": "WVPblOYX",
-                "description": "A code that identifies a voucher. Pattern can use all letters of the English alphabet, Arabic numerals, and special characters. Pass this attribute in the request body if you want to deliberately create a distinct code. Otherwise, either use the `code_config` object to design rules that the Voucherify API should use to create a random code or don't pass any code and the application will generate a random code."
+                "description": "Code that identifies a voucher. The pattern can use all the letters of the English alphabet, Arabic numerals, and special characters. Pass this attribute in the request body to create a distinct code. Otherwise, either use the `code_config` object to set the rules that the Voucherify API will use to create a random code, or don't pass any code and Voucherify will generate a random code."
               }
             },
             "required": [
               "code"
             ]
+          },
+          {
+            "$ref": "#/components/schemas/VoucherCreateGift"
           }
         ]
       },
@@ -19936,7 +20097,6 @@
             "properties": {
               "type": {
                 "type": "string",
-                "default": "LOYALTY_CARD",
                 "enum": [
                   "LOYALTY_CARD"
                 ],
@@ -19977,20 +20137,20 @@
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/VoucherCreateLoyaltyCard"
-          },
-          {
             "type": "object",
             "properties": {
               "code": {
                 "type": "string",
                 "example": "WVPblOYX",
-                "description": "A code that identifies a voucher. Pattern can use all letters of the English alphabet, Arabic numerals, and special characters. Pass this attribute in the request body if you want to deliberately create a distinct code. Otherwise, either use the `code_config` object to design rules that the Voucherify API should use to create a random code or don't pass any code and the application will generate a random code."
+                "description": "Code that identifies a voucher. The pattern can use all the letters of the English alphabet, Arabic numerals, and special characters. Pass this attribute in the request body to create a distinct code. Otherwise, either use the `code_config` object to set the rules that the Voucherify API will use to create a random code, or don't pass any code and Voucherify will generate a random code."
               }
             },
             "required": [
               "code"
             ]
+          },
+          {
+            "$ref": "#/components/schemas/VoucherCreateLoyaltyCard"
           }
         ]
       },
@@ -20099,7 +20259,6 @@
               }
             },
             "required": [
-              "type",
               "discount"
             ]
           }
@@ -20128,7 +20287,6 @@
               }
             },
             "required": [
-              "type",
               "gift"
             ]
           }
@@ -20157,7 +20315,6 @@
               }
             },
             "required": [
-              "type",
               "loyalty_card"
             ]
           }
@@ -20285,19 +20442,19 @@
           }
         ]
       },
-      "VouchersCreateWithWithSpecificCodeRequestBody": {
+      "VouchersCreateWithSpecificCodeRequestBody": {
         "title": "Vouchers Create With Specific Code Request Body",
         "type": "object",
         "description": "Request body schema for **POST** `/vouchers/{code}`.",
         "oneOf": [
           {
-            "$ref": "#/components/schemas/VoucherCreateLoyaltyCardWithCodeConfig"
+            "$ref": "#/components/schemas/VoucherCreateLoyaltyCard"
           },
           {
-            "$ref": "#/components/schemas/VoucherCreateGiftWithCodeConfig"
+            "$ref": "#/components/schemas/VoucherCreateGift"
           },
           {
-            "$ref": "#/components/schemas/VoucherCreateDiscountWithCodeConfig"
+            "$ref": "#/components/schemas/VoucherCreateDiscount"
           }
         ]
       },
@@ -21093,7 +21250,7 @@
           },
           "fields": {
             "type": "array",
-            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combination of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique transaction ID. | vtx_0cb7811f1c07765800 |\n| type | Transaction type. | - `CREDITS_REMOVAL` <br> - `CREDITS_ADDITION` <br> - `CREDITS_REFUND` <br> - `CREDITS_REDEMPTION` <br> - `POINTS_ACCRUAL` <br> - `POINTS_CANCELLATION` <br> - `POINTS_REDEMPTION`<br> - `POINTS_REFUND`<br> - `POINTS_ADDITION`<br> - `POINTS_REMOVAL`<br> - `POINTS_EXPIRATION`<br> - `POINTS_TRANSFER_IN`<br> - `POINTS_TRANSFER_OUT` |\n| source_id | Unique transaction source ID. | 8638 |\n| reason | Contains the reason for the transaction if one was included originally. |  |\n| balance | The gift card or loyalty card balance after the transaction. |  |\n| amount | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | 2022-03-09T09:16:32.521Z  |\n| voucher_id | Unique Voucher ID. | v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp |\n| campaign_id | Parent campaign ID. | camp_FNYR4jhqZBM9xTptxDGgeNBV |\n| source|  Channel through which the transaction was initiated. | API |\n| details | More detailed information stored in the form of a JSON. | Provides more details related to the transaction in the form of an object. |\n| related_transaction_id | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | vtx_0c9afe802593b34b80 |",
+            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combination of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique transaction ID. | vtx_0cb7811f1c07765800 |\n| type | Transaction type. | - `CREDITS_REMOVAL` <br> - `CREDITS_ADDITION` <br> - `CREDITS_REFUND` <br> - `CREDITS_REDEMPTION` <br> - `POINTS_ACCRUAL` <br> - `POINTS_REDEMPTION`<br> - `POINTS_REFUND`<br> - `POINTS_ADDITION`<br> - `POINTS_REMOVAL`<br> - `POINTS_EXPIRATION`<br> - `POINTS_TRANSFER_IN`<br> - `POINTS_TRANSFER_OUT` |\n| source_id | Unique transaction source ID. | 8638 |\n| reason | Contains the reason for the transaction if one was included originally. |  |\n| balance | The gift card or loyalty card balance after the transaction. |  |\n| amount | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | 2022-03-09T09:16:32.521Z  |\n| voucher_id | Unique Voucher ID. | v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp |\n| campaign_id | Parent campaign ID. | camp_FNYR4jhqZBM9xTptxDGgeNBV |\n| source|  Channel through which the transaction was initiated. | API |\n| details | More detailed information stored in the form of a JSON. | Provides more details related to the transaction in the form of an object. |\n| related_transaction_id | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | vtx_0c9afe802593b34b80 |",
             "items": {
               "type": "string",
               "enum": [
@@ -21129,7 +21286,7 @@
           },
           "fields": {
             "type": "array",
-            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combination of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique transaction ID. | vtx_0cb7811f1c07765800 |\n| type | Transaction type. | - `CREDITS_REMOVAL` <br> - `CREDITS_ADDITION` <br> - `CREDITS_REFUND` <br> - `CREDITS_REDEMPTION` <br> - `POINTS_ACCRUAL` <br> - `POINTS_CANCELLATION` <br> - `POINTS_REDEMPTION`<br> - `POINTS_REFUND`<br> - `POINTS_ADDITION`<br> - `POINTS_REMOVAL`<br> - `POINTS_EXPIRATION`<br> - `POINTS_TRANSFER_IN`<br> - `POINTS_TRANSFER_OUT` |\n| source_id | Unique transaction source ID. | 8638 |\n| reason | Contains the reason for the transaction if one was included originally. |  |\n| balance | The gift card or loyalty card balance after the transaction. |  |\n| amount | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | 2022-03-09T09:16:32.521Z  |\n| voucher_id | Unique Voucher ID. | v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp |\n| campaign_id | Parent campaign ID. | camp_FNYR4jhqZBM9xTptxDGgeNBV |\n| source|  Channel through which the transaction was initiated. | API |\n| details | More detailed information stored in the form of a JSON. | Provides more details related to the transaction in the form of an object. |\n| related_transaction_id | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | vtx_0c9afe802593b34b80 |",
+            "description": "Array of strings containing the data in the export. These fields define the headers in the CSV file. The array can be a combination of any of the following available fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique transaction ID. | vtx_0cb7811f1c07765800 |\n| type | Transaction type. | - `CREDITS_REMOVAL` <br> - `CREDITS_ADDITION` <br> - `CREDITS_REFUND` <br> - `CREDITS_REDEMPTION` <br> - `POINTS_ACCRUAL`<br> - `POINTS_REDEMPTION`<br> - `POINTS_REFUND`<br> - `POINTS_ADDITION`<br> - `POINTS_REMOVAL`<br> - `POINTS_EXPIRATION`<br> - `POINTS_TRANSFER_IN`<br> - `POINTS_TRANSFER_OUT` |\n| source_id | Unique transaction source ID. | 8638 |\n| reason | Contains the reason for the transaction if one was included originally. |  |\n| balance | The gift card or loyalty card balance after the transaction. |  |\n| amount | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | 2022-03-09T09:16:32.521Z  |\n| voucher_id | Unique Voucher ID. | v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp |\n| campaign_id | Parent campaign ID. | camp_FNYR4jhqZBM9xTptxDGgeNBV |\n| source|  Channel through which the transaction was initiated. | API |\n| details | More detailed information stored in the form of a JSON. | Provides more details related to the transaction in the form of an object. |\n| related_transaction_id | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | vtx_0c9afe802593b34b80 |",
             "items": {
               "type": "string",
               "enum": [
@@ -21162,11 +21319,11 @@
         "properties": {
           "category": {
             "type": "string",
-            "description": "The name of the tag defining the category that this voucher belongs to. Useful when listing vouchers using the [List Vouchers](ref:list-vouchers) endpoint."
+            "description": "The name of the category that this voucher belongs to. Useful when listing vouchers with the [List Vouchers](ref:list-vouchers) endpoint."
           },
           "category_id": {
             "type": "string",
-            "description": "The unique ID assigned by Voucherify of the tag defining the category that this voucher belongs to. Useful when listing vouchers using the [List Vouchers](ref:list-vouchers) endpoint.",
+            "description": "Unique identifier assigned by Voucherify to the name of the category that this voucher belongs to. Useful when listing vouchers with the [List Vouchers](ref:list-vouchers) endpoint.",
             "example": "cat_0bb81a481615a37b5e"
           },
           "start_date": {
@@ -21206,7 +21363,7 @@
       },
       "VoucherUpdateDiscount": {
         "title": "Voucher Update Discount",
-        "readmeTitle": "Update voucher in discound campaign",
+        "readmeTitle": "Update voucher in a discound campaign",
         "type": "object",
         "allOf": [
           {
@@ -21217,7 +21374,6 @@
             "properties": {
               "type": {
                 "type": "string",
-                "default": "DISCOUNT_VOUCHER",
                 "enum": [
                   "DISCOUNT_VOUCHER"
                 ],
@@ -21243,7 +21399,6 @@
             "properties": {
               "type": {
                 "type": "string",
-                "default": "GIFT_VOUCHER",
                 "enum": [
                   "GIFT_VOUCHER"
                 ],
@@ -21269,7 +21424,6 @@
             "properties": {
               "type": {
                 "type": "string",
-                "default": "LOYALTY_CARD",
                 "enum": [
                   "LOYALTY_CARD"
                 ],
@@ -24687,7 +24841,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VouchersCreateWithWithSpecificCodeRequestBody"
+                "$ref": "#/components/schemas/VouchersCreateWithSpecificCodeRequestBody"
               },
               "examples": {
                 "Percentage Discount": {
@@ -25750,7 +25904,7 @@
           }
         ],
         "summary": "Export Voucher Transactions",
-        "description": "Export transactions that are associated with credit movements on a gift card or loyalty card.\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique transaction ID. | vtx_0cb7811f1c07765800 |\n| type | Transaction type. | - `CREDITS_REMOVAL` <br> - `CREDITS_ADDITION` <br> - `CREDITS_REFUND` <br> - `CREDITS_REDEMPTION` <br> - `POINTS_ACCRUAL` <br> - `POINTS_CANCELLATION` <br> - `POINTS_REDEMPTION`<br> - `POINTS_REFUND`<br> - `POINTS_ADDITION`<br> - `POINTS_REMOVAL`<br> - `POINTS_EXPIRATION`<br> - `POINTS_TRANSFER_IN`<br> - `POINTS_TRANSFER_OUT` |\n| source_id | Unique transaction source ID. | 8638 |\n| reason | Contains the reason for the transaction if one was included originally. |  |\n| balance | The gift card or loyalty card balance after the transaction. |  |\n| amount | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | 2022-03-09T09:16:32.521Z  |\n| voucher_id | Unique Voucher ID. | v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp |\n| campaign_id | Parent campaign ID. | camp_FNYR4jhqZBM9xTptxDGgeNBV |\n| source|  Channel through which the transaction was initiated. | API |\n| details | More detailed information stored in the form of a JSON. | Provides more details related to the transaction in the form of an object. |\n| related_transaction_id | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | vtx_0c9afe802593b34b80 |",
+        "description": "Export transactions that are associated with credit movements on a gift card or loyalty card.\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique transaction ID. | vtx_0cb7811f1c07765800 |\n| type | Transaction type. | - `CREDITS_REMOVAL` <br> - `CREDITS_ADDITION` <br> - `CREDITS_REFUND` <br> - `CREDITS_REDEMPTION` <br> - `POINTS_ACCRUAL` <br> - `POINTS_REDEMPTION`<br> - `POINTS_REFUND`<br> - `POINTS_ADDITION`<br> - `POINTS_REMOVAL`<br> - `POINTS_EXPIRATION`<br> - `POINTS_TRANSFER_IN`<br> - `POINTS_TRANSFER_OUT` |\n| source_id | Unique transaction source ID. | 8638 |\n| reason | Contains the reason for the transaction if one was included originally. |  |\n| balance | The gift card or loyalty card balance after the transaction. |  |\n| amount | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | 2022-03-09T09:16:32.521Z  |\n| voucher_id | Unique Voucher ID. | v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp |\n| campaign_id | Parent campaign ID. | camp_FNYR4jhqZBM9xTptxDGgeNBV |\n| source|  Channel through which the transaction was initiated. | API |\n| details | More detailed information stored in the form of a JSON. | Provides more details related to the transaction in the form of an object. |\n| related_transaction_id | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | vtx_0c9afe802593b34b80 |",
         "requestBody": {
           "description": "Specify the parameters for the transaction export.",
           "content": {
@@ -42601,11 +42755,12 @@
       ],
       "put": {
         "operationId": "update-customers-consents",
+        "deprecated": true,
         "tags": [
           "Customers"
         ],
-        "summary": "Update Customer's consents",
-        "description": "Update marketing permissions for the specified customer.",
+        "summary": "Update Customer's consents [Deprecated]",
+        "description": "Update marketing permissions for the specified customer.\n\n>❗️ Deprecated\n>\n> This endpoint is deprecated. The feature of managing consents will be soon removed from Voucherify, including this endpoint.",
         "parameters": [],
         "security": [
           {
@@ -49124,11 +49279,12 @@
       ],
       "put": {
         "operationId": "update-customers-consents-client-side",
+        "deprecated": true,
         "tags": [
           "Client-side"
         ],
-        "summary": "Update Customer's consents (client-side)",
-        "description": "Update marketing permissions for the specified customer.",
+        "summary": "Update Customer's consents (client-side) [Deprecated]",
+        "description": "Update marketing permissions for the specified customer.\n\n>❗️ Deprecated\n>\n> This endpoint is deprecated. The feature of managing consents will be soon removed from Voucherify, including this endpoint.",
         "parameters": [],
         "security": [
           {
