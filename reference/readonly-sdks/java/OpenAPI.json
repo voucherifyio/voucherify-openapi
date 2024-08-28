@@ -1620,6 +1620,47 @@
           }
         ]
       },
+      "CustomersActivityListResponseBody": {
+        "type": "object",
+        "title": "Customers Activity List Response Body",
+        "description": "Response body schema for **GET** `/customers/{customerId}/activity`.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON. This object stores information about customer activities in a dictionary.",
+            "enum": [
+              "list"
+            ],
+            "nullable": true
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of customer activity objects.",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of customer activity objects.",
+            "items": {
+              "$ref": "#/components/schemas/CustomerActivity"
+            },
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request with a `starting_after_id` query or a different limit to get more records returned in the results.",
+            "nullable": true
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an ID that can be used to return another page of results. Use the event id in the `starting_after_id` query parameter to display another page of the results starting after the event with that ID.",
+            "nullable": true
+          }
+        },
+        "required": []
+      },
       "CustomersConsentsUpdateRequestBody": {
         "type": "object",
         "title": "Customers Consents Update Request Body",
@@ -3647,6 +3688,13 @@
           }
         ]
       },
+      "ParameterActivityCategory": {
+        "type": "string",
+        "enum": [
+          "ACTION",
+          "EFFECT"
+        ]
+      },
       "ParameterAsyncActionId": {
         "type": "string",
         "example": "aa_0afb3d009a55814a48"
@@ -3658,6 +3706,17 @@
         "type": "string",
         "example": "camp_rRsfatlwN7unSeUIJDCYedal"
       },
+      "ParameterCampaignType": {
+        "type": "string",
+        "enum": [
+          "PROMOTION",
+          "GIFT_VOUCHERS",
+          "REFERRAL_PROGRAM",
+          "DISCOUNT_COUPONS",
+          "LOYALTY_PROGRAM",
+          "LUCKY_DRAW"
+        ]
+      },
       "ParameterCategoryId": {
         "type": "string",
         "example": "cat_0bb81a481615a37b5e"
@@ -3665,6 +3724,9 @@
       "ParameterCode": {
         "type": "string",
         "example": "2CpRCE2c"
+      },
+      "ParameterCustomerEvent": {
+        "type": "string"
       },
       "ParameterCustomerId": {
         "type": "string",
@@ -3843,6 +3905,13 @@
       },
       "ParameterObject": {
         "type": "object"
+      },
+      "ParameterOrderCreatedAt": {
+        "type": "string",
+        "enum": [
+          "created_at",
+          "-created_at"
+        ]
       },
       "ParameterOrderId": {
         "type": "string",
@@ -8654,6 +8723,23 @@
         },
         "required": []
       },
+      "VouchersUpdateInBulkRequestBody": {
+        "title": "Vouchers Update In Bulk Request Body",
+        "type": "array",
+        "description": "Request body schema for **POST** `/vouchers/bulk/async`.",
+        "items": {
+          "$ref": "#/components/schemas/VouchersUpdateInBulkRequestBodyItem"
+        }
+      },
+      "VouchersUpdateInBulkResponseBody": {
+        "title": "Vouchers Update In Bulk Response Body",
+        "description": "Response body schema for **POST** `/vouchers/bulk/async`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AsyncActions"
+          }
+        ]
+      },
       "VouchersUpdateRequestBody": {
         "type": "object",
         "title": "VouchersUpdateRequestBody",
@@ -8774,17 +8860,6 @@
             "nullable": true
           }
         }
-      },
-      "ParameterCampaignType": {
-        "type": "string",
-        "enum": [
-          "PROMOTION",
-          "GIFT_VOUCHERS",
-          "REFERRAL_PROGRAM",
-          "DISCOUNT_COUPONS",
-          "LOYALTY_PROGRAM",
-          "LUCKY_DRAW"
-        ]
       },
       "ParameterOrder": {
         "type": "string",
@@ -9366,6 +9441,42 @@
           "initial_count": {
             "type": "integer",
             "description": "Internal value, does not change anything if provided.",
+            "nullable": true
+          }
+        }
+      },
+      "CustomerActivity": {
+        "title": "Customer Activity",
+        "type": "object",
+        "description": "This is an object representing customer activity.  \n\nThis is a general object which presents moments from customers' activity. There are all types of different events that customers perform during their journey once they participate in Promotions. Events describe moments when customers redeem coupons and earn points or rewards. The list of all types of activities is listed below.\n\nThe details describing the activity are collected in a property named `data`. In this object, software integrators will find all further information explaining the event context.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique event ID, assigned by Voucherify.",
+            "example": "evcus_0c150c51730c6b60b1",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "Event type.",
+            "nullable": true
+          },
+          "data": {
+            "type": "object",
+            "description": "Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the customer activity occurred in ISO 8601 format.",
+            "example": "2022-08-30T09:14:07.660Z",
+            "format": "date-time",
+            "nullable": true
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Unique identifier of the request that caused the event.",
+            "example": "v-1f36113948e50fc4ge",
             "nullable": true
           }
         }
@@ -16866,6 +16977,23 @@
           }
         }
       },
+      "VouchersUpdateInBulkRequestBodyItem": {
+        "title": "Vouchers Update In Bulk Request Body Item",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Unique voucher code.",
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format.",
+            "nullable": true
+          }
+        },
+        "required": []
+      },
       "AccessSettingsCampaignAssignmentsList": {
         "title": "Access Settings Campaign Assignments List",
         "type": "object",
@@ -24316,6 +24444,76 @@
                     "value": {
                       "async_action_id": "aa_0a875d56c805df6601"
                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/vouchers/bulk/async": {
+      "post": {
+        "operationId": "update-vouchers-in-bulk",
+        "tags": [
+          "Vouchers"
+        ],
+        "summary": "Update Vouchers in bulk",
+        "description": "Use this endpoint to update specific metadata parameters for each code, respectively. You can update each codes metadata property separately.    \n- Update up to **100 records** in one request.\n- Upserts are not supported.  \n 🚧 \n \n Currently only **metadata** updates are supported.\nThis API request starts a process that affects Voucherify data in bulk. \nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the IN_PROGRESS status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \nThe result will return the async ID. You can verify the status of your request via this API request.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "List of objects, each containing a code that is being updated and the metadata key/value pairs for that code.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VouchersUpdateInBulkRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": [
+                    {
+                      "code": "example_code",
+                      "metadata": {
+                        "lang": "en",
+                        "test": false,
+                        "MetadataTest": "Update metadata",
+                        "update_value": 1,
+                        "next_update_date": "2022-11-11T09:00:00.000Z"
+                      }
+                    },
+                    {
+                      "code": "example_code2",
+                      "metadata": {
+                        "lang": "pl",
+                        "test": false,
+                        "MetadataTest": "Update metadata",
+                        "update_value": 2
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Returns the ID of the scheduled asynchronous action, informing you that your request has been accepted and the voucher(s) will be updated in the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and pass it using <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VouchersUpdateInBulkResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "$ref": "#/components/examples/res_async_actions"
                   }
                 }
               }
@@ -39859,6 +40057,114 @@
         "responses": {
           "204": {
             "description": "Returns no content if the consents were updated successfully."
+          }
+        }
+      }
+    },
+    "/v1/customers/{customerId}/activity": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCustomerId"
+          },
+          "name": "customerId",
+          "in": "path",
+          "required": true,
+          "description": "A Voucherify customers id or source ID of the customer who performed the activities."
+        }
+      ],
+      "get": {
+        "operationId": "list-customer-activity",
+        "tags": [
+          "Customers"
+        ],
+        "summary": "List Customer Activity",
+        "description": "Retrieve customer activities.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderCreatedAt"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Apply this filter to order the events according the date and time when it was created. "
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterDate"
+            },
+            "description": "Timestamp representing the date and time which results must begin on. Represented in ISO 8601 format."
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterDate"
+            },
+            "description": "Timestamp representing the date and time which results must end on. Represented in ISO 8601 format."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCampaignId"
+            },
+            "in": "query",
+            "name": "campaign_id",
+            "description": "Requests only events related to specific campaign identified by its ID."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCampaignType"
+            },
+            "in": "query",
+            "name": "campaign_type",
+            "description": "Filters related customers activity for the selected campaign types. Allowed values: \nDISCOUNT_COUPONS,\nREFERRAL_PROGRAM,\nGIFT_VOUCHERS,\nPROMOTION,\nLOYALTY_PROGRAM."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterActivityCategory"
+            },
+            "in": "query",
+            "name": "category",
+            "description": "Filters activities for actions or effects. Allowed values: \nACTION,\nEFFECT."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCustomerEvent"
+            },
+            "in": "query",
+            "name": "type",
+            "description": "Event name of the customer event."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a dictionary with customer activities.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomersActivityListResponseBody"
+                }
+              }
+            }
           }
         }
       }

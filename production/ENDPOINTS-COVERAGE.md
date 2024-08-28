@@ -74,7 +74,7 @@
 | /v1/vouchers/{code}/transactions/export   | post   | Export Voucher Transactions        | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/import                       | post   | Import Vouchers                    | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/importCSV                    | post   | Import Vouchers using CSV          | <font color='green'>supported</font> |                                      |
-| /v1/vouchers/bulk/async                   | post   | Update Vouchers in bulk            |                                      |                                      |
+| /v1/vouchers/bulk/async                   | post   | Update Vouchers in bulk            | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/metadata/async               | post   | Update Vouchers' metadata in bulk  | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/{code}/sessions/{sessionKey} | delete | Release Validation Session         | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/qualification                | post   | Examine Qualification [Deprecated] |                                      |  <font color='red'>deprecated</font> |
@@ -183,8 +183,8 @@
 | /v1/customers/bulk/async                      | post   | Update Customers in bulk                | <font color='green'>supported</font> |                                      |
 | /v1/customers/metadata/async                  | post   | Update Customers' Metadata in bulk      | <font color='green'>supported</font> |                                      |
 | /v1/customers/{customerId}/consents           | put    | Update Customer's consents [Deprecated] | <font color='green'>supported</font> |  <font color='red'>deprecated</font> |
-| /v1/customers/{customerId}/activity           | get    | List Customer Activity                  |                                      |                                      |
-| /v1/customers/{customerId}/activities         | get    | List Customer Activities                |                                      |                                      |
+| /v1/customers/{customerId}/activity           | get    | List Customer Activity                  | <font color='green'>supported</font> |                                      |
+| /v1/customers/{customerId}/activities         | get    | List Customer Activities [Deprecated]   |                                      |  <font color='red'>deprecated</font> |
 | /v1/customers/{customerId}/segments           | get    | List Customer's Segments                | <font color='green'>supported</font> |                                      |
 | /v1/customers/{customerId}/redeemables        | get    | List Customer's Redeemables             |                                      |                                      |
 ## Orders
