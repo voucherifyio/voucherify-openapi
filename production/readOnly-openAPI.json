@@ -249,6 +249,14 @@
         },
         "description": "Timestamp representing the date and time which results must end on. Represented in ISO 8601 format."
       },
+      "ids": {
+        "name": "ids",
+        "in": "query",
+        "required": false,
+        "schema": {
+          "$ref": "#/components/schemas/ParameterIds"
+        }
+      },
       "limit": {
         "name": "limit",
         "in": "query",
@@ -9133,6 +9141,78 @@
           }
         ]
       },
+      "LoyaltiesGetCampaignResponseBody": {
+        "type": "object",
+        "title": "Loyalties Get Campaign Response Body",
+        "description": "Response body schema for **GET** `/loyalties/{campaignId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/LoyaltyCampaign"
+          }
+        ]
+      },
+      "LoyaltiesListCampaignsResponseBody": {
+        "type": "object",
+        "title": "Loyalties List Campaigns Response Body",
+        "description": "Response body schema for **Get** `/loyalties`.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON. This object stores information about loyalty campaigns in a dictionary."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "campaigns",
+            "enum": [
+              "campaigns"
+            ],
+            "description": "Identifies the name of the attribute that contains the array of loyalty campaign objects."
+          },
+          "campaigns": {
+            "type": "array",
+            "description": "Contains an array of loyalty campaign objects.",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyCampaign"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of loyalty campaign objects."
+          }
+        }
+      },
+      "LoyaltiesListMembersResponseBody": {
+        "title": "Loyalties List Members Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/loyalties/{campaignId}/members`.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON. This object stores information about members in a dictionary."
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "vouchers",
+            "enum": [
+              "vouchers"
+            ],
+            "description": "Identifies the name of the attribute that contains the array of voucher objects."
+          },
+          "vouchers": {
+            "type": "array",
+            "description": "Contains array of voucher objects representing loyalty cards, in other words, loyalty program members.",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyMember"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of voucher objects."
+          }
+        }
+      },
       "LoyaltiesLoyaltyTierReward": {
         "title": "Loyalty Tier Reward Object",
         "type": "object",
@@ -9265,6 +9345,16 @@
           "type",
           "object",
           "related_object"
+        ]
+      },
+      "LoyaltiesMembersGetResponseBody": {
+        "title": "Loyalties Members Get Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/loyalties/{campaignId}/members/{memberId}` and **GET** `/loyalties/members/{memberId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/LoyaltyMember"
+          }
         ]
       },
       "LoyaltiesMembersPointsExpirationListResponseBody": {
@@ -9681,7 +9771,7 @@
             "properties": {
               "points": {
                 "type": "integer",
-                "description": "Total points incurred over lifespan of loyalty card."
+                "description": "Total points incurred over the lifespan of the loyalty card."
               },
               "balance": {
                 "type": "integer",
@@ -10513,6 +10603,199 @@
           "POINTS_TRANSFER_IN",
           "POINTS_TRANSFER_OUT"
         ]
+      },
+      "LoyaltyMember": {
+        "title": "Loyalty Member",
+        "description": "This is an object representing a loyalty member.",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "v_mkZN9v7vjYUadXnHrMza8W5c34fE5KiV",
+            "description": "Assigned by the Voucherify API, identifies the voucher."
+          },
+          "code": {
+            "type": "string",
+            "example": "WVPblOYX",
+            "description": "A code that identifies a voucher. Pattern can use all letters of the English alphabet, Arabic numerals, and special characters."
+          },
+          "campaign": {
+            "type": "string",
+            "example": "Loyalty campaign",
+            "description": "A unique campaign name, identifies the voucher's parent campaign."
+          },
+          "campaign_id": {
+            "type": "string",
+            "example": "camp_FNYR4jhqZBM9xTptxDGgeNBV",
+            "description": "Assigned by the Voucherify API, identifies the voucher's parent campaign."
+          },
+          "category": {
+            "type": "string",
+            "description": "Tag defining the category that this voucher belongs to."
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Unique category ID assigned by Voucherify.",
+            "example": "cat_0bb343dee3cdb5ec0c"
+          },
+          "type": {
+            "type": "string",
+            "default": "LOYALTY_CARD",
+            "enum": [
+              "LOYALTY_CARD"
+            ],
+            "description": "Defines the type of the voucher. "
+          },
+          "discount": {
+            "type": "object",
+            "nullable": true
+          },
+          "gift": {
+            "type": "object",
+            "nullable": true
+          },
+          "loyalty_card": {
+            "type": "object",
+            "description": "Object representing loyalty card parameters. Child attributes are present only if `type` is `LOYALTY_CARD`. Defaults to `null`.",
+            "properties": {
+              "points": {
+                "type": "integer",
+                "example": 7000,
+                "description": "Total points incurred over the lifespan of the loyalty card."
+              },
+              "balance": {
+                "type": "integer",
+                "example": 6970,
+                "description": "Points available for reward redemption."
+              },
+              "next_expiration_date": {
+                "type": "string",
+                "format": "date",
+                "example": "2023-05-30",
+                "description": "The next closest date when the next set of points are due to expire."
+              },
+              "next_expiration_points": {
+                "type": "integer",
+                "description": "The amount of points that are set to expire next."
+              }
+            }
+          },
+          "start_date": {
+            "type": "string",
+            "example": "2021-12-01T00:00:00.000Z",
+            "format": "date-time",
+            "description": "Activation timestamp defines when the code starts to be active in ISO 8601 format. Voucher is *inactive before* this date. "
+          },
+          "expiration_date": {
+            "type": "string",
+            "example": "2021-12-31T00:00:00.000Z",
+            "format": "date-time",
+            "description": "Expiration timestamp defines when the code expires in ISO 8601 format.  Voucher is *inactive after* this date."
+          },
+          "validity_timeframe": {
+            "$ref": "#/components/schemas/ValidityTimeframe"
+          },
+          "validity_day_of_week": {
+            "$ref": "#/components/schemas/ValidityDayOfWeek"
+          },
+          "validity_hours": {
+            "$ref": "#/components/schemas/ValidityHours"
+          },
+          "active": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "A flag to toggle the voucher on or off. You can disable a voucher even though it's within the active period defined by the `start_date` and `expiration_date`.  \n\n- `true` indicates an *active* voucher\n- `false` indicates an *inactive* voucher"
+          },
+          "additional_info": {
+            "type": "string",
+            "description": "An optional field to keep any extra textual information about the code such as a code description and details."
+          },
+          "metadata": {
+            "type": "object",
+            "description": "The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format."
+          },
+          "assets": {
+            "$ref": "#/components/schemas/VoucherAssets"
+          },
+          "is_referral_code": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "This is always false for loyalty members."
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the voucher was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2021-12-22T10:14:45.316Z",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the voucher was last updated in ISO 8601 format."
+          },
+          "holder_id": {
+            "type": "string",
+            "example": "cust_eWgXlBBiY6THFRJwX45Iakv4",
+            "description": "Unique identifier of the customer who owns the voucher."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. Default is `voucher`.",
+            "default": "voucher"
+          },
+          "publish": {
+            "type": "object",
+            "description": "This object stores a summary of publish events: an events counter and an endpoint which can be called to return details of each event.  A publication is required for loyalty cards and referral codes. This object gets updated whenever a voucher has been published. Publication means assigning a code to a particular customer. Typically, a publication is made by distributing your codes to your customers, e.g. through Export to MailChimp or <!-- [publish voucher](OpenAPI.json/paths/~1publications/post) -->[publish voucher](ref:create-publication) API method. \n\n<!-- title: My Table Title -->\n\n| Required | Optional |\n| -------- | :------: |\n| `type`:`LOYALTY_CARD` |  `type`:`DISCOUNT_VOUCHER`   | \n| `is_referral_code`:`true`      |    `type`:`GIFT_VOUCHER`   |\n",
+            "properties": {
+              "object": {
+                "type": "string",
+                "default": "list",
+                "description": "The type of the object represented is by default `list`. To get this list, you need to make a call to the endpoint returned in the `url` attribute."
+              },
+              "count": {
+                "type": "integer",
+                "example": 0,
+                "description": "Publication event counter."
+              },
+              "url": {
+                "type": "string",
+                "example": "/v1/vouchers/WVPblOYX/publications?page=1&limit=10",
+                "description": "The endpoint where this list of publications can be accessed using a GET method. `/v1/vouchers/{voucher_code}/publications`"
+              }
+            }
+          },
+          "redemption": {
+            "type": "object",
+            "description": "Stores a summary of redemptions that have been applied to the voucher.",
+            "properties": {
+              "quantity": {
+                "type": "integer",
+                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+              },
+              "redeemed_quantity": {
+                "type": "integer",
+                "example": 1,
+                "description": "How many times a voucher has already been redeemed."
+              },
+              "redeemed_points": {
+                "type": "integer",
+                "example": 100000,
+                "description": "Total loyalty points redeemed."
+              },
+              "object": {
+                "type": "string",
+                "default": "list",
+                "description": "The type of the object represented is by default `list`. To get this list, you need to make a call to the endpoint returned in the url attribute."
+              },
+              "url": {
+                "type": "string",
+                "example": "/v1/vouchers/WVPblOYX/redemptions?page=1&limit=10",
+                "description": "The endpoint where this list of redemptions can be accessed using a GET method. `/v1/vouchers/{voucher_code}/redemptions`"
+              }
+            }
+          }
+        }
       },
       "LoyaltyTier": {
         "title": "Loyalty Tier",
@@ -11910,6 +12193,12 @@
               }
             }
           }
+        }
+      },
+      "ParameterIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
         }
       },
       "ParameterInteger": {
@@ -14537,7 +14826,7 @@
           "points": {
             "type": "integer",
             "example": 7000,
-            "description": "Total points incurred over lifespan of loyalty card."
+            "description": "Total points incurred over the lifespan of the loyalty card."
           },
           "balance": {
             "type": "integer",
@@ -17400,7 +17689,7 @@
         "properties": {
           "points": {
             "type": "integer",
-            "description": "Total points incurred over lifespan of loyalty card."
+            "description": "Total points incurred over the lifespan of the loyalty card."
           },
           "balance": {
             "type": "integer",
@@ -19699,7 +19988,7 @@
               "points": {
                 "type": "integer",
                 "example": 7000,
-                "description": "Total points incurred over lifespan of loyalty card."
+                "description": "Total points incurred over the lifespan of the loyalty card."
               },
               "balance": {
                 "type": "integer",
@@ -23044,6 +23333,17 @@
             "in": "query",
             "name": "order",
             "description": "Sorts the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCode"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ids"
           }
         ],
         "security": [
@@ -33742,6 +34042,213 @@
       }
     },
     "/v1/loyalties": {
+      "get": {
+        "operationId": "list-loyalty-programs",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "List Loyalty Campaigns",
+        "description": "Returns a list of your loyalty campaigns.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListCampaigns"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a dictionary with loyalty program objects. The loyalty campaigns are returned sorted by creation date, with the most recent campaigns appearing first.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesListCampaignsResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "campaigns",
+                      "campaigns": [
+                        {
+                          "id": "camp_eTIsUtuzkRXQT6rsUQqrS5Gw",
+                          "name": "Loyalty Campaign 1",
+                          "campaign_type": "LOYALTY_PROGRAM",
+                          "type": "AUTO_UPDATE",
+                          "voucher": {
+                            "type": "LOYALTY_CARD",
+                            "loyalty_card": {
+                              "points": 0
+                            },
+                            "redemption": {
+                              "quantity": null
+                            },
+                            "code_config": {
+                              "length": 8,
+                              "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                              "pattern": "########"
+                            },
+                            "is_referral_code": false
+                          },
+                          "auto_join": false,
+                          "join_once": false,
+                          "use_voucher_metadata_schema": true,
+                          "description": "This is a campaign description.",
+                          "vouchers_count": 6,
+                          "active": true,
+                          "metadata": {
+                            "Season": "Fall"
+                          },
+                          "created_at": "2022-11-21T13:57:03.712Z",
+                          "updated_at": "2022-11-23T09:59:49.581Z",
+                          "creation_status": "DONE",
+                          "vouchers_generation_status": "DONE",
+                          "protected": false,
+                          "category_id": "cat_0b6152ce12414820dc",
+                          "categories": [],
+                          "object": "campaign"
+                        },
+                        {
+                          "id": "camp_fkZ28pe7DUAEmmabofkxHI8N",
+                          "name": "Loyalty Campaign - Tiers",
+                          "campaign_type": "LOYALTY_PROGRAM",
+                          "type": "AUTO_UPDATE",
+                          "voucher": {
+                            "type": "LOYALTY_CARD",
+                            "loyalty_card": {
+                              "points": 0
+                            },
+                            "redemption": {
+                              "quantity": null
+                            },
+                            "code_config": {
+                              "length": 8,
+                              "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                              "pattern": "########",
+                              "prefix": "LT1-",
+                              "initial_count": 1
+                            },
+                            "is_referral_code": false,
+                            "start_date": "2022-11-01T00:00:00.000Z"
+                          },
+                          "auto_join": false,
+                          "join_once": false,
+                          "use_voucher_metadata_schema": true,
+                          "start_date": "2022-11-01T00:00:00.000Z",
+                          "validity_day_of_week": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6
+                          ],
+                          "vouchers_count": 3,
+                          "active": true,
+                          "metadata": {},
+                          "created_at": "2022-11-09T06:26:52.985Z",
+                          "updated_at": "2022-11-10T08:54:46.136Z",
+                          "creation_status": "DONE",
+                          "vouchers_generation_status": "DONE",
+                          "protected": false,
+                          "category_id": "cat_0b8b5a427a0283c854",
+                          "categories": [],
+                          "loyalty_tiers_expiration": {
+                            "qualification_type": "BALANCE",
+                            "start_date": {
+                              "type": "IMMEDIATE"
+                            },
+                            "expiration_date": {
+                              "type": "CUSTOM",
+                              "extend": "P3M",
+                              "rounding": {
+                                "type": "MONTH",
+                                "strategy": "END"
+                              }
+                            }
+                          },
+                          "object": "campaign"
+                        },
+                        {
+                          "id": "camp_NwO6D0Z0mpZ1CDc380DnPgrW",
+                          "name": "Loyalty Campaign Example",
+                          "campaign_type": "LOYALTY_PROGRAM",
+                          "type": "STATIC",
+                          "voucher": {
+                            "type": "LOYALTY_CARD",
+                            "loyalty_card": {
+                              "points": 0
+                            },
+                            "redemption": {
+                              "quantity": null
+                            },
+                            "code_config": {
+                              "length": 8,
+                              "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                              "pattern": "########",
+                              "initial_count": 1
+                            },
+                            "is_referral_code": false,
+                            "start_date": "2021-12-15T00:00:00.000Z",
+                            "expiration_date": "2021-12-31T00:00:00.000Z",
+                            "validity_timeframe": {
+                              "interval": "P1D",
+                              "duration": "PT1H"
+                            }
+                          },
+                          "auto_join": true,
+                          "join_once": true,
+                          "use_voucher_metadata_schema": true,
+                          "start_date": "2021-12-15T00:00:00.000Z",
+                          "expiration_date": "2021-12-31T00:00:00.000Z",
+                          "validity_timeframe": {
+                            "interval": "P1D",
+                            "duration": "PT1H"
+                          },
+                          "validity_day_of_week": [
+                            3,
+                            4,
+                            5,
+                            6
+                          ],
+                          "activity_duration_after_publishing": "P24D",
+                          "vouchers_count": 0,
+                          "active": false,
+                          "metadata": {},
+                          "created_at": "2021-12-15T08:02:52.298Z",
+                          "updated_at": "2021-12-15T08:11:43.808Z",
+                          "creation_status": "DRAFT",
+                          "vouchers_generation_status": "DRAFT",
+                          "protected": false,
+                          "category_id": null,
+                          "categories": [],
+                          "object": "campaign"
+                        }
+                      ],
+                      "total": 3
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "operationId": "create-loyalty-program",
         "tags": [
@@ -33951,6 +34458,113 @@
           "description": "The campaign ID or name of the loyalty campaign. You can either pass the campaign ID, which was assigned by Voucherify, or the `name` of the campaign as the path parameter value, e.g., `Loyalty%20Campaign`. "
         }
       ],
+      "get": {
+        "operationId": "get-loyalty-program",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "Get Loyalty Campaign",
+        "description": "Retrieve a specific loyalty campaign.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a loyalty campaign object for a given loyalty campaign ID. ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesGetCampaignResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "camp_fkZ28pe7DUAEmmabofkxHI8N",
+                      "name": "Loyalty Campaign - Tiers - 1",
+                      "campaign_type": "LOYALTY_PROGRAM",
+                      "type": "AUTO_UPDATE",
+                      "voucher": {
+                        "type": "LOYALTY_CARD",
+                        "loyalty_card": {
+                          "points": 0
+                        },
+                        "redemption": {
+                          "quantity": null
+                        },
+                        "code_config": {
+                          "length": 8,
+                          "charset": "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                          "pattern": "########",
+                          "prefix": "LT1-",
+                          "initial_count": 1
+                        },
+                        "is_referral_code": false,
+                        "start_date": "2022-11-01T00:00:00.000Z"
+                      },
+                      "auto_join": false,
+                      "join_once": false,
+                      "use_voucher_metadata_schema": true,
+                      "start_date": "2022-11-01T00:00:00.000Z",
+                      "validity_day_of_week": [
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                      ],
+                      "vouchers_count": 3,
+                      "active": true,
+                      "metadata": {},
+                      "created_at": "2022-11-09T06:26:52.985Z",
+                      "updated_at": "2022-11-10T08:54:46.136Z",
+                      "category": "Eighth",
+                      "creation_status": "DONE",
+                      "vouchers_generation_status": "DONE",
+                      "protected": false,
+                      "validation_rules_assignments": {
+                        "object": "list",
+                        "data_ref": "data",
+                        "data": [],
+                        "total": 0
+                      },
+                      "category_id": "cat_0b8b5a427a0283c854",
+                      "categories": [
+                        {
+                          "id": "cat_0b8b5a427a0283c854",
+                          "name": "Eighth",
+                          "hierarchy": 8,
+                          "created_at": "2022-08-16T11:45:54.171Z",
+                          "object": "category"
+                        }
+                      ],
+                      "loyalty_tiers_expiration": {
+                        "qualification_type": "BALANCE",
+                        "start_date": {
+                          "type": "IMMEDIATE"
+                        },
+                        "expiration_date": {
+                          "type": "CUSTOM",
+                          "extend": "P3M",
+                          "rounding": {
+                            "type": "MONTH",
+                            "strategy": "END"
+                          }
+                        }
+                      },
+                      "object": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "put": {
         "operationId": "update-loyalty-program",
         "tags": [
@@ -34176,6 +34790,395 @@
                   "Example": {
                     "value": {
                       "async_action_id": "aa_0a875d56c805df6601"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/{campaignId}/members": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "description": "Unique campaign ID of the loyalty program."
+        }
+      ],
+      "get": {
+        "operationId": "list-members",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "List Members",
+        "description": "Returns a list of your loyalty cards. The loyalty cards are sorted by creation date, with the most recent loyalty cards appearing first.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/page"
+          },
+          {
+            "$ref": "#/components/parameters/customer"
+          },
+          {
+            "$ref": "#/components/parameters/created_at"
+          },
+          {
+            "$ref": "#/components/parameters/updated_at"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderVouchers"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCode"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/ids"
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a list of loyalty cards within a campaign.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesListMembersResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "vouchers",
+                      "vouchers": [
+                        {
+                          "id": "v_YLn0WVWXSXbUfDvxgrgUbtfJ3SQIY655",
+                          "code": "0PmQ7JQI",
+                          "campaign": "Loyalty Campaign",
+                          "campaign_id": "camp_7s3uXI44aKfIk5IhmeOPr6ic",
+                          "category": null,
+                          "category_id": null,
+                          "categories": [],
+                          "type": "LOYALTY_CARD",
+                          "discount": null,
+                          "gift": null,
+                          "loyalty_card": {
+                            "points": 0,
+                            "balance": 0
+                          },
+                          "start_date": null,
+                          "expiration_date": null,
+                          "validity_timeframe": null,
+                          "validity_day_of_week": null,
+                          "active": true,
+                          "additional_info": null,
+                          "metadata": {},
+                          "assets": {
+                            "qr": {
+                              "id": "U2FsdGVkX19RtPewWeUYb2hiCR6xEhVE3SLdMfCXj3BA/s6uqSwFl2oAKAt9K5dolsdcZcj5Jgaa/YCnKkm63TRuX6OgGJoEggbKMg+wLfCMwBSi4J2v8KXuyqM25wP4r9WAL58Z+z3B1jkALIbjtw==",
+                              "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX19RtPewWeUYb2hiCR6xEhVE3SLdMfCXj3BA%2Fs6uqSwFl2oAKAt9K5dolsdcZcj5Jgaa%2FYCnKkm63TRuX6OgGJoEggbKMg%2BwLfCMwBSi4J2v8KXuyqM25wP4r9WAL58Z%2Bz3B1jkALIbjtw%3D%3D"
+                            },
+                            "barcode": {
+                              "id": "U2FsdGVkX1+hrRfaPMHRRX5aGVz2RpurRBjC2brcHcptPs4Od93qZM51vUXZe4DDzfRbnVrP+BfBtF+pyyQpxCeqbQuB/OuSnP/nzec6n0n/gTb9+XcIYLvvxcbnDbYoVdRFQEbcCxKKo4QzDlqIjQ==",
+                              "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BhrRfaPMHRRX5aGVz2RpurRBjC2brcHcptPs4Od93qZM51vUXZe4DDzfRbnVrP%2BBfBtF%2BpyyQpxCeqbQuB%2FOuSnP%2Fnzec6n0n%2FgTb9%2BXcIYLvvxcbnDbYoVdRFQEbcCxKKo4QzDlqIjQ%3D%3D"
+                            }
+                          },
+                          "is_referral_code": false,
+                          "created_at": "2022-04-15T05:48:45.509Z",
+                          "updated_at": "2022-07-01T00:01:57.860Z",
+                          "holder_id": "cust_nk0N1uNQ1YnupAoJGOgvsODC",
+                          "redemption": {
+                            "quantity": null,
+                            "redeemed_quantity": 0,
+                            "redeemed_points": 0,
+                            "object": "list",
+                            "url": "/v1/vouchers/0PmQ7JQI/redemptions?page=1&limit=10"
+                          },
+                          "publish": {
+                            "object": "list",
+                            "count": 1,
+                            "url": "/v1/vouchers/0PmQ7JQI/publications?page=1&limit=10"
+                          },
+                          "object": "voucher"
+                        },
+                        {
+                          "id": "v_0aMj6Mdp0i3zuXrd9NnBKboc7746mlgF",
+                          "code": "MmFAzfDe",
+                          "campaign": "Loyalty Campaign",
+                          "campaign_id": "camp_7s3uXI44aKfIk5IhmeOPr6ic",
+                          "category": null,
+                          "category_id": "cat_0b6152ce12414820de",
+                          "categories": [],
+                          "type": "LOYALTY_CARD",
+                          "discount": null,
+                          "gift": null,
+                          "loyalty_card": {
+                            "points": 13435,
+                            "balance": 13135,
+                            "next_expiration_date": "2022-11-30",
+                            "next_expiration_points": 12
+                          },
+                          "start_date": null,
+                          "expiration_date": null,
+                          "validity_timeframe": null,
+                          "validity_day_of_week": null,
+                          "active": true,
+                          "additional_info": null,
+                          "metadata": {},
+                          "assets": {
+                            "qr": {
+                              "id": "U2FsdGVkX184kVdWUO/msrLg1G0MRf/Cs6QwSN3f6kyWCOTGdijyq8OfUbUpcGx6fjdeIpTf2UilFGNG8aCWVk/dXm/QEJ/sulXKDlUMWf+MN7TRG5LB+wuzqTy7csDBfRoJn0fURpwU4A6VZZSwBQ==",
+                              "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX184kVdWUO%2FmsrLg1G0MRf%2FCs6QwSN3f6kyWCOTGdijyq8OfUbUpcGx6fjdeIpTf2UilFGNG8aCWVk%2FdXm%2FQEJ%2FsulXKDlUMWf%2BMN7TRG5LB%2BwuzqTy7csDBfRoJn0fURpwU4A6VZZSwBQ%3D%3D"
+                            },
+                            "barcode": {
+                              "id": "U2FsdGVkX1/RGZN9VwvkdI6B26PPZQZWjh33USr5NPMXbHuJVkxsH6TUyW/cXen1Lc7gaqik09BGiry0R4QIAP52jnxQuABOsW0HdYfglsLPY7IajGX5rJzZKDKuzioq2vRIPyuE6z03frAod7ptvQ==",
+                              "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2FRGZN9VwvkdI6B26PPZQZWjh33USr5NPMXbHuJVkxsH6TUyW%2FcXen1Lc7gaqik09BGiry0R4QIAP52jnxQuABOsW0HdYfglsLPY7IajGX5rJzZKDKuzioq2vRIPyuE6z03frAod7ptvQ%3D%3D"
+                            }
+                          },
+                          "is_referral_code": false,
+                          "created_at": "2022-02-18T14:03:59.954Z",
+                          "updated_at": "2022-11-21T13:49:54.949Z",
+                          "holder_id": "cust_sehkNIi8Uq2qQuRqSr7xn4Zi",
+                          "redemption": {
+                            "quantity": null,
+                            "redeemed_quantity": 1,
+                            "redeemed_points": 300,
+                            "object": "list",
+                            "url": "/v1/vouchers/MmFAzfDe/redemptions?page=1&limit=10"
+                          },
+                          "publish": {
+                            "object": "list",
+                            "count": 1,
+                            "url": "/v1/vouchers/MmFAzfDe/publications?page=1&limit=10"
+                          },
+                          "object": "voucher"
+                        }
+                      ],
+                      "total": 2
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/{campaignId}/members/{memberId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "description": "Unique campaign ID."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique code that identifies the loyalty card."
+        }
+      ],
+      "get": {
+        "operationId": "get-member-1",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "Get Member",
+        "description": "Retrieves the loyalty card with the given member ID (i.e. voucher code).",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns loyalty card details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMembersGetResponseBody"
+                },
+                "examples": {
+                  "Loyalty Card": {
+                    "value": {
+                      "id": "v_0aMj6Mdp0i3zuXrd9NnBKboc7746mlgF",
+                      "code": "MmFAzfDe",
+                      "campaign": "Loyalty Program",
+                      "campaign_id": "camp_7s3uXI44aKfIk5IhmeOPr6ic",
+                      "category": null,
+                      "category_id": "cat_0b6152ce12414820de",
+                      "categories": [],
+                      "type": "LOYALTY_CARD",
+                      "discount": null,
+                      "gift": null,
+                      "loyalty_card": {
+                        "points": 13435,
+                        "balance": 13135,
+                        "next_expiration_date": "2022-11-30",
+                        "next_expiration_points": 12
+                      },
+                      "start_date": null,
+                      "expiration_date": null,
+                      "validity_timeframe": null,
+                      "validity_day_of_week": null,
+                      "active": true,
+                      "additional_info": null,
+                      "metadata": {},
+                      "assets": {
+                        "qr": {
+                          "id": "U2FsdGVkX184kVdWUO/msrLg1G0MRf/Cs6QwSN3f6kyWCOTGdijyq8OfUbUpcGx6fjdeIpTf2UilFGNG8aCWVk/dXm/QEJ/sulXKDlUMWf+MN7TRG5LB+wuzqTy7csDBfRoJn0fURpwU4A6VZZSwBQ==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX184kVdWUO%2FmsrLg1G0MRf%2FCs6QwSN3f6kyWCOTGdijyq8OfUbUpcGx6fjdeIpTf2UilFGNG8aCWVk%2FdXm%2FQEJ%2FsulXKDlUMWf%2BMN7TRG5LB%2BwuzqTy7csDBfRoJn0fURpwU4A6VZZSwBQ%3D%3D"
+                        },
+                        "barcode": {
+                          "id": "U2FsdGVkX1/RGZN9VwvkdI6B26PPZQZWjh33USr5NPMXbHuJVkxsH6TUyW/cXen1Lc7gaqik09BGiry0R4QIAP52jnxQuABOsW0HdYfglsLPY7IajGX5rJzZKDKuzioq2vRIPyuE6z03frAod7ptvQ==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2FRGZN9VwvkdI6B26PPZQZWjh33USr5NPMXbHuJVkxsH6TUyW%2FcXen1Lc7gaqik09BGiry0R4QIAP52jnxQuABOsW0HdYfglsLPY7IajGX5rJzZKDKuzioq2vRIPyuE6z03frAod7ptvQ%3D%3D"
+                        }
+                      },
+                      "is_referral_code": false,
+                      "created_at": "2022-02-18T14:03:59.954Z",
+                      "updated_at": "2022-11-21T13:49:54.949Z",
+                      "holder_id": "cust_sehkNIi8Uq2qQuRqSr7xn4Zi",
+                      "redemption": {
+                        "quantity": null,
+                        "redeemed_quantity": 1,
+                        "redeemed_points": 300,
+                        "object": "list",
+                        "url": "/v1/vouchers/MmFAzfDe/redemptions?page=1&limit=10"
+                      },
+                      "publish": {
+                        "object": "list",
+                        "count": 1,
+                        "url": "/v1/vouchers/MmFAzfDe/publications?page=1&limit=10"
+                      },
+                      "object": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/members/{memberId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty card code assigned to a particular customer."
+        }
+      ],
+      "get": {
+        "operationId": "get-member",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "Get Member",
+        "description": "Retrieve loyalty card with the given member ID (i.e. voucher code).    \n\n<!-- theme: info -->\n> 📘 Alternative endpoint\n> This endpoint is an alternative to this <!-- [endpoint](OpenAPI.json/paths/~1loyalties~1{campaignId}~1members~1{memberId}/post) -->[endpoint](ref:get-member-1). The URL was re-designed to allow you to retrieve loyalty card details without having to provide the `campaignId` as a path parameter.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns loyalty card details.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMembersGetResponseBody"
+                },
+                "examples": {
+                  "Loyalty Card": {
+                    "value": {
+                      "id": "v_0aMj6Mdp0i3zuXrd9NnBKboc7746mlgF",
+                      "code": "MmFAzfDe",
+                      "campaign": "Loyalty Program",
+                      "campaign_id": "camp_7s3uXI44aKfIk5IhmeOPr6ic",
+                      "category": null,
+                      "category_id": "cat_0b6152ce12414820de",
+                      "categories": [],
+                      "type": "LOYALTY_CARD",
+                      "discount": null,
+                      "gift": null,
+                      "loyalty_card": {
+                        "points": 13435,
+                        "balance": 13135,
+                        "next_expiration_date": "2022-11-30",
+                        "next_expiration_points": 12
+                      },
+                      "start_date": null,
+                      "expiration_date": null,
+                      "validity_timeframe": null,
+                      "validity_day_of_week": null,
+                      "active": true,
+                      "additional_info": null,
+                      "metadata": {},
+                      "assets": {
+                        "qr": {
+                          "id": "U2FsdGVkX184kVdWUO/msrLg1G0MRf/Cs6QwSN3f6kyWCOTGdijyq8OfUbUpcGx6fjdeIpTf2UilFGNG8aCWVk/dXm/QEJ/sulXKDlUMWf+MN7TRG5LB+wuzqTy7csDBfRoJn0fURpwU4A6VZZSwBQ==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX184kVdWUO%2FmsrLg1G0MRf%2FCs6QwSN3f6kyWCOTGdijyq8OfUbUpcGx6fjdeIpTf2UilFGNG8aCWVk%2FdXm%2FQEJ%2FsulXKDlUMWf%2BMN7TRG5LB%2BwuzqTy7csDBfRoJn0fURpwU4A6VZZSwBQ%3D%3D"
+                        },
+                        "barcode": {
+                          "id": "U2FsdGVkX1/RGZN9VwvkdI6B26PPZQZWjh33USr5NPMXbHuJVkxsH6TUyW/cXen1Lc7gaqik09BGiry0R4QIAP52jnxQuABOsW0HdYfglsLPY7IajGX5rJzZKDKuzioq2vRIPyuE6z03frAod7ptvQ==",
+                          "url": "https://dev.dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2FRGZN9VwvkdI6B26PPZQZWjh33USr5NPMXbHuJVkxsH6TUyW%2FcXen1Lc7gaqik09BGiry0R4QIAP52jnxQuABOsW0HdYfglsLPY7IajGX5rJzZKDKuzioq2vRIPyuE6z03frAod7ptvQ%3D%3D"
+                        }
+                      },
+                      "is_referral_code": false,
+                      "created_at": "2022-02-18T14:03:59.954Z",
+                      "updated_at": "2022-11-21T13:49:54.949Z",
+                      "holder_id": "cust_sehkNIi8Uq2qQuRqSr7xn4Zi",
+                      "redemption": {
+                        "quantity": null,
+                        "redeemed_quantity": 1,
+                        "redeemed_points": 300,
+                        "object": "list",
+                        "url": "/v1/vouchers/MmFAzfDe/redemptions?page=1&limit=10"
+                      },
+                      "publish": {
+                        "object": "list",
+                        "count": 1,
+                        "url": "/v1/vouchers/MmFAzfDe/publications?page=1&limit=10"
+                      },
+                      "object": "voucher"
                     }
                   }
                 }
