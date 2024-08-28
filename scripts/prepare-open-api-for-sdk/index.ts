@@ -5,6 +5,8 @@ import minimist from "minimist";
 import colors from "colors";
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 import originalOpenAPIContent from "../../reference/OpenAPI.json";
+import _ from "lodash";
+
 let openAPIContent = originalOpenAPIContent;
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
@@ -189,7 +191,9 @@ const main = async (languageOptions: LanguageOptions) => {
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
-      schemas: parseNullsToNullableObjects(schemas),
+      schemas: moveSchemasOnTheBack(parseNullsToNullableObjects(schemas), [
+        "LoyaltiesEarningRulesUpdateRequestBody",
+      ]),
       parameters,
     },
     paths: newPaths,
@@ -197,6 +201,11 @@ const main = async (languageOptions: LanguageOptions) => {
 
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
 };
+
+const moveSchemasOnTheBack = (schemas: any, schemasNames: string[]) => ({
+  ..._.omit(schemas, schemasNames),
+  ..._.pick(schemas, schemasNames),
+});
 
 if (!("language" in options)) {
   console.log(colors.red("invalid arguments, missing language parameter"));
