@@ -1,5 +1,5 @@
 ---
-title: Redeem Voucher (client-side) [Deprecated]
+title: Redeem Voucher (client-side)
 type: endpoint
 categorySlug: voucherify-api
 slug: redeem-voucher-client-side
