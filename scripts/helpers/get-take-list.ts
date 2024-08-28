@@ -1,4 +1,10 @@
 export const rawTakeList = {
+  "/v1/loyalties/{campaignId}/points-expiration/export": {
+    post: ["default", "ruby", "java", "php"],
+  },
+  "/v1/customers/{customerId}/redeemables": {
+    get: ["default", "ruby", "java", "php"],
+  },
   "/v1/vouchers/import": {
     post: ["default", "ruby", "java", "php"],
   },
