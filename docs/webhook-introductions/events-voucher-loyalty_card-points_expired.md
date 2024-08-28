@@ -1,4 +1,4 @@
-The `EVENTS.CUSTOMER.VOUCHER.LOYALTY_CARD.POINTS_EXPIRED` event indicates that loyalty points have expired on a customer's loyalty card. It informs about the loyalty points that were removed under the expiration rules set in the loyalty campaign.
+The `EVENTS.VOUCHER.LOYALTY_CARD.POINTS_EXPIRED` event indicates that loyalty points have expired on a loyalty card. It informs about the loyalty points that were removed under the expiration rules set in the loyalty campaign.
 
 > 📘 Webhook documentation
 >

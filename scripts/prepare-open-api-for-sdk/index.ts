@@ -20,7 +20,7 @@ import {
   removeBuggedTagsFromOpenAPIPaths,
 } from "./remove-bugged-tags-from-open-api";
 import { removeUnwantedProperties } from "./remove-unwanted-properties";
-import { omit, pick } from "lodash";
+import addMissingDefaults from "./add-missing-defaults";
 
 const options = minimist(process.argv.slice(2));
 
@@ -33,6 +33,7 @@ type LanguageOptions = {
   putNotObjectSchemasIntoObjectSchemas?: true; //default: false
   removeBuggedTagsFromOpenAPIPaths?: true; //default: false
   makeEverythingNullable?: true; //default: false
+  addMissingDefaultsWhenSingleEnumFound?: true;
 };
 
 const supportedLanguages: {
@@ -50,6 +51,7 @@ const supportedLanguages: {
     removeRequiredOnNullable: true,
     makeEverythingNullable: true,
     removeBuggedTagsFromOpenAPIPaths: true,
+    addMissingDefaultsWhenSingleEnumFound: true,
   },
   php: {
     name: "php",
@@ -59,6 +61,7 @@ const supportedLanguages: {
     makeEverythingNullable: true,
     removeBuggedTagsFromOpenAPIPaths: true,
     putNotObjectSchemasIntoObjectSchemas: true,
+    addMissingDefaultsWhenSingleEnumFound: true,
   },
   java: {
     name: "java",
@@ -67,6 +70,7 @@ const supportedLanguages: {
     removeRequiredOnNullable: true,
     makeEverythingNullable: true,
     removeBuggedTagsFromOpenAPIPaths: true,
+    addMissingDefaultsWhenSingleEnumFound: true,
   },
 };
 
@@ -137,6 +141,9 @@ const main = async (languageOptions: LanguageOptions) => {
     );
   delete openAPIContent.components.schemas.Voucher.allOf;
   //////////////////////////////////////////////////////////////////////////////
+  if (languageOptions.addMissingDefaultsWhenSingleEnumFound) {
+    openAPIContent = addMissingDefaults(openAPIContent);
+  }
   const { paths, newSchemas } = getPathsWithoutDeprecated(
     openAPIContent.paths,
     languageOptions.okResponseMustBeOnlyOne,
@@ -195,8 +202,8 @@ const main = async (languageOptions: LanguageOptions) => {
 };
 
 const moveSchemasOnTheBack = (schemas: any, schemasNames: string[]) => ({
-  ...omit(schemas, schemasNames),
-  ...pick(schemas, schemasNames),
+  ..._.omit(schemas, schemasNames),
+  ..._.pick(schemas, schemasNames),
 });
 
 if (!("language" in options)) {
