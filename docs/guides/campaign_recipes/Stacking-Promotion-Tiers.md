@@ -19,6 +19,9 @@ order: 7
 Cart-level promotions apply discounts to customer's cart without promo codes. Once a customer qualifies for a promotion tier, the discount is automatically added to their cart. 
 Cart promotion can have many tiers, each with different discount and rules assigned. Created tiers can be grouped into stacks and validated/redeemed as a single redeemable. 
 
+> 📘
+> A single promotion stack can have a maximum number of **30 tiers**.
+
 There are two modes for creating the promotion stacks.
 * Dashboard - [go here](https://support.voucherify.io/article/519-create-cart-level-promotions) to learn more
 * API - call **POST** URL/{promotion_id}/stacks
