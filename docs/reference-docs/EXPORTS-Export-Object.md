@@ -267,7 +267,7 @@ Available values: `and`, `or`
 ## Field Conditions
 | Attributes |  Description |
 |:-----|:--------|
-| conditions | <p>Data filters used to narrow the data records to be returned in the result.</p> [Filters Condition](#filters-condition) |
+| conditions | <p>Data filters used to narrow down the data records to be returned in the result.</p> [Filters Condition](#filters-condition) |
 
 ## Any
 One of:
