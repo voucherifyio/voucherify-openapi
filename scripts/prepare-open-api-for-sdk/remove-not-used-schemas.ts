@@ -5,8 +5,8 @@ import {
 } from "./utils";
 
 type Components = {
-  parameters: {};
-  schemas: {};
+  parameters: Record<string, any>;
+  schemas: Record<string, any>;
 };
 
 type LanguageOptions = {

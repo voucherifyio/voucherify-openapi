@@ -104,7 +104,10 @@ const main = async (languageOptions: LanguageOptions) => {
   //////////////////////////////////////////////////////////////////////////////
   removeStoplightTag(openAPIContent);
   openAPIContent = removeUnwantedProperties(openAPIContent, ["readmeTitle"]);
-  openAPIContent.components.schemas = removeUnwantedProperties(openAPIContent.components.schemas, ["title"]);
+  openAPIContent.components.schemas = removeUnwantedProperties(
+    openAPIContent.components.schemas,
+    ["title"],
+  );
   //Simplify AsyncAction.result
   openAPIContent.components.schemas.AsyncAction.allOf.map((schema) => {
     if (schema?.properties?.result) {
@@ -119,8 +122,9 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.securitySchemes["X-Management-Id"];
   delete openAPIContent.components.securitySchemes["X-Management-Token"];
   //Fix voucher - to prevent breaking changes
-  delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum
-  delete openAPIContent.components.schemas.AsyncActionBase.properties.operation_status.enum
+  delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
+  delete openAPIContent.components.schemas.AsyncActionBase.properties
+    .operation_status.enum;
   openAPIContent.components.schemas.Voucher["type"] = "object";
   openAPIContent.components.schemas.Voucher["properties"] =
     openAPIContent.components.schemas.Voucher.allOf.reduce(
@@ -154,7 +158,6 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.schemas.MemberActivity.properties.type.enum;
   delete openAPIContent.components.schemas.MemberActivity.properties.data
     .properties;
-  openAPIContent.components.schemas = copySchemasIfUsedAsAllOfInBase(openAPIContent.components.schemas)
   //////////////////////////////////////////////////////////////////////////////
   if (languageOptions.addMissingDefaultsWhenSingleEnumFound) {
     openAPIContent = addMissingDefaults(openAPIContent);
@@ -200,17 +203,34 @@ const main = async (languageOptions: LanguageOptions) => {
         )
       : openAPIContent.components.parameters;
 
+  Object.fromEntries(
+    Object.entries(schemas).map(([title, schema]) => {
+      return [title, openAPIContent.components.schemas];
+    }),
+  );
 
-  Object.fromEntries(Object.entries(schemas).map(([title, schema]) => {
-    return [title, openAPIContent.components.schemas]
-  }));
+  const schemasWithFixedTitles: any = fixSchemasTitles(
+    removeUnwantedProperties(
+      parseNullsToNullableObjects(copySchemasIfUsedAsAllOfInBase(schemas)),
+      ["title"],
+    ),
+  );
+  let schemasWithoutNotUsed2 = removeNotUsedSchemas(
+    {
+      schemas: schemasWithFixedTitles,
+      parameters: openAPIContent.components.parameters,
+    },
+    paths,
+    languageOptions,
+    {},
+  );
 
   // Building all together
   const newOpenApiFile = cleanUpDescriptionsInEntireObject({
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
-      schemas: fixSchemasTitles(parseNullsToNullableObjects(schemas)),
+      schemas: schemasWithoutNotUsed2,
       parameters,
     },
     paths: newPaths,
@@ -219,59 +239,170 @@ const main = async (languageOptions: LanguageOptions) => {
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
 };
 
-const copySchemasIfUsedAsAllOfInBase = (schemas):any => {
-  return Object.fromEntries(Object.entries(schemas).map(([schemaName, schema]):any => {
-    if(_.isObject(schema) && 'allOf' in schema && (schema as any).allOf?.length ===1 && (schema as any).allOf?.[0]?.$ref) {
-      const copyFrom = schema.allOf?.[0]?.$ref;
-      if(typeof copyFrom === 'string') {
-        const copyFromSchemaName = copyFrom.split('/').at(-1)
-        if(schemas[copyFromSchemaName]){
-          return [schemaName, _.merge(_.omit(schemas[copyFromSchemaName],['description']),_.pick(schema,['description']))]
-        }else{
-          throw new Error(`Could not find ${copyFromSchemaName} schema.... ref found in schema ${schemaName}`);
-        }
+const mergeObjectsWithAllOfs = (object, schemas) => {
+  const _object = _.omit(object, ["allOf"]);
+  _object.type = "object";
+  _object.properties = {};
+  object.allOf.forEach((item) => {
+    if (item?.$ref) {
+      const shcemaName = item?.$ref?.split("/").at(-1);
+      if (!schemas[shcemaName]) {
+        throw new Error(
+          `Could not find schema ${shcemaName}, ref: ${item?.$ref}`,
+        );
       }
+      if (schemas[shcemaName].allOf) {
+        _object.properties = {
+          ..._object.properties,
+          ...mergeObjectsWithAllOfs(schemas[shcemaName], schemas).properties,
+        };
+      } else if (schemas[shcemaName].properties) {
+        _object.properties = {
+          ..._object.properties,
+          ...schemas[shcemaName].properties,
+        };
+      } else {
+        throw new Error(
+          `Could not find allOf or Properties in schema ${shcemaName}`,
+        );
+      }
+    } else if (item?.properties) {
+      _object.properties = {
+        ..._object.properties,
+        ...item?.properties,
+      };
+    } else if (item.allOf) {
+      _object.properties = {
+        ...mergeObjectsWithAllOfs(item, schemas).properties,
+        ...item?.properties,
+      };
+    } else if (item.type === "object" && item.required.length) {
+    } else {
+      console.log(item);
+      throw new Error(
+        `Could not find any properties and any ref in one of allOf in object`,
+        object,
+      );
     }
-    return [schemaName, schema]
-  }));
-}
+  });
+  return _object;
+};
+
+const copySchemasIfUsedAsAllOfInBase = (schemas): Record<string, any> => {
+  return Object.fromEntries(
+    Object.entries(schemas).map(([schemaName, schema]): any => {
+      if (
+        !_.isObject(schema) ||
+        !("allOf" in schema) ||
+        (schema as any).allOf?.length === 0
+      ) {
+        return [schemaName, schema];
+      } else if ((schema as any).allOf?.length === 1) {
+        const copyFrom = schema.allOf?.[0]?.$ref;
+        if (typeof copyFrom === "string") {
+          const copyFromSchemaName = copyFrom.split("/").at(-1);
+          if (schemas[copyFromSchemaName]) {
+            if (schemas[copyFromSchemaName].allOf) {
+              return [
+                schemaName,
+                _.merge(
+                  _.omit(
+                    _.omit(
+                      mergeObjectsWithAllOfs(
+                        schemas[copyFromSchemaName],
+                        schemas,
+                      ),
+                      ["description", "allOf"],
+                    ),
+                    ["description"],
+                  ),
+                  _.pick(schema, ["description"]),
+                ),
+              ];
+            }
+            return [
+              schemaName,
+              _.merge(
+                _.omit(schemas[copyFromSchemaName], ["description"]),
+                _.pick(schema, ["description"]),
+              ),
+            ];
+          } else {
+            throw new Error(
+              `Could not find ${copyFromSchemaName} schema.... ref found in schema ${schemaName}`,
+            );
+          }
+        } else {
+          throw new Error(
+            `Could not find $ref in schema ${schemaName}.allOf[0]`,
+          );
+        }
+      } else {
+        return [
+          schemaName,
+          _.merge(
+            _.omit(mergeObjectsWithAllOfs(schema, schemas), [
+              "description",
+              "allOf",
+            ]),
+            _.pick(schema, ["description"]),
+          ),
+        ];
+      }
+    }),
+  );
+};
 
 const fixSchemasTitles = (schemas) => {
-  return Object.fromEntries(Object.entries(schemas).map(([title, schema]) => {
-    return [title, fixSchemaTitle(schema, title)]
-  }));
-}
+  return Object.fromEntries(
+    Object.entries(schemas).map(([title, schema]) => {
+      return [title, fixSchemaTitle(schema, title)];
+    }),
+  );
+};
 
-const fixSchemaTitle = (schema, title,skipSettingTitle?:boolean) => {
-  if(schema.$ref){
-    return _.pick(schema,'$ref')
+const fixSchemaTitle = (schema, title, skipSettingTitle?: boolean) => {
+  if (schema.$ref) {
+    return _.pick(schema, "$ref");
   }
-  if(!skipSettingTitle) {
+  if (!skipSettingTitle) {
     schema.title = title;
   }
-  if(schema.items){
-    schema.items = fixSchemaTitle(schema.items,`${title}Item`)
+  if (schema.items) {
+    schema.items = fixSchemaTitle(schema.items, `${title}Item`);
   }
-  if(schema.properties){
-    schema.properties = Object.fromEntries(Object.entries(schema.properties).map(([property, schema]:any) => {
-      if(['object','array'].includes(schema.type)) {
-        return [property, fixSchemaTitle(schema, `${title}${(_.startCase(snakeToCamel(property))).replaceAll(' ','')}`)]
-      }
-      return [property, schema]
-    }));
+  if (schema.properties) {
+    schema.properties = Object.fromEntries(
+      Object.entries(schema.properties).map(([property, schema]: any) => {
+        if (["object", "array"].includes(schema.type)) {
+          return [
+            property,
+            fixSchemaTitle(
+              schema,
+              `${title}${_.startCase(snakeToCamel(property)).replaceAll(
+                " ",
+                "",
+              )}`,
+            ),
+          ];
+        }
+        return [property, schema];
+      }),
+    );
   }
-  if(schema.allOf){
-    schema.allOf = schema.allOf.map((schema: any) =>fixSchemaTitle(schema, title, true));
+  if (schema.allOf) {
+    schema.allOf = schema.allOf.map((schema: any) =>
+      fixSchemaTitle(schema, title, true),
+    );
   }
-  return {title: schema.title, ..._.omit(schema)};
-}
+  return { title: schema.title, ..._.omit(schema) };
+};
 
-const snakeToCamel = str =>
-    str.toLowerCase().replace(/([-_][a-z])/g, group =>
-        group
-            .toUpperCase()
-            .replace('-', '')
-            .replace('_', '')
+const snakeToCamel = (str) =>
+  str
+    .toLowerCase()
+    .replace(/([-_][a-z])/g, (group) =>
+      group.toUpperCase().replace("-", "").replace("_", ""),
     );
 
 const moveSchemasOnTheBack = (schemas: any, schemasNames: string[]) => ({
