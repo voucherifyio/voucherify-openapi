@@ -95,3 +95,49 @@ Manual steps checklist:
 3. Ensure which version You want to build.
 4. Use command `git tag vx.y.z` to add tag
 5. Use command `git push origin vx.y.z` this will run GitHub action that will publish new version of ruby SDK
+
+
+## java chengelog
+
+- Added support:
+  - /v1/vouchers, get - List Vouchers
+  - /v1/vouchers, post - Generate Random Code 
+  - /v1/vouchers/{code}, put - Update Voucher
+  - /v1/vouchers/{code}, post - Create Voucher
+  - /v1/vouchers/import, post - Import Vouchers
+  - /v1/vouchers/bulk/async, post - Update Vouchers in Bulk
+  - /v1/vouchers/metadata/async, post - Update Vouchers' Metadata in Bulk
+  - /v1/promotions/tiers, get - List Promotion Tiers
+  - /v1/loyalties, get - List Loyalty Campaigns
+  - /v1/loyalties, post - Create Loyalty Campaign
+  - /v1/loyalties/{campaignId}, get - Get Loyalty Campaign
+  - /v1/loyalties/{campaignId}, put - Update Loyalty Campaign
+  - /v1/loyalties/{campaignId}/members, get - List Members
+  - /v1/loyalties/{campaignId}/members, post - Add Member
+  - /v1/loyalties/{campaignId}/members/{memberId}, get - Get Member
+  - /v1/loyalties/members/{memberId}, get - Get Member
+  - /v1/loyalties/{campaignId}/members/{memberId}/activity, get - List Member Activity
+  - /v1/loyalties/members/{memberId}/activity, get - List Member Activity
+  - /v1/loyalties/{campaignId}/points-expiration/export, post - Create Points Expiration Export
+  - /v1/loyalties/{campaignId}/earning-rules, get - List Earning Rules
+  - /v1/loyalties/{campaignId}/earning-rules, post - Create Earning Rule
+  - /v1/loyalties/{campaignId}/earning-rules/{earningRuleId}, put - Update Earning Rule
+  - /v1/loyalties/{campaignId}/reward-assignments, get - List Reward Assignments
+  - /v1/loyalties/{campaignId}/rewards, get - List Reward Assignments
+  - /v1/loyalties/{campaignId}/rewards, post - Create Reward Assignment
+  - /v1/loyalties/{campaignId}/rewards/{assignmentId}, put - Update Reward Assignment
+  - /v1/customers/{customerId}/activity, get - List Customer Activity
+  - /v1/customers/{customerId}/redeemables, get - List Customer's Redeemables
+  - /v1/segments/{segmentId}, get - Get Segment
+  - /v1/segments, post - Create Segment
+  - /v1/async-actions, get - List Async Actions
+  - /v1/async-actions/{asyncActionId}, get - Get Async Action
+  - /client/v1/promotions/tiers, get - List Promotion Tiers (client-side)
+
+
+
+
+
+to change
+- CampaignLoyaltyCardExpirationRules - usunąć enumy z `periodType` i `roundingType`
+
