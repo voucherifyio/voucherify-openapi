@@ -49,6 +49,8 @@ const createOpenAPIVersionToUpload = async () => {
     path.join(__dirname, "../tmp/referenceToUpload/OpenAPI.json"),
     JSON.stringify(newOpenApiFile, null, 2),
   );
+
+  console.log(colors.green("ok"));
 };
 
 (async () => {

@@ -4,6 +4,26 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+
+## 2024-08-26
+
+- Added the `Templates` tag and the following endpoints:
+  - GET `/v1/templates/campaigns`
+  - POST `/v1/templates/campaigns`
+
+## 2024-08-21
+
+- Added the `AsyncActionsVoucherCustomerProductBulkUpdateResult` schema for the results of the GET Async Action endpoint for the following bulk update actions:
+  - POST Update Vouchers in bulk
+  - POST Update Vouchers' metadata in bulk
+  - POST Update Customers in bulk
+  - POST Update Customers' Metadata in bulk
+  - POST Update Products in bulk
+  - POST Update Products' Metadata in bulk
+- Changes to descriptions to the above-mentioned endpoints
+- Added error 413 to the above-mentioned endpoints
+- Added `enum` to the `CampaignLoyaltyCard` and `AsyncActionBase` schemas
+
 ## 2024-08-07
 `OpenAPI.json`
 - New shemas `CreatePublicationWithoutSpecifyingVoucher`, `LoyaltiesMembersCreateResponseBody`
@@ -12,6 +32,9 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 ## 2024-08-07
 `OpenAPI.json`
 - New schemas: `LoyaltiesGetCampaignResponseBody`, `LoyaltiesListCampaignsResponseBody`, `ParameterCode`, `ParameterIds`, `LoyaltyMember`, `LoyaltiesListMembersResponseBody`, `LoyaltiesMembersGetResponseBody`
+
+## 2024-08-13
+- Added updated the description to `PromotionStackBase`, `PromotionsStacksUpdateRequestBody`, and `SimplePromotionStack` with the info about 30 promotion tiers in one stack
 
 ## 2024-08-06
 `OpenAPI.json`

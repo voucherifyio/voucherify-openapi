@@ -119,6 +119,8 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.securitySchemes["X-Management-Id"];
   delete openAPIContent.components.securitySchemes["X-Management-Token"];
   //Fix voucher - to prevent breaking changes
+  delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum
+  delete openAPIContent.components.schemas.AsyncActionBase.properties.operation_status.enum
   openAPIContent.components.schemas.Voucher["type"] = "object";
   openAPIContent.components.schemas.Voucher["properties"] =
     openAPIContent.components.schemas.Voucher.allOf.reduce(

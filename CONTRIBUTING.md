@@ -92,9 +92,9 @@ Note that OpenAPI files slightly differ depending on where we use them.
 
 If you want to contribute to the OpenAPI file, you MUST do it in the **reference/OpenAPI.json** file, because all other OpenAPI files are generated from this file!
 
-To update the **[production/readOnly-openAPI.json]** file, run the `npm run build-production-openapi` or `npm run manage-project -- (parameters)` command.
+To update the **[production/readOnly-openAPI.json]** file, run the `npm run build-production-openapi`
 
-The **[tmp/referenceToUpload/OpenAPI.json]** file is generated while running the `npm run manage-project -- (parameters)` command.
+The **[tmp/referenceToUpload/OpenAPI.json]** file is generated while running the `npm run create-clean-project -- (parameters)` command.
 
 The **[tmp/reference/{language}/OpenAPI.json]** files are generated while running `npm run prepare-open-api-for-sdk -- --language=(language)` command. The available languages are `ruby` and `python`.
 
@@ -235,11 +235,11 @@ There are two ways of adding images to Markdown files:
 - With a `[block:image]` component, [see example in Introduction.md](docs/guides/getting_started/Introduction.md),
 - With a link declaration, for example `![Welcome Diagram](https://files.readme.io/6070078-welcome-diagram.png "Welcome Diagram")`.
 
-At first, always point to the assets img folder, for example: `![Recent Changes](../../assets/img/guides_getting_started_quickstart_recent_changes_4.png "Recent Changes")`. This path declaration will be automatically updated to a url link during `npm run manage-project` command. However, if you don't want to update project data, you can run `npm run readme-upload-missing-images` instead.
+At first, always point to the assets img folder, for example: `![Recent Changes](../../assets/img/guides_getting_started_quickstart_recent_changes_4.png "Recent Changes")`. This path declaration will be automatically updated to a url link during `npm run create-clean-project` command. However, if you don't want to update project data, you can run `npm run readme-upload-missing-images` instead.
 
 ### Categories
 
-In order to add a new category, go to `scripts/manage-project.ts` and edit following fragment:
+In order to add a new category, go to `scripts/create-clean-version.ts` and edit following fragment:
 ```js
 const listOfGuideCategories = [
   "Getting started",
@@ -258,7 +258,7 @@ Note that the order of each category title determines the order on the Voucherif
 
 In order to change the order of the categories, change the order of category titles in the script fragment presented above.
 
-In order to remove a category, remove its title from the list. Make sure to remove any Markdown files associated with this `categorySlug` as well.
+In order to remove a category, remove its title from the list. Make sure to remove any Markdown files associated with this `categorySl ug` as well.
 
 > [!NOTE] `categorySlug` is created from the category title by converting the title to `kebab-case`/`dash-case` (all lower case). Example: `Campaigns Recipes` -> `campaigns-recipes`.
 
@@ -268,29 +268,11 @@ In order to remove a category, remove its title from the list. Make sure to remo
 	- Create your own branch from `master`.
 	- Create a draft pull request.
 - Make changes in the repository following the [patterns](#naming-convention) and [good practices](#good-practices).
-- Run `npm run manage-project -- --vt={your name}-{pull request number} --create` to create a new project version with your tag number.
-  - If the following error occurs:
-  ```
-  > manage-project
-  > ts-node scripts/build-update-md-tables-from-openapi.ts && ts-node ./scripts/manage-project.ts --vt=pw-658 --create
-
-  sh: ts-node: command not found
-  ```
-  Run `npm i` in the terminal.
-- Run `npm run upload-webhook-definitions -- --vt={your name}-{pull request number}` to upload the OpenAPIWebhook.json file and create Voucherify event documentation. This command also uploads Markdown files in the `docs/custom-webhook-sites` and `docs/webhook-introductions` folders.
-- Go to the url provided at the end of the `npm run manage-project -- --vt={your name}-{pull request number} --create` script run to test changes using preview on readme.io
-- If you need to make a change:
-	- Apply changes.
-	- Run `npm run manage-project -- --vt={your name}-{pull request number} --update` to update your version.
-	- Run `npm run upload-webhook-definitions -- --vt={your name}-{pull request number}` to upload the OpenAPIWebhook.json file again.
-	- Test changes using preview on readme.io.
-    - If needed - **REPEAT**. Remember that the webhook definitions must be uploaded every time the API documentation is uploaded.
-  - If you change only the OpenAPIWebhooks.json file, remove the `EVENTS` section in readme.io first:
-    - Go to your documentation version.
-    - Go to API Reference.
-    - Scroll down the API definition list to the `EVENTS` section.
-    - Click the kebab menu (three dots on the right) and Delete the section.
-    - Run `npm run upload-webhook-definitions -- --vt={your name}-{pull request number}` to upload the OpenAPIWebhook.json file again.
+- Run `npm run create-clean-version -- --vt={your name}-{pull request number}` to create a new project version with your tag number.
+    - then follow instructions from the console or add `--ua` or `--uploadAll` option to the script
+- If you need to make a change, run `npm run create-clean-version -- --vt={your name}-{pull request number}-{!!!any number!!!}`
+    - then follow instructions from the console or add `--ua` or `--uploadAll` option to the script
+    - on the readme dashboard delete version that is not good.
 - If changes are fine, then:
 	- Add a note in the changelog.
 	- run `git commit; git push`.
@@ -300,7 +282,8 @@ In order to remove a category, remove its title from the list. Make sure to remo
 
 - Ensure the changelog was updated.
 - Merge the master branch to your branch by running `git merge master`.
-- Run `npm run manage-project -- --vt={your name}-{pull request number} --update` to ensure the version is up-to-date.
+- Run `npm run create-clean-version -- --vt={your name}-{pull request number}-master` to ensure the version is up-to-date.
+  - then follow instructions from the console or add `--ua` or `--uploadAll` option to the script
 - Test for the last time the changes on readme. You can use the version prepared by the contributor.
 - Merge the pull request with the `master` branch.
 - In readme.io, change the current documentation version from `v2018-08-01` to `v2018-08-01-deprecated-mm-dd-yyyy`.

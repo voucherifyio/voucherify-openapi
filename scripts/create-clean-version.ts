@@ -2,25 +2,17 @@ import dotenv from "dotenv";
 import minimist from "minimist";
 import colors from "colors";
 import { exec } from "child_process";
-import path from "path";
-import fs from "fs";
-import fsPromises from "fs/promises";
-import "./build-production-openapi";
+import { prepareWebhooksDocumentation } from "./prepare-webhooks-documentation";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 dotenv.config();
 const options = minimist(process.argv.slice(2));
 const versionTag = options.versionTag || options.vt;
-const versionOption = options.version || options.v;
-const { create, update } = options;
+const uploadAll = options.ua || options.uploadAll;
 const help = options.help || options.h;
 const mainVersion = "v2018-08-01";
-const version =
-  versionOption || versionTag ? `${mainVersion}-${versionTag}` : undefined;
-import { removeAdditionalPropertiesFromSchemas } from "./remove-additional-properties-for-some-schemas";
-import { main as uploadWebhookDefinitions } from "./upload-webhook-definitions";
-import { readmeReplaceTitle } from "./readme-replace-title";
+const version = versionTag ? `${mainVersion}-${versionTag}` : undefined;
 
 const listOfGuideCategories = [
   "Getting started",
@@ -37,74 +29,80 @@ const listOfReferenceCategories = ["Introduction"];
 const main = async ({
   help,
   version,
-  create,
-  update,
 }: {
   help?: boolean;
   version?: string;
-  create?: boolean;
-  update?: boolean;
 }) => {
-  const { error } = await runCliProcess({
-    command: `npm run create-open-api-version-to-upload`,
-    resolveErrorAsFalse: true,
-  });
-  if (error) {
-    console.log(colors.red("Could not build openApi file to upload!"));
-  }
-  if (!(await validate({ help, version, create, update }))) {
+  if (!validate({ help, version })) {
     return;
   }
-  if (create) {
-    await createNewVersion(version);
-  }
+  await runCliProcess({
+    command: `npm run create-open-api-version-to-upload`,
+    okIncludes: "ok",
+  });
+  await createNewVersion(version);
   await cleanProject(version);
-  await uploadOpenApiFileWithMaxNumberOfAttempts(version, 1);
-  console.log(
-    colors.green(
-      `BUILDING AND UPDATING MD TABLES FROM OPEN API... PLEASE WAIT...`,
-    ),
-  );
-  await buildAndUpdateMdTables();
-  console.log(colors.green("Sleeping 90s"));
-  await sleep(90000);
   await uploadImagesUsedInMdFiles();
-  await uploadGuideFiles(version);
-  await uploadReferenceDocsWithMaxNumberOfAttempts(version, 2);
-  await uploadWebhookDefinitions({ _version: version });
-};
-
-const uploadOpenApiFileWithMaxNumberOfAttempts = async (
-  version,
-  maxNumberOfUploadingAttempts = 3,
-) => {
-  console.log(
-    colors.green(
-      "UPLOADING OPEN API FILE... PLEASE WAIT... THIS MAY TAKE UP TO A MINUTE",
-    ),
-  );
-  for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
-    const { success, error } = await runCliProcess({
-      command: `rdme openapi ./tmp/referenceToUpload/OpenAPI.json --version=${version} --create`,
-      stderrIncludes: `We're sorry, your upload request timed out. Please try again or split your file up into smaller chunks.`,
-      stdoutIncludes: `You've successfully uploaded a new OpenAPI file to your ReadMe project!`,
-      resolveErrorAsFalse: true,
-    });
-    if (success) {
-      console.log(colors.green("OPEN API FILE WAS UPLOADED"));
-      break;
-    }
-    if (i === maxNumberOfUploadingAttempts) {
-      console.log(
-        colors.red(
-          "OPEN API FILE COULD BE NOT UPLOADED! CHECK LOGS ABOVE AND VERIFY RESULT ON THE WEB.",
+  console.log(colors.green("Preparing webhooks documentation"));
+  await prepareWebhooksDocumentation();
+  if (!uploadAll) {
+    console.log(
+      `\nNow run:\n` +
+        colors.yellow(
+          `rdme openapi ./tmp/referenceToUpload/OpenAPI.json --version=${version} --create`,
+        ) +
+        `\nwait 10s` +
+        colors.yellow(
+          `\nrdme openapi ./reference/OpenAPIWebhooks.json --version=${version} --create`,
+        ) +
+        `\nwait 10s` +
+        colors.yellow(`\nrdme docs ./docs/guides --version=${version}`) +
+        colors.yellow(
+          `\nrdme docs ./docs/reference-docs --version=${version}`,
+        ) +
+        colors.yellow(
+          `\nnpm run update-webhooks-documentation-titles -- --vt=${versionTag}`,
+        ) +
+        colors.yellow(`\nrdme docs ./docs/webhooks --version=${version}`) +
+        colors.yellow(
+          `\nrdme docs ./docs/custom-webhook-sites --version=${version}`,
         ),
-      );
-      break;
-    }
-    await sleep(20000);
+    );
+  } else {
+    await runCliProcess({
+      command: `rdme openapi ./tmp/referenceToUpload/OpenAPI.json --version=${version} --create`,
+      okIncludes: "done!",
+    });
+    await runCliProcess({
+      command: `rdme openapi ./reference/OpenAPIWebhooks.json --version=${version} --create`,
+      okIncludes: "done!",
+    });
+    console.log(colors.green("sleeping 10s..."));
+    await new Promise((r) => setTimeout(r, 10000));
+    await runCliProcess({
+      command: `rdme docs ./docs/guides --version=${version}`,
+      okIncludes: "successfully created",
+    });
+    await runCliProcess({
+      command: `rdme docs ./docs/reference-docs --version=${version}`,
+      okIncludes: "successfully updated",
+    });
+    await runCliProcess({
+      command: `npm run update-webhooks-documentation-titles -- --vt=${versionTag}`,
+      okIncludes: "ok",
+    });
+    await runCliProcess({
+      command: `rdme docs ./docs/webhooks --version=${version}`,
+      okIncludes: "successfully updated",
+    });
+    await runCliProcess({
+      command: `rdme docs ./docs/custom-webhook-sites --version=${version}`,
+      okIncludes: "successfully created",
+    });
   }
-  return;
+  console.log(
+    colors.green(`\n\nDONE!\nVisit: https://docs.voucherify.io/${version}/`),
+  );
 };
 
 const uploadImagesUsedInMdFiles = async () => {
@@ -115,6 +113,7 @@ const uploadImagesUsedInMdFiles = async () => {
   );
   await runCliProcess({
     command: `npm run readme-upload-missing-images`,
+    okIncludes: "Done!",
   });
   console.log(colors.green("OPERATION WAS COMPLETED SUCCESSFULLY!"));
 };
@@ -136,79 +135,36 @@ const isVersionExists = async (version: string) => {
   );
 };
 
-const uploadReferenceDocsWithMaxNumberOfAttempts = async (
-  version,
-  maxNumberOfUploadingAttempts = 3,
-) => {
-  console.log(colors.green("UPLOADING REFERENCE DOC FILES..."));
-  for (let i = 1; i <= maxNumberOfUploadingAttempts; i++) {
-    const { success, error } = await runCliProcess({
-      command: `rdme docs ./docs/reference-docs --version=${version}`,
-      stdoutIncludes: "successfully created",
-      resolveErrorAsFalse: true,
-    });
-    if (success) {
-      console.log(colors.green("REFERENCE DOC FILES WERE UPLOADED!"));
-      break;
-    }
-    if (i === maxNumberOfUploadingAttempts) {
-      console.log(
-        colors.red(
-          "REFERENCE DOC FILES COULD BE NOT UPLOADED! CHECK LOGS ABOVE AND VERIFY RESULT ON THE WEB.",
-        ),
-      );
-      break;
-    }
-    await sleep(20000);
-  }
-  return;
-};
-
 const runCliProcess = async ({
   command,
-  stdoutIncludes,
-  stderrIncludes,
-  resolveErrorAsFalse = false,
+  okIncludes,
 }: {
   command: string;
-  stdoutIncludes?: string;
-  stderrIncludes?: string;
-  resolveErrorAsFalse?: boolean;
-}): Promise<{ success: boolean; error?: string }> => {
+  okIncludes?: string;
+}): Promise<{ success: boolean }> => {
+  console.log(colors.green(`Running: ${command}`));
   return await new Promise((resolve) => {
     exec(command, (error, stdout, stderr) => {
-      const stdoutClean = stdout.replace(/.*voucherify/, "").trim();
+      const stdoutClean = `${stdout.replace(/.*voucherify/, "").trim()}\n${
+        stderr || ""
+      }`;
+      console.log(colors.yellow(stdoutClean));
       if (
-        (stdoutIncludes && stdoutClean?.includes(stdoutIncludes)) ||
-        (!stdoutIncludes && stdoutClean) ||
-        (stderrIncludes && stderr.includes(stderrIncludes))
+        stdoutClean.includes("Error") &&
+        !stdoutClean.includes("Errors") &&
+        !stdoutClean.includes("Error-")
       ) {
+        console.log(colors.red(`Error`));
+        return resolve({ success: false });
+      } else if (okIncludes && stdoutClean.includes(okIncludes)) {
+        console.log(colors.green(`Success`));
         return resolve({ success: true });
       }
-      if (resolveErrorAsFalse) {
-        return resolve({ success: false, error: `Error: \n${stderr}` });
-      }
-      throw error;
+      console.log(colors.yellow(stdoutClean));
+      console.log(colors.red(`Unknown result`));
+      return resolve({ success: false });
     });
   });
-};
-
-const uploadGuideFiles = async (version) => {
-  await sleep(10000);
-  console.log(colors.green("UPLOADING GUIDES DOC FILES..."));
-  await runCliProcess({
-    command: `rdme docs ./docs/guides --version=${version}`,
-    stdoutIncludes: "successfully created",
-  });
-  console.log(colors.green("GUIDES DOC FILES WERE UPLOADED!"));
-};
-
-const buildAndUpdateMdTables = async () => {
-  console.log(colors.green("BUILDING MD TABLES FROM OPEN API..."));
-  await runCliProcess({
-    command: `npm run build-update-md-tables-from-openapi`,
-  });
-  console.log(colors.green("MD TABLES WERE BUILDED SUCCESSFULLY!"));
 };
 
 const createNewVersion = async (version) => {
@@ -230,9 +186,16 @@ const createNewVersion = async (version) => {
       }),
     });
     if (response.status !== 200 && !(await isVersionExists(version))) {
-      throw new Error(
-        `Response status: ${response.status}, maybe this versionTag is already created?`,
+      console.log(
+        colors.red(
+          `Response status: ${response.status}; ${
+            response.status === 401
+              ? "Readme api key is invalid"
+              : "Is this versionTag already created?"
+          }`,
+        ),
       );
+      process.exit(1);
     }
     console.log(colors.green(`FORK CREATED! VERSION "${version}"`));
   } catch (error) {
@@ -358,63 +321,21 @@ const asyncMap = (arr, asyncFn) => {
   return Promise.all(arr.map(asyncFn));
 };
 
-const validate = async ({
-  help,
-  version,
-  create,
-  update,
-}: {
-  help?: boolean;
-  version?: string;
-  create?: boolean;
-  update?: boolean;
-}) => {
+const validate = ({ help, version }: { help?: boolean; version?: string }) => {
   if (process.env.README_IO_AUTH?.length < 10) {
     console.log(
       colors.red("`README_IO_AUTH` was not provided in `.env` file :/"),
     );
     return;
   }
-  if (help || (!version && !create && !update)) {
+  if (help) {
     printHelp();
     return false;
   }
   if (!version) {
     console.log(
       colors.red(
-        "invalid arguments, missing `version` or `versionTag`, check `help` for more information\nrun 'npm run manage-project -- --help'",
-      ),
-    );
-    return false;
-  }
-  if (!create && !update) {
-    console.log(
-      colors.red(
-        "invalid arguments, missing `update` or `create`, check `help` for more information\nrun 'npm run manage-project -- --help'",
-      ),
-    );
-    return false;
-  }
-  if (create && update) {
-    console.log(
-      colors.red(
-        "invalid arguments, you provided conflicting arguments `update` and `create`, check `help` for more information\nrun 'npm run manage-project -- --help'",
-      ),
-    );
-    return false;
-  }
-  if (update && !(await isVersionExists(version))) {
-    console.log(
-      colors.red(
-        `Version ${version} does not exist! Create it first. Use parameter --create instead of --update`,
-      ),
-    );
-    return false;
-  }
-  if (create && (await isVersionExists(version))) {
-    console.log(
-      colors.red(
-        `Version ${version} already exist! Update it instead. Use parameter --update instead of --create`,
+        "invalid arguments, missing `versionTag` or `vt`, check `help` for more information\nrun 'npm run create-clean-project -- --help'",
       ),
     );
     return false;
@@ -427,16 +348,7 @@ const printHelp = () => {
     colors.green(
       `options:` +
         `\n"versionTag" or "vt" for versionTag` +
-        `\n"version" or "v" for version` +
-        `\n"create" if you want to create such version` +
-        `\n"update" if you want to update such version` +
-        `\n\nversionTag or version is required!` +
-        `\ncreate or update option is required!` +
-        `\n\nexamples:` +
-        `\nnpm run manage-project -- --vt=piotr-123 --create` +
-        `\nnpm run manage-project -- --v=v2018-08-01-piotr-123 --create` +
-        `\nnpm run manage-project -- --vt=piotr-123 --update` +
-        `\nnpm run manage-project -- --v=v2018-08-01-piotr-123 --update`,
+        `\nnpm run create-clean-version -- --vt=[your-name]-[version-number]`,
     ),
   );
 };
@@ -445,7 +357,5 @@ const printHelp = () => {
   await main({
     help,
     version,
-    create,
-    update,
   });
 })();
