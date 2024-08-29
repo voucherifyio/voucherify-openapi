@@ -134,11 +134,9 @@ Manual steps checklist:
   - /v1/async-actions/{asyncActionId}, get - Get Async Action
   - /client/v1/promotions/tiers, get - List Promotion Tiers (client-side)
 - Breaking changes:
-  - CampaignsImportVoucherItem.loyaltyCard - now uses `SimpleLoyaltyCard` instead of `CampaignsImportVoucherLoyaltyCard`
-  - Deleted `CampaignsImportVoucherLoyaltyCard` ^
-  - CampaignsVouchersCreateBaseRequestBody.redemption - now uses `CampaignsVouchersCreateBaseRequestBodyRedemption` instead of `CampaignsImportVoucherItemRedemption`
-  - CampaignsVouchersCreateInBulkRequestBody.redemption - now uses `CampaignsVouchersCreateBaseRequestBodyRedemption` instead of `CampaignsImportVoucherItemRedemption`
-  - CampaignsVouchersCreateRequestBody.redemption - now uses `CampaignsVouchersCreateBaseRequestBodyRedemption` instead of `CampaignsImportVoucherItemRedemption`
+  - CampaignsApi.disableCampaign returns `Object` instead of `CampaignsDisableResponseBody`, `CampaignsDisableResponseBody` was deleted
+  - CampaignsApi.enableCampaign returns `Object` instead of `CampaignsEnableResponseBody`, `CampaignsEnableResponseBody` was deleted
+  - CampaignsImportVoucherItem.loyaltyCard uses now `SimpleLoyaltyCard` instead of `CampaignsImportVoucherLoyaltyCard`, `CampaignsImportVoucherLoyaltyCard` was deleted
   - 
 
 

@@ -154,6 +154,7 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.schemas.MemberActivity.properties.type.enum;
   delete openAPIContent.components.schemas.MemberActivity.properties.data
     .properties;
+  openAPIContent.components.schemas = copySchemasIfUsedAsAllOfInBase(openAPIContent.components.schemas)
   //////////////////////////////////////////////////////////////////////////////
   if (languageOptions.addMissingDefaultsWhenSingleEnumFound) {
     openAPIContent = addMissingDefaults(openAPIContent);
@@ -218,17 +219,36 @@ const main = async (languageOptions: LanguageOptions) => {
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
 };
 
+const copySchemasIfUsedAsAllOfInBase = (schemas):any => {
+  return Object.fromEntries(Object.entries(schemas).map(([schemaName, schema]):any => {
+    if(_.isObject(schema) && 'allOf' in schema && (schema as any).allOf?.length ===1 && (schema as any).allOf?.[0]?.$ref) {
+      const copyFrom = schema.allOf?.[0]?.$ref;
+      if(typeof copyFrom === 'string') {
+        const copyFromSchemaName = copyFrom.split('/').at(-1)
+        if(schemas[copyFromSchemaName]){
+          return [schemaName, _.merge(_.omit(schemas[copyFromSchemaName],['description']),_.pick(schema,['description']))]
+        }else{
+          throw new Error(`Could not find ${copyFromSchemaName} schema.... ref found in schema ${schemaName}`);
+        }
+      }
+    }
+    return [schemaName, schema]
+  }));
+}
+
 const fixSchemasTitles = (schemas) => {
   return Object.fromEntries(Object.entries(schemas).map(([title, schema]) => {
     return [title, fixSchemaTitle(schema, title)]
   }));
 }
 
-const fixSchemaTitle = (schema, title) => {
+const fixSchemaTitle = (schema, title,skipSettingTitle?:boolean) => {
   if(schema.$ref){
     return _.pick(schema,'$ref')
   }
-  schema.title = title;
+  if(!skipSettingTitle) {
+    schema.title = title;
+  }
   if(schema.items){
     schema.items = fixSchemaTitle(schema.items,`${title}Item`)
   }
@@ -239,6 +259,9 @@ const fixSchemaTitle = (schema, title) => {
       }
       return [property, schema]
     }));
+  }
+  if(schema.allOf){
+    schema.allOf = schema.allOf.map((schema: any) =>fixSchemaTitle(schema, title, true));
   }
   return {title: schema.title, ..._.omit(schema)};
 }
