@@ -9856,11 +9856,6 @@
           "operation_status": {
             "type": "string",
             "description": "Status of async action processing. Informs about the async action status, whether it failed, succeeded, or the status is unknown.",
-            "enum": [
-              "FAILED",
-              "SUCCESS",
-              "UNKNOWN"
-            ],
             "nullable": true
           },
           "created_at": {
@@ -19406,7 +19401,7 @@
           },
           "activity_duration_after_publishing": {
             "type": "string",
-            "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days.",
+            "description": "Defines the amount of time the vouchers will be active after publishing. The value is shown in the ISO 8601 format. For example, a voucher with the value of P24D will be valid for a duration of 24 days.",
             "nullable": true
           },
           "validation_rules": {
@@ -19452,7 +19447,7 @@
             "properties": {
               "activity_duration_after_publishing": {
                 "type": "string",
-                "description": "Defines the amount of time the campaign will be active in ISO 8601 format after publishing. For example, a campaign with a `duration` of `P24D` will be valid for a duration of 24 days.",
+                "description": "Defines the amount of time the vouchers will be active after publishing. The value is shown in the ISO 8601 format. For example, a voucher with the value of P24D will be valid for a duration of 24 days.",
                 "nullable": true
               },
               "join_once": {
@@ -26936,8 +26931,8 @@
         "tags": [
           "Vouchers"
         ],
-        "summary": "Update Vouchers in bulk",
-        "description": "Use this endpoint to update specific metadata parameters for each code, respectively. You can update each codes metadata property separately.    \n- Update up to **100 records** in one request.\n- Upserts are not supported.  \n 🚧 \n \n Currently only **metadata** updates are supported.\nThis API request starts a process that affects Voucherify data in bulk. \nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the IN_PROGRESS status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \nThe result will return the async ID. You can verify the status of your request via this API request.",
+        "summary": "Update Vouchers in Bulk",
+        "description": "Updates specific metadata parameters for each code, respectively, in one asynchronous operation.\nThe request can include up to **10 MB** of data.\nUpserts are not supported.\n 🚧\n \n Currently, only **metadata** updates are supported.\nThe response returns a unique asynchronous action ID. Use this ID in the query paramater of the GET Async Action endpoint to check, e.g.:\n- The status of your request (in queue, in progress, done, or failed)\n- Resources that failed to be updated\n- The report file with details about the update\nThis API request starts a process that affects Voucherify data in bulk. In the case of small jobs (like bulk update), the request is put into a queue and processed when every other bulk request placed in the queue prior to this request is finished.",
         "parameters": [],
         "security": [
           {
@@ -26947,7 +26942,7 @@
         ],
         "requestBody": {
           "required": true,
-          "description": "List of objects, each containing a code that is being updated and the metadata key/value pairs for that code.",
+          "description": "List the codes to be updated with the metadata key/value pairs for that code.",
           "content": {
             "application/json": {
               "schema": {
@@ -26983,7 +26978,7 @@
         },
         "responses": {
           "202": {
-            "description": "Returns the ID of the scheduled asynchronous action, informing you that your request has been accepted and the voucher(s) will be updated in the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and pass it using <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint.",
+            "description": "Returns the ID of the scheduled asynchronous action. The response informs you that the request has been accepted and the resources will be updated in the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and use it as a query parameter in the [GET Async Action](ref:get-async-action) endpoint.",
             "content": {
               "application/json": {
                 "schema": {
@@ -27006,8 +27001,8 @@
         "tags": [
           "Vouchers"
         ],
-        "summary": "Update Vouchers' metadata in bulk",
-        "description": "Use this endpoint to update the same metadata parameters for a list of codes.   \nUpdate up to **100 records** in one request. Upserts are not supported. \nThis API request starts a process that affects Voucherify data in bulk. \nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the IN_PROGRESS status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \nThe result will return the async ID. You can verify the status of your request via this API request.",
+        "summary": "Update Vouchers' Metadata in Bulk",
+        "description": "Updates metadata parameters for a list of codes. Every resource in the list will receive the metadata defined in the request.\nThe request can include up to **10 MB** of data.\nUpserts are not supported.\nThe response returns a unique asynchronous action ID. Use this ID in the query paramater of the GET Async Action endpoint to check, e.g.:\n- The status of your request (in queue, in progress, done, or failed)\n- Resources that failed to be updated\n- The report file with details about the update\nThis API request starts a process that affects Voucherify data in bulk. In the case of small jobs (like bulk update), the request is put into a queue and processed when every other bulk request placed in the queue prior to this request is finished.",
         "parameters": [],
         "security": [
           {
@@ -27017,7 +27012,7 @@
         ],
         "requestBody": {
           "required": true,
-          "description": "Request to update vouchers metadata in bulk. Provide an array of voucher codes in the codes parameter along with the metadata object. The metadata object should contain the key value pairs that you would like to update for all the vouchers included in the codes parameter.",
+          "description": "List the codes of the vouchers you would like to update with the metadata key/value pairs.",
           "content": {
             "application/json": {
               "schema": {
@@ -27042,7 +27037,7 @@
         },
         "responses": {
           "202": {
-            "description": "Returns the ID of the scheduled asynchronous action, informing you that your request has been accepted and the voucher(s) will be updated in the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and pass it using <!-- [Get Async Action](OpenAPI.json/paths/~1async-actions~1{asyncActionId}/get) -->[Get Async Action](ref:get-async-action) endpoint.",
+            "description": "Returns the ID of the scheduled asynchronous action. The response informs you that the request has been accepted and the resources will be updated in the repository asynchronously. To check the status and result, copy the `async_action_id` from the response and use it as a query parameter in the [GET Async Action](ref:get-async-action) endpoint.",
             "content": {
               "application/json": {
                 "schema": {
@@ -36431,9 +36426,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/limit"
-          },
-          {
-            "$ref": "#/components/parameters/page"
           }
         ],
         "security": [
