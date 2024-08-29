@@ -133,6 +133,14 @@ Manual steps checklist:
   - /v1/async-actions, get - List Async Actions
   - /v1/async-actions/{asyncActionId}, get - Get Async Action
   - /client/v1/promotions/tiers, get - List Promotion Tiers (client-side)
+- Breaking changes:
+  - CampaignsImportVoucherItem.loyaltyCard - now uses `SimpleLoyaltyCard` instead of `CampaignsImportVoucherLoyaltyCard`
+  - Deleted `CampaignsImportVoucherLoyaltyCard` ^
+  - CampaignsVouchersCreateBaseRequestBody.redemption - now uses `CampaignsVouchersCreateBaseRequestBodyRedemption` instead of `CampaignsImportVoucherItemRedemption`
+  - CampaignsVouchersCreateInBulkRequestBody.redemption - now uses `CampaignsVouchersCreateBaseRequestBodyRedemption` instead of `CampaignsImportVoucherItemRedemption`
+  - CampaignsVouchersCreateRequestBody.redemption - now uses `CampaignsVouchersCreateBaseRequestBodyRedemption` instead of `CampaignsImportVoucherItemRedemption`
+  - 
+
 
 
 
@@ -140,4 +148,7 @@ Manual steps checklist:
 
 to change
 - CampaignLoyaltyCardExpirationRules - usunąć enumy z `periodType` i `roundingType`
+  CampaignLoyaltyCard.properties.expiration_rules.properties.rounding_type.enum
+  CampaignLoyaltyCard.properties.expiration_rules.properties.period_type.enum
+
 

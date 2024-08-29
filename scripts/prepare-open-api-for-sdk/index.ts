@@ -209,11 +209,7 @@ const main = async (languageOptions: LanguageOptions) => {
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
-      schemas: moveSchemasOnTheBack(fixSchemasTitles(parseNullsToNullableObjects(schemas)), [
-        "LoyaltiesEarningRulesUpdateRequestBody",
-        "CampaignsVouchersCreateBaseRequestBody",
-        "CampaignLoyaltyVoucher",
-      ]),
+      schemas: fixSchemasTitles(parseNullsToNullableObjects(schemas)),
       parameters,
     },
     paths: newPaths,
