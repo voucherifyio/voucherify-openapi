@@ -94,6 +94,7 @@ export const updateMdTablesInDoc = async () => {
       console.log(`Updated table in ${docFile} `);
     } catch (e) {
       console.log(`Error for ${objectName}`, e);
+      throw new Error(`Error for ${objectName}`);
     }
   }
   console.log("done");
