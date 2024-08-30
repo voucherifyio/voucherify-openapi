@@ -2568,7 +2568,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/Order"
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
               }
             ]
           },
@@ -2621,7 +2621,47 @@
             "nullable": true
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "title": "ClientQualificationsCheckEligibilityResponseBodyOrder",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "description": "Order information.",
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "example": "2021-12-22T10:13:06.487Z",
+                    "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+                    "format": "date-time",
+                    "nullable": true
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": "2021-12-22T10:14:45.316Z",
+                    "format": "date-time",
+                    "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+                  },
+                  "customer_id": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Unique customer ID of the customer making the purchase.",
+                    "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
+                  },
+                  "referrer_id": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Unique referrer ID.",
+                    "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+                  }
+                }
+              }
+            ],
+            "nullable": true
           },
           "stacking_rules": {
             "$ref": "#/components/schemas/StackingRules"
@@ -2714,7 +2754,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/Order"
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
               }
             ]
           },
@@ -2878,7 +2918,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/Order"
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
               }
             ]
           },
@@ -3165,7 +3205,7 @@
             "nullable": true
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
           },
           "tracking_id": {
             "type": "string",
@@ -9241,7 +9281,7 @@
             "description": "Order object that is **required** when redeeming a pay with points reward.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/Order"
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
               }
             ]
           },
@@ -11650,20 +11690,6 @@
             "nullable": true,
             "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
           },
-          "created_at": {
-            "type": "string",
-            "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-            "format": "date-time",
-            "nullable": true
-          },
-          "updated_at": {
-            "type": "string",
-            "nullable": true,
-            "example": "2021-12-22T10:14:45.316Z",
-            "format": "date-time",
-            "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
-          },
           "status": {
             "type": "string",
             "description": "The order status.",
@@ -11735,6 +11761,29 @@
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
             "nullable": true
           },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "default": "order",
+            "enum": [
+              "order"
+            ],
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": true,
+            "example": "2021-12-22T10:14:45.316Z",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+          },
           "customer_id": {
             "type": "string",
             "nullable": true,
@@ -11747,43 +11796,97 @@
             "description": "Unique referrer ID.",
             "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
           },
-          "object": {
-            "type": "string",
-            "description": "The type of the object represented by JSON.",
-            "default": "order",
-            "enum": [
-              "order"
-            ],
-            "nullable": true
-          },
-          "redemptions": {
-            "title": "OrdersCreateResponseBodyRedemptions",
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/OrderRedemptions"
-            },
-            "nullable": true
-          },
           "customer": {
             "title": "OrdersCreateResponseBodyCustomer",
             "type": "object",
             "properties": {
               "id": {
                 "type": "string",
-                "description": "A unique identifier of an existing customer.",
+                "description": "The ID of an existing customer.",
                 "nullable": true
               },
-              "object": {
+              "source_id": {
                 "type": "string",
-                "description": "The type of the object represented by JSON.",
-                "default": "customer",
-                "enum": [
-                  "customer"
-                ],
+                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's first and last name.",
+                "nullable": true
+              },
+              "description": {
+                "type": "string",
+                "description": "An arbitrary string that you can attach to a customer object.",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email address.",
+                "nullable": true
+              },
+              "phone": {
+                "type": "string",
+                "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel.",
+                "nullable": true
+              },
+              "birthday": {
+                "type": "string",
+                "description": "`Deprecated`. ~~Customer's birthdate; format YYYY-MM-DD~~.",
+                "format": "date",
+                "nullable": true
+              },
+              "birthdate": {
+                "type": "string",
+                "description": "Customer's birthdate; format YYYY-MM-DD.",
+                "format": "date",
+                "nullable": true
+              },
+              "address": {
+                "title": "OrdersCreateResponseBodyCustomerAddress",
+                "type": "object",
+                "nullable": true,
+                "description": "Customer's address.",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "City",
+                    "nullable": true
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "State",
+                    "nullable": true
+                  },
+                  "line_1": {
+                    "type": "string",
+                    "description": "First line of address.",
+                    "nullable": true
+                  },
+                  "line_2": {
+                    "type": "string",
+                    "description": "Second line of address.",
+                    "nullable": true
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country.",
+                    "nullable": true
+                  },
+                  "postal_code": {
+                    "type": "string",
+                    "description": "Postal code.",
+                    "nullable": true
+                  }
+                }
+              },
+              "metadata": {
+                "title": "OrdersCreateResponseBodyCustomerMetadata",
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.",
                 "nullable": true
               }
             },
-            "required": [],
             "nullable": true
           },
           "referrer": {
@@ -11792,20 +11895,99 @@
             "properties": {
               "id": {
                 "type": "string",
-                "description": "A unique identifier of an existing customer.",
+                "description": "The ID of an existing customer.",
                 "nullable": true
               },
-              "object": {
+              "source_id": {
                 "type": "string",
-                "description": "The type of the object represented by JSON.",
-                "default": "customer",
-                "enum": [
-                  "customer"
-                ],
+                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's first and last name.",
+                "nullable": true
+              },
+              "description": {
+                "type": "string",
+                "description": "An arbitrary string that you can attach to a customer object.",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email address.",
+                "nullable": true
+              },
+              "phone": {
+                "type": "string",
+                "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel.",
+                "nullable": true
+              },
+              "birthday": {
+                "type": "string",
+                "description": "`Deprecated`. ~~Customer's birthdate; format YYYY-MM-DD~~.",
+                "format": "date",
+                "nullable": true
+              },
+              "birthdate": {
+                "type": "string",
+                "description": "Customer's birthdate; format YYYY-MM-DD.",
+                "format": "date",
+                "nullable": true
+              },
+              "address": {
+                "title": "OrdersCreateResponseBodyReferrerAddress",
+                "type": "object",
+                "nullable": true,
+                "description": "Customer's address.",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "City",
+                    "nullable": true
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "State",
+                    "nullable": true
+                  },
+                  "line_1": {
+                    "type": "string",
+                    "description": "First line of address.",
+                    "nullable": true
+                  },
+                  "line_2": {
+                    "type": "string",
+                    "description": "Second line of address.",
+                    "nullable": true
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country.",
+                    "nullable": true
+                  },
+                  "postal_code": {
+                    "type": "string",
+                    "description": "Postal code.",
+                    "nullable": true
+                  }
+                }
+              },
+              "metadata": {
+                "title": "OrdersCreateResponseBodyReferrerMetadata",
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.",
                 "nullable": true
               }
             },
-            "required": [],
+            "nullable": true
+          },
+          "redemptions": {
+            "title": "OrdersCreateResponseBodyRedemptions",
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OrderRedemptions"
+            },
             "nullable": true
           }
         },
@@ -11999,20 +12181,6 @@
             "nullable": true,
             "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
           },
-          "created_at": {
-            "type": "string",
-            "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-            "format": "date-time",
-            "nullable": true
-          },
-          "updated_at": {
-            "type": "string",
-            "nullable": true,
-            "example": "2021-12-22T10:14:45.316Z",
-            "format": "date-time",
-            "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
-          },
           "status": {
             "type": "string",
             "description": "The order status.",
@@ -12084,6 +12252,29 @@
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
             "nullable": true
           },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "default": "order",
+            "enum": [
+              "order"
+            ],
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": true,
+            "example": "2021-12-22T10:14:45.316Z",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+          },
           "customer_id": {
             "type": "string",
             "nullable": true,
@@ -12095,23 +12286,6 @@
             "nullable": true,
             "description": "Unique referrer ID.",
             "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
-          },
-          "object": {
-            "type": "string",
-            "description": "The type of the object represented by JSON.",
-            "default": "order",
-            "enum": [
-              "order"
-            ],
-            "nullable": true
-          },
-          "redemptions": {
-            "title": "OrdersGetResponseBodyRedemptions",
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/OrderRedemptions"
-            },
-            "nullable": true
           },
           "customer": {
             "allOf": [
@@ -12126,6 +12300,14 @@
                 "$ref": "#/components/schemas/ReferrerId"
               }
             ]
+          },
+          "redemptions": {
+            "title": "OrdersGetResponseBodyRedemptions",
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OrderRedemptions"
+            },
+            "nullable": true
           }
         },
         "description": "Response body schema for **GET** `v1/orders/{orderId}`."
@@ -12148,7 +12330,7 @@
               }
             },
             {
-              "$ref": "#/components/schemas/OrderBase"
+              "$ref": "#/components/schemas/OrderCreateBase"
             }
           ]
         }
@@ -12298,20 +12480,6 @@
             "nullable": true,
             "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
           },
-          "created_at": {
-            "type": "string",
-            "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-            "format": "date-time",
-            "nullable": true
-          },
-          "updated_at": {
-            "type": "string",
-            "nullable": true,
-            "example": "2021-12-22T10:14:45.316Z",
-            "format": "date-time",
-            "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
-          },
           "status": {
             "type": "string",
             "description": "The order status.",
@@ -12383,6 +12551,29 @@
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
             "nullable": true
           },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "default": "order",
+            "enum": [
+              "order"
+            ],
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": true,
+            "example": "2021-12-22T10:14:45.316Z",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+          },
           "customer_id": {
             "type": "string",
             "nullable": true,
@@ -12395,43 +12586,97 @@
             "description": "Unique referrer ID.",
             "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
           },
-          "object": {
-            "type": "string",
-            "description": "The type of the object represented by JSON.",
-            "default": "order",
-            "enum": [
-              "order"
-            ],
-            "nullable": true
-          },
-          "redemptions": {
-            "title": "OrdersUpdateResponseBodyRedemptions",
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/OrderRedemptions"
-            },
-            "nullable": true
-          },
           "customer": {
             "title": "OrdersUpdateResponseBodyCustomer",
             "type": "object",
             "properties": {
               "id": {
                 "type": "string",
-                "description": "A unique identifier of an existing customer.",
+                "description": "The ID of an existing customer.",
                 "nullable": true
               },
-              "object": {
+              "source_id": {
                 "type": "string",
-                "description": "The type of the object represented by JSON.",
-                "default": "customer",
-                "enum": [
-                  "customer"
-                ],
+                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's first and last name.",
+                "nullable": true
+              },
+              "description": {
+                "type": "string",
+                "description": "An arbitrary string that you can attach to a customer object.",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email address.",
+                "nullable": true
+              },
+              "phone": {
+                "type": "string",
+                "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel.",
+                "nullable": true
+              },
+              "birthday": {
+                "type": "string",
+                "description": "`Deprecated`. ~~Customer's birthdate; format YYYY-MM-DD~~.",
+                "format": "date",
+                "nullable": true
+              },
+              "birthdate": {
+                "type": "string",
+                "description": "Customer's birthdate; format YYYY-MM-DD.",
+                "format": "date",
+                "nullable": true
+              },
+              "address": {
+                "title": "OrdersUpdateResponseBodyCustomerAddress",
+                "type": "object",
+                "nullable": true,
+                "description": "Customer's address.",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "City",
+                    "nullable": true
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "State",
+                    "nullable": true
+                  },
+                  "line_1": {
+                    "type": "string",
+                    "description": "First line of address.",
+                    "nullable": true
+                  },
+                  "line_2": {
+                    "type": "string",
+                    "description": "Second line of address.",
+                    "nullable": true
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country.",
+                    "nullable": true
+                  },
+                  "postal_code": {
+                    "type": "string",
+                    "description": "Postal code.",
+                    "nullable": true
+                  }
+                }
+              },
+              "metadata": {
+                "title": "OrdersUpdateResponseBodyCustomerMetadata",
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.",
                 "nullable": true
               }
             },
-            "required": [],
             "nullable": true
           },
           "referrer": {
@@ -12440,20 +12685,99 @@
             "properties": {
               "id": {
                 "type": "string",
-                "description": "A unique identifier of an existing customer.",
+                "description": "The ID of an existing customer.",
                 "nullable": true
               },
-              "object": {
+              "source_id": {
                 "type": "string",
-                "description": "The type of the object represented by JSON.",
-                "default": "customer",
-                "enum": [
-                  "customer"
-                ],
+                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's first and last name.",
+                "nullable": true
+              },
+              "description": {
+                "type": "string",
+                "description": "An arbitrary string that you can attach to a customer object.",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email address.",
+                "nullable": true
+              },
+              "phone": {
+                "type": "string",
+                "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel.",
+                "nullable": true
+              },
+              "birthday": {
+                "type": "string",
+                "description": "`Deprecated`. ~~Customer's birthdate; format YYYY-MM-DD~~.",
+                "format": "date",
+                "nullable": true
+              },
+              "birthdate": {
+                "type": "string",
+                "description": "Customer's birthdate; format YYYY-MM-DD.",
+                "format": "date",
+                "nullable": true
+              },
+              "address": {
+                "title": "OrdersUpdateResponseBodyReferrerAddress",
+                "type": "object",
+                "nullable": true,
+                "description": "Customer's address.",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "City",
+                    "nullable": true
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "State",
+                    "nullable": true
+                  },
+                  "line_1": {
+                    "type": "string",
+                    "description": "First line of address.",
+                    "nullable": true
+                  },
+                  "line_2": {
+                    "type": "string",
+                    "description": "Second line of address.",
+                    "nullable": true
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country.",
+                    "nullable": true
+                  },
+                  "postal_code": {
+                    "type": "string",
+                    "description": "Postal code.",
+                    "nullable": true
+                  }
+                }
+              },
+              "metadata": {
+                "title": "OrdersUpdateResponseBodyReferrerMetadata",
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.",
                 "nullable": true
               }
             },
-            "required": [],
+            "nullable": true
+          },
+          "redemptions": {
+            "title": "OrdersUpdateResponseBodyRedemptions",
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OrderRedemptions"
+            },
             "nullable": true
           }
         },
@@ -16970,7 +17294,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/Order"
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
               }
             ]
           },
@@ -17023,7 +17347,47 @@
             "nullable": true
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "title": "QualificationsCheckEligibilityResponseBodyOrder",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "description": "Order information.",
+                "properties": {
+                  "created_at": {
+                    "type": "string",
+                    "example": "2021-12-22T10:13:06.487Z",
+                    "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+                    "format": "date-time",
+                    "nullable": true
+                  },
+                  "updated_at": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": "2021-12-22T10:14:45.316Z",
+                    "format": "date-time",
+                    "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+                  },
+                  "customer_id": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Unique customer ID of the customer making the purchase.",
+                    "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
+                  },
+                  "referrer_id": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Unique referrer ID.",
+                    "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+                  }
+                }
+              }
+            ],
+            "nullable": true
           },
           "stacking_rules": {
             "$ref": "#/components/schemas/StackingRules"
@@ -17172,20 +17536,6 @@
                 "nullable": true,
                 "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
               },
-              "created_at": {
-                "type": "string",
-                "example": "2021-12-22T10:13:06.487Z",
-                "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-                "format": "date-time",
-                "nullable": true
-              },
-              "updated_at": {
-                "type": "string",
-                "nullable": true,
-                "example": "2021-12-22T10:14:45.316Z",
-                "format": "date-time",
-                "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
-              },
               "status": {
                 "type": "string",
                 "description": "The order status.",
@@ -17256,6 +17606,29 @@
                 "type": "object",
                 "nullable": true
               },
+              "object": {
+                "type": "string",
+                "description": "The type of the object represented by JSON.",
+                "default": "order",
+                "enum": [
+                  "order"
+                ],
+                "nullable": true
+              },
+              "created_at": {
+                "type": "string",
+                "example": "2021-12-22T10:13:06.487Z",
+                "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+                "format": "date-time",
+                "nullable": true
+              },
+              "updated_at": {
+                "type": "string",
+                "nullable": true,
+                "example": "2021-12-22T10:14:45.316Z",
+                "format": "date-time",
+                "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+              },
               "customer_id": {
                 "type": "string",
                 "nullable": true,
@@ -17267,20 +17640,6 @@
                 "nullable": true,
                 "description": "Unique referrer ID.",
                 "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
-              },
-              "object": {
-                "type": "string",
-                "description": "The type of the object represented by JSON.",
-                "default": "order",
-                "enum": [
-                  "order"
-                ],
-                "nullable": true
-              },
-              "redemptions": {
-                "title": "RedemptionsGetResponseBodyOrderRedemptions",
-                "type": "object",
-                "nullable": true
               },
               "customer": {
                 "title": "RedemptionsGetResponseBodyOrderCustomer",
@@ -17322,6 +17681,11 @@
                     "nullable": true
                   }
                 },
+                "nullable": true
+              },
+              "redemptions": {
+                "title": "RedemptionsGetResponseBodyOrderRedemptions",
+                "type": "object",
                 "nullable": true
               }
             },
@@ -18113,20 +18477,6 @@
                       "nullable": true,
                       "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
                     },
-                    "created_at": {
-                      "type": "string",
-                      "example": "2021-12-22T10:13:06.487Z",
-                      "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-                      "format": "date-time",
-                      "nullable": true
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "nullable": true,
-                      "example": "2021-12-22T10:14:45.316Z",
-                      "format": "date-time",
-                      "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
-                    },
                     "status": {
                       "type": "string",
                       "description": "The order status.",
@@ -18196,6 +18546,29 @@
                       "title": "RedemptionsListResponseBodyRedemptionsItemOrderMetadata",
                       "type": "object"
                     },
+                    "object": {
+                      "type": "string",
+                      "description": "The type of the object represented by JSON.",
+                      "default": "order",
+                      "enum": [
+                        "order"
+                      ],
+                      "nullable": true
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "example": "2021-12-22T10:13:06.487Z",
+                      "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+                      "format": "date-time",
+                      "nullable": true
+                    },
+                    "updated_at": {
+                      "type": "string",
+                      "nullable": true,
+                      "example": "2021-12-22T10:14:45.316Z",
+                      "format": "date-time",
+                      "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+                    },
                     "customer_id": {
                       "type": "string",
                       "nullable": true,
@@ -18207,19 +18580,6 @@
                       "nullable": true,
                       "description": "Unique referrer ID.",
                       "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
-                    },
-                    "object": {
-                      "type": "string",
-                      "description": "The type of the object represented by JSON.",
-                      "default": "order",
-                      "enum": [
-                        "order"
-                      ],
-                      "nullable": true
-                    },
-                    "redemptions": {
-                      "title": "RedemptionsListResponseBodyRedemptionsItemOrderRedemptions",
-                      "type": "object"
                     },
                     "customer": {
                       "title": "RedemptionsListResponseBodyRedemptionsItemOrderCustomer",
@@ -18260,6 +18620,10 @@
                           "nullable": true
                         }
                       }
+                    },
+                    "redemptions": {
+                      "title": "RedemptionsListResponseBodyRedemptionsItemOrderRedemptions",
+                      "type": "object"
                     }
                   }
                 },
@@ -18968,7 +19332,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/Order"
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
               }
             ]
           },
@@ -19064,7 +19428,7 @@
             "$ref": "#/components/schemas/Customer"
           },
           "order": {
-            "$ref": "#/components/schemas/Order"
+            "$ref": "#/components/schemas/OrderCalculatedEssential"
           },
           "metadata": {
             "title": "RedemptionsRollbackCreateRequestBodyMetadata",
@@ -19336,7 +19700,7 @@
             "$ref": "#/components/schemas/Customer"
           },
           "order": {
-            "$ref": "#/components/schemas/Order"
+            "$ref": "#/components/schemas/OrderCalculatedEssential"
           },
           "metadata": {
             "title": "RedemptionsRollbacksCreateRequestBodyMetadata",
@@ -21501,7 +21865,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/Order"
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
               }
             ]
           },
@@ -21789,7 +22153,7 @@
             "nullable": true
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
           },
           "tracking_id": {
             "type": "string",
@@ -28586,166 +28950,6 @@
           }
         }
       },
-      "Order": {
-        "title": "Order",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.",
-            "nullable": true
-          },
-          "source_id": {
-            "type": "string",
-            "description": "Unique source ID of an existing order that will be linked to the redemption of this request.",
-            "nullable": true
-          },
-          "status": {
-            "type": "string",
-            "description": "The order status.",
-            "enum": [
-              "CREATED",
-              "PAID",
-              "CANCELED",
-              "FULFILLED"
-            ],
-            "nullable": true
-          },
-          "amount": {
-            "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.\n\n",
-            "nullable": true
-          },
-          "discount_amount": {
-            "type": "integer",
-            "description": "Sum of all order-level discounts applied to the order.",
-            "nullable": true
-          },
-          "initial_amount": {
-            "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
-            "nullable": true
-          },
-          "items": {
-            "title": "OrderItems",
-            "type": "array",
-            "description": "Array of items applied to the order.",
-            "items": {
-              "$ref": "#/components/schemas/OrderItem"
-            },
-            "nullable": true
-          },
-          "customer": {
-            "description": "This is an object containing information about the customer.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Customer"
-              }
-            ]
-          },
-          "customer_id": {
-            "type": "string",
-            "description": "Unique customer ID of the customer making the purchase.",
-            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1",
-            "nullable": true
-          },
-          "referrer": {
-            "description": "This is an object containing information about the referrer.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Referrer"
-              }
-            ]
-          },
-          "referrer_id": {
-            "type": "string",
-            "description": "Unique referrer ID.",
-            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix",
-            "nullable": true
-          },
-          "metadata": {
-            "title": "OrderMetadata",
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
-            "nullable": true
-          }
-        }
-      },
-      "OrderBase": {
-        "title": "OrderBase",
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "The order status.",
-            "enum": [
-              "CREATED",
-              "PAID",
-              "CANCELED",
-              "FULFILLED"
-            ],
-            "nullable": true
-          },
-          "amount": {
-            "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.\n\n",
-            "nullable": true
-          },
-          "discount_amount": {
-            "type": "integer",
-            "description": "Sum of all order-level discounts applied to the order.",
-            "nullable": true
-          },
-          "initial_amount": {
-            "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
-            "nullable": true
-          },
-          "items": {
-            "title": "OrderBaseItems",
-            "type": "array",
-            "description": "Array of items applied to the order.",
-            "items": {
-              "$ref": "#/components/schemas/OrderItem"
-            },
-            "nullable": true
-          },
-          "customer": {
-            "description": "This is an object containing information about the customer.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Customer"
-              }
-            ]
-          },
-          "customer_id": {
-            "type": "string",
-            "description": "Unique customer ID of the customer making the purchase.",
-            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1",
-            "nullable": true
-          },
-          "referrer": {
-            "description": "This is an object containing information about the referrer.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Referrer"
-              }
-            ]
-          },
-          "referrer_id": {
-            "type": "string",
-            "description": "Unique referrer ID.",
-            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix",
-            "nullable": true
-          },
-          "metadata": {
-            "title": "OrderBaseMetadata",
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
-            "nullable": true
-          }
-        }
-      },
       "OrderCalculated": {
         "title": "OrderCalculated",
         "type": "object",
@@ -28759,20 +28963,6 @@
             "type": "string",
             "nullable": true,
             "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
-          },
-          "created_at": {
-            "type": "string",
-            "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-            "format": "date-time",
-            "nullable": true
-          },
-          "updated_at": {
-            "type": "string",
-            "nullable": true,
-            "example": "2021-12-22T10:14:45.316Z",
-            "format": "date-time",
-            "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
           },
           "status": {
             "type": "string",
@@ -28845,6 +29035,29 @@
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
             "nullable": true
           },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "default": "order",
+            "enum": [
+              "order"
+            ],
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": true,
+            "example": "2021-12-22T10:14:45.316Z",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+          },
           "customer_id": {
             "type": "string",
             "nullable": true,
@@ -28857,13 +29070,190 @@
             "description": "Unique referrer ID.",
             "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
           },
-          "object": {
-            "type": "string",
-            "description": "The type of the object represented by JSON.",
-            "default": "order",
-            "enum": [
-              "order"
-            ],
+          "customer": {
+            "title": "OrderCalculatedCustomer",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The ID of an existing customer.",
+                "nullable": true
+              },
+              "source_id": {
+                "type": "string",
+                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's first and last name.",
+                "nullable": true
+              },
+              "description": {
+                "type": "string",
+                "description": "An arbitrary string that you can attach to a customer object.",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email address.",
+                "nullable": true
+              },
+              "phone": {
+                "type": "string",
+                "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel.",
+                "nullable": true
+              },
+              "birthday": {
+                "type": "string",
+                "description": "`Deprecated`. ~~Customer's birthdate; format YYYY-MM-DD~~.",
+                "format": "date",
+                "nullable": true
+              },
+              "birthdate": {
+                "type": "string",
+                "description": "Customer's birthdate; format YYYY-MM-DD.",
+                "format": "date",
+                "nullable": true
+              },
+              "address": {
+                "title": "OrderCalculatedCustomerAddress",
+                "type": "object",
+                "nullable": true,
+                "description": "Customer's address.",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "City",
+                    "nullable": true
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "State",
+                    "nullable": true
+                  },
+                  "line_1": {
+                    "type": "string",
+                    "description": "First line of address.",
+                    "nullable": true
+                  },
+                  "line_2": {
+                    "type": "string",
+                    "description": "Second line of address.",
+                    "nullable": true
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country.",
+                    "nullable": true
+                  },
+                  "postal_code": {
+                    "type": "string",
+                    "description": "Postal code.",
+                    "nullable": true
+                  }
+                }
+              },
+              "metadata": {
+                "title": "OrderCalculatedCustomerMetadata",
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.",
+                "nullable": true
+              }
+            },
+            "nullable": true
+          },
+          "referrer": {
+            "title": "OrderCalculatedReferrer",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The ID of an existing customer.",
+                "nullable": true
+              },
+              "source_id": {
+                "type": "string",
+                "description": "A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "description": "Customer's first and last name.",
+                "nullable": true
+              },
+              "description": {
+                "type": "string",
+                "description": "An arbitrary string that you can attach to a customer object.",
+                "nullable": true
+              },
+              "email": {
+                "type": "string",
+                "description": "Customer's email address.",
+                "nullable": true
+              },
+              "phone": {
+                "type": "string",
+                "description": "Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel.",
+                "nullable": true
+              },
+              "birthday": {
+                "type": "string",
+                "description": "`Deprecated`. ~~Customer's birthdate; format YYYY-MM-DD~~.",
+                "format": "date",
+                "nullable": true
+              },
+              "birthdate": {
+                "type": "string",
+                "description": "Customer's birthdate; format YYYY-MM-DD.",
+                "format": "date",
+                "nullable": true
+              },
+              "address": {
+                "title": "OrderCalculatedReferrerAddress",
+                "type": "object",
+                "nullable": true,
+                "description": "Customer's address.",
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "City",
+                    "nullable": true
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "State",
+                    "nullable": true
+                  },
+                  "line_1": {
+                    "type": "string",
+                    "description": "First line of address.",
+                    "nullable": true
+                  },
+                  "line_2": {
+                    "type": "string",
+                    "description": "Second line of address.",
+                    "nullable": true
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country.",
+                    "nullable": true
+                  },
+                  "postal_code": {
+                    "type": "string",
+                    "description": "Postal code.",
+                    "nullable": true
+                  }
+                }
+              },
+              "metadata": {
+                "title": "OrderCalculatedReferrerMetadata",
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.",
+                "nullable": true
+              }
+            },
             "nullable": true
           },
           "redemptions": {
@@ -28873,49 +29263,80 @@
               "$ref": "#/components/schemas/OrderRedemptions"
             },
             "nullable": true
+          }
+        }
+      },
+      "OrderCalculatedEssential": {
+        "title": "OrderCalculatedEssential",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "The order status.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "CANCELED",
+              "FULFILLED"
+            ],
+            "nullable": true
+          },
+          "amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.\n\n",
+            "nullable": true
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level discounts applied to the order.",
+            "nullable": true
+          },
+          "initial_amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
+            "nullable": true
+          },
+          "items": {
+            "title": "OrderCalculatedEssentialItems",
+            "type": "array",
+            "description": "Array of items applied to the order.",
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            },
+            "nullable": true
           },
           "customer": {
-            "title": "OrderCalculatedCustomer",
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "A unique identifier of an existing customer.",
-                "nullable": true
-              },
-              "object": {
-                "type": "string",
-                "description": "The type of the object represented by JSON.",
-                "default": "customer",
-                "enum": [
-                  "customer"
-                ],
-                "nullable": true
+            "description": "This is an object containing information about the customer.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
               }
-            },
-            "required": [],
+            ]
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Unique customer ID of the customer making the purchase.",
+            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1",
             "nullable": true
           },
           "referrer": {
-            "title": "OrderCalculatedReferrer",
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "A unique identifier of an existing customer.",
-                "nullable": true
-              },
-              "object": {
-                "type": "string",
-                "description": "The type of the object represented by JSON.",
-                "default": "customer",
-                "enum": [
-                  "customer"
-                ],
-                "nullable": true
+            "description": "This is an object containing information about the referrer.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Referrer"
               }
-            },
-            "required": [],
+            ]
+          },
+          "referrer_id": {
+            "type": "string",
+            "description": "Unique referrer ID.",
+            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix",
+            "nullable": true
+          },
+          "metadata": {
+            "title": "OrderCalculatedEssentialMetadata",
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
             "nullable": true
           }
         }
@@ -28933,20 +29354,6 @@
             "type": "string",
             "nullable": true,
             "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
-          },
-          "created_at": {
-            "type": "string",
-            "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-            "format": "date-time",
-            "nullable": true
-          },
-          "updated_at": {
-            "type": "string",
-            "nullable": true,
-            "example": "2021-12-22T10:14:45.316Z",
-            "format": "date-time",
-            "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
           },
           "status": {
             "type": "string",
@@ -29019,6 +29426,29 @@
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
             "nullable": true
           },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "default": "order",
+            "enum": [
+              "order"
+            ],
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "nullable": true,
+            "example": "2021-12-22T10:14:45.316Z",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+          },
           "customer_id": {
             "type": "string",
             "nullable": true,
@@ -29030,23 +29460,6 @@
             "nullable": true,
             "description": "Unique referrer ID.",
             "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
-          },
-          "object": {
-            "type": "string",
-            "description": "The type of the object represented by JSON.",
-            "default": "order",
-            "enum": [
-              "order"
-            ],
-            "nullable": true
-          },
-          "redemptions": {
-            "title": "OrderCalculatedNoCustomerDataRedemptions",
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/OrderRedemptions"
-            },
-            "nullable": true
           },
           "customer": {
             "allOf": [
@@ -29061,6 +29474,89 @@
                 "$ref": "#/components/schemas/ReferrerId"
               }
             ]
+          },
+          "redemptions": {
+            "title": "OrderCalculatedNoCustomerDataRedemptions",
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OrderRedemptions"
+            },
+            "nullable": true
+          }
+        }
+      },
+      "OrderCreateBase": {
+        "title": "OrderCreateBase",
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "The order status.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "CANCELED",
+              "FULFILLED"
+            ],
+            "nullable": true
+          },
+          "amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.\n\n",
+            "nullable": true
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level discounts applied to the order.",
+            "nullable": true
+          },
+          "initial_amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
+            "nullable": true
+          },
+          "items": {
+            "title": "OrderCreateBaseItems",
+            "type": "array",
+            "description": "Array of items applied to the order.",
+            "items": {
+              "$ref": "#/components/schemas/OrderItem"
+            },
+            "nullable": true
+          },
+          "customer": {
+            "description": "This is an object containing information about the customer.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Unique customer ID of the customer making the purchase.",
+            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1",
+            "nullable": true
+          },
+          "referrer": {
+            "description": "This is an object containing information about the referrer.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Referrer"
+              }
+            ]
+          },
+          "referrer_id": {
+            "type": "string",
+            "description": "Unique referrer ID.",
+            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix",
+            "nullable": true
+          },
+          "metadata": {
+            "title": "OrderCreateBaseMetadata",
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
+            "nullable": true
           }
         }
       },
@@ -31305,20 +31801,6 @@
                 "nullable": true,
                 "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
               },
-              "created_at": {
-                "type": "string",
-                "example": "2021-12-22T10:13:06.487Z",
-                "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-                "format": "date-time",
-                "nullable": true
-              },
-              "updated_at": {
-                "type": "string",
-                "nullable": true,
-                "example": "2021-12-22T10:14:45.316Z",
-                "format": "date-time",
-                "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
-              },
               "status": {
                 "type": "string",
                 "description": "The order status.",
@@ -31389,6 +31871,29 @@
                 "type": "object",
                 "nullable": true
               },
+              "object": {
+                "type": "string",
+                "description": "The type of the object represented by JSON.",
+                "default": "order",
+                "enum": [
+                  "order"
+                ],
+                "nullable": true
+              },
+              "created_at": {
+                "type": "string",
+                "example": "2021-12-22T10:13:06.487Z",
+                "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+                "format": "date-time",
+                "nullable": true
+              },
+              "updated_at": {
+                "type": "string",
+                "nullable": true,
+                "example": "2021-12-22T10:14:45.316Z",
+                "format": "date-time",
+                "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+              },
               "customer_id": {
                 "type": "string",
                 "nullable": true,
@@ -31400,20 +31905,6 @@
                 "nullable": true,
                 "description": "Unique referrer ID.",
                 "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
-              },
-              "object": {
-                "type": "string",
-                "description": "The type of the object represented by JSON.",
-                "default": "order",
-                "enum": [
-                  "order"
-                ],
-                "nullable": true
-              },
-              "redemptions": {
-                "title": "RedemptionEntryOrderRedemptions",
-                "type": "object",
-                "nullable": true
               },
               "customer": {
                 "title": "RedemptionEntryOrderCustomer",
@@ -31455,6 +31946,11 @@
                     "nullable": true
                   }
                 },
+                "nullable": true
+              },
+              "redemptions": {
+                "title": "RedemptionEntryOrderRedemptions",
+                "type": "object",
                 "nullable": true
               }
             },
@@ -33784,7 +34280,6 @@
       },
       "Voucher": {
         "title": "Voucher",
-        "description": "This is an object representing a voucher with categories and validation rules assignments.",
         "type": "object",
         "properties": {
           "id": {
@@ -34066,7 +34561,8 @@
           "validation_rules_assignments": {
             "$ref": "#/components/schemas/ValidationRulesAssignmentsList"
           }
-        }
+        },
+        "description": "This is an object representing a voucher with categories and validation rules assignments."
       },
       "VoucherAssets": {
         "title": "VoucherAssets",
