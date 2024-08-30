@@ -133,9 +133,6 @@ Manual steps checklist:
   - /v1/async-actions, get - List Async Actions
   - /v1/async-actions/{asyncActionId}, get - Get Async Action
   - /client/v1/promotions/tiers, get - List Promotion Tiers (client-side)
-- Changes
-  - Model CampaignsVouchersCreateBaseRequestBody was deleted - never used
-  - 
 - Breaking changes:
   - CampaignsApi.disableCampaign returns `Object` instead of `CampaignsDisableResponseBody`, `CampaignsDisableResponseBody` was deleted
   - CampaignsApi.enableCampaign returns `Object` instead of `CampaignsEnableResponseBody`, `CampaignsEnableResponseBody` was deleted
@@ -158,7 +155,172 @@ Manual steps checklist:
   - ClientValidationsValidateResponseBody.order uses now `OrderCalculatedNoCustomerData` instead of `OrderCalculated`
   - Customer.address uses now `CustomerAddress` instead of `CustomerBaseAddress`
   - CustomerLoyalty.campaigns uses now `Map<CustomerLoyaltyCampaignsEntry>` instead of `Map<CustomerLoyaltyCampaignsValue>`
-  - 
+  - CustomerWithSummaryLoyaltyReferrals.assets uses now `CustomerWithSummaryLoyaltyReferralsAssets` instead of `CustomerResponseDataAssets`
+  - CustomerWithSummaryLoyaltyReferrals.address uses now `CustomerWithSummaryLoyaltyReferralsAddress` instead of `CustomerBaseAddress`
+  - CustomersCreateRequestBody.address uses now `CustomersCreateRequestBodyAddress` instead of `CustomerBaseAddress`
+  - CustomersCreateResponseBody.assets uses now `CustomersCreateResponseBodyAssets` instead of `CustomerResponseDataAssets`
+  - CustomersCreateResponseBody.address uses now `CustomersCreateResponseBodyAddress` instead of `CustomerBaseAddress`
+  - CustomersGetResponseBody.assets uses now `CustomersGetResponseBodyAssets` instead of `CustomerResponseDataAssets`
+  - CustomersGetResponseBody.address uses now `CustomersGetResponseBodyAddress` instead of `CustomerBaseAddress`
+  - CustomersUpdateInBulkRequestBody.address uses now `CustomersUpdateInBulkRequestBodyAddress` instead of `CustomerBaseAddress`
+  - CustomersUpdateRequestBody.address uses now `CustomersUpdateRequestBodyAddress` instead of `CustomerBaseAddress`
+  - CustomersUpdateResponseBody.address uses now `CustomersUpdateResponseBodyAddress` instead of `CustomerBaseAddress`
+  - CustomersUpdateResponseBody.assets uses now `CustomersUpdateResponseBodyAssets` instead of `CustomerResponseDataAssets`
+  - EarningRule.loyalty uses now `EarningRuleLoyalty` instead of `EarningRuleBaseLoyalty`
+  - EarningRule.customEvent uses now `EarningRuleCustomEvent` instead of `EarningRuleBaseCustomEvent`, `EarningRuleBaseCustomEvent` was deleted
+  - EarningRule.segment uses now `EarningRuleSegment` instead of `EarningRuleBaseSegment`
+  - EarningRule.loyalty uses now `EarningRuleSource` instead of `EarningRuleBaseSource`
+  - EventsCreateRequestBody.referral uses now `EventsCreateRequestBodyReferral` instead of `ClientEventsCreateRequestBodyReferral`
+  - EventsCreateRequestBody.loyalty uses now `EventsCreateRequestBodyLoyalty` instead of `ClientEventsCreateRequestBodyLoyalty`
+  - ExportsGetResponseBody.result uses now `ExportsGetResponseBodyResult` instead of `ExportResult`
+  - ExportsGetResponseBody.parameters uses now `ExportsGetResponseBodyParameters` instead of `ExportParameters`
+  - LoyaltiesEarningRulesDisableResponseBody.loyalty uses now `LoyaltiesEarningRulesDisableResponseBodyLoyalty` instead of `EarningRuleBaseLoyalty`
+  - LoyaltiesEarningRulesDisableResponseBody.event uses now `String` instead of `EarningRuleEvent`
+  - LoyaltiesEarningRulesDisableResponseBody.customEvent uses now `LoyaltiesEarningRulesDisableResponseBodyCustomEvent` instead of `EarningRuleBaseCustomEvent`
+  - LoyaltiesEarningRulesDisableResponseBody.segment uses now `LoyaltiesEarningRulesDisableResponseBodySegment` instead of `EarningRuleBaseSegment`
+  - LoyaltiesEarningRulesDisableResponseBody.source uses now `LoyaltiesEarningRulesDisableResponseBodySource` instead of `EarningRuleBaseSource`
+  - LoyaltiesEarningRulesEnableResponseBody.loyalty uses now `LoyaltiesEarningRulesEnableResponseBodyLoyalty` instead of `EarningRuleBaseLoyalty`
+  - LoyaltiesEarningRulesEnableResponseBody.event uses now `String` instead of `EarningRuleEvent`
+  - LoyaltiesEarningRulesEnableResponseBody.customEvent uses now `LoyaltiesEarningRulesEnableResponseBodyCustomEvent` instead of `EarningRuleBaseCustomEvent`
+  - LoyaltiesEarningRulesEnableResponseBody.segment uses now `LoyaltiesEarningRulesEnableResponseBodySegment` instead of `EarningRuleBaseSegment`
+  - LoyaltiesEarningRulesEnableResponseBody.source uses now `LoyaltiesEarningRulesEnableResponseBodySource` instead of `EarningRuleBaseSource`
+  - LoyaltiesEarningRulesGetResponseBody.loyalty uses now `LoyaltiesEarningRulesGetResponseBodyLoyalty` instead of `EarningRuleBaseLoyalty`
+  - LoyaltiesEarningRulesGetResponseBody.event uses now `String` instead of `EarningRuleEvent`
+  - LoyaltiesEarningRulesGetResponseBody.customEvent uses now `LoyaltiesEarningRulesGetResponseBodyCustomEvent` instead of `EarningRuleBaseCustomEvent`
+  - LoyaltiesEarningRulesGetResponseBody.segment uses now `LoyaltiesEarningRulesGetResponseBodySegment` instead of `EarningRuleBaseSegment`
+  - LoyaltiesEarningRulesGetResponseBody.source uses now `LoyaltiesEarningRulesGetResponseBodySource` instead of `EarningRuleBaseSource`
+  - LoyaltiesMembersRedemptionRedeemRequestBody.order uses now `OrderCalculatedEssential` instead of `Order`
+  - LoyaltiesMembersRedemptionRedeemResponseBody.relatedRedemptions uses now `LoyaltiesMembersRedemptionRedeemResponseBodyRelatedRedemptions` instead of `RedemptionRelatedRedemptions`
+  - LoyaltiesMembersRedemptionRedeemResponseBody.channel uses now `LoyaltiesMembersRedemptionRedeemResponseBodyChannel` instead of `RedemptionRelatedRedemptions`
+  - LoyaltiesMembersRedemptionRedeemResponseBody.voucher uses now `LoyaltiesMembersRedemptionRedeemResponseBodyVoucher` instead of `RedemptionVoucher`
+  - LoyaltiesMembersRedemptionRedeemResponseBody.gift uses now `LoyaltiesMembersRedemptionRedeemResponseBodyGift` instead of `RedemptionGift`
+  - LoyaltiesMembersRedemptionRedeemResponseBody.loyaltyCard uses now `LoyaltiesMembersRedemptionRedeemResponseBodyLoyaltyCard` instead of `RedemptionLoyaltyCard`
+  - LoyaltiesMembersTransactionsExportCreateResponseBody.parameters uses now `LoyaltiesMembersTransactionsExportCreateResponseBodyParameters` instead of `LoyaltiesMembersTransactionsExportCreateRequestBodyParameters`
+  - LoyaltiesRewardAssignmentsGetResponseBody.parameters uses now `LoyaltiesRewardAssignmentsGetResponseBodyParameters` instead of `RewardAssignmentParametersParameters`
+  - LoyaltiesRewardAssignmentsRewardGetResponseBody.attributes uses now `LoyaltiesRewardAssignmentsRewardGetResponseBodyAttributes` instead of `RewardAttributes`
+  - LoyaltiesRewardsGetResponseBody.parameters uses now `LoyaltiesRewardsGetResponseBodyParameters` instead of `RewardAssignmentParametersParameters`
+  - LoyaltiesTiersGetResponseBody.config uses now `LoyaltiesTiersGetResponseBodyConfig` instead of `LoyaltyTierAllOfConfig`
+  - LoyaltiesTiersGetResponseBody.points uses now `LoyaltiesTiersGetResponseBodyPoints` instead of `LoyaltyTierBasePoints`
+  - LoyaltyCardTransaction.details uses now `LoyaltyCardTransactionDetails` instead of `VoucherTransactionDetails`
+  - LoyaltyCardTransactionsType.CANCELLATION(POINTS_CANCELLATION) was removed
+  - LoyaltyTier.config uses now `LoyaltyTierConfig` instead of `LoyaltyTierAllOfConfig`
+  - LoyaltyTier.points uses now `LoyaltyTierPoints` instead of `LoyaltyTierBasePoints`
+  - OrderCalculated.customer uses now `OrderCalculatedCustomer` instead of `CustomerId`
+  - OrderCalculated.referrer uses now `OrderCalculatedReferrer` instead of `CustomerId`
+  - OrderItem.product uses now `OrderItemProduct` instead of `OrderItemCalculatedProduct`
+  - OrderItem.sku uses now `OrderItemSku` instead of `OrderItemCalculatedSku`
+  - OrderItemCalculated.totalAppliedDiscountAmount was removed (was never used)
+  - OrdersCreateResponseBody.customer uses now `CustomerId` instead of `OrdersCreateResponseBodyCustomer`
+  - OrdersCreateResponseBody.referrer uses now `xxx` instead of `xxx`
+  - OrdersCreateResponseBody.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  -
 
 
 
