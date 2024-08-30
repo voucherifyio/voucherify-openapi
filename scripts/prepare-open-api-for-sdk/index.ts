@@ -344,7 +344,7 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
   }
   if (!skipSettingTitle) {
     if (schema.additionalProperties) {
-      schema.title = `${title}Item`;
+      schema.title = `${title}Entry`;
     } else {
       schema.title = title;
     }
@@ -383,7 +383,7 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
   if (schema.additionalProperties) {
     schema.additionalProperties = fixSchemaTitle(
       schema.additionalProperties,
-      `${title}Item`,
+      `${title}Entry`,
       schemas,
       true,
     );

@@ -157,7 +157,7 @@ Manual steps checklist:
   - ClientValidationsValidateResponseBody.redeemables uses now `ClientValidationsValidateResponseBodyRedeemablesItem` instead of `ValidationsValidateResponseBodyRedeemablesItem`
   - ClientValidationsValidateResponseBody.order uses now `OrderCalculatedNoCustomerData` instead of `OrderCalculated`
   - Customer.address uses now `CustomerAddress` instead of `CustomerBaseAddress`
-  - CustomerLoyalty.campaigns uses now `Map<CustomerLoyaltyCampaigns>` instead of `Map<CustomerLoyaltyCampaignsValue>`
+  - CustomerLoyalty.campaigns uses now `Map<CustomerLoyaltyCampaignsEntry>` instead of `Map<CustomerLoyaltyCampaignsValue>`
   - 
 
 
