@@ -154,7 +154,7 @@ Manual steps checklist:
   - ClientValidationsValidateResponseBody.redeemables uses now `ClientValidationsValidateResponseBodyRedeemablesItem` instead of `ValidationsValidateResponseBodyRedeemablesItem`
   - ClientValidationsValidateResponseBody.order uses now `OrderCalculatedNoCustomerData` instead of `OrderCalculated`
   - Customer.address uses now `CustomerAddress` instead of `CustomerBaseAddress`
-  - CustomerLoyalty.campaigns uses now `Map<CustomerLoyaltyCampaignsEntry>` instead of `Map<CustomerLoyaltyCampaignsValue>`
+  - CustomerLoyalty.campaigns uses now `Map<String, CustomerLoyaltyCampaignsEntry>` instead of `Map<String, CustomerLoyaltyCampaignsValue>`
   - CustomerWithSummaryLoyaltyReferrals.assets uses now `CustomerWithSummaryLoyaltyReferralsAssets` instead of `CustomerResponseDataAssets`
   - CustomerWithSummaryLoyaltyReferrals.address uses now `CustomerWithSummaryLoyaltyReferralsAddress` instead of `CustomerBaseAddress`
   - CustomersCreateRequestBody.address uses now `CustomersCreateRequestBodyAddress` instead of `CustomerBaseAddress`
@@ -207,24 +207,26 @@ Manual steps checklist:
   - LoyaltyTier.points uses now `LoyaltyTierPoints` instead of `LoyaltyTierBasePoints`
   - OrderCalculated.customer uses now `OrderCalculatedCustomer` instead of `CustomerId`
   - OrderCalculated.referrer uses now `OrderCalculatedReferrer` instead of `CustomerId`
+  - OrderCalculated.redemptions uses now `Map<String, OrderRedemptionsEntry>` instead of `Map<String, OrderRedemptions>`
+  - OrderCalculatedNoCustomerData.redemptions uses now `Map<String, OrderRedemptionsEntry>` instead of `Map<String, OrderRedemptions>`
   - OrderItem.product uses now `OrderItemProduct` instead of `OrderItemCalculatedProduct`
   - OrderItem.sku uses now `OrderItemSku` instead of `OrderItemCalculatedSku`
   - OrderItemCalculated.totalAppliedDiscountAmount was removed (was never used)
-  - OrdersCreateResponseBody.customer uses now `CustomerId` instead of `OrdersCreateResponseBodyCustomer`
-  - OrdersCreateResponseBody.referrer uses now `xxx` instead of `xxx`
-  - OrdersCreateResponseBody.rrrr uses now `xxx` instead of `xxx`
-  - xxxxx.rrrr uses now `xxx` instead of `xxx`
-  - xxxxx.rrrr uses now `xxx` instead of `xxx`
-  - xxxxx.rrrr uses now `xxx` instead of `xxx`
-  - xxxxx.rrrr uses now `xxx` instead of `xxx`
-  - xxxxx.rrrr uses now `xxx` instead of `xxx`
-  - xxxxx.rrrr uses now `xxx` instead of `xxx`
-  - xxxxx.rrrr uses now `xxx` instead of `xxx`
-  - xxxxx.rrrr uses now `xxx` instead of `xxx`
-  - xxxxx.rrrr uses now `xxx` instead of `xxx`
-  - xxxxx.rrrr uses now `xxx` instead of `xxx`
-  - xxxxx.rrrr uses now `xxx` instead of `xxx`
-  - xxxxx.rrrr uses now `xxx` instead of `xxx`
+  - OrdersCreateResponseBody.referrer uses now `ReferrerId` instead of `CustomerId`
+  - OrdersCreateResponseBody.redemptions uses now `Map<String, OrderRedemptionsEntry>` instead of `Map<String, OrderRedemptions>`
+  - OrdersExportCreateResponseBody.parameters uses now `OrdersExportCreateResponseBodyParameters` instead of `OrdersExportCreateRequestBodyParameters`
+  - OrdersGetResponseBody.redemptions uses now `Map<String, OrderRedemptionsEntry>` instead of `Map<String, OrderRedemptions>`
+  - OrdersUpdateResponseBody.redemptions uses now `Map<String, OrderRedemptionsEntry>` instead of `Map<String, OrderRedemptions>`
+  - OrdersUpdateResponseBody.customer uses now `OrdersUpdateResponseBodyCustomer` instead of `CustomerId`
+  - OrdersUpdateResponseBody.referrer uses now `OrdersUpdateResponseBodyReferrer` instead of `CustomerId`
+  - ProductCollectionsCreateRequestBody.products uses now `List<ProductCollectionsCreateRequestBodyProductsItem>` instead of `List<ProductCollectionsCreateDynamicRequestBodyProductsItem>`
+  - ProductCollectionsCreateResponseBody.filter uses now `ProductCollectionsCreateResponseBodyFilter` instead of `ProductCollectionsCreateRequestBodyFilter`
+  - ProductCollectionsCreateResponseBody.products uses now `List<ProductCollectionsCreateResponseBodyProductsItem>` instead of `List<ProductCollectionsItemProductsItem>`
+  - ProductCollectionsGetResponseBod.filter uses now `ProductCollectionsGetResponseBodyFilter` instead of `ProductCollectionsCreateRequestBodyFilter`
+  - ProductCollectionsGetResponseBod.products uses now `List<ProductCollectionsGetResponseBodyProductsItem>` instead of `List<ProductCollectionsItemProductsItem>`
+  - ProductCollectionsItem.filter uses now `ProductCollectionsItemFilter` instead of `ProductCollectionsCreateRequestBodyFilter`
+  - ProductCollectionsProductsListResponseBody.data uses now `List<ProductCollectionsProductsListResponseBodyDataItem>` instead of `List<ProductCollectionsProductsListDataItem>`
+  - PromotionStack.tiers uses now `PromotionStackTiers` instead of `PromotionStackBaseTiers`
   - xxxxx.rrrr uses now `xxx` instead of `xxx`
   - xxxxx.rrrr uses now `xxx` instead of `xxx`
   - xxxxx.rrrr uses now `xxx` instead of `xxx`
