@@ -140,6 +140,24 @@ Manual steps checklist:
   - CampaignsApi.disableCampaign returns `Object` instead of `CampaignsDisableResponseBody`, `CampaignsDisableResponseBody` was deleted
   - CampaignsApi.enableCampaign returns `Object` instead of `CampaignsEnableResponseBody`, `CampaignsEnableResponseBody` was deleted
   - CampaignsImportVoucherItem.loyaltyCard uses now `SimpleLoyaltyCard` instead of `CampaignsImportVoucherLoyaltyCard`, `CampaignsImportVoucherLoyaltyCard` was deleted
+  - CampaignsVouchersCreateInBulkRequestBody.redemption uses now `CampaignsVouchersCreateInBulkRequestBodyRedemption` instead of `CampaignsImportVoucherItemRedemption`
+  - CampaignsVouchersCreateRequestBody.redemption uses now `CampaignsVouchersCreateRequestBodyRedemption` instead of `CampaignsImportVoucherItemRedemption`
+  - CampaignsVouchersCreateResponseBody.gift uses now `CampaignsVouchersCreateResponseBodyGift` instead of `CampaignsVouchersCreateCombinedResponseBodyGift`
+  - CampaignsVouchersCreateResponseBody.loyaltyCard uses now `CampaignsVouchersCreateResponseBodyLoyaltyCard` instead of `CampaignsVouchersCreateCombinedResponseBodyLoyaltyCard`
+  - CampaignsVouchersCreateResponseBody.publish uses now `CampaignsVouchersCreateResponseBodyPublish` instead of `CampaignsVouchersCreateCombinedResponseBodyPublish`
+  - CampaignsVouchersCreateResponseBody.redemption uses now `CampaignsVouchersCreateResponseBodyRedemption` instead of `CampaignsVouchersCreateCombinedResponseBodyRedemption`
+  - ClientQualificationsCheckEligibilityRequestBody.order uses now `OrderCalculatedEssential` instead of `Order`
+  - ClientQualificationsCheckEligibilityResponseBody.order uses now `OrderCalculatedEssential` instead of `Order`
+  - ClientRedemptionsRedeemRequestBody.redeemables uses now `ClientRedemptionsRedeemRequestBodyRedeemablesItem[]` instead of `StackableValidateRedeemBaseRedeemablesItem[]`
+  - ClientRedemptionsRedeemRequestBody.order uses now `OrderCalculatedEssential` instead of `Order`
+  - ClientRedemptionsRedeemRequestBody.options uses now `ClientRedemptionsRedeemRequestBodyOptions` instead of `ClientRedemptionsRedeemRequestBodyAllOfOptions`
+  - ClientValidationsValidateRequestBody.redeemables uses now `ClientValidationsValidateRequestBodyRedeemablesItem[]` instead of `StackableValidateRedeemBaseRedeemablesItem[]`
+  - ClientValidationsValidateRequestBody.order uses now `OrderCalculatedEssential` instead of `Order`
+  - ClientValidationsValidateRequestBody.options uses now `ClientValidationsValidateRequestBodyOptions` instead of `ClientValidationsValidateRequestBodyAllOfOptions`
+  - ClientValidationsValidateResponseBody.redeemables uses now `ClientValidationsValidateResponseBodyRedeemablesItem` instead of `ValidationsValidateResponseBodyRedeemablesItem`
+  - ClientValidationsValidateResponseBody.order uses now `OrderCalculatedNoCustomerData` instead of `OrderCalculated`
+  - Customer.address uses now `CustomerAddress` instead of `CustomerBaseAddress`
+  - CustomerLoyalty.campaigns uses now `Map<CustomerLoyaltyCampaigns>` instead of `Map<CustomerLoyaltyCampaignsValue>`
   - 
 
 

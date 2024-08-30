@@ -343,7 +343,11 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
     return _.pick(schema, "$ref");
   }
   if (!skipSettingTitle) {
-    schema.title = title;
+    if (schema.additionalProperties) {
+      schema.title = `${title}Item`;
+    } else {
+      schema.title = title;
+    }
   }
   if (schema.items) {
     schema.items = fixSchemaTitle(schema.items, `${title}Item`, schemas);
@@ -374,6 +378,14 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
   if (schema.allOf) {
     schema.allOf = schema.allOf.map((schema: any) =>
       fixSchemaTitle(schema, title, schemas, true),
+    );
+  }
+  if (schema.additionalProperties) {
+    schema.additionalProperties = fixSchemaTitle(
+      schema.additionalProperties,
+      `${title}Item`,
+      schemas,
+      true,
     );
   }
   return { title: schema.title, ..._.omit(schema) };
