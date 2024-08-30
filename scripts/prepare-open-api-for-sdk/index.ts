@@ -125,29 +125,6 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
   delete openAPIContent.components.schemas.AsyncActionBase.properties
     .operation_status.enum;
-  openAPIContent.components.schemas.Voucher["type"] = "object";
-  openAPIContent.components.schemas.Voucher["properties"] =
-    openAPIContent.components.schemas.Voucher.allOf.reduce(
-      (accumulator, currentValue) => {
-        if (typeof currentValue?.$ref === "string") {
-          accumulator = {
-            ...accumulator,
-            ...(openAPIContent.components.schemas?.[
-              currentValue?.$ref.split("/").at(-1)
-            ]?.properties || {}),
-          };
-        } else {
-          accumulator = {
-            ...accumulator,
-            // @ts-ignore
-            ...(currentValue.properties || {}),
-          };
-        }
-        return accumulator;
-      },
-      {},
-    );
-  delete openAPIContent.components.schemas.Voucher.allOf;
   //Fix `CustomerActivity`
   delete openAPIContent.components.schemas.CustomerActivity.properties.type
     .enum;

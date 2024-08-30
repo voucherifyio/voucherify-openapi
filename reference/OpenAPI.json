@@ -1727,8 +1727,8 @@
           }
         ]
       },
-      "OrderBase": {
-        "title": "Order Base",
+      "OrderCreateBase": {
+        "title": "Order Create Base",
         "type": "object",
         "properties": {
           "status": {
@@ -1884,7 +1884,7 @@
           "object"
         ]
       },
-      "Order": {
+      "OrderCreate": {
         "title": "Order",
         "allOf": [
           {
@@ -1902,7 +1902,15 @@
             }
           },
           {
-            "$ref": "#/components/schemas/OrderBase"
+            "$ref": "#/components/schemas/OrderCreateBase"
+          }
+        ]
+      },
+      "OrderCalculatedEssential": {
+        "title": "Order Calculated Essential",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OrderCreateBase"
           }
         ]
       },
@@ -1920,19 +1928,6 @@
             "type": "string",
             "nullable": true,
             "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
-          },
-          "created_at": {
-            "type": "string",
-            "example": "2021-12-22T10:13:06.487Z",
-            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "nullable": true,
-            "example": "2021-12-22T10:14:45.316Z",
-            "format": "date-time",
-            "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
           },
           "status": {
             "type": "string",
@@ -1991,17 +1986,93 @@
             "type": "object",
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
           },
-          "customer_id": {
+          "object": {
             "type": "string",
-            "nullable": true,
-            "description": "Unique customer ID of the customer making the purchase.",
-            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
+            "description": "The type of the object represented by JSON.",
+            "default": "order",
+            "enum": [
+              "order"
+            ]
+          }
+        },
+        "required": [
+          "source_id",
+          "customer_id",
+          "referrer_id",
+          "object"
+        ]
+      },
+      "OrderCalculatedBase": {
+        "title": "Order Response Base",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Order information.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request."
           },
-          "referrer_id": {
+          "source_id": {
             "type": "string",
             "nullable": true,
-            "description": "Unique referrer ID.",
-            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+            "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+          },
+          "status": {
+            "type": "string",
+            "description": "The order status.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "CANCELED",
+              "FULFILLED"
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts."
+          },
+          "initial_amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level discounts applied to the order."
+          },
+          "items_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all product-specific discounts applied to the order."
+          },
+          "total_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level AND all product-specific discounts applied to the order."
+          },
+          "total_amount": {
+            "type": "integer",
+            "description": "Order amount after undoing all the discounts through the rollback redemption."
+          },
+          "applied_discount_amount": {
+            "type": "integer",
+            "description": "This field shows the order-level discount applied."
+          },
+          "items_applied_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all product-specific discounts applied in a particular request.  \n`sum(items, i => i.applied_discount_amount)`"
+          },
+          "total_applied_discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level AND all product-specific discounts applied in a particular request.  \n`total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount`"
+          },
+          "items": {
+            "type": "array",
+            "description": "Array of items applied to the order.",
+            "items": {
+              "$ref": "#/components/schemas/OrderItemCalculated"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
           },
           "object": {
             "type": "string",
@@ -2010,12 +2081,6 @@
             "enum": [
               "order"
             ]
-          },
-          "redemptions": {
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/OrderRedemptions"
-            }
           }
         },
         "required": [
@@ -2037,19 +2102,50 @@
             "additionalProperties": false,
             "description": "Order information.",
             "properties": {
+              "created_at": {
+                "type": "string",
+                "example": "2021-12-22T10:13:06.487Z",
+                "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "nullable": true,
+                "example": "2021-12-22T10:14:45.316Z",
+                "format": "date-time",
+                "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+              },
+              "customer_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique customer ID of the customer making the purchase.",
+                "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
+              },
+              "referrer_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique referrer ID.",
+                "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+              },
               "customer": {
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/CustomerId"
+                    "$ref": "#/components/schemas/Customer"
                   }
                 ]
               },
               "referrer": {
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/ReferrerId"
+                    "$ref": "#/components/schemas/Referrer"
                   }
                 ]
+              },
+              "redemptions": {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/OrderRedemptions"
+                }
               }
             }
           }
@@ -2067,6 +2163,31 @@
             "additionalProperties": false,
             "description": "Order information.",
             "properties": {
+              "created_at": {
+                "type": "string",
+                "example": "2021-12-22T10:13:06.487Z",
+                "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+                "format": "date-time"
+              },
+              "updated_at": {
+                "type": "string",
+                "nullable": true,
+                "example": "2021-12-22T10:14:45.316Z",
+                "format": "date-time",
+                "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
+              },
+              "customer_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique customer ID of the customer making the purchase.",
+                "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
+              },
+              "referrer_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique referrer ID.",
+                "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+              },
               "customer": {
                 "allOf": [
                   {
@@ -2080,6 +2201,12 @@
                     "$ref": "#/components/schemas/ReferrerId"
                   }
                 ]
+              },
+              "redemptions": {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/OrderRedemptions"
+                }
               }
             }
           }
@@ -2162,7 +2289,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/Order"
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
               }
             ]
           },
@@ -15157,7 +15284,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/Order"
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
               }
             ]
           },
@@ -27410,7 +27537,7 @@
         "description": "Request body schema for **POST** `v1/orders`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Order"
+            "$ref": "#/components/schemas/OrderCreate"
           }
         ]
       },
@@ -27420,7 +27547,7 @@
         "description": "Request body schema for **PUT** `v1/orders/{orderId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/OrderBase"
+            "$ref": "#/components/schemas/OrderCreateBase"
           }
         ]
       },
@@ -32490,7 +32617,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/Order"
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
               }
             ]
           },
@@ -39771,7 +39898,7 @@
             "$ref": "#/components/schemas/Customer"
           },
           "order": {
-            "$ref": "#/components/schemas/Order"
+            "$ref": "#/components/schemas/OrderCalculatedEssential"
           },
           "metadata": {
             "type": "object",
@@ -39863,7 +39990,7 @@
             "$ref": "#/components/schemas/Customer"
           },
           "order": {
-            "$ref": "#/components/schemas/Order"
+            "$ref": "#/components/schemas/OrderCalculatedEssential"
           },
           "metadata": {
             "type": "object",
@@ -40039,7 +40166,7 @@
             "description": "Order object that is **required** when redeeming a pay with points reward.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/Order"
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
               }
             ]
           },
@@ -40280,7 +40407,7 @@
               }
             },
             {
-              "$ref": "#/components/schemas/OrderBase"
+              "$ref": "#/components/schemas/OrderCreateBase"
             }
           ]
         }
@@ -40525,7 +40652,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/Order"
+                "$ref": "#/components/schemas/OrderCalculatedEssential"
               }
             ]
           },
