@@ -133,6 +133,9 @@ Manual steps checklist:
   - /v1/async-actions, get - List Async Actions
   - /v1/async-actions/{asyncActionId}, get - Get Async Action
   - /client/v1/promotions/tiers, get - List Promotion Tiers (client-side)
+- Changes
+  - Model CampaignsVouchersCreateBaseRequestBody was deleted - never used
+  - 
 - Breaking changes:
   - CampaignsApi.disableCampaign returns `Object` instead of `CampaignsDisableResponseBody`, `CampaignsDisableResponseBody` was deleted
   - CampaignsApi.enableCampaign returns `Object` instead of `CampaignsEnableResponseBody`, `CampaignsEnableResponseBody` was deleted

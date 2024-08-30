@@ -356,12 +356,12 @@ const copySchemasIfUsedAsAllOfInBase = (schemas): Record<string, any> => {
 const fixSchemasTitles = (schemas) => {
   return Object.fromEntries(
     Object.entries(schemas).map(([title, schema]) => {
-      return [title, fixSchemaTitle(schema, title)];
+      return [title, fixSchemaTitle(schema, title, schemas)];
     }),
   );
 };
 
-const fixSchemaTitle = (schema, title, skipSettingTitle?: boolean) => {
+const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
   if (schema.$ref) {
     return _.pick(schema, "$ref");
   }
@@ -369,20 +369,24 @@ const fixSchemaTitle = (schema, title, skipSettingTitle?: boolean) => {
     schema.title = title;
   }
   if (schema.items) {
-    schema.items = fixSchemaTitle(schema.items, `${title}Item`);
+    schema.items = fixSchemaTitle(schema.items, `${title}Item`, schemas);
   }
   if (schema.properties) {
     schema.properties = Object.fromEntries(
       Object.entries(schema.properties).map(([property, schema]: any) => {
+        const _title = `${title}${_.startCase(
+          snakeToCamel(property),
+        ).replaceAll(" ", "")}`;
         if (["object", "array"].includes(schema.type)) {
+          return [property, fixSchemaTitle(schema, _title, schemas)];
+        }
+        if ("allOf" in schema && schema.allOf.length > 1) {
           return [
             property,
             fixSchemaTitle(
-              schema,
-              `${title}${_.startCase(snakeToCamel(property)).replaceAll(
-                " ",
-                "",
-              )}`,
+              mergeObjectsWithAllOfs(schema, schemas),
+              _title,
+              schemas,
             ),
           ];
         }
@@ -392,7 +396,7 @@ const fixSchemaTitle = (schema, title, skipSettingTitle?: boolean) => {
   }
   if (schema.allOf) {
     schema.allOf = schema.allOf.map((schema: any) =>
-      fixSchemaTitle(schema, title, true),
+      fixSchemaTitle(schema, title, schemas, true),
     );
   }
   return { title: schema.title, ..._.omit(schema) };
