@@ -11938,8 +11938,8 @@
           },
           "source_id": {
             "type": "string",
-            "description": "Unique source ID of an existing order that will be linked to the redemption of this request.",
-            "nullable": true
+            "nullable": true,
+            "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
           },
           "status": {
             "type": "string",
@@ -11954,12 +11954,7 @@
           },
           "amount": {
             "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.\n\n",
-            "nullable": true
-          },
-          "discount_amount": {
-            "type": "integer",
-            "description": "Sum of all order-level discounts applied to the order.",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
             "nullable": true
           },
           "initial_amount": {
@@ -11967,41 +11962,18 @@
             "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
             "nullable": true
           },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level discounts applied to the order.",
+            "nullable": true
+          },
           "items": {
             "title": "OrdersCreateRequestBodyItems",
             "type": "array",
             "description": "Array of items applied to the order.",
             "items": {
-              "$ref": "#/components/schemas/OrderItem"
+              "$ref": "#/components/schemas/OrderItemEssential"
             },
-            "nullable": true
-          },
-          "customer": {
-            "description": "This is an object containing information about the customer.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Customer"
-              }
-            ]
-          },
-          "customer_id": {
-            "type": "string",
-            "description": "Unique customer ID of the customer making the purchase.",
-            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1",
-            "nullable": true
-          },
-          "referrer": {
-            "description": "This is an object containing information about the referrer.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Referrer"
-              }
-            ]
-          },
-          "referrer_id": {
-            "type": "string",
-            "description": "Unique referrer ID.",
-            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix",
             "nullable": true
           },
           "metadata": {
@@ -12009,6 +11981,33 @@
             "type": "object",
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
             "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "referrer_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique referrer ID.",
+            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+          },
+          "customer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
+          },
+          "referrer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Referrer"
+              }
+            ]
           }
         },
         "description": "Request body schema for **POST** `v1/orders`."
@@ -12146,14 +12145,6 @@
                 "$ref": "#/components/schemas/ReferrerId"
               }
             ]
-          },
-          "redemptions": {
-            "title": "OrdersCreateResponseBodyRedemptionsEntry",
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/OrderRedemptionsEntry"
-            },
-            "nullable": true
           }
         },
         "description": "Response body schema for **POST** `v1/orders`."
@@ -12465,14 +12456,6 @@
                 "$ref": "#/components/schemas/ReferrerId"
               }
             ]
-          },
-          "redemptions": {
-            "title": "OrdersGetResponseBodyRedemptionsEntry",
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/OrderRedemptionsEntry"
-            },
-            "nullable": true
           }
         },
         "description": "Response body schema for **GET** `v1/orders/{orderId}`."
@@ -12486,16 +12469,40 @@
           "type": "object",
           "allOf": [
             {
-              "type": "object",
-              "properties": {
-                "source_id": {
-                  "type": "string",
-                  "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
-                }
-              }
+              "$ref": "#/components/schemas/OrderEssential"
             },
             {
-              "$ref": "#/components/schemas/OrderCreateBase"
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Order information.",
+              "properties": {
+                "created_at": {
+                  "type": "string",
+                  "example": "2021-12-22T10:13:06.487Z",
+                  "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+                  "format": "date-time"
+                },
+                "referrer_id": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Unique referrer ID.",
+                  "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+                },
+                "customer": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Customer"
+                    }
+                  ]
+                },
+                "referrer": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Referrer"
+                    }
+                  ]
+                }
+              }
             }
           ]
         }
@@ -12559,6 +12566,11 @@
         "title": "OrdersUpdateRequestBody",
         "type": "object",
         "properties": {
+          "source_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+          },
           "status": {
             "type": "string",
             "description": "The order status.",
@@ -12572,12 +12584,7 @@
           },
           "amount": {
             "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.\n\n",
-            "nullable": true
-          },
-          "discount_amount": {
-            "type": "integer",
-            "description": "Sum of all order-level discounts applied to the order.",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
             "nullable": true
           },
           "initial_amount": {
@@ -12585,41 +12592,18 @@
             "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
             "nullable": true
           },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level discounts applied to the order.",
+            "nullable": true
+          },
           "items": {
             "title": "OrdersUpdateRequestBodyItems",
             "type": "array",
             "description": "Array of items applied to the order.",
             "items": {
-              "$ref": "#/components/schemas/OrderItem"
+              "$ref": "#/components/schemas/OrderItemEssential"
             },
-            "nullable": true
-          },
-          "customer": {
-            "description": "This is an object containing information about the customer.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Customer"
-              }
-            ]
-          },
-          "customer_id": {
-            "type": "string",
-            "description": "Unique customer ID of the customer making the purchase.",
-            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1",
-            "nullable": true
-          },
-          "referrer": {
-            "description": "This is an object containing information about the referrer.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Referrer"
-              }
-            ]
-          },
-          "referrer_id": {
-            "type": "string",
-            "description": "Unique referrer ID.",
-            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix",
             "nullable": true
           },
           "metadata": {
@@ -12627,6 +12611,33 @@
             "type": "object",
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
             "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2021-12-22T10:13:06.487Z",
+            "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "referrer_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique referrer ID.",
+            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+          },
+          "customer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Customer"
+              }
+            ]
+          },
+          "referrer": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Referrer"
+              }
+            ]
           }
         },
         "description": "Request body schema for **PUT** `v1/orders/{orderId}`."
@@ -12764,14 +12775,6 @@
                 "$ref": "#/components/schemas/ReferrerId"
               }
             ]
-          },
-          "redemptions": {
-            "title": "OrdersUpdateResponseBodyRedemptionsEntry",
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/OrderRedemptionsEntry"
-            },
-            "nullable": true
           }
         },
         "description": "Response body schema for **PUT** `v1/orders/{orderId}`."
@@ -17642,11 +17645,6 @@
                   }
                 },
                 "nullable": true
-              },
-              "redemptions": {
-                "title": "RedemptionsGetResponseBodyOrderRedemptions",
-                "type": "object",
-                "nullable": true
               }
             },
             "nullable": true
@@ -18580,10 +18578,6 @@
                           "nullable": true
                         }
                       }
-                    },
-                    "redemptions": {
-                      "title": "RedemptionsListResponseBodyRedemptionsItemOrderRedemptions",
-                      "type": "object"
                     }
                   }
                 },
@@ -28305,97 +28299,12 @@
                 "$ref": "#/components/schemas/ReferrerId"
               }
             ]
-          },
-          "redemptions": {
-            "title": "OrderCalculatedRedemptionsEntry",
-            "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/OrderRedemptionsEntry"
-            },
-            "nullable": true
-          }
-        }
-      },
-      "OrderCreateBase": {
-        "title": "OrderCreateBase",
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "The order status.",
-            "enum": [
-              "CREATED",
-              "PAID",
-              "CANCELED",
-              "FULFILLED"
-            ],
-            "nullable": true
-          },
-          "amount": {
-            "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.\n\n",
-            "nullable": true
-          },
-          "discount_amount": {
-            "type": "integer",
-            "description": "Sum of all order-level discounts applied to the order.",
-            "nullable": true
-          },
-          "initial_amount": {
-            "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
-            "nullable": true
-          },
-          "items": {
-            "title": "OrderCreateBaseItems",
-            "type": "array",
-            "description": "Array of items applied to the order.",
-            "items": {
-              "$ref": "#/components/schemas/OrderItem"
-            },
-            "nullable": true
-          },
-          "customer": {
-            "description": "This is an object containing information about the customer.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Customer"
-              }
-            ]
-          },
-          "customer_id": {
-            "type": "string",
-            "description": "Unique customer ID of the customer making the purchase.",
-            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1",
-            "nullable": true
-          },
-          "referrer": {
-            "description": "This is an object containing information about the referrer.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Referrer"
-              }
-            ]
-          },
-          "referrer_id": {
-            "type": "string",
-            "description": "Unique referrer ID.",
-            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix",
-            "nullable": true
-          },
-          "metadata": {
-            "title": "OrderCreateBaseMetadata",
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
-            "nullable": true
           }
         }
       },
       "OrderEssential": {
         "title": "OrderEssential",
         "type": "object",
-        "additionalProperties": false,
-        "description": "Order information.",
         "properties": {
           "id": {
             "type": "string",
@@ -28448,186 +28357,8 @@
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
             "nullable": true
           }
-        }
-      },
-      "OrderItem": {
-        "title": "OrderItem",
-        "type": "object",
-        "properties": {
-          "object": {
-            "type": "string",
-            "default": "order_item",
-            "enum": [
-              "order_item"
-            ],
-            "description": "The type of the object represented by JSON. This object stores information about the `order_item`.",
-            "nullable": true
-          },
-          "sku_id": {
-            "type": "string",
-            "description": "Unique identifier of the SKU. It is assigned by Voucherify.",
-            "nullable": true
-          },
-          "product_id": {
-            "type": "string",
-            "description": "Unique identifier of the product. It is assigned by Voucherify.",
-            "nullable": true
-          },
-          "related_object": {
-            "type": "string",
-            "enum": [
-              "product",
-              "sku"
-            ],
-            "description": "Used along with the source_id property, can be set to either sku or product.",
-            "nullable": true
-          },
-          "source_id": {
-            "type": "string",
-            "description": "The merchant's product/SKU ID (if it is different from the Voucherify product/SKU ID). It is useful in the integration between multiple systems. It can be an ID from an eCommerce site, a database, or a third-party service.",
-            "nullable": true
-          },
-          "quantity": {
-            "type": "integer",
-            "description": "The quantity of the particular item in the cart.",
-            "nullable": true
-          },
-          "discount_quantity": {
-            "type": "integer",
-            "description": "Number of dicounted items.",
-            "nullable": true
-          },
-          "initial_quantity": {
-            "type": "integer",
-            "description": "A positive integer in the smallest unit quantity representing the total amount of the order; this is the sum of the order items' quantity.",
-            "nullable": true
-          },
-          "amount": {
-            "type": "integer",
-            "description": "The total amount of the order item (price * quantity).",
-            "nullable": true
-          },
-          "discount_amount": {
-            "type": "integer",
-            "description": "\nSum of all order-item-level discounts applied to the order.",
-            "nullable": true
-          },
-          "initial_amount": {
-            "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
-            "nullable": true
-          },
-          "applied_discount_amount": {
-            "type": "integer",
-            "description": "Order-level discount amount applied in the transaction.",
-            "nullable": true
-          },
-          "applied_discount_quantity": {
-            "type": "integer",
-            "description": "Number of the discounted items applied in the transaction.",
-            "nullable": true
-          },
-          "applied_quantity": {
-            "type": "integer",
-            "description": "Quantity of items changed by the application of a new quantity items. It can be positive when an item is added or negative if an item is replaced.",
-            "nullable": true
-          },
-          "applied_quantity_amount": {
-            "type": "integer",
-            "description": "Amount for the items changed by the application of a new quantity items. It can be positive when an item is added or negative if an item is replaced.",
-            "nullable": true
-          },
-          "price": {
-            "type": "integer",
-            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
-            "nullable": true
-          },
-          "subtotal_amount": {
-            "type": "integer",
-            "description": "Final order item amount after the applied item-level discount.  If there are no item-level discounts applied, this item is equal to the `amount`.   \n`subtotal_amount`=`amount`-`discount_amount`",
-            "nullable": true
-          },
-          "product": {
-            "title": "OrderItemProduct",
-            "type": "object",
-            "additionalProperties": false,
-            "description": "An object containing details of the related product.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "A unique identifier that represents the product and is assigned by Voucherify.",
-                "nullable": true
-              },
-              "source_id": {
-                "type": "string",
-                "description": "The merchant's product ID (if it is different than Voucherify's product ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.",
-                "nullable": true
-              },
-              "override": {
-                "type": "boolean",
-                "description": "The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.",
-                "nullable": true
-              },
-              "name": {
-                "type": "string",
-                "description": "Product name.",
-                "nullable": true
-              },
-              "metadata": {
-                "title": "OrderItemProductMetadata",
-                "type": "object",
-                "description": "A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format.",
-                "nullable": true
-              },
-              "price": {
-                "type": "number",
-                "description": "Product price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).",
-                "nullable": true
-              }
-            },
-            "nullable": true
-          },
-          "sku": {
-            "title": "OrderItemSku",
-            "type": "object",
-            "additionalProperties": false,
-            "description": "An object containing details of the related SKU.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "A unique identifier that represents the SKU and is assigned by Voucherify.",
-                "nullable": true
-              },
-              "source_id": {
-                "type": "string",
-                "description": "The merchant's SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.",
-                "nullable": true
-              },
-              "override": {
-                "type": "boolean",
-                "description": "The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.",
-                "nullable": true
-              },
-              "sku": {
-                "type": "string",
-                "description": "The SKU name.",
-                "nullable": true
-              },
-              "price": {
-                "type": "number",
-                "description": "SKU price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).",
-                "nullable": true
-              }
-            },
-            "nullable": true
-          },
-          "metadata": {
-            "title": "OrderItemMetadata",
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to an order item. It can be useful for storing additional information about the order item in a structured format.",
-            "nullable": true
-          }
-        }
+        },
+        "description": "Order information."
       },
       "OrderItemCalculated": {
         "title": "OrderItemCalculated",
@@ -28809,68 +28540,153 @@
         },
         "required": []
       },
-      "OrderRedemptionsEntry": {
-        "title": "OrderRedemptionsEntry",
+      "OrderItemEssential": {
+        "title": "OrderItemEssential",
         "type": "object",
         "properties": {
-          "date": {
+          "sku_id": {
             "type": "string",
-            "description": "Timestamp representing the date and time when the redemption was created. The value is shown in the ISO 8601 format.",
-            "example": "2022-09-02T17:06:56.649Z",
-            "format": "date-time",
+            "description": "Unique identifier of the SKU. It is assigned by Voucherify.",
             "nullable": true
           },
-          "rollback_id": {
+          "product_id": {
             "type": "string",
-            "description": "Unique ID of the redemption rollback.",
-            "example": "rr_0c63c84eb78ee0a6c0",
+            "description": "Unique identifier of the product. It is assigned by Voucherify.",
             "nullable": true
           },
-          "rollback_date": {
+          "related_object": {
             "type": "string",
-            "description": "Timestamp representing the date and tiem when the redemption rollback was created. The value is shown in the ISO 8601 format.",
-            "example": "2023-01-31T14:18:37.150Z",
-            "format": "date-time",
+            "enum": [
+              "product",
+              "sku"
+            ],
+            "description": "Used along with the source_id property, can be set to either sku or product.",
             "nullable": true
           },
-          "related_object_type": {
+          "source_id": {
             "type": "string",
-            "description": "The source of the incentive.",
-            "default": "redemption",
+            "description": "The merchant's product/SKU ID (if it is different from the Voucherify product/SKU ID). It is useful in the integration between multiple systems. It can be an ID from an eCommerce site, a database, or a third-party service.",
             "nullable": true
           },
-          "related_object_id": {
-            "type": "string",
-            "description": "Unique ID of the parent redemption.",
-            "example": "r_0ba186c4824e4881e1",
+          "quantity": {
+            "type": "integer",
+            "description": "The quantity of the particular item in the cart.",
             "nullable": true
           },
-          "related_object_parent_id": {
-            "type": "string",
-            "description": "Represent's the campaign ID of the voucher if the redemption was based on a voucher that was part of bulk codes generated within a campaign. In case of a promotion tier, this represents the campaign ID of the promotion tier's parent campaign.",
+          "discount_quantity": {
+            "type": "integer",
+            "description": "Number of dicounted items.",
             "nullable": true
           },
-          "stacked": {
-            "title": "OrderRedemptionsEntryStacked",
-            "type": "array",
-            "description": "Contains a list of unique IDs of child redemptions, which belong to the stacked incentives.",
-            "items": {
-              "title": "OrderRedemptionsEntryStackedItem",
-              "type": "string"
+          "initial_quantity": {
+            "type": "integer",
+            "description": "A positive integer in the smallest unit quantity representing the total amount of the order; this is the sum of the order items' quantity.",
+            "nullable": true
+          },
+          "amount": {
+            "type": "integer",
+            "description": "The total amount of the order item (price * quantity).",
+            "nullable": true
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "xxxSum of all order-item-level discounts applied to the order.",
+            "nullable": true
+          },
+          "initial_amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
+            "nullable": true
+          },
+          "price": {
+            "type": "integer",
+            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
+            "nullable": true
+          },
+          "product": {
+            "title": "OrderItemEssentialProduct",
+            "type": "object",
+            "additionalProperties": false,
+            "description": "An object containing details of the related product.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "A unique identifier that represents the product and is assigned by Voucherify.",
+                "nullable": true
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant's product ID (if it is different than Voucherify's product ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.",
+                "nullable": true
+              },
+              "override": {
+                "type": "boolean",
+                "description": "The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "description": "Product name.",
+                "nullable": true
+              },
+              "metadata": {
+                "title": "OrderItemEssentialProductMetadata",
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format.",
+                "nullable": true
+              },
+              "price": {
+                "type": "number",
+                "description": "Product price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).",
+                "nullable": true
+              }
             },
             "nullable": true
           },
-          "rollback_stacked": {
-            "title": "OrderRedemptionsEntryRollbackStacked",
-            "type": "array",
-            "description": "Lists the rollback redemption IDs of the particular child redemptions.",
-            "items": {
-              "title": "OrderRedemptionsEntryRollbackStackedItem",
-              "type": "string"
+          "sku": {
+            "title": "OrderItemEssentialSku",
+            "type": "object",
+            "additionalProperties": false,
+            "description": "An object containing details of the related SKU.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "A unique identifier that represents the SKU and is assigned by Voucherify.",
+                "nullable": true
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant's SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.",
+                "nullable": true
+              },
+              "override": {
+                "type": "boolean",
+                "description": "The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.",
+                "nullable": true
+              },
+              "sku": {
+                "type": "string",
+                "description": "The SKU name.",
+                "nullable": true
+              },
+              "price": {
+                "type": "number",
+                "description": "SKU price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).",
+                "nullable": true
+              }
             },
+            "nullable": true
+          },
+          "metadata": {
+            "title": "OrderItemEssentialMetadata",
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format.",
             "nullable": true
           }
-        }
+        },
+        "required": [
+          "object"
+        ]
       },
       "Product": {
         "title": "Product",
@@ -30836,11 +30652,6 @@
                     "nullable": true
                   }
                 },
-                "nullable": true
-              },
-              "redemptions": {
-                "title": "RedemptionEntryOrderRedemptions",
-                "type": "object",
                 "nullable": true
               }
             },
@@ -34940,154 +34751,6 @@
             "nullable": true
           }
         }
-      },
-      "OrderItemEssential": {
-        "title": "OrderItemEssential",
-        "type": "object",
-        "properties": {
-          "sku_id": {
-            "type": "string",
-            "description": "Unique identifier of the SKU. It is assigned by Voucherify.",
-            "nullable": true
-          },
-          "product_id": {
-            "type": "string",
-            "description": "Unique identifier of the product. It is assigned by Voucherify.",
-            "nullable": true
-          },
-          "related_object": {
-            "type": "string",
-            "enum": [
-              "product",
-              "sku"
-            ],
-            "description": "Used along with the source_id property, can be set to either sku or product.",
-            "nullable": true
-          },
-          "source_id": {
-            "type": "string",
-            "description": "The merchant's product/SKU ID (if it is different from the Voucherify product/SKU ID). It is useful in the integration between multiple systems. It can be an ID from an eCommerce site, a database, or a third-party service.",
-            "nullable": true
-          },
-          "quantity": {
-            "type": "integer",
-            "description": "The quantity of the particular item in the cart.",
-            "nullable": true
-          },
-          "discount_quantity": {
-            "type": "integer",
-            "description": "Number of dicounted items.",
-            "nullable": true
-          },
-          "initial_quantity": {
-            "type": "integer",
-            "description": "A positive integer in the smallest unit quantity representing the total amount of the order; this is the sum of the order items' quantity.",
-            "nullable": true
-          },
-          "amount": {
-            "type": "integer",
-            "description": "The total amount of the order item (price * quantity).",
-            "nullable": true
-          },
-          "discount_amount": {
-            "type": "integer",
-            "description": "xxxSum of all order-item-level discounts applied to the order.",
-            "nullable": true
-          },
-          "initial_amount": {
-            "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
-            "nullable": true
-          },
-          "price": {
-            "type": "integer",
-            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`.",
-            "nullable": true
-          },
-          "product": {
-            "title": "OrderItemEssentialProduct",
-            "type": "object",
-            "additionalProperties": false,
-            "description": "An object containing details of the related product.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "A unique identifier that represents the product and is assigned by Voucherify.",
-                "nullable": true
-              },
-              "source_id": {
-                "type": "string",
-                "description": "The merchant's product ID (if it is different than Voucherify's product ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.",
-                "nullable": true
-              },
-              "override": {
-                "type": "boolean",
-                "description": "The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.",
-                "nullable": true
-              },
-              "name": {
-                "type": "string",
-                "description": "Product name.",
-                "nullable": true
-              },
-              "metadata": {
-                "title": "OrderItemEssentialProductMetadata",
-                "type": "object",
-                "description": "A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format.",
-                "nullable": true
-              },
-              "price": {
-                "type": "number",
-                "description": "Product price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).",
-                "nullable": true
-              }
-            },
-            "nullable": true
-          },
-          "sku": {
-            "title": "OrderItemEssentialSku",
-            "type": "object",
-            "additionalProperties": false,
-            "description": "An object containing details of the related SKU.",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "A unique identifier that represents the SKU and is assigned by Voucherify.",
-                "nullable": true
-              },
-              "source_id": {
-                "type": "string",
-                "description": "The merchant's SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.",
-                "nullable": true
-              },
-              "override": {
-                "type": "boolean",
-                "description": "The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.",
-                "nullable": true
-              },
-              "sku": {
-                "type": "string",
-                "description": "The SKU name.",
-                "nullable": true
-              },
-              "price": {
-                "type": "number",
-                "description": "SKU price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).",
-                "nullable": true
-              }
-            },
-            "nullable": true
-          },
-          "metadata": {
-            "title": "OrderItemEssentialMetadata",
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format.",
-            "nullable": true
-          }
-        },
-        "required": [
-          "object"
-        ]
       },
       "QualificationsFieldConditions": {
         "title": "QualificationsFieldConditions",

@@ -1584,7 +1584,7 @@
           }
         ]
       },
-      "ParameterOrderValidateVoucherClientSide": {
+      "ParameterOrderMetadata": {
         "type": "object",
         "title": "Order details",
         "description": "Order details.",
@@ -1727,71 +1727,6 @@
           }
         ]
       },
-      "OrderCreateBase": {
-        "title": "Order Create Base",
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "description": "The order status.",
-            "enum": [
-              "CREATED",
-              "PAID",
-              "CANCELED",
-              "FULFILLED"
-            ]
-          },
-          "amount": {
-            "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.\n\n"
-          },
-          "discount_amount": {
-            "type": "integer",
-            "description": "Sum of all order-level discounts applied to the order."
-          },
-          "initial_amount": {
-            "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts."
-          },
-          "items": {
-            "type": "array",
-            "description": "Array of items applied to the order.",
-            "items": {
-              "$ref": "#/components/schemas/OrderItem"
-            }
-          },
-          "customer": {
-            "description": "This is an object containing information about the customer.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Customer"
-              }
-            ]
-          },
-          "customer_id": {
-            "type": "string",
-            "description": "Unique customer ID of the customer making the purchase.",
-            "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
-          },
-          "referrer": {
-            "description": "This is an object containing information about the referrer.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Referrer"
-              }
-            ]
-          },
-          "referrer_id": {
-            "type": "string",
-            "description": "Unique referrer ID.",
-            "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
-          },
-          "metadata": {
-            "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
-          }
-        }
-      },
       "SimpleOrder": {
         "title": "Simple Order",
         "type": "object",
@@ -1884,38 +1819,12 @@
           "object"
         ]
       },
-      "OrderCreate": {
-        "title": "Order",
-        "allOf": [
-          {
-            "title": "Order Ids",
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request."
-              },
-              "source_id": {
-                "type": "string",
-                "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
-              }
-            }
-          },
-          {
-            "$ref": "#/components/schemas/OrderCreateBase"
-          }
-        ]
-      },
-      "OrderEssential": {
-        "title": "Order Essential",
+      "OrderEssentialBase": {
+        "title": "Order Essential Base",
         "type": "object",
         "additionalProperties": false,
         "description": "Order information.",
         "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request."
-          },
           "source_id": {
             "type": "string",
             "nullable": true,
@@ -1955,6 +1864,25 @@
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
           }
         }
+      },
+      "OrderEssential": {
+        "title": "Order Essential",
+        "type": "object",
+        "description": "Order information.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/OrderEssentialBase"
+          }
+        ]
       },
       "OrderCalculatedBase": {
         "title": "Order Response Base",
@@ -2088,12 +2016,6 @@
                     "$ref": "#/components/schemas/ReferrerId"
                   }
                 ]
-              },
-              "redemptions": {
-                "type": "object",
-                "additionalProperties": {
-                  "$ref": "#/components/schemas/OrderRedemptionsEntry"
-                }
               }
             }
           }
@@ -27543,7 +27465,41 @@
         "description": "Request body schema for **POST** `v1/orders`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/OrderCreate"
+            "$ref": "#/components/schemas/OrderEssential"
+          },
+          {
+            "title": "Order Customer And Referrer Ids Objects",
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Order information.",
+            "properties": {
+              "created_at": {
+                "type": "string",
+                "example": "2021-12-22T10:13:06.487Z",
+                "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+                "format": "date-time"
+              },
+              "referrer_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique referrer ID.",
+                "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+              },
+              "customer": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Customer"
+                  }
+                ]
+              },
+              "referrer": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Referrer"
+                  }
+                ]
+              }
+            }
           }
         ]
       },
@@ -27553,7 +27509,41 @@
         "description": "Request body schema for **PUT** `v1/orders/{orderId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/OrderCreateBase"
+            "$ref": "#/components/schemas/OrderEssentialBase"
+          },
+          {
+            "title": "Order Customer And Referrer Ids Objects",
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Order information.",
+            "properties": {
+              "created_at": {
+                "type": "string",
+                "example": "2021-12-22T10:13:06.487Z",
+                "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+                "format": "date-time"
+              },
+              "referrer_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique referrer ID.",
+                "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+              },
+              "customer": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Customer"
+                  }
+                ]
+              },
+              "referrer": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Referrer"
+                  }
+                ]
+              }
+            }
           }
         ]
       },
@@ -40413,17 +40403,41 @@
           "type": "object",
           "allOf": [
             {
-              "title": "Order Ids",
-              "type": "object",
-              "properties": {
-                "source_id": {
-                  "type": "string",
-                  "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
-                }
-              }
+              "$ref": "#/components/schemas/OrderEssential"
             },
             {
-              "$ref": "#/components/schemas/OrderCreateBase"
+              "title": "Order Customer And Referrer Ids Objects",
+              "type": "object",
+              "additionalProperties": false,
+              "description": "Order information.",
+              "properties": {
+                "created_at": {
+                  "type": "string",
+                  "example": "2021-12-22T10:13:06.487Z",
+                  "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
+                  "format": "date-time"
+                },
+                "referrer_id": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Unique referrer ID.",
+                  "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
+                },
+                "customer": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Customer"
+                    }
+                  ]
+                },
+                "referrer": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Referrer"
+                    }
+                  ]
+                }
+              }
             }
           ]
         }
@@ -88897,7 +88911,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "$ref": "#/components/schemas/ParameterOrderValidateVoucherClientSide"
+              "$ref": "#/components/schemas/ParameterOrderMetadata"
             },
             "style": "deepObject",
             "explode": true,
