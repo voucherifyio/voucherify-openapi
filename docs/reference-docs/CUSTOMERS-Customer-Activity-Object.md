@@ -235,7 +235,7 @@ One of:
 | loyalty_tier | See: [Loyalty Tier](#loyalty-tier) |
 | earning_rule | See: [Earning Rule](#earning-rule) |
 | balance</br>`integer` |  |
-| order | See: [Order Calculated](#order-calculated) |
+| order | See: [Order Calculated No Customer Data](#order-calculated-no-customer-data) |
 | event</br>`object` |  |
 
 ## Event Customer Gift Voucher Balance Added
@@ -558,8 +558,8 @@ All of:
 | channel_id</br>`string` | <p>Unique channel ID of the user performing the redemption. This is either a user ID from a user using the Voucherify Dashboard or an X-APP-Id of a user using the API.</p> **Example:** <p>user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH</p> |
 | failure_code</br>`string` | <p>If the result is <code>FAILURE</code>, this parameter will provide a generic reason as to why the redemption failed.</p> **Example:** <p>customer_rules_violated</p> |
 | failure_message</br>`string` | <p>If the result is <code>FAILURE</code>, this parameter will provide a more expanded reason as to why the redemption failed.</p> |
-| order | See: [Order Calculated](#order-calculated) |
-| previous_order | See: [Order Calculated](#order-calculated) |
+| order | See: [Order Calculated No Customer Data](#order-calculated-no-customer-data) |
+| previous_order | See: [Order Calculated No Customer Data](#order-calculated-no-customer-data) |
 | reward | See: [Redemption Reward Result](#redemption-reward-result) |
 | amount</br>`integer` | <p>For gift cards, this is a positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the number of redeemed credits.<br>For loyalty cards, this is the number of loyalty points used in the transaction.</p> **Example:** <p>10000</p> |
 | reason</br>`string` | <p>System generated cause for the redemption being invalid in the context of the provided parameters.</p> |
@@ -650,11 +650,11 @@ All of:
 1. [EarningRuleBase](#earningrulebase)
 2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">validation_rule_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance.</p></td></tr><tr><td style="text-align:left">updated_at</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the earning rule was last updated in ISO 8601 format.</p></td></tr><tr><td style="text-align:left">active</br><code>boolean</code></td><td style="text-align:left"><p>A flag to toggle the earning rule on or off. You can disable an earning rule even though it's within the active period defined by the start_date and expiration_date of the campaign or the earning rule's own start_date and expiration_date.</p><ul><li><code>true</code> indicates an active earning rule</li><li><code>false</code> indicates an inactive earning rule</li></ul></td></tr></tbody></table>
 
-## Order Calculated
+## Order Calculated No Customer Data
 All of:
 
 1. [Order Response Base](#order-response-base)
-2. <h3>Order Calculated</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:13:06.487Z</p></td></tr><tr><td style="text-align:left">updated_at</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the order was last updated in ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:14:45.316Z</p></td></tr><tr><td style="text-align:left">customer_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Unique customer ID of the customer making the purchase.</p> <strong>Example:</strong> <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p></td></tr><tr><td style="text-align:left">referrer_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Unique referrer ID.</p> <strong>Example:</strong> <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p></td></tr><tr><td style="text-align:left">customer</td><td style="text-align:left">One of: <a href="#customer">Customer</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">One of: <a href="#referrer">Referrer</a></td></tr><tr><td style="text-align:left">redemptions</br><code>object</code></td><td style="text-align:left"><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#order-redemptions">Order Redemptions</a></td></tr></tbody></table></td></tr></tbody></table>
+2. <h3>Order Customer And Referrer Ids Objects</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:13:06.487Z</p></td></tr><tr><td style="text-align:left">updated_at</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the order was last updated in ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:14:45.316Z</p></td></tr><tr><td style="text-align:left">customer_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Unique customer ID of the customer making the purchase.</p> <strong>Example:</strong> <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p></td></tr><tr><td style="text-align:left">referrer_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Unique referrer ID.</p> <strong>Example:</strong> <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p></td></tr><tr><td style="text-align:left">customer</td><td style="text-align:left"><a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left"><a href="#referrer-id">Referrer Id</a></td></tr><tr><td style="text-align:left">redemptions</br><code>object</code></td><td style="text-align:left"><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#order-redemptions">Order Redemptions</a></td></tr></tbody></table></td></tr></tbody></table>
 
 ## Voucher Transaction
 | Attributes |  Description |
@@ -729,7 +729,7 @@ All of:
 |:-----|:--------|
 | customer | See: [Simple Customer](#simple-customer) |
 | referrer | See: [Simple Customer](#simple-customer) |
-| order | See: [Order Calculated](#order-calculated) |
+| order | See: [Order Calculated No Customer Data](#order-calculated-no-customer-data) |
 | redemption | See: [Redemption Internal](#redemption-internal) |
 
 ## Event Customer Reward Redemptions
@@ -998,14 +998,14 @@ One of:
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.</p> |
 | object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `order` |
 
-## Customer
-All of:
+## Customer Id
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>A unique identifier of an existing customer.</p> |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `customer` |
 
-1. <h3>Customer Id And Source Id</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>The ID of an existing customer.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.</p></td></tr></tbody></table>
-2. [Customer Base](#customer-base)
-
-## Referrer
-[Customer](#customer)
+## Referrer Id
+[Customer Id](#customer-id)
 
 ## Order Redemptions
 | Attributes |  Description |
@@ -1054,7 +1054,7 @@ Available values: `POINTS_ACCRUAL`, `POINTS_REDEMPTION`, `POINTS_REFUND`, `POINT
 | status</br>`string` | <p>Indicates whether the redeemable can be applied or not applied based on the validation rules.</p> Available values: `APPLICABLE` |
 | id</br>`string` | <p>Redeemable ID, i.e. the voucher code.</p> |
 | object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
-| order | See: [Order Calculated](#order-calculated) |
+| order | See: [Order Calculated No Customer Data](#order-calculated-no-customer-data) |
 | applicable_to | See: [Applicable To Result List](#applicable-to-result-list) |
 | inapplicable_to | See: [Inapplicable To Result List](#inapplicable-to-result-list) |
 | result | <p>Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.</p> One of: [Coupon Code](#coupon-code), [Gift Card](#gift-card), [Loyalty Card](#loyalty-card), [Redeemable Result Promotion Tier](#redeemable-result-promotion-tier), [Promotion Stack](#promotion-stack) |

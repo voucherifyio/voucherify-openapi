@@ -1906,13 +1906,55 @@
           }
         ]
       },
-      "OrderCalculatedEssential": {
-        "title": "Order Calculated Essential",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/OrderCalculatedBase"
+      "OrderEssential": {
+        "title": "Order Essential",
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Order information.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request."
+          },
+          "source_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Unique source ID of an existing order that will be linked to the redemption of this request."
+          },
+          "status": {
+            "type": "string",
+            "description": "The order status.",
+            "enum": [
+              "CREATED",
+              "PAID",
+              "CANCELED",
+              "FULFILLED"
+            ]
+          },
+          "amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts."
+          },
+          "initial_amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "Sum of all order-level discounts applied to the order."
+          },
+          "items": {
+            "type": "array",
+            "description": "Array of items applied to the order.",
+            "items": {
+              "$ref": "#/components/schemas/OrderItemEssential"
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format."
           }
-        ]
+        }
       },
       "OrderCalculatedBase": {
         "title": "Order Response Base",
@@ -1997,67 +2039,6 @@
         }
       },
       "OrderCalculated": {
-        "title": "Order Calculated",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/OrderCalculatedBase"
-          },
-          {
-            "title": "Order Calculated",
-            "type": "object",
-            "additionalProperties": false,
-            "description": "Order information.",
-            "properties": {
-              "created_at": {
-                "type": "string",
-                "example": "2021-12-22T10:13:06.487Z",
-                "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-                "format": "date-time"
-              },
-              "updated_at": {
-                "type": "string",
-                "nullable": true,
-                "example": "2021-12-22T10:14:45.316Z",
-                "format": "date-time",
-                "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
-              },
-              "customer_id": {
-                "type": "string",
-                "nullable": true,
-                "description": "Unique customer ID of the customer making the purchase.",
-                "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
-              },
-              "referrer_id": {
-                "type": "string",
-                "nullable": true,
-                "description": "Unique referrer ID.",
-                "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
-              },
-              "customer": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Customer"
-                  }
-                ]
-              },
-              "referrer": {
-                "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Referrer"
-                  }
-                ]
-              },
-              "redemptions": {
-                "type": "object",
-                "additionalProperties": {
-                  "$ref": "#/components/schemas/OrderRedemptionsEntry"
-                }
-              }
-            }
-          }
-        ]
-      },
-      "OrderCalculatedNoCustomerData": {
         "title": "Order Calculated No Customer Data",
         "allOf": [
           {
@@ -2123,7 +2104,7 @@
         "description": "Response body schema for **GET** `v1/orders/{orderId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
+            "$ref": "#/components/schemas/OrderCalculated"
           }
         ]
       },
@@ -2195,7 +2176,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/OrderCalculatedEssential"
+                "$ref": "#/components/schemas/OrderEssential"
               }
             ]
           },
@@ -3239,6 +3220,125 @@
             "description": "Final order item amount after the applied item-level discount.  If there are no item-level discounts applied, this item is equal to the `amount`.   \n`subtotal_amount`=`amount`-`discount_amount`"
           }
         }
+      },
+      "OrderItemEssential": {
+        "type": "object",
+        "title": "Order Item Essential",
+        "properties": {
+          "sku_id": {
+            "type": "string",
+            "description": "Unique identifier of the SKU. It is assigned by Voucherify."
+          },
+          "product_id": {
+            "type": "string",
+            "description": "Unique identifier of the product. It is assigned by Voucherify."
+          },
+          "related_object": {
+            "type": "string",
+            "enum": [
+              "product",
+              "sku"
+            ],
+            "description": "Used along with the source_id property, can be set to either sku or product."
+          },
+          "source_id": {
+            "type": "string",
+            "description": "The merchant's product/SKU ID (if it is different from the Voucherify product/SKU ID). It is useful in the integration between multiple systems. It can be an ID from an eCommerce site, a database, or a third-party service."
+          },
+          "quantity": {
+            "type": "integer",
+            "description": "The quantity of the particular item in the cart."
+          },
+          "discount_quantity": {
+            "type": "integer",
+            "description": "Number of dicounted items."
+          },
+          "initial_quantity": {
+            "type": "integer",
+            "description": "A positive integer in the smallest unit quantity representing the total amount of the order; this is the sum of the order items' quantity."
+          },
+          "amount": {
+            "type": "integer",
+            "description": "The total amount of the order item (price * quantity)."
+          },
+          "discount_amount": {
+            "type": "integer",
+            "description": "xxxSum of all order-item-level discounts applied to the order."
+          },
+          "initial_amount": {
+            "type": "integer",
+            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts."
+          },
+          "price": {
+            "type": "integer",
+            "description": "Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example `10000 cents` for `$100.00`."
+          },
+          "product": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "An object containing details of the related product.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "A unique identifier that represents the product and is assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant's product ID (if it is different than Voucherify's product ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
+              },
+              "override": {
+                "type": "boolean",
+                "description": "The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system."
+              },
+              "name": {
+                "type": "string",
+                "description": "Product name."
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format."
+              },
+              "price": {
+                "type": "number",
+                "description": "Product price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00)."
+              }
+            }
+          },
+          "sku": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "An object containing details of the related SKU.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "A unique identifier that represents the SKU and is assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "The merchant's SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service."
+              },
+              "override": {
+                "type": "boolean",
+                "description": "The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system."
+              },
+              "sku": {
+                "type": "string",
+                "description": "The SKU name."
+              },
+              "price": {
+                "type": "number",
+                "description": "SKU price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00)."
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format."
+          }
+        },
+        "required": [
+          "object"
+        ]
       },
       "OrderItemCalculated": {
         "type": "object",
@@ -15190,7 +15290,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/OrderCalculatedEssential"
+                "$ref": "#/components/schemas/OrderEssential"
               }
             ]
           },
@@ -15340,7 +15440,7 @@
             }
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
+            "$ref": "#/components/schemas/OrderCalculated"
           },
           "tracking_id": {
             "type": "string",
@@ -17536,7 +17636,7 @@
             "nullable": true,
             "allOf": [
               {
-                "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
+                "$ref": "#/components/schemas/OrderCalculated"
               }
             ]
           },
@@ -17763,7 +17863,7 @@
             "nullable": true,
             "allOf": [
               {
-                "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
+                "$ref": "#/components/schemas/OrderCalculated"
               }
             ]
           },
@@ -27322,7 +27422,7 @@
         "description": "Response body schema for **POST** `v1/orders`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
+            "$ref": "#/components/schemas/OrderCalculated"
           }
         ]
       },
@@ -27422,7 +27522,7 @@
             "type": "array",
             "description": "Contains array of order objects.",
             "items": {
-              "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
+              "$ref": "#/components/schemas/OrderCalculated"
             }
           },
           "total": {
@@ -32225,40 +32325,7 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "#/components/schemas/OrderCalculatedEssential"
-              },
-              {
-                "title": "Order Calculated",
-                "type": "object",
-                "additionalProperties": false,
-                "description": "Order information.",
-                "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "example": "2021-12-22T10:13:06.487Z",
-                    "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "nullable": true,
-                    "example": "2021-12-22T10:14:45.316Z",
-                    "format": "date-time",
-                    "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
-                  },
-                  "customer_id": {
-                    "type": "string",
-                    "nullable": true,
-                    "description": "Unique customer ID of the customer making the purchase.",
-                    "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
-                  },
-                  "referrer_id": {
-                    "type": "string",
-                    "nullable": true,
-                    "description": "Unique referrer ID.",
-                    "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
-                  }
-                }
+                "$ref": "#/components/schemas/OrderEssential"
               }
             ]
           },
@@ -32561,7 +32628,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/OrderCalculatedEssential"
+                "$ref": "#/components/schemas/OrderEssential"
               }
             ]
           },
@@ -38716,7 +38783,7 @@
             "$ref": "#/components/schemas/RedemptionRollback"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculatedNoCustomerData"
+            "$ref": "#/components/schemas/OrderCalculated"
           }
         }
       },
@@ -39602,40 +39669,7 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "#/components/schemas/OrderCalculatedEssential"
-              },
-              {
-                "title": "Order Calculated",
-                "type": "object",
-                "additionalProperties": false,
-                "description": "Order information.",
-                "properties": {
-                  "created_at": {
-                    "type": "string",
-                    "example": "2021-12-22T10:13:06.487Z",
-                    "description": "Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.",
-                    "format": "date-time"
-                  },
-                  "updated_at": {
-                    "type": "string",
-                    "nullable": true,
-                    "example": "2021-12-22T10:14:45.316Z",
-                    "format": "date-time",
-                    "description": "Timestamp representing the date and time when the order was last updated in ISO 8601 format."
-                  },
-                  "customer_id": {
-                    "type": "string",
-                    "nullable": true,
-                    "description": "Unique customer ID of the customer making the purchase.",
-                    "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
-                  },
-                  "referrer_id": {
-                    "type": "string",
-                    "nullable": true,
-                    "description": "Unique referrer ID.",
-                    "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
-                  }
-                }
+                "$ref": "#/components/schemas/OrderEssential"
               }
             ]
           },
@@ -39880,7 +39914,7 @@
             "$ref": "#/components/schemas/Customer"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculatedEssential"
+            "$ref": "#/components/schemas/OrderEssential"
           },
           "metadata": {
             "type": "object",
@@ -39972,7 +40006,7 @@
             "$ref": "#/components/schemas/Customer"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculatedEssential"
+            "$ref": "#/components/schemas/OrderEssential"
           },
           "metadata": {
             "type": "object",
@@ -40148,7 +40182,7 @@
             "description": "Order object that is **required** when redeeming a pay with points reward.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/OrderCalculatedEssential"
+                "$ref": "#/components/schemas/OrderEssential"
               }
             ]
           },
@@ -40634,7 +40668,7 @@
             "description": "Order information.",
             "allOf": [
               {
-                "$ref": "#/components/schemas/OrderCalculatedEssential"
+                "$ref": "#/components/schemas/OrderEssential"
               }
             ]
           },

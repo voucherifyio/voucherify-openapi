@@ -29,7 +29,7 @@ One of:
 | gift | <p>Gift object response</p> [Gift](#gift) |
 | loyalty</br>`object` | <p>Contains the cost of reward in points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points_cost</br><code>number</code></td><td style="text-align:left"><p>Number of points that wlil be deducted from loyaty card for the associated reward.</p></td></tr></tbody></table> |
 | reward</br>`object` | <p>Contains information about the reward that is being validated.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique reward ID assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">assignment_id</br><code>string</code></td><td style="text-align:left"><p>Unique reward assignment ID assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">points</br><code>number</code></td><td style="text-align:left"><p>Number of points applied to the reward.</p></td></tr></tbody></table> |
-| order | See: [Order Calculated](#order-calculated) |
+| order | See: [Order Calculated No Customer Data](#order-calculated-no-customer-data) |
 | session | <p>Schema model for session lock object. The session object contains information about the session key that was used to establish a session between multiple parallel validation and redemption requests.</p> [Session](#session) |
 | start_date</br>`string` | <p>Activation timestamp defines when the voucher starts to be active in ISO 8601 format. Voucher is inactive before this date.</p> |
 | expiration_date</br>`string` | <p>Expiration timestamp defines when the voucher expires in ISO 8601 format. Voucher is inactive after this date.</p> |
@@ -76,11 +76,11 @@ One of:
 | balance</br>`number` | <p>Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
 | effect</br>`string` | <p>Defines how the credits are applied to the customer's order.</p> Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS` |
 
-## Order Calculated
+## Order Calculated No Customer Data
 All of:
 
 1. [Order Response Base](#order-response-base)
-2. <h3>Order Calculated</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:13:06.487Z</p></td></tr><tr><td style="text-align:left">updated_at</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the order was last updated in ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:14:45.316Z</p></td></tr><tr><td style="text-align:left">customer_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Unique customer ID of the customer making the purchase.</p> <strong>Example:</strong> <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p></td></tr><tr><td style="text-align:left">referrer_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Unique referrer ID.</p> <strong>Example:</strong> <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p></td></tr><tr><td style="text-align:left">customer</td><td style="text-align:left">One of: <a href="#customer">Customer</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left">One of: <a href="#referrer">Referrer</a></td></tr><tr><td style="text-align:left">redemptions</br><code>object</code></td><td style="text-align:left"><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#order-redemptions">Order Redemptions</a></td></tr></tbody></table></td></tr></tbody></table>
+2. <h3>Order Customer And Referrer Ids Objects</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">created_at</br><code>string</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:13:06.487Z</p></td></tr><tr><td style="text-align:left">updated_at</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Timestamp representing the date and time when the order was last updated in ISO 8601 format.</p> <strong>Example:</strong> <p>2021-12-22T10:14:45.316Z</p></td></tr><tr><td style="text-align:left">customer_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Unique customer ID of the customer making the purchase.</p> <strong>Example:</strong> <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p></td></tr><tr><td style="text-align:left">referrer_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>Unique referrer ID.</p> <strong>Example:</strong> <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p></td></tr><tr><td style="text-align:left">customer</td><td style="text-align:left"><a href="#customer-id">Customer Id</a></td></tr><tr><td style="text-align:left">referrer</td><td style="text-align:left"><a href="#referrer-id">Referrer Id</a></td></tr><tr><td style="text-align:left">redemptions</br><code>object</code></td><td style="text-align:left"><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">[propertyName]</td><td style="text-align:left">See: <a href="#order-redemptions">Order Redemptions</a></td></tr></tbody></table></td></tr></tbody></table>
 
 ## Session
 | Attributes |  Description |
@@ -179,14 +179,14 @@ All of:
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.</p> |
 | object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `order` |
 
-## Customer
-All of:
+## Customer Id
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>A unique identifier of an existing customer.</p> |
+| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `customer` |
 
-1. <h3>Customer Id And Source Id</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>The ID of an existing customer.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier of the customer who validates a voucher. It can be a customer ID or email from a CRM system, database, or a third-party service. If you also pass a customer ID (unique ID assigned by Voucherify), the source ID will be ignored.</p></td></tr></tbody></table>
-2. [Customer Base](#customer-base)
-
-## Referrer
-[Customer](#customer)
+## Referrer Id
+[Customer Id](#customer-id)
 
 ## Order Redemptions
 | Attributes |  Description |
@@ -262,18 +262,6 @@ Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`
 | sku</br>`object` | <p>An object containing details of the related SKU.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier that represents the SKU and is assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant's SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.</p></td></tr><tr><td style="text-align:left">override</br><code>boolean</code></td><td style="text-align:left"><p>The override set to <code>true</code> is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.</p></td></tr><tr><td style="text-align:left">sku</br><code>string</code></td><td style="text-align:left"><p>The SKU name.</p></td></tr><tr><td style="text-align:left">price</br><code>number</code></td><td style="text-align:left"><p>SKU price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
 | object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `order_item` |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format.</p> |
-
-## Customer Base
-| Attributes |  Description |
-|:-----|:--------|
-| name</br>`string` | <p>Customer's first and last name.</p> |
-| description</br>`string` | <p>An arbitrary string that you can attach to a customer object.</p> |
-| email</br>`string` | <p>Customer's email address.</p> |
-| phone</br>`string` | <p>Customer's phone number. This parameter is mandatory when you try to send out codes to customers via an SMS channel.</p> |
-| birthday</br>`string` | <p><code>Deprecated</code>. <s>Customer's birthdate; format YYYY-MM-DD</s>.</p> |
-| birthdate</br>`string` | <p>Customer's birthdate; format YYYY-MM-DD.</p> |
-| address</br>`object`, `null` | <p>Customer's address.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">city</br><code>string</code></td><td style="text-align:left"><p>City</p></td></tr><tr><td style="text-align:left">state</br><code>string</code></td><td style="text-align:left"><p>State</p></td></tr><tr><td style="text-align:left">line_1</br><code>string</code></td><td style="text-align:left"><p>First line of address.</p></td></tr><tr><td style="text-align:left">line_2</br><code>string</code></td><td style="text-align:left"><p>Second line of address.</p></td></tr><tr><td style="text-align:left">country</br><code>string</code></td><td style="text-align:left"><p>Country.</p></td></tr><tr><td style="text-align:left">postal_code</br><code>string</code></td><td style="text-align:left"><p>Postal code.</p></td></tr></tbody></table> |
-| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a customer. The metadata object stores all custom attributes assigned to the customer. It can be useful for storing additional information about the customer in a structured format. This metadata can be used for validating whether the customer qualifies for a discount or it can be used in building customer segments.</p> |
 
 [block:html]
 {
