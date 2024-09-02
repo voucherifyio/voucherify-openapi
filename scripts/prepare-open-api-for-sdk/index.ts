@@ -358,9 +358,6 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
         const _title = `${title}${_.startCase(
           snakeToCamel(property),
         ).replaceAll(" ", "")}`;
-        if (["object", "array"].includes(schema.type)) {
-          return [property, fixSchemaTitle(schema, _title, schemas)];
-        }
         if ("allOf" in schema && schema.allOf.length > 1) {
           return [
             property,
@@ -370,6 +367,10 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
               schemas,
             ),
           ];
+        } else if ("allOf" in schema && schema.allOf.length === 1) {
+          return [property, schema.allOf[0]]; // fixSchemaTitle(schema.allOf[0], _title, schemas)
+        } else if (["object", "array"].includes(schema.type)) {
+          return [property, fixSchemaTitle(schema, _title, schemas)];
         }
         return [property, schema];
       }),
