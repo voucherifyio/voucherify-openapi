@@ -5,6 +5,10 @@
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 
+## 2024-09-02
+
+- Removed `created_at` and `-created_at` from the `order` query parameter for List Bin Entries – `ParameterOrderListBin`
+
 ## 2024-08-26
 
 - Added the `Templates` tag and the following endpoints:
