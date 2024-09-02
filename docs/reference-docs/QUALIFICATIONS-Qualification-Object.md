@@ -68,6 +68,8 @@ order: 1
 | joint_categories</br>`array` | <p>Lists all joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.</p> |
 | redeemables_application_mode</br>`string` | <p>Defines redeemables application mode.</p> Available values: `ALL`, `PARTIAL` |
 | redeemables_sorting_rule</br>`string` | <p>Defines redeemables sorting rule.</p> Available values: `CATEGORY_HIERARCHY`, `REQUESTED_ORDER` |
+| redeemables_products_application_mode</br>`string` | <p>Defines redeemables products application mode.</p> Available values: `STACK`, `ONCE` |
+| redeemables_no_effect_rule</br>`string` | <p>Defines redeemables no effect rule.</p> Available values: `REDEEM_ANYWAY`, `SKIP` |
 
 ## Combined response of redeemable object and multiple redeemables within
 All of:
@@ -233,6 +235,9 @@ One of:
 | amount_limit</br>`integer` | <p>Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:</p><ul><li><code>APPLY_TO_ITEMS</code> (each item subtotal is discounted equally)</li><li><code>APPLY_TO_ITEMS_BY_QUANTITY</code> (each unit of matched products has the same discount value)</li></ul> |
 | order_item_indices</br>`array` |  |
+| repeat</br>`integer` |  |
+| skip_initially</br>`integer` |  |
+| target</br>`string` |  |
 
 ## Inapplicable To
 [Applicable To](#applicable-to)

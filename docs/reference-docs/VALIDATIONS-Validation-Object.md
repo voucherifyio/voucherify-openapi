@@ -127,6 +127,9 @@ One of:
 | amount_limit</br>`integer` | <p>Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:</p><ul><li><code>APPLY_TO_ITEMS</code> (each item subtotal is discounted equally)</li><li><code>APPLY_TO_ITEMS_BY_QUANTITY</code> (each unit of matched products has the same discount value)</li></ul> |
 | order_item_indices</br>`array` |  |
+| repeat</br>`integer` |  |
+| skip_initially</br>`integer` |  |
+| target</br>`string` |  |
 
 ## Inapplicable To
 [Applicable To](#applicable-to)
