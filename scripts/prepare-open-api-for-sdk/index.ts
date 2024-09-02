@@ -125,29 +125,6 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
   delete openAPIContent.components.schemas.AsyncActionBase.properties
     .operation_status.enum;
-  openAPIContent.components.schemas.Voucher["type"] = "object";
-  openAPIContent.components.schemas.Voucher["properties"] =
-    openAPIContent.components.schemas.Voucher.allOf.reduce(
-      (accumulator, currentValue) => {
-        if (typeof currentValue?.$ref === "string") {
-          accumulator = {
-            ...accumulator,
-            ...(openAPIContent.components.schemas?.[
-              currentValue?.$ref.split("/").at(-1)
-            ]?.properties || {}),
-          };
-        } else {
-          accumulator = {
-            ...accumulator,
-            // @ts-ignore
-            ...(currentValue.properties || {}),
-          };
-        }
-        return accumulator;
-      },
-      {},
-    );
-  delete openAPIContent.components.schemas.Voucher.allOf;
   //Fix `CustomerActivity`
   delete openAPIContent.components.schemas.CustomerActivity.properties.type
     .enum;
@@ -366,7 +343,11 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
     return _.pick(schema, "$ref");
   }
   if (!skipSettingTitle) {
-    schema.title = title;
+    if (schema.additionalProperties) {
+      schema.title = `${title}Entry`;
+    } else {
+      schema.title = title;
+    }
   }
   if (schema.items) {
     schema.items = fixSchemaTitle(schema.items, `${title}Item`, schemas);
@@ -377,9 +358,6 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
         const _title = `${title}${_.startCase(
           snakeToCamel(property),
         ).replaceAll(" ", "")}`;
-        if (["object", "array"].includes(schema.type)) {
-          return [property, fixSchemaTitle(schema, _title, schemas)];
-        }
         if ("allOf" in schema && schema.allOf.length > 1) {
           return [
             property,
@@ -389,6 +367,10 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
               schemas,
             ),
           ];
+        } else if ("allOf" in schema && schema.allOf.length === 1) {
+          return [property, schema.allOf[0]]; // fixSchemaTitle(schema.allOf[0], _title, schemas)
+        } else if (["object", "array"].includes(schema.type)) {
+          return [property, fixSchemaTitle(schema, _title, schemas)];
         }
         return [property, schema];
       }),
@@ -397,6 +379,14 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
   if (schema.allOf) {
     schema.allOf = schema.allOf.map((schema: any) =>
       fixSchemaTitle(schema, title, schemas, true),
+    );
+  }
+  if (schema.additionalProperties) {
+    schema.additionalProperties = fixSchemaTitle(
+      schema.additionalProperties,
+      `${title}Entry`,
+      schemas,
+      true,
     );
   }
   return { title: schema.title, ..._.omit(schema) };
