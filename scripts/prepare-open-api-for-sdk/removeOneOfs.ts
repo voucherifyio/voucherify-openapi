@@ -84,6 +84,21 @@ const removeOneOf = (schema, schemas, title) => {
       }),
     };
   }
+  if (schema.items) {
+    const { removed, schema: _schema } = removeOneOf(
+      schema.items,
+      schemas,
+      title,
+    );
+    return {
+      removed,
+      schema: {
+        ...schema,
+        title: `${title}Item`,
+        items: _schema,
+      },
+    };
+  }
   if (schema.allOf) {
     let removed = false;
     return {
