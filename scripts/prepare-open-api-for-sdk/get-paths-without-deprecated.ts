@@ -2,17 +2,7 @@ import { removeNotYetRefactoredPaths } from "../helpers/remove-not-yet-refactore
 import openAPIContent from "../../reference/OpenAPI.json";
 import { mergeMultipleOkResponsesIntoOne } from "./merge-multiple-ok-responses-into-one";
 
-export const getPathsWithoutDeprecated = (
-  allPaths: any,
-  okResponseMustBeOnlyOne?: true,
-  lng?: string,
-) => {
-  if (!okResponseMustBeOnlyOne) {
-    return {
-      paths: removeNotYetRefactoredPaths(openAPIContent.paths, lng),
-      newSchemas: {},
-    };
-  }
+export const getPathsWithoutDeprecated = (allPaths: any, lng?: string) => {
   const { paths, newSchemas } = mergeMultipleOkResponsesIntoOne(allPaths);
   return {
     paths: removeNotYetRefactoredPaths(paths, lng),

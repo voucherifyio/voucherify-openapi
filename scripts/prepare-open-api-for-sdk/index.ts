@@ -27,14 +27,8 @@ const options = minimist(process.argv.slice(2));
 
 type LanguageOptions = {
   name: string;
-  removeRequiredOnNullable?: true; //default: false
-  simplifyAllObjectsThatHaveAdditionalProperties?: true; //default: false
-  okResponseMustBeOnlyOne?: true; //default: false
-  mergeOneOfs?: true; //default: false
-  putNotObjectSchemasIntoObjectSchemas?: true; //default: false
-  removeBuggedTagsFromOpenAPIPaths?: true; //default: false
-  makeEverythingNullable?: true; //default: false
-  addMissingDefaultsWhenSingleEnumFound?: true;
+  simplifyAllObjectsThatHaveAdditionalProperties?: true;
+  putNotObjectSchemasIntoObjectSchemas?: true;
 };
 
 const supportedLanguages: {
@@ -42,36 +36,17 @@ const supportedLanguages: {
 } = {
   python: {
     name: "python",
-    removeRequiredOnNullable: true,
     simplifyAllObjectsThatHaveAdditionalProperties: true,
   },
   ruby: {
     name: "ruby",
-    mergeOneOfs: true,
-    okResponseMustBeOnlyOne: true,
-    removeRequiredOnNullable: true,
-    makeEverythingNullable: true,
-    removeBuggedTagsFromOpenAPIPaths: true,
-    addMissingDefaultsWhenSingleEnumFound: true,
   },
   php: {
     name: "php",
-    mergeOneOfs: true,
-    okResponseMustBeOnlyOne: true,
-    removeRequiredOnNullable: true,
-    makeEverythingNullable: true,
-    removeBuggedTagsFromOpenAPIPaths: true,
     putNotObjectSchemasIntoObjectSchemas: true,
-    addMissingDefaultsWhenSingleEnumFound: true,
   },
   java: {
     name: "java",
-    mergeOneOfs: true,
-    okResponseMustBeOnlyOne: true,
-    removeRequiredOnNullable: true,
-    makeEverythingNullable: true,
-    removeBuggedTagsFromOpenAPIPaths: true,
-    addMissingDefaultsWhenSingleEnumFound: true,
   },
 };
 
@@ -136,12 +111,9 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.schemas.MemberActivity.properties.data
     .properties;
   //////////////////////////////////////////////////////////////////////////////
-  if (languageOptions.addMissingDefaultsWhenSingleEnumFound) {
-    openAPIContent = addMissingDefaults(openAPIContent);
-  }
+  openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
     openAPIContent.paths,
-    languageOptions.okResponseMustBeOnlyOne,
     languageOptions.name,
   );
   const parameters = removedNotUsedParameters(
@@ -160,30 +132,17 @@ const main = async (languageOptions: LanguageOptions) => {
       schemasWithoutNotUsed,
     );
   }
-  const schemas = languageOptions.mergeOneOfs
-    ? removeAllOneOfs(
-        schemasWithoutNotUsed,
-        paths,
-        openAPIContent.components.parameters,
-        languageOptions,
-      )
-    : schemasWithoutNotUsed;
+  const schemas = removeAllOneOfs(
+    schemasWithoutNotUsed,
+    paths,
+    openAPIContent.components.parameters,
+    languageOptions,
+  );
 
-  const newPaths = languageOptions.removeBuggedTagsFromOpenAPIPaths
-    ? removeBuggedTagsFromOpenAPIPaths(paths)
-    : paths;
+  const newPaths = removeBuggedTagsFromOpenAPIPaths(paths);
 
-  openAPIContent.components.parameters =
-    languageOptions.removeBuggedTagsFromOpenAPIPaths
-      ? removeBuggedTagsFromOpenAPIParameters(
-          openAPIContent.components.parameters,
-        )
-      : openAPIContent.components.parameters;
-
-  Object.fromEntries(
-    Object.entries(schemas).map(([title, schema]) => {
-      return [title, openAPIContent.components.schemas];
-    }),
+  openAPIContent.components.parameters = removeBuggedTagsFromOpenAPIParameters(
+    openAPIContent.components.parameters,
   );
 
   const schemasWithFixedTitles: any = fixSchemasTitles(
@@ -192,7 +151,7 @@ const main = async (languageOptions: LanguageOptions) => {
       ["title"],
     ),
   );
-  let schemasWithoutNotUsed2 = removeNotUsedSchemas(
+  schemasWithoutNotUsed = removeNotUsedSchemas(
     {
       schemas: schemasWithFixedTitles,
       parameters: openAPIContent.components.parameters,
@@ -207,7 +166,7 @@ const main = async (languageOptions: LanguageOptions) => {
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
-      schemas: schemasWithoutNotUsed2,
+      schemas: schemasWithoutNotUsed,
       parameters,
     },
     paths: newPaths,
@@ -328,6 +287,32 @@ const copySchemasIfUsedAsAllOfInBase = (schemas): Record<string, any> => {
       }
     }),
   );
+};
+
+const addNullableToAllSchemasProperties = (schemas) => {
+  return Object.fromEntries(
+    Object.entries(schemas).map(([title, schema]) => {
+      return [title, addNullableToAllSchemaProperties(schema)];
+    }),
+  );
+};
+
+const addNullableToAllSchemaProperties = (schema) => {
+  if (schema.items) {
+    schema.items = addNullableToAllSchemaProperties(schema.items);
+  } else if (schema.properties) {
+    schema.properties = Object.fromEntries(
+      Object.entries(schema.properties).map(([property, schema]: any) => {
+        return [property, addNullableToAllSchemaProperties(schema)];
+      }),
+    );
+  } else if (schema.additionalProperties) {
+    schema.additionalProperties = addNullableToAllSchemaProperties(
+      schema.additionalProperties,
+    );
+  }
+  schema.nullable = true;
+  return schema;
 };
 
 const fixSchemasTitles = (schemas) => {
