@@ -3,16 +3,22 @@ import fs from "fs/promises";
 import { rawTakeList } from "./helpers/get-take-list";
 import minimist from "minimist";
 const options = minimist(process.argv.slice(2));
-const generateForOptions: GenerateForOption[] = ["java", "ruby", "default"];
-type GenerateForOption = "java" | "ruby" | "default";
+const generateForOptions: GenerateForOption[] = [
+  "java",
+  "ruby",
+  "default",
+  "php",
+  "python",
+];
+type GenerateForOption = "java" | "ruby" | "default" | "php" | "python";
 const generateFor =
   generateForOptions.includes(options.generateFor) && options.generateFor;
 import colors from "colors";
 
 type SdkLink = {
   java?: string;
-  // php?: string;
-  // python?: string;
+  php?: string;
+  python?: string;
   ruby?: string;
 };
 
@@ -22,9 +28,11 @@ type Method = {
   tags: string[];
   isDeprecated: boolean;
   supported: {
-    default: boolean;
-    java: boolean;
-    ruby: boolean;
+    default?: boolean;
+    java?: boolean;
+    ruby?: boolean;
+    php?: boolean;
+    python?: boolean;
   };
 };
 
@@ -149,6 +157,10 @@ const main = async (generateFor: GenerateForOption) => {
     const endpointMethods: Method[] = [];
     const apiMethods = filterApiMethodsFromEndpointElements(elements);
     Object.entries(apiMethods).forEach(([method, methodContent]) => {
+      const supported =
+        rawTakeList?.[endpoint]?.[method] === true
+          ? true
+          : rawTakeList?.[endpoint]?.[method]?.includes?.(generateFor) || false;
       const methodObj: Method = {
         method,
         tags: methodContent.tags,
@@ -156,10 +168,7 @@ const main = async (generateFor: GenerateForOption) => {
         isDeprecated:
           methodContent.summary.toLowerCase().includes("deprecated") || false,
         supported: {
-          default:
-            rawTakeList?.[endpoint]?.[method]?.includes("default") || false,
-          java: rawTakeList?.[endpoint]?.[method]?.includes("java") || false,
-          ruby: rawTakeList?.[endpoint]?.[method]?.includes("ruby") || false,
+          [generateFor]: supported,
         },
       };
 
