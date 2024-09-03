@@ -4,6 +4,8 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-09-03
+- Merged https://github.com/voucherifyio/voucherify-openapi/pull/793
 
 ## 2024-08-26
 
