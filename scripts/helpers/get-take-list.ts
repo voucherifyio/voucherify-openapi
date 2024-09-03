@@ -1,301 +1,397 @@
 export const rawTakeList = {
-  "/client/v1/promotions/tiers": { get: ["default", "ruby", "java", "php"] },
-  "/v1/promotions/tiers": { get: ["default", "ruby", "java", "php"] },
-  "/v1/async-actions": { get: ["default", "ruby", "java", "php"] },
+  "/v1/loyalties/{campaignId}/points-expiration/export": {
+    post: true,
+  },
+  "/v1/customers/{customerId}/redeemables": {
+    get: true,
+  },
+  "/v1/vouchers/import": {
+    post: true,
+  },
+  "/v1/vouchers/metadata/async": {
+    post: true,
+  },
+  "/v1/customers/{customerId}/activity": {
+    get: true,
+  },
+  "/v1/vouchers/bulk/async": {
+    post: true,
+  },
+  "/client/v1/promotions/tiers": {
+    get: true,
+  },
+  "/v1/promotions/tiers": { get: true },
+  "/v1/async-actions": { get: true },
   "/v1/async-actions/{asyncActionId}": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
-  "/v1/segments": { post: ["default", "ruby", "java", "php"] },
+  "/v1/segments": { post: true },
   "/v1/segments/{segmentId}": {
-    delete: ["default", "ruby", "java", "php"],
-    get: ["default", "ruby", "java", "php"],
+    delete: true,
+    get: true,
   },
-  "/v1/publications/create": { get: ["default", "ruby", "java", "php"] },
+  "/v1/publications/create": {
+    get: true,
+  },
   "/v1/vouchers/{code}/sessions/{sessionKey}": {
-    delete: ["default", "ruby", "java", "php"],
+    delete: true,
   },
   "/v1/publications": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
-  "/v1/qualifications": { post: ["default", "ruby", "java", "php"] },
-  "/v1/validations": { post: ["default", "ruby", "java", "php"] },
+  "/v1/qualifications": { post: true },
+  "/v1/validations": { post: true },
   "/v1/redemptions": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
-  "/v1/redemptions/{redemptionId}": { get: ["default", "ruby", "java", "php"] },
-  "/v1/vouchers/{code}/redemption": { get: ["default", "ruby", "java", "php"] },
+  "/v1/redemptions/{redemptionId}": {
+    get: true,
+  },
+  "/v1/vouchers/{code}/redemption": {
+    get: true,
+  },
   "/v1/redemptions/{redemptionId}/rollback": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/redemptions/{parentRedemptionId}/rollbacks": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
+  },
+  "/v1/vouchers": {
+    get: true,
+    post: true,
   },
   "/v1/vouchers/{code}": {
-    get: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
+    put: true,
+    delete: true,
   },
-  "/v1/vouchers/{code}/enable": { post: ["default", "ruby", "java", "php"] },
-  "/v1/vouchers/{code}/disable": { post: ["default", "ruby", "java", "php"] },
-  "/v1/vouchers/{code}/balance": { post: ["default", "ruby", "java", "php"] },
+  "/v1/vouchers/{code}/enable": {
+    post: true,
+  },
+  "/v1/vouchers/{code}/disable": {
+    post: true,
+  },
+  "/v1/vouchers/{code}/balance": {
+    post: true,
+  },
   "/v1/vouchers/{code}/transactions": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
   "/v1/vouchers/{code}/transactions/export": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
-  "/v1/vouchers/importCSV": { post: ["default", "ruby", "java", "php"] },
+  "/v1/vouchers/importCSV": {
+    post: true,
+  },
   "/v1/campaigns": {
-    post: ["default", "ruby", "java", "php"],
-    get: ["default", "ruby", "java", "php"],
+    post: true,
+    get: true,
   },
   "/v1/campaigns/{campaignId}": {
-    get: ["default", "ruby", "java", "php"],
-    put: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
+    get: true,
+    put: true,
+    delete: true,
   },
   "/v1/campaigns/{campaignId}/vouchers": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/campaigns/{campaignId}/vouchers/{code}": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/campaigns/{campaignId}/import": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/campaigns/{campaignId}/importCSV": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/campaigns/{campaignId}/enable": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/campaigns/{campaignId}/disable": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/promotions/{campaignId}/tiers": {
-    post: ["default", "ruby", "java", "php"],
-    get: ["default", "ruby", "java", "php"],
+    post: true,
+    get: true,
   },
   "/v1/promotions/tiers/{promotionTierId}": {
-    put: ["default", "ruby", "java", "php"],
-    get: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
+    put: true,
+    get: true,
+    delete: true,
   },
   "/v1/promotions/tiers/{promotionTierId}/enable": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/promotions/tiers/{promotionTierId}/disable": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
-  "/v1/promotions/stacks": { get: ["default", "ruby", "java", "php"] },
+  "/v1/promotions/stacks": {
+    get: true,
+  },
   "/v1/promotions/{campaignId}/stacks": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
   "/v1/promotions/{campaignId}/stacks/{stackId}": {
-    get: ["default", "ruby", "java", "php"],
-    put: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
+    get: true,
+    put: true,
+    delete: true,
   },
   "/v1/rewards": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
   "/v1/rewards/{rewardId}": {
-    get: ["default", "ruby", "java", "php"],
-    put: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
+    get: true,
+    put: true,
+    delete: true,
   },
   "/v1/rewards/{rewardId}/assignments": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
   "/v1/rewards/{rewardId}/assignments/{assignmentId}": {
-    put: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
-    get: ["default", "ruby", "java", "php"],
+    put: true,
+    delete: true,
+    get: true,
   },
-  "/v1/loyalties/{campaignId}": { delete: ["default", "ruby", "java", "php"] },
+  "/v1/loyalties/{campaignId}": {
+    get: true,
+    delete: true,
+    put: true,
+  },
   "/v1/loyalties/{campaignId}/members/{memberId}/balance": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
+  },
+  "/v1/loyalties/{campaignId}/members/{memberId}": {
+    get: true,
+  },
+  "/v1/loyalties/{campaignId}/members": {
+    get: true,
+    post: true,
+  },
+  "/v1/loyalties": {
+    get: true,
+    post: true,
+  },
+  "/v1/loyalties/members/{memberId}": {
+    get: true,
+  },
+  "/v1/loyalties/{campaignId}/members/{memberId}/activity": {
+    get: true,
+  },
+  "/v1/loyalties/members/{memberId}/activity": {
+    get: true,
   },
   "/v1/loyalties/members/{memberId}/balance": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/loyalties/{campaignId}/members/{memberId}/transfers": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/loyalties/{campaignId}/members/{memberId}/transactions": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
   "/v1/loyalties/members/{memberId}/transactions": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
   "/v1/loyalties/members/{memberId}/transactions/export": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/loyalties/{campaignId}/members/{memberId}/transactions/export": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/loyalties/{campaignId}/members/{memberId}/points-expiration": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
+  },
+  "/v1/loyalties/{campaignId}/earning-rules": {
+    get: true,
+    post: true,
   },
   "/v1/loyalties/{campaignId}/earning-rules/{earningRuleId}": {
-    get: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
+    get: true,
+    delete: true,
+    put: true,
   },
   "/v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/enable": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/loyalties/{campaignId}/earning-rules/{earningRuleId}/disable": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/loyalties/members/{memberId}/rewards": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
   "/v1/loyalties/{campaignId}/reward-assignments/{assignmentId}/reward": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
   "/v1/loyalties/{campaignId}/reward-assignments/{assignmentId}": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
+  },
+  "/v1/loyalties/{campaignId}/reward-assignments": {
+    get: true,
+  },
+  "/v1/loyalties/{campaignId}/rewards": {
+    get: true,
+    post: true,
   },
   "/v1/loyalties/{campaignId}/rewards/{assignmentId}": {
-    get: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
+    get: true,
+    put: true,
+    delete: true,
   },
   "/v1/loyalties/{campaignId}/members/{memberId}/redemption": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/loyalties/members/{memberId}/redemption": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
   "/v1/loyalties/{campaignId}/tiers": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
   "/v1/loyalties/{campaignId}/tiers/{loyaltyTierId}": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
   "/v1/loyalties/members/{memberId}/tiers": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
   "/v1/loyalties/{campaignId}/tiers/{loyaltyTierId}/earning-rules": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
   "/v1/loyalties/{campaignId}/tiers/{loyaltyTierId}/rewards": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
   "/v1/customers": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
   "/v1/customers/{customerId}": {
-    get: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
-    put: ["default", "ruby", "java", "php"],
+    get: true,
+    delete: true,
+    put: true,
   },
   "/v1/customers/{customerId}/permanent-deletion": {
-    post: ["default", "ruby", "java", "php"],
+    post: true,
   },
-  "/v1/customers/importCSV": { post: ["default", "ruby", "java", "php"] },
-  "/v1/customers/bulk/async": { post: ["default", "ruby", "java", "php"] },
-  "/v1/customers/metadata/async": { post: ["default", "ruby", "java", "php"] },
+  "/v1/customers/importCSV": {
+    post: true,
+  },
+  "/v1/customers/bulk/async": {
+    post: true,
+  },
+  "/v1/customers/metadata/async": {
+    post: true,
+  },
   "/v1/customers/{customerId}/consents": {
-    put: ["default", "ruby", "java", "php"],
+    put: true,
   },
-  "/v1/customers/{customerId}/activities": { get: ["ruby", "php"] },
+  "/v1/customers/{customerId}/activities": { get: ["ruby"] },
   "/v1/customers/{customerId}/segments": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
   "/v1/orders": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
   "/v1/orders/{orderId}": {
-    get: ["default", "ruby", "java", "php"],
-    put: ["default", "ruby", "java", "php"],
+    get: true,
+    put: true,
   },
-  "/v1/orders/import": { post: ["default", "ruby", "java", "php"] },
-  "/v1/orders/export": { post: ["default", "ruby", "java", "php"] },
+  "/v1/orders/import": { post: true },
+  "/v1/orders/export": { post: true },
   "/v1/products": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
   "/v1/products/{productId}": {
-    get: ["default", "ruby", "java", "php"],
-    put: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
+    get: true,
+    put: true,
+    delete: true,
   },
-  "/v1/products/bulk/async": { post: ["default", "ruby", "java", "php"] },
-  "/v1/products/metadata/async": { post: ["default", "ruby", "java", "php"] },
-  "/v1/skus/{skuId}": { get: ["default", "ruby", "java", "php"] },
+  "/v1/products/bulk/async": {
+    post: true,
+  },
+  "/v1/products/metadata/async": {
+    post: true,
+  },
+  "/v1/skus/{skuId}": { get: true },
   "/v1/products/{productId}/skus": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
   "/v1/products/{productId}/skus/{skuId}": {
-    put: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
+    put: true,
+    delete: true,
   },
-  "/v1/products/importCSV": { post: ["default", "ruby", "java", "php"] },
-  "/v1/skus/importCSV": { post: ["default", "ruby", "java", "php"] },
+  "/v1/products/importCSV": {
+    post: true,
+  },
+  "/v1/skus/importCSV": { post: true },
   "/v1/product-collections": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
   "/v1/product-collections/{productCollectionId}": {
-    get: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
+    get: true,
+    delete: true,
   },
   "/v1/product-collections/{productCollectionId}/products": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
   "/v1/validation-rules": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
   "/v1/validation-rules/{validationRuleId}": {
-    get: ["default", "ruby", "java", "php"],
-    put: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
+    get: true,
+    put: true,
+    delete: true,
   },
   "/v1/validation-rules-assignments": {
-    get: ["default", "ruby", "java", "php"],
+    get: true,
   },
   "/v1/validation-rules/{validationRuleId}/assignments": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
   "/v1/validation-rules/{validationRuleId}/assignments/{assignmentId}": {
-    delete: ["default", "ruby", "java", "php"],
+    delete: true,
   },
-  "/v1/events": { post: ["default", "ruby", "java", "php"] },
+  "/v1/events": { post: true },
   "/v1/exports": {
-    post: ["default", "ruby", "java", "php"],
-    get: ["default", "ruby", "java", "php"],
+    post: true,
+    get: true,
   },
   "/v1/exports/{exportId}": {
-    get: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
+    get: true,
+    delete: true,
   },
-  "/v1/exports/{export_Id}": { get: ["default", "ruby", "java", "php"] },
+  "/v1/exports/{export_Id}": {
+    get: true,
+  },
   "/v1/categories": {
-    get: ["default", "ruby", "java", "php"],
-    post: ["default", "ruby", "java", "php"],
+    get: true,
+    post: true,
   },
   "/v1/categories/{categoryId}": {
-    get: ["default", "ruby", "java", "php"],
-    delete: ["default", "ruby", "java", "php"],
-    put: ["default", "ruby", "java", "php"],
+    get: true,
+    delete: true,
+    put: true,
   },
-  "/client/v1/qualifications": { post: ["default", "ruby", "java", "php"] },
-  "/client/v1/redemptions": { post: ["default", "ruby", "java", "php"] },
-  "/client/v1/validations": { post: ["default", "ruby", "java", "php"] },
-  "/client/v1/customers/{customerId}/consents": {
-    put: ["default", "ruby", "java", "php"],
+  "/client/v1/qualifications": {
+    post: true,
   },
-  "/client/v1/events": { post: ["default", "ruby", "java", "php"] },
+  "/client/v1/redemptions": {
+    post: true,
+  },
+  "/client/v1/validations": {
+    post: true,
+  },
+  "/client/v1/events": { post: true },
 };
 
 export const getTakeList = (
@@ -305,7 +401,7 @@ export const getTakeList = (
     .map(([endpoint, methods]) => {
       const supportedMethods = Object.entries(methods)
         .map(([method, languages]) => {
-          if (languages.includes(language)) {
+          if (languages === true || languages.includes(language)) {
             return method;
           }
           return undefined;

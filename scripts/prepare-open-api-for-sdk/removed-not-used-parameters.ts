@@ -4,14 +4,13 @@ import {
 } from "./utils";
 
 type LanguageOptions = {
-  removeRequiredOnNullable?: boolean; //default: false
   simplifyAllObjectsThatHaveAdditionalProperties?: boolean; //default: false
 };
 
 export const removedNotUsedParameters = (
   parameters,
   paths,
-  opt: LanguageOptions
+  opt: LanguageOptions,
 ) => {
   const parametersNames = JSON.stringify(paths)
     .match(/"#\/components\/parameters\/.*?"/g)
@@ -26,13 +25,11 @@ export const removedNotUsedParameters = (
     }
     newParameters[parameterName] = removeAdditionalProperties(
       parameters[parameterName],
-      !opt.simplifyAllObjectsThatHaveAdditionalProperties
+      !opt.simplifyAllObjectsThatHaveAdditionalProperties,
     );
-    if (opt.removeRequiredOnNullable) {
-      newParameters[parameterName] = removeRequiredOnNullableAttributes(
-        newParameters[parameterName]
-      );
-    }
+    newParameters[parameterName] = removeRequiredOnNullableAttributes(
+      newParameters[parameterName],
+    );
   }
 
   return newParameters;

@@ -204,7 +204,7 @@ One of:
 | prefix</br>`string` | <p>A text appended before the code.</p> |
 | postfix</br>`string` | <p>A text appended after the code.</p> |
 | pattern</br>`string` | <p>A pattern for codes where hashes (#) will be replaced with random characters. Overrides <code>length</code>.</p> |
-| initial_count</br>`integer` | <p>The initial count</p> |
+| initial_count</br>`integer` | <p>Internal value, does not change anything if provided.</p> |
 
 ## Validation Rule Assignments List
 | Attributes |  Description |
