@@ -344,7 +344,7 @@
 | /client/v1/promotions/tiers                | get    | List Promotion Tiers (client-side)                    | <font color='green'>supported</font> |                                      |
 | /client/v1/redemptions                     | post   | Redeem Stackable Discounts (client-side)              | <font color='green'>supported</font> |                                      |
 | /client/v1/validations                     | post   | Validate Stackable Discounts (client-side)            | <font color='green'>supported</font> |                                      |
-| /client/v1/customers/{customerId}/consents | put    | Update Customer's consents (client-side) [Deprecated] | <font color='green'>supported</font> |  <font color='red'>deprecated</font> |
+| /client/v1/customers/{customerId}/consents | put    | Update Customer's consents (client-side) [Deprecated] |                                      |  <font color='red'>deprecated</font> |
 | /client/v1/events                          | post   | Track Custom Event (client-side)                      | <font color='green'>supported</font> |                                      |
 | /client/v1/consents                        | get    | List Consents (client-side) [Deprecated]              |                                      |  <font color='red'>deprecated</font> |
 | /client/v1/validate                        | get    | Validate Voucher (client-side) [Deprecated]           |                                      |  <font color='red'>deprecated</font> |
