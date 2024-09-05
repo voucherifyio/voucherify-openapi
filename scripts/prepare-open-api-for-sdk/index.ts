@@ -166,7 +166,7 @@ const main = async (languageOptions: LanguageOptions) => {
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
-      schemas: schemasWithoutNotUsed,
+      schemas: addNullableToAllSchemasProperties(schemasWithoutNotUsed),
       parameters,
     },
     paths: newPaths,
@@ -297,7 +297,18 @@ const addNullableToAllSchemasProperties = (schemas) => {
   );
 };
 
+const returnRefSchemaIfAllOfContainsOnly1Reference = (schema) => {
+  if (schema?.allOf?.length === 1 && schema.allOf[0]?.$ref) {
+    return schema.allOf[0];
+  }
+  return false;
+};
+
 const addNullableToAllSchemaProperties = (schema) => {
+  const refSchema = returnRefSchemaIfAllOfContainsOnly1Reference(schema);
+  if (refSchema) {
+    return refSchema;
+  }
   if (schema.items) {
     schema.items = addNullableToAllSchemaProperties(schema.items);
   } else if (schema.properties) {
