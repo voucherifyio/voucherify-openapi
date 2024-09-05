@@ -36,14 +36,14 @@ const supportedLanguages: {
 } = {
   python: {
     name: "python",
-    simplifyAllObjectsThatHaveAdditionalProperties: true,
+    simplifyAllObjectsThatHaveAdditionalProperties: true, //MUST STAY!
   },
   ruby: {
     name: "ruby",
   },
   php: {
     name: "php",
-    putNotObjectSchemasIntoObjectSchemas: true,
+    putNotObjectSchemasIntoObjectSchemas: true, //MUST STAY!
   },
   java: {
     name: "java",
