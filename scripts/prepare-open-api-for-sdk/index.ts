@@ -166,7 +166,7 @@ const main = async (languageOptions: LanguageOptions) => {
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
-      schemas: addNullableToAllSchemasProperties(schemasWithoutNotUsed),
+      schemas: fixRefUagesInAllSchemasProperties(schemasWithoutNotUsed),
       parameters,
     },
     paths: newPaths,
@@ -289,10 +289,10 @@ const copySchemasIfUsedAsAllOfInBase = (schemas): Record<string, any> => {
   );
 };
 
-const addNullableToAllSchemasProperties = (schemas) => {
+const fixRefUagesInAllSchemasProperties = (schemas) => {
   return Object.fromEntries(
     Object.entries(schemas).map(([title, schema]) => {
-      return [title, addNullableToAllSchemaProperties(schema)];
+      return [title, fixRefsUsages(schema)];
     }),
   );
 };
@@ -304,25 +304,22 @@ const returnRefSchemaIfAllOfContainsOnly1Reference = (schema) => {
   return false;
 };
 
-const addNullableToAllSchemaProperties = (schema) => {
+const fixRefsUsages = (schema) => {
   const refSchema = returnRefSchemaIfAllOfContainsOnly1Reference(schema);
   if (refSchema) {
     return refSchema;
   }
   if (schema.items) {
-    schema.items = addNullableToAllSchemaProperties(schema.items);
+    schema.items = fixRefsUsages(schema.items);
   } else if (schema.properties) {
     schema.properties = Object.fromEntries(
       Object.entries(schema.properties).map(([property, schema]: any) => {
-        return [property, addNullableToAllSchemaProperties(schema)];
+        return [property, fixRefsUsages(schema)];
       }),
     );
   } else if (schema.additionalProperties) {
-    schema.additionalProperties = addNullableToAllSchemaProperties(
-      schema.additionalProperties,
-    );
+    schema.additionalProperties = fixRefsUsages(schema.additionalProperties);
   }
-  schema.nullable = true;
   return schema;
 };
 
