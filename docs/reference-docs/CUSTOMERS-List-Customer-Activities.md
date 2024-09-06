@@ -1,5 +1,5 @@
 ---
-title: List Customer Activities
+title: List Customer Activities [Deprecated]
 type: endpoint
 categorySlug: voucherify-api
 slug: list-customer-activities

@@ -4,6 +4,8 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-09-03
+- Merged https://github.com/voucherifyio/voucherify-openapi/pull/793
 
 ## 2024-09-02
 
@@ -28,38 +30,61 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - Added error 413 to the above-mentioned endpoints
 - Added `enum` to the `CampaignLoyaltyCard` and `AsyncActionBase` schemas
 
-## 2024-08-13
+## 2024-08-07
+`OpenAPI.json`
+- New shemas `CreatePublicationWithoutSpecifyingVoucher`, `LoyaltiesMembersCreateResponseBody`
+- Added property `channel` to `CreatePublicationBase`
 
+## 2024-08-07
+`OpenAPI.json`
+- New schemas: `LoyaltiesGetCampaignResponseBody`, `LoyaltiesListCampaignsResponseBody`, `ParameterCode`, `ParameterIds`, `LoyaltyMember`, `LoyaltiesListMembersResponseBody`, `LoyaltiesMembersGetResponseBody`
+
+## 2024-08-13
 - Added updated the description to `PromotionStackBase`, `PromotionsStacksUpdateRequestBody`, and `SimplePromotionStack` with the info about 30 promotion tiers in one stack
 
-## 2024-08-09
+## 2024-08-06
+`OpenAPI.json`
+- New schemas: `LoyaltyCampaign`, `LoyaltyCampaignVoucher`, `LoyaltiesCreateCampaignRequestBody`, `LoyaltiesCreateCampaignResponseBody`, `LoyaltiesUpdateCampaignRequestBody`, `LoyaltiesUpdateCampaignResponseBody`
 
-- Deprecated the following endpoints:
-  - PUT `/v1/customers/{customerId}/consents`
-  - GET `/v1/consents`
-  - PUT `/client/v1/customers/{customerId}/consents`
-  - GET `/client/v1/consents`
-- Removed `POINTS_CANCELLATION` from types of loyalty card transactions
+## 2024-08-06
+`OpenAPI.json`
+- New schemas: `LoyaltiesRewardsCreateAssignmentRequestBody`, `LoyaltiesRewardsCreateAssignmentResponseBody`, `LoyaltiesRewardsCreateAssignmentItemRequestBody`, `LoyaltiesRewardsUpdateAssignmentRequestBody`, `LoyaltiesRewardsUpdateAssignmentResponseBody`
+- Schema renamed:
+  - `VouchersImportCreateRequestBodyItem` -> `VouchersImportCreateItemRequestBody`
+  - `VouchersUpdateInBulkRequestBodyItem` -> `VouchersUpdateInBulkItemRequestBody`
+  - `VouchersImportCreateRequestBodyItem` -> `VouchersImportCreateItemRequestBody`
+  - `VouchersImportCreateRequestBodyItemRedemption` -> `VouchersImportCreateItemRequestBodyRedemption`
+  - `VouchersImportCreateRequestBodyItemMetadata` -> `VouchersImportCreateItemRequestBodyMetadata`
+  - `VouchersUpdateInBulkRequestBodyItem` -> `VouchersUpdateInBulkItemRequestBody`
 
-## 2024-08-01
+## 2024-08-06
+`OpenAPI.json`
+- New schemas: `LoyaltiesRewardsListAssignmentsResponseBody`, `LoyaltiesRewardAssignmentsListResponseBody`
 
-Added the following to `OpenAPIWebhooks.json`:
-- `voucher.loyalty_card.transaction.created`
-- `voucher.loyalty_card.points_expired`
-- `voucher.gift.transaction.created`
-- metadata to `RedemptionRewardResult` schema
+## 2024-08-05
+`OpenAPI.json`
+- New schemas: `VouchersUpdateInBulkRequestBody`, `VouchersUpdateInBulkRequestBodyItem`
+- renamed `ParameterCategory` into `ParameterActivityCategory`
 
-Added the following to `OpenAPI.json`:
-- `customer.holder.assignment.created` – OpenAPI.json
-- `customer.holder.assignment.deleted` – OpenAPI.json
-- metadata to `RedemptionRewardResult` schema
+## 2024-08-02-02
+`OpenAPI.json`
+- New schemas: `VouchersImportCreateRequestBody`, `VouchersImportCreateRequestBodyItem`, `VoucherImportLoyaltyCard`, `VoucherImportGift`, `VoucherImportDiscount`, `VouchersImportGiftVoucherRequestBody`, `VouchersImportDiscountVoucherRequestBody`, `VoucherImportBase`, `CampaignsImportVoucherItem`
 
-Removed the `[Beta]` tag from the following endpoints:
-- List Customer's Redeemables
-- List Referral Code Holders
+## 2024-08-02-02
+`OpenAPI.json`
+- New schemas: `VouchersMetadataUpdateInBulkRequestBody`, `EarningRuleBase`
+
+## 2024-08-02
+
+`OpenAPI.json`
+- refactored `/v1/vouchers` GET and POST
+- refactored `/v1/vouchers/{code}` POST and PUT
+- Added `VoucherWithCategories`, `VoucherBase`, `VouchersCreateRequestBody`, `VoucherCreateLoyaltyCard`, `VoucherCreateGiftWithSpecificCodeOrCodeConfig`, `VoucherCreateGiftWithSpecificCode`, `VoucherCreateGiftWithCodeConfig`, `VoucherUpdateGift`, `VoucherCreateGift`, `VoucherCreateDiscountWithSpecificCodeOrCodeConfig`, `VoucherCreateDiscountWithSpecificCode`, `VoucherCreateDiscountWithCodeConfig`, `VoucherCreateDiscount`, `VoucherUpdateDiscount`, `VoucherCreateBase`, `VouchersListResponseBody`, `VoucherUpdateBase`, `VouchersUpdateRequestBody`, `CodeConfigBase`
+- `Voucher` is now created from `VoucherBase` 
 
 ## 2024-07-30
 
+  `OpenAPI.json`
 - Added parameter `ParameterRedeemableHolderId`
 - Schema `Session` - property `key` is no longer `enum`
 - Added `RewardsListResponseBody`, `PromotionsTiersCreateRequestBody`, `PromotionsTiersCreateResponseBody`, `PromotionsTiersUpdateRequestBody`, `PromotionsTiersUpdateResponseBody`, `PromotionTierUpdate`, `PromotionTierCreateParams`, `RewardsCreateRequestBodyMaterial`, `RewardsCreateRequestBodyDigital`, `RewardsCreateRequestBodyDigitalParameters`, `RewardsCreateRequestBodyPayWithPoints`,  `RewardsUpdateRequestBody`, `RewardsUpdateRequestBodyDigital`, `RewardsUpdateRequestBodyPayWithPoints`, `RewardsUpdateRequestBodyMaterial`, `RewardsUpdateRequestBodyDigitalParametersLoyaltyProgram`, `RewardsUpdateRequestBodyDigitalParametersGiftVouchers`, `RewardsUpdateRequestBodyDigitalParametersDiscountCoupons`, `RewardsUpdateRequestBodyDigitalParameters`, `RewardsUpdateRequestBodyMaterialParameters`, `RewardsUpdateRequestBodyPayWithPointsParameters`, `RewardsCreateRequestBodyDigitalParametersLoyaltyProgram`, `RewardsCreateRequestBodyDigitalParametersGiftVouchers`, `RewardsCreateRequestBodyDigitalParametersDiscountCoupons`, `RewardsCreateRequestBodyMaterialParameters`, `RewardsCreateRequestBodyPayWithPointsParameters`,`SegmentsCreateRequestBodyStatic`,  `SegmentsCreateRequestBody`, `SegmentsGetResponseBody`, `SegmentsCreateResponseBody`, `SegmentsCreateRequestBodyDynamic`, `AsyncActionGetResponseBody`, `AsyncAction`, `AsyncActionsListResponseBody`, `ReferralsMembersHoldersCreateInBulkRequestBody`, `ReferralsMembersHoldersCreateInBulkResponseBody`, `RedemptionEntry`, `ClientPromotionsTiersListResponseBody`
@@ -79,10 +104,10 @@ Removed the `[Beta]` tag from the following endpoints:
 ## 2024-07-15
 
 `OpenAPI.json`:
-- Added a new endpoint, Invite a New User (**POST** `/management/v1/projects/users/invite`), and associated schemas:
+- Added a new endpoint, Invite a New User (**POST** `v1/management/v1/projects/users/invite`), and associated schemas:
   - ManagementProjectsUserInviteCreateRequestBody
   - ManagementProjectsUserInviteParameters
-- Added the ManagementProjectsSideKeys schema for app ID and app token in the server-side and client-side objects, which are returned in the **POST** `/management/v1/projects/` endpoint
+- Added the ManagementProjectsSideKeys schema for app ID and app token in the server-side and client-side objects, which are returned in the **POST** `v1/management/v1/projects/` endpoint
 
 ## 2024-07-10
 - added schemas `ValidityTimeframe` and `ValidityDayOfWeek`, replaced everywhere `validity_day_of_week` with ref to `ValidityDayOfWeek`, replaced everywhere `validity_timeframe` with ref to `ValidityTimeframe`

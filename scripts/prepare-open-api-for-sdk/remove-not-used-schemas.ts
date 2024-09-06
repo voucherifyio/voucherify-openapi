@@ -5,13 +5,11 @@ import {
 } from "./utils";
 
 type Components = {
-  parameters: {};
-  schemas: {};
+  parameters: Record<string, any>;
+  schemas: Record<string, any>;
 };
 
 type LanguageOptions = {
-  makeEverythingNullable?: boolean;
-  removeRequiredOnNullable?: boolean;
   simplifyAllObjectsThatHaveAdditionalProperties?: boolean;
 };
 
@@ -84,17 +82,14 @@ export const removeNotUsedSchemas = (
     }
   }
 
-  languageOptions.makeEverythingNullable &&
-    Object.keys(schemas).forEach((schemaName) => {
-      schemas[schemaName] = makeEverythingNullable(schemas[schemaName]);
-    });
-
-  languageOptions.removeRequiredOnNullable &&
-    Object.keys(schemas).forEach((schemaName) => {
-      schemas[schemaName] = removeRequiredOnNullableAttributes(
-        schemas[schemaName],
-      );
-    });
+  Object.keys(schemas).forEach((schemaName) => {
+    schemas[schemaName] = makeEverythingNullable(schemas[schemaName]);
+  });
+  Object.keys(schemas).forEach((schemaName) => {
+    schemas[schemaName] = removeRequiredOnNullableAttributes(
+      schemas[schemaName],
+    );
+  });
 
   return schemas;
 };

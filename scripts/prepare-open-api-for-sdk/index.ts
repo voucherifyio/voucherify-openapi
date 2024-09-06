@@ -5,6 +5,8 @@ import minimist from "minimist";
 import colors from "colors";
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 import originalOpenAPIContent from "../../reference/OpenAPI.json";
+import _ from "lodash";
+
 let openAPIContent = originalOpenAPIContent;
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
@@ -25,14 +27,8 @@ const options = minimist(process.argv.slice(2));
 
 type LanguageOptions = {
   name: string;
-  removeRequiredOnNullable?: true; //default: false
-  simplifyAllObjectsThatHaveAdditionalProperties?: true; //default: false
-  okResponseMustBeOnlyOne?: true; //default: false
-  mergeOneOfs?: true; //default: false
-  putNotObjectSchemasIntoObjectSchemas?: true; //default: false
-  removeBuggedTagsFromOpenAPIPaths?: true; //default: false
-  makeEverythingNullable?: true; //default: false
-  addMissingDefaultsWhenSingleEnumFound?: true;
+  simplifyAllObjectsThatHaveAdditionalProperties?: true;
+  putNotObjectSchemasIntoObjectSchemas?: true;
 };
 
 const supportedLanguages: {
@@ -40,36 +36,17 @@ const supportedLanguages: {
 } = {
   python: {
     name: "python",
-    removeRequiredOnNullable: true,
     simplifyAllObjectsThatHaveAdditionalProperties: true,
   },
   ruby: {
     name: "ruby",
-    mergeOneOfs: true,
-    okResponseMustBeOnlyOne: true,
-    removeRequiredOnNullable: true,
-    makeEverythingNullable: true,
-    removeBuggedTagsFromOpenAPIPaths: true,
-    addMissingDefaultsWhenSingleEnumFound: true,
   },
   php: {
     name: "php",
-    mergeOneOfs: true,
-    okResponseMustBeOnlyOne: true,
-    removeRequiredOnNullable: true,
-    makeEverythingNullable: true,
-    removeBuggedTagsFromOpenAPIPaths: true,
     putNotObjectSchemasIntoObjectSchemas: true,
-    addMissingDefaultsWhenSingleEnumFound: true,
   },
   java: {
     name: "java",
-    mergeOneOfs: true,
-    okResponseMustBeOnlyOne: true,
-    removeRequiredOnNullable: true,
-    makeEverythingNullable: true,
-    removeBuggedTagsFromOpenAPIPaths: true,
-    addMissingDefaultsWhenSingleEnumFound: true,
   },
 };
 
@@ -99,9 +76,14 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 };
 
 const main = async (languageOptions: LanguageOptions) => {
+  //////////////////////////////////////////////////////////////////////////////
   removeStoplightTag(openAPIContent);
   openAPIContent = removeUnwantedProperties(openAPIContent, ["readmeTitle"]);
-  //OVERRIDE
+  openAPIContent.components.schemas = removeUnwantedProperties(
+    openAPIContent.components.schemas,
+    ["title"],
+  );
+  //Simplify AsyncAction.result
   openAPIContent.components.schemas.AsyncAction.allOf.map((schema) => {
     if (schema?.properties?.result) {
       schema.properties.result = {
@@ -111,15 +93,27 @@ const main = async (languageOptions: LanguageOptions) => {
     }
   });
   delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
+  //Delete unused Security schemas
   delete openAPIContent.components.securitySchemes["X-Management-Id"];
   delete openAPIContent.components.securitySchemes["X-Management-Token"];
-  //
-  if (languageOptions.addMissingDefaultsWhenSingleEnumFound) {
-    openAPIContent = addMissingDefaults(openAPIContent);
-  }
+  //Fix voucher - to prevent breaking changes
+  delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
+  delete openAPIContent.components.schemas.AsyncActionBase.properties
+    .operation_status.enum;
+  //Fix `CustomerActivity`
+  delete openAPIContent.components.schemas.CustomerActivity.properties.type
+    .enum;
+  delete openAPIContent.components.schemas.CustomerActivity.properties.data
+    .properties;
+  delete openAPIContent.components.schemas.ParameterCustomerEvent.enum;
+  //Fix `MemberActivity`
+  delete openAPIContent.components.schemas.MemberActivity.properties.type.enum;
+  delete openAPIContent.components.schemas.MemberActivity.properties.data
+    .properties;
+  //////////////////////////////////////////////////////////////////////////////
+  openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
     openAPIContent.paths,
-    languageOptions.okResponseMustBeOnlyOne,
     languageOptions.name,
   );
   const parameters = removedNotUsedParameters(
@@ -138,32 +132,41 @@ const main = async (languageOptions: LanguageOptions) => {
       schemasWithoutNotUsed,
     );
   }
-  const schemas = languageOptions.mergeOneOfs
-    ? removeAllOneOfs(
-        schemasWithoutNotUsed,
-        paths,
-        openAPIContent.components.parameters,
-        languageOptions,
-      )
-    : schemasWithoutNotUsed;
+  const schemas = removeAllOneOfs(
+    schemasWithoutNotUsed,
+    paths,
+    openAPIContent.components.parameters,
+    languageOptions,
+  );
 
-  const newPaths = languageOptions.removeBuggedTagsFromOpenAPIPaths
-    ? removeBuggedTagsFromOpenAPIPaths(paths)
-    : paths;
+  const newPaths = removeBuggedTagsFromOpenAPIPaths(paths);
 
-  openAPIContent.components.parameters =
-    languageOptions.removeBuggedTagsFromOpenAPIPaths
-      ? removeBuggedTagsFromOpenAPIParameters(
-          openAPIContent.components.parameters,
-        )
-      : openAPIContent.components.parameters;
+  openAPIContent.components.parameters = removeBuggedTagsFromOpenAPIParameters(
+    openAPIContent.components.parameters,
+  );
+
+  const schemasWithFixedTitles: any = fixSchemasTitles(
+    removeUnwantedProperties(
+      parseNullsToNullableObjects(copySchemasIfUsedAsAllOfInBase(schemas)),
+      ["title"],
+    ),
+  );
+  schemasWithoutNotUsed = removeNotUsedSchemas(
+    {
+      schemas: schemasWithFixedTitles,
+      parameters: openAPIContent.components.parameters,
+    },
+    paths,
+    languageOptions,
+    {},
+  );
 
   // Building all together
   const newOpenApiFile = cleanUpDescriptionsInEntireObject({
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
-      schemas: parseNullsToNullableObjects(schemas),
+      schemas: schemasWithoutNotUsed,
       parameters,
     },
     paths: newPaths,
@@ -171,6 +174,220 @@ const main = async (languageOptions: LanguageOptions) => {
 
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
 };
+
+const mergeObjectsWithAllOfs = (object, schemas) => {
+  const _object = _.omit(object, ["allOf"]);
+  _object.type = "object";
+  _object.properties = {};
+  object.allOf.forEach((item) => {
+    if (item?.$ref) {
+      const shcemaName = item?.$ref?.split("/").at(-1);
+      if (!schemas[shcemaName]) {
+        throw new Error(
+          `Could not find schema ${shcemaName}, ref: ${item?.$ref}`,
+        );
+      }
+      if (schemas[shcemaName].allOf) {
+        _object.properties = {
+          ..._object.properties,
+          ...mergeObjectsWithAllOfs(schemas[shcemaName], schemas).properties,
+        };
+      } else if (schemas[shcemaName].properties) {
+        _object.properties = {
+          ..._object.properties,
+          ...schemas[shcemaName].properties,
+        };
+      } else {
+        throw new Error(
+          `Could not find allOf or Properties in schema ${shcemaName}`,
+        );
+      }
+    } else if (item?.properties) {
+      _object.properties = {
+        ..._object.properties,
+        ...item?.properties,
+      };
+    } else if (item.allOf) {
+      _object.properties = {
+        ...mergeObjectsWithAllOfs(item, schemas).properties,
+        ...item?.properties,
+      };
+    } else if (item.type === "object" && item.required.length) {
+    } else {
+      console.log(item);
+      throw new Error(
+        `Could not find any properties and any ref in one of allOf in object`,
+        object,
+      );
+    }
+  });
+  return _object;
+};
+
+const copySchemasIfUsedAsAllOfInBase = (schemas): Record<string, any> => {
+  return Object.fromEntries(
+    Object.entries(schemas).map(([schemaName, schema]): any => {
+      if (
+        !_.isObject(schema) ||
+        !("allOf" in schema) ||
+        (schema as any).allOf?.length === 0
+      ) {
+        return [schemaName, schema];
+      } else if ((schema as any).allOf?.length === 1) {
+        const copyFrom = schema.allOf?.[0]?.$ref;
+        if (typeof copyFrom === "string") {
+          const copyFromSchemaName = copyFrom.split("/").at(-1);
+          if (schemas[copyFromSchemaName]) {
+            if (schemas[copyFromSchemaName].allOf) {
+              return [
+                schemaName,
+                _.merge(
+                  _.omit(
+                    _.omit(
+                      mergeObjectsWithAllOfs(
+                        schemas[copyFromSchemaName],
+                        schemas,
+                      ),
+                      ["description", "allOf"],
+                    ),
+                    ["description"],
+                  ),
+                  _.pick(schema, ["description"]),
+                ),
+              ];
+            }
+            return [
+              schemaName,
+              _.merge(
+                _.omit(schemas[copyFromSchemaName], ["description"]),
+                _.pick(schema, ["description"]),
+              ),
+            ];
+          } else {
+            throw new Error(
+              `Could not find ${copyFromSchemaName} schema.... ref found in schema ${schemaName}`,
+            );
+          }
+        } else {
+          throw new Error(
+            `Could not find $ref in schema ${schemaName}.allOf[0]`,
+          );
+        }
+      } else {
+        return [
+          schemaName,
+          _.merge(
+            _.omit(mergeObjectsWithAllOfs(schema, schemas), [
+              "description",
+              "allOf",
+            ]),
+            _.pick(schema, ["description"]),
+          ),
+        ];
+      }
+    }),
+  );
+};
+
+const addNullableToAllSchemasProperties = (schemas) => {
+  return Object.fromEntries(
+    Object.entries(schemas).map(([title, schema]) => {
+      return [title, addNullableToAllSchemaProperties(schema)];
+    }),
+  );
+};
+
+const addNullableToAllSchemaProperties = (schema) => {
+  if (schema.items) {
+    schema.items = addNullableToAllSchemaProperties(schema.items);
+  } else if (schema.properties) {
+    schema.properties = Object.fromEntries(
+      Object.entries(schema.properties).map(([property, schema]: any) => {
+        return [property, addNullableToAllSchemaProperties(schema)];
+      }),
+    );
+  } else if (schema.additionalProperties) {
+    schema.additionalProperties = addNullableToAllSchemaProperties(
+      schema.additionalProperties,
+    );
+  }
+  schema.nullable = true;
+  return schema;
+};
+
+const fixSchemasTitles = (schemas) => {
+  return Object.fromEntries(
+    Object.entries(schemas).map(([title, schema]) => {
+      return [title, fixSchemaTitle(schema, title, schemas)];
+    }),
+  );
+};
+
+const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
+  if (schema.$ref) {
+    return _.pick(schema, "$ref");
+  }
+  if (!skipSettingTitle) {
+    if (schema.additionalProperties) {
+      schema.title = `${title}Entry`;
+    } else {
+      schema.title = title;
+    }
+  }
+  if (schema.items) {
+    schema.items = fixSchemaTitle(schema.items, `${title}Item`, schemas);
+  }
+  if (schema.properties) {
+    schema.properties = Object.fromEntries(
+      Object.entries(schema.properties).map(([property, schema]: any) => {
+        const _title = `${title}${_.startCase(
+          snakeToCamel(property),
+        ).replaceAll(" ", "")}`;
+        if ("allOf" in schema && schema.allOf.length > 1) {
+          return [
+            property,
+            fixSchemaTitle(
+              mergeObjectsWithAllOfs(schema, schemas),
+              _title,
+              schemas,
+            ),
+          ];
+        } else if ("allOf" in schema && schema.allOf.length === 1) {
+          return [property, schema.allOf[0]]; // fixSchemaTitle(schema.allOf[0], _title, schemas)
+        } else if (["object", "array"].includes(schema.type)) {
+          return [property, fixSchemaTitle(schema, _title, schemas)];
+        }
+        return [property, schema];
+      }),
+    );
+  }
+  if (schema.allOf) {
+    schema.allOf = schema.allOf.map((schema: any) =>
+      fixSchemaTitle(schema, title, schemas, true),
+    );
+  }
+  if (schema.additionalProperties) {
+    schema.additionalProperties = fixSchemaTitle(
+      schema.additionalProperties,
+      `${title}Entry`,
+      schemas,
+      true,
+    );
+  }
+  return { title: schema.title, ..._.omit(schema) };
+};
+
+const snakeToCamel = (str) =>
+  str
+    .toLowerCase()
+    .replace(/([-_][a-z])/g, (group) =>
+      group.toUpperCase().replace("-", "").replace("_", ""),
+    );
+
+const moveSchemasOnTheBack = (schemas: any, schemasNames: string[]) => ({
+  ..._.omit(schemas, schemasNames),
+  ..._.pick(schemas, schemasNames),
+});
 
 if (!("language" in options)) {
   console.log(colors.red("invalid arguments, missing language parameter"));

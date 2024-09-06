@@ -158,7 +158,7 @@ Example of a model that needs a `Differentiator`:
 "PublicationsCreateResponseBody": {
     "title": "Publications Create Response Body",
     "type": "object",
-    "description": "Response body schema for **POST** `/publication` and **GET** `/publications/create`.",
+    "description": "Response body schema for **POST** `v1/publication` and **GET** `v1/publications/create`.",
     "oneOf": [
         {
             "$ref": "#/components/schemas/PublicationsCreateVoucherResponseBody"
@@ -186,7 +186,7 @@ Example of a model that needs a `Differentiator`:
   "RedemptionsGetResponseBody": {
     "type": "object",
     "title": "Redemptions Get Response Body",
-    "description": "Response body schema for **GET** `/redemptions/{redemptionId}`",
+    "description": "Response body schema for **GET** `v1/redemptions/{redemptionId}`",
     "oneOf": [
       {
         "$ref": "#/components/schemas/Redemption"
