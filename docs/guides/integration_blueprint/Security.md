@@ -42,4 +42,4 @@ Contact our Customer Success team for a complete **Security Architecture Model**
 
 > 📘 Voucherify built-in messaging
 >
-> If you plan to use Voucherify's built-in messaging, go to a dedicated [GDPR guide](https://support.voucherify.io/article/125-security-data-protection "Security and Data Protection – GDPR and CCPA compliance"). It showcases how Voucherify implements marketing consents and other requirements from the Directive.
+> If you plan to use Voucherify's built-in messaging, go to a dedicated [GDPR guide](https://support.voucherify.io/article/125-security-data-protection "Security and Data Protection – GDPR and CCPA compliance"). It showcases how Voucherify implements requirements from the Directive.
