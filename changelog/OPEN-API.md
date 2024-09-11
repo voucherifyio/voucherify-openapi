@@ -4,6 +4,14 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-09-06
+
+`OpenAPI.json` and `OpenAPIWebhooks.json` - removed references to consent feature; removed among others:
+- `customer.consents.given` and `customer.consents.revoked` events
+- `18_res_list_consents_GET`, `CustomersConsentsUpdateRequestBody`, `ClientCustomersConsentsUpdateRequestBody`, `EventCustomerConsents`, `EventCustomerConsentsGiven`, `EventCustomerConsentsRevoked`, `SimpleConsent` schemas
+- GET `/v1/consents` and `/client/v1/consents`, PUT `/v1/customers/{customerId}/consents` and `/client/v1/customers/{customerId}/consents` endpoints
+- `/EVENTS.CUSTOMER.CONSENTS.GIVEN` and `/EVENTS.CUSTOMER.CONSENTS.REVOKED` and referred to schemas
+
 ## 2024-09-03
 - Merged https://github.com/voucherifyio/voucherify-openapi/pull/793
 

@@ -7,6 +7,11 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-09-09
+
+- Removed reference to Marketing Permissions and Consents
+- Set up a redirect for the Messaging Automation article to Help Scout – [Getting Started with Distributions](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work)
+
 ## 2024-08-13
 
 - Added a redirect page to the Open Source Loyalty Accelerator for Omnichannel Retail blog post.
