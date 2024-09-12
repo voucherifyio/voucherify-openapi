@@ -18,6 +18,17 @@ Added two new effects to the `enum` in `ApplicableToEffect` schema:
 
 The changes also apply to the `OpenAPIWebhooks.json` file.
 
+Changes to responses to GET `/v1/async-actions/{asyncActionId}` for bulk updates to customer, product, and voucher, including metadata bulk updates:
+- Removed the `errors` object from the `AsyncActionsVoucherCustomerProductBulkUpdateResult` schema
+- Added a separate `errors` object in the following schemas:
+  - `AsyncActionResultCustomersBulkUpdateResponseBody`
+  - `AsyncActionResultCustomersMetadataUpdateResponseBody`
+  - `AsyncActionResultProductsBulkUpdateResponseBody`
+  - `AsyncActionResultProductsMetadataUpdateResponseBody`
+  - `AsyncActionResultVouchersBulkUpdateResponseBody`
+  - `AsyncActionResultVouchersMetadataUpdateResponseBody`
+- Removed the reference to the `Error` schema in the above-mentioned schemas
+
 ## 2024-09-06
 
 `OpenAPI.json` and `OpenAPIWebhooks.json` - removed references to consent feature; removed among others:

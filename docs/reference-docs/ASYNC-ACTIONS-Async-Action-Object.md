@@ -82,11 +82,12 @@ All of:
 All of:
 
 1. [Async Action Voucher Customer Product Bulk Update Result](#async-action-voucher-customer-product-bulk-update-result)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">errors</br><code>array</code></td><td style="text-align:left"><p>List of errors encountered during processing.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>A human-readable message providing a short description of the error.</p></td></tr><tr><td style="text-align:left">details</br><code>string</code></td><td style="text-align:left"><p>A human-readable message providing more details about the error.</p></td></tr><tr><td style="text-align:left">key</br><code>string</code></td><td style="text-align:left"><p>Short string describing the kind of error which occurred.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Source identifier of the customer for which the error occurred.</p></td></tr></tbody></table></td></tr></tbody></table>
 
 ## CUSTOMERS.METADATA_UPDATE
-All of:
-
-1. [Async Action Voucher Customer Product Bulk Update Result](#async-action-voucher-customer-product-bulk-update-result)
+| Attributes |  Description |
+|:-----|:--------|
+| errors</br>`array` | <p>List of errors encountered during processing.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>A human-readable message providing a short description of the error.</p></td></tr><tr><td style="text-align:left">details</br><code>string</code></td><td style="text-align:left"><p>A human-readable message providing more details about the error.</p></td></tr><tr><td style="text-align:left">key</br><code>string</code></td><td style="text-align:left"><p>Short string describing the kind of error which occurred.</p></td></tr></tbody></table> |
 
 ## CUSTOMERS.METADATA_KEY_PURGE
 | Attributes |  Description |
@@ -98,11 +99,12 @@ All of:
 All of:
 
 1. [Async Action Voucher Customer Product Bulk Update Result](#async-action-voucher-customer-product-bulk-update-result)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">errors</br><code>array</code></td><td style="text-align:left"><p>List of errors encountered during processing.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>A human-readable message providing a short description of the error.</p></td></tr><tr><td style="text-align:left">details</br><code>string</code></td><td style="text-align:left"><p>A human-readable message providing more details about the error.</p></td></tr><tr><td style="text-align:left">key</br><code>string</code></td><td style="text-align:left"><p>Short string describing the kind of error which occurred.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>Source identifier of the product for which the error occurred.</p></td></tr></tbody></table></td></tr></tbody></table>
 
 ## PRODUCTS.METADATA_UPDATE
-All of:
-
-1. [Async Action Voucher Customer Product Bulk Update Result](#async-action-voucher-customer-product-bulk-update-result)
+| Attributes |  Description |
+|:-----|:--------|
+| errors</br>`array` | <p>List of errors encountered during processing.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>A human-readable message providing a short description of the error.</p></td></tr><tr><td style="text-align:left">details</br><code>string</code></td><td style="text-align:left"><p>A human-readable message providing more details about the error.</p></td></tr><tr><td style="text-align:left">key</br><code>string</code></td><td style="text-align:left"><p>Short string describing the kind of error which occurred.</p></td></tr></tbody></table> |
 
 ## PRODUCTS.IMPORT_CSV
 | Attributes |  Description |
@@ -146,11 +148,12 @@ All of:
 All of:
 
 1. [Async Action Voucher Customer Product Bulk Update Result](#async-action-voucher-customer-product-bulk-update-result)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">errors</br><code>array</code></td><td style="text-align:left"><p>List of errors encountered during processing.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>A human-readable message providing a short description of the error.</p></td></tr><tr><td style="text-align:left">details</br><code>string</code></td><td style="text-align:left"><p>A human-readable message providing more details about the error.</p></td></tr><tr><td style="text-align:left">key</br><code>string</code></td><td style="text-align:left"><p>Short string describing the kind of error which occurred.</p></td></tr><tr><td style="text-align:left">code</br><code>string</code></td><td style="text-align:left"><p>Code of the voucher for which the error occurred. Present only in voucher updates.</p></td></tr></tbody></table></td></tr></tbody></table>
 
 ## VOUCHERS.METADATA_UPDATE
-All of:
-
-1. [Async Action Voucher Customer Product Bulk Update Result](#async-action-voucher-customer-product-bulk-update-result)
+| Attributes |  Description |
+|:-----|:--------|
+| errors</br>`array` | <p>List of errors encountered during processing.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>A human-readable message providing a short description of the error.</p></td></tr><tr><td style="text-align:left">details</br><code>string</code></td><td style="text-align:left"><p>A human-readable message providing more details about the error.</p></td></tr><tr><td style="text-align:left">key</br><code>string</code></td><td style="text-align:left"><p>Short string describing the kind of error which occurred.</p></td></tr></tbody></table> |
 
 ## VOUCHERS.METADATA_KEY_PURGE
 | Attributes |  Description |
@@ -179,18 +182,6 @@ All of:
 | failed_count</br>`integer` | <p>Number of items that failed to be processed.</p> |
 | reports</br>`array` | <p>List of URLs to report files.</p> |
 | reports_available_till</br>`string` | <p>Timestamp until the reports are available.</p> |
-| errors</br>`array` | <p>List of errors encountered during processing.</p> Array of [Error Object](#error-object) |
-
-## Error Object
-| Attributes |  Description |
-|:-----|:--------|
-| code</br>`integer` | <p>Error's HTTP status code.</p> |
-| key</br>`string` | <p>Short string describing the kind of error which occurred.</p> |
-| message</br>`string` | <p>A human-readable message providing a short description about the error.</p> |
-| details</br>`string` | <p>A human-readable message providing more details about the error.</p> |
-| request_id</br>`string` | <p>This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team.</p> **Example:** <p>v-0a885062c80375740f</p> |
-| resource_id</br>`string` | <p>Unique resource ID that can be used in another endpoint to get more details.</p> **Example:** <p>rf_0c5d710a87c8a31f86</p> |
-| resource_type</br>`string` | <p>The resource type.</p> **Example:** <p>voucher</p> |
 
 [block:html]
 {

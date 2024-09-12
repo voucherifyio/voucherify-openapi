@@ -1386,7 +1386,7 @@ One of:
 |:-----|:--------|
 | code</br>`integer` | <p>Error's HTTP status code.</p> |
 | key</br>`string` | <p>Short string describing the kind of error which occurred.</p> |
-| message</br>`string` | <p>A human-readable message providing a short description about the error.</p> |
+| message</br>`string` | <p>A human-readable message providing a short description of the error.</p> |
 | details</br>`string` | <p>A human-readable message providing more details about the error.</p> |
 | request_id</br>`string` | <p>This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team.</p> **Example:** <p>v-0a885062c80375740f</p> |
 | resource_id</br>`string` | <p>Unique resource ID that can be used in another endpoint to get more details.</p> **Example:** <p>rf_0c5d710a87c8a31f86</p> |
