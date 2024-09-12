@@ -16,6 +16,8 @@ Added two new effects to the `enum` in `ApplicableToEffect` schema:
 - `APPLY_FROM_CHEAPEST`
 - `APPLY_FROM_MOST_EXPENSIVE`
 
+The changes also apply to the `OpenAPIWebhooks.json` file.
+
 ## 2024-09-06
 
 `OpenAPI.json` and `OpenAPIWebhooks.json` - removed references to consent feature; removed among others:
