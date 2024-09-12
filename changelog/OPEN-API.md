@@ -4,6 +4,18 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-09-12
+
+Added the descriptions to the following fields in the `ApplicableTo` schema:
+- `order_item_indices`
+- `repeat`
+- `skip_initially`
+- `target`
+
+Added two new effects to the `enum` in `ApplicableToEffect` schema:
+- `APPLY_FROM_CHEAPEST`
+- `APPLY_FROM_MOST_EXPENSIVE`
+
 ## 2024-09-06
 
 `OpenAPI.json` and `OpenAPIWebhooks.json` - removed references to consent feature; removed among others:
