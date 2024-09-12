@@ -1590,9 +1590,9 @@ One of:
 ## Applicable To
 | Attributes |  Description |
 |:-----|:--------|
-| object</br>`string` | <p>This object stores information about the product collection.</p> Available values: `product`, `sku`, `products_collection` |
-| id</br>`string` | <p>Unique product collection ID assigned by Voucherify.</p> |
-| source_id</br>`string` | <p>The source ID from your inventory system.</p> |
+| object</br>`string` | <p>This object stores information about the resource to which the discount is applicable.</p> Available values: `product`, `sku`, `products_collection` |
+| id</br>`string` | <p>Unique product collection, product, or SKU identifier assigned by Voucherify.</p> |
+| source_id</br>`string` | <p>The source identifier from your inventory system.</p> |
 | product_id</br>`string` | <p>Parent product's unique ID assigned by Voucherify.</p> |
 | product_source_id</br>`string` | <p>Parent product's source ID from your inventory system.</p> |
 | strict</br>`boolean` |  |
@@ -1603,10 +1603,10 @@ One of:
 | aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
 | amount_limit</br>`integer` | <p>Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:</p><ul><li><code>APPLY_TO_ITEMS</code> (each item subtotal is discounted equally)</li><li><code>APPLY_TO_ITEMS_BY_QUANTITY</code> (each unit of matched products has the same discount value)</li></ul> |
-| order_item_indices</br>`array` |  |
-| repeat</br>`integer` |  |
-| skip_initially</br>`integer` |  |
-| target</br>`string` |  |
+| order_item_indices</br>`array` | <p>Determines the order in which the discount is applied to the products or SKUs sent in the <code>order</code> object in the request. The counting begins from <code>0</code>.</p> |
+| repeat</br>`integer` | <p>Determines the recurrence of the discount, e.g. <code>&quot;repeat&quot;: 3</code> means that the discount is applied to every third item.</p> |
+| skip_initially</br>`integer` | <p>Determines how many items are skipped before the discount is applied.</p> |
+| target</br>`string` | <p>Determines to which kinds of objects the discount is applicable. <code>&quot;ITEM&quot;</code> includes products and SKUs.</p> Available values: `ITEM` |
 
 ## Inapplicable To
 [Applicable To](#applicable-to)
@@ -1654,7 +1654,7 @@ One of:
 | order_items</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">subtotal_amount</br><code>object</code></td><td style="text-align:left"><p>Defines the ratio based on the property defined in the calculation_type parameter. For every set of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every calculation_type, give points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">every</br><code>integer</code></td><td style="text-align:left"><p>Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 order amount is written as 1000.</p></td></tr><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points to be awarded, i.e. how many points to be added to the loyalty card.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Type of object taken under consideration.</p> Available values: <code>products_collection</code>, <code>product</code>, <code>sku</code></td></tr><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
 ## Applicable To Effect
-Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`
+Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_FROM_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`, `APPLY_FROM_MOST_EXPENSIVE`
 
 [block:html]
 {

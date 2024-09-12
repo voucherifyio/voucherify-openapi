@@ -221,9 +221,9 @@ One of:
 ## Applicable To
 | Attributes |  Description |
 |:-----|:--------|
-| object</br>`string` | <p>This object stores information about the product collection.</p> Available values: `product`, `sku`, `products_collection` |
-| id</br>`string` | <p>Unique product collection ID assigned by Voucherify.</p> |
-| source_id</br>`string` | <p>The source ID from your inventory system.</p> |
+| object</br>`string` | <p>This object stores information about the resource to which the discount is applicable.</p> Available values: `product`, `sku`, `products_collection` |
+| id</br>`string` | <p>Unique product collection, product, or SKU identifier assigned by Voucherify.</p> |
+| source_id</br>`string` | <p>The source identifier from your inventory system.</p> |
 | product_id</br>`string` | <p>Parent product's unique ID assigned by Voucherify.</p> |
 | product_source_id</br>`string` | <p>Parent product's source ID from your inventory system.</p> |
 | strict</br>`boolean` |  |
@@ -234,10 +234,10 @@ One of:
 | aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
 | amount_limit</br>`integer` | <p>Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:</p><ul><li><code>APPLY_TO_ITEMS</code> (each item subtotal is discounted equally)</li><li><code>APPLY_TO_ITEMS_BY_QUANTITY</code> (each unit of matched products has the same discount value)</li></ul> |
-| order_item_indices</br>`array` |  |
-| repeat</br>`integer` |  |
-| skip_initially</br>`integer` |  |
-| target</br>`string` |  |
+| order_item_indices</br>`array` | <p>Determines the order in which the discount is applied to the products or SKUs sent in the <code>order</code> object in the request. The counting begins from <code>0</code>.</p> |
+| repeat</br>`integer` | <p>Determines the recurrence of the discount, e.g. <code>&quot;repeat&quot;: 3</code> means that the discount is applied to every third item.</p> |
+| skip_initially</br>`integer` | <p>Determines how many items are skipped before the discount is applied.</p> |
+| target</br>`string` | <p>Determines to which kinds of objects the discount is applicable. <code>&quot;ITEM&quot;</code> includes products and SKUs.</p> Available values: `ITEM` |
 
 ## Inapplicable To
 [Applicable To](#applicable-to)
@@ -313,7 +313,7 @@ One of:
 | source_id</br>`string` | <p>The merchant's transaction ID if it is different from the Voucherify transaction ID. It is really useful in case of an integration between multiple systems. It can be a transaction ID from a CRM system, database or 3rd-party service.</p> |
 
 ## Applicable To Effect
-Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`
+Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_FROM_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`, `APPLY_FROM_MOST_EXPENSIVE`
 
 ## Discount Amount Vouchers Effect Types
 Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`, `APPLY_TO_ITEMS_PROPORTIONALLY`, `APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY`, `APPLY_TO_ITEMS_BY_QUANTITY`
