@@ -29,6 +29,7 @@ type LanguageOptions = {
   name: string;
   simplifyAllObjectsThatHaveAdditionalProperties?: true;
   putNotObjectSchemasIntoObjectSchemas?: true;
+  use2XX?: true;
 };
 
 const supportedLanguages: {
@@ -37,6 +38,7 @@ const supportedLanguages: {
   python: {
     name: "python",
     simplifyAllObjectsThatHaveAdditionalProperties: true, //MUST STAY!
+    use2XX: true, //MUST STAY!
   },
   ruby: {
     name: "ruby",
@@ -115,6 +117,7 @@ const main = async (languageOptions: LanguageOptions) => {
   const { paths, newSchemas } = getPathsWithoutDeprecated(
     openAPIContent.paths,
     languageOptions.name,
+    languageOptions.use2XX,
   );
   const parameters = removedNotUsedParameters(
     openAPIContent.components.parameters,
@@ -139,7 +142,34 @@ const main = async (languageOptions: LanguageOptions) => {
     languageOptions,
   );
 
-  const newPaths = removeBuggedTagsFromOpenAPIPaths(paths);
+  const pathsWithoutBuggedTags = removeBuggedTagsFromOpenAPIPaths(paths);
+  const pathsWithFixedResponses = Object.fromEntries(
+    Object.entries(pathsWithoutBuggedTags).map(([path, pathEntry]) => {
+      return [
+        path,
+        Object.fromEntries(
+          Object.entries(pathEntry).map(([method, methodEntry]) => {
+            methodEntry.responses = Object.fromEntries(
+              _.compact(
+                Object.entries(methodEntry.responses || {}).map(
+                  ([statusCode, responseEntry]) => {
+                    if (!statusCode.startsWith("2")) {
+                      return;
+                    }
+                    if (languageOptions.use2XX) {
+                      return ["2XX", responseEntry];
+                    }
+                    return [statusCode, responseEntry];
+                  },
+                ),
+              ),
+            );
+            return [method, methodEntry];
+          }),
+        ),
+      ];
+    }),
+  );
 
   openAPIContent.components.parameters = removeBuggedTagsFromOpenAPIParameters(
     openAPIContent.components.parameters,
@@ -169,7 +199,7 @@ const main = async (languageOptions: LanguageOptions) => {
       schemas: fixRefUagesInAllSchemasProperties(schemasWithoutNotUsed),
       parameters,
     },
-    paths: newPaths,
+    paths: pathsWithFixedResponses,
   });
 
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
