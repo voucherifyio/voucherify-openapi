@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-09-16
+
+- Updated the Fetching Data article with a list of endpoints that use the `more_starting_after` and `starting_after_id` paging method plus other changes
+
 ## 2024-08-13
 
 - Added a redirect page to the Open Source Loyalty Accelerator for Omnichannel Retail blog post.
