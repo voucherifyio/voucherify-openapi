@@ -54,7 +54,7 @@ All of:
 | data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of promotion tier objects.</p> |
 | tiers</br>`array` | <p>Contains array of promotion tier objects.</p> Array of [Promotion Tier](#promotion-tier) |
 | total</br>`integer` | <p>Total number of promotion tiers.</p> |
-| has_more</br>`boolean` | <p>As query results are always limited (by the limit parameter), the <code>has_more</code> flag indicates if there are more records for given filter parameters. This lets you know if you can run another request (with a different page or a different start date filter) to get more records returned in the results.</p> |
+| has_more</br>`boolean` | <p>As query results are always limited (by the limit parameter), the <code>has_more</code> flag indicates if there are more records for given filter parameters. This lets you know if you can run another request to get more records returned in the results.</p> |
 
 ## Validation Rules Assignments List
 | Attributes |  Description |
