@@ -112,6 +112,8 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.schemas.MemberActivity.properties.type.enum;
   delete openAPIContent.components.schemas.MemberActivity.properties.data
     .properties;
+  //Do not do breaking change in `ApplicableTo`
+  delete openAPIContent.components.schemas.ApplicableTo.properties.target.enum;
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
