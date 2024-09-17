@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-09-17
+
+Updated the Introduction to Webhooks – IP Whitelisting with new addresses
+
 ## 2024-09-16
 
 - Updated the Fetching Data article with a list of endpoints that use the `more_starting_after` and `starting_after_id` paging method plus other changes

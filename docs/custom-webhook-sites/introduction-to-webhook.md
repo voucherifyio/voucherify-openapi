@@ -141,11 +141,15 @@ To add an additional layer of security, you can do IP whitelisting. This mechani
 
 Voucherify sends webhooks from the IP ranges below.
 
-| **Instance** | **IP**        |
-| :----------- | :------------ |
-| eu1          | 34.247.197.22 |
-| us1          | 100.25.106.67 |
-| as1          | 52.76.98.82   |
+| **Instance** | **IP**                                                       |
+| :----------- | :----------------------------------------------------------- |
+| eu1          | 34.247.197.22<br>63.32.191.141 (new)<br>52.215.148.84 (new)  |
+| us1          | 100.25.106.67<br>18.209.236.215 (new)<br>34.192.255.99 (new) |
+| as1          | 52.76.98.82<br>54.169.8.101 (new)<br>13.214.87.160 (new)     |
+
+> 🚧 New Addresses
+>
+> The new addresses are not live yet. The actual traffic will begin on 18th October.
 
 ## Webhooks Available in Project Settings
 
