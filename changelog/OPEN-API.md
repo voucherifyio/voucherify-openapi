@@ -40,6 +40,10 @@ Changes to responses to GET `/v1/async-actions/{asyncActionId}` for bulk updates
 ## 2024-09-03
 - Merged https://github.com/voucherifyio/voucherify-openapi/pull/793
 
+## 2024-09-02
+
+- Removed `created_at` and `-created_at` from the `order` query parameter for List Bin Entries – `ParameterOrderListBin`
+
 ## 2024-08-26
 
 - Added the `Templates` tag and the following endpoints:
