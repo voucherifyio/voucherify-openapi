@@ -8,7 +8,7 @@ hidden: false
 order: 4
 ---
 
-All top-level API resources have support for fetches via **list** API methods. For instance, you can list redemptions, list publications, list customers, and list products. 
+All top-level API resources have support for fetches via **list** API methods. For instance, you can list redemptions, list publications, list customers, or list products. 
 
 These list API methods share a common structure, using at least these _query parameters_: `limit` and `created_at`.  
 
@@ -19,27 +19,38 @@ These list API methods share a common structure, using at least these _query par
 
 ## Paging the results
 
-Some list API methods use the `page` query parameter to display another page of results.
+Some of the list API methods use the `page` query parameter to display another page of results.
 
 However, the following list API methods use the `starting_after_id` query parameter:
-- List member activity
-- List member activity (with campaign ID)
 - [List customer activity](ref:list-customer-activity)
+- [List member activity](ref:list-member-activity)
+- [List member activity (with campaign ID)](ref:list-member-activity-1)
+- [List voucher transactions](ref:list-voucher-transactions)
+- [List loyalty card transactions](ref:list-loyalty-card-transactions)
+- [List loyalty card transactions (with campaign ID)](ref:list-loyalty-card-transactions-1)
+- [List customer redeemables](ref:list-customer-redeemables)
+- [List referral code holders](ref:referrals-code-holders-1)
+- [List referral code holders (with campaign ID)](ref:referrals-code-holders-1)
+- [List bin entries](ref:list-bin-entries)
+- [List campaign templates](ref:list-campaign-templates)
 
-The response to these three methods includes a `more_starting_after` key that takes a string value with an event ID. Use this event ID with the `starting_after_id` query parameter to page the results.
+The response to these methods includes a `more_starting_after` key that takes a string value with an ID. Use this ID with the `starting_after_id` query parameter to display another page of results.
 
 ## Response format
 
-The listing method returns a dictionary with a data property that contains an array of resources. The maximum number of resources returned is determined by the limit query parameter. If no more resources are available, the resulting array on a given page will be empty. The result can be narrowed down according to the specified (or default) filters.  
+The listing method returns a dictionary with a data property that contains an array of resources. The maximum number of resources returned is determined by the `limit` query parameter. If no more resources are available, the resulting array on a given page will be empty. The result can be narrowed down according to the specified (or default) filters.  
 
-| **Property name** | **Description**                                                                       |
-| :---------------- | :------------------------------------------------------------------------------------ |
-| `object`          | A string describing the object type returned.                                         |
-| `total`           | Total number of records for given filtering query.                                    |
-| `data_ref`        | The value for this property indicates the property name containing the results array. |
+| **Property name**     | **Description**                                                                                                                                           |
+| :-------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `object`              | A string describing the object type returned.                                                                                                             |
+| `data_ref`            | The value for this property indicates the property name containing the results array.                                                                     |
+| `data`                | An array that contains objects for a given list endpoint. In older methods, this is replaced by the name of the respective resource, e.g. `publications`. |
+| `total`               | Total number of records for given filtering query. In some methods, this field is absent.                                                                 |
+| `has_more`            | It indicates that there are more results to be returned for given filter parameters.                                                                      |
+| `more_starting_after` | In newer endpoints, it provides an ID that can be used with a `starting_after_id` query parameter to return another page of results.                      |
 
 
-```json Example Response
+```json Old Method Example Response
 {
     "object": "list",
     "total": 1,
@@ -79,11 +90,11 @@ The listing method returns a dictionary with a data property that contains an ar
             "assets": {
                 "qr": {
                     "id": "U2FsdGVkX1+oNqKQ08m2y1IWJemXXWI7RpgBrrNvmBiQbxe/4XBlAudagPJWbdtDI3S5biYSdslhXIwPyRCx0eUhUqnQmngmBadWq8xX3HeGSjUxMu2/yF9PAc3izKU0MUJ2oXJpjZ/oieEHtIElEA==",
-                    "url": "https://dl.voucherify.io/api/v1/assets/qr/U2FsdGVkX1%2BoNqKQ08m2y1IWJemXXWI7RpgBrrNvmBiQbxe%2F4XBlAudagPJWbdtDI3S5biYSdslhXIwPyRCx0eUhUqnQmngmBadWq8xX3HeGSjUxMu2%2FyF9PAc3izKU0MUJ2oXJpjZ%2FoieEHtIElEA%3D%3D"
+                    "url": "{{voucherify_internal_URL}}"
                 },
                 "barcode": {
                     "id": "U2FsdGVkX1+anixbnFov/mzPXUmqQp6YDR++HLW2m0WxQBc4t1wbBSKHqP8cAa63CUQE8IdyZEIZIku0RwAQiYflEAq6upaJ5CHiB3LUOh0EsdtnzUCB21EBkaNCs3PKNvFdDwG5UQzqIjN0u5MOGA==",
-                    "url": "https://dl.voucherify.io/api/v1/assets/barcode/U2FsdGVkX1%2BanixbnFov%2FmzPXUmqQp6YDR%2B%2BHLW2m0WxQBc4t1wbBSKHqP8cAa63CUQE8IdyZEIZIku0RwAQiYflEAq6upaJ5CHiB3LUOh0EsdtnzUCB21EBkaNCs3PKNvFdDwG5UQzqIjN0u5MOGA%3D%3D"
+                    "url": "{{voucherify_internal_URL}}"
                 }
             },
             "is_referral_code": false,
@@ -94,10 +105,51 @@ The listing method returns a dictionary with a data property that contains an ar
     ]
 }
 ```
+```json New Method Example Response
+{
+    "object": "list",
+    "data_ref": "data",
+    "data": [
+        {
+            "id": "rh_0f35d7ba9300a8e8e4",
+            "created_at": "2024-08-14T10:29:19.542Z",
+            "redeemable_id": "v_YdDGS5yBnLCp79vfPbHhkoRrqPwkgyiy",
+            "redeemable_object": "voucher",
+            "campaign_id": "camp_vVk4unz3k4gA023fk9XoSiTh",
+            "campaign_type": "REFERRAL_PROGRAM",
+            "voucher_type": "DISCOUNT_VOUCHER",
+            "customer_id": "cust_K11DXLfeJIZz7LZpxgiLhZpX",
+            "holder_role": "REFEREE",
+            "object": "redeemable_holder",
+            "metadata": {
+                "influencer_code": true
+            }
+        },
+        {
+            "id": "rh_0f35d7ba9300a8e8e3",
+            "created_at": "2024-08-14T10:29:19.542Z",
+            "redeemable_id": "v_YdDGS5yBnLCp79vfPbHhkoRrqPwkgyiy",
+            "redeemable_object": "voucher",
+            "campaign_id": "camp_vVk4unz3k4gA023fk9XoSiTh",
+            "campaign_type": "REFERRAL_PROGRAM",
+            "voucher_type": "DISCOUNT_VOUCHER",
+            "customer_id": "cust_6P4K6p7PxEuK37sDtiLOii0A",
+            "holder_role": "REFEREE",
+            "object": "redeemable_holder",
+            "metadata": {
+                "influencer_code": false
+            }
+        }
+    ],
+    "total": 2,
+    "has_more": true,
+    "more_starting_after": "rh_0f35d7ba9300a8e8e3"
+}
+```
 
 ## Shortcuts
 
-**List** API methods offer a list of query parameters. These parameters allow you to filter the results. Each API resource enables a specific set of options which can be used for simplifying a query. If you need advanced options, you can read the next section.  
+List API methods offer a list of query parameters. These parameters allow you to filter the results. Each API resource enables a specific set of options which can be used for simplifying a query. If you need advanced options, read the [next section](#advanced-filters-for-fetching-resources).  
 
 | Resource                        | **Shortcuts**                                                                                                                                       | **Example**                                                                                    |
 | :------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
