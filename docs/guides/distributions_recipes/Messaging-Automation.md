@@ -3,9 +3,10 @@ title: Messaging automation
 excerpt: How to set up an automatic promotion delivery for a dynamic customer segment?
 categorySlug: distributions-recipes
 slug: automatic-delivery
-type: basic
+type: link
 hidden: false
 order: 4
+link_url: https://support.voucherify.io/article/19-how-does-the-distribution-manager-work
 ---
 
 In this tutorial, you will learn how to set up an automatic promo code distribution. Imagine the following scenario – your marketing team wants to have the ability to define `who`, `when`, and by `which channel` gets a specific promo code. 

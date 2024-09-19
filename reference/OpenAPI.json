@@ -119,10 +119,6 @@
       "description": "Track custom and internal events."
     },
     {
-      "name": "Consents",
-      "description": "List marketing opt-in consents."
-    },
-    {
       "name": "Async Actions",
       "description": "Track asynchronous operations scheduled in Projects."
     },
@@ -426,8 +422,6 @@
           "customer.redemption.succeeded",
           "customer.redemption.rollback.failed",
           "customer.redemption.rollback.succeeded",
-          "customer.consents.given",
-          "customer.consents.revoked",
           "customer.order.canceled",
           "customer.order.created",
           "customer.order.fulfilled",
@@ -736,8 +730,6 @@
       "ParameterOrderListBin": {
         "type": "string",
         "enum": [
-          "created_at",
-          "-created_at",
           "id",
           "-id"
         ]
@@ -25355,28 +25347,6 @@
           "code_config"
         ]
       },
-      "SimpleConsent": {
-        "title": "Simple Consent",
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "object": {
-            "type": "string",
-            "default": "consent",
-            "enum": [
-              "consent"
-            ]
-          }
-        },
-        "required": [
-          "object"
-        ]
-      },
       "SimpleLoyaltyCard": {
         "title": "Simple Loyalty Card",
         "type": "object",
@@ -25543,8 +25513,6 @@
               "customer.redemption.succeeded",
               "customer.redemption.rollback.failed",
               "customer.redemption.rollback.succeeded",
-              "customer.consents.given",
-              "customer.consents.revoked",
               "customer.order.canceled",
               "customer.order.created",
               "customer.order.fulfilled",
@@ -25792,12 +25760,6 @@
           },
           {
             "$ref": "#/components/schemas/EventCustomerRedemptionRollbackFailed"
-          },
-          {
-            "$ref": "#/components/schemas/EventCustomerConsentsGiven"
-          },
-          {
-            "$ref": "#/components/schemas/EventCustomerConsentsRevoked"
           },
           {
             "$ref": "#/components/schemas/EventCustomerOrderCanceled"
@@ -26695,39 +26657,6 @@
                 "$ref": "#/components/schemas/SimpleRedemption"
               }
             }
-          }
-        ]
-      },
-      "EventCustomerConsents": {
-        "title": "Event Customer Consents",
-        "type": "object",
-        "properties": {
-          "customer": {
-            "$ref": "#/components/schemas/SimpleCustomer"
-          },
-          "consents": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SimpleConsent"
-            }
-          }
-        }
-      },
-      "EventCustomerConsentsGiven": {
-        "title": "Event Customer Consents Given",
-        "description": "Event data object schema for `customer.consents.given`.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EventCustomerConsents"
-          }
-        ]
-      },
-      "EventCustomerConsentsRevoked": {
-        "title": "Event Customer Consents Revoked",
-        "description": "Event data object schema for `customer.consents.revoked`.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/EventCustomerConsents"
           }
         ]
       },
@@ -31302,18 +31231,82 @@
           },
           {
             "description": "Result schema for a `CUSTOMERS.BULK_UPDATE` async action type."
+          },
+          {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "array",
+                "description": "List of errors encountered during processing.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "A human-readable message providing a short description of the error."
+                    },
+                    "details": {
+                      "type": "string",
+                      "description": "A human-readable message providing more details about the error."
+                    },
+                    "key": {
+                      "type": "string",
+                      "description": "Short string describing the kind of error which occurred."
+                    },
+                    "source_id": {
+                      "type": "string",
+                      "description": "Source identifier of the customer for which the error occurred."
+                    }
+                  },
+                  "required": [
+                    "message",
+                    "details",
+                    "key",
+                    "source_id"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "errors"
+            ]
           }
         ]
       },
       "AsyncActionResultCustomersMetadataUpdateResponseBody": {
         "title": "CUSTOMERS.METADATA_UPDATE",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/AsyncActionsVoucherCustomerProductBulkUpdateResult"
-          },
-          {
-            "description": "Result schema for a `CUSTOMERS.METADATA_UPDATE` async action type."
+        "description": "Result schema for a `CUSTOMERS.METADATA_UPDATE` async action type.",
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "description": "List of errors encountered during processing.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "A human-readable message providing a short description of the error."
+                },
+                "details": {
+                  "type": "string",
+                  "description": "A human-readable message providing more details about the error."
+                },
+                "key": {
+                  "type": "string",
+                  "description": "Short string describing the kind of error which occurred."
+                }
+              },
+              "required": [
+                "message",
+                "details",
+                "key"
+              ]
+            }
           }
+        },
+        "required": [
+          "errors"
         ]
       },
       "17_res_obj_get_async_action_result_customers_metadata_key_purge": {
@@ -31339,18 +31332,82 @@
           },
           {
             "description": "`Result schema for a PRODUCTS.BULK_UPDATE` async action type."
+          },
+          {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "array",
+                "description": "List of errors encountered during processing.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "A human-readable message providing a short description of the error."
+                    },
+                    "details": {
+                      "type": "string",
+                      "description": "A human-readable message providing more details about the error."
+                    },
+                    "key": {
+                      "type": "string",
+                      "description": "Short string describing the kind of error which occurred."
+                    },
+                    "source_id": {
+                      "type": "string",
+                      "description": "Source identifier of the product for which the error occurred."
+                    }
+                  },
+                  "required": [
+                    "message",
+                    "details",
+                    "key",
+                    "source_id"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "errors"
+            ]
           }
         ]
       },
       "AsyncActionResultProductsMetadataUpdateResponseBody": {
         "title": "PRODUCTS.METADATA_UPDATE",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/AsyncActionsVoucherCustomerProductBulkUpdateResult"
-          },
-          {
-            "description": "Result schema for a `PRODUCTS.METADATA_UPDATE` async action type."
+        "description": "Result schema for a `PRODUCTS.METADATA_UPDATE` async action type.",
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "description": "List of errors encountered during processing.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "A human-readable message providing a short description of the error."
+                },
+                "details": {
+                  "type": "string",
+                  "description": "A human-readable message providing more details about the error."
+                },
+                "key": {
+                  "type": "string",
+                  "description": "Short string describing the kind of error which occurred."
+                }
+              },
+              "required": [
+                "message",
+                "details",
+                "key"
+              ]
+            }
           }
+        },
+        "required": [
+          "errors"
         ]
       },
       "17_res_obj_get_async_action_result_products_metadata_key_purge": {
@@ -31526,18 +31583,82 @@
           },
           {
             "description": "Result schema for a `VOUCHERS.BULK_UPDATE` async action type."
+          },
+          {
+            "type": "object",
+            "properties": {
+              "errors": {
+                "type": "array",
+                "description": "List of errors encountered during processing.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "A human-readable message providing a short description of the error."
+                    },
+                    "details": {
+                      "type": "string",
+                      "description": "A human-readable message providing more details about the error."
+                    },
+                    "key": {
+                      "type": "string",
+                      "description": "Short string describing the kind of error which occurred."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Code of the voucher for which the error occurred."
+                    }
+                  },
+                  "required": [
+                    "message",
+                    "details",
+                    "key",
+                    "code"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "errors"
+            ]
           }
         ]
       },
       "AsyncActionResultVouchersMetadataUpdateResponseBody": {
         "title": "VOUCHERS.METADATA_UPDATE",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/AsyncActionsVoucherCustomerProductBulkUpdateResult"
-          },
-          {
-            "description": "Result schema for a `VOUCHERS.METADATA_UPDATE` async action type."
+        "description": "Result schema for a `VOUCHERS.METADATA_UPDATE` async action type.",
+        "type": "object",
+        "properties": {
+          "errors": {
+            "type": "array",
+            "description": "List of errors encountered during processing.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "A human-readable message providing a short description of the error."
+                },
+                "details": {
+                  "type": "string",
+                  "description": "A human-readable message providing more details about the error."
+                },
+                "key": {
+                  "type": "string",
+                  "description": "Short string describing the kind of error which occurred."
+                }
+              },
+              "required": [
+                "message",
+                "details",
+                "key"
+              ]
+            }
           }
+        },
+        "required": [
+          "errors"
         ]
       },
       "17_res_obj_get_async_action_result_vouchers_metadata_key_purge": {
@@ -31628,160 +31749,14 @@
             "type": "string",
             "format": "date-time",
             "description": "Timestamp until the reports are available."
-          },
-          "errors": {
-            "type": "array",
-            "description": "List of errors encountered during processing.",
-            "items": {
-              "$ref": "#/components/schemas/Error"
-            }
           }
         },
         "required": [
           "done_count",
           "failed_count",
           "reports",
-          "reports_available_till",
-          "errors"
+          "reports_available_till"
         ]
-      },
-      "18_res_list_consents_GET": {
-        "description": "Response body schema for listing consents.",
-        "type": "object",
-        "title": "List Consents Response Body",
-        "properties": {
-          "groups": {
-            "type": "object",
-            "description": "Contains marketing permission groups' definitions.",
-            "properties": {
-              "object": {
-                "type": "string",
-                "default": "list",
-                "description": "Stores information about marketing permission groups."
-              },
-              "data_ref": {
-                "type": "string",
-                "default": "data",
-                "description": "Identifies the name of the attribute that contains the array of marketing permission groups."
-              },
-              "data": {
-                "type": "array",
-                "description": "An array of marketing permission groups.",
-                "items": {
-                  "type": "object",
-                  "description": "Contains a marketing permission group's definition.",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "example": "cnstgr_3c7Z3rcOLv51bsXlRtTZPYj8",
-                      "description": "Unique group ID."
-                    },
-                    "name": {
-                      "type": "string",
-                      "description": "Marketing permission group name."
-                    },
-                    "description": {
-                      "type": "string",
-                      "description": "Marketing permission group category."
-                    },
-                    "consents": {
-                      "type": "array",
-                      "description": "List of consents that are assigned to the group.",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "example": "2022-04-13T09:12:47.743Z",
-                      "description": "Timestamp representing the date and time when the group was created. The value is shown in the ISO 8601 format."
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "example": "2022-05-14T09:11:27.037Z",
-                      "description": "Timestamp representing the date and time when the group was updated. The value is shown in the ISO 8601 format."
-                    },
-                    "object": {
-                      "type": "string",
-                      "default": "consent_group",
-                      "description": "Stores information about a marketing permission group."
-                    }
-                  }
-                }
-              },
-              "total": {
-                "type": "integer",
-                "description": "Total number of groups."
-              }
-            }
-          },
-          "consents": {
-            "type": "object",
-            "description": "Contains opt-in consents' definitions.",
-            "properties": {
-              "object": {
-                "type": "string",
-                "default": "list",
-                "description": "Stores information about opt-in consents."
-              },
-              "data_ref": {
-                "type": "string",
-                "default": "data",
-                "description": "Identifies the name of the attribute that contains the array of opt-in consents."
-              },
-              "data": {
-                "type": "array",
-                "description": "An array of consents.",
-                "items": {
-                  "type": "object",
-                  "description": "Contains an opt-in consent definition.",
-                  "properties": {
-                    "id": {
-                      "type": "string",
-                      "example": "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                      "description": "Unique consent ID."
-                    },
-                    "name": {
-                      "type": "string",
-                      "description": "Consent name."
-                    },
-                    "description": {
-                      "type": "string",
-                      "description": "Consent description."
-                    },
-                    "category": {
-                      "type": "string",
-                      "description": "Consent category."
-                    },
-                    "created_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "example": "2022-04-13T09:11:27.037Z",
-                      "description": "Timestamp representing the date and time when the consent was created. The value is shown in the ISO 8601 format."
-                    },
-                    "updated_at": {
-                      "type": "string",
-                      "format": "date-time",
-                      "example": "2022-05-14T09:11:27.037Z",
-                      "description": "Timestamp representing the date and time when the consent was updated. The value is shown in the ISO 8601 format."
-                    },
-                    "object": {
-                      "type": "string",
-                      "default": "consent",
-                      "description": "Stores information about an opt-in consent."
-                    }
-                  }
-                }
-              },
-              "total": {
-                "type": "integer",
-                "description": "Total number of consents."
-              }
-            }
-          }
-        }
       },
       "21_obj_metadata_schema_object": {
         "type": "object",
@@ -36689,7 +36664,7 @@
           },
           "message": {
             "type": "string",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -36727,7 +36702,7 @@
           },
           "message": {
             "type": "string",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -36775,7 +36750,7 @@
           },
           "message": {
             "type": "string",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -36814,7 +36789,7 @@
           },
           "message": {
             "type": "string",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -36877,7 +36852,7 @@
           },
           "message": {
             "type": "string",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -36901,7 +36876,7 @@
           },
           "error": {
             "type": "string",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "message": {
             "type": "string",
@@ -36920,7 +36895,7 @@
           },
           "message": {
             "type": "string",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "key": {
             "type": "string",
@@ -36946,7 +36921,7 @@
           "message": {
             "type": "string",
             "default": "Missing required parameter",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -36978,7 +36953,7 @@
           "message": {
             "type": "string",
             "default": "Invalid payload",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -37008,7 +36983,7 @@
           },
           "message": {
             "type": "string",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -37039,7 +37014,7 @@
           "message": {
             "type": "string",
             "default": "Invalid Export",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -37070,7 +37045,7 @@
           "message": {
             "type": "string",
             "default": "Invalid Voucher",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -37098,7 +37073,7 @@
           },
           "message": {
             "type": "string",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -37126,7 +37101,7 @@
           "message": {
             "type": "string",
             "default": "Not enough codes",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -37158,7 +37133,7 @@
           "message": {
             "type": "string",
             "default": "Metadata validation failed",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -37190,7 +37165,7 @@
           "message": {
             "type": "string",
             "default": "Missing reward",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -37243,7 +37218,7 @@
           "message": {
             "type": "string",
             "default": "Missing order",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -37296,7 +37271,7 @@
           "message": {
             "type": "string",
             "default": "loyalty card points exceeded",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -37349,7 +37324,7 @@
           "message": {
             "type": "string",
             "default": "Duplicate codes",
-            "description": "A human-readable message providing a short description about the error."
+            "description": "A human-readable message providing a short description of the error."
           },
           "details": {
             "type": "string",
@@ -37634,15 +37609,15 @@
               "sku",
               "products_collection"
             ],
-            "description": "This object stores information about the product collection."
+            "description": "This object stores information about the resource to which the discount is applicable."
           },
           "id": {
             "type": "string",
-            "description": "Unique product collection ID assigned by Voucherify."
+            "description": "Unique product collection, product, or SKU identifier assigned by Voucherify."
           },
           "source_id": {
             "type": "string",
-            "description": "The source ID from your inventory system."
+            "description": "The source identifier from your inventory system."
           },
           "product_id": {
             "type": "string",
@@ -37689,18 +37664,25 @@
           },
           "order_item_indices": {
             "type": "array",
+            "description": "Determines the order in which the discount is applied to the products or SKUs sent in the `order` object in the request. The counting begins from `0`.",
             "items": {
               "type": "integer"
             }
           },
           "repeat": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Determines the recurrence of the discount, e.g. `\"repeat\": 3` means that the discount is applied to every third item."
           },
           "skip_initially": {
-            "type": "integer"
+            "type": "integer",
+            "description": "Determines how many items are skipped before the discount is applied."
           },
           "target": {
-            "type": "string"
+            "type": "string",
+            "description": "Determines to which kinds of objects the discount is applicable. `\"ITEM\"` includes products and SKUs.",
+            "enum": [
+              "ITEM"
+            ]
           }
         },
         "required": [
@@ -37716,7 +37698,9 @@
         "enum": [
           "APPLY_TO_EVERY",
           "APPLY_TO_CHEAPEST",
-          "APPLY_TO_MOST_EXPENSIVE"
+          "APPLY_FROM_CHEAPEST",
+          "APPLY_TO_MOST_EXPENSIVE",
+          "APPLY_FROM_MOST_EXPENSIVE"
         ]
       },
       "VouchersValidateResponseBody": {
@@ -40242,36 +40226,6 @@
           }
         ]
       },
-      "CustomersConsentsUpdateRequestBody": {
-        "type": "object",
-        "title": "Customers Consents Update Request Body",
-        "description": "Request body schema for **PUT** `v1/customers/{customerId}/consents`.",
-        "properties": {
-          "unsubscribed": {
-            "type": "boolean",
-            "description": "To deny all consents, use `unsubscribed` as a consent identifier and `true` as a value."
-          }
-        },
-        "additionalProperties": {
-          "type": "boolean",
-          "description": "Key-value pair where the key is the consent identifier and value is a boolean that identifies if a customer has given the consent or not."
-        }
-      },
-      "ClientCustomersConsentsUpdateRequestBody": {
-        "description": "Request body schema for **PUT** `v1/customers/{customerId}/consents`.",
-        "type": "object",
-        "title": "Client Customers Consents Update Request Body",
-        "properties": {
-          "unsubscribed": {
-            "type": "boolean",
-            "description": "To deny all consents, use `unsubscribed` as a consent identifier and `true` as a value."
-          }
-        },
-        "additionalProperties": {
-          "type": "boolean",
-          "description": "Key-value pair where the key is the consent identifier and value is a boolean that identifies if a customer has given the consent or not."
-        }
-      },
       "OrdersImportCreateRequestBody": {
         "type": "array",
         "title": "Orders Import Create Request Body",
@@ -42151,9 +42105,7 @@
                 "customer.created",
                 "customer.deleted",
                 "customer.rewarded",
-                "customer.rewarded.loyalty_points",
-                "customer.consents.revoked",
-                "customer.consents.given"
+                "customer.rewarded.loyalty_points"
               ]
             }
           },
@@ -72493,84 +72445,6 @@
         }
       }
     },
-    "/v1/customers/{customerId}/consents": {
-      "parameters": [
-        {
-          "schema": {
-            "$ref": "#/components/schemas/ParameterCustomerId"
-          },
-          "name": "customerId",
-          "in": "path",
-          "required": true,
-          "description": "A Voucherify unique customer identifier or source ID."
-        }
-      ],
-      "put": {
-        "operationId": "update-customers-consents",
-        "deprecated": true,
-        "tags": [
-          "Customers"
-        ],
-        "summary": "Update Customer's consents [Deprecated]",
-        "description": "Update marketing permissions for the specified customer.\n\n>❗️ Deprecated\n>\n> This endpoint is deprecated. The feature of managing consents will be soon removed from Voucherify, including this endpoint.",
-        "parameters": [],
-        "security": [
-          {
-            "X-App-Id": [],
-            "X-App-Token": []
-          }
-        ],
-        "requestBody": {
-          "description": "Key-value pairs where the key is the consent identifier and value is a boolean that identifies if a customer has given the consent or not. To deny all consents use \"unsubscribed\" as a consent identifier and \"true\" as its value.  \n\n#### Examples\n\n<!--\ntitle: \"Request Body\"\nlineNumbers: true\n-->\n```json\n{\n    \"cnst_aIdUulAh0SCsOCaS3005y7yS\": true,\n    \"cnst_aIdUulAhwewqaS31213fdsfds\": false\n}\n```\n\nOpt-out from all communication:\n\n<!--\ntitle: \"Request Body\"\nlineNumbers: true\n-->\n```json\n{\n    \"unsubscribed\": true\n}\n```",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CustomersConsentsUpdateRequestBody"
-              },
-              "examples": {
-                "Example": {
-                  "value": {
-                    "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I": true,
-                    "cnst_VCmucIvAsmDYw2PPAok6bcYy": false
-                  }
-                },
-                "Opt-out of all": {
-                  "value": {
-                    "unsubscribed": true
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Returns no content if the consents were updated successfully."
-          },
-          "400": {
-            "description": "Returns an error if the payload is empty.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "examples": {
-                  "Example": {
-                    "value": {
-                      "code": 400,
-                      "key": "invalid_payload",
-                      "message": "Invalid payload",
-                      "details": "The payload cannot be empty",
-                      "request_id": "v-0ba675252cc3bf6b03"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/customers/{customerId}/activity": {
       "parameters": [
         {
@@ -78120,98 +77994,6 @@
                       "request_id": "v-0dc6ead2680056a15a",
                       "resource_id": "registered_10055",
                       "resource_type": "customer"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/consents": {
-      "get": {
-        "operationId": "list-consents",
-        "deprecated": true,
-        "tags": [
-          "Consents"
-        ],
-        "summary": "List Consents [Deprecated]",
-        "description": "List the Marketing Permission definitions within the project along with opt-in consents.\n\n>❗️ Deprecated\n>\n> This endpoint is deprecated. The feature of managing consents will be soon removed from Voucherify, including this endpoint.",
-        "parameters": [],
-        "security": [
-          {
-            "X-App-Id": [],
-            "X-App-Token": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns marketing permission groups and opt-in consents.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/18_res_list_consents_GET"
-                },
-                "examples": {
-                  "Marketing Permissions Groups and Consents": {
-                    "value": {
-                      "groups": {
-                        "object": "list",
-                        "data_ref": "data",
-                        "data": [
-                          {
-                            "id": "cnstgr_3c7Z3rcOLv51bsXlRtTZPYj8",
-                            "name": "Consent group",
-                            "description": "Consent group",
-                            "consents": [
-                              "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                              "cnst_VCmucIvAsmDYw2PPAok6bcYy"
-                            ],
-                            "created_at": "2022-04-13T09:12:47.743Z",
-                            "updated_at": "2022-04-13T09:45:46.616Z",
-                            "object": "consent_group"
-                          },
-                          {
-                            "id": "cnstgr_EAIakTj5lNG2ZpiQEauGqBlY",
-                            "name": "Consent group 2",
-                            "description": "Consent group 2",
-                            "consents": [
-                              "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                              "cnst_VCmucIvAsmDYw2PPAok6bcYy"
-                            ],
-                            "created_at": "2022-04-13T10:03:46.564Z",
-                            "updated_at": null,
-                            "object": "consent_group"
-                          }
-                        ],
-                        "total": 2
-                      },
-                      "consents": {
-                        "object": "list",
-                        "data_ref": "data",
-                        "data": [
-                          {
-                            "id": "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                            "name": "Consent",
-                            "description": "Consent for marketing",
-                            "category": "New",
-                            "created_at": "2022-04-13T09:11:27.037Z",
-                            "updated_at": null,
-                            "object": "consent"
-                          },
-                          {
-                            "id": "cnst_VCmucIvAsmDYw2PPAok6bcYy",
-                            "name": "Consent 2",
-                            "description": "Consent 2",
-                            "category": "Trial",
-                            "created_at": "2022-04-13T09:45:37.597Z",
-                            "updated_at": null,
-                            "object": "consent"
-                          }
-                        ],
-                        "total": 2
-                      }
                     }
                   }
                 }
@@ -86714,9 +86496,7 @@
                             "customer.created",
                             "customer.deleted",
                             "customer.rewarded",
-                            "customer.rewarded.loyalty_points",
-                            "customer.consents.revoked",
-                            "customer.consents.given"
+                            "customer.rewarded.loyalty_points"
                           ],
                           "target_url": "your_url",
                           "active": true
@@ -88460,78 +88240,6 @@
         }
       }
     },
-    "/client/v1/customers/{customerId}/consents": {
-      "parameters": [
-        {
-          "schema": {
-            "$ref": "#/components/schemas/ParameterCustomerId"
-          },
-          "name": "customerId",
-          "in": "path",
-          "required": true,
-          "description": "A Voucherify customer identifier or `source_id`"
-        }
-      ],
-      "put": {
-        "operationId": "update-customers-consents-client-side",
-        "deprecated": true,
-        "tags": [
-          "Client-side"
-        ],
-        "summary": "Update Customer's consents (client-side) [Deprecated]",
-        "description": "Update marketing permissions for the specified customer.\n\n>❗️ Deprecated\n>\n> This endpoint is deprecated. The feature of managing consents will be soon removed from Voucherify, including this endpoint.",
-        "parameters": [],
-        "security": [
-          {
-            "X-Client-Application-Id": [],
-            "X-Client-Token": []
-          }
-        ],
-        "requestBody": {
-          "description": "Key-value pairs where the key is the consent identifier and value is a boolean that identifies if a customer has given the consent or not. To deny all consents use \"unsubscribed\" as a consent identifier and \"true\" as its value.  \n\n#### Examples\n\n<!--\ntitle: \"Request Body\"\nlineNumbers: true\n-->\n```json\n{\n    \"cnst_aIdUulAh0SCsOCaS3005y7yS\": true,\n    \"cnst_aIdUulAhwewqaS31213fdsfds\": false\n}\n```\n\nOpt-out from all communication:\n\n<!--\ntitle: \"Request Body\"\nlineNumbers: true\n-->\n```json\n{\n    \"unsubscribed\": true\n}\n```",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ClientCustomersConsentsUpdateRequestBody"
-              },
-              "examples": {
-                "Example": {
-                  "value": {
-                    "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I": true,
-                    "cnst_VCmucIvAsmDYw2PPAok6bcYy": false
-                  }
-                },
-                "Opt-out of all": {
-                  "value": {
-                    "unsubscribed": true
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "204": {
-            "description": "Returns no content if the consents were updated successfully."
-          },
-          "400": {
-            "description": "Returns an error if the payload is empty.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "examples": {
-                  "Example": {
-                    "value": {}
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/client/v1/events": {
       "post": {
         "operationId": "track-custom-event-client-side",
@@ -88644,102 +88352,6 @@
                       "message": "Invalid payload",
                       "details": "Property .referral should have required property 'code'",
                       "request_id": "v-0c15694e0e022146dd"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/client/v1/consents": {
-      "get": {
-        "operationId": "list-consents-client-side",
-        "deprecated": true,
-        "tags": [
-          "Client-side"
-        ],
-        "summary": "List Consents (client-side) [Deprecated]",
-        "description": "List the Marketing Permission definitions within the project along with opt-in consents.\n\n>❗️ Deprecated\n>\n> This endpoint is deprecated. The feature of managing consents will be soon removed from Voucherify, including this endpoint.",
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/origin"
-          }
-        ],
-        "security": [
-          {
-            "X-Client-Application-Id": [],
-            "X-Client-Token": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns marketing permission groups and opt-in consents.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/18_res_list_consents_GET"
-                },
-                "examples": {
-                  "Marketing Permissions Groups and Consents": {
-                    "value": {
-                      "groups": {
-                        "object": "list",
-                        "data_ref": "data",
-                        "data": [
-                          {
-                            "id": "cnstgr_3c7Z3rcOLv51bsXlRtTZPYj8",
-                            "name": "Consent group",
-                            "description": "Consent group",
-                            "consents": [
-                              "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                              "cnst_VCmucIvAsmDYw2PPAok6bcYy"
-                            ],
-                            "created_at": "2022-04-13T09:12:47.743Z",
-                            "updated_at": "2022-04-13T09:45:46.616Z",
-                            "object": "consent_group"
-                          },
-                          {
-                            "id": "cnstgr_EAIakTj5lNG2ZpiQEauGqBlY",
-                            "name": "Consent group 2",
-                            "description": "Consent group 2",
-                            "consents": [
-                              "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                              "cnst_VCmucIvAsmDYw2PPAok6bcYy"
-                            ],
-                            "created_at": "2022-04-13T10:03:46.564Z",
-                            "updated_at": null,
-                            "object": "consent_group"
-                          }
-                        ],
-                        "total": 2
-                      },
-                      "consents": {
-                        "object": "list",
-                        "data_ref": "data",
-                        "data": [
-                          {
-                            "id": "cnst_6jQ5XcUOLnj5L7ImQAdBsJ1I",
-                            "name": "Consent",
-                            "description": "Consent for marketing",
-                            "category": "New",
-                            "created_at": "2022-04-13T09:11:27.037Z",
-                            "updated_at": null,
-                            "object": "consent"
-                          },
-                          {
-                            "id": "cnst_VCmucIvAsmDYw2PPAok6bcYy",
-                            "name": "Consent 2",
-                            "description": "Consent 2",
-                            "category": "Trial",
-                            "created_at": "2022-04-13T09:45:37.597Z",
-                            "updated_at": null,
-                            "object": "consent"
-                          }
-                        ],
-                        "total": 2
-                      }
                     }
                   }
                 }

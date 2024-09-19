@@ -32,7 +32,6 @@ export const mdTables: [string, string?][] = [
   ],
   ["Segment", "SEGMENTS-Customer-Segment-Object.md"],
   ["EventsCreateRequestBody", "EVENTS-Custom-Event-Object.md"],
-  ["18_res_list_consents_GET", "CONSENTS-Consents-Object.md"],
   ["AsyncAction", "ASYNC-ACTIONS-Async-Action-Object.md"],
   ["Export", "EXPORTS-Export-Object.md"],
   ["Category", "CATEGORIES-Category-Object.md"],

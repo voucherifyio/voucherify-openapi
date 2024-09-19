@@ -15,6 +15,11 @@ Updated the Introduction to Webhooks – IP Whitelisting with new addresses
 
 - Updated the Fetching Data article with a list of endpoints that use the `more_starting_after` and `starting_after_id` paging method plus other changes
 
+## 2024-09-09
+
+- Removed reference to Marketing Permissions and Consents
+- Set up a redirect for the Messaging Automation article to Help Scout – [Getting Started with Distributions](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work)
+
 ## 2024-08-13
 
 - Added a redirect page to the Open Source Loyalty Accelerator for Omnichannel Retail blog post.

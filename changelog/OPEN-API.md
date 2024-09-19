@@ -11,8 +11,45 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - GET `/v1/loyalties/{campaignId}/members/{memberId}/transactions`
   - GET `/v1/loyalties/members/{memberId}/transactions`
 
+## 2024-09-12
+
+Added the descriptions to the following fields in the `ApplicableTo` schema:
+- `order_item_indices`
+- `repeat`
+- `skip_initially`
+- `target`
+
+Added two new effects to the `enum` in `ApplicableToEffect` schema:
+- `APPLY_FROM_CHEAPEST`
+- `APPLY_FROM_MOST_EXPENSIVE`
+
+The changes also apply to the `OpenAPIWebhooks.json` file.
+
+Changes to responses to GET `/v1/async-actions/{asyncActionId}` for bulk updates to customer, product, and voucher, including metadata bulk updates:
+- Removed the `errors` object from the `AsyncActionsVoucherCustomerProductBulkUpdateResult` schema
+- Added a separate `errors` object in the following schemas:
+  - `AsyncActionResultCustomersBulkUpdateResponseBody`
+  - `AsyncActionResultCustomersMetadataUpdateResponseBody`
+  - `AsyncActionResultProductsBulkUpdateResponseBody`
+  - `AsyncActionResultProductsMetadataUpdateResponseBody`
+  - `AsyncActionResultVouchersBulkUpdateResponseBody`
+  - `AsyncActionResultVouchersMetadataUpdateResponseBody`
+- Removed the reference to the `Error` schema in the above-mentioned schemas
+
+## 2024-09-06
+
+`OpenAPI.json` and `OpenAPIWebhooks.json` - removed references to consent feature; removed among others:
+- `customer.consents.given` and `customer.consents.revoked` events
+- `18_res_list_consents_GET`, `CustomersConsentsUpdateRequestBody`, `ClientCustomersConsentsUpdateRequestBody`, `EventCustomerConsents`, `EventCustomerConsentsGiven`, `EventCustomerConsentsRevoked`, `SimpleConsent` schemas
+- GET `/v1/consents` and `/client/v1/consents`, PUT `/v1/customers/{customerId}/consents` and `/client/v1/customers/{customerId}/consents` endpoints
+- `/EVENTS.CUSTOMER.CONSENTS.GIVEN` and `/EVENTS.CUSTOMER.CONSENTS.REVOKED` and referred to schemas
+
 ## 2024-09-03
 - Merged https://github.com/voucherifyio/voucherify-openapi/pull/793
+
+## 2024-09-02
+
+- Removed `created_at` and `-created_at` from the `order` query parameter for List Bin Entries – `ParameterOrderListBin`
 
 ## 2024-08-26
 

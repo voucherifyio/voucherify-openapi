@@ -22,7 +22,6 @@ Voucherify supports **different approaches to campaign management**. You can use
 
 * Currency and timezone.
 * Users and user roles.
-* Email settings and marketing consents.
 * Metadata schema.
 * Categories. 
 * API keys, usage & webhooks.
