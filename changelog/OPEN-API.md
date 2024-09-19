@@ -4,6 +4,13 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-09-16
+
+- Updated the following endpoints with new paging methods:
+  - GET `/v1/vouchers/{campaignId}/transactions`
+  - GET `/v1/loyalties/{campaignId}/members/{memberId}/transactions`
+  - GET `/v1/loyalties/members/{memberId}/transactions`
+
 ## 2024-09-12
 
 Added the descriptions to the following fields in the `ApplicableTo` schema:
