@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-09-24
+
+- Removed Giveaway/`LUCK_DRAW` schemas and other data for v20240902
+
 ## 2024-09-16
 
 - Updated the following endpoints with new paging methods:
