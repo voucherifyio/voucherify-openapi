@@ -288,10 +288,12 @@
 | /v1/trash-bin              | get    | List Bin Entries |              |               |
 | /v1/trash-bin/{binEntryId} | delete | Delete Bin Entry |              |               |
 ## Templates
-| endpoint                | method | summary                  | is supported | is deprecated |
-| ----------------------- | ------ | ------------------------ | ------------ | ------------- |
-| /v1/templates/campaigns | get    | List Campaign Templates  |              |               |
-| /v1/templates/campaigns | post   | Create Campaign Template |              |               |
+| endpoint                                     | method | summary                  | is supported | is deprecated |
+| -------------------------------------------- | ------ | ------------------------ | ------------ | ------------- |
+| /v1/templates/campaigns                      | get    | List Campaign Templates  |              |               |
+| /v1/templates/campaigns                      | post   | Create Campaign Template |              |               |
+| /v1/templates/campaigns/{campaignTemplateId} | get    | Get Campaign Template    |              |               |
+| /v1/templates/campaigns/{campaignTemplateId} | post   | Create Campaign Template |              |               |
 ## Management
 | endpoint                                                                       | method | summary                    | is supported | is deprecated |
 | ------------------------------------------------------------------------------ | ------ | -------------------------- | ------------ | ------------- |

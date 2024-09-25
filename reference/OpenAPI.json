@@ -675,6 +675,10 @@
         "type": "string",
         "example": "camp_rRsfatlwN7unSeUIJDCYedal"
       },
+      "ParameterCampaignTemplateId": {
+        "type": "string",
+        "example": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHcq"
+      },
       "ParameterEarningRuleId": {
         "type": "string",
         "example": "ern_CFuv1O0IDl8Jgph0ojhMu8bH"
@@ -42679,6 +42683,16 @@
           "name"
         ]
       },
+      "TemplatesCampaignGetResponseBody": {
+        "type": "object",
+        "title": "Templates Campaign Template Get Response Body",
+        "description": "Response body schema for **GET** `/templates/campaign/{campaignTemplateId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TemplatesGetCampaignTemplateBody"
+          }
+        ]
+      },
       "TemplatesCampaignListResponseBody": {
         "type": "object",
         "title": "Templates Campaign Template List Response Body",
@@ -42738,7 +42752,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique identifier of the campaign template.",
+            "description": "Unique identifier of the campaign template. It is assigned by Voucherify.",
             "example": "camp_tpl_eR9NsNJ5gqJRN2TG3fqCvbVl"
           },
           "name": {
@@ -42751,7 +42765,7 @@
           },
           "campaign_type": {
             "type": "string",
-            "description": "User-defined description of the campaign template.",
+            "description": "Type of the campaign used to create the campaign template. Templates created from a promotion tier are converted to `DISCOUNT_COUPONS`.",
             "enum": [
               "DISCOUNT_COUPONS",
               "GIFT_VOUCHERS"
@@ -82356,6 +82370,142 @@
                       ],
                       "total": 14,
                       "has_more": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "create-campaign-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Create Campaign Template",
+        "description": "Creates a template for a discount or gift campaign.\n\nA template stores campaign configuration **without** the following details:\n- Campaign name\n- Category\n- Code count\n\nThe following elements are not supported by campaign templates:\n- Redeeming API keys\n- Redeeming users\n- Customer loyalty tier\n- Static segments\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation]() to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Provide details for a campaign template",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatesCampaignCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details of a created campaign template.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignTemplateBase"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload is missing required properties in the request or the campaign includes features not supported by campaign templates.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "campaign_type_is_not_supported_by_campaign_template",
+                      "message": "Campaign of the given type is not supported by campaign template",
+                      "request_id": "v-0f3d6a65bb929f94f1"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_Tq8OnIpBAeHNY7KMM0rE5MB",
+                      "request_id": "v-0f3eed5a090c0fdf45",
+                      "resource_id": "camp_Tq8OnIpBAeHNY7KMM0rE5MB",
+                      "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/templates/campaigns/{campaignTemplateId}": {
+      "get": {
+        "operationId": "get-campaign-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Get Campaign Template",
+        "description": "Retrieves a campaign template available in the project.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "campaignTemplateId",
+            "description": "Pass the campaign template ID that was assigned by Voucherify.",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterCampaignId"
+            },
+            "required": true
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the details about a campaign template",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignGetResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHcq",
+                      "name": "Happy Hours Template",
+                      "description": "Template for a Happy Hours campaign with discount coupons.",
+                      "campaign_type": "DISCOUNT_COUPONS",
+                      "created_at": "2019-09-09T09:09:09.009Z",
+                      "object": "campaign_template"
                     }
                   }
                 }
