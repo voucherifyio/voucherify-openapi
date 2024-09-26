@@ -1,11 +1,11 @@
 ---
-title: Create Campaign Template
+title: Delete Campaign Template
 type: endpoint
 categorySlug: voucherify-api
-slug: create-campaign-template
+slug: delete-campaign-template
 parentDocSlug: templates
 hidden: false
-order: 30
+order: 50
 ---
 [block:html]
 {

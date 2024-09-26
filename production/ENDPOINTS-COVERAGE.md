@@ -294,6 +294,7 @@
 | /v1/templates/campaigns                      | post   | Create Campaign Template |              |               |
 | /v1/templates/campaigns/{campaignTemplateId} | get    | Get Campaign Template    |              |               |
 | /v1/templates/campaigns/{campaignTemplateId} | put    | Update Campaign Template |              |               |
+| /v1/templates/campaigns/{campaignTemplateId} | delete | Delete Campaign Template |              |               |
 ## Management
 | endpoint                                                                       | method | summary                    | is supported | is deprecated |
 | ------------------------------------------------------------------------------ | ------ | -------------------------- | ------------ | ------------- |
