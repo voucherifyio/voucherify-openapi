@@ -4,6 +4,18 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-09-24
+
+- Updated titles and descriptions for:
+  - `RedeemPromotionStack`
+  - `RedeemPromotionTier`
+  - `RedeemGiftCard`
+  - `RedeemLoyaltyCard`
+  - `RedeemVoucher`
+- Fixes to descriptions:
+  - `override` flag in the `Order` object
+  - broken link in `Validate Voucher [Deprecated]`
+
 ## 2024-09-16
 
 - Updated the following endpoints with new paging methods:
