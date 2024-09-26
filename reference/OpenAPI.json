@@ -8457,10 +8457,33 @@
           }
         }
       },
+      "CampaignsCreateBaseValidationRules": {
+        "type": "object",
+        "title": "Campaign Create Schema Base With Validation Rules",
+        "description": "Base body schema for creating a campaign using **POST** `v1/campaigns`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsCreateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "validation_rules": {
+                "type": "array",
+                "description": "Array containing the ID of the validation rule associated with the promotion tier.",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 1
+              }
+            }
+          }
+        ]
+      },
       "CampaignsCreateBase": {
         "type": "object",
         "title": "Campaign Create Schema Base",
-        "description": "Base body schema for creating a campaign using **POST** `v1/campaigns`.",
+        "description": "Base body schema for creating a campaign",
         "properties": {
           "name": {
             "type": "string",
@@ -8519,14 +8542,6 @@
             "type": "string",
             "description": "Defines the amount of time the vouchers will be active after publishing. The value is shown in the ISO 8601 format. For example, a voucher with the value of P24D will be valid for a duration of 24 days."
           },
-          "validation_rules": {
-            "type": "array",
-            "description": "Array containing the ID of the validation rule associated with the promotion tier.",
-            "items": {
-              "type": "string"
-            },
-            "maxItems": 1
-          },
           "category_id": {
             "type": "string",
             "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
@@ -8539,7 +8554,8 @@
           "metadata": {
             "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
-          }
+          },
+          "access_settings": {}
         }
       },
       "CampaignsUpdateBase": {
@@ -8814,7 +8830,7 @@
         "title": "Create Discount Coupons Campaign",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CampaignsCreateBase"
+            "$ref": "#/components/schemas/CampaignsCreateBaseValidationRules"
           },
           {
             "type": "object",
@@ -8840,7 +8856,7 @@
         "title": "Create Referral Program",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CampaignsCreateBase"
+            "$ref": "#/components/schemas/CampaignsCreateBaseValidationRules"
           },
           {
             "type": "object",
@@ -8869,7 +8885,7 @@
         "title": "Create Gift Campaign",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CampaignsCreateBase"
+            "$ref": "#/components/schemas/CampaignsCreateBaseValidationRules"
           },
           {
             "type": "object",
@@ -8895,7 +8911,7 @@
         "title": "Create Loyalty Campaign",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CampaignsCreateBase"
+            "$ref": "#/components/schemas/CampaignsCreateBaseValidationRules"
           },
           {
             "type": "object",
@@ -8921,7 +8937,7 @@
         "title": "Create Promotion Campaign",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CampaignsCreateBase"
+            "$ref": "#/components/schemas/CampaignsCreateBaseValidationRules"
           },
           {
             "type": "object",
@@ -8956,7 +8972,7 @@
         "title": "Create Giveaway Campaign",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CampaignsCreateBase"
+            "$ref": "#/components/schemas/CampaignsCreateBaseValidationRules"
           },
           {
             "type": "object",
@@ -42715,7 +42731,7 @@
       "TemplatesCampaignGetResponseBody": {
         "type": "object",
         "title": "Templates Campaign Template Get Response Body",
-        "description": "Response body schema for **GET** `/templates/campaign/{campaignTemplateId}`.",
+        "description": "Response body schema for **GET** `/v1/templates/campaign/{campaignTemplateId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/TemplatesGetCampaignTemplateBody"
@@ -42725,10 +42741,20 @@
       "TemplatesCampaignListResponseBody": {
         "type": "object",
         "title": "Templates Campaign Template List Response Body",
-        "description": "Response body schema for **GET** `/templates/campaign`.",
+        "description": "Response body schema for **GET** `/v1/templates/campaign`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/TemplatesCampaignTemplateList"
+          }
+        ]
+      },
+      "TemplatesCampaignCreateFromTemplateRequestBody": {
+        "type": "object",
+        "title": "Templates Campaign Template Create Request Body",
+        "description": "Response body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/campaign-setup`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TemplatesCreateCampaignFromTemplateBody"
           }
         ]
       },
@@ -42838,6 +42864,42 @@
               }
             }
           }
+        ]
+      },
+      "TemplatesCreateCampaignFromTemplateBody": {
+        "type": "object",
+        "description": "",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsCreateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "code_config": {
+                    "$ref": "#/components/schemas/CodeConfig"
+                  },
+                  "redemption": {
+                    "type": "object",
+                    "description": "Stores the quantity of redemptions that can be applied to the voucher.",
+                    "properties": {
+                      "quantity": {
+                        "type": "integer",
+                        "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "required": [
+          "name"
         ]
       },
       "TrashBinListResponseBody": {
@@ -82678,6 +82740,89 @@
         "responses": {
           "204": {
             "description": "Returns no content if deletion is successful."
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign_template with id camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "request_id": "v-0f6d3efe61099b2824",
+                      "resource_id": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "resource_type": "campaign_template"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/templates/campaigns/{campaignTemplateId}/campaign-setup": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignTemplateId",
+          "description": "Pass the campaign template ID that was assigned by Voucherify.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignTemplateId"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "create-campaign-from-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Create Campaign From Template",
+        "description": "Creates a campaign out of a campaign template.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatesCampaignCreateFromTemplateRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignGetResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {}
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "Returns an error if a resource is not found.",
