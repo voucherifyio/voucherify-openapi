@@ -287,7 +287,7 @@ export const rawTakeList = {
     post: true,
   },
   "/v1/customers/{customerId}/consents": {
-    put: true,
+    put: ["ruby", "php", "java"],
   },
   "/v1/customers/{customerId}/activities": { get: ["ruby"] },
   "/v1/customers/{customerId}/segments": {

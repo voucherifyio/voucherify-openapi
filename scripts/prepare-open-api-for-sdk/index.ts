@@ -4,7 +4,7 @@ import path from "path";
 import minimist from "minimist";
 import colors from "colors";
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
-import originalOpenAPIContent from "../../reference/OpenAPI.json";
+import originalOpenAPIContent from "../../reference/OpenAPIForSDK.json";
 import _ from "lodash";
 
 let openAPIContent = originalOpenAPIContent;
