@@ -114,6 +114,13 @@ const main = async (languageOptions: LanguageOptions) => {
     .properties;
   //Do not do breaking change in `ApplicableTo`
   delete openAPIContent.components.schemas.ApplicableTo.properties.target.enum;
+  //Fix `VouchersTransactionsListResponseBody`
+  if (languageOptions.name !== "python") {
+    delete openAPIContent.components.schemas
+      .VouchersTransactionsListResponseBody.properties.object.enum;
+    delete openAPIContent.components.schemas
+      .VouchersTransactionsListResponseBody.properties.data_ref.enum;
+  }
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(

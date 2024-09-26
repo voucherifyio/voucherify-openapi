@@ -146,7 +146,12 @@ const generateReadme = async (
 };
 
 const main = async (generateFor: GenerateForOption) => {
-  const openApiPath = path.join(__dirname, "../reference/OpenAPI.json");
+  const openApiPath = path.join(
+    __dirname,
+    generateFor === "default"
+      ? "../reference/OpenAPI.json"
+      : "../reference/OpenAPIForSDK.json",
+  );
   const openAPIContent = JSON.parse(
     (await fs.readFile(openApiPath)).toString(),
   );
