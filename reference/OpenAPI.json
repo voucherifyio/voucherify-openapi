@@ -42751,10 +42751,20 @@
       "TemplatesCampaignCreateFromTemplateRequestBody": {
         "type": "object",
         "title": "Templates Campaign Template Create Request Body",
-        "description": "Response body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/campaign-setup`.",
+        "description": "Request body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/campaign-setup`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/TemplatesCreateCampaignFromTemplateBody"
+          }
+        ]
+      },
+      "TemplatesCampaignCreateFromTemplateResponseBody": {
+        "type": "object",
+        "title": "Templates Campaign Template Create Response Body",
+        "description": "Response body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/campaign-setup`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TemplatesCreateCampaignFromTemplate"
           }
         ]
       },
@@ -42845,6 +42855,57 @@
           "name",
           "campaign_type",
           "created_at",
+          "object"
+        ]
+      },
+      "TemplatesCreateCampaignFromTemplate": {
+        "type": "object",
+        "description": "",
+        "properties": {
+          "created_resources": {
+            "type": "array",
+            "description": "Contains a list of resources that have been added in the project when the campaign has been created out of the template.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier assigned to the created resource. It is assigned by Voucherify."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "The type of the created resource.",
+                  "enum": [
+                    "validation_rules",
+                    "product",
+                    "sku",
+                    "products_collection",
+                    "segments",
+                    "location"
+                  ]
+                }
+              }
+            }
+          },
+          "campaign": {
+            "description": "Details of the created campaign.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Campaign"
+              }
+            ]
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about the campaign created out of the campaign template.",
+            "enum": [
+              "campaign_setup"
+            ]
+          }
+        },
+        "required": [
+          "created_resources",
+          "campaign",
           "object"
         ]
       },
@@ -82785,7 +82846,7 @@
           "Templates"
         ],
         "summary": "Create Campaign From Template",
-        "description": "Creates a campaign out of a campaign template.",
+        "description": "Creates a campaign out of a campaign template.\n\nTo create a campaign, you need to provide the name only in the request. Then, the configuration from the template will be used.\n\nYou can send new values of the fields listed below to replace the settings saved in the template. However, you cannot assign an existing validation rule or create a new one in the request. If the template has a validation rule, a new validation rule is always created for the campaign. When the campaign has been created, then you can:\n- [update the validation rule](ref:update-validation-rule),\n[unassign the validation rule](ref:delete-validation-rule-assignment),\n[assign an existing validation rule](ref:create-validation-rule-assignment).",
         "parameters": [],
         "security": [
           {
@@ -82794,7 +82855,7 @@
           }
         ],
         "requestBody": {
-          "description": "",
+          "description": "Only `name` is required. The rest of the fields will overwrite the template configuration.",
           "content": {
             "application/json": {
               "schema": {
@@ -82802,7 +82863,12 @@
               },
               "examples": {
                 "Example": {
-                  "value": {}
+                  "value": {
+                    "name": "Campaign-out-of-template",
+                    "description": "Created out of a template",
+                    "auto_join": true,
+                    "join_once": true
+                  }
                 }
               }
             }
@@ -82810,15 +82876,109 @@
         },
         "responses": {
           "200": {
-            "description": "",
+            "description": "Returns the details about the created campaign and about the resources that have been created out of the template and added to the project.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TemplatesCampaignGetResponseBody"
+                  "$ref": "#/components/schemas/TemplatesCampaignCreateFromTemplateResponseBody"
                 },
                 "examples": {
                   "Example": {
-                    "value": {}
+                    "value": {
+                      "created_resources": [
+                        {
+                          "id": "val_3LBFw25WTmAK",
+                          "object": "validation_rules"
+                        }
+                      ],
+                      "campaign": {
+                        "id": "camp_txDwyDPeLvBEq490bfV2nLwo",
+                        "name": "Campaign-out-of-template",
+                        "campaign_type": "DISCOUNT_COUPONS",
+                        "type": "AUTO_UPDATE",
+                        "is_referral_code": false,
+                        "voucher": {
+                          "type": "DISCOUNT_VOUCHER",
+                          "discount": {
+                            "type": "AMOUNT",
+                            "amount_off": 2500,
+                            "aggregated_amount_limit": 25000,
+                            "units": null,
+                            "effect": "APPLY_TO_ITEMS"
+                          },
+                          "gift": null,
+                          "loyalty_card": null,
+                          "redemption": {
+                            "quantity": 4,
+                            "redeemed_quantity": 0
+                          },
+                          "code_config": {
+                            "pattern": "##",
+                            "length": 2,
+                            "charset": "xD",
+                            "prefix": "U-",
+                            "postfix": "-WOT"
+                          }
+                        },
+                        "auto_join": true,
+                        "join_once": true,
+                        "use_voucher_metadata_schema": true,
+                        "description": "Winter 2024-25",
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_hours": null,
+                        "validity_day_of_week": null,
+                        "activity_duration_after_publishing": null,
+                        "vouchers_count_invalid": null,
+                        "vouchers_count": 0,
+                        "active": true,
+                        "metadata": null,
+                        "created_at": "2024-09-26T17:14:56.226Z",
+                        "updated_at": null,
+                        "category": null,
+                        "creation_status": "DONE",
+                        "protected": false,
+                        "validation_rules_assignments": {
+                          "data": [
+                            {
+                              "id": "asgm_BLgJYmo64rnAK5eB",
+                              "rule_id": "val_3LBFw25WTmAK",
+                              "related_object_id": "camp_txDwyDPeLvBEq490bfV2nLwo",
+                              "related_object_type": "campaign",
+                              "created_at": "2024-09-26T17:14:56.226Z",
+                              "object": "validation_rules_assignment"
+                            }
+                          ],
+                          "total": 1
+                        },
+                        "object": "campaign",
+                        "deleted": false,
+                        "deleted_at": null,
+                        "category_id": null,
+                        "voucher_type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "amount_off": 2500,
+                          "aggregated_amount_limit": 25000,
+                          "units": null,
+                          "effect": "APPLY_TO_ITEMS"
+                        },
+                        "gift": null,
+                        "loyalty_card": null,
+                        "voucher_code_config": {
+                          "pattern": "##",
+                          "length": 2,
+                          "charset": "xD",
+                          "prefix": "Your-",
+                          "postfix": "-Voucher"
+                        },
+                        "default_voucher_redemption": {
+                          "quantity": 4
+                        }
+                      },
+                      "object": "campaign_setup"
+                    }
                   }
                 }
               }
