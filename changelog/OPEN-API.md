@@ -4,6 +4,18 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-09-30
+
+Added the following endpoints:
+- POST `v1/templates/campaign`
+- GET `v1/templates/campaign/{campaignTemplateId}`
+- PUT `v1/templates/campaign/{campaignTemplateId}`
+- DELETE `v1/templates/campaign/{campaignTemplateId}`
+- POST `v1/templates/campaign/{campaignTemplateId}/campaign-setup`
+
+Added or updated the following schemas:
+- `ParameterCampaignTemplateId`, `CampaignsCreateBaseValidationRules`, `AccessSettings`, `TemplatesCampaignsCreateRequestBody`, `TemplatesCampaignsUpdateRequestBody`, `TemplatesCampaignsNameDescription`, `TemplatesCampaignsGetResponseBody`, `TemplatesCampaignsListResponseBody`, `TemplatesCampaignsCreateFromTemplateRequestBody`, `TemplatesCampaignsCreateFromTemplateResponseBody`, `TemplatesCampaignsCreateTemplateResponseBody`, `CampaignTemplateBase`, `CampaignTemplateBody`, `TemplatesCreateCampaignFromTemplateBody`, 
+
 ## 2024-09-16
 
 - Updated the following endpoints with new paging methods:
