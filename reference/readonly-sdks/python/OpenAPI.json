@@ -439,100 +439,6 @@
         "title": "CampaignsCreateRequestBody",
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Campaign name.",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "description": "An optional field to keep any extra textual information about the campaign such as a campaign description and details.",
-            "nullable": true
-          },
-          "type": {
-            "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
-            "enum": [
-              "AUTO_UPDATE",
-              "STATIC"
-            ],
-            "nullable": true
-          },
-          "join_once": {
-            "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once.",
-            "nullable": true
-          },
-          "auto_join": {
-            "type": "boolean",
-            "description": "Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled.",
-            "nullable": true
-          },
-          "use_voucher_metadata_schema": {
-            "type": "boolean",
-            "description": "Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema.",
-            "nullable": true
-          },
-          "vouchers_count": {
-            "type": "integer",
-            "description": "Total number of unique vouchers in campaign (size of campaign).",
-            "nullable": true
-          },
-          "start_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Activation timestamp defines when the campaign starts to be active in ISO 8601 format. Campaign is *inactive before* this date. ",
-            "example": "2022-09-20T00:00:00.000Z",
-            "nullable": true
-          },
-          "expiration_date": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Expiration timestamp defines when the campaign expires in ISO 8601 format.  Campaign is *inactive after* this date.",
-            "example": "2022-09-30T00:00:00.000Z",
-            "nullable": true
-          },
-          "validity_timeframe": {
-            "$ref": "#/components/schemas/ValidityTimeframe"
-          },
-          "validity_day_of_week": {
-            "$ref": "#/components/schemas/ValidityDayOfWeek"
-          },
-          "validity_hours": {
-            "$ref": "#/components/schemas/ValidityHours"
-          },
-          "activity_duration_after_publishing": {
-            "type": "string",
-            "description": "Defines the amount of time the vouchers will be active after publishing. The value is shown in the ISO 8601 format. For example, a voucher with the value of P24D will be valid for a duration of 24 days.",
-            "nullable": true
-          },
-          "validation_rules": {
-            "title": "CampaignsCreateRequestBodyValidationRules",
-            "type": "array",
-            "description": "Array containing the ID of the validation rule associated with the promotion tier.",
-            "items": {
-              "title": "CampaignsCreateRequestBodyValidationRulesItem",
-              "type": "string"
-            },
-            "maxItems": 1,
-            "nullable": true
-          },
-          "category_id": {
-            "type": "string",
-            "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
-            "example": "cat_0b688929a2476386a7",
-            "nullable": true
-          },
-          "category": {
-            "type": "string",
-            "description": "The category assigned to the campaign. Either pass this parameter OR the `category_id`.",
-            "nullable": true
-          },
-          "metadata": {
-            "title": "CampaignsCreateRequestBodyMetadata",
-            "type": "object",
-            "nullable": true
-          },
           "campaign_type": {
             "type": "string",
             "enum": [
@@ -1175,6 +1081,9 @@
             "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
             "example": "cat_0b688929a2476386a7",
             "nullable": true
+          },
+          "access_settings": {
+            "$ref": "#/components/schemas/AccessSettings"
           }
         }
       },
@@ -4923,17 +4832,6 @@
             "description": "Defines the amount of time the vouchers will be active after publishing. The value is shown in the ISO 8601 format. For example, a voucher with the value of P24D will be valid for a duration of 24 days.",
             "nullable": true
           },
-          "validation_rules": {
-            "title": "LoyaltiesCreateCampaignRequestBodyValidationRules",
-            "type": "array",
-            "description": "Array containing the ID of the validation rule associated with the promotion tier.",
-            "items": {
-              "title": "LoyaltiesCreateCampaignRequestBodyValidationRulesItem",
-              "type": "string"
-            },
-            "maxItems": 1,
-            "nullable": true
-          },
           "category_id": {
             "type": "string",
             "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
@@ -4949,6 +4847,20 @@
             "title": "LoyaltiesCreateCampaignRequestBodyMetadata",
             "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format.",
+            "nullable": true
+          },
+          "access_settings": {
+            "$ref": "#/components/schemas/AccessSettings"
+          },
+          "validation_rules": {
+            "title": "LoyaltiesCreateCampaignRequestBodyValidationRules",
+            "type": "array",
+            "description": "Array containing the ID of the validation rule associated with the promotion tier.",
+            "items": {
+              "title": "LoyaltiesCreateCampaignRequestBodyValidationRulesItem",
+              "type": "string"
+            },
+            "maxItems": 1,
             "nullable": true
           },
           "campaign_type": {
@@ -10984,6 +10896,9 @@
             "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
             "example": "cat_0b688929a2476386a7",
             "nullable": true
+          },
+          "access_settings": {
+            "$ref": "#/components/schemas/AccessSettings"
           },
           "activity_duration_after_publishing": {
             "type": "string",
@@ -27110,10 +27025,73 @@
         "type": "string",
         "format": "hostname"
       },
+      "AccessSettings": {
+        "title": "AccessSettings",
+        "type": "object",
+        "description": "Assigns or unassigns an area or store to the campaign.\n\n**NOTE**: this object can be sent if the Areas and Stores enterprise feature is enabled. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.",
+        "properties": {
+          "assign": {
+            "title": "AccessSettingsAssign",
+            "type": "object",
+            "description": "Assigns the campaign to an area or a store. Provide the area and/or store IDs in the respective arrays. If a campaign changes assignments between areas or stores, unassign it from the area. For example, if a campaign is assigned to Area-01, but it must be now assigned to Store-01 within this area, you have to unassign the campaign from Area-01 and assign to Store-01 only.\n\nIf you want to assign the campaign to stores only, you do not have to send the area ID.",
+            "properties": {
+              "areas_ids": {
+                "title": "AccessSettingsAssignAreasIds",
+                "type": "array",
+                "description": "List all area IDs to which the campaign will be assigned.",
+                "items": {
+                  "title": "AccessSettingsAssignAreasIdsItem",
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "area_stores_ids": {
+                "title": "AccessSettingsAssignAreaStoresIds",
+                "type": "array",
+                "description": "List all store IDs to which the campaign will be assigned.",
+                "items": {
+                  "title": "AccessSettingsAssignAreaStoresIdsItem",
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            },
+            "nullable": true
+          },
+          "unassign": {
+            "title": "AccessSettingsUnassign",
+            "type": "object",
+            "description": "Unassigns the campaign from an area or a store. Provide the area and/or store IDs in the respective arrays. If a campaign changes assignments between areas or stores, unassign it first. For example, if a campaign is assigned to Area-01, but it must be now assigned to Store-01 within this area, you have to unassign the campaign from Area-01 and assigned to Store-01 only.\n\nIf you want to assign the campaign to stores only, you do not have to send the area ID.",
+            "properties": {
+              "areas_ids": {
+                "title": "AccessSettingsUnassignAreasIds",
+                "type": "array",
+                "description": "List all area IDs from which the campaign will be unassigned.",
+                "items": {
+                  "title": "AccessSettingsUnassignAreasIdsItem",
+                  "type": "string"
+                },
+                "nullable": true
+              },
+              "area_stores_ids": {
+                "title": "AccessSettingsUnassignAreaStoresIds",
+                "type": "array",
+                "description": "List all store IDs to which the campaign will be unassigned.",
+                "items": {
+                  "title": "AccessSettingsUnassignAreaStoresIdsItem",
+                  "type": "string"
+                },
+                "nullable": true
+              }
+            },
+            "nullable": true
+          }
+        }
+      },
       "AccessSettingsCampaignAssignmentsList": {
         "title": "AccessSettingsCampaignAssignmentsList",
         "type": "object",
-        "description": "Lists all assignments of the campaign to areas and stores if the Areas and Stores feature is enabled (Enterprise feature).",
+        "description": "Lists all assignments of the campaign to areas and stores.\n\n**NOTE**: This object is returned only if the Areas and Stores enterprise feature is enabled. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.",
         "properties": {
           "object": {
             "type": "string",
