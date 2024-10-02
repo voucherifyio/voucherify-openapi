@@ -2,7 +2,8 @@ import { createResourceName } from "../helpers/createResourceName";
 import { compact, uniq } from "lodash";
 
 export const mergeMultipleOkResponsesIntoOne = (
-  paths
+  paths,
+  use2XX?: boolean,
 ): { paths: any; newSchemas: any } => {
   const newSchemas: Record<string, any> = {};
   return {
@@ -32,8 +33,8 @@ export const mergeMultipleOkResponsesIntoOne = (
                     const response = entry.responses[responseStatus];
                     return response?.content?.["application/json"]?.schema
                       ?.$ref;
-                  })
-                )
+                  }),
+                ),
               );
               if (responsesRefs.length < 1) {
                 throw {
@@ -51,7 +52,7 @@ export const mergeMultipleOkResponsesIntoOne = (
                     ? accumulator + " and " + response.description
                     : accumulator;
                 },
-                ""
+                "",
               );
               newSchemas[newSchemaName] = {
                 type: "object",
@@ -69,14 +70,17 @@ export const mergeMultipleOkResponsesIntoOne = (
                   },
                 },
               };
-              return [
-                method,
-                { ...entry, responses: { 200: responsesSchema } },
-              ];
-            })
+              const responses = {};
+              if (use2XX) {
+                responses["2XX"] = responsesSchema;
+              } else {
+                responses[200] = responsesSchema;
+              }
+              return [method, { ...entry, responses }];
+            }),
           ),
         ];
-      })
+      }),
     ),
     newSchemas,
   };

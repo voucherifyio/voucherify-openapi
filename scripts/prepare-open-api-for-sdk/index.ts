@@ -29,6 +29,7 @@ type LanguageOptions = {
   name: string;
   simplifyAllObjectsThatHaveAdditionalProperties?: true;
   putNotObjectSchemasIntoObjectSchemas?: true;
+  use2XX?: true;
 };
 
 const supportedLanguages: {
@@ -36,14 +37,15 @@ const supportedLanguages: {
 } = {
   python: {
     name: "python",
-    simplifyAllObjectsThatHaveAdditionalProperties: true,
+    simplifyAllObjectsThatHaveAdditionalProperties: true, //MUST STAY!
+    use2XX: true, //MUST STAY!
   },
   ruby: {
     name: "ruby",
   },
   php: {
     name: "php",
-    putNotObjectSchemasIntoObjectSchemas: true,
+    putNotObjectSchemasIntoObjectSchemas: true, //MUST STAY!
   },
   java: {
     name: "java",
@@ -93,9 +95,6 @@ const main = async (languageOptions: LanguageOptions) => {
     }
   });
   delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
-  //Delete unused Security schemas
-  delete openAPIContent.components.securitySchemes["X-Management-Id"];
-  delete openAPIContent.components.securitySchemes["X-Management-Token"];
   //Fix voucher - to prevent breaking changes
   delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
   delete openAPIContent.components.schemas.AsyncActionBase.properties
@@ -110,11 +109,14 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.schemas.MemberActivity.properties.type.enum;
   delete openAPIContent.components.schemas.MemberActivity.properties.data
     .properties;
+  //Do not do breaking change in `ApplicableTo`
+  delete openAPIContent.components.schemas.ApplicableTo.properties.target.enum;
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
     openAPIContent.paths,
     languageOptions.name,
+    languageOptions.use2XX,
   );
   const parameters = removedNotUsedParameters(
     openAPIContent.components.parameters,
@@ -139,7 +141,34 @@ const main = async (languageOptions: LanguageOptions) => {
     languageOptions,
   );
 
-  const newPaths = removeBuggedTagsFromOpenAPIPaths(paths);
+  const pathsWithoutBuggedTags = removeBuggedTagsFromOpenAPIPaths(paths);
+  const pathsWithFixedResponses = Object.fromEntries(
+    Object.entries(pathsWithoutBuggedTags).map(([path, pathEntry]) => {
+      return [
+        path,
+        Object.fromEntries(
+          Object.entries(pathEntry).map(([method, methodEntry]) => {
+            methodEntry.responses = Object.fromEntries(
+              _.compact(
+                Object.entries(methodEntry.responses || {}).map(
+                  ([statusCode, responseEntry]) => {
+                    if (!statusCode.startsWith("2")) {
+                      return;
+                    }
+                    if (languageOptions.use2XX) {
+                      return ["2XX", responseEntry];
+                    }
+                    return [statusCode, responseEntry];
+                  },
+                ),
+              ),
+            );
+            return [method, methodEntry];
+          }),
+        ),
+      ];
+    }),
+  );
 
   openAPIContent.components.parameters = removeBuggedTagsFromOpenAPIParameters(
     openAPIContent.components.parameters,
@@ -166,10 +195,10 @@ const main = async (languageOptions: LanguageOptions) => {
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
-      schemas: schemasWithoutNotUsed,
+      schemas: fixRefUagesInAllSchemasProperties(schemasWithoutNotUsed),
       parameters,
     },
-    paths: newPaths,
+    paths: pathsWithFixedResponses,
   });
 
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
@@ -289,29 +318,37 @@ const copySchemasIfUsedAsAllOfInBase = (schemas): Record<string, any> => {
   );
 };
 
-const addNullableToAllSchemasProperties = (schemas) => {
+const fixRefUagesInAllSchemasProperties = (schemas) => {
   return Object.fromEntries(
     Object.entries(schemas).map(([title, schema]) => {
-      return [title, addNullableToAllSchemaProperties(schema)];
+      return [title, fixRefsUsages(schema)];
     }),
   );
 };
 
-const addNullableToAllSchemaProperties = (schema) => {
+const returnRefSchemaIfAllOfContainsOnly1Reference = (schema) => {
+  if (schema?.allOf?.length === 1 && schema.allOf[0]?.$ref) {
+    return schema.allOf[0];
+  }
+  return false;
+};
+
+const fixRefsUsages = (schema) => {
+  const refSchema = returnRefSchemaIfAllOfContainsOnly1Reference(schema);
+  if (refSchema) {
+    return refSchema;
+  }
   if (schema.items) {
-    schema.items = addNullableToAllSchemaProperties(schema.items);
+    schema.items = fixRefsUsages(schema.items);
   } else if (schema.properties) {
     schema.properties = Object.fromEntries(
       Object.entries(schema.properties).map(([property, schema]: any) => {
-        return [property, addNullableToAllSchemaProperties(schema)];
+        return [property, fixRefsUsages(schema)];
       }),
     );
   } else if (schema.additionalProperties) {
-    schema.additionalProperties = addNullableToAllSchemaProperties(
-      schema.additionalProperties,
-    );
+    schema.additionalProperties = fixRefsUsages(schema.additionalProperties);
   }
-  schema.nullable = true;
   return schema;
 };
 
