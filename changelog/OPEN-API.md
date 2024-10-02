@@ -4,6 +4,16 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-10-02
+
+Fixed filters for the following endpoints:
+- GET `/v1/customers/{customerId}/redeemables`
+- GET `/v1/referrals/{campaignId}/members/{memberId}/holders`
+- GET `/v1/referrals/members/{memberId}/holders`
+- GET `/v1/locations`
+- GET `/v1/redemptions`
+- GET `/v1/templates/campaigns`
+
 ## 2024-09-16
 
 - Updated the following endpoints with new paging methods:
