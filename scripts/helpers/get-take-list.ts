@@ -392,6 +392,72 @@ export const rawTakeList = {
     post: true,
   },
   "/client/v1/events": { post: true },
+  "/v1/trash-bin": { get: true },
+  "/v1/trash-bin/{binEntryId}": { delete: true },
+  "/management/v1/projects": { post: true, get: true },
+  "/management/v1/projects/{projectId}": {
+    post: true,
+    get: true,
+    delete: true,
+  },
+  "/management/v1/projects/users/invite": {
+    post: true,
+  },
+  "/management/v1/projects/{projectId}/users": {
+    post: true,
+    get: true,
+  },
+  "/management/v1/projects/{projectId}/users/{userId}": {
+    get: true,
+    put: true,
+    delete: true,
+  },
+  "/management/v1/projects/{projectId}/metadata-schemas": {
+    post: true,
+    get: true,
+  },
+  "/management/v1/projects/{projectId}/metadata-schemas/{metadataSchemaId}": {
+    get: true,
+    put: true,
+    delete: true,
+  },
+  "/management/v1/projects/{projectId}/custom-event-schemas": {
+    post: true,
+    get: true,
+  },
+  "/management/v1/projects/{projectId}/custom-event-schemas/{customEventSchemaId}":
+    {
+      get: true,
+      put: true,
+      delete: true,
+    },
+  "/management/v1/projects/{projectId}/stacking-rules": {
+    post: true,
+    get: true,
+  },
+  "/management/v1/projects/{projectId}/stacking-rules/{stackingRulesId}": {
+    get: true,
+    put: true,
+    delete: true,
+  },
+  "/management/v1/projects/{projectId}/webhooks": {
+    post: true,
+    get: true,
+  },
+  "/management/v1/projects/{projectId}/webhooks/{webhookId}": {
+    get: true,
+    put: true,
+    delete: true,
+  },
+  "/management/v1/projects/{projectId}/branding": {
+    post: true,
+    get: true,
+  },
+  "/management/v1/projects/{projectId}/branding/{brandingId}": {
+    get: true,
+    put: true,
+    delete: true,
+  },
 };
 
 export const getTakeList = (
