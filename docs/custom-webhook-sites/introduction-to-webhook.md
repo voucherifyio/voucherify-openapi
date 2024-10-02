@@ -122,9 +122,80 @@ Then, you can validate the signature by reconstructing it and comparing it to th
 
 Reconstruct it using the keyed-hash message authentication code HMAC. It is built with the cryptographic hash function **sha256** and the secret cryptographic key taken from the Project settings.
 
-To see an example, go to the `verifySignature` method in the [NodeJS SDK](https://github.com/voucherifyio/voucherify-nodejs-sdk/blob/c63f738c5a53ecb9a5006a04d80d612ee70bdeae/src/utils.js#L102).
+See the following examples for Java and the `verifySignature` method in the [NodeJS SDK](https://github.com/voucherifyio/voucherify-nodejs-sdk/blob/c63f738c5a53ecb9a5006a04d80d612ee70bdeae/src/utils.js#L102).
 
+```java Java
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+
+class HelloWorld {
+
+    public static void main(String[] args)  throws InvalidKeyException, NoSuchAlgorithmException {
+        byte[] secretKey = "secretKey".getBytes(StandardCharsets.UTF_8);
+
+        // when payload is JSON object - whitespaces must be removed
+        String signature1 = "a17d2ac229d1ebbb5f10e839c7985c4818e5986eab297f7e5979196d4d7d3ed2";
+        System.out.println(verifySignature(removeWhitespaces("{\n  \"a\": 1\n}"), signature1, secretKey));
+        System.out.println(verifySignature(removeWhitespaces("{\"a\":1}"), signature1, secretKey));
+
+        String signature2 = "f7cf97814a03146abedb9793f56e1dec34f618f82d10395310d053f749483ffb";
+        System.out.println(verifySignature(removeWhitespaces("{\n  \"a\\\"b\": 1\n}"), signature2, secretKey));
+
+        // when payload is directly a String
+        String signature3 = "53ff92957e1427ce23ad5bda9d0c5f2f4ff384d0806b83eeacb510c842d3a358";
+        System.out.println(verifySignature("  message  ", signature3, secretKey));
+    }
+    
+    public static String removeWhitespaces(String json) {
+        boolean quoted = false;
+        boolean escaped = false;
+        String out = "";
+    
+        for (Character c : json.toCharArray()) {
+            if (escaped) {
+                out += c;
+                escaped = false;
+                continue;
+            }
+    
+            if (c == '"') {
+                quoted = !quoted;
+            } else if (c == '\\') {
+                escaped = true;
+            }
+    
+            if (Character.isWhitespace(c) &! quoted) {
+                continue;
+            }
+    
+            out += c;
+        }
+
+        return out;
+    }
+    
+    public static boolean verifySignature(String payload, String signature, byte[] secretKey) throws InvalidKeyException, NoSuchAlgorithmException {
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(secretKey, "HmacSHA256"));
+        byte[] hash = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
+        String generatedSignature = bytesToHex(hash);
+        return generatedSignature.equals(signature);
+    }
+    
+    private static String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+
+}
 ```
+```javascript NodeJS
 const crypto = require('crypto') 
 verifySignature: function (signature, message, secretKey) {
   return crypto.createHmac('sha256', secretKey)

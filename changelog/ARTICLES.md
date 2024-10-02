@@ -7,6 +7,14 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-09-26
+
+Updated the Performance article with information about new latency; and other fixes.
+
+## 2024-09-23
+
+Updated the Webhooks v2024-01-01 article with a code example for webhook authentication.
+
 ## 2024-09-17
 
 Updated the Introduction to Webhooks – IP Whitelisting with new addresses

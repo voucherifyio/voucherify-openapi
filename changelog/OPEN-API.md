@@ -4,15 +4,18 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-## 2024-10-02
+## 2024-09-24
 
-Fixed filters for the following endpoints:
-- GET `/v1/customers/{customerId}/redeemables`
-- GET `/v1/referrals/{campaignId}/members/{memberId}/holders`
-- GET `/v1/referrals/members/{memberId}/holders`
-- GET `/v1/locations`
-- GET `/v1/redemptions`
-- GET `/v1/templates/campaigns`
+- Removed Giveaway/`LUCK_DRAW` schemas and other data for v20240902
+- Updated titles and descriptions for:
+  - `RedeemPromotionStack`
+  - `RedeemPromotionTier`
+  - `RedeemGiftCard`
+  - `RedeemLoyaltyCard`
+  - `RedeemVoucher`
+- Fixes to descriptions:
+  - `override` flag in the `Order` object
+  - broken link in `Validate Voucher [Deprecated]`
 
 ## 2024-09-16
 
@@ -56,6 +59,10 @@ Changes to responses to GET `/v1/async-actions/{asyncActionId}` for bulk updates
 
 ## 2024-09-03
 - Merged https://github.com/voucherifyio/voucherify-openapi/pull/793
+
+## 2024-09-02
+
+- Removed `created_at` and `-created_at` from the `order` query parameter for List Bin Entries – `ParameterOrderListBin`
 
 ## 2024-08-26
 

@@ -504,8 +504,7 @@
         "type": "string",
         "enum": [
           "discount",
-          "loyalty",
-          "lucky_draw"
+          "loyalty"
         ]
       },
       "ParameterOrderListPublications": {
@@ -733,8 +732,6 @@
       "ParameterOrderListBin": {
         "type": "string",
         "enum": [
-          "created_at",
-          "-created_at",
           "id",
           "-id"
         ]
@@ -1810,8 +1807,7 @@
           "GIFT_VOUCHERS",
           "REFERRAL_PROGRAM",
           "DISCOUNT_COUPONS",
-          "LOYALTY_PROGRAM",
-          "LUCKY_DRAW"
+          "LOYALTY_PROGRAM"
         ]
       },
       "ParameterOrigin": {
@@ -3157,7 +3153,7 @@
               },
               "override": {
                 "type": "boolean",
-                "description": "The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system."
+                "description": "The override set to `true` is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system. Override works only for endpoints that create an order in the database."
               },
               "name": {
                 "type": "string",
@@ -7702,8 +7698,7 @@
               "GIFT_VOUCHERS",
               "DISCOUNT_COUPONS",
               "PROMOTION",
-              "REFERRAL_PROGRAM",
-              "LUCKY_DRAW"
+              "REFERRAL_PROGRAM"
             ],
             "description": "Type of campaign."
           },
@@ -8551,26 +8546,6 @@
           }
         }
       },
-      "LuckyDraw": {
-        "type": "object",
-        "title": "Lucky Draw",
-        "description": "Object for defining detailed information about lucky draw should be applied",
-        "properties": {
-          "winners_count": {
-            "description": "It represents the total number of winners in a lucky draw.",
-            "minimum": 1,
-            "type": "string"
-          },
-          "unique_winners_per_draw": {
-            "description": "It indicates whether each winner in a draw is unique or not.",
-            "type": "string"
-          },
-          "unique_winners": {
-            "description": "Specifies whether each participant can win only once across multiple draws.",
-            "type": "string"
-          }
-        }
-      },
       "CampaignsCreateBase": {
         "type": "object",
         "title": "Campaign Create Schema Base",
@@ -8847,24 +8822,6 @@
           }
         ]
       },
-      "CampaignsUpdateGiveawayCampaign": {
-        "type": "object",
-        "title": "Update Giveaway Campaign",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CampaignsUpdateCouponCampaignBase"
-          },
-          {
-            "title": "Properties For Giveaway Campaign",
-            "description": "Body schema for update a campaign of giveaway type using **PUT** `v1/campaigns`.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/LuckyDraw"
-              }
-            ]
-          }
-        ]
-      },
       "CampaignsUpdatePromotionCampaign": {
         "type": "object",
         "title": "Update Promotion Campaign",
@@ -8893,9 +8850,6 @@
           },
           {
             "$ref": "#/components/schemas/CampaignsCreatePromotionCampaign"
-          },
-          {
-            "$ref": "#/components/schemas/CampaignsCreateGiveawayCampaign"
           }
         ]
       },
@@ -8918,9 +8872,6 @@
           },
           {
             "$ref": "#/components/schemas/CampaignsUpdatePromotionCampaign"
-          },
-          {
-            "$ref": "#/components/schemas/CampaignsUpdateGiveawayCampaign"
           }
         ]
       },
@@ -9061,35 +9012,6 @@
                     }
                   }
                 }
-              }
-            }
-          }
-        ]
-      },
-      "CampaignsCreateGiveawayCampaign": {
-        "title": "Create Giveaway Campaign",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/CampaignsCreateBase"
-          },
-          {
-            "type": "object",
-            "title": "Schema that contains unique properties for Giveaway Campaign",
-            "description": "Body schema for creating a campaign of giveaway type using **POST** `v1/campaigns`.",
-            "properties": {
-              "campaign_type": {
-                "type": "string",
-                "default": "LUCKY_DRAW",
-                "enum": [
-                  "LUCKY_DRAW"
-                ],
-                "description": "Type of campaign."
-              },
-              "voucher": {
-                "$ref": "#/components/schemas/GiveawayCampaignVoucher"
-              },
-              "lucky_draw": {
-                "$ref": "#/components/schemas/LuckyDraw"
               }
             }
           }
@@ -9683,44 +9605,6 @@
           "type",
           "discount",
           "is_referral_code"
-        ]
-      },
-      "GiveawayCampaignVoucher": {
-        "title": "Object representing voucher property for Giveaway Campaign",
-        "properties": {
-          "type": {
-            "type": "string",
-            "default": "DISCOUNT_VOUCHER",
-            "description": "Type of voucher.",
-            "enum": [
-              "DISCOUNT_VOUCHER"
-            ]
-          },
-          "discount": {
-            "$ref": "#/components/schemas/Discount"
-          },
-          "code_config": {
-            "$ref": "#/components/schemas/CodeConfig"
-          },
-          "redemption": {
-            "type": "object",
-            "description": "Defines the redemption limits on vouchers.",
-            "properties": {
-              "quantity": {
-                "type": "integer",
-                "nullable": true,
-                "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
-              }
-            }
-          },
-          "is_referral_code": {
-            "type": "boolean",
-            "description": "Flag indicating whether this voucher is a referral code; `true` for campaign type `REFERRAL_PROGRAM`."
-          }
-        },
-        "required": [
-          "type",
-          "discount"
         ]
       },
       "GiftCampaignVoucher": {
@@ -15019,9 +14903,9 @@
         }
       },
       "RedeemPromotionStack": {
-        "title": "Redeem Promotion Stack",
+        "title": "Promotion Stack Redeemable",
         "type": "object",
-        "description": "Redeem a discount code.",
+        "description": "Validate or redeem a promotion stack.",
         "properties": {
           "object": {
             "type": "string",
@@ -15042,9 +14926,9 @@
         ]
       },
       "RedeemPromotionTier": {
-        "title": "Redeem Promotion Tier",
+        "title": "Promotion Tier Redeemable",
         "type": "object",
-        "description": "Redeem a discount code.",
+        "description": "Validate or redeem a promotion tier.",
         "properties": {
           "object": {
             "type": "string",
@@ -15065,7 +14949,8 @@
         ]
       },
       "RedeemGiftCard": {
-        "title": "Redeem Gift Card",
+        "title": "Gift Card Redeemable",
+        "description": "Validate or redeem a gift card",
         "allOf": [
           {
             "$ref": "#/components/schemas/RedeemVoucher"
@@ -15088,7 +14973,8 @@
         ]
       },
       "RedeemLoyaltyCard": {
-        "title": "Redeem Loyalty Card",
+        "title": "Loyalty Card Redeemable",
+        "description": "Validate or redeem a loyalty card",
         "allOf": [
           {
             "$ref": "#/components/schemas/RedeemVoucher"
@@ -15116,9 +15002,9 @@
         ]
       },
       "RedeemVoucher": {
-        "title": "Redeem Voucher",
+        "title": "Voucher Redeemable",
         "type": "object",
-        "description": "Redeem a discount code.",
+        "description": "Validate or redeem a discount code.",
         "properties": {
           "object": {
             "type": "string",
@@ -25117,8 +25003,7 @@
                 "enum": [
                   "DISCOUNT_VOUCHER",
                   "LOYALTY_CARD",
-                  "GIFT_VOUCHER",
-                  "LUCKY_DRAW_CODE"
+                  "GIFT_VOUCHER"
                 ],
                 "description": "Type of reward."
               },
@@ -25306,14 +25191,6 @@
           },
           "voucher": {
             "$ref": "#/components/schemas/SimpleCampaignVoucher"
-          },
-          "lucky_draw": {
-            "type": "object",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/LuckyDraw"
-              }
-            ]
           },
           "referral_program": {
             "$ref": "#/components/schemas/ReferralProgram"
@@ -28610,7 +28487,6 @@
               "campaign.promotion.discount.fixed.apply_to_items",
               "campaign.promotion.discount.percent.apply_to_items",
               "campaign.loyalty_program",
-              "campaign.lucky_draw",
               "voucher.discount_voucher",
               "voucher.discount_voucher.discount.apply_to_order",
               "voucher.discount_voucher.discount.apply_to_items",
@@ -28623,7 +28499,6 @@
               "voucher.gift_voucher.gift.apply_to_order",
               "voucher.gift_voucher.gift.apply_to_items",
               "voucher.loyalty_card",
-              "voucher.lucky_draw_code",
               "distribution.custom_event",
               "distribution.order.paid",
               "distribution.order.created",
@@ -28632,7 +28507,7 @@
               "reward_assignment.pay_with_points",
               "global"
             ],
-            "description": "Validation rule context type.  \n\n| **Context Type** | **Definition** |\n|:---|:---|\n| earning_rule.order.paid |  |\n| earning_rule.custom_event |  |\n| earning_rule.customer.segment.entered |  |\n| campaign.discount_coupons |  |\n| campaign.discount_coupons.discount.apply_to_order |  |\n| campaign.discount_coupons.discount.apply_to_items |  |\n| campaign.discount_coupons.discount.apply_to_items_proportionally |  |\n| campaign.discount_coupons.discount.apply_to_items_proportionally_by_quantity |  |\n| campaign.discount_coupons.discount.fixed.apply_to_items |  |\n| campaign.gift_vouchers |  |\n| campaign.gift_vouchers.gift.apply_to_order |  |\n| campaign.gift_vouchers.gift.apply_to_items |  |\n| campaign.referral_program |  |\n| campaign.referral_program.discount.apply_to_order |  |\n| campaign.referral_program.discount.apply_to_items |  |\n| campaign.referral_program.discount.apply_to_items_proportionally |  |\n| campaign.referral_program.discount.apply_to_items_proportionally_by_quantity |  |\n| campaign.referral_program.discount.fixed.apply_to_items |  |\n| campaign.promotion |  |\n| campaign.promotion.discount.apply_to_order |  |\n| campaign.promotion.discount.apply_to_items |  |\n| campaign.promotion.discount.apply_to_items_proportionally |  |\n| campaign.promotion.discount.apply_to_items_proportionally_by_quantity |  |\n| campaign.promotion.discount.fixed.apply_to_items |  |\n| campaign.loyalty_program |  |\n| campaign.lucky_draw |  |\n| voucher.discount_voucher |  |\n| voucher.discount_voucher.discount.apply_to_order |  |\n| voucher.discount_voucher.discount.apply_to_items |  |\n| voucher.discount_voucher.discount.apply_to_items_proportionally |  |\n| voucher.discount_voucher.discount.apply_to_items_proportionally_by_quantity |  |\n| voucher.discount_voucher.discount.fixed.apply_to_items |  |\n| voucher.gift_voucher |  |\n| voucher.gift_voucher.gift.apply_to_order |  |\n| voucher.gift_voucher.gift.apply_to_items |  |\n| voucher.loyalty_card |  |\n| voucher.lucky_draw_code |  |\n| distribution.custom_event |  |\n| reward_assignment.pay_with_points |  |\n| global |  |"
+            "description": "Validation rule context type.  \n\n| **Context Type** | **Definition** |\n|:---|:---|\n| earning_rule.order.paid |  |\n| earning_rule.custom_event |  |\n| earning_rule.customer.segment.entered |  |\n| campaign.discount_coupons |  |\n| campaign.discount_coupons.discount.apply_to_order |  |\n| campaign.discount_coupons.discount.apply_to_items |  |\n| campaign.discount_coupons.discount.apply_to_items_proportionally |  |\n| campaign.discount_coupons.discount.apply_to_items_proportionally_by_quantity |  |\n| campaign.discount_coupons.discount.fixed.apply_to_items |  |\n| campaign.gift_vouchers |  |\n| campaign.gift_vouchers.gift.apply_to_order |  |\n| campaign.gift_vouchers.gift.apply_to_items |  |\n| campaign.referral_program |  |\n| campaign.referral_program.discount.apply_to_order |  |\n| campaign.referral_program.discount.apply_to_items |  |\n| campaign.referral_program.discount.apply_to_items_proportionally |  |\n| campaign.referral_program.discount.apply_to_items_proportionally_by_quantity |  |\n| campaign.referral_program.discount.fixed.apply_to_items |  |\n| campaign.promotion |  |\n| campaign.promotion.discount.apply_to_order |  |\n| campaign.promotion.discount.apply_to_items |  |\n| campaign.promotion.discount.apply_to_items_proportionally |  |\n| campaign.promotion.discount.apply_to_items_proportionally_by_quantity |  |\n| campaign.promotion.discount.fixed.apply_to_items |  |\n| campaign.loyalty_program |  |\n| voucher.discount_voucher |  |\n| voucher.discount_voucher.discount.apply_to_order |  |\n| voucher.discount_voucher.discount.apply_to_items |  |\n| voucher.discount_voucher.discount.apply_to_items_proportionally |  |\n| voucher.discount_voucher.discount.apply_to_items_proportionally_by_quantity |  |\n| voucher.discount_voucher.discount.fixed.apply_to_items |  |\n| voucher.gift_voucher |  |\n| voucher.gift_voucher.gift.apply_to_order |  |\n| voucher.gift_voucher.gift.apply_to_items |  |\n| voucher.loyalty_card |  |\n| distribution.custom_event |  |\n| reward_assignment.pay_with_points |  |\n| global |  |"
           }
         }
       },
@@ -29164,8 +29039,7 @@
               "GIFT_VOUCHERS",
               "DISCOUNT_COUPONS",
               "PROMOTION",
-              "REFERRAL_PROGRAM",
-              "LUCKY_DRAW"
+              "REFERRAL_PROGRAM"
             ],
             "example": "DISCOUNT_COUPONS",
             "default": "DISCOUNT_COUPONS"
@@ -29176,8 +29050,7 @@
             "enum": [
               "GIFT_VOUCHER",
               "DISCOUNT_VOUCHER",
-              "LOYALTY_CARD",
-              "LUCKY_DRAW_CODE"
+              "LOYALTY_CARD"
             ],
             "default": "DISCOUNT_VOUCHER",
             "example": "DISCOUNT_VOUCHER"
@@ -42475,12 +42348,6 @@
                 "nullable": true,
                 "description": "Enables the referral campaign overview for customers."
               },
-              "lucky_draw_enabled": {
-                "type": "boolean",
-                "default": false,
-                "nullable": true,
-                "description": "Enables the lucky draw overview for customers."
-              },
               "theme": {
                 "type": "string",
                 "default": "default",
@@ -42672,10 +42539,6 @@
                 "type": "boolean",
                 "description": "Enables the referral campaign overview for customers."
               },
-              "lucky_draw_enabled": {
-                "type": "boolean",
-                "description": "Enables the lucky draw overview for customers."
-              },
               "theme": {
                 "type": "string",
                 "description": "Determines the color scheme of the customer cockpit.",
@@ -42706,7 +42569,6 @@
               "gift_cards_enabled",
               "coupons_enabled",
               "referrals_enabled",
-              "lucky_draw_enabled",
               "theme",
               "use_custom_double_opt_in_redirect_url",
               "custom_double_opt_in_redirect_url"
@@ -42862,10 +42724,6 @@
               "referrals_enabled": {
                 "type": "boolean",
                 "description": "Indicates if the referral campaign overview is turned on for customers."
-              },
-              "lucky_draw_enabled": {
-                "type": "boolean",
-                "description": "Indicates if the lucky draw overview is turned on for customers."
               },
               "theme": {
                 "type": "string",
@@ -54216,7 +54074,7 @@
           "Validations"
         ],
         "summary": "Validate Voucher [Deprecated]",
-        "description": "<!-- theme: danger -->\n> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for voucher validation, and we do not recommend using it. The new [Stackable Discounts API](ref:validate-stacked-discounts) introduces additional features and improvements while maintaining backward compatibility, including applying a combination of coupon codes and promotion tiers. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint. \n\nTo verify a voucher code given by a customer, you can use this method. It is designed for a server side integration, which means that is accessible only through private keys.  \n\n<!-- theme: danger -->\n> ❗️ Important  \n>\n> This endpoint supports the validation of a single promo code. If you need to validate more than one incentive, you can use the <!-- [Stackable discounts API](OpenAPI.json/paths/~1validations/post) -->[Stackable discounts API](ref:stackable-discounts-api). The stacking discounts API lets you validate up to 5 incentives per call. Before integrating Voucherify, choose which validation endpoint you prefer to use.\n\n#### Gift Vouchers - validate Gift Card and control amount to redeem\nVoucherify also gives the possibility to create a gift card, which allows using credits to fulfill the order. A user can specify how many credits he wants to use from the gift card. The available balance of credits is counted based on policy rules attached to the Gift Voucher definition.  \n\nThis operation returns information about the validity of the code. Moreover, it returns a hashed source identifier which can be used as a tracking ID in future calls.\n\nIf a validation session is established, then the session details will be returned as well. Read more about sessions <!-- [here](..docs/guides/campaign_recipes/Locking-Validation-Session.md) -->[here](doc:locking-validation-session).\n\nVoucher validation might fail because of one of these reasons:\n* `voucher not found` - voucher doesn't exist or was <!-- [deleted](OpenAPI.json/paths/~1vouchers~1{code}/delete) -->[deleted](ref:delete-voucher)\n* `voucher expired` - voucher is out of start date - expiration date time frame\n* `voucher is disabled` - learn more about a <!-- [disabled voucher](OpenAPI.json/paths/~1vouchers~1{code}~1disable/post) -->[disabled voucher](ref:disable-voucher)\n* `customer does not match segment rules` - learn more [customer tracking](doc:customers#customer-tracking) \n* `order does not match validation rules` - learn more about [validation rules](doc:validation-rules)",
+        "description": "<!-- theme: danger -->\n> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for voucher validation, and we do not recommend using it. The new [Stackable Discounts API](ref:validate-stacked-discounts) introduces additional features and improvements while maintaining backward compatibility, including applying a combination of coupon codes and promotion tiers. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint. \n\nTo verify a voucher code given by a customer, you can use this method. It is designed for a server side integration, which means that is accessible only through private keys.  \n\n<!-- theme: danger -->\n> ❗️ Important  \n>\n> This endpoint supports the validation of a single promo code. If you need to validate more than one incentive, you can use the <!-- [Stackable discounts API](OpenAPI.json/paths/~1validations/post) -->[Stackable discounts API](ref:validate-stacked-discounts). The stacking discounts API lets you validate up to 30 incentives per call. Before integrating Voucherify, choose which validation endpoint you prefer to use.\n\n#### Gift Vouchers - validate Gift Card and control amount to redeem\nVoucherify also gives the possibility to create a gift card, which allows using credits to fulfill the order. A user can specify how many credits he wants to use from the gift card. The available balance of credits is counted based on policy rules attached to the Gift Voucher definition.  \n\nThis operation returns information about the validity of the code. Moreover, it returns a hashed source identifier which can be used as a tracking ID in future calls.\n\nIf a validation session is established, then the session details will be returned as well. Read more about sessions <!-- [here](..docs/guides/campaign_recipes/Locking-Validation-Session.md) -->[here](doc:locking-validation-session).\n\nVoucher validation might fail because of one of these reasons:\n* `voucher not found` - voucher doesn't exist or was <!-- [deleted](OpenAPI.json/paths/~1vouchers~1{code}/delete) -->[deleted](ref:delete-voucher)\n* `voucher expired` - voucher is out of start date - expiration date time frame\n* `voucher is disabled` - learn more about a <!-- [disabled voucher](OpenAPI.json/paths/~1vouchers~1{code}~1disable/post) -->[disabled voucher](ref:disable-voucher)\n* `customer does not match segment rules` - learn more [customer tracking](doc:customers#customer-tracking) \n* `order does not match validation rules` - learn more about [validation rules](doc:validation-rules)",
         "parameters": [],
         "security": [
           {
@@ -87281,7 +87139,6 @@
                       "gift_cards_enabled": true,
                       "coupons_enabled": true,
                       "referrals_enabled": true,
-                      "lucky_draw_enabled": false,
                       "theme": "default",
                       "use_custom_double_opt_in_redirect_url": false,
                       "custom_double_opt_in_redirect_url": null
@@ -87328,7 +87185,6 @@
                         "gift_cards_enabled": true,
                         "coupons_enabled": true,
                         "referrals_enabled": true,
-                        "lucky_draw_enabled": false,
                         "theme": "default",
                         "use_custom_double_opt_in_redirect_url": false,
                         "custom_double_opt_in_redirect_url": null
@@ -87493,7 +87349,6 @@
                             "gift_cards_enabled": true,
                             "coupons_enabled": true,
                             "referrals_enabled": true,
-                            "lucky_draw_enabled": false,
                             "theme": "default",
                             "use_custom_double_opt_in_redirect_url": false,
                             "custom_double_opt_in_redirect_url": null
@@ -87639,7 +87494,6 @@
                         "gift_cards_enabled": true,
                         "coupons_enabled": true,
                         "referrals_enabled": true,
-                        "lucky_draw_enabled": false,
                         "theme": "default",
                         "use_custom_double_opt_in_redirect_url": false,
                         "custom_double_opt_in_redirect_url": null
@@ -87774,7 +87628,6 @@
                         "gift_cards_enabled": true,
                         "coupons_enabled": true,
                         "referrals_enabled": true,
-                        "lucky_draw_enabled": false,
                         "theme": "default",
                         "use_custom_double_opt_in_redirect_url": false,
                         "custom_double_opt_in_redirect_url": null
