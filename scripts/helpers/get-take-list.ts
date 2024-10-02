@@ -396,7 +396,7 @@ export const rawTakeList = {
   "/v1/trash-bin/{binEntryId}": { delete: true },
   "/management/v1/projects": { post: true, get: true },
   "/management/v1/projects/{projectId}": {
-    post: true,
+    put: true,
     get: true,
     delete: true,
   },
