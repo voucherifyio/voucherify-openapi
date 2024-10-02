@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-10-02
+https://github.com/voucherifyio/voucherify-openapi/pull/797/files#diff-b489d733b8287aa4e95ebb17457df080e796eae9abcd9408d0c4c096bace6bb9
+to be described
+
 ## 2024-09-24
 
 - Removed Giveaway/`LUCK_DRAW` schemas and other data for v20240902
