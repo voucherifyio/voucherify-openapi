@@ -6,6 +6,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2024-09-24
 
+- Removed Giveaway/`LUCK_DRAW` schemas and other data for v20240902
 - Updated titles and descriptions for:
   - `RedeemPromotionStack`
   - `RedeemPromotionTier`
