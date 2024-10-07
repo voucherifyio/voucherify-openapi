@@ -10449,6 +10449,32 @@
         "title": "Promotion Tier Create",
         "type": "object",
         "description": "This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PromotionTierCreateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "object",
+                "description": "Contains details about the discount applied by the promotion tier.",
+                "properties": {
+                  "discount": {
+                    "$ref": "#/components/schemas/Discount"
+                  }
+                }
+              },
+              "validation_rule_assignments": {
+                "$ref": "#/components/schemas/ValidationRuleAssignmentsList"
+              }
+            }
+          }
+        ]
+      },
+      "PromotionTierCreateBase": {
+        "title": "Promotion Tier Create Base",
+        "type": "object",
         "properties": {
           "name": {
             "type": "string",
@@ -10457,15 +10483,6 @@
           "banner": {
             "type": "string",
             "description": "Text to be displayed to your customers on your website."
-          },
-          "action": {
-            "type": "object",
-            "description": "Contains details about the discount applied by the promotion tier.",
-            "properties": {
-              "discount": {
-                "$ref": "#/components/schemas/Discount"
-              }
-            }
           },
           "metadata": {
             "type": "object",
@@ -10499,9 +10516,6 @@
           },
           "validity_hours": {
             "$ref": "#/components/schemas/ValidityHours"
-          },
-          "validation_rule_assignments": {
-            "$ref": "#/components/schemas/ValidationRuleAssignmentsList"
           },
           "category": {
             "type": "string",
@@ -43089,9 +43103,9 @@
           "has_more"
         ]
       },
-      "TemplatesCampaignsCreateFromTemplateRequestBody": {
+      "TemplatesCampaignsCreateCampaignFromTemplateRequestBody": {
         "type": "object",
-        "title": "Templates Campaign Template Create Request Body",
+        "title": "Templates Campaign Template Create Campaign Request Body",
         "description": "Request body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/campaign-setup`.",
         "allOf": [
           {
@@ -43099,14 +43113,37 @@
           }
         ]
       },
-      "TemplatesCampaignsCreateFromTemplateResponseBody": {
+      "TemplatesCampaignsAddTierFromTemplateRequestBody": {
         "type": "object",
-        "title": "Templates Campaign Template Create Response Body",
+        "title": "Templates Campaign Template Add Tier Request Body",
+        "description": "Request body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/tier-setup`.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "campaign_id": {
+                "type": "string",
+                "description": "Unique campaign identifier, assigned by Voucherify. Defines the promotion campaign to which the promotion tier will be added."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/PromotionTierCreateBase"
+          }
+        ],
+        "required": [
+          "campaign_id",
+          "name"
+        ]
+      },
+      "TemplatesCampaignsCreateCampaignFromTemplateResponseBody": {
+        "type": "object",
+        "title": "Templates Campaigns Create Campaign From Template Response Body",
         "description": "Response body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/campaign-setup`.",
         "properties": {
           "created_resources": {
             "type": "array",
-            "description": "Contains a list of resources that have been added in the project when the campaign has been created out of the template.",
+            "description": "Contains a list of resources that have been added to the project when the campaign has been created out of the template.",
             "items": {
               "type": "object",
               "properties": {
@@ -43146,6 +43183,62 @@
             "description": "The type of the object represented by JSON. This object stores information about the campaign created out of the campaign template.",
             "enum": [
               "campaign_setup"
+            ]
+          }
+        },
+        "required": [
+          "created_resources",
+          "campaign",
+          "object"
+        ]
+      },
+      "TemplatesCampaignsAddTierFromTemplateResponseBody": {
+        "type": "object",
+        "title": "Templates Campaigns Add Tier From Template Response Body",
+        "description": "Response body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/tier-setup`.",
+        "properties": {
+          "created_resources": {
+            "type": "array",
+            "description": "Contains a list of resources that have been added to the project when the promotion tier has been created out of the template.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier assigned to the created resource. It is assigned by Voucherify."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "The type of the created resource.",
+                  "enum": [
+                    "validation_rules",
+                    "product",
+                    "sku",
+                    "products_collection",
+                    "segments",
+                    "location"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "id",
+              "object"
+            ]
+          },
+          "promotion_tier": {
+            "description": "Details of the added promotion tier.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PromotionTier"
+              }
+            ]
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about the campaign created out of the campaign template.",
+            "enum": [
+              "promotion_tier_setup"
             ]
           }
         },
@@ -48954,7 +49047,6 @@
                     "campaign_type": "DISCOUNT_COUPONS",
                     "join_once": true,
                     "type": "AUTO_UPDATE",
-                    "category_id": "cat_0bb343dee3cdb5ec0c",
                     "start_date": "2020-08-16T00:00:00Z",
                     "expiration_date": "2023-12-26T00:00:00Z",
                     "vouchers_count": 3,
@@ -48993,7 +49085,6 @@
                     "campaign_type": "GIFT_VOUCHERS",
                     "join_once": true,
                     "type": "AUTO_UPDATE",
-                    "category_id": "cat_0bb343dee3cdb5ec0c",
                     "start_date": "2020-08-16T00:00:00Z",
                     "expiration_date": "2023-12-26T00:00:00Z",
                     "vouchers_count": 2,
@@ -49033,7 +49124,6 @@
                     "auto_join": true,
                     "join_once": true,
                     "type": "AUTO_UPDATE",
-                    "category_id": "cat_0bb343dee3cdb5ec0c",
                     "start_date": "2020-08-16T00:00:00Z",
                     "expiration_date": "2023-12-26T00:00:00Z",
                     "vouchers_count": 2,
@@ -49075,7 +49165,6 @@
                     "name": "Promotion - API - 4",
                     "campaign_type": "PROMOTION",
                     "type": "STATIC",
-                    "category_id": "cat_0bb343dee3cdb5ec0c",
                     "use_voucher_metadata_schema": false,
                     "start_date": "2020-08-16T00:00:00Z",
                     "expiration_date": "2023-12-26T00:00:00Z",
@@ -49165,7 +49254,6 @@
                     "campaign_type": "REFERRAL_PROGRAM",
                     "join_once": true,
                     "type": "AUTO_UPDATE",
-                    "category_id": "cat_0bb343dee3cdb5ec0c",
                     "start_date": "2020-08-16T00:00:00Z",
                     "expiration_date": "2023-12-26T00:00:00Z",
                     "vouchers_count": 2,
@@ -50789,7 +50877,6 @@
                     },
                     {
                       "code": "CODE9",
-                      "category_id": "cat_0bb343dee3cdb5ec0c",
                       "redemption": {
                         "quantity": 4
                       },
@@ -50835,7 +50922,6 @@
                     },
                     {
                       "code": "CODE15",
-                      "category_id": "cat_0bb343dee3cdb5ec0c",
                       "redemption": {
                         "quantity": 4
                       },
@@ -50881,7 +50967,6 @@
                     },
                     {
                       "code": "CODE12",
-                      "category_id": "cat_0bb343dee3cdb5ec0c",
                       "redemption": {
                         "quantity": 4
                       },
@@ -83298,7 +83383,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TemplatesCampaignsCreateFromTemplateRequestBody"
+                "$ref": "#/components/schemas/TemplatesCampaignsCreateCampaignFromTemplateRequestBody"
               },
               "examples": {
                 "Example": {
@@ -83319,7 +83404,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TemplatesCampaignsCreateFromTemplateResponseBody"
+                  "$ref": "#/components/schemas/TemplatesCampaignsCreateCampaignFromTemplateResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -83463,6 +83548,146 @@
                       "request_id": "v-0f754b9c091c095e33",
                       "resource_id": "CampaignFromTemplate-01",
                       "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/templates/campaigns/{campaignTemplateId}/tier-setup": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignTemplateId",
+          "description": "Pass the campaign template ID that was assigned by Voucherify.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignTemplateId"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "add-tier-from-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Add Promotion Tier From Template",
+        "description": "Creates a promotion tier out of a discount campaign template and adds it to an existing promotion campaign.\n\nTo add a promotion tier to a campaign, you need to provide the name in the request and the campaign ID. Other fields are optional. If no other fields are sent, the configuration from the template will be used.\n\nYou can send new values of the fields listed below to replace the settings saved in the template. However, you cannot assign an action or an existing validation rule or create a new one in the request. If the template has a validation rule, a new validation rule is always created for the promotion tier. When the promotion tier has been created, then you can:\n- [Update the validation rule](ref:update-validation-rule),\n- [Unassign the validation rule](ref:delete-validation-rule-assignment),\n- [Assign an existing validation rule](ref:create-validation-rule-assignment).\n> 👍 Promotion Tiers and Campaign Templates\n>\n>You can create a campaign template out of a promotion tier. Promotion tiers are converted to a discount campaign with the `DISCOUNT_COUPON` type. You can use this template to create:\n>- Discount campaign,\n>- Promotion tier.\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Only `name` and `campaign_id` are required. The rest of the fields will overwrite the template configuration.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatesCampaignsAddTierFromTemplateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the added promotion tier and about the resources that have been created out of the template and added to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignsAddTierFromTemplateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "created_resources": [
+                        {
+                          "id": "val_Z2QPKZhfIlW1",
+                          "object": "validation_rules"
+                        }
+                      ],
+                      "promotion_tier": {
+                        "id": "promo_FHRjE8g5Cu2C1C5voqjijl5I",
+                        "created_at": "2024-10-07T14:40:20.125Z",
+                        "name": "metadata-test-template-02",
+                        "banner": null,
+                        "action": {
+                          "discount": {
+                            "type": "AMOUNT",
+                            "amount_off": 300,
+                            "aggregated_amount_limit": 900,
+                            "units": null,
+                            "effect": "APPLY_TO_ITEMS"
+                          }
+                        },
+                        "metadata": {},
+                        "hierarchy": 9,
+                        "campaign": {
+                          "id": "camp_1oOwcEGaNELf8G5sVN77z0ou",
+                          "start_date": null,
+                          "expiration_date": null,
+                          "active": true,
+                          "object": "campaign",
+                          "name": "Promotion request test",
+                          "created_at": "2024-07-26T11:00:51.278Z",
+                          "campaign_type": "PROMOTION",
+                          "category_id": "cat_0d75bdfe4c9030a732",
+                          "categories": []
+                        },
+                        "campaign_id": "camp_1oOwcEGaNELf8G5sVN77z0ou",
+                        "summary": {
+                          "redemptions": {
+                            "total_redeemed": 0
+                          },
+                          "orders": {
+                            "total_amount": 0,
+                            "total_discount_amount": 0
+                          }
+                        },
+                        "active": true,
+                        "validity_day_of_week": null,
+                        "category_id": null,
+                        "categories": [],
+                        "object": "promotion_tier",
+                        "validation_rules_assignments": [
+                          {
+                            "id": "asgm_n1ILxyVhKjyACbVL",
+                            "rule_id": "val_Z2QPKZhfIlW1",
+                            "related_object_id": "promo_FHRjE8g5Cu2C1C5voqjijl5I",
+                            "related_object_type": "promotion_tier",
+                            "created_at": "2024-10-07T14:40:20.125Z",
+                            "object": "validation_rules_assignment"
+                          }
+                        ]
+                      },
+                      "object": "promotion_tier_setup"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign_template with id camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "request_id": "v-0f6d3efe61099b2824",
+                      "resource_id": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "resource_type": "campaign_template"
                     }
                   }
                 }
