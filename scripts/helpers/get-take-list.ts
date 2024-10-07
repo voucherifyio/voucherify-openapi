@@ -458,6 +458,18 @@ export const rawTakeList = {
     put: true,
     delete: true,
   },
+  "/v1/metadata-schemas/{resource}": {
+    get: true,
+  },
+  "/v1/metadata-schemas": {
+    get: true,
+  },
+  "/v1/locations": {
+    get: true,
+  },
+  "/v1/locations/{locationId}": {
+    get: true,
+  },
 };
 
 export const getTakeList = (

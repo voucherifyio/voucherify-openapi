@@ -30,7 +30,7 @@ const countResponsesSchemasWithOneOf = (openAPIContent) => {
       if (schemas[schemaName].properties) {
         const nestedSchemas = countSchemasWithOneOf(
           schemas[schemaName].properties,
-          mainSchemaName ?? schemaName
+          mainSchemaName ?? schemaName,
         );
         elements.push(...nestedSchemas);
       }
@@ -53,7 +53,7 @@ const countResponsesSchemasWithOneOf = (openAPIContent) => {
             .map(
               (responseName) =>
                 responses[responseName].content?.["application/json"]?.schema
-                  ?.$ref
+                  ?.$ref,
             )
             .filter((e) => e);
         });
@@ -73,7 +73,7 @@ const countResponsesSchemasWithOneOf = (openAPIContent) => {
   const responseSchemas = getPathsResponses(openAPIContent);
 
   const schemasWithOneOf: Set<string> = new Set(
-    countSchemasWithOneOf(responseSchemas)
+    countSchemasWithOneOf(responseSchemas),
   );
 
   const validSchemasWithOneOf = [
@@ -96,7 +96,6 @@ const countResponsesSchemasWithOneOf = (openAPIContent) => {
     "8_obj_export_object_points_expiration",
     "8_obj_earning_rule_object",
     "17_obj_async_action_object",
-    "22_obj_location_object",
   ];
 
   const result = _.difference(_.toArray(schemasWithOneOf), [
@@ -106,7 +105,7 @@ const countResponsesSchemasWithOneOf = (openAPIContent) => {
 
   console.log(
     wrapColor(!result.length, "Top level responses schemas with oneOf ="),
-    result
+    result,
   );
 };
 
@@ -114,12 +113,12 @@ const countParametersWithoutRefs = (openAPIContent) => {
   const parameters = openAPIContent.components.parameters;
 
   const parametersWithoutRefs = Object.keys(parameters).filter(
-    (parameterName) => !parameters[parameterName].schema.$ref
+    (parameterName) => !parameters[parameterName].schema.$ref,
   );
 
   console.log(
     wrapColor(parametersWithoutRefs.length === 0, "Parameters without refs ="),
-    parametersWithoutRefs
+    parametersWithoutRefs,
   );
 };
 
@@ -139,7 +138,7 @@ const countEndpointsWithParametersThatNotUsingRefs = (openAPIContent) => {
       const parameters = paths[path][method].parameters;
       if (parameters) {
         const parametersWithoutRefs = parameters.filter(
-          (parameter) => !parameter.$ref && !parameter.schema?.$ref
+          (parameter) => !parameter.$ref && !parameter.schema?.$ref,
         );
 
         if (parametersWithoutRefs.length) {
@@ -158,9 +157,9 @@ const countEndpointsWithParametersThatNotUsingRefs = (openAPIContent) => {
   console.log(
     wrapColor(
       Object.keys(result).length === 0,
-      "Schema and methods that contains parameters without refs ="
+      "Schema and methods that contains parameters without refs =",
     ),
-    result
+    result,
   );
 };
 
@@ -178,7 +177,7 @@ export const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
 
   const addToSkipList = (path, method) => {
     const existingItemWithCurrentPath = skipList.find(
-      (item) => item.endpoint === path
+      (item) => item.endpoint === path,
     );
     if (existingItemWithCurrentPath) {
       skipList = [
@@ -210,7 +209,7 @@ export const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
           ? JSON.stringify(methodData?.requestBody)
               .match(/"#\/components\/schemas\/.*?"/g)
               ?.map((match) =>
-                match.replace('"#/components/schemas/', "").slice(0, -1)
+                match.replace('"#/components/schemas/', "").slice(0, -1),
               )
               .sort() || []
           : [];
@@ -225,11 +224,11 @@ export const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
           !requestSchemaName?.endsWith?.("RequestBody")
         ) {
           messages.push({
-              endpoint: path,
-              method: methodName,
-              statusCode: null,
-              schemaName: requestSchemaName,
-          })
+            endpoint: path,
+            method: methodName,
+            statusCode: null,
+            schemaName: requestSchemaName,
+          });
         }
       }
 
@@ -247,7 +246,7 @@ export const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
             ? JSON.stringify(responseSchema)
                 .match(/"#\/components\/schemas\/.*?"/g)
                 ?.map((match) =>
-                  match.replace('"#/components/schemas/', "").slice(0, -1)
+                  match.replace('"#/components/schemas/', "").slice(0, -1),
                 )
                 .sort() || []
             : [];
@@ -277,18 +276,32 @@ export const checkRequestResponseSchemaNamesCorrectness = (openAPIContent) => {
       }
       if (messages.length > 0) {
         if (old) {
-          console.log(colors.yellow(messages
-              .map((message) => `${message.endpoint} [${message.method}/${message.statusCode}] - ${message.schemaName}`)
-              .join("\n"))
+          console.log(
+            colors.yellow(
+              messages
+                .map(
+                  (message) =>
+                    `${message.endpoint} [${message.method}/${message.statusCode}] - ${message.schemaName}`,
+                )
+                .join("\n"),
+            ),
           );
         } else {
-          console.log(colors.red(messages
-              .map((message) => `${message.endpoint} [${message.method}/${message.statusCode}] - ${message.schemaName}`)
-              .join("\n"))
+          console.log(
+            colors.red(
+              messages
+                .map(
+                  (message) =>
+                    `${message.endpoint} [${message.method}/${message.statusCode}] - ${message.schemaName}`,
+                )
+                .join("\n"),
+            ),
           );
-          redResponses.push(...messages.map(message => {
-            return ({...message, red: true});
-          }));
+          redResponses.push(
+            ...messages.map((message) => {
+              return { ...message, red: true };
+            }),
+          );
         }
       }
     });
