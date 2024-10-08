@@ -4,6 +4,11 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-10-08
+
+- Added the POST `v1/templates/campaign/{campaignTemplateId}/tier-setup` endpoints.
+- Renamed the `17_res_obj_get_async_action_result_products_import_csv` schema to `AsyncActionResultProductsImportCSV` (responses in the Get Async Action endpoint).
+
 ## 2024-10-02
 https://github.com/voucherifyio/voucherify-openapi/pull/797/files#diff-b489d733b8287aa4e95ebb17457df080e796eae9abcd9408d0c4c096bace6bb9
 to be described
