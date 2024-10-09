@@ -470,6 +470,20 @@ export const rawTakeList = {
   "/v1/locations/{locationId}": {
     get: true,
   },
+  "/v1/referrals/{campaignId}/members/{memberId}/holders": {
+    get: true,
+    post: true,
+  },
+  "/v1/referrals/members/{memberId}/holders": {
+    get: true,
+    post: true,
+  },
+  "/v1/referrals/{campaignId}/members/{memberId}/holders/{holderId}": {
+    delete: true,
+  },
+  "/v1/referrals/members/{memberId}/holders/{holderId}": {
+    delete: true,
+  },
 };
 
 export const getTakeList = (
