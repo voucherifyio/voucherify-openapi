@@ -6,7 +6,8 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2024-10-08
 
-- Added the POST `v1/templates/campaign/{campaignTemplateId}/tier-setup` endpoints.
+- Added the POST `v1/templates/campaign/{campaignTemplateId}/tier-setup` endpoint and associated schemas:
+  - `PromotionTierCreateBase` (edited out of `PromotionTierCreate`),`TemplatesCampaignsAddTierFromTemplateRequestBody`, `TemplatesCampaignsAddTierFromTemplateResponseBody`
 - Renamed the `17_res_obj_get_async_action_result_products_import_csv` schema to `AsyncActionResultProductsImportCSV` (responses in the Get Async Action endpoint).
 
 ## 2024-10-02
