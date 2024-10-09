@@ -33,8 +33,9 @@ However, the following list API methods use the `starting_after_id` query parame
 - [List referral code holders (with campaign ID)](ref:referrals-code-holders-1)
 - [List bin entries](ref:list-bin-entries)
 - [List campaign templates](ref:list-campaign-templates)
+- [Management – List campaign templates](ref:management-list-campaign-templates)
 
-The response to these methods includes a `more_starting_after` key that takes a string value with an ID. Use this ID with the `starting_after_id` query parameter to display another page of results.
+The response to these methods may include a `more_starting_after` key that takes a string value with an ID. Use this ID with the `starting_after_id` query parameter to display another page of results.
 
 ## Response format
 
@@ -47,7 +48,7 @@ The listing method returns a dictionary with a data property that contains an ar
 | `data`                | An array that contains objects for a given list endpoint. In older methods, this is replaced by the name of the respective resource, e.g. `publications`. |
 | `total`               | Total number of records for given filtering query. In some methods, this field is absent.                                                                 |
 | `has_more`            | It indicates that there are more results to be returned for given filter parameters.                                                                      |
-| `more_starting_after` | In newer endpoints, it provides an ID that can be used with a `starting_after_id` query parameter to return another page of results.                      |
+| `more_starting_after` | Present in some of the newer endpoints; it provides an ID that can be used with a `starting_after_id` query parameter to return another page of results.  |
 
 
 ```json Old Method Example Response
