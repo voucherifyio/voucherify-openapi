@@ -39,7 +39,7 @@ export const mdTables: [string, string?][] = [
     "21_obj_metadata_schema_object",
     "METADATA-SCHEMAS-Metadata-Schema-Object.md",
   ],
-  ["22_obj_location_object", "LOCATIONS-Location-Object.md"],
+  ["Location", "LOCATIONS-Location-Object.md"],
   [
     "QualificationsCheckEligibilityResponseBody",
     "QUALIFICATIONS-Qualification-Object.md",
