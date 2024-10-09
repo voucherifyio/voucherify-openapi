@@ -311,6 +311,7 @@
 | /management/v1/projects/{projectId}/users/{userId}                             | put    | Update User                | <font color='green'>supported</font> |               |
 | /management/v1/projects/{projectId}/users/{userId}                             | delete | Unassign User              | <font color='green'>supported</font> |               |
 | /management/v1/projects/users/invite                                           | post   | Invite a New User          | <font color='green'>supported</font> |               |
+| /management/v1/projects/{projectId}/templates/campaigns                        | get    | List Campaign Templates    |                                      |               |
 | /management/v1/projects/{projectId}/stacking-rules                             | post   | Create Stacking Rules      | <font color='green'>supported</font> |               |
 | /management/v1/projects/{projectId}/stacking-rules                             | get    | List Stacking Rules        | <font color='green'>supported</font> |               |
 | /management/v1/projects/{projectId}/stacking-rules/{stackingRulesId}           | get    | Get Stacking Rules         | <font color='green'>supported</font> |               |
