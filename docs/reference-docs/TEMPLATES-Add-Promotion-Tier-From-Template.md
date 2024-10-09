@@ -1,11 +1,11 @@
 ---
-title: Update Campaign Template [Beta]
+title: Add Promotion Tier From Template [Beta]
 type: endpoint
 categorySlug: voucherify-api
-slug: update-campaign-template
+slug: add-tier-from-template
 parentDocSlug: templates
-hidden: false
-order: 40
+hidden: true
+order: 70
 ---
 [block:html]
 {
