@@ -7,6 +7,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 ## 2024-10-07
 - refactoring `v1/metadata-schemas/{resource}` and `v1/metadata-schemas` use MetadataSchemasGetResponseBody & MetadataSchemasListResponseBody
 - refactoring `/v1/locations/{locationId}` and `/v1/locations` use LocationsGetResponseBody & LocationsListResponseBody
+- `filter` property in schemas ProductCollectionsCreateRequestBody, ProductCollectionsCreateResponseBody and ProductCollectionsGetResponseBody has changed. Uses additionalProperties.
 
 ## 2024-10-02
 https://github.com/voucherifyio/voucherify-openapi/pull/797/files#diff-b489d733b8287aa4e95ebb17457df080e796eae9abcd9408d0c4c096bace6bb9
