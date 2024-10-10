@@ -4,6 +4,11 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-10-10
+- refactoring /templates - deleted `TemplatesCreateCampaignFromTemplateBody`, renamed schemas to match `path+action+request/response+body`
+- commit https://github.com/voucherifyio/voucherify-openapi/commit/a95ce3e404cccb1a92e6ed1f3343bc9d6e074d3e
+
+
 ## 2024-10-08
 
 - Added the POST `v1/templates/campaign/{campaignTemplateId}/tier-setup` endpoint and associated schemas:

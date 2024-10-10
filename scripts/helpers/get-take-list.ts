@@ -1,4 +1,19 @@
 export const rawTakeList = {
+  "/v1/templates/campaigns": {
+    post: true,
+    get: true,
+  },
+  "/v1/templates/campaigns/{campaignTemplateId}": {
+    get: true,
+    put: true,
+    delete: true,
+  },
+  "/v1/templates/campaigns/{campaignTemplateId}/campaign-setup": {
+    post: true,
+  },
+  "/v1/templates/campaigns/{campaignTemplateId}/tier-setup": {
+    post: true,
+  },
   "/v1/loyalties/{campaignId}/points-expiration/export": {
     post: true,
   },
