@@ -8,7 +8,7 @@ export const rawTakeList = {
     put: true,
     delete: true,
   },
-  "v/1/templates/campaigns/{campaignTemplateId}/campaign-setup": {
+  "/v1/templates/campaigns/{campaignTemplateId}/campaign-setup": {
     post: true,
   },
   "/v1/templates/campaigns/{campaignTemplateId}/tier-setup": {
