@@ -33,8 +33,9 @@ However, the following list API methods use the `starting_after_id` query parame
 - [List referral code holders (with campaign ID)](ref:referrals-code-holders-1)
 - [List bin entries](ref:list-bin-entries)
 - [List campaign templates](ref:list-campaign-templates)
+- [Management – List campaign templates](ref:management-list-campaign-templates)
 
-The response to these methods includes a `more_starting_after` key that takes a string value with an ID. Use this ID with the `starting_after_id` query parameter to display another page of results.
+The response to these methods may include a `more_starting_after` key that takes a string value with an ID. Use this ID with the `starting_after_id` query parameter to display another page of results.
 
 ## Response format
 
@@ -47,7 +48,7 @@ The listing method returns a dictionary with a data property that contains an ar
 | `data`                | An array that contains objects for a given list endpoint. In older methods, this is replaced by the name of the respective resource, e.g. `publications`. |
 | `total`               | Total number of records for given filtering query. In some methods, this field is absent.                                                                 |
 | `has_more`            | It indicates that there are more results to be returned for given filter parameters.                                                                      |
-| `more_starting_after` | In newer endpoints, it provides an ID that can be used with a `starting_after_id` query parameter to return another page of results.                      |
+| `more_starting_after` | Present in some of the newer endpoints; it provides an ID that can be used with a `starting_after_id` query parameter to return another page of results.  |
 
 
 ```json Old Method Example Response
@@ -169,18 +170,3 @@ Moreover, API methods for fetching resources offer extended capabilities for fil
 | **Campaigns**                 | `[filters][metadata.seq_number][conditions][$is]=1`<br>`[filters][metadata.test][conditions][$is]=true`                                                                                                                                                                                                                                                                                                                                                                                                              |
 | **Products and Skus**         | `[filters][updated_at][conditions][$after][0]=2020-08-20T14:17:09Z`<br>`[filters][updated_at][conditions][$before][0]=2020-08-20T14:17:09Z`<br>`[filters][created_at][conditions][$after][0]=2020-08-20T14:17:09Z`<br>`[filters][created_at][conditions][$before][0]=2020-08-20T14:17:09Z`                                                                                                                                                                                                                           |
 | **List all promotion stacks** | `[created_at][before]=2021-12-30T13:52:18.227Z`<br>`[created_at][after]=2021-12-30T13:52:18.227Z`<br>`[filters][created_at][conditions][$before][0]=2021-12-30T13:52:18.227Z`<br>`[filters][created_at][conditions][$after][0]=2021-12-30T13:52:18.227Z`<br>`[updated_at][before]=2021-12-30T13:52:18.227Z`<br>`[updated_at][after]=2021-12-30T13:52:18.227Z`<br>`[filters][updated_at][conditions][$before][0]=2021-12-30T13:52:18.227Z`<br>`[filters][updated_at][conditions][$after][0]=2021-12-30T13:52:18.227Z` |
-
-### Advanced filters for qualification API
-
-Examine qualifications methods display all vouchers or campaigns qualified to the given customer and context (e.g., order). Using the advanced filters listed below, you can limit the qualification results.  
-
-| **Resource**  | **Filter**                                                                         | **Example**                                                                                  |
-| :------------ | :--------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
-| **Campaigns** | `category`                                                                         | `[filters][categories][conditions][$is]={{category_name}}`                                   |
-| **Campaigns** | `voucher type` (`DISCOUNT_VOUCHER`, `GIFT_VOUCHER` or `LOYALTY_CARD`)              | `[filters][voucher_type][conditions][$is]={{voucher_type}}`                                  |
-| **Campaigns** | `metadata`                                                                         | `[filters][metadata.{{Campaign metadata key}}][conditions][$is]={{campaign_metadata_value}}` |
-| **Voucher**   | `category`                                                                         | `[filters][categories][conditions][$is]={{category_name}}`                                   |
-| **Voucher**   | voucher type<br>(`GIFT_VOUCHER`, or `DISCOUNT_VOUCHER`)                            | `[filters][type][conditions][$is]={{voucher_type}`                                           |
-| **Voucher**   | `metadata`                                                                         | `[filters][metadata.{{Voucher metadata key}}][conditions][$is]={{voucher_metadata_value}}`   |
-| **Voucher**   | `holder_id`<br>(when a code is published to a customer, he/she becomes its holder) | `[filters][holder_id][conditions][$in]={{customer_id}}`                                      |
-| **Voucher**   | `campaign_ids`                                                                     | `[filters][campaign_id][conditions][$in]={{campaign_id}}`                                    |

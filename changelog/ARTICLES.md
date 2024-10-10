@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-10-09
+
+Removed "Advanced Filters for Qualifications" section from the Fetching Data article. The filters were for query and they didn't work – filters are passed only in the request body.
+
 ## 2024-09-26
 
 Updated the Performance article with information about new latency; and other fixes.
