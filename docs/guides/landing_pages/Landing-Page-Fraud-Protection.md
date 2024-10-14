@@ -64,4 +64,4 @@ Check out our other guides on landing pages to fully tap into the potential of V
 2. [How to set up a custom domain for your landing page](doc:custom-domain-for-landing-pages)
 3. [Landing Pages Releases and Maintenance](doc:releases-and-maintenance-of-landing-pages)
 4. [How can customers upload photos on my landing page](doc:upload-photos-to-a-landing-page)
-5. [Creating a Landping Page](doc:creating-a-landing-page)
+5. [Creating a Landing Page](doc:creating-a-landing-page)
