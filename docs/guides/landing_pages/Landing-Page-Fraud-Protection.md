@@ -58,9 +58,10 @@ You can find this option in Landing Page Settings.
 To use this feature properly, you need to enable "Only unique emails" option; otherwise the system won't automatically check for email uniqueness and won't block email duplicates.
 If the system catches an email duplicate, it will send out an error massage which you can customise in Pages tab.
 
-Remaining landing pages articles:
-1. 
-2. 
-3. 
-4. 
-5. 
+Check out our other guides on landing pages to fully tap into the potential of Voucherify Landing Pages Creator: 
+
+1. [Types of Landing Pages](doc:types-of-landing-pages)
+2. [How to set up a custom domain for your landing page](doc:custom-domain-for-landing-pages)
+3. [Landing Pages Releases and Maintenance](doc:releases-and-maintenance-of-landing-pages)
+4. [How can customers upload photos on my landing page](doc:upload-photos-to-a-landing-page)
+5. [Creating a Landping Page](doc:creating-a-landing-page)

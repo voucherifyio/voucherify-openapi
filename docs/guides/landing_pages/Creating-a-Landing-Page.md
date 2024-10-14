@@ -71,9 +71,10 @@ The link is defined when you publish a page, so if you want to change it, you sh
 
 **Now all that's left is saving your landing page and publishing it.**
 
-Remaining landing pages articles:
-1. 
-2. 
-3. 
-4. 
-5. 
+Check out our other guides on landing pages to fully tap into the potential of Voucherify Landing Pages Creator: 
+
+1. [Types of Landing Pages](doc:types-of-landing-pages)
+2. [Landing Page Fraud Protection](doc:landing-page-fraud-protection)
+3. [Landing Pages Releases and Maintenance](doc:releases-and-maintenance-of-landing-pages)
+4. [How to set up a custom domain for your landing page](doc:custom-domain-for-landing-pages)
+5. [How can customers upload photos on my landing page](doc:upload-photos-to-a-landing-page)

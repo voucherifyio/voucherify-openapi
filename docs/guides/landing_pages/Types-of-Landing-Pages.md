@@ -154,9 +154,10 @@ When all landing pages are ready, confirm with Save. Now, you can release your l
 
 Choose Release, customize URL, and Set it live. Confirm release with Set, and from now on, your sign-up landing page is available online. 
 
-Remaining landing pages articles:
-1. 
-2. 
-3. 
-4. 
-5. 
+Check out our other guides on landing pages to fully tap into the potential of Voucherify Landing Pages Creator: 
+
+1. [Landing Pages Releases and Maintenance](doc:releases-and-maintenance-of-landing-pages)
+2. [How to set up a custom domain for your landing page](doc:custom-domain-for-landing-pages)
+3. [Landing Page Fraud Protection](doc:landing-page-fraud-protection)
+4. [How can customers upload photos on my landing page](doc:upload-photos-to-a-landing-page)
+5. [Creating a Landping Page](doc:creating-a-landing-page)
