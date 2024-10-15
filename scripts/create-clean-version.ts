@@ -21,6 +21,7 @@ const listOfGuideCategories = [
   "Campaigns Recipes",
   "Discounts Recipes",
   "Distributions Recipes",
+  "Landing Pages",
   "More",
 ];
 
