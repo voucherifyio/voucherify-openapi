@@ -155,12 +155,19 @@ const removeOneOf = (schema, schemas, title) => {
       if (!oneOfPartial?.allOf) {
         return oneOfPartial;
       }
-      const allOf = oneOfPartial["allOf"].map((data) => {
-        if (data.$ref?.split("/")?.at(-1)) {
-          return schemas[data.$ref?.split("/")?.at(-1)];
-        }
-        return data;
-      });
+      const allOf = oneOfPartial["allOf"]
+        .map((data) => {
+          if (data.$ref?.split("/")?.at(-1)) {
+            return schemas[data.$ref?.split("/")?.at(-1)];
+          }
+          return data;
+        })
+        .map((el) => {
+          if (el.allOf) {
+            return mergeAllOfObjects(el.allOf, schemas, title);
+          }
+          return el;
+        });
       if (
         allOf.reduce((accumulator, currentValue) => {
           if (!currentValue?.oneOf) {

@@ -288,10 +288,15 @@
 | /v1/trash-bin              | get    | List Bin Entries | <font color='green'>supported</font> |               |
 | /v1/trash-bin/{binEntryId} | delete | Delete Bin Entry | <font color='green'>supported</font> |               |
 ## Templates
-| endpoint                | method | summary                  | is supported | is deprecated |
-| ----------------------- | ------ | ------------------------ | ------------ | ------------- |
-| /v1/templates/campaigns | get    | List Campaign Templates  |              |               |
-| /v1/templates/campaigns | post   | Create Campaign Template |              |               |
+| endpoint                                                    | method | summary                          | is supported | is deprecated |
+| ----------------------------------------------------------- | ------ | -------------------------------- | ------------ | ------------- |
+| /v1/templates/campaigns                                     | get    | List Campaign Templates          |              |               |
+| /v1/templates/campaigns                                     | post   | Create Campaign Template         |              |               |
+| /v1/templates/campaigns/{campaignTemplateId}                | get    | Get Campaign Template            |              |               |
+| /v1/templates/campaigns/{campaignTemplateId}                | put    | Update Campaign Template         |              |               |
+| /v1/templates/campaigns/{campaignTemplateId}                | delete | Delete Campaign Template         |              |               |
+| /v1/templates/campaigns/{campaignTemplateId}/campaign-setup | post   | Create Campaign From Template    |              |               |
+| /v1/templates/campaigns/{campaignTemplateId}/tier-setup     | post   | Add Promotion Tier From Template |              |               |
 ## Management
 | endpoint                                                                       | method | summary                    | is supported                         | is deprecated |
 | ------------------------------------------------------------------------------ | ------ | -------------------------- | ------------------------------------ | ------------- |

@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: create-campaign-template
 parentDocSlug: templates
 hidden: false
-order: 20
+order: 30
 ---
 [block:html]
 {
