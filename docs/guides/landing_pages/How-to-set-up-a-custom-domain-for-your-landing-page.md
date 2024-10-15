@@ -8,6 +8,10 @@ hidden: true
 order: 5
 ---
 
+> ❗ Deprecated Feature
+>
+> The Landing Pages feature is deprecated and it will not be supported or developed.
+
 Voucherify allows you to link custom domains to your landing pages.
 
 In order to successfully create a new custom domain, you will need SSL certificates and a little technological know-how or a friendly developer willing to help you.
@@ -18,16 +22,15 @@ Let's take a look at the step-by-step tutorial:
 
 Choose Project Settings and go to the Custom Domains tab. Select Add Custom Domain option. Here you will be asked to provide details for your domain such as:
 
-- Domain Name - you can provide any name of your choice(e.g. subscribe.voucherify.io or bestlandingpage.mybrand.com
+- Domain Name - you can provide any name of your choice (e.g. `subscribe.voucherify.io` or `bestlandingpage.mybrand.com`)
 
 > 🚧 
 > Keep in mind that you need to be the owner of the domain if you want to use it.
 
+All of the following details should be provided by your Administrator or IT services provider:
 - Private Key
 - Certificate
 - Certificate Chain 
-
-All of these details should be provided by your Administrator or IT services provider. 
 
 2. Type in the configuration of SSL certificate
 
@@ -63,10 +66,12 @@ Click the cloud icon to launch your landing page.
 
 Now if you select the Open option (globe icon) or type in the domain's address, you will see your newly created landing page in your own domain.
 
+## Other Guides on Landing Pages
+
 Check out our other guides on landing pages to fully tap into the potential of Voucherify Landing Pages Creator: 
 
 1. [Types of Landing Pages](doc:types-of-landing-pages)
-2. [Landing Page Fraud Protection](doc:landing-page-fraud-protection)
-3. [Landing Pages Releases and Maintenance](doc:releases-and-maintenance-of-landing-pages)
-4. [How can customers upload photos on my landing page](doc:upload-photos-to-a-landing-page)
-5. [Creating a Landing Page](doc:creating-a-landing-page)
+2. [Creating a Landing Page](doc:creating-a-landing-page)
+3. [Landing Page Fraud Protection](doc:landing-page-fraud-protection)
+4. [Landing Pages Releases and Maintenance](doc:releases-and-maintenance-of-landing-pages)
+5. [How can customers upload photos on my landing page](doc:upload-photos-to-a-landing-page)
