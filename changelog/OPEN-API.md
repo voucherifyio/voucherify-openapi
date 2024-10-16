@@ -8,6 +8,11 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 Changed the structure of the `ValidationRuleRules` schema. The recurrence of the schema caused performance issues with Readme pages that use the schema. Fixed by copying the schema and allowing 3 levels of nesting.
 
+## 2024-10-09
+
+- Added the GET `/management/v1/projects/{projectId}/templates/campaigns"` and POST `/management/v1/projects/{projectId}/templates/campaigns/{campaignTemplateId}/copy` endpoints with the associated schemas:
+  - `ManagementTemplatesCampaignsCopyRequestBody`, `ManagementTemplatesCampaignsListResponseBody`, 
+
 ## 2024-10-08
 
 - Added the POST `v1/templates/campaign/{campaignTemplateId}/tier-setup` endpoint and associated schemas:
