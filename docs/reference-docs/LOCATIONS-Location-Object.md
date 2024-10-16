@@ -41,7 +41,7 @@ order: 1
 ## Geojson Multi Polygon
 | Attributes |  Description |
 |:-----|:--------|
-| type</br>`string` | <p>Type of geojson coordinates, i.e. <code>Polygon</code>.</p> Available values: `MultiPolygon` |
+| type</br>`string` | <p>Type of geojson coordinates, i.e. <code>MultiPolygon</code>.</p> Available values: `MultiPolygon` |
 | coordinates</br>`array` | Array of [PolygonCoordinates](#polygoncoordinates) |
 
 ## PolygonCoordinates
