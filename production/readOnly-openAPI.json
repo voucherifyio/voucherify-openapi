@@ -2800,6 +2800,73 @@
           }
         ]
       },
+      "CampaignTemplate": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignTemplateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp representing the date and time when the campaign template was last updated. The value is shown in the ISO 8601 format.",
+                "example": "2024-07-17T06:25:21.500Z",
+                "nullable": true
+              }
+            }
+          }
+        ]
+      },
+      "CampaignTemplateBase": {
+        "type": "object",
+        "title": "Campaign Template Base",
+        "description": "Stores details about a campaign template.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the campaign template. It is assigned by Voucherify.",
+            "example": "camp_tpl_eR9NsNJ5gqJRN2TG3fqCvbVl",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "User-defined name of the campaign template.",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "description": "User-defined description of the campaign template.",
+            "nullable": true
+          },
+          "campaign_type": {
+            "type": "string",
+            "description": "Type of the campaign used to create the campaign template. Templates created from a promotion tier are converted to `DISCOUNT_COUPONS`.",
+            "enum": [
+              "DISCOUNT_COUPONS",
+              "GIFT_VOUCHERS"
+            ],
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the campaign template was created. The value is shown in the ISO 8601 format.",
+            "example": "2024-07-16T09:05:53.175Z",
+            "nullable": true
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "enum": [
+              "campaign_template"
+            ],
+            "nullable": true
+          }
+        },
+        "required": []
+      },
       "CampaignVoucher": {
         "type": "object",
         "description": "Schema model for a campaign voucher.",
@@ -8699,6 +8766,50 @@
           }
         }
       },
+      "GeojsonMultiPolygon": {
+        "type": "object",
+        "title": "Geojson Multi Polygon",
+        "description": "Defines the parameters for the polygon.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of geojson coordinates, i.e. `MultiPolygon`.",
+            "enum": [
+              "MultiPolygon"
+            ],
+            "nullable": true
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PolygonCoordinates"
+            },
+            "nullable": true
+          }
+        },
+        "required": []
+      },
+      "GeojsonPolygon": {
+        "type": "object",
+        "title": "Geojson Polygon",
+        "description": "Defines the parameters for the polygon.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of geojson coordinates, i.e. `Polygon`.",
+            "enum": [
+              "Polygon"
+            ],
+            "nullable": true
+          },
+          "coordinates": {
+            "$ref": "#/components/schemas/PolygonCoordinates"
+          }
+        },
+        "required": [
+          "coordinates"
+        ]
+      },
       "Gift": {
         "title": "Gift",
         "type": "object",
@@ -9074,6 +9185,186 @@
           }
         },
         "required": []
+      },
+      "Location": {
+        "title": "Location object",
+        "type": "object",
+        "description": "This is an object representing a location.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique location ID, assigned by the Voucherify API.",
+            "example": "loc_NoMGXmHO9OUs7iz9mGWpamma",
+            "nullable": true
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about a `location`.",
+            "default": "location",
+            "enum": [
+              "location"
+            ],
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Location name.",
+            "nullable": true
+          },
+          "shape": {
+            "type": "object",
+            "description": "Defines the shape and boundaries of the location.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LocationShapeCircle"
+              },
+              {
+                "$ref": "#/components/schemas/LocationShapePolygon"
+              }
+            ],
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2022-02-14T15:12:06.817Z",
+            "description": "Timestamp representing the date and time when the location was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "example": "2022-03-14T15:12:06.817Z",
+            "nullable": true,
+            "description": "Timestamp representing the date and time when the location was updated. The value is shown in the ISO 8601 format.",
+            "format": "date-time"
+          }
+        },
+        "required": []
+      },
+      "LocationsGetResponseBody": {
+        "title": "Locations Get Response Body",
+        "description": "Response schema for listing locations using **GET** `/v1/locations/{locationId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Location"
+          }
+        ]
+      },
+      "LocationShapeCircle": {
+        "title": "Circle",
+        "type": "object",
+        "description": "This is an object representing a circular shape.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of shape being defined is a `circle`.",
+            "enum": [
+              "circle"
+            ],
+            "nullable": true
+          },
+          "format": {
+            "type": "string",
+            "description": "The location is defined in terms of a `distance` object.",
+            "enum": [
+              "distance"
+            ],
+            "nullable": true
+          },
+          "distance": {
+            "type": "object",
+            "title": "Distance",
+            "description": "Defines the parameters for the circle.",
+            "properties": {
+              "center": {
+                "type": "string",
+                "description": "Center of the circle identified by GPS coordinates in decimal degrees.",
+                "example": "geo:40.79372699823857,-74.15092132694554",
+                "nullable": true
+              },
+              "radius": {
+                "type": "string",
+                "description": "Defines the radius of the circle.",
+                "nullable": true
+              }
+            },
+            "nullable": true
+          }
+        },
+        "required": []
+      },
+      "LocationShapePolygon": {
+        "title": "Polygon",
+        "type": "object",
+        "description": "This is an object representing a polygon.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of shape being defined is a `polygon`.",
+            "enum": [
+              "polygon"
+            ],
+            "nullable": true
+          },
+          "format": {
+            "type": "string",
+            "description": "The location is defined in terms of a `geojson` object.",
+            "enum": [
+              "geojson"
+            ],
+            "nullable": true
+          },
+          "geojson": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/GeojsonPolygon"
+              },
+              {
+                "$ref": "#/components/schemas/GeojsonMultiPolygon"
+              }
+            ]
+          }
+        },
+        "required": [
+          "geojson"
+        ]
+      },
+      "LocationsListResponseBody": {
+        "title": "List Locations Response Body",
+        "type": "object",
+        "description": "Response schema for listing locations using **GET** `v1/locations`.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about locations in a dictionary.",
+            "default": "list",
+            "nullable": true
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "Identifies the name of the attribute that contains the array of metadata schema objects.",
+            "default": "data",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "description": "Array of location objects.",
+            "items": {
+              "$ref": "#/components/schemas/Location"
+            },
+            "nullable": true
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of locations.",
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request (with a different end date filter) to get more records returned in the results.",
+            "nullable": true
+          }
+        }
       },
       "LoyaltiesCreateCampaignRequestBody": {
         "type": "object",
@@ -13590,8 +13881,8 @@
       },
       "ManagementProjectsMetadataSchemasGetResponseBody": {
         "type": "object",
-        "title": "Management Projects Metadata Schemas Update Response Body",
-        "description": "Response body schema for **POST** `management/v1/projects/{projectId}/metadata-schemas/{metadataSchemaId}`.",
+        "title": "Management Projects Metadata Schemas Get Response Body",
+        "description": "Response body schema for **GET** `management/v1/projects/{projectId}/metadata-schemas/{metadataSchemaId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsMetadataSchema"
@@ -14521,6 +14812,219 @@
           }
         ]
       },
+      "MetadataSchemaDefinitionDeprecated": {
+        "type": "object",
+        "title": "Metadata Definitions",
+        "description": "Custom definition name. This is also shown in **Project Settings** > **Metadata Schema** in the Voucherify Dashboard.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "string",
+              "number",
+              "object",
+              "date",
+              "datetime",
+              "geopoint",
+              "boolean",
+              "image_url"
+            ],
+            "nullable": true
+          },
+          "array": {
+            "type": "boolean",
+            "description": "Indicates whether the definition is an array.",
+            "nullable": true
+          },
+          "optional": {
+            "type": "boolean",
+            "description": "Indicates whether this definition is optional or not optional for the resource.",
+            "nullable": true
+          },
+          "objectType": {
+            "type": "string",
+            "nullable": true,
+            "description": "Returns the name of the custom resource if the resource was previously defined in the Dashboard as a custom (non-standard) Nested object."
+          },
+          "eq": {
+            "type": "array",
+            "description": "Array of possible values when the setting for `is equal to any of` in the Dashboard is defined explicitly.",
+            "items": {},
+            "nullable": true
+          },
+          "ne": {
+            "type": "array",
+            "description": "Array of values that are not allowed when the setting for `is not equal to any of` in the Dashboard is defined explicitly.",
+            "items": {},
+            "nullable": true
+          },
+          "lt": {
+            "type": "integer",
+            "description": "A property of `number` type must have `less than` this value.",
+            "nullable": true
+          },
+          "lte": {
+            "type": "integer",
+            "description": "A property of `number` type must be `less than or equal` to this value.",
+            "nullable": true
+          },
+          "gt": {
+            "type": "integer",
+            "description": "A property of `number` type must be `greater than` this value.",
+            "nullable": true
+          },
+          "gte": {
+            "type": "integer",
+            "description": "A property of `number` type must be `greater than or equal` to this value.",
+            "nullable": true
+          },
+          "deleted": {
+            "type": "boolean",
+            "description": "Indicates whether the definition was deleted from the schema.",
+            "nullable": true
+          },
+          "maxLength": {
+            "type": "integer",
+            "description": "Value for maximum length when the setting for `has maximum length of` in the Dashboard is defined explicitly.",
+            "nullable": true
+          },
+          "minLength": {
+            "type": "integer",
+            "description": "Value indicating minimum length when the setting for `has minimum length of` in the Dashboard is defined explicitly.",
+            "nullable": true
+          },
+          "exactLength": {
+            "type": "integer",
+            "description": "Value indicating exact length when the setting for `has exact length of` in the Dashboard is defined explicitly.",
+            "nullable": true
+          }
+        },
+        "required": []
+      },
+      "MetadataSchemaDeprecated": {
+        "type": "object",
+        "description": "Object representing a metadata schema.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the metadata schema.",
+                "nullable": true
+              },
+              "related_object": {
+                "type": "string",
+                "description": "The resource type. You can define custom metadata schemas, which have a custom `\"related_object\"` resource type. The standard metadata schemas are: `\"campaign\"`, `\"customer\"`, `\"earning_rule\"`, `\"loyalty_tier\"`, `\"order\"`, `\"order_item\"`, `\"product\"`, `\"promotion_tier\"`, `\"publication\"`, `\"redemption\"`, `\"reward\"`, `\"voucher\"`.",
+                "nullable": true
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "properties": {
+                "type": "object",
+                "description": "Contains metadata definitions.",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/MetadataSchemaDefinitionDeprecated"
+                },
+                "nullable": true
+              }
+            },
+            "required": []
+          },
+          {
+            "type": "object",
+            "properties": {
+              "allow_defined_only": {
+                "type": "boolean",
+                "nullable": true,
+                "description": "Restricts the creation of metadata fields when set to `true`. It indicates whether or not you can create new metadata definitions, e.g. in the campaign or publication manager. If set to `true`, then only the defined fields are available for assigning values."
+              },
+              "created_at": {
+                "type": "string",
+                "example": "2021-12-03T13:33:44.556Z",
+                "description": "Timestamp representing the date and time when the metadata schema was created. The value for this parameter is shown in the ISO 8601 format.",
+                "format": "date-time",
+                "nullable": true
+              },
+              "updated_at": {
+                "type": "string",
+                "nullable": true,
+                "example": "2022-08-11T08:05:30.695Z",
+                "description": "Timestamp representing the date and time when the metadata schema was updated. The value for this parameter is shown in the ISO 8601 format.",
+                "format": "date-time"
+              },
+              "object": {
+                "type": "string",
+                "default": "metadata_schema",
+                "description": "The type of the object represented by the JSON. This object stores information about the metadata schema.",
+                "nullable": true
+              }
+            }
+          }
+        ],
+        "required": [
+          "id",
+          "related_object",
+          "properties",
+          "allow_defined_only",
+          "created_at",
+          "updated_at",
+          "object"
+        ]
+      },
+      "MetadataSchemasGetResponseBody": {
+        "type": "object",
+        "title": "Metadata Schemas Get Response Body",
+        "description": "Response body schema for **GET** `/v1/metadata-schemas/{resource}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MetadataSchemaDeprecated"
+          }
+        ]
+      },
+      "MetadataSchemasListResponseBody": {
+        "type": "object",
+        "description": "Object containing a list of metadata schemas.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON. This object stores information about the metadata schemas in a dictionary.",
+            "enum": [
+              "list"
+            ],
+            "nullable": true
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of metadata schema objects.",
+            "enum": [
+              "schemas"
+            ],
+            "nullable": true
+          },
+          "schemas": {
+            "type": "array",
+            "description": "Array of metadata schema objects. The metadata schemas are listed by related object properties.",
+            "items": {
+              "$ref": "#/components/schemas/MetadataSchemaDeprecated"
+            },
+            "nullable": true
+          },
+          "total": {
+            "type": "integer",
+            "description": "The total number of metadata schema objects.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "data"
+        ]
+      },
       "Order": {
         "title": "Order",
         "type": "object",
@@ -15403,6 +15907,10 @@
         "type": "string",
         "example": "camp_rRsfatlwN7unSeUIJDCYedal"
       },
+      "ParameterCampaignTemplateId": {
+        "type": "string",
+        "example": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHcq"
+      },
       "ParameterCampaignType": {
         "type": "string",
         "enum": [
@@ -16169,6 +16677,39 @@
           }
         }
       },
+      "ParameterFiltersListLocations": {
+        "properties": {
+          "name": {
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            },
+            "nullable": true
+          },
+          "created_at": {
+            "description": "Timestamp representing the date and time when the location was created. The value is shown in the ISO 8601 format.",
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsDateTime"
+              }
+            },
+            "nullable": true
+          },
+          "updated_at": {
+            "description": "Timestamp representing the date and time when the location was updated. The value is shown in the ISO 8601 format.",
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsDateTime"
+              }
+            },
+            "nullable": true
+          }
+        }
+      },
       "ParameterFiltersListPublications": {
         "type": "object",
         "properties": {
@@ -16375,6 +16916,221 @@
           }
         }
       },
+      "ParameterFiltersListReferralsRedeemableHolders": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "object",
+            "description": "Unique redeemable holder ID, i.e. `rh_0e77502f84f0f4a6a8`.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            },
+            "nullable": true
+          },
+          "created_at": {
+            "description": "Timestamp representing the date and time when the redeemable was added to the holder. The value is shown in the ISO 8601 format.",
+            "type": "object",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsDateTime"
+              }
+            },
+            "nullable": true
+          },
+          "holder_role": {
+            "type": "object",
+            "description": "Holder role of the redeemable. Allowed values:\n`REFEREE`,\n`REFERRER`",
+            "properties": {
+              "conditions": {
+                "properties": {
+                  "$in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "REFEREE",
+                        "REFERRER"
+                      ]
+                    },
+                    "nullable": true
+                  },
+                  "$not_in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "REFEREE",
+                        "REFERRER"
+                      ]
+                    },
+                    "nullable": true
+                  },
+                  "$is": {
+                    "type": "string",
+                    "description": "Value is exactly this value (single value).",
+                    "enum": [
+                      "REFEREE",
+                      "REFERRER"
+                    ],
+                    "nullable": true
+                  },
+                  "$is_not": {
+                    "type": "string",
+                    "description": "Results omit this value (single value).",
+                    "enum": [
+                      "REFEREE",
+                      "REFERRER"
+                    ],
+                    "nullable": true
+                  },
+                  "$has_value": {
+                    "type": "string",
+                    "description": "Value is NOT null. The value for this parameter is an empty string.",
+                    "nullable": true
+                  },
+                  "$is_unknown": {
+                    "type": "string",
+                    "description": "Value is null. The value for this parameter is an empty string.",
+                    "nullable": true
+                  },
+                  "$starts_with": {
+                    "type": "string",
+                    "description": "Value starts with the specified string.",
+                    "nullable": true
+                  },
+                  "$ends_with": {
+                    "type": "string",
+                    "description": "Value ends with the specified string.",
+                    "nullable": true
+                  }
+                }
+              }
+            },
+            "nullable": true
+          },
+          "customer_id": {
+            "type": "object",
+            "description": "Unique customer ID, i.e. `cust_sehkNIi8Uq2qQuRqSr7xn4Zi`.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            },
+            "nullable": true
+          },
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          }
+        }
+      },
+      "ParameterFiltersListTemplates": {
+        "type": "object",
+        "properties": {
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          },
+          "id": {
+            "type": "object",
+            "description": "Unique template ID.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            },
+            "nullable": true
+          },
+          "name": {
+            "type": "object",
+            "description": "Unique user-defined template name.",
+            "properties": {
+              "conditions": {
+                "$ref": "#/components/schemas/FilterConditionsString"
+              }
+            },
+            "nullable": true
+          },
+          "campaign_type": {
+            "type": "object",
+            "description": "Campaign template campaign type.",
+            "properties": {
+              "conditions": {
+                "type": "object",
+                "description": "Data filters used to narrow down the data records to be returned in the result.",
+                "properties": {
+                  "$in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "DISCOUNT_COUPONS",
+                        "GIFT_VOUCHERS"
+                      ]
+                    },
+                    "nullable": true
+                  },
+                  "$not_in": {
+                    "type": "array",
+                    "description": "Array of resource values that should be included in the results (multiple values).",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "DISCOUNT_COUPONS",
+                        "GIFT_VOUCHERS"
+                      ]
+                    },
+                    "nullable": true
+                  },
+                  "$is": {
+                    "type": "string",
+                    "description": "Value is exactly this value (single value).",
+                    "enum": [
+                      "DISCOUNT_COUPONS",
+                      "GIFT_VOUCHERS"
+                    ],
+                    "nullable": true
+                  },
+                  "$is_not": {
+                    "type": "string",
+                    "description": "Results omit this value (single value).",
+                    "enum": [
+                      "DISCOUNT_COUPONS",
+                      "GIFT_VOUCHERS"
+                    ],
+                    "nullable": true
+                  },
+                  "$has_value": {
+                    "type": "string",
+                    "description": "Value is NOT null. The value for this parameter is an empty string.",
+                    "nullable": true
+                  },
+                  "$is_unknown": {
+                    "type": "string",
+                    "description": "Value is null. The value for this parameter is an empty string.",
+                    "nullable": true
+                  },
+                  "$starts_with": {
+                    "type": "string",
+                    "description": "Value starts with the specified string.",
+                    "nullable": true
+                  },
+                  "$ends_with": {
+                    "type": "string",
+                    "description": "Value ends with the specified string.",
+                    "nullable": true
+                  }
+                },
+                "nullable": true
+              }
+            },
+            "nullable": true
+          }
+        }
+      },
       "ParameterIds": {
         "type": "array",
         "items": {
@@ -16388,6 +17144,10 @@
         "type": "integer",
         "maximum": 100,
         "minimum": 1
+      },
+      "ParameterLocationId": {
+        "type": "string",
+        "example": "loc_NoMGXmHO9OUs7iz9mGWpamma"
       },
       "ParameterLoyaltyTierId": {
         "type": "string",
@@ -16486,6 +17246,15 @@
           "-created_at",
           "status",
           "-status"
+        ]
+      },
+      "ParameterOrderListLocations": {
+        "type": "string",
+        "enum": [
+          "created_at",
+          "-created_at",
+          "updated_at",
+          "-updated_at"
         ]
       },
       "ParameterOrderListLoyaltyTiers": {
@@ -16628,6 +17397,10 @@
         "type": "string",
         "example": "promo_2EnAik6Jt7dKTOMkRTIgEjZH"
       },
+      "ParameterRedeemableHolderId": {
+        "type": "string",
+        "example": "rh_0f1ab744ce8277d0dc"
+      },
       "ParameterRedemptionId": {
         "type": "string",
         "example": "r_0ba186c4824e4881e1"
@@ -16661,6 +17434,13 @@
       },
       "ParameterString": {
         "type": "string"
+      },
+      "ParameterTemplatesList": {
+        "type": "string",
+        "enum": [
+          "id",
+          "-id"
+        ]
       },
       "ParameterUpdatedBeforeAfter": {
         "type": "object",
@@ -16709,6 +17489,16 @@
           "NON_EXPIRING"
         ]
       },
+      "PolygonCoordinates": {
+        "title": "PolygonCoordinates",
+        "type": "array",
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        }
+      },
       "Product": {
         "type": "object",
         "description": "This is an object representing a product.  \n\nThis entity should be used to map product items from your inventory management system. The aim of products is to build which reflect product-specific campaigns.",
@@ -16752,47 +17542,6 @@
             "required": [
               "junction"
             ],
-            "properties": {
-              "junction": {
-                "$ref": "#/components/schemas/Junction"
-              },
-              "id": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "product_id": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "source_id": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "name": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "price": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "object": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "attributes": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "metadata": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "image_url": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "skus": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "created_at": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "updated_at": {
-                "$ref": "#/components/schemas/FieldConditions"
-              }
-            },
             "nullable": true
           }
         },
@@ -16914,47 +17663,6 @@
             "required": [
               "junction"
             ],
-            "properties": {
-              "junction": {
-                "$ref": "#/components/schemas/Junction"
-              },
-              "id": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "product_id": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "source_id": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "name": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "price": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "object": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "attributes": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "metadata": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "image_url": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "skus": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "created_at": {
-                "$ref": "#/components/schemas/FieldConditions"
-              },
-              "updated_at": {
-                "$ref": "#/components/schemas/FieldConditions"
-              }
-            },
             "nullable": true
           },
           "products": {
@@ -19180,6 +19888,140 @@
           }
         }
       },
+      "RedeemableHolder": {
+        "type": "object",
+        "title": "Customer Redeemable",
+        "description": "Single customer's redeemable",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the redeemable holder.",
+            "example": "rh_0e7b8db4700106a852",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the redeemable was assigned. The value is shown in the ISO 8601 format.",
+            "example": "2024-03-22T17:48:25.910Z",
+            "nullable": true
+          },
+          "redeemable_id": {
+            "type": "string",
+            "description": "Identifier of the redeemable item.",
+            "example": "v_GXVguPhq2khgFxH7GrRXWA91gDr1LiA1",
+            "nullable": true
+          },
+          "redeemable_object": {
+            "type": "string",
+            "description": "Type of the redeemable.",
+            "example": "voucher",
+            "nullable": true
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Unique identifier of the customer.",
+            "example": "cust_p1ufreYbVbwZ1x70nFkH9rF9",
+            "nullable": true
+          },
+          "holder_role": {
+            "type": "string",
+            "description": "Role of the holder.",
+            "enum": [
+              "OWNER",
+              "REFERRER",
+              "REFEREE"
+            ],
+            "example": "OWNER",
+            "nullable": true
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unique identifier of the campaign as assigned by Voucherify.",
+            "example": "camp_weer1c3p5ZgktqfW56RfoNaG",
+            "nullable": true
+          },
+          "campaign_type": {
+            "type": "string",
+            "description": "Defines the type of the campaign.",
+            "default": "REFERRAL_PROGRAM",
+            "enum": [
+              "REFERRAL_PROGRAM"
+            ],
+            "example": "REFERRAL_PROGRAM",
+            "nullable": true
+          },
+          "voucher_type": {
+            "type": "string",
+            "description": "Defines the type of the voucher.",
+            "enum": [
+              "GIFT_VOUCHER",
+              "DISCOUNT_VOUCHER",
+              "LOYALTY_CARD"
+            ],
+            "example": "DISCOUNT_VOUCHER",
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to a redeemable holder. The metadata object stores all custom attributes assigned to the `redeemable_holder` object.",
+            "nullable": true
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON.",
+            "default": "redeemable_holder",
+            "enum": [
+              "redeemable_holder"
+            ],
+            "nullable": true
+          }
+        },
+        "required": []
+      },
+      "RedeemableHoldersList": {
+        "type": "object",
+        "title": "Redeemable Holders List",
+        "description": "List of Holder's Redeemables",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about redeemables holders",
+            "default": "list",
+            "nullable": true
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "Identifies the name of the JSON property that contains the array of holders.",
+            "default": "data",
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "description": "A dictionary that contains an array of holders.",
+            "items": {
+              "$ref": "#/components/schemas/RedeemableHolder"
+            },
+            "nullable": true
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of holders assigned to the redeemable.",
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request with a `starting_after_id` query or a different limit to get more records returned in the results.",
+            "nullable": true
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an ID that can be used to return another page of results. Use the ID in the `starting_after_id` query parameter to display another page of the results occuring after the field with that ID.",
+            "nullable": true
+          }
+        },
+        "required": []
+      },
       "RedeemableLoyaltyCard": {
         "type": "object",
         "title": "Redeemable Loyalty Card",
@@ -20939,6 +21781,54 @@
             "nullable": true
           }
         }
+      },
+      "ReferralsMembersHoldersCreateInBulkRequestBody": {
+        "type": "object",
+        "title": "Add Referral Card Holders",
+        "description": "Request body schema for **POST** `v1/referrals/{campaignId}/members/{memberId}/holders` and **POST** `v1/referrals/members/{memberId}/holders`.",
+        "properties": {
+          "holders": {
+            "type": "array",
+            "title": "Holder Array",
+            "description": "Array of holders to be added to a referral card as referees. You have to send at least one object in the array up to a maximum of 100 objects. You can send either a `source_id` or `id`, or both; however, at least one of them is required. If both are sent, Voucherify checks `id` to upsert that customer's data.",
+            "items": {
+              "$ref": "#/components/schemas/Customer"
+            },
+            "nullable": true
+          },
+          "metadata": {
+            "type": "object",
+            "description": "A set of custom key/value pairs that you can attach to the redeemable holders sent in the array. The value can be a string, number, boolean, date, datetime, image URL, or object. The metadata must meet the metadata schema for publications. The metadata object stores all custom attributes assigned to the redeemable holder.",
+            "nullable": true
+          }
+        },
+        "required": []
+      },
+      "ReferralsMembersHoldersCreateInBulkResponseBody": {
+        "type": "object",
+        "title": "Add Referral Code Holder Response Body",
+        "description": "Response body schema for **POST** `v1/referrals/{campaignId}/members/{memberId}/holders` and **POST** `v1/referrals/members/{memberId}/holders`.",
+        "properties": {
+          "holders": {
+            "type": "array",
+            "description": "Contains an array of referral card holders who are the customers sent in the request.",
+            "items": {
+              "$ref": "#/components/schemas/RedeemableHolder"
+            },
+            "nullable": true
+          }
+        },
+        "required": []
+      },
+      "ReferralsMembersHoldersListResponseBody": {
+        "type": "object",
+        "title": "Referrals Redeemable Holders List Response Body",
+        "description": "Response body schema for **GET** `v1/referrals/{campaignId}/members/{memberId}/holders` and for **GET** `v1/referrals/members/{memberId}/holders`",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RedeemableHoldersList"
+          }
+        ]
       },
       "Referrer": {
         "title": "Referrer",
@@ -23661,6 +24551,320 @@
           }
         },
         "required": []
+      },
+      "TemplatesCampaignsCampaignSetupCreateRequestBody": {
+        "type": "object",
+        "title": "Templates Campaign Template Create Campaign Request Body",
+        "description": "Request body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/campaign-setup`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsCreateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "code_config": {
+                    "$ref": "#/components/schemas/CodeConfig"
+                  },
+                  "redemption": {
+                    "type": "object",
+                    "description": "Stores the quantity of redemptions that can be applied to the voucher.",
+                    "properties": {
+                      "quantity": {
+                        "type": "integer",
+                        "description": "How many times a voucher can be redeemed. A `null` value means unlimited.",
+                        "nullable": true
+                      }
+                    },
+                    "nullable": true
+                  }
+                },
+                "nullable": true
+              }
+            }
+          }
+        ],
+        "required": [
+          "name"
+        ]
+      },
+      "TemplatesCampaignsCampaignSetupCreateResponseBody": {
+        "type": "object",
+        "title": "Templates Campaigns Create Campaign From Template Response Body",
+        "description": "Response body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/campaign-setup`.",
+        "properties": {
+          "created_resources": {
+            "type": "array",
+            "description": "Contains a list of resources that have been added to the project when the campaign has been created out of the template.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier assigned to the created resource. It is assigned by Voucherify."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "The type of the created resource.",
+                  "enum": [
+                    "validation_rules",
+                    "product",
+                    "sku",
+                    "products_collection",
+                    "segments",
+                    "location"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "id",
+              "object"
+            ],
+            "nullable": true
+          },
+          "campaign": {
+            "description": "Details of the created campaign.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Campaign"
+              }
+            ]
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about the campaign created out of the campaign template.",
+            "enum": [
+              "campaign_setup"
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "campaign"
+        ]
+      },
+      "TemplatesCampaignsCreateRequestBody": {
+        "type": "object",
+        "title": "Templates Campaigns Template Create Request Body",
+        "description": "Request body schema for **POST** `/templates/campaign`.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "campaign_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique identifier of the campaign that will create a template. It must be an ID of an existing discount or gift card campaign. It cannot be passed when `promotion_tier_id` has value. Required when the `promotion_tier_id` is not passed or it is `null`."
+              },
+              "promotion_tier_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique identifier of the promotion tier that will create a template. It cannot be passed when `campaign_id` has value. Required when the `campaign_id` is not passed or it is `null`."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/TemplatesCampaignsNameDescription"
+          }
+        ],
+        "required": [
+          "name"
+        ]
+      },
+      "TemplatesCampaignsCreateTemplateResponseBody": {
+        "type": "object",
+        "title": "Templates Campaign Template Create Response Body",
+        "description": "Response body schema for **POST** `/v1/templates/campaigns`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignTemplateBase"
+          }
+        ]
+      },
+      "TemplatesCampaignsGetResponseBody": {
+        "type": "object",
+        "title": "Templates Campaign Template Get Response Body",
+        "description": "Response body schema for **GET** `/v1/templates/campaign/{campaignTemplateId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignTemplate"
+          }
+        ]
+      },
+      "TemplatesCampaignsListBody": {
+        "type": "object",
+        "title": "Templates Campaign Template List Response Body",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about campaign templates.",
+            "enum": [
+              "list"
+            ],
+            "nullable": true
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "Identifies the name of the JSON property that contains the array of campaign templates.",
+            "enum": [
+              "data"
+            ],
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "description": "Dictionary that contains an array of campaign templates.",
+            "items": {
+              "$ref": "#/components/schemas/CampaignTemplate"
+            },
+            "nullable": true
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of templates, regardless of the applied query parameters. Displayed only if the `include_total` query paremeter is set to `true`.",
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request to get more records returned in the results.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "campaign_template"
+        ]
+      },
+      "TemplatesCampaignsListResponseBody": {
+        "type": "object",
+        "title": "Templates Campaign Template List Response Body",
+        "description": "Response body schema for **GET** `/v1/templates/campaign`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TemplatesCampaignsListBody"
+          }
+        ]
+      },
+      "TemplatesCampaignsNameDescription": {
+        "type": "object",
+        "title": "Update Campaign Template Request",
+        "description": "Request body for updating a campaign template.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "User-defined name of the campaign template. It must be unique.",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "User-defined description of the campaign template."
+          }
+        }
+      },
+      "TemplatesCampaignsTierSetupCreateRequestBody": {
+        "type": "object",
+        "title": "Templates Campaign Template Add Tier Request Body",
+        "description": "Request body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/tier-setup`.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "campaign_id": {
+                "type": "string",
+                "description": "Unique campaign identifier, assigned by Voucherify. Defines the promotion campaign to which the promotion tier will be added.",
+                "nullable": true
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/PromotionTierCreateBase"
+          }
+        ],
+        "required": [
+          "campaign_id",
+          "name"
+        ]
+      },
+      "TemplatesCampaignsTierSetupCreateResponseBody": {
+        "type": "object",
+        "title": "Templates Campaigns Add Tier From Template Response Body",
+        "description": "Response body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/tier-setup`.",
+        "properties": {
+          "created_resources": {
+            "type": "array",
+            "description": "Contains a list of resources that have been added to the project when the promotion tier has been created out of the template.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier assigned to the created resource. It is assigned by Voucherify."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "The type of the created resource.",
+                  "enum": [
+                    "validation_rules",
+                    "product",
+                    "sku",
+                    "products_collection",
+                    "segments",
+                    "location"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "id",
+              "object"
+            ],
+            "nullable": true
+          },
+          "promotion_tier": {
+            "description": "Details of the added promotion tier.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PromotionTier"
+              }
+            ]
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about the campaign created out of the campaign template.",
+            "enum": [
+              "promotion_tier_setup"
+            ],
+            "nullable": true
+          }
+        },
+        "required": [
+          "campaign"
+        ]
+      },
+      "TemplatesCampaignsUpdateRequestBody": {
+        "type": "object",
+        "title": "Templates Campaigns Template Update Request Body",
+        "description": "Request body schema for **PUT** `/templates/campaign/{campaignTemplateId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TemplatesCampaignsNameDescription"
+          }
+        ]
+      },
+      "TemplatesCampaignsUpdateResponseBody": {
+        "type": "object",
+        "title": "Templates Campaigns Template Update Response Body",
+        "description": "Request body schema for **PUT** `/templates/campaign/{campaignTemplateId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignTemplate"
+          }
+        ]
       },
       "TrashBinItem": {
         "type": "object",
@@ -55464,6 +56668,1789 @@
         }
       }
     },
+    "/v1/metadata-schemas": {
+      "get": {
+        "operationId": "list-metadata-schemas",
+        "tags": [
+          "Metadata Schemas"
+        ],
+        "summary": "List Metadata Schemas",
+        "description": "Retrieve metadata schema definitions.\n\n>📘 Management API\n>\n>If you have Management API enabled, you can also use the [List Metadata Schemas](ref:list-metadata-schemas-1) endpoint to list all metadata schemas.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns an array of metadata schema definitions. The response does not include unknown metadata properties in the response, i.e. those that have been defined outside of the **Project Settings** > **Metadata Schema** definitions. For example, an unknown metadata property can be defined in the campaign manager while creating a campaign.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetadataSchemasListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "schemas",
+                      "schemas": [
+                        {
+                          "id": "ms_yqMHRHH6S1KYIHPmQHealNf4",
+                          "related_object": "Payment",
+                          "properties": {
+                            "payment_tax": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "payment_method": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            }
+                          },
+                          "allow_defined_only": true,
+                          "created_at": "2022-03-07T11:01:01.747Z",
+                          "updated_at": "2022-03-07T11:01:44.785Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_DwUjpX32sY3fJEoQELpS7bN3",
+                          "related_object": "campaign",
+                          "properties": {
+                            "Store": {
+                              "type": "string",
+                              "array": false,
+                              "deleted": true,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "locale": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "date_tag": {
+                              "type": "date",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "store_names": {
+                              "eq": [
+                                "Store 1 - New York - Broadway",
+                                "Store 2 - Florida - Miami",
+                                "Store 3 - London - Heathrow",
+                                "Store 4 - Berlin - Alexanderplatz"
+                              ],
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "date_time_tag": {
+                              "type": "datetime",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "favorite_brands": {
+                              "type": "string",
+                              "array": true,
+                              "deleted": true,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "height_customer_number": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "location_country_string": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2021-12-03T13:33:44.556Z",
+                          "updated_at": "2022-07-26T13:57:42.288Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_f0r4hm3ta6a4a5ch3ma",
+                          "related_object": "customer",
+                          "properties": {
+                            "birth_date": {
+                              "type": "datetime",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "CRM_created_date": {
+                              "type": "datetime",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "customer_location": {
+                              "type": "geopoint",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "acquisition_channel": {
+                              "eq": [
+                                "Facebook",
+                                "Twitter",
+                                "Website"
+                              ],
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "customer_life_time_value": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2021-12-03T06:33:45.894Z",
+                          "updated_at": "2022-07-14T15:15:34.928Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_7X7krsG84H6MeNuIaKkb4LXN",
+                          "related_object": "earning_rule",
+                          "properties": {
+                            "Type": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "minLength": 6,
+                              "objectType": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2022-07-27T08:54:07.980Z",
+                          "updated_at": null,
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_OF36L2rk4EqhdxvZs56IW9iE",
+                          "related_object": "loyalty_tier",
+                          "properties": {
+                            "has_funds": {
+                              "type": "boolean",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2022-03-30T06:22:16.685Z",
+                          "updated_at": "2022-07-27T08:55:01.628Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_f1r5Tm3ta6a4a5ch3ma",
+                          "related_object": "order",
+                          "properties": {
+                            "Payment": {
+                              "type": "object",
+                              "array": false,
+                              "deleted": true,
+                              "optional": true,
+                              "objectType": "Payment"
+                            },
+                            "day_of_week": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "location_id": {
+                              "eq": [
+                                "L1",
+                                "L2",
+                                "L3"
+                              ],
+                              "type": "string",
+                              "array": true,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "payment_mean": {
+                              "eq": [
+                                "credit-card",
+                                "wire-transfer",
+                                "paypal"
+                              ],
+                              "type": "string",
+                              "array": true,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "booking_end_date": {
+                              "type": "datetime",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "booking_start_date": {
+                              "type": "datetime",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "number_of_store_visits": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2021-12-03T06:33:45.798Z",
+                          "updated_at": "2022-04-20T06:47:10.350Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_0qgIlxP7bYb8H59DqpnWBCUN",
+                          "related_object": "order_item",
+                          "properties": {
+                            "Size": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "Color": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "Thickness": {
+                              "eq": [
+                                "Thin",
+                                "Medium",
+                                "Thick"
+                              ],
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2022-03-11T13:32:55.029Z",
+                          "updated_at": "2022-05-23T13:46:01.463Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_s3c0N6m3ta6a4a5ch3ma",
+                          "related_object": "product",
+                          "properties": {
+                            "color": {
+                              "type": "string",
+                              "array": true,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "origin": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "minLength": 1,
+                              "objectType": null
+                            },
+                            "product_location": {
+                              "type": "geopoint",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "metadata_attribute_name_with_date_property": {
+                              "type": "date",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "metadata_attribute_name_with_number_property": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "metadata_attribute_name_with_boolean_property": {
+                              "type": "boolean",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "metadata_attribute_name_with_datetime_property": {
+                              "type": "datetime",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2021-12-03T06:33:45.880Z",
+                          "updated_at": "2022-07-14T15:46:47.994Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_th8YHt9yFYY1yAA99XOasT5W",
+                          "related_object": "promotion_tier",
+                          "properties": {
+                            "has_budget": {
+                              "type": "boolean",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2022-01-24T07:22:21.523Z",
+                          "updated_at": "2022-07-27T08:54:42.909Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_Z7niydc0OpGjDRL4yB40niXn",
+                          "related_object": "publication",
+                          "properties": {
+                            "year": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2022-03-30T06:23:49.715Z",
+                          "updated_at": "2022-04-19T10:28:24.568Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_t4ir0Dm3ta6a4a5ch3ma",
+                          "related_object": "redemption",
+                          "properties": {
+                            "location_id": {
+                              "eq": [
+                                "L1",
+                                "L2",
+                                "L3"
+                              ],
+                              "type": "string",
+                              "array": true,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "store_names": {
+                              "eq": [
+                                "Store 1 - New York - Broadway",
+                                "Store 2 - Florida - Miami",
+                                "Store 3 - London - Heathrow",
+                                "Store 4 - Berlin - Alexanderplatz"
+                              ],
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2021-12-03T06:33:45.890Z",
+                          "updated_at": "2022-07-26T14:58:24.546Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_EnSASZVEIDsZAYa8Z0nG8Rlg",
+                          "related_object": "reward",
+                          "properties": {
+                            "Type": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null,
+                              "exactLength": 4
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2022-07-27T08:53:32.257Z",
+                          "updated_at": "2022-07-27T08:53:48.542Z",
+                          "object": "metadata_schema"
+                        },
+                        {
+                          "id": "ms_xUHvkRBPvVJAlWcTkVzufKx4",
+                          "related_object": "voucher",
+                          "properties": {
+                            "unit": {
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "Region": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "Season": {
+                              "eq": [
+                                "Spring",
+                                "Summer",
+                                "Fall",
+                                "Winter"
+                              ],
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "CATEGORY": {
+                              "type": "string",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            },
+                            "active_on_calendar_month": {
+                              "eq": [
+                                1,
+                                2,
+                                3,
+                                5,
+                                7,
+                                9,
+                                10,
+                                11,
+                                12
+                              ],
+                              "type": "number",
+                              "array": false,
+                              "optional": true,
+                              "objectType": null
+                            }
+                          },
+                          "allow_defined_only": false,
+                          "created_at": "2022-01-24T07:22:01.281Z",
+                          "updated_at": "2022-06-22T07:22:09.577Z",
+                          "object": "metadata_schema"
+                        }
+                      ],
+                      "total": 13
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/metadata-schemas/{resource}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterString"
+          },
+          "name": "resource",
+          "in": "path",
+          "required": true,
+          "description": "There is an infinite number of possibilities for retrieving metadata schemas by the resource type because you can define custom metadata schemas."
+        }
+      ],
+      "get": {
+        "operationId": "get-metadata-schema",
+        "tags": [
+          "Metadata Schemas"
+        ],
+        "summary": "Get Metadata Schema",
+        "description": "Retrieves a metadata schema per resource type.\n\n## Resource types\n\n### Standard\n\nYou can retrieve metadata schemas for the standard metadata schema definitions listed below. Add one of these types as the resource path parameter.\n\n- `campaign`\n- `customer`\n- `earning_rule`\n- `loyalty_tier`\n- `order`\n- `order_item`\n- `product`\n- `promotion_tier`\n- `publication`\n- `redemption`\n- `reward`\n- `voucher`\n\n### Custom\n\nIf you have defined a [custom metadata schema](https://support.voucherify.io/article/99-schema-validation-metadata#add-metadata), provide its name in the `\"resource\"` field to retrieve its details.\n\n>📘 Management API\n>\n>If you have Management API enabled, you can also use the [Get Metadata Schemas](ref:get-metadata-schema-1) endpoint to retrieve a metadata schema using its ID.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The response does not include unknown metadata properties in the response, i.e. those that have been defined outside of the **Project Settings** > **Metadata Schema** definitions. For example, an unknown metadata property can be defined in the campaign manager.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetadataSchemasGetResponseBody"
+                },
+                "examples": {
+                  "earning_rule": {
+                    "value": {
+                      "id": "ms_27vMXZqBAkkqBoOuw8EYTRLn",
+                      "related_object": "earning_rule",
+                      "properties": {
+                        "channel_id": {
+                          "type": "string",
+                          "array": true,
+                          "optional": true,
+                          "objectType": null,
+                          "exactLength": 5
+                        },
+                        "channel_name": {
+                          "eq": [
+                            "instagram",
+                            "facebook",
+                            "google",
+                            "twitter",
+                            "linkedin",
+                            "website"
+                          ],
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        }
+                      },
+                      "allow_defined_only": false,
+                      "created_at": "2022-08-25T13:09:59.970Z",
+                      "updated_at": "2022-08-25T13:11:15.704Z",
+                      "object": "metadata_schema"
+                    }
+                  },
+                  "campaign": {
+                    "value": {
+                      "id": "ms_psGSDpVl6JcPilPA7toZ83Kj",
+                      "related_object": "campaign",
+                      "properties": {
+                        "region": {
+                          "eq": [
+                            "EMEA",
+                            "AMER",
+                            "APAC"
+                          ],
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        }
+                      },
+                      "allow_defined_only": false,
+                      "created_at": "2022-08-25T13:12:58.447Z",
+                      "updated_at": "2022-08-25T13:16:03.167Z",
+                      "object": "metadata_schema"
+                    }
+                  },
+                  "customer": {
+                    "value": {
+                      "id": "ms_f0r4hm3ta6a4a5ch3ma",
+                      "related_object": "customer",
+                      "properties": {
+                        "age": {
+                          "type": "number",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "city_id": {
+                          "type": "number",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "location": {
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "favorite_brands": {
+                          "type": "string",
+                          "array": true,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "acquisition_channel": {
+                          "eq": [
+                            "Facebook",
+                            "Twitter",
+                            "Website"
+                          ],
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "customer_life_time_value": {
+                          "type": "number",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        }
+                      },
+                      "allow_defined_only": false,
+                      "created_at": "2021-12-01T08:00:48.889Z",
+                      "updated_at": "2022-09-12T07:34:49.163Z",
+                      "object": "metadata_schema"
+                    }
+                  },
+                  "loyalty_tier": {
+                    "value": {
+                      "id": "ms_jHUoFlgepKVEftxK1pKPGZlO",
+                      "related_object": "loyalty_tier",
+                      "properties": {
+                        "level_name": {
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "audience_restricted": {
+                          "type": "boolean",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        }
+                      },
+                      "allow_defined_only": false,
+                      "created_at": "2022-08-25T13:14:54.954Z",
+                      "updated_at": "2022-08-25T13:15:24.436Z",
+                      "object": "metadata_schema"
+                    }
+                  },
+                  "order": {
+                    "value": {
+                      "id": "ms_f1r5Tm3ta6a4a5ch3ma",
+                      "related_object": "order",
+                      "properties": {
+                        "card": {
+                          "eq": [
+                            "Visa",
+                            "MasterCard",
+                            "Other"
+                          ],
+                          "type": "string",
+                          "array": true,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "currency": {
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "location": {
+                          "ne": [
+                            1,
+                            2,
+                            18,
+                            22
+                          ],
+                          "type": "number",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "store_city": {
+                          "eq": [
+                            "Hampden",
+                            "San Francisco",
+                            "Warsaw"
+                          ],
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "location_id": {
+                          "eq": [
+                            "L1",
+                            "L2",
+                            "L3"
+                          ],
+                          "type": "string",
+                          "array": true,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "payment_mean": {
+                          "eq": [
+                            "credit-card",
+                            "wire-transfer",
+                            "paypal"
+                          ],
+                          "type": "string",
+                          "array": true,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "booking_end_date": {
+                          "type": "datetime",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "booking_start_date": {
+                          "type": "datetime",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        }
+                      },
+                      "allow_defined_only": false,
+                      "created_at": "2021-12-01T08:00:47.575Z",
+                      "updated_at": "2022-10-25T10:05:18.978Z",
+                      "object": "metadata_schema"
+                    }
+                  },
+                  "order_item": {
+                    "value": {
+                      "id": "ms_7ux44AEnt82bqo8ww5V1SXzV",
+                      "related_object": "order_item",
+                      "properties": {
+                        "manufacturer_id": {
+                          "gte": 15,
+                          "type": "number",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        }
+                      },
+                      "allow_defined_only": false,
+                      "created_at": "2022-08-25T13:16:03.167Z",
+                      "updated_at": "2022-08-25T13:16:03.167Z",
+                      "object": "metadata_schema"
+                    }
+                  },
+                  "product": {
+                    "value": {
+                      "id": "ms_s3c0N6m3ta6a4a5ch3ma",
+                      "related_object": "product",
+                      "properties": {
+                        "vendor": {
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "category": {
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "location": {
+                          "type": "geopoint",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        }
+                      },
+                      "allow_defined_only": false,
+                      "created_at": "2021-12-01T08:00:48.298Z",
+                      "updated_at": "2022-07-14T15:53:29.226Z",
+                      "object": "metadata_schema"
+                    }
+                  },
+                  "promotion_tier": {
+                    "value": {
+                      "id": "ms_dNb5aLMzU0VBCiRuxLOeMNwn",
+                      "related_object": "promotion_tier",
+                      "properties": {
+                        "level": {
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        }
+                      },
+                      "allow_defined_only": false,
+                      "created_at": "2022-01-24T10:42:04.937Z",
+                      "updated_at": "2022-09-23T08:51:46.266Z",
+                      "object": "metadata_schema"
+                    }
+                  },
+                  "publication": {
+                    "value": {
+                      "id": "ms_fzvWNh7sU4LeykEQ2Abpg6jG",
+                      "related_object": "publication",
+                      "properties": {
+                        "file_uploaded": {
+                          "type": "image_url",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "publication_method": {
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        }
+                      },
+                      "allow_defined_only": false,
+                      "created_at": "2022-08-25T13:16:35.534Z",
+                      "updated_at": "2022-09-12T10:26:31.135Z",
+                      "object": "metadata_schema"
+                    }
+                  },
+                  "redemption": {
+                    "value": {
+                      "id": "ms_t4ir0Dm3ta6a4a5ch3ma",
+                      "related_object": "redemption",
+                      "properties": {
+                        "location_id": {
+                          "eq": [
+                            "L1",
+                            "L2",
+                            "L3"
+                          ],
+                          "type": "string",
+                          "array": true,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "redemption_location": {
+                          "type": "object",
+                          "array": false,
+                          "optional": true,
+                          "objectType": "Location"
+                        }
+                      },
+                      "allow_defined_only": false,
+                      "created_at": "2021-12-01T08:00:48.794Z",
+                      "updated_at": "2022-08-25T13:19:50.497Z",
+                      "object": "metadata_schema"
+                    }
+                  },
+                  "reward": {
+                    "value": {
+                      "id": "ms_PwrAtwqCFXeH4Qix22gEkqhl",
+                      "related_object": "reward",
+                      "properties": {
+                        "reward_type": {
+                          "eq": [
+                            "MATERIAL",
+                            "PAY-WITH-POINTS",
+                            "DISCOUNT-COUPON",
+                            "GIFT-CARD-CREDITS",
+                            "LOYALTY POINTS"
+                          ],
+                          "type": "string",
+                          "array": false,
+                          "optional": false,
+                          "objectType": null
+                        }
+                      },
+                      "allow_defined_only": true,
+                      "created_at": "2022-08-25T13:07:13.689Z",
+                      "updated_at": "2022-08-25T13:08:26.696Z",
+                      "object": "metadata_schema"
+                    }
+                  },
+                  "voucher": {
+                    "value": {
+                      "id": "ms_9uE6eP17Jvoxl46mCqL6Q3Ut",
+                      "related_object": "voucher",
+                      "properties": {
+                        "lang": {
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "Season": {
+                          "eq": [
+                            "Spring",
+                            "Summer",
+                            "Fall",
+                            "Winter"
+                          ],
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "marketing_text": {
+                          "type": "string",
+                          "array": false,
+                          "optional": true,
+                          "objectType": null
+                        },
+                        "ProductionVoucherCodeMetaData": {
+                          "type": "string",
+                          "array": false,
+                          "deleted": true,
+                          "optional": true,
+                          "objectType": null
+                        }
+                      },
+                      "allow_defined_only": false,
+                      "created_at": "2022-01-24T10:42:23.994Z",
+                      "updated_at": "2022-09-19T14:13:30.590Z",
+                      "object": "metadata_schema"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/locations": {
+      "get": {
+        "operationId": "list-locations",
+        "tags": [
+          "Locations"
+        ],
+        "summary": "List Locations",
+        "description": "Returns a list of your locations.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListLocations"
+            },
+            "description": "Sorts the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListLocations"
+            },
+            "description": "Filter the locations using one of the available filters.",
+            "style": "deepObject",
+            "explode": true
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ParameterDate"
+            },
+            "description": "A filter on the list based on the end date. This will filter out all locations whose end date falls before the specified date and time. A date value must be presented in the ISO 8601 format (`2016-11-16T14:14:31Z` or `2016-11-16`)."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a dictionary that contains an array of locations. Each entry in the array is a separate location object.  If no more locations are available, the resulting array will be empty. The result can be narrowed down according to specified (or default) filters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationsListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "loc_NoMGXmHO9OUs7iz9mGWpamma",
+                          "object": "location",
+                          "name": "Belleville",
+                          "shape": {
+                            "type": "circle",
+                            "format": "distance",
+                            "distance": {
+                              "center": "geo:40.79372699823857,-74.15092132694554",
+                              "radius": "1.54 km"
+                            }
+                          },
+                          "created_at": "2022-07-15T06:04:36.924Z",
+                          "updated_at": null
+                        },
+                        {
+                          "id": "loc_ae2gKWpAFMsuRhyMqGx2FZFF",
+                          "object": "location",
+                          "name": "New York",
+                          "shape": {
+                            "type": "polygon",
+                            "format": "geojson",
+                            "geojson": {
+                              "type": "Polygon",
+                              "coordinates": [
+                                [
+                                  [
+                                    -74.016167,
+                                    40.703186
+                                  ],
+                                  [
+                                    -74.008687,
+                                    40.750656
+                                  ],
+                                  [
+                                    -73.943597,
+                                    40.851838
+                                  ],
+                                  [
+                                    -73.928559,
+                                    40.845285
+                                  ],
+                                  [
+                                    -73.936152,
+                                    40.8356
+                                  ],
+                                  [
+                                    -73.934298,
+                                    40.810015
+                                  ],
+                                  [
+                                    -73.92711,
+                                    40.795145
+                                  ],
+                                  [
+                                    -73.978623,
+                                    40.710432
+                                  ],
+                                  [
+                                    -74.013201,
+                                    40.701619
+                                  ],
+                                  [
+                                    -74.016167,
+                                    40.703186
+                                  ]
+                                ]
+                              ]
+                            }
+                          },
+                          "created_at": "2022-07-15T05:37:45.299Z",
+                          "updated_at": null
+                        },
+                        {
+                          "id": "loc_f5HqjVaiq7g9ISlmivpytxSf",
+                          "object": "location",
+                          "name": "Germany",
+                          "shape": {
+                            "type": "circle",
+                            "format": "distance",
+                            "distance": {
+                              "center": "geo:51.303908897065064,10.222253628401518",
+                              "radius": "192.37 km"
+                            }
+                          },
+                          "created_at": "2022-07-14T15:51:39.265Z",
+                          "updated_at": null
+                        },
+                        {
+                          "id": "loc_RcYz537sV07e1t5aG5tIH9FD",
+                          "object": "location",
+                          "name": "Poland",
+                          "shape": {
+                            "type": "polygon",
+                            "format": "geojson",
+                            "geojson": {
+                              "type": "Polygon",
+                              "coordinates": [
+                                [
+                                  [
+                                    18.553923,
+                                    50.559107
+                                  ],
+                                  [
+                                    18.528805,
+                                    51.087437
+                                  ],
+                                  [
+                                    19.591667,
+                                    50.832424
+                                  ],
+                                  [
+                                    19.425109,
+                                    50.497984
+                                  ],
+                                  [
+                                    19.375814,
+                                    50.330652
+                                  ],
+                                  [
+                                    19.398107,
+                                    50.111652
+                                  ],
+                                  [
+                                    18.73906,
+                                    49.981498
+                                  ],
+                                  [
+                                    18.272477,
+                                    50.088707
+                                  ],
+                                  [
+                                    18.553923,
+                                    50.559107
+                                  ]
+                                ]
+                              ]
+                            }
+                          },
+                          "created_at": "2022-07-14T15:21:55.085Z",
+                          "updated_at": null
+                        }
+                      ],
+                      "total": 4,
+                      "has_more": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/locations/{locationId}": {
+      "get": {
+        "operationId": "get-location",
+        "tags": [
+          "Locations"
+        ],
+        "summary": "Get Location",
+        "description": "Returns a location object.",
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterLocationId"
+            },
+            "name": "locationId",
+            "in": "path",
+            "required": true,
+            "description": "The unique location ID."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a location object.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationsGetResponseBody"
+                },
+                "examples": {
+                  "Circle Example": {
+                    "value": {
+                      "id": "loc_NoMGXmHO9OUs7iz9mGWpamma",
+                      "object": "location",
+                      "name": "Belleville",
+                      "shape": {
+                        "type": "circle",
+                        "format": "distance",
+                        "distance": {
+                          "center": "geo:40.79372699823857,-74.15092132694554",
+                          "radius": "1.54 km"
+                        }
+                      },
+                      "created_at": "2022-07-15T06:04:36.924Z",
+                      "updated_at": null
+                    }
+                  },
+                  "Polygon Example": {
+                    "value": {
+                      "id": "loc_RcYz537sV07e1t5aG5tIH9FD",
+                      "object": "location",
+                      "name": "Poland",
+                      "shape": {
+                        "type": "polygon",
+                        "format": "geojson",
+                        "geojson": {
+                          "type": "Polygon",
+                          "coordinates": [
+                            [
+                              [
+                                18.553923,
+                                50.559107
+                              ],
+                              [
+                                18.528805,
+                                51.087437
+                              ],
+                              [
+                                19.591667,
+                                50.832424
+                              ],
+                              [
+                                19.425109,
+                                50.497984
+                              ],
+                              [
+                                19.375814,
+                                50.330652
+                              ],
+                              [
+                                19.398107,
+                                50.111652
+                              ],
+                              [
+                                18.73906,
+                                49.981498
+                              ],
+                              [
+                                18.272477,
+                                50.088707
+                              ],
+                              [
+                                18.553923,
+                                50.559107
+                              ]
+                            ]
+                          ]
+                        }
+                      },
+                      "created_at": "2022-07-14T15:21:55.085Z",
+                      "updated_at": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/referrals/{campaignId}/members/{memberId}/holders": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier of a referral program campaign."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique referral code or its identifier."
+        }
+      ],
+      "post": {
+        "operationId": "referrals-add-holders-1",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "Add Referral Code Holders",
+        "description": "Adds new holders to a referral code as referees. The data sent in the request is upserted into the customer data.\n\nIf the request returns an error even for one customer, you have to resend the whole request. Customer data is upserted if the data for all customers is correct.\n\nTo use this endpoint, you must have the following permissions:\n- Create and modify Customers and Segments (`customers.modify`)\n- Publish Voucher (`vouchers.publish`)",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the customer data to be upserted as redeemable holders.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferralsMembersHoldersCreateInBulkRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "holders": [
+                      {
+                        "source_id": "cst-prsn01",
+                        "name": "Alex Doe",
+                        "email": "alex-doe@your.domain.com",
+                        "country": "England"
+                      },
+                      {
+                        "source_id": "cst-prsn02",
+                        "name": "Alex Joe",
+                        "email": "alex-joe@your.domain.com",
+                        "country": "Wales"
+                      }
+                    ],
+                    "metadata": {
+                      "influencer_code": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a list of redeemable holder objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralsMembersHoldersCreateInBulkResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "holders": [
+                        {
+                          "id": "rh_0f198761748966ffab",
+                          "created_at": "2024-07-23T10:40:48.579Z",
+                          "redeemable_id": "v_uOrG9tQresN9X51gbAoo0a2vY4MLV9lS",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_vVk4unz3k4gA023fk9XoSiTh",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_r8yoJtgAAF2pqU1yuICtk9bv",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder",
+                          "metadata": {
+                            "influencer_code": true
+                          }
+                        },
+                        {
+                          "id": "rh_0f198761748966ffac",
+                          "created_at": "2024-07-23T10:40:48.579Z",
+                          "redeemable_id": "v_uOrG9tQresN9X51gbAoo0a2vY4MLV9lS",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_vVk4unz3k4gA023fk9XoSiTh",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_uCLPtbQkQayw6t40O9IMPQzV",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder",
+                          "metadata": {
+                            "influencer_code": true
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "referrals-code-holders",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "List Referral Code Holders",
+        "description": "Retrieves all the redeemables that have been assigned to the customer.\n\nTo use this endpoint, you must have the following permissions:\n\n- Read Customers (`customers.details.read`)",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListRedeemables"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListReferralsRedeemableHolders"
+            },
+            "description": "Filters for listing customer redeemables.",
+            "style": "deepObject",
+            "explode": true
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the holders of the redeemable that is assigned to the referral campaign.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralsMembersHoldersListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "rh_0e7213a6bc407b8639",
+                          "created_at": "2024-03-15T09:08:50.529Z",
+                          "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_XDwHXVBSZZAJgjpHvrgUHx3J",
+                          "holder_role": "REFERRER",
+                          "object": "redeemable_holder"
+                        },
+                        {
+                          "id": "rh_0e6d0b84960f447f52",
+                          "created_at": "2024-03-11T11:20:54.093Z",
+                          "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_1B9wkAcSz5O1Y4Zn8JPfKQm6",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder"
+                        }
+                      ],
+                      "total": 2,
+                      "has_more": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/referrals/{campaignId}/members/{memberId}/holders/{holderId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier of a referral program campaign."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique referral code or its identifier."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterRedeemableHolderId"
+          },
+          "name": "holderId",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier of a redeemable holder."
+        }
+      ],
+      "delete": {
+        "operationId": "referrals-remove-holder-1",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "Remove Referral Card Holder",
+        "description": "Removes the holder from a referral card. You can remove a referee only.\n\nTo use this endpoint, you must have the following permissions:\n- Create and modify Customers and Segments (`customers.modify`)\n- Publish Voucher (`vouchers.publish`)",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if removal is successful."
+          }
+        }
+      }
+    },
+    "/v1/referrals/members/{memberId}/holders": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique referral code or its identifier."
+        }
+      ],
+      "post": {
+        "operationId": "referrals-add-holders",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "Add Referral Code Holders",
+        "description": "Adds new holders to a referral code as referees. The data sent in the request is upserted into the customer data.\n\nIf the request returns an error even for one customer, you have to resend the whole request. Customer data is upserted if the data for all customers is correct.\n\nTo use this endpoint, you must have the following permissions:\n- Create and modify Customers and Segments (`customers.modify`)\n- Publish Voucher (`vouchers.publish`)\n\n> 📘 Alternative endpoint\n>\n>This endpoint is an alternative to the [Add Referral Code Holders endpoint](ref:referrals-add-holders-1). The URL was re-designed to retrieve the referral member holders without providing the `campaignId` as a path paremeter.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Specify the customer data to be upserted as redeemable holders.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReferralsMembersHoldersCreateInBulkRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "holders": [
+                      {
+                        "source_id": "cst-prsn01",
+                        "name": "Alex Doe",
+                        "email": "alex-doe@your.domain.com",
+                        "country": "England"
+                      },
+                      {
+                        "source_id": "cst-prsn02",
+                        "name": "Alex Joe",
+                        "email": "alex-joe@your.domain.com",
+                        "country": "Wales"
+                      }
+                    ],
+                    "metadata": {
+                      "influencer_code": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns a list of redeemable holder objects.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralsMembersHoldersCreateInBulkResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "holders": [
+                        {
+                          "id": "rh_0f198761748966ffab",
+                          "created_at": "2024-07-23T10:40:48.579Z",
+                          "redeemable_id": "v_uOrG9tQresN9X51gbAoo0a2vY4MLV9lS",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_vVk4unz3k4gA023fk9XoSiTh",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_r8yoJtgAAF2pqU1yuICtk9bv",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder",
+                          "metadata": {
+                            "influencer_code": true
+                          }
+                        },
+                        {
+                          "id": "rh_0f198761748966ffac",
+                          "created_at": "2024-07-23T10:40:48.579Z",
+                          "redeemable_id": "v_uOrG9tQresN9X51gbAoo0a2vY4MLV9lS",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_vVk4unz3k4gA023fk9XoSiTh",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_uCLPtbQkQayw6t40O9IMPQzV",
+                          "holder_role": "REFEREE",
+                          "object": "redeemable_holder",
+                          "metadata": {
+                            "influencer_code": true
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "referrals-code-holders-1",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "List Referral Code Holders",
+        "description": "Retrieves the holders of the referral code from a referral campaign.\n\nTo use this endpoint, you must have the following permissions:\n\n- Read Customers (`customers.details.read`)\n\n> 📘 Alternative endpoint\n>\n>This endpoint is an alternative to the [List Member Holders endpoint](ref:referrals-member-holders). The URL was re-designed to retrieve the referral member holders without providing the `campaignId` as a path paremeter.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListRedeemables"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash - preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListReferralsRedeemableHolders"
+            },
+            "description": "Filters for listing customer redeemables.",
+            "style": "deepObject",
+            "explode": true
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the holders of the redeemable that is assigned to the referral campaign.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReferralsMembersHoldersListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "rh_0e7213a6bc407b8639",
+                          "created_at": "2024-03-15T09:08:50.529Z",
+                          "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                          "campaign_type": "REFERRAL_PROGRAM",
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_XDwHXVBSZZAJgjpHvrgUHx3J",
+                          "holder_role": "REFERRER",
+                          "object": "redeemable_holder"
+                        },
+                        {
+                          "id": "rh_0e6d0b84960f447f52",
+                          "created_at": "2024-03-11T11:20:54.093Z",
+                          "redeemable_id": "v_jFVcN1f5ofg707z2G3GYWtMyKJ4usss4",
+                          "redeemable_object": "voucher",
+                          "campaign_id": "camp_td1gcD4feTAjUKQYfg40kWhN",
+                          "campaign_type": null,
+                          "voucher_type": "DISCOUNT_VOUCHER",
+                          "customer_id": "cust_1B9wkAcSz5O1Y4Zn8JPfKQm6",
+                          "holder_role": "OWNER",
+                          "object": "redeemable_holder"
+                        }
+                      ],
+                      "total": 2,
+                      "has_more": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/referrals/members/{memberId}/holders/{holderId}": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique referral code or its identifier."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterRedeemableHolderId"
+          },
+          "name": "holderId",
+          "in": "path",
+          "required": true,
+          "description": "Unique identifier of a redeemable holder."
+        }
+      ],
+      "delete": {
+        "operationId": "referrals-remove-holder",
+        "tags": [
+          "Referrals"
+        ],
+        "summary": "Remove Referral Card Holder",
+        "description": "Removes the holder from a referral card. You can remove a referee only.\n\nTo use this endpoint, you must have the following permissions:\n- Create and modify Customers and Segments (`customers.modify`)\n- Publish Voucher (`vouchers.publish`)\n\n> 📘 Alternative endpoint\n>\n>This endpoint is an alternative to the [Remove Referral Card Holder endpoint](ref:referrals-remove-holder-1). The URL was re-designed to retrieve the referral member holders without providing the `campaignId` as a path paremeter.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if removal is successful."
+          }
+        }
+      }
+    },
     "/v1/trash-bin": {
       "get": {
         "operationId": "list-bin-entries",
@@ -55585,6 +58572,541 @@
         "responses": {
           "204": {
             "description": "Returns no content if deletion is successful."
+          }
+        }
+      }
+    },
+    "/v1/templates/campaigns": {
+      "get": {
+        "operationId": "list-campaign-templates",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "List Campaign Templates",
+        "description": "Lists all campaign templates available in the project.\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the campaign templates created after a template with the given ID."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterTemplatesList"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash - preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterBoolean"
+            },
+            "in": "query",
+            "name": "include_total",
+            "description": "If set to `true`, the response returns the number of all campaign templates, regardless of the applied filters or limits. Set to `false` by default."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListTemplates"
+            },
+            "description": "Filters for listing templates.",
+            "style": "deepObject",
+            "explode": true
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a dictionary of campaign template objects. The templates are returned by creation date by default. The most recent objects appear last unless specified otherwise with the `order` parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignsListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "campaign_templates",
+                      "campaign_templates": [
+                        {
+                          "id": "camp_tpl_hFK6hpVc9WKsWaBv4mz7uZn8",
+                          "name": "DISCOUNT-CAMPAIGN-TEMPLATE",
+                          "description": "New discount for Q4",
+                          "campaign_type": "DISCOUNT_COUPONS",
+                          "created_at": "2024-06-21T13:03:09.431Z",
+                          "object": "campaign_template"
+                        },
+                        {
+                          "id": "camp_tpl_cR8va5Ga2nAi4Nxoi1I1qR8S",
+                          "name": "GIFT-CAMPAIGN-TEMPLATE",
+                          "campaign_type": "GIFT_VOUCHERS",
+                          "created_at": "2024-07-05T14:26:31.600Z",
+                          "updated_at": "2024-07-05T14:27:02.905Z",
+                          "object": "campaign_template"
+                        }
+                      ],
+                      "total": 14,
+                      "has_more": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "create-campaign-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Create Campaign Template",
+        "description": "Creates a template for a discount or gift campaign, or a promotion tier.\n\nA template stores campaign configuration **without** the following details:\n- Campaign name\n- Category\n- Code count\n\nThe following elements are not supported by campaign templates:\n- Redeeming API keys\n- Redeeming users\n- Customer loyalty tier\n- Static segments\n\n> 👍 Promotion Tiers and Campaign Templates\n>\n>You can create a campaign template out of a promotion tier. Promotion tiers are converted to a discount campaign with the `DISCOUNT_COUPON` type. You can use this template to create:\n>- Discount campaign,\n>- Promotion tier.\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Provide details for a campaign template",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatesCampaignsCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details of a created campaign template.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignsCreateTemplateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/templates/campaigns/{campaignTemplateId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignTemplateId",
+          "description": "Pass the campaign template ID that was assigned by Voucherify.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignTemplateId"
+          },
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "get-campaign-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Get Campaign Template",
+        "description": "Retrieves a campaign template available in the project.\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the details about a campaign template.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignsGetResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHcq",
+                      "name": "Happy Hours Template",
+                      "description": "Template for a Happy Hours campaign with discount coupons.",
+                      "campaign_type": "DISCOUNT_COUPONS",
+                      "created_at": "2019-09-09T09:09:09.009Z",
+                      "object": "campaign_template"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "update-campaign-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Update Campaign Template",
+        "description": "Updates the name or description of the campaign template.\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Provide the new name or description for the campaign template",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatesCampaignsUpdateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details of an updated campaign template.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignsUpdateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHcq",
+                      "name": "Happy Hours Winter Template",
+                      "description": "Template for a Happy Hours campaign with discount coupons for the winter season.",
+                      "campaign_type": "DISCOUNT_COUPONS",
+                      "created_at": "2019-09-09T09:09:09.009Z",
+                      "updated_at": "2019-09-09T19:09:09.009Z",
+                      "object": "campaign_template"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-campaign-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Delete Campaign Template",
+        "description": "Deletes the campaign template permanently.\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          }
+        }
+      }
+    },
+    "/v1/templates/campaigns/{campaignTemplateId}/campaign-setup": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignTemplateId",
+          "description": "Pass the campaign template ID that was assigned by Voucherify.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignTemplateId"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "create-campaign-from-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Create Campaign From Template",
+        "description": "Creates a campaign out of a campaign template.\n\nTo create a campaign, you need to provide the name in the request, while other fields are optional. If no other fields are sent, the configuration from the template will be used.\n\nYou can send new values of the fields listed below to replace the settings saved in the template. However, you cannot assign an existing validation rule or create a new one in the request. If the template has a validation rule, a new validation rule is always created for the campaign. When the campaign has been created, then you can:\n- [Update the validation rule](ref:update-validation-rule),\n- [Unassign the validation rule](ref:delete-validation-rule-assignment),\n- [Assign an existing validation rule](ref:create-validation-rule-assignment).\n\n> 👍 Promotion Tiers and Campaign Templates\n>\n>You can create a campaign template out of a promotion tier. Promotion tiers are converted to a discount campaign with the `DISCOUNT_COUPON` type. You can use this template to create:\n>- Discount campaign\n>- [Promotion tier](ref:add-tier-from-template)\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Only `name` is required. The rest of the fields will overwrite the template configuration.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatesCampaignsCampaignSetupCreateRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "name": "Campaign-out-of-template",
+                    "description": "Created out of a template",
+                    "auto_join": true,
+                    "join_once": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the created campaign and about the resources that have been created out of the template and added to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignsCampaignSetupCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "created_resources": [
+                        {
+                          "id": "val_3LBFw25WTmAK",
+                          "object": "validation_rules"
+                        }
+                      ],
+                      "campaign": {
+                        "id": "camp_txDwyDPeLvBEq490bfV2nLwo",
+                        "name": "Campaign-out-of-template",
+                        "campaign_type": "DISCOUNT_COUPONS",
+                        "type": "AUTO_UPDATE",
+                        "is_referral_code": false,
+                        "voucher": {
+                          "type": "DISCOUNT_VOUCHER",
+                          "discount": {
+                            "type": "AMOUNT",
+                            "amount_off": 2500,
+                            "aggregated_amount_limit": 25000,
+                            "units": null,
+                            "effect": "APPLY_TO_ITEMS"
+                          },
+                          "gift": null,
+                          "loyalty_card": null,
+                          "redemption": {
+                            "quantity": 4,
+                            "redeemed_quantity": 0
+                          },
+                          "code_config": {
+                            "pattern": "##",
+                            "length": 2,
+                            "charset": "xD",
+                            "prefix": "U-",
+                            "postfix": "-WOT"
+                          }
+                        },
+                        "auto_join": true,
+                        "join_once": true,
+                        "use_voucher_metadata_schema": true,
+                        "description": "Winter 2024-25",
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_hours": null,
+                        "validity_day_of_week": null,
+                        "activity_duration_after_publishing": null,
+                        "vouchers_count_invalid": null,
+                        "vouchers_count": 0,
+                        "active": true,
+                        "metadata": null,
+                        "created_at": "2024-09-26T17:14:56.226Z",
+                        "updated_at": null,
+                        "category": null,
+                        "creation_status": "DONE",
+                        "protected": false,
+                        "validation_rules_assignments": {
+                          "data": [
+                            {
+                              "id": "asgm_BLgJYmo64rnAK5eB",
+                              "rule_id": "val_3LBFw25WTmAK",
+                              "related_object_id": "camp_txDwyDPeLvBEq490bfV2nLwo",
+                              "related_object_type": "campaign",
+                              "created_at": "2024-09-26T17:14:56.226Z",
+                              "object": "validation_rules_assignment"
+                            }
+                          ],
+                          "total": 1
+                        },
+                        "object": "campaign",
+                        "deleted": false,
+                        "deleted_at": null,
+                        "category_id": null,
+                        "voucher_type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "amount_off": 2500,
+                          "aggregated_amount_limit": 25000,
+                          "units": null,
+                          "effect": "APPLY_TO_ITEMS"
+                        },
+                        "gift": null,
+                        "loyalty_card": null,
+                        "voucher_code_config": {
+                          "pattern": "##",
+                          "length": 2,
+                          "charset": "xD",
+                          "prefix": "Your-",
+                          "postfix": "-Voucher"
+                        },
+                        "default_voucher_redemption": {
+                          "quantity": 4
+                        }
+                      },
+                      "object": "campaign_setup"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/templates/campaigns/{campaignTemplateId}/tier-setup": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignTemplateId",
+          "description": "Pass the campaign template ID that was assigned by Voucherify.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignTemplateId"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "add-tier-from-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Add Promotion Tier From Template",
+        "description": "Creates a promotion tier out of a discount campaign template and adds it to an existing promotion campaign.\n\nTo add a promotion tier to a campaign, you need to provide the name in the request and the campaign ID. Other fields are optional. If no other fields are sent, the configuration from the template will be used.\n\nYou can send new values of the fields listed below to replace the settings saved in the template. However, you cannot assign an action or an existing validation rule or create a new one in the request. If the template has a validation rule, a new validation rule is always created for the promotion tier. When the promotion tier has been created, then you can:\n- [Update the validation rule](ref:update-validation-rule),\n- [Unassign the validation rule](ref:delete-validation-rule-assignment),\n- [Assign an existing validation rule](ref:create-validation-rule-assignment).\n\n> 👍 Promotion Tiers and Campaign Templates\n>\n>You can create a campaign template out of a promotion tier. Promotion tiers are converted to a discount campaign with the `DISCOUNT_COUPON` type. You can use this template to create:\n>- [Discount campaign](ref:create-campaign-from-template)\n>- Promotion tier\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Only `name` and `campaign_id` are required. The rest of the fields will overwrite the template configuration.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatesCampaignsTierSetupCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the added promotion tier and about the resources that have been created out of the template and added to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignsTierSetupCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "created_resources": [
+                        {
+                          "id": "val_Z2QPKZhfIlW1",
+                          "object": "validation_rules"
+                        }
+                      ],
+                      "promotion_tier": {
+                        "id": "promo_FHRjE8g5Cu2C1C5voqjijl5I",
+                        "created_at": "2024-10-07T14:40:20.125Z",
+                        "name": "metadata-test-template-02",
+                        "banner": null,
+                        "action": {
+                          "discount": {
+                            "type": "AMOUNT",
+                            "amount_off": 300,
+                            "aggregated_amount_limit": 900,
+                            "units": null,
+                            "effect": "APPLY_TO_ITEMS"
+                          }
+                        },
+                        "metadata": {},
+                        "hierarchy": 9,
+                        "campaign": {
+                          "id": "camp_1oOwcEGaNELf8G5sVN77z0ou",
+                          "start_date": null,
+                          "expiration_date": null,
+                          "active": true,
+                          "object": "campaign",
+                          "name": "Promotion request test",
+                          "created_at": "2024-07-26T11:00:51.278Z",
+                          "campaign_type": "PROMOTION",
+                          "category_id": "cat_0d75bdfe4c9030a732",
+                          "categories": []
+                        },
+                        "campaign_id": "camp_1oOwcEGaNELf8G5sVN77z0ou",
+                        "summary": {
+                          "redemptions": {
+                            "total_redeemed": 0
+                          },
+                          "orders": {
+                            "total_amount": 0,
+                            "total_discount_amount": 0
+                          }
+                        },
+                        "active": true,
+                        "validity_day_of_week": null,
+                        "category_id": null,
+                        "categories": [],
+                        "object": "promotion_tier",
+                        "validation_rules_assignments": [
+                          {
+                            "id": "asgm_n1ILxyVhKjyACbVL",
+                            "rule_id": "val_Z2QPKZhfIlW1",
+                            "related_object_id": "promo_FHRjE8g5Cu2C1C5voqjijl5I",
+                            "related_object_type": "promotion_tier",
+                            "created_at": "2024-10-07T14:40:20.125Z",
+                            "object": "validation_rules_assignment"
+                          }
+                        ]
+                      },
+                      "object": "promotion_tier_setup"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

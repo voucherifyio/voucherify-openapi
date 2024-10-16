@@ -473,6 +473,32 @@ export const rawTakeList = {
     put: true,
     delete: true,
   },
+  "/v1/metadata-schemas/{resource}": {
+    get: true,
+  },
+  "/v1/metadata-schemas": {
+    get: true,
+  },
+  "/v1/locations": {
+    get: true,
+  },
+  "/v1/locations/{locationId}": {
+    get: true,
+  },
+  "/v1/referrals/{campaignId}/members/{memberId}/holders": {
+    get: true,
+    post: true,
+  },
+  "/v1/referrals/members/{memberId}/holders": {
+    get: true,
+    post: true,
+  },
+  "/v1/referrals/{campaignId}/members/{memberId}/holders/{holderId}": {
+    delete: true,
+  },
+  "/v1/referrals/members/{memberId}/holders/{holderId}": {
+    delete: true,
+  },
 };
 
 export const getTakeList = (

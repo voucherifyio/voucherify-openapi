@@ -264,39 +264,39 @@
 | /v1/categories/{categoryId} | delete | Delete Category | <font color='green'>supported</font> |               |
 | /v1/categories/{categoryId} | put    | Update Category | <font color='green'>supported</font> |               |
 ## Metadata Schemas
-| endpoint                        | method | summary               | is supported | is deprecated |
-| ------------------------------- | ------ | --------------------- | ------------ | ------------- |
-| /v1/metadata-schemas            | get    | List Metadata Schemas |              |               |
-| /v1/metadata-schemas/{resource} | get    | Get Metadata Schema   |              |               |
+| endpoint                        | method | summary               | is supported                         | is deprecated |
+| ------------------------------- | ------ | --------------------- | ------------------------------------ | ------------- |
+| /v1/metadata-schemas            | get    | List Metadata Schemas | <font color='green'>supported</font> |               |
+| /v1/metadata-schemas/{resource} | get    | Get Metadata Schema   | <font color='green'>supported</font> |               |
 ## Locations
-| endpoint                   | method | summary        | is supported | is deprecated |
-| -------------------------- | ------ | -------------- | ------------ | ------------- |
-| /v1/locations              | get    | List Locations |              |               |
-| /v1/locations/{locationId} | get    | Get Location   |              |               |
+| endpoint                   | method | summary        | is supported                         | is deprecated |
+| -------------------------- | ------ | -------------- | ------------------------------------ | ------------- |
+| /v1/locations              | get    | List Locations | <font color='green'>supported</font> |               |
+| /v1/locations/{locationId} | get    | Get Location   | <font color='green'>supported</font> |               |
 ## Referrals
-| endpoint                                                         | method | summary                     | is supported | is deprecated |
-| ---------------------------------------------------------------- | ------ | --------------------------- | ------------ | ------------- |
-| /v1/referrals/{campaignId}/members/{memberId}/holders            | post   | Add Referral Code Holders   |              |               |
-| /v1/referrals/{campaignId}/members/{memberId}/holders            | get    | List Referral Code Holders  |              |               |
-| /v1/referrals/{campaignId}/members/{memberId}/holders/{holderId} | delete | Remove Referral Card Holder |              |               |
-| /v1/referrals/members/{memberId}/holders                         | post   | Add Referral Code Holders   |              |               |
-| /v1/referrals/members/{memberId}/holders                         | get    | List Referral Code Holders  |              |               |
-| /v1/referrals/members/{memberId}/holders/{holderId}              | delete | Remove Referral Card Holder |              |               |
+| endpoint                                                         | method | summary                     | is supported                         | is deprecated |
+| ---------------------------------------------------------------- | ------ | --------------------------- | ------------------------------------ | ------------- |
+| /v1/referrals/{campaignId}/members/{memberId}/holders            | post   | Add Referral Code Holders   | <font color='green'>supported</font> |               |
+| /v1/referrals/{campaignId}/members/{memberId}/holders            | get    | List Referral Code Holders  | <font color='green'>supported</font> |               |
+| /v1/referrals/{campaignId}/members/{memberId}/holders/{holderId} | delete | Remove Referral Card Holder | <font color='green'>supported</font> |               |
+| /v1/referrals/members/{memberId}/holders                         | post   | Add Referral Code Holders   | <font color='green'>supported</font> |               |
+| /v1/referrals/members/{memberId}/holders                         | get    | List Referral Code Holders  | <font color='green'>supported</font> |               |
+| /v1/referrals/members/{memberId}/holders/{holderId}              | delete | Remove Referral Card Holder | <font color='green'>supported</font> |               |
 ## Bin
 | endpoint                   | method | summary          | is supported                         | is deprecated |
 | -------------------------- | ------ | ---------------- | ------------------------------------ | ------------- |
 | /v1/trash-bin              | get    | List Bin Entries | <font color='green'>supported</font> |               |
 | /v1/trash-bin/{binEntryId} | delete | Delete Bin Entry | <font color='green'>supported</font> |               |
 ## Templates
-| endpoint                                                    | method | summary                          | is supported | is deprecated |
-| ----------------------------------------------------------- | ------ | -------------------------------- | ------------ | ------------- |
-| /v1/templates/campaigns                                     | get    | List Campaign Templates          |              |               |
-| /v1/templates/campaigns                                     | post   | Create Campaign Template         |              |               |
-| /v1/templates/campaigns/{campaignTemplateId}                | get    | Get Campaign Template            |              |               |
-| /v1/templates/campaigns/{campaignTemplateId}                | put    | Update Campaign Template         |              |               |
-| /v1/templates/campaigns/{campaignTemplateId}                | delete | Delete Campaign Template         |              |               |
-| /v1/templates/campaigns/{campaignTemplateId}/campaign-setup | post   | Create Campaign From Template    |              |               |
-| /v1/templates/campaigns/{campaignTemplateId}/tier-setup     | post   | Add Promotion Tier From Template |              |               |
+| endpoint                                                    | method | summary                          | is supported                         | is deprecated |
+| ----------------------------------------------------------- | ------ | -------------------------------- | ------------------------------------ | ------------- |
+| /v1/templates/campaigns                                     | get    | List Campaign Templates          | <font color='green'>supported</font> |               |
+| /v1/templates/campaigns                                     | post   | Create Campaign Template         | <font color='green'>supported</font> |               |
+| /v1/templates/campaigns/{campaignTemplateId}                | get    | Get Campaign Template            | <font color='green'>supported</font> |               |
+| /v1/templates/campaigns/{campaignTemplateId}                | put    | Update Campaign Template         | <font color='green'>supported</font> |               |
+| /v1/templates/campaigns/{campaignTemplateId}                | delete | Delete Campaign Template         | <font color='green'>supported</font> |               |
+| /v1/templates/campaigns/{campaignTemplateId}/campaign-setup | post   | Create Campaign From Template    | <font color='green'>supported</font> |               |
+| /v1/templates/campaigns/{campaignTemplateId}/tier-setup     | post   | Add Promotion Tier From Template | <font color='green'>supported</font> |               |
 ## Management
 | endpoint                                                                          | method | summary                             | is supported                         | is deprecated |
 | --------------------------------------------------------------------------------- | ------ | ----------------------------------- | ------------------------------------ | ------------- |
