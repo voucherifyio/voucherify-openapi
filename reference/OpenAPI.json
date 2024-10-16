@@ -670,6 +670,10 @@
         "type": "string",
         "example": "camp_rRsfatlwN7unSeUIJDCYedal"
       },
+      "ParameterCampaignTemplateId": {
+        "type": "string",
+        "example": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHcq"
+      },
       "ParameterEarningRuleId": {
         "type": "string",
         "example": "ern_CFuv1O0IDl8Jgph0ojhMu8bH"
@@ -8664,10 +8668,33 @@
           }
         }
       },
+      "CampaignsCreateBaseValidationRules": {
+        "type": "object",
+        "title": "Campaign Create Schema Base With Validation Rules",
+        "description": "Base body schema for creating a campaign using **POST** `v1/campaigns`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsCreateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "validation_rules": {
+                "type": "array",
+                "description": "Array containing the ID of the validation rule associated with the promotion tier.",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 1
+              }
+            }
+          }
+        ]
+      },
       "CampaignsCreateBase": {
         "type": "object",
         "title": "Campaign Create Schema Base",
-        "description": "Base body schema for creating a campaign using **POST** `v1/campaigns`.",
+        "description": "Base body schema for creating a campaign",
         "properties": {
           "name": {
             "type": "string",
@@ -8726,14 +8753,6 @@
             "type": "string",
             "description": "Defines the amount of time the vouchers will be active after publishing. The value is shown in the ISO 8601 format. For example, a voucher with the value of P24D will be valid for a duration of 24 days."
           },
-          "validation_rules": {
-            "type": "array",
-            "description": "Array containing the ID of the validation rule associated with the promotion tier.",
-            "items": {
-              "type": "string"
-            },
-            "maxItems": 1
-          },
           "category_id": {
             "type": "string",
             "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
@@ -8746,6 +8765,9 @@
           "metadata": {
             "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the campaign. A set of key/value pairs that you can attach to a campaign object. It can be useful for storing additional information about the campaign in a structured format."
+          },
+          "access_settings": {
+            "$ref": "#/components/schemas/AccessSettings"
           }
         }
       },
@@ -8799,6 +8821,9 @@
             "type": "string",
             "description": "Unique category ID that this campaign belongs to. Either pass this parameter OR the `category`.",
             "example": "cat_0b688929a2476386a7"
+          },
+          "access_settings": {
+            "$ref": "#/components/schemas/AccessSettings"
           }
         }
       },
@@ -8997,7 +9022,7 @@
         "title": "Create Discount Coupons Campaign",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CampaignsCreateBase"
+            "$ref": "#/components/schemas/CampaignsCreateBaseValidationRules"
           },
           {
             "type": "object",
@@ -9023,7 +9048,7 @@
         "title": "Create Referral Program",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CampaignsCreateBase"
+            "$ref": "#/components/schemas/CampaignsCreateBaseValidationRules"
           },
           {
             "type": "object",
@@ -9052,7 +9077,7 @@
         "title": "Create Gift Campaign",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CampaignsCreateBase"
+            "$ref": "#/components/schemas/CampaignsCreateBaseValidationRules"
           },
           {
             "type": "object",
@@ -9078,7 +9103,7 @@
         "title": "Create Loyalty Campaign",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CampaignsCreateBase"
+            "$ref": "#/components/schemas/CampaignsCreateBaseValidationRules"
           },
           {
             "type": "object",
@@ -9104,7 +9129,7 @@
         "title": "Create Promotion Campaign",
         "allOf": [
           {
-            "$ref": "#/components/schemas/CampaignsCreateBase"
+            "$ref": "#/components/schemas/CampaignsCreateBaseValidationRules"
           },
           {
             "type": "object",
@@ -9184,7 +9209,7 @@
       "AccessSettingsCampaignAssignmentsList": {
         "title": "Access Settings Campaign Assignments List",
         "type": "object",
-        "description": "Lists all assignments of the campaign to areas and stores if the Areas and Stores feature is enabled (Enterprise feature).",
+        "description": "Lists all assignments of the campaign to areas and stores.\n\n**NOTE**: This object is returned only if the Areas and Stores enterprise feature is enabled. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.",
         "properties": {
           "object": {
             "type": "string",
@@ -9263,6 +9288,53 @@
           "created_at",
           "object"
         ]
+      },
+      "AccessSettings": {
+        "type": "object",
+        "title": "Access Settings",
+        "description": "Assigns or unassigns an area or store to the campaign.\n\n**NOTE**: this object can be sent if the Areas and Stores enterprise feature is enabled. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.",
+        "properties": {
+          "assign": {
+            "type": "object",
+            "description": "Assigns the campaign to an area or a store. Provide the area and/or store IDs in the respective arrays. If a campaign changes assignments between areas or stores, unassign it from the area. For example, if a campaign is assigned to Area-01, but it must be now assigned to Store-01 within this area, you have to unassign the campaign from Area-01 and assign to Store-01 only.\n\nIf you want to assign the campaign to stores only, you do not have to send the area ID.",
+            "properties": {
+              "areas_ids": {
+                "type": "array",
+                "description": "List all area IDs to which the campaign will be assigned.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "area_stores_ids": {
+                "type": "array",
+                "description": "List all store IDs to which the campaign will be assigned.",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "unassign": {
+            "type": "object",
+            "description": "Unassigns the campaign from an area or a store. Provide the area and/or store IDs in the respective arrays. If a campaign changes assignments between areas or stores, unassign it first. For example, if a campaign is assigned to Area-01, but it must be now assigned to Store-01 within this area, you have to unassign the campaign from Area-01 and assigned to Store-01 only.\n\nIf you want to assign the campaign to stores only, you do not have to send the area ID.",
+            "properties": {
+              "areas_ids": {
+                "type": "array",
+                "description": "List all area IDs from which the campaign will be unassigned.",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "area_stores_ids": {
+                "type": "array",
+                "description": "List all store IDs to which the campaign will be unassigned.",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
       },
       "2_req_examine_qualification": {
         "type": "object",
@@ -10370,6 +10442,32 @@
         "title": "Promotion Tier Create",
         "type": "object",
         "description": "This is an object representing a promotion tier. Promotion tiers are always assigned to a campaign and cannot be used standalone.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PromotionTierCreateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "object",
+                "description": "Contains details about the discount applied by the promotion tier.",
+                "properties": {
+                  "discount": {
+                    "$ref": "#/components/schemas/Discount"
+                  }
+                }
+              },
+              "validation_rule_assignments": {
+                "$ref": "#/components/schemas/ValidationRuleAssignmentsList"
+              }
+            }
+          }
+        ]
+      },
+      "PromotionTierCreateBase": {
+        "title": "Promotion Tier Create Base",
+        "type": "object",
         "properties": {
           "name": {
             "type": "string",
@@ -10378,15 +10476,6 @@
           "banner": {
             "type": "string",
             "description": "Text to be displayed to your customers on your website."
-          },
-          "action": {
-            "type": "object",
-            "description": "Contains details about the discount applied by the promotion tier.",
-            "properties": {
-              "discount": {
-                "$ref": "#/components/schemas/Discount"
-              }
-            }
           },
           "metadata": {
             "type": "object",
@@ -10420,9 +10509,6 @@
           },
           "validity_hours": {
             "$ref": "#/components/schemas/ValidityHours"
-          },
-          "validation_rule_assignments": {
-            "$ref": "#/components/schemas/ValidationRuleAssignmentsList"
           },
           "category": {
             "type": "string",
@@ -28306,7 +28392,137 @@
               "$ref": "#/components/schemas/ValidationRuleConditions"
             },
             "rules": {
-              "$ref": "#/components/schemas/ValidationRuleRules"
+              "$ref": "#/components/schemas/ValidationRuleRules01"
+            },
+            "error": {
+              "type": "object",
+              "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rule."
+                }
+              }
+            }
+          }
+        }
+      },
+      "ValidationRuleRules01": {
+        "title": "Validation Rule Rules",
+        "type": "object",
+        "description": "Contains all the rule definitions for the validation rule. It is a set of key value pairs representing the rules and logic between the rules. The keys are numbered consecutively beginning from `1`. The values are objects containing the rule conditions.",
+        "properties": {
+          "logic": {
+            "type": "string",
+            "example": "(1 and 2) and (3)",
+            "description": "Defines the logic between the rules."
+          }
+        },
+        "additionalProperties": {
+          "type": "object",
+          "description": "Contains the name of the validation rule.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Voucherify specific rule name.  The list of available names is provided below.  \n\n|**Type**|**Name** |\n---- | -----------|\n|**Customer** | customer.segment<br>customer.metadata* |\n|**Order** |order.amount<br>order.initial_amount<br>order.items.count<br>order.items.price_any<br>order.items.price_each<br>order.items.metadata_any<br>order.items.metadata_each<br>order.metadata* |\n| **Campaign** | campaign.orders.amount_discounted<br>campaign.orders.amount<br>campaign.redemptions.count<br>campaign.redemptions.count.daily<br>campaign.redemptions.count.monthly<br>campaign.redemptions.customers_count<br>campaign.redemptions.customers_count.daily<br>campaign.redemptions.customers_count.monthly |\n| **Redemption** |redemption.gift.amount<br>redemption.count.daily<br>redemption.count.monthly<br>redemption.count.per_customer<br>redemption.count.per_customer.daily<br>redemption.count.per_customer.monthly<br>redemption.api_key<br>redemption.count.per_api_key<br>redemption.user.login<br>redemption.count.per_user<br>redemption.metadata<br>redemption.reward.pay_with_points.points_used |\n| **Product** | product.id<br>product.price<br>product.quantity<br>product.discount_applicable<br>product.metadata*<br>product.metadata.aggregated_quantity<br>product.metadata.aggregated_amount<br>product.metadata.discount_applicable<br>product.metadata.match_all |\n| **SKU** | sku.id<br>sku.price<br>sku.quantity<br>sku.discount_applicable |\n| **Publication** | publication.redeemable_by_linked_customer |\n| **Custom Event** | custom_event.metadata* |\n| **Order items** | order.items.every<br>order.items.any<br>order.items.none<br>order.items.cheapest<br>order.items.most_expensive | order.items.quantity<br>order.items.aggregated_quantity<br>order.items.price<br>order.items.aggregated_amount<br>order.items.metadata* |  \n\n\n\n*Requires the `property` field to be defined."
+            },
+            "property": {
+              "type": "string",
+              "nullable": true,
+              "description": "Custom name for a metadata property associated with the condition to be satisfied. **Required** if the property `name` is any of the following: \n customer_metadata<br>custom_event_metadata<br>order_items_metadata<br>order_metadata<br>product_metadata<br>redemption_metadata"
+            },
+            "conditions": {
+              "$ref": "#/components/schemas/ValidationRuleConditions"
+            },
+            "rules": {
+              "$ref": "#/components/schemas/ValidationRuleRules02"
+            },
+            "error": {
+              "type": "object",
+              "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rule."
+                }
+              }
+            }
+          }
+        }
+      },
+      "ValidationRuleRules02": {
+        "title": "Validation Rule Rules",
+        "type": "object",
+        "description": "Contains all the rule definitions for the validation rule. It is a set of key value pairs representing the rules and logic between the rules. The keys are numbered consecutively beginning from `1`. The values are objects containing the rule conditions.",
+        "properties": {
+          "logic": {
+            "type": "string",
+            "example": "(1 and 2) and (3)",
+            "description": "Defines the logic between the rules."
+          }
+        },
+        "additionalProperties": {
+          "type": "object",
+          "description": "Contains the name of the validation rule.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Voucherify specific rule name.  The list of available names is provided below.  \n\n|**Type**|**Name** |\n---- | -----------|\n|**Customer** | customer.segment<br>customer.metadata* |\n|**Order** |order.amount<br>order.initial_amount<br>order.items.count<br>order.items.price_any<br>order.items.price_each<br>order.items.metadata_any<br>order.items.metadata_each<br>order.metadata* |\n| **Campaign** | campaign.orders.amount_discounted<br>campaign.orders.amount<br>campaign.redemptions.count<br>campaign.redemptions.count.daily<br>campaign.redemptions.count.monthly<br>campaign.redemptions.customers_count<br>campaign.redemptions.customers_count.daily<br>campaign.redemptions.customers_count.monthly |\n| **Redemption** |redemption.gift.amount<br>redemption.count.daily<br>redemption.count.monthly<br>redemption.count.per_customer<br>redemption.count.per_customer.daily<br>redemption.count.per_customer.monthly<br>redemption.api_key<br>redemption.count.per_api_key<br>redemption.user.login<br>redemption.count.per_user<br>redemption.metadata<br>redemption.reward.pay_with_points.points_used |\n| **Product** | product.id<br>product.price<br>product.quantity<br>product.discount_applicable<br>product.metadata*<br>product.metadata.aggregated_quantity<br>product.metadata.aggregated_amount<br>product.metadata.discount_applicable<br>product.metadata.match_all |\n| **SKU** | sku.id<br>sku.price<br>sku.quantity<br>sku.discount_applicable |\n| **Publication** | publication.redeemable_by_linked_customer |\n| **Custom Event** | custom_event.metadata* |\n| **Order items** | order.items.every<br>order.items.any<br>order.items.none<br>order.items.cheapest<br>order.items.most_expensive | order.items.quantity<br>order.items.aggregated_quantity<br>order.items.price<br>order.items.aggregated_amount<br>order.items.metadata* |  \n\n\n\n*Requires the `property` field to be defined."
+            },
+            "property": {
+              "type": "string",
+              "nullable": true,
+              "description": "Custom name for a metadata property associated with the condition to be satisfied. **Required** if the property `name` is any of the following: \n customer_metadata<br>custom_event_metadata<br>order_items_metadata<br>order_metadata<br>product_metadata<br>redemption_metadata"
+            },
+            "conditions": {
+              "$ref": "#/components/schemas/ValidationRuleConditions"
+            },
+            "rules": {
+              "$ref": "#/components/schemas/ValidationRuleRules03"
+            },
+            "error": {
+              "type": "object",
+              "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rule."
+                }
+              }
+            }
+          }
+        }
+      },
+      "ValidationRuleRules03": {
+        "title": "Validation Rule Rules",
+        "type": "object",
+        "description": "Contains all the rule definitions for the validation rule. It is a set of key value pairs representing the rules and logic between the rules. The keys are numbered consecutively beginning from `1`. The values are objects containing the rule conditions.",
+        "properties": {
+          "logic": {
+            "type": "string",
+            "example": "(1 and 2) and (3)",
+            "description": "Defines the logic between the rules."
+          }
+        },
+        "additionalProperties": {
+          "type": "object",
+          "description": "Contains the name of the validation rule.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Voucherify specific rule name.  The list of available names is provided below.  \n\n|**Type**|**Name** |\n---- | -----------|\n|**Customer** | customer.segment<br>customer.metadata* |\n|**Order** |order.amount<br>order.initial_amount<br>order.items.count<br>order.items.price_any<br>order.items.price_each<br>order.items.metadata_any<br>order.items.metadata_each<br>order.metadata* |\n| **Campaign** | campaign.orders.amount_discounted<br>campaign.orders.amount<br>campaign.redemptions.count<br>campaign.redemptions.count.daily<br>campaign.redemptions.count.monthly<br>campaign.redemptions.customers_count<br>campaign.redemptions.customers_count.daily<br>campaign.redemptions.customers_count.monthly |\n| **Redemption** |redemption.gift.amount<br>redemption.count.daily<br>redemption.count.monthly<br>redemption.count.per_customer<br>redemption.count.per_customer.daily<br>redemption.count.per_customer.monthly<br>redemption.api_key<br>redemption.count.per_api_key<br>redemption.user.login<br>redemption.count.per_user<br>redemption.metadata<br>redemption.reward.pay_with_points.points_used |\n| **Product** | product.id<br>product.price<br>product.quantity<br>product.discount_applicable<br>product.metadata*<br>product.metadata.aggregated_quantity<br>product.metadata.aggregated_amount<br>product.metadata.discount_applicable<br>product.metadata.match_all |\n| **SKU** | sku.id<br>sku.price<br>sku.quantity<br>sku.discount_applicable |\n| **Publication** | publication.redeemable_by_linked_customer |\n| **Custom Event** | custom_event.metadata* |\n| **Order items** | order.items.every<br>order.items.any<br>order.items.none<br>order.items.cheapest<br>order.items.most_expensive | order.items.quantity<br>order.items.aggregated_quantity<br>order.items.price<br>order.items.aggregated_amount<br>order.items.metadata* |  \n\n\n\n*Requires the `property` field to be defined."
+            },
+            "property": {
+              "type": "string",
+              "nullable": true,
+              "description": "Custom name for a metadata property associated with the condition to be satisfied. **Required** if the property `name` is any of the following: \n customer_metadata<br>custom_event_metadata<br>order_items_metadata<br>order_metadata<br>product_metadata<br>redemption_metadata"
+            },
+            "conditions": {
+              "$ref": "#/components/schemas/ValidationRuleConditions"
+            },
+            "rules": {
+              "type": "object",
+              "description": "Another set of validation rules. If you need to create complex rules with more nested rules, use the validation rule builder in the dashboard."
             },
             "error": {
               "type": "object",
@@ -30940,7 +31156,7 @@
                     "$ref": "#/components/schemas/AsyncActionResultProductsMetadataUpdateResponseBody"
                   },
                   {
-                    "$ref": "#/components/schemas/17_res_obj_get_async_action_result_products_import_csv"
+                    "$ref": "#/components/schemas/AsyncActionResultProductsImportCSV"
                   },
                   {
                     "$ref": "#/components/schemas/17_res_obj_get_async_action_result_skus_import_csv"
@@ -31500,7 +31716,7 @@
           }
         }
       },
-      "17_res_obj_get_async_action_result_products_import_csv": {
+      "AsyncActionResultProductsImportCSV": {
         "title": "PRODUCTS.IMPORT_CSV",
         "type": "object",
         "description": "Result schema for a `PRODUCTS.IMPORT_CSV` async action type.",
@@ -31519,6 +31735,10 @@
                 "row": {
                   "type": "integer",
                   "description": "The CSV file row number where the product definition is recorded. The row counter excludes the file headers row."
+                },
+                "source_id": {
+                  "type": "string",
+                  "description": "The source identifier of the product that caused the error."
                 },
                 "reason": {
                   "type": "string",
@@ -41011,7 +41231,7 @@
       "ManagementProjectsCreateRequestBody": {
         "type": "object",
         "title": "Management Project Create Request Body",
-        "description": "Request body schema for **POST** `v1/management/v1/projects`.",
+        "description": "Request body schema for **POST** `/management/v1/projects`.",
         "allOf": [
           {
             "type": "object",
@@ -41092,7 +41312,7 @@
       "ManagementProjectsUpdateRequestBody": {
         "type": "object",
         "title": "Management Project Update Request Body",
-        "description": "Request body schema for **PUT** `v1/management/v1/projects/{projectId}`.",
+        "description": "Request body schema for **PUT** `/management/v1/projects/{projectId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectBase"
@@ -41397,7 +41617,7 @@
       },
       "ManagementProjectsUsersInviteCreateRequestBody": {
         "type": "object",
-        "description": "Request body schema for **POST** `v1/management/v1/projects/users/invite`.",
+        "description": "Request body schema for **POST** `/management/v1/projects/users/invite`.",
         "properties": {
           "email": {
             "type": "string",
@@ -41433,6 +41653,49 @@
           "first_name",
           "last_name",
           "projects"
+        ]
+      },
+      "ManagementProjectsTemplatesCampaignsCopyCreateRequestBody": {
+        "type": "object",
+        "title": "Management Templates Campaign Copy Template Request Body",
+        "description": "Response body schema for **POST** `/management/v1/projects/{projectId}/templates/campaigns/{campaignTemplateId}/copy`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TemplatesCampaignsNameDescription"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "destination_project_id": {
+                "type": "string",
+                "description": "Unique identifier of the project to which the campaign template will be copied."
+              }
+            }
+          }
+        ],
+        "required": [
+          "name",
+          "destination_project_id"
+        ]
+      },
+      "ManagementProjectsTemplatesCampaignsCopyCreateResponseBody": {
+        "type": "object",
+        "title": "Management Templates Campaign Template Copy Response Body",
+        "description": "Response body schema for **POST** `/management/v1/projects/{projectId}/templates/campaigns/{campaignTemplateId}/copy`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignTemplateBase"
+          }
+        ]
+      },
+      "ManagementProjectsTemplatesCampaignsListResponseBody": {
+        "type": "object",
+        "title": "Management Templates Campaign Template List Response Body",
+        "description": "Response body schema for **GET** `/management/v1/projects/{projectId}/templates/campaigns`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TemplatesCampaignsListBody"
+          }
         ]
       },
       "ManagementProjectsStackingRulesUpdateRequestBody": {
@@ -41900,7 +42163,7 @@
       "ManagementProjectsCustomEventSchemasCreateRequestBody": {
         "type": "object",
         "title": "Create Custom Event Schema Request",
-        "description": "Request body schema for **POST** `v1/management/v1/projects/{projectId}/custom-event-schema`.",
+        "description": "Request body schema for **POST** `/management/v1/projects/{projectId}/custom-event-schema`.",
         "allOf": [
           {
             "type": "object",
@@ -41924,7 +42187,7 @@
       "ManagementProjectsCustomEventSchemasGetResponseBody": {
         "type": "object",
         "title": "Get Custom Event Schema Response",
-        "description": "Response body schema for **GET** `v1/management/v1/projects/{projectId}/custom-event-schema/{customEventSchemaId}`.",
+        "description": "Response body schema for **GET** `/management/v1/projects/{projectId}/custom-event-schema/{customEventSchemaId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsCustomEventSchema"
@@ -41934,7 +42197,7 @@
       "ManagementProjectsCustomEventSchemasUpdateRequestBody": {
         "type": "object",
         "title": "Update Custom Event Schema Request Body",
-        "description": "Request body schema for **POST** `v1/management/v1/projects/{projectId}/custom-event-schema/{customEventSchemaId}`.",
+        "description": "Request body schema for **POST** `/management/v1/projects/{projectId}/custom-event-schema/{customEventSchemaId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsCustomEventSchemaBase"
@@ -41944,7 +42207,7 @@
       "ManagementProjectsCustomEventSchemasUpdateResponseBody": {
         "type": "object",
         "title": "Update Custom Event Schema Response Body",
-        "description": "Response body schema for **POST** `v1/management/v1/projects/{projectId}/custom-event-schema/{customEventSchemaId}`.",
+        "description": "Response body schema for **POST** `/management/v1/projects/{projectId}/custom-event-schema/{customEventSchemaId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsCustomEventSchema"
@@ -41954,7 +42217,7 @@
       "ManagementProjectsCustomEventSchemasCreateResponseBody": {
         "type": "object",
         "title": "Create Custom Event Schema Response",
-        "description": "Response body schema for **POST** `v1/management/v1/projects/{projectId}/custom-event-schema`.",
+        "description": "Response body schema for **POST** `/management/v1/projects/{projectId}/custom-event-schema`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsCustomEventSchema"
@@ -42061,7 +42324,7 @@
       "ManagementProjectsWebhooksUpdateResponseBody": {
         "type": "object",
         "title": "Management Webhook Update Response Response",
-        "description": "Response body schema for **PUT** `v1/management/v1/projects/{projectId}/webhooks/{webhookId}`.",
+        "description": "Response body schema for **PUT** `/management/v1/projects/{projectId}/webhooks/{webhookId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsWebhook"
@@ -42071,7 +42334,7 @@
       "ManagementProjectsWebhooksGetResponseBody": {
         "type": "object",
         "title": "Management Webhook Get Response Response",
-        "description": "Response body schema for **GET** `v1/management/v1/projects/{projectId}/webhooks/{webhookId}`.",
+        "description": "Response body schema for **GET** `/management/v1/projects/{projectId}/webhooks/{webhookId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsWebhook"
@@ -42081,7 +42344,7 @@
       "ManagementProjectsWebhooksCreateResponseBody": {
         "type": "object",
         "title": "Management Webhook Create Request Response",
-        "description": "Response body schema for **POST** `v1/management/v1/projects/{projectId}/webhooks`.",
+        "description": "Response body schema for **POST** `/management/v1/projects/{projectId}/webhooks`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsWebhook"
@@ -42091,7 +42354,7 @@
       "ManagementProjectsWebhooksUpdateRequestBody": {
         "type": "object",
         "title": "Management Webhook Update Request Body",
-        "description": "Request body schema for **PUT** `v1/management/v1/projects/{projectId}/webhooks`.",
+        "description": "Request body schema for **PUT** `/management/v1/projects/{projectId}/webhooks`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsWebhookBase"
@@ -42105,7 +42368,7 @@
       "ManagementProjectsWebhooksCreateRequestBody": {
         "type": "object",
         "title": "Management Webhook Create Request Body",
-        "description": "Request body schema for **POST** `v1/management/v1/projects/{projectId}/webhooks/{webhookId}`.",
+        "description": "Request body schema for **POST** `/management/v1/projects/{projectId}/webhooks/{webhookId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsWebhookBase"
@@ -42581,7 +42844,7 @@
       "ManagementProjectsBrandingCreateRequestBody": {
         "type": "object",
         "title": "Create Brand Request",
-        "description": "Request body schema for **POST** `v1/management/v1/projects/{projectId}/branding`.",
+        "description": "Request body schema for **POST** `/management/v1/projects/{projectId}/branding`.",
         "properties": {
           "brand": {
             "type": "object",
@@ -42744,7 +43007,7 @@
       "ManagementProjectsBrandingCreateResponseBody": {
         "type": "object",
         "title": "Management Projects Branding Create Response Body",
-        "description": "Response body schema for **POST** `v1/management/v1/projects/{projectId}/branding`.",
+        "description": "Response body schema for **POST** `/management/v1/projects/{projectId}/branding`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsBranding"
@@ -42754,7 +43017,7 @@
       "ManagementProjectsBrandingUpdateResponseBody": {
         "type": "object",
         "title": "Management Projects Branding Update Response Body",
-        "description": "Response body schema for **PUT** `v1/management/v1/projects/{projectId}/branding/{brandingId}`.",
+        "description": "Response body schema for **PUT** `/management/v1/projects/{projectId}/branding/{brandingId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsBranding"
@@ -42764,7 +43027,7 @@
       "ManagementProjectsBrandingGetResponseBody": {
         "type": "object",
         "title": "Management Projects Branding Get Response Body",
-        "description": "Response body schema for **GET** `v1/management/v1/projects/{projectId}/branding/{brandingId}`.",
+        "description": "Response body schema for **GET** `/management/v1/projects/{projectId}/branding/{brandingId}`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/ManagementProjectsBranding"
@@ -43143,53 +43406,93 @@
           "in_app"
         ]
       },
-      "TemplatesCampaignCreateRequestBody": {
+      "TemplatesCampaignsCreateRequestBody": {
         "type": "object",
-        "title": "Templates Campaign Template Create Request Body",
+        "title": "Templates Campaigns Template Create Request Body",
         "description": "Request body schema for **POST** `/templates/campaign`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/TemplatesCampaignCreate"
+            "type": "object",
+            "properties": {
+              "campaign_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique identifier of the campaign that will create a template. It must be an ID of an existing discount or gift card campaign. It cannot be passed when `promotion_tier_id` has value. Required when the `promotion_tier_id` is not passed or it is `null`."
+              },
+              "promotion_tier_id": {
+                "type": "string",
+                "nullable": true,
+                "description": "Unique identifier of the promotion tier that will create a template. It cannot be passed when `campaign_id` has value. Required when the `campaign_id` is not passed or it is `null`."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/TemplatesCampaignsNameDescription"
+          }
+        ],
+        "required": [
+          "name"
+        ]
+      },
+      "TemplatesCampaignsUpdateRequestBody": {
+        "type": "object",
+        "title": "Templates Campaigns Template Update Request Body",
+        "description": "Request body schema for **PUT** `/templates/campaign/{campaignTemplateId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TemplatesCampaignsNameDescription"
           }
         ]
       },
-      "TemplatesCampaignCreate": {
+      "TemplatesCampaignsUpdateResponseBody": {
         "type": "object",
-        "title": "Create Campaign Template Request",
-        "description": "Request body for creating a campaign template.",
+        "title": "Templates Campaigns Template Update Response Body",
+        "description": "Request body schema for **PUT** `/templates/campaign/{campaignTemplateId}`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignTemplate"
+          }
+        ]
+      },
+      "TemplatesCampaignsNameDescription": {
+        "type": "object",
+        "title": "Update Campaign Template Request",
+        "description": "Request body for updating a campaign template.",
         "properties": {
-          "campaign_id": {
-            "type": "string",
-            "description": "Unique identifier of the campaign that will create a template."
-          },
           "name": {
             "type": "string",
             "description": "User-defined name of the campaign template. It must be unique."
           },
           "description": {
             "type": "string",
+            "nullable": true,
             "description": "User-defined description of the campaign template."
           }
-        },
-        "required": [
-          "campaign_id",
-          "name"
-        ]
+        }
       },
-      "TemplatesCampaignListResponseBody": {
+      "TemplatesCampaignsGetResponseBody": {
         "type": "object",
-        "title": "Templates Campaign Template List Response Body",
-        "description": "Response body schema for **GET** `/templates/campaign`.",
+        "title": "Templates Campaign Template Get Response Body",
+        "description": "Response body schema for **GET** `/v1/templates/campaign/{campaignTemplateId}`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/TemplatesCampaignTemplateList"
+            "$ref": "#/components/schemas/CampaignTemplate"
           }
         ]
       },
-      "TemplatesCampaignTemplateList": {
+      "TemplatesCampaignsListResponseBody": {
         "type": "object",
-        "title": "Campaign Template List",
-        "description": "List of campaign templates",
+        "title": "Templates Campaign Template List Response Body",
+        "description": "Response body schema for **GET** `/v1/templates/campaign`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TemplatesCampaignsListBody"
+          }
+        ]
+      },
+      "TemplatesCampaignsListBody": {
+        "type": "object",
+        "title": "Templates Campaign Template List Response Body",
         "properties": {
           "object": {
             "type": "string",
@@ -43209,7 +43512,7 @@
             "type": "array",
             "description": "Dictionary that contains an array of campaign templates.",
             "items": {
-              "$ref": "#/components/schemas/TemplatesGetCampaignTemplateBody"
+              "$ref": "#/components/schemas/CampaignTemplate"
             }
           },
           "total": {
@@ -43228,14 +43531,196 @@
           "has_more"
         ]
       },
-      "TemplatesCampaignTemplateBase": {
+      "TemplatesCampaignsCampaignSetupCreateRequestBody": {
+        "type": "object",
+        "title": "Templates Campaign Template Create Campaign Request Body",
+        "description": "Request body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/campaign-setup`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsCreateBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "code_config": {
+                    "$ref": "#/components/schemas/CodeConfig"
+                  },
+                  "redemption": {
+                    "type": "object",
+                    "description": "Stores the quantity of redemptions that can be applied to the voucher.",
+                    "properties": {
+                      "quantity": {
+                        "type": "integer",
+                        "description": "How many times a voucher can be redeemed. A `null` value means unlimited."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "required": [
+          "name"
+        ]
+      },
+      "TemplatesCampaignsTierSetupCreateRequestBody": {
+        "type": "object",
+        "title": "Templates Campaign Template Add Tier Request Body",
+        "description": "Request body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/tier-setup`.",
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "campaign_id": {
+                "type": "string",
+                "description": "Unique campaign identifier, assigned by Voucherify. Defines the promotion campaign to which the promotion tier will be added."
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/PromotionTierCreateBase"
+          }
+        ],
+        "required": [
+          "campaign_id",
+          "name"
+        ]
+      },
+      "TemplatesCampaignsCampaignSetupCreateResponseBody": {
+        "type": "object",
+        "title": "Templates Campaigns Create Campaign From Template Response Body",
+        "description": "Response body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/campaign-setup`.",
+        "properties": {
+          "created_resources": {
+            "type": "array",
+            "description": "Contains a list of resources that have been added to the project when the campaign has been created out of the template.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier assigned to the created resource. It is assigned by Voucherify."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "The type of the created resource.",
+                  "enum": [
+                    "validation_rules",
+                    "product",
+                    "sku",
+                    "products_collection",
+                    "segments",
+                    "location"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "id",
+              "object"
+            ]
+          },
+          "campaign": {
+            "description": "Details of the created campaign.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Campaign"
+              }
+            ]
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about the campaign created out of the campaign template.",
+            "enum": [
+              "campaign_setup"
+            ]
+          }
+        },
+        "required": [
+          "created_resources",
+          "campaign",
+          "object"
+        ]
+      },
+      "TemplatesCampaignsTierSetupCreateResponseBody": {
+        "type": "object",
+        "title": "Templates Campaigns Add Tier From Template Response Body",
+        "description": "Response body schema for **POST** `/v1/templates/campaigns/{campaignTemplateId}/tier-setup`.",
+        "properties": {
+          "created_resources": {
+            "type": "array",
+            "description": "Contains a list of resources that have been added to the project when the promotion tier has been created out of the template.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier assigned to the created resource. It is assigned by Voucherify."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "The type of the created resource.",
+                  "enum": [
+                    "validation_rules",
+                    "product",
+                    "sku",
+                    "products_collection",
+                    "segments",
+                    "location"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "id",
+              "object"
+            ]
+          },
+          "promotion_tier": {
+            "description": "Details of the added promotion tier.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PromotionTier"
+              }
+            ]
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about the campaign created out of the campaign template.",
+            "enum": [
+              "promotion_tier_setup"
+            ]
+          }
+        },
+        "required": [
+          "created_resources",
+          "campaign",
+          "object"
+        ]
+      },
+      "TemplatesCampaignsCreateTemplateResponseBody": {
+        "type": "object",
+        "title": "Templates Campaign Template Create Response Body",
+        "description": "Response body schema for **POST** `/v1/templates/campaigns`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignTemplateBase"
+          }
+        ]
+      },
+      "CampaignTemplateBase": {
         "type": "object",
         "title": "Campaign Template Base",
         "description": "Stores details about a campaign template.",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique identifier of the campaign template.",
+            "description": "Unique identifier of the campaign template. It is assigned by Voucherify.",
             "example": "camp_tpl_eR9NsNJ5gqJRN2TG3fqCvbVl"
           },
           "name": {
@@ -43248,7 +43733,7 @@
           },
           "campaign_type": {
             "type": "string",
-            "description": "User-defined description of the campaign template.",
+            "description": "Type of the campaign used to create the campaign template. Templates created from a promotion tier are converted to `DISCOUNT_COUPONS`.",
             "enum": [
               "DISCOUNT_COUPONS",
               "GIFT_VOUCHERS"
@@ -43276,10 +43761,10 @@
           "object"
         ]
       },
-      "TemplatesGetCampaignTemplateBody": {
+      "CampaignTemplate": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/TemplatesCampaignTemplateBase"
+            "$ref": "#/components/schemas/CampaignTemplateBase"
           },
           {
             "type": "object",
@@ -48981,7 +49466,6 @@
                     "campaign_type": "DISCOUNT_COUPONS",
                     "join_once": true,
                     "type": "AUTO_UPDATE",
-                    "category_id": "cat_0bb343dee3cdb5ec0c",
                     "start_date": "2020-08-16T00:00:00Z",
                     "expiration_date": "2023-12-26T00:00:00Z",
                     "vouchers_count": 3,
@@ -49020,7 +49504,6 @@
                     "campaign_type": "GIFT_VOUCHERS",
                     "join_once": true,
                     "type": "AUTO_UPDATE",
-                    "category_id": "cat_0bb343dee3cdb5ec0c",
                     "start_date": "2020-08-16T00:00:00Z",
                     "expiration_date": "2023-12-26T00:00:00Z",
                     "vouchers_count": 2,
@@ -49060,7 +49543,6 @@
                     "auto_join": true,
                     "join_once": true,
                     "type": "AUTO_UPDATE",
-                    "category_id": "cat_0bb343dee3cdb5ec0c",
                     "start_date": "2020-08-16T00:00:00Z",
                     "expiration_date": "2023-12-26T00:00:00Z",
                     "vouchers_count": 2,
@@ -49102,7 +49584,6 @@
                     "name": "Promotion - API - 4",
                     "campaign_type": "PROMOTION",
                     "type": "STATIC",
-                    "category_id": "cat_0bb343dee3cdb5ec0c",
                     "use_voucher_metadata_schema": false,
                     "start_date": "2020-08-16T00:00:00Z",
                     "expiration_date": "2023-12-26T00:00:00Z",
@@ -49192,7 +49673,6 @@
                     "campaign_type": "REFERRAL_PROGRAM",
                     "join_once": true,
                     "type": "AUTO_UPDATE",
-                    "category_id": "cat_0bb343dee3cdb5ec0c",
                     "start_date": "2020-08-16T00:00:00Z",
                     "expiration_date": "2023-12-26T00:00:00Z",
                     "vouchers_count": 2,
@@ -50219,7 +50699,7 @@
             }
           },
           "403": {
-            "description": "Returns an error if the user is missing the access to an area or a store to which the campaign with this ID has been assigned.",
+            "description": "Returns an error if the restricted user is missing the access to an area or a store to which the campaign with this ID has been assigned.",
             "content": {
               "application/json": {
                 "schema": {
@@ -50388,8 +50868,31 @@
               }
             }
           },
+          "400": {
+            "description": "Returns an error if the restricted user does not have the permission to modify the campaign, because the campaign is `readonly` for them.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_protected",
+                      "message": "Resource is protected",
+                      "details": "Resource campaign with id camp_oazbyS2Y3SxKLCh9yQ3pqFr6 is protected and cannot be modified",
+                      "request_id": "v-0f7548b67cc7ed8dff",
+                      "resource_id": "camp_oazbyS2Y3SxKLCh9yQ3pqFr6",
+                      "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "403": {
-            "description": "Returns an error if the user is missing the access to an area or a store to which the campaign with this ID has been assigned.",
+            "description": "Returns an error if the restricted user is missing the access to an area or a store to which the campaign with this ID has been assigned.",
             "content": {
               "application/json": {
                 "schema": {
@@ -50448,7 +50951,7 @@
             }
           },
           "403": {
-            "description": "Returns an error if the user is missing the access to an area or a store to which the campaign with this ID has been assigned.",
+            "description": "Returns an error if the restricted user is missing the access to an area or a store to which the campaign with this ID has been assigned.",
             "content": {
               "application/json": {
                 "schema": {
@@ -50793,7 +51296,6 @@
                     },
                     {
                       "code": "CODE9",
-                      "category_id": "cat_0bb343dee3cdb5ec0c",
                       "redemption": {
                         "quantity": 4
                       },
@@ -50839,7 +51341,6 @@
                     },
                     {
                       "code": "CODE15",
-                      "category_id": "cat_0bb343dee3cdb5ec0c",
                       "redemption": {
                         "quantity": 4
                       },
@@ -50885,7 +51386,6 @@
                     },
                     {
                       "code": "CODE12",
-                      "category_id": "cat_0bb343dee3cdb5ec0c",
                       "redemption": {
                         "quantity": 4
                       },
@@ -55910,7 +56410,7 @@
           "Validations"
         ],
         "summary": "Validate Promotions [Deprecated]",
-        "description": "<!-- theme: danger -->\n> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for qualification, and we do not recommend using it. The new [Qualifications API](ref:examine-qualification) introduces additional features and improvements while maintaining backward compatibility. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint. \n\n <!-- theme: danger -->\n> ❗️ Limitation  \n>\n> Only the first 150 most recent promotion tiers are checked for eligibility. Older promotion tiers are ignored and not returned. \n\n Use this method to get valid promotions for a given customer and order.\n\n### Advanced validation filters\n\nYou can narrow down a validation to a specific promotion ID or tier metadata. Here are the examples of filtering queries you can use:\n\n| **Filter** | **Example** |\n|:---|:---|\n| promotion_id | [filters][promotion_id][conditions][$is]={{campaign_id}} |\n| tier metadata | [filters][metadata.{{promotion tier metadata key}}][conditions][$is]={{promotion tier metadata value}} |\n\n<!--\ntitle: \"Validate promotion against customer rules\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }'/\n  'https://api.voucherify.io/v1/promotions/validation?audienceRulesOnly=true'\n```\n<!--\ntitle: \"Validate promotion for specific campaign\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    },\n    \"metadata\": {\n        \"store_names\": \"Store 1 - New York - Broadway\"\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][promotion_id][conditions][$is]=camp_nYcAyjFXmEaBU0nB7EQ4hVTr'\n```\n<!--\ntitle: \"Validate promotion based on tier metadata\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][metadata.has_budget][conditions][$is]=true'\n```",
+        "description": "<!-- theme: danger -->\n> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for qualification, and we do not recommend using it. The new [Qualifications API](ref:check-eligibility) introduces additional features and improvements while maintaining backward compatibility. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint. \n\n <!-- theme: danger -->\n> ❗️ Limitation  \n>\n> Only the first 150 most recent promotion tiers are checked for eligibility. Older promotion tiers are ignored and not returned. \n\n Use this method to get valid promotions for a given customer and order.\n\n### Advanced validation filters\n\nYou can narrow down a validation to a specific promotion ID or tier metadata. Here are the examples of filtering queries you can use:\n\n| **Filter** | **Example** |\n|:---|:---|\n| promotion_id | [filters][promotion_id][conditions][$is]={{campaign_id}} |\n| tier metadata | [filters][metadata.{{promotion tier metadata key}}][conditions][$is]={{promotion tier metadata value}} |\n\n<!--\ntitle: \"Validate promotion against customer rules\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }'/\n  'https://api.voucherify.io/v1/promotions/validation?audienceRulesOnly=true'\n```\n<!--\ntitle: \"Validate promotion for specific campaign\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    },\n    \"metadata\": {\n        \"store_names\": \"Store 1 - New York - Broadway\"\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][promotion_id][conditions][$is]=camp_nYcAyjFXmEaBU0nB7EQ4hVTr'\n```\n<!--\ntitle: \"Validate promotion based on tier metadata\"\nlineNumbers: true\n-->\n```cURL\ncurl -X GET \\\n  -H \"X-Client-Application-Id: 011240bf-d5fc-4ef1-9e82-11eb68c43bf5\" \\\n  -H \"X-Client-Token: 9e2230c5-71fb-460a-91c6-fbee64707a20\" \\\n  -H \"Content-Type: application/json\" \\\n  -d `{\n    \"customer\": {\n        \"id\": \"cust_gN9KgORZECfdhG9qT6n82Zr7\"\n    },\n    \"order\": {\n        \"items\": [\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9aeddb019a42db\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0a9f9ab4ab019a42d5\",\n                \"quantity\": \"1\"\n            },\n            {\n                \"sku_id\": \"sku_0b7d7dfb090be5c619\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b72b0bd64d198e3ae\",\n                \"quantity\": 1\n            },\n            {\n                \"product_id\": \"prod_0b7d7c4e814be5c502\",\n                \"quantity\": 1\n            }\n        ],\n        \"metadata\":{\n            \"payment_mean\": [\"credit-card\"]\n        }\n    },\n    \"options\": {\n        \"expand\": [\n            \"category\"\n        ]\n    }\n  }`\\\n  'https://api.voucherify.io/v1/promotions/validation?[filters][metadata.has_budget][conditions][$is]=true'\n```",
         "parameters": [
           {
             "schema": {
@@ -57952,7 +58452,7 @@
           "Validations"
         ],
         "summary": "Validate Promotion Tier [Deprecated]",
-        "description": "<!-- theme: danger -->\n> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for promotion tier redemption, and we do not recommend using it. The new [Stackable Discounts API](ref:redeem-stacked-discounts) introduces additional features and improvements while maintaining backward compatibility, including applying a combination of coupon codes and promotion tiers. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint. \n\nTo verify whether the promotion tier discount can be applied to an order. This method is designed for server side integration which means that it is accessible only through private keys.",
+        "description": "<!-- theme: danger -->\n> ❗️ Deprecated  \n>\n> This endpoint represents the deprecated version of the API responsible for promotion tier redemption, and we do not recommend using it. The new [Stackable Discounts API](ref:validate-stacked-discounts) introduces additional features and improvements while maintaining backward compatibility, including applying a combination of coupon codes and promotion tiers. Developers are encouraged to migrate to the latest version to take advantage of the latest enhancements and bug fixes. No updates will be provided to the deprecated endpoint. \n\nTo verify whether the promotion tier discount can be applied to an order. This method is designed for server side integration which means that it is accessible only through private keys.",
         "parameters": [],
         "security": [
           {
@@ -62705,6 +63205,29 @@
               }
             }
           },
+          "403": {
+            "description": "Returns an error if the restricted user is missing the access to an area or a store to which the campaign with this ID has been assigned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Resource campaign with id camp_7u3ZPLSByANMXjBkAs4kT2nS is not accessible in given context",
+                      "request_id": "v-0f005192bfce923bb7",
+                      "resource_id": "camp_7u3ZPLSByANMXjBkAs4kT2nS",
+                      "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
             "description": "Returns an error if the campaign does not exist or has been deleted.",
             "content": {
@@ -62899,6 +63422,52 @@
                         }
                       },
                       "object": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the restricted user does not have the permission to modify the campaign, because the campaign is `readonly` for them.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 400,
+                      "key": "resource_protected",
+                      "message": "Resource is protected",
+                      "details": "Resource campaign with id camp_oazbyS2Y3SxKLCh9yQ3pqFr6 is protected and cannot be modified",
+                      "request_id": "v-0f7548b67cc7ed8dff",
+                      "resource_id": "camp_oazbyS2Y3SxKLCh9yQ3pqFr6",
+                      "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if the restricted user is missing the access to an area or a store to which the campaign with this ID has been assigned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Resource campaign with id camp_7u3ZPLSByANMXjBkAs4kT2nS is not accessible in given context",
+                      "request_id": "v-0f005192bfce923bb7",
+                      "resource_id": "camp_7u3ZPLSByANMXjBkAs4kT2nS",
+                      "resource_type": "campaign"
                     }
                   }
                 }
@@ -82785,7 +83354,7 @@
           "Templates"
         ],
         "summary": "List Campaign Templates",
-        "description": "Lists all campaign templates available in the project.",
+        "description": "Lists all campaign templates available in the project.\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
         "parameters": [
           {
             "$ref": "#/components/parameters/limit"
@@ -82837,7 +83406,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TemplatesCampaignListResponseBody"
+                  "$ref": "#/components/schemas/TemplatesCampaignsListResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -82878,7 +83447,7 @@
           "Templates"
         ],
         "summary": "Create Campaign Template",
-        "description": "Creates a template for a discount or gift campaign.\n\nA template stores campaign configuration **without** the following details:\n- Campaign name\n- Category\n- Code count\n\nThe following elements are not supported by campaign templates:\n- Redeeming API keys\n- Redeeming users\n- Customer loyalty tier\n- Static segments\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation]() to learn more about this feature.",
+        "description": "Creates a template for a discount or gift campaign, or a promotion tier.\n\nA template stores campaign configuration **without** the following details:\n- Campaign name\n- Category\n- Code count\n\nThe following elements are not supported by campaign templates:\n- Redeeming API keys\n- Redeeming users\n- Customer loyalty tier\n- Static segments\n\n> 👍 Promotion Tiers and Campaign Templates\n>\n>You can create a campaign template out of a promotion tier. Promotion tiers are converted to a discount campaign with the `DISCOUNT_COUPON` type. You can use this template to create:\n>- Discount campaign,\n>- Promotion tier.\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
         "parameters": [],
         "security": [
           {
@@ -82891,7 +83460,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TemplatesCampaignCreateRequestBody"
+                "$ref": "#/components/schemas/TemplatesCampaignsCreateRequestBody"
               }
             }
           }
@@ -82902,7 +83471,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TemplatesCampaignTemplateBase"
+                  "$ref": "#/components/schemas/TemplatesCampaignsCreateTemplateResponseBody"
                 },
                 "examples": {
                   "Example": {
@@ -82920,7 +83489,16 @@
                   "$ref": "#/components/schemas/e_400_invalid_payload"
                 },
                 "examples": {
-                  "Invalid payload": {
+                  "Missing Name": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Payload must have required property 'name'",
+                      "request_id": "v-0f77b9c5b95c094937"
+                    }
+                  },
+                  "Invalid Campaign Type": {
                     "value": {
                       "code": 400,
                       "key": "campaign_type_is_not_supported_by_campaign_template",
@@ -82949,6 +83527,586 @@
                       "request_id": "v-0f3eed5a090c0fdf45",
                       "resource_id": "camp_Tq8OnIpBAeHNY7KMM0rE5MB",
                       "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/templates/campaigns/{campaignTemplateId}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignTemplateId",
+          "description": "Pass the campaign template ID that was assigned by Voucherify.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignTemplateId"
+          },
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "get-campaign-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Get Campaign Template",
+        "description": "Retrieves a campaign template available in the project.\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the details about a campaign template.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignsGetResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHcq",
+                      "name": "Happy Hours Template",
+                      "description": "Template for a Happy Hours campaign with discount coupons.",
+                      "campaign_type": "DISCOUNT_COUPONS",
+                      "created_at": "2019-09-09T09:09:09.009Z",
+                      "object": "campaign_template"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign_template with id camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "request_id": "v-0f6d3efe61099b2824",
+                      "resource_id": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "resource_type": "campaign_template"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "update-campaign-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Update Campaign Template",
+        "description": "Updates the name or description of the campaign template.\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Provide the new name or description for the campaign template",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatesCampaignsUpdateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details of an updated campaign template.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignsUpdateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHcq",
+                      "name": "Happy Hours Winter Template",
+                      "description": "Template for a Happy Hours campaign with discount coupons for the winter season.",
+                      "campaign_type": "DISCOUNT_COUPONS",
+                      "created_at": "2019-09-09T09:09:09.009Z",
+                      "updated_at": "2019-09-09T19:09:09.009Z",
+                      "object": "campaign_template"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if the payload is invalid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/e_400_invalid_payload"
+                },
+                "examples": {
+                  "Invalid payload": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_payload",
+                      "message": "Invalid payload",
+                      "details": "Property .description must be string,null",
+                      "request_id": "v-0f6d3eda91c99b27ed"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign_template with id camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "request_id": "v-0f6d3efe61099b2824",
+                      "resource_id": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "resource_type": "campaign_template"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns an error if a campaign template with the same name already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Duplicate": {
+                    "value": {
+                      "code": 409,
+                      "key": "duplicate_found",
+                      "message": "Duplicated resource found",
+                      "details": "Duplicated campaign_template exists with name Campaign_Template_01",
+                      "request_id": "v-0f7610d229c04a0bd9",
+                      "resource_id": "Campaign_Template_01",
+                      "resource_type": "campaign_template"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "delete-campaign-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Delete Campaign Template",
+        "description": "Deletes the campaign template permanently.\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if deletion is successful."
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign_template with id camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "request_id": "v-0f6d3efe61099b2824",
+                      "resource_id": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "resource_type": "campaign_template"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/templates/campaigns/{campaignTemplateId}/campaign-setup": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignTemplateId",
+          "description": "Pass the campaign template ID that was assigned by Voucherify.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignTemplateId"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "create-campaign-from-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Create Campaign From Template",
+        "description": "Creates a campaign out of a campaign template.\n\nTo create a campaign, you need to provide the name in the request, while other fields are optional. If no other fields are sent, the configuration from the template will be used.\n\nYou can send new values of the fields listed below to replace the settings saved in the template. However, you cannot assign an existing validation rule or create a new one in the request. If the template has a validation rule, a new validation rule is always created for the campaign. When the campaign has been created, then you can:\n- [Update the validation rule](ref:update-validation-rule),\n- [Unassign the validation rule](ref:delete-validation-rule-assignment),\n- [Assign an existing validation rule](ref:create-validation-rule-assignment).\n\n> 👍 Promotion Tiers and Campaign Templates\n>\n>You can create a campaign template out of a promotion tier. Promotion tiers are converted to a discount campaign with the `DISCOUNT_COUPON` type. You can use this template to create:\n>- Discount campaign\n>- [Promotion tier](ref:add-tier-from-template)\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Only `name` is required. The rest of the fields will overwrite the template configuration.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatesCampaignsCampaignSetupCreateRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "name": "Campaign-out-of-template",
+                    "description": "Created out of a template",
+                    "auto_join": true,
+                    "join_once": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the created campaign and about the resources that have been created out of the template and added to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignsCampaignSetupCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "created_resources": [
+                        {
+                          "id": "val_3LBFw25WTmAK",
+                          "object": "validation_rules"
+                        }
+                      ],
+                      "campaign": {
+                        "id": "camp_txDwyDPeLvBEq490bfV2nLwo",
+                        "name": "Campaign-out-of-template",
+                        "campaign_type": "DISCOUNT_COUPONS",
+                        "type": "AUTO_UPDATE",
+                        "is_referral_code": false,
+                        "voucher": {
+                          "type": "DISCOUNT_VOUCHER",
+                          "discount": {
+                            "type": "AMOUNT",
+                            "amount_off": 2500,
+                            "aggregated_amount_limit": 25000,
+                            "units": null,
+                            "effect": "APPLY_TO_ITEMS"
+                          },
+                          "gift": null,
+                          "loyalty_card": null,
+                          "redemption": {
+                            "quantity": 4,
+                            "redeemed_quantity": 0
+                          },
+                          "code_config": {
+                            "pattern": "##",
+                            "length": 2,
+                            "charset": "xD",
+                            "prefix": "U-",
+                            "postfix": "-WOT"
+                          }
+                        },
+                        "auto_join": true,
+                        "join_once": true,
+                        "use_voucher_metadata_schema": true,
+                        "description": "Winter 2024-25",
+                        "start_date": null,
+                        "expiration_date": null,
+                        "validity_timeframe": null,
+                        "validity_hours": null,
+                        "validity_day_of_week": null,
+                        "activity_duration_after_publishing": null,
+                        "vouchers_count_invalid": null,
+                        "vouchers_count": 0,
+                        "active": true,
+                        "metadata": null,
+                        "created_at": "2024-09-26T17:14:56.226Z",
+                        "updated_at": null,
+                        "category": null,
+                        "creation_status": "DONE",
+                        "protected": false,
+                        "validation_rules_assignments": {
+                          "data": [
+                            {
+                              "id": "asgm_BLgJYmo64rnAK5eB",
+                              "rule_id": "val_3LBFw25WTmAK",
+                              "related_object_id": "camp_txDwyDPeLvBEq490bfV2nLwo",
+                              "related_object_type": "campaign",
+                              "created_at": "2024-09-26T17:14:56.226Z",
+                              "object": "validation_rules_assignment"
+                            }
+                          ],
+                          "total": 1
+                        },
+                        "object": "campaign",
+                        "deleted": false,
+                        "deleted_at": null,
+                        "category_id": null,
+                        "voucher_type": "DISCOUNT_VOUCHER",
+                        "discount": {
+                          "type": "AMOUNT",
+                          "amount_off": 2500,
+                          "aggregated_amount_limit": 25000,
+                          "units": null,
+                          "effect": "APPLY_TO_ITEMS"
+                        },
+                        "gift": null,
+                        "loyalty_card": null,
+                        "voucher_code_config": {
+                          "pattern": "##",
+                          "length": 2,
+                          "charset": "xD",
+                          "prefix": "Your-",
+                          "postfix": "-Voucher"
+                        },
+                        "default_voucher_redemption": {
+                          "quantity": 4
+                        }
+                      },
+                      "object": "campaign_setup"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign_template with id camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "request_id": "v-0f6d3efe61099b2824",
+                      "resource_id": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "resource_type": "campaign_template"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns an error if a campaign with the same name already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Duplicate": {
+                    "value": {
+                      "code": 409,
+                      "key": "duplicate_found",
+                      "message": "Duplicated resource found",
+                      "details": "Duplicated campaign exists with name CampaignFromTemplate-01",
+                      "request_id": "v-0f754b9c091c095e33",
+                      "resource_id": "CampaignFromTemplate-01",
+                      "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/templates/campaigns/{campaignTemplateId}/tier-setup": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignTemplateId",
+          "description": "Pass the campaign template ID that was assigned by Voucherify.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignTemplateId"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "add-tier-from-template",
+        "tags": [
+          "Templates"
+        ],
+        "summary": "Add Promotion Tier From Template",
+        "description": "Creates a promotion tier out of a discount campaign template and adds it to an existing promotion campaign.\n\nTo add a promotion tier to a campaign, you need to provide the name in the request and the campaign ID. Other fields are optional. If no other fields are sent, the configuration from the template will be used.\n\nYou can send new values of the fields listed below to replace the settings saved in the template. However, you cannot assign an action or an existing validation rule or create a new one in the request. If the template has a validation rule, a new validation rule is always created for the promotion tier. When the promotion tier has been created, then you can:\n- [Update the validation rule](ref:update-validation-rule),\n- [Unassign the validation rule](ref:delete-validation-rule-assignment),\n- [Assign an existing validation rule](ref:create-validation-rule-assignment).\n\n> 👍 Promotion Tiers and Campaign Templates\n>\n>You can create a campaign template out of a promotion tier. Promotion tiers are converted to a discount campaign with the `DISCOUNT_COUPON` type. You can use this template to create:\n>- [Discount campaign](ref:create-campaign-from-template)\n>- Promotion tier\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Only `name` and `campaign_id` are required. The rest of the fields will overwrite the template configuration.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatesCampaignsTierSetupCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the added promotion tier and about the resources that have been created out of the template and added to the project.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplatesCampaignsTierSetupCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "created_resources": [
+                        {
+                          "id": "val_Z2QPKZhfIlW1",
+                          "object": "validation_rules"
+                        }
+                      ],
+                      "promotion_tier": {
+                        "id": "promo_FHRjE8g5Cu2C1C5voqjijl5I",
+                        "created_at": "2024-10-07T14:40:20.125Z",
+                        "name": "metadata-test-template-02",
+                        "banner": null,
+                        "action": {
+                          "discount": {
+                            "type": "AMOUNT",
+                            "amount_off": 300,
+                            "aggregated_amount_limit": 900,
+                            "units": null,
+                            "effect": "APPLY_TO_ITEMS"
+                          }
+                        },
+                        "metadata": {},
+                        "hierarchy": 9,
+                        "campaign": {
+                          "id": "camp_1oOwcEGaNELf8G5sVN77z0ou",
+                          "start_date": null,
+                          "expiration_date": null,
+                          "active": true,
+                          "object": "campaign",
+                          "name": "Promotion request test",
+                          "created_at": "2024-07-26T11:00:51.278Z",
+                          "campaign_type": "PROMOTION",
+                          "category_id": "cat_0d75bdfe4c9030a732",
+                          "categories": []
+                        },
+                        "campaign_id": "camp_1oOwcEGaNELf8G5sVN77z0ou",
+                        "summary": {
+                          "redemptions": {
+                            "total_redeemed": 0
+                          },
+                          "orders": {
+                            "total_amount": 0,
+                            "total_discount_amount": 0
+                          }
+                        },
+                        "active": true,
+                        "validity_day_of_week": null,
+                        "category_id": null,
+                        "categories": [],
+                        "object": "promotion_tier",
+                        "validation_rules_assignments": [
+                          {
+                            "id": "asgm_n1ILxyVhKjyACbVL",
+                            "rule_id": "val_Z2QPKZhfIlW1",
+                            "related_object_id": "promo_FHRjE8g5Cu2C1C5voqjijl5I",
+                            "related_object_type": "promotion_tier",
+                            "created_at": "2024-10-07T14:40:20.125Z",
+                            "object": "validation_rules_assignment"
+                          }
+                        ]
+                      },
+                      "object": "promotion_tier_setup"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if a resource is not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign_template with id camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "request_id": "v-0f6d3efe61099b2824",
+                      "resource_id": "camp_tpl_zLtn2H9fgcG3NwO7t4PAfHc",
+                      "resource_type": "campaign_template"
                     }
                   }
                 }
@@ -84583,6 +85741,318 @@
                       "details": "Duplicated user exists with email your.email@domain.com",
                       "resource_id": "your.email@domain.com",
                       "resource_type": "user"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/templates/campaigns": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "management-list-campaign-templates",
+        "tags": [
+          "Management"
+        ],
+        "summary": "List Campaign Templates",
+        "description": "Lists all campaign templates available in the project.\n\n> 👍 List Campaign Templates\n>\n> This endpoint works in the same way as the [List Campaign Templates endpoint](ref:list-campaign-templates).\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the campaign templates created after a template with the given ID."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterTemplatesList"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash - preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterBoolean"
+            },
+            "in": "query",
+            "name": "include_total",
+            "description": "If set to `true`, the response returns the number of all campaign templates, regardless of the applied filters or limits. Set to `false` by default."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterFiltersListTemplates"
+            },
+            "description": "Filters for listing templates.",
+            "style": "deepObject",
+            "explode": true
+          }
+        ],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a dictionary of campaign template objects. The templates are returned by creation date by default. The most recent objects appear last unless specified otherwise with the `order` parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsTemplatesCampaignsListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "campaign_templates",
+                      "campaign_templates": [
+                        {
+                          "id": "camp_tpl_hFK6hpVc9WKsWaBv4mz7uZn8",
+                          "name": "DISCOUNT-CAMPAIGN-TEMPLATE",
+                          "description": "New discount for Q4",
+                          "campaign_type": "DISCOUNT_COUPONS",
+                          "created_at": "2024-06-21T13:03:09.431Z",
+                          "object": "campaign_template"
+                        },
+                        {
+                          "id": "camp_tpl_cR8va5Ga2nAi4Nxoi1I1qR8S",
+                          "name": "GIFT-CAMPAIGN-TEMPLATE",
+                          "campaign_type": "GIFT_VOUCHERS",
+                          "created_at": "2024-07-05T14:26:31.600Z",
+                          "updated_at": "2024-07-05T14:27:02.905Z",
+                          "object": "campaign_template"
+                        }
+                      ],
+                      "total": 14,
+                      "has_more": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_5itvDU7"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/management/v1/projects/{projectId}/templates/campaigns/{campaignTemplateId}/copy": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterProjectId"
+          },
+          "in": "path",
+          "name": "projectId",
+          "description": "Provide the unique identifier of the project.",
+          "required": true
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignTemplateId"
+          },
+          "in": "path",
+          "name": "campaignTemplateId",
+          "description": "Provide the unique identifier of the campaign template.",
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "management-copy-campaign-template",
+        "tags": [
+          "Management"
+        ],
+        "summary": "Copy Campaign Template to a Project",
+        "description": "Copies a campaign template to another project.\n\nThe resources, like validation rules or products, will not be copied to the destination project yet. When the template is used to create a new campaign or add a new promotion tier, the resources will be created in the destination project.\n\n> 📘 Campaign Templates – Documentation\n>\n>Read the [Campaign Templates documentation](https://support.voucherify.io/article/620-campaign-templates) to learn more about this feature.",
+        "parameters": [],
+        "security": [
+          {
+            "X-Management-Id": [],
+            "X-Management-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Determines the details about the template in the destination project as well as the destination project itself.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManagementProjectsTemplatesCampaignsCopyCreateRequestBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the copied campaign template.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManagementProjectsTemplatesCampaignsCopyCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "camp_tpl_0f7e3ac98f04d00ab9",
+                      "name": "Item_Discount_Campaign_Template",
+                      "description": "To be reused in the future",
+                      "campaign_type": "DISCOUNT_COUPONS",
+                      "created_at": "2024-10-09T15:52:45.414Z",
+                      "object": "campaign_template"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Returns an error if an invalid token was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Unauthorized": {
+                    "value": {
+                      "code": 401,
+                      "message": "Unauthorized",
+                      "key": "unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "Returns an error if the current plan does not include the Management API feature.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorPaymentRequired"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 402,
+                      "message": "Payment required",
+                      "details": "Your current plan does not include a feature required to perform this operation.",
+                      "key": "missing_required_feature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error when a resource could not be found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Resource not found": {
+                    "value": {
+                      "code": 404,
+                      "message": "Resource not found",
+                      "details": "Cannot find project with id proj_5itvDU7"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Returns an error if a campaign template with the same name already exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Duplicate": {
+                    "value": {
+                      "code": 409,
+                      "message": "Duplicated resource found",
+                      "details": "Duplicated campaign_template exists with name Template copy"
                     }
                   }
                 }

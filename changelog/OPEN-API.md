@@ -4,15 +4,46 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-10-11
+
+Changed the structure of the `ValidationRuleRules` schema. The recurrence of the schema caused performance issues with Readme pages that use the schema. Fixed by copying the schema and allowing 3 levels of nesting.
+
 ## 2024-10-10
 - refactoring `v1/metadata-schemas/{resource}` and `v1/metadata-schemas` use MetadataSchemasGetResponseBody & MetadataSchemasListResponseBody
 - refactoring `/v1/locations/{locationId}` and `/v1/locations` use LocationsGetResponseBody & LocationsListResponseBody
 - `filter` property in schemas ProductCollectionsCreateRequestBody, ProductCollectionsCreateResponseBody and ProductCollectionsGetResponseBody has changed. Uses additionalProperties.
 - refactored `referrals` endpoints. - https://github.com/voucherifyio/voucherify-openapi/commit/30fc8382917a6d0db6d05d5edf68526f63d325b1
 
+## 2024-10-10
+- refactoring /templates - deleted `TemplatesCreateCampaignFromTemplateBody`, renamed schemas to match `path+action+request/response+body`
+- commit https://github.com/voucherifyio/voucherify-openapi/commit/a95ce3e404cccb1a92e6ed1f3343bc9d6e074d3e
+
+## 2024-10-09
+
+- Added the GET `/management/v1/projects/{projectId}/templates/campaigns"` and POST `/management/v1/projects/{projectId}/templates/campaigns/{campaignTemplateId}/copy` endpoints with the associated schemas:
+  - `ManagementTemplatesCampaignsCopyRequestBody`, `ManagementTemplatesCampaignsListResponseBody`, 
+
+## 2024-10-08
+
+- Added the POST `v1/templates/campaign/{campaignTemplateId}/tier-setup` endpoint and associated schemas:
+  - `PromotionTierCreateBase` (edited out of `PromotionTierCreate`),`TemplatesCampaignsAddTierFromTemplateRequestBody`, `TemplatesCampaignsAddTierFromTemplateResponseBody`
+- Renamed the `17_res_obj_get_async_action_result_products_import_csv` schema to `AsyncActionResultProductsImportCSV` (responses in the Get Async Action endpoint).
+
 ## 2024-10-02
 https://github.com/voucherifyio/voucherify-openapi/pull/797/files#diff-b489d733b8287aa4e95ebb17457df080e796eae9abcd9408d0c4c096bace6bb9
 to be described
+
+## 2024-09-30
+
+Added the following endpoints:
+- POST `v1/templates/campaign`
+- GET `v1/templates/campaign/{campaignTemplateId}`
+- PUT `v1/templates/campaign/{campaignTemplateId}`
+- DELETE `v1/templates/campaign/{campaignTemplateId}`
+- POST `v1/templates/campaign/{campaignTemplateId}/campaign-setup`
+
+Added or updated the following schemas:
+- `ParameterCampaignTemplateId`, `CampaignsCreateBaseValidationRules`, `AccessSettings`, `TemplatesCampaignsCreateRequestBody`, `TemplatesCampaignsUpdateRequestBody`, `TemplatesCampaignsNameDescription`, `TemplatesCampaignsGetResponseBody`, `TemplatesCampaignsListResponseBody`, `TemplatesCampaignsCreateFromTemplateRequestBody`, `TemplatesCampaignsCreateFromTemplateResponseBody`, `TemplatesCampaignsCreateTemplateResponseBody`, `CampaignTemplateBase`, `CampaignTemplateBody`, `TemplatesCreateCampaignFromTemplateBody`, 
 
 ## 2024-09-24
 
