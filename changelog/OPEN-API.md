@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-10-11
+
+Changed the structure of the `ValidationRuleRules` schema. The recurrence of the schema caused performance issues with Readme pages that use the schema. Fixed by copying the schema and allowing 3 levels of nesting.
+
 ## 2024-10-08
 
 - Added the POST `v1/templates/campaign/{campaignTemplateId}/tier-setup` endpoint and associated schemas:
