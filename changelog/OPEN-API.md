@@ -4,10 +4,18 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-10-11
+
+Changed the structure of the `ValidationRuleRules` schema. The recurrence of the schema caused performance issues with Readme pages that use the schema. Fixed by copying the schema and allowing 3 levels of nesting.
+
 ## 2024-10-10
 - refactoring /templates - deleted `TemplatesCreateCampaignFromTemplateBody`, renamed schemas to match `path+action+request/response+body`
 - commit https://github.com/voucherifyio/voucherify-openapi/commit/a95ce3e404cccb1a92e6ed1f3343bc9d6e074d3e
 
+## 2024-10-09
+
+- Added the GET `/management/v1/projects/{projectId}/templates/campaigns"` and POST `/management/v1/projects/{projectId}/templates/campaigns/{campaignTemplateId}/copy` endpoints with the associated schemas:
+  - `ManagementTemplatesCampaignsCopyRequestBody`, `ManagementTemplatesCampaignsListResponseBody`, 
 
 ## 2024-10-08
 

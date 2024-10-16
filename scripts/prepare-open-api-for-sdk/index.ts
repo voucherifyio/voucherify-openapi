@@ -111,6 +111,8 @@ const main = async (languageOptions: LanguageOptions) => {
     .properties;
   //Do not do breaking change in `ApplicableTo`
   delete openAPIContent.components.schemas.ApplicableTo.properties.target.enum;
+  //ValidationRuleRules fix for Readme – should stay forever
+  openAPIContent.components.schemas.ValidationRuleRules.additionalProperties.properties.rules.$ref = "#/components/schemas/ValidationRuleRules"
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
