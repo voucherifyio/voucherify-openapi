@@ -79,7 +79,7 @@ order: 1
 | object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
 | result</br>`object` | <p>Includes the error object with details about the reason why the redeemable is inapplicable</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">error</td><td style="text-align:left">See: <a href="#error-object">Error Object</a></td></tr><tr><td style="text-align:left">details</br><code>object</code></td><td style="text-align:left"><p>Provides details about the reason why the redeemable is inapplicable.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>Generic message from the <code>message</code> string shown in the <code>error</code> object or the message configured in a validation rule.</p></td></tr><tr><td style="text-align:left">key</br><code>string</code></td><td style="text-align:left"><p>Generic message from the <code>key</code> string shown in the <code>error</code> object.</p></td></tr></tbody></table></td></tr></tbody></table> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
-| categories</br>`array` | Array of [Category](#category) |
+| categories</br>`array` | Array of [Category with Stacking Rules Type](#category-with-stacking-rules-type) |
 
 ## Skipped Redeemable
 | Attributes |  Description |
@@ -89,7 +89,7 @@ order: 1
 | object</br>`string` | <p>Redeemable's object type.</p> Available values: `voucher`, `promotion_tier` |
 | result</br>`object` | <p>Provides details about the reason why the redeemable is skipped.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">details</td><td style="text-align:left">One of: <a href="#validations-redeemable-skipped-result-limit-exceeded">Validations Redeemable Skipped Result Limit Exceeded</a>, <a href="#validations-redeemable-skipped-result-category-limit-exceeded">Validations Redeemable Skipped Result Category Limit Exceeded</a>, <a href="#validations-redeemable-skipped-result-redeemables-limit-exceeded">Validations Redeemable Skipped Result Redeemables Limit Exceeded</a>, <a href="#validations-redeemable-skipped-result-redeemables-category-limit-exceeded">Validations Redeemable Skipped Result Redeemables Category Limit Exceeded</a>, <a href="#validations-redeemable-skipped-result-exclusion-rules-not-met">Validations Redeemable Skipped Result Exclusion Rules Not Met</a>, <a href="#validations-redeemable-skipped-result-preceding-validation-failed">Validations Redeemable Skipped Result Preceding Validation Failed</a></td></tr></tbody></table> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
-| categories</br>`array` | Array of [Category](#category) |
+| categories</br>`array` | Array of [Category with Stacking Rules Type](#category-with-stacking-rules-type) |
 
 ## Simple Customer
 | Attributes |  Description |
@@ -215,16 +215,13 @@ All of:
 | resource_id</br>`string` | <p>Unique resource ID that can be used in another endpoint to get more details.</p> **Example:** <p>rf_0c5d710a87c8a31f86</p> |
 | resource_type</br>`string` | <p>The resource type.</p> **Example:** <p>voucher</p> |
 
-## Category
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
-| name</br>`string` | <p>Category name.</p> |
-| hierarchy</br>`integer` | <p>Category hierarchy.</p> |
-| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
-| created_at</br>`string` | <p>Timestamp representing the date and time when the category was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
-| updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
-| stacking_rules_type</br>`string` | <p>The type of the stacking rule eligibility.</p> Available values: `JOINT`, `EXCLUSIVE` |
+## Category with Stacking Rules Type
+<p>Category object with <code>stacking_rules_type</code></p>
+
+All of:
+
+1. [Category](#category)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">stacking_rules_type</br><code>string</code></td><td style="text-align:left"><p>The type of the stacking rule eligibility.</p> Available values: <code>JOINT</code>, <code>EXCLUSIVE</code></td></tr></tbody></table>
 
 ## Validations Redeemable Skipped Result Limit Exceeded
 | Attributes |  Description |
@@ -292,6 +289,16 @@ All of:
 | object</br>`string` | <p>The type of the object represented by JSON. Default is <code>voucher</code>.</p> |
 | publish</br>`object` | <p>Stores a summary of publication events: an event counter and endpoint to return details of each event. Publication is an assignment of a code to a customer, e.g. through a distribution.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of the object represented is by default <code>list</code>. To get this list, you need to make a call to the endpoint returned in the <code>url</code> attribute.</p></td></tr><tr><td style="text-align:left">count</br><code>integer</code></td><td style="text-align:left"><p>Publication events counter.</p> <strong>Example:</strong> <p>0</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>The endpoint where this list of publications can be accessed using a GET method. <code>/v1/vouchers/{voucher_code}/publications</code></p> <strong>Example:</strong> <p>/v1/vouchers/WVPblOYX/publications?page=1&amp;limit=10</p></td></tr></tbody></table> |
 | redemption</br>`object` | <p>Stores a summary of redemptions that have been applied to the voucher.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher can be redeemed. A <code>null</code> value means unlimited.</p></td></tr><tr><td style="text-align:left">redeemed_quantity</br><code>integer</code></td><td style="text-align:left"><p>How many times a voucher has already been redeemed.</p> <strong>Example:</strong> <p>1</p></td></tr><tr><td style="text-align:left">redeemed_points</br><code>integer</code></td><td style="text-align:left"><p>Total loyalty points redeemed.</p> <strong>Example:</strong> <p>100000</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>The type of the object represented is by default <code>list</code>. To get this list, you need to make a call to the endpoint returned in the url attribute.</p></td></tr><tr><td style="text-align:left">url</br><code>string</code></td><td style="text-align:left"><p>The endpoint where this list of redemptions can be accessed using a GET method. <code>/v1/vouchers/{voucher_code}/redemptions</code></p> <strong>Example:</strong> <p>/v1/vouchers/WVPblOYX/redemptions?page=1&amp;limit=10</p></td></tr></tbody></table> |
+
+## Category
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique category ID assigned by Voucherify.</p> |
+| name</br>`string` | <p>Category name.</p> |
+| hierarchy</br>`integer` | <p>Category hierarchy.</p> |
+| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the category.</p> Available values: `category` |
+| created_at</br>`string` | <p>Timestamp representing the date and time when the category was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-07-14T10:45:13.156Z</p> |
+| updated_at</br>`string` | <p>Timestamp representing the date and time when the category was updated. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-08-16T10:52:08.094Z</p> |
 
 ## Validation Rules Assignments List
 | Attributes |  Description |
