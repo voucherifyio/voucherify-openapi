@@ -1,11 +1,11 @@
 ---
-title: Create Export
+title: Download Export
 type: endpoint
 categorySlug: voucherify-api
-slug: create-export
+slug: download-export
 parentDocSlug: exports
 hidden: false
-order: 4
+order: 5
 ---
 [block:html]
 {
