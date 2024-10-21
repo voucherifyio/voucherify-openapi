@@ -4147,6 +4147,29 @@
           }
         ]
       },
+      "LoyaltiesRewardRedemption": {
+        "title": "Member Card",
+        "readmeTitle": "Member card with categories and validation rules assignments",
+        "description": "This is an object representing a member card with categories and validation rules assignments.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "categories": {
+                "type": "array",
+                "description": "Always returns an empty array.",
+                "items": {}
+              },
+              "validation_rules_assignments": {
+                "$ref": "#/components/schemas/ValidationRulesAssignmentsList"
+              }
+            }
+          }
+        ]
+      },
       "Voucher": {
         "title": "Voucher",
         "readmeTitle": "Voucher with categories and validation rules assignments",
@@ -4163,6 +4186,31 @@
                 "description": "Contains details about the category.",
                 "items": {
                   "$ref": "#/components/schemas/Category"
+                }
+              },
+              "validation_rules_assignments": {
+                "$ref": "#/components/schemas/ValidationRulesAssignmentsList"
+              }
+            }
+          }
+        ]
+      },
+      "VoucherQualificationValidationRedemption": {
+        "title": "Voucher",
+        "readmeTitle": "Voucher with categories and validation rules assignments",
+        "description": "This is an object representing a voucher with categories and validation rules assignments for **POST** `v1/qualifications`, **POST** `v1/redemptions`, and **POST** `v1/validations`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "categories": {
+                "type": "array",
+                "description": "Contains details about the category.",
+                "items": {
+                  "$ref": "#/components/schemas/CategoryWithStackingRulesType"
                 }
               },
               "validation_rules_assignments": {
@@ -15382,7 +15430,7 @@
       },
       "ValidationsValidateResponseBody": {
         "title": "Validations Validate Response Body",
-        "description": "Response body schema for **POST** `/validations`.",
+        "description": "Response body schema for **POST** `v1/validations`.",
         "type": "object",
         "properties": {
           "valid": {
@@ -15510,7 +15558,7 @@
           "categories": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Category"
+              "$ref": "#/components/schemas/CategoryWithStackingRulesType"
             }
           }
         },
@@ -15575,7 +15623,7 @@
           "categories": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Category"
+              "$ref": "#/components/schemas/CategoryWithStackingRulesType"
             }
           }
         },
@@ -15645,7 +15693,7 @@
           "categories": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Category"
+              "$ref": "#/components/schemas/CategoryWithStackingRulesType"
             }
           }
         },
@@ -16432,11 +16480,11 @@
           "redemptions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Redemption"
+              "$ref": "#/components/schemas/RedemptionRedeem"
             }
           },
           "parent_redemption": {
-            "$ref": "#/components/schemas/Redemption"
+            "$ref": "#/components/schemas/RedemptionRedeem"
           },
           "order": {
             "description": "Contains the order details associated with the redemption.",
@@ -17727,10 +17775,87 @@
           "related_object_id"
         ]
       },
+      "MembersRedemption": {
+        "title": "Redemption",
+        "type": "object",
+        "description": "This is an object representing a redemption.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RedemptionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "description": "Defines the details of the voucher being redeemed.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LoyaltiesRewardRedemption"
+                  },
+                  {
+                    "$ref": "#/components/schemas/VoucherHolder"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "RedemptionRedeem": {
+        "title": "Redemption Redeem",
+        "type": "object",
+        "description": "This is an object representing a redemption for **POST** `v1/redemptions`, **POST** `v1/loyalties/{campaignId}/members/{memberId}/redemption`, **POST** `v1/loyalties/members/{memberId}/redemption`, **POST** `/client/v1/redemptions`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RedemptionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "description": "Defines the details of the voucher being redeemed.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/VoucherQualificationValidationRedemption"
+                  },
+                  {
+                    "$ref": "#/components/schemas/VoucherHolder"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
       "Redemption": {
         "title": "Redemption",
         "type": "object",
         "description": "This is an object representing a redemption.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RedemptionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "description": "Defines the details of the voucher being redeemed.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Voucher"
+                  },
+                  {
+                    "$ref": "#/components/schemas/VoucherHolder"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "RedemptionBase": {
+        "title": "Redemption Base",
+        "type": "object",
         "properties": {
           "id": {
             "type": "string",
@@ -17896,17 +18021,6 @@
           "related_object_id": {
             "type": "string",
             "description": "Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher."
-          },
-          "voucher": {
-            "description": "Defines the details of the voucher being redeemed.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Voucher"
-              },
-              {
-                "$ref": "#/components/schemas/VoucherHolder"
-              }
-            ]
           },
           "promotion_tier": {
             "description": "Contains details of the promotion tier and the parent campaign.",
@@ -33092,7 +33206,7 @@
             "type": "array",
             "description": "List of category information.",
             "items": {
-              "$ref": "#/components/schemas/Category"
+              "$ref": "#/components/schemas/CategoryWithStackingRulesType"
             }
           },
           "banner": {
@@ -36822,14 +36936,6 @@
             "example": "2022-08-16T10:52:08.094Z",
             "description": "Timestamp representing the date and time when the category was updated. The value is shown in the ISO 8601 format.",
             "format": "date-time"
-          },
-          "stacking_rules_type": {
-            "type": "string",
-            "description": "The type of the stacking rule eligibility.",
-            "enum": [
-              "JOINT",
-              "EXCLUSIVE"
-            ]
           }
         },
         "required": [
@@ -36838,6 +36944,29 @@
           "hierarchy",
           "created_at",
           "object"
+        ]
+      },
+      "CategoryWithStackingRulesType": {
+        "type": "object",
+        "title": "Category with Stacking Rules Type",
+        "description": "Category object with `stacking_rules_type`",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Category"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "stacking_rules_type": {
+                "type": "string",
+                "description": "The type of the stacking rule eligibility.",
+                "enum": [
+                  "JOINT",
+                  "EXCLUSIVE"
+                ]
+              }
+            }
+          }
         ]
       },
       "CategoriesListResponseBody": {
@@ -38988,11 +39117,11 @@
           "redemptions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Redemption"
+              "$ref": "#/components/schemas/RedemptionRedeem"
             }
           },
           "parent_redemption": {
-            "$ref": "#/components/schemas/Redemption"
+            "$ref": "#/components/schemas/RedemptionRedeem"
           },
           "order": {
             "description": "Contains the order details associated with the redemption.",
@@ -39610,7 +39739,7 @@
         "description": "Response body schema for **POST** `v1/loyalties/{campaignId}/members/{memberId}/redemption` and for **POST** `v1/loyalties/members/{memberId}/redemption`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Redemption"
+            "$ref": "#/components/schemas/MembersRedemption"
           },
           {
             "title": "RedemptionRewardRequired",
@@ -41760,10 +41889,46 @@
         "type": "object",
         "title": "Management Templates Campaign Template List Response Body",
         "description": "Response body schema for **GET** `/management/v1/projects/{projectId}/templates/campaigns`.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/TemplatesCampaignsListBody"
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. This object stores information about campaign templates.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "description": "Identifies the name of the JSON property that contains the array of campaign templates.",
+            "enum": [
+              "data"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "description": "Dictionary that contains an array of campaign templates.",
+            "items": {
+              "$ref": "#/components/schemas/CampaignTemplate"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of templates, regardless of the applied query parameters. Displayed only if the `include_total` query paremeter is set to `true`."
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request to get more records returned in the results."
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an ID that can be used to return another page of results. Use the template ID in the `starting_after_id` query parameter to display another page of the results starting after the template with that ID."
           }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "campaign_template",
+          "has_more"
         ]
       },
       "ManagementProjectsStackingRulesUpdateRequestBody": {
@@ -43703,15 +43868,6 @@
         "type": "object",
         "title": "Templates Campaign Template List Response Body",
         "description": "Response body schema for **GET** `/v1/templates/campaign`.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/TemplatesCampaignsListBody"
-          }
-        ]
-      },
-      "TemplatesCampaignsListBody": {
-        "type": "object",
-        "title": "Templates Campaign Template List Response Body",
         "properties": {
           "object": {
             "type": "string",
@@ -43741,6 +43897,10 @@
           "has_more": {
             "type": "boolean",
             "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request to get more records returned in the results."
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an ID that can be used to return another page of results. Use the template ID in the `starting_after_id` query parameter to display another page of the results starting after the template with that ID."
           }
         },
         "required": [

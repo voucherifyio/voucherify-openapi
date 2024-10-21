@@ -80,7 +80,10 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 const main = async (languageOptions: LanguageOptions) => {
   //////////////////////////////////////////////////////////////////////////////
   removeStoplightTag(openAPIContent);
-  openAPIContent = removeUnwantedProperties(openAPIContent, ["readmeTitle"]);
+  openAPIContent = removeUnwantedProperties(openAPIContent, [
+    "readmeTitle",
+    "access_settings", //@todo remove when fixed
+  ]);
   openAPIContent.components.schemas = removeUnwantedProperties(
     openAPIContent.components.schemas,
     ["title"],
@@ -116,7 +119,8 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.schemas.ValidationEntity.properties.skipped_redeemables.items.properties.type.enum;
   delete openAPIContent.components.schemas.ValidationEntity.properties.inapplicable_redeemables.items.properties.type.enum;
   //ValidationRuleRules fix for Readme – should stay forever
-  openAPIContent.components.schemas.ValidationRuleRules.additionalProperties.properties.rules.$ref = "#/components/schemas/ValidationRuleRules"
+  openAPIContent.components.schemas.ValidationRuleRules.additionalProperties.properties.rules.$ref =
+    "#/components/schemas/ValidationRuleRules";
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(

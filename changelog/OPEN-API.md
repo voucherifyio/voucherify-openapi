@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-10-21
+
+- Changes to POST `v1/qualifications` and POST `v1/validations` – only these endpoints should return `vouchers.categories.stacking_rules_type`
+
 ## 2024-10-17
 
 Fixed `security` field in the `/v1/exports/{export_Id}.get` path.
