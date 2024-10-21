@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-10-21
+
+- Changes to POST `v1/qualifications` and POST `v1/validations` – only these endpoints should return `vouchers.categories.stacking_rules_type`
+
 ## 2024-10-11
 
 Changed the structure of the `ValidationRuleRules` schema. The recurrence of the schema caused performance issues with Readme pages that use the schema. Fixed by copying the schema and allowing 3 levels of nesting.
