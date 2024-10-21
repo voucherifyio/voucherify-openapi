@@ -4147,6 +4147,29 @@
           }
         ]
       },
+      "LoyaltiesRewardRedemption": {
+        "title": "Member Card",
+        "readmeTitle": "Member card with categories and validation rules assignments",
+        "description": "This is an object representing a member card with categories and validation rules assignments.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "categories": {
+                "type": "array",
+                "description": "Always returns an empty array.",
+                "items": {}
+              },
+              "validation_rules_assignments": {
+                "$ref": "#/components/schemas/ValidationRulesAssignmentsList"
+              }
+            }
+          }
+        ]
+      },
       "Voucher": {
         "title": "Voucher",
         "readmeTitle": "Voucher with categories and validation rules assignments",
@@ -4163,6 +4186,31 @@
                 "description": "Contains details about the category.",
                 "items": {
                   "$ref": "#/components/schemas/Category"
+                }
+              },
+              "validation_rules_assignments": {
+                "$ref": "#/components/schemas/ValidationRulesAssignmentsList"
+              }
+            }
+          }
+        ]
+      },
+      "VoucherQualificationValidationRedemption": {
+        "title": "Voucher",
+        "readmeTitle": "Voucher with categories and validation rules assignments",
+        "description": "This is an object representing a voucher with categories and validation rules assignments for **POST** `v1/qualifications`, **POST** `v1/redemptions`, and **POST** `v1/validations`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "categories": {
+                "type": "array",
+                "description": "Contains details about the category.",
+                "items": {
+                  "$ref": "#/components/schemas/CategoryWithStackingRulesType"
                 }
               },
               "validation_rules_assignments": {
@@ -15382,7 +15430,7 @@
       },
       "ValidationsValidateResponseBody": {
         "title": "Validations Validate Response Body",
-        "description": "Response body schema for POST `/validations`.",
+        "description": "Response body schema for **POST** `v1/validations`.",
         "type": "object",
         "properties": {
           "valid": {
@@ -15510,7 +15558,7 @@
           "categories": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Category"
+              "$ref": "#/components/schemas/CategoryWithStackingRulesType"
             }
           }
         },
@@ -15575,7 +15623,7 @@
           "categories": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Category"
+              "$ref": "#/components/schemas/CategoryWithStackingRulesType"
             }
           }
         },
@@ -15645,7 +15693,7 @@
           "categories": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Category"
+              "$ref": "#/components/schemas/CategoryWithStackingRulesType"
             }
           }
         },
@@ -16432,11 +16480,11 @@
           "redemptions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Redemption"
+              "$ref": "#/components/schemas/RedemptionRedeem"
             }
           },
           "parent_redemption": {
-            "$ref": "#/components/schemas/Redemption"
+            "$ref": "#/components/schemas/RedemptionRedeem"
           },
           "order": {
             "description": "Contains the order details associated with the redemption.",
@@ -17727,10 +17775,87 @@
           "related_object_id"
         ]
       },
+      "MembersRedemption": {
+        "title": "Redemption",
+        "type": "object",
+        "description": "This is an object representing a redemption.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RedemptionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "description": "Defines the details of the voucher being redeemed.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LoyaltiesRewardRedemption"
+                  },
+                  {
+                    "$ref": "#/components/schemas/VoucherHolder"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "RedemptionRedeem": {
+        "title": "Redemption Redeem",
+        "type": "object",
+        "description": "This is an object representing a redemption for **POST** `v1/redemptions`, **POST** `v1/loyalties/{campaignId}/members/{memberId}/redemption`, **POST** `v1/loyalties/members/{memberId}/redemption`, **POST** `/client/v1/redemptions`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RedemptionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "description": "Defines the details of the voucher being redeemed.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/VoucherQualificationValidationRedemption"
+                  },
+                  {
+                    "$ref": "#/components/schemas/VoucherHolder"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
       "Redemption": {
         "title": "Redemption",
         "type": "object",
         "description": "This is an object representing a redemption.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/RedemptionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "voucher": {
+                "description": "Defines the details of the voucher being redeemed.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Voucher"
+                  },
+                  {
+                    "$ref": "#/components/schemas/VoucherHolder"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "RedemptionBase": {
+        "title": "Redemption Base",
+        "type": "object",
         "properties": {
           "id": {
             "type": "string",
@@ -17896,17 +18021,6 @@
           "related_object_id": {
             "type": "string",
             "description": "Unique related object ID assigned by Voucherify, i.e. v_lfZi4rcEGe0sN9gmnj40bzwK2FH6QUno for a voucher."
-          },
-          "voucher": {
-            "description": "Defines the details of the voucher being redeemed.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Voucher"
-              },
-              {
-                "$ref": "#/components/schemas/VoucherHolder"
-              }
-            ]
           },
           "promotion_tier": {
             "description": "Contains details of the promotion tier and the parent campaign.",
@@ -33047,7 +33161,7 @@
             "type": "array",
             "description": "List of category information.",
             "items": {
-              "$ref": "#/components/schemas/Category"
+              "$ref": "#/components/schemas/CategoryWithStackingRulesType"
             }
           },
           "banner": {
@@ -36776,14 +36890,6 @@
             "example": "2022-08-16T10:52:08.094Z",
             "description": "Timestamp representing the date and time when the category was updated. The value is shown in the ISO 8601 format.",
             "format": "date-time"
-          },
-          "stacking_rules_type": {
-            "type": "string",
-            "description": "The type of the stacking rule eligibility.",
-            "enum": [
-              "JOINT",
-              "EXCLUSIVE"
-            ]
           }
         },
         "required": [
@@ -36792,6 +36898,29 @@
           "hierarchy",
           "created_at",
           "object"
+        ]
+      },
+      "CategoryWithStackingRulesType": {
+        "type": "object",
+        "title": "Category with Stacking Rules Type",
+        "description": "Category object with `stacking_rules_type`",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Category"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "stacking_rules_type": {
+                "type": "string",
+                "description": "The type of the stacking rule eligibility.",
+                "enum": [
+                  "JOINT",
+                  "EXCLUSIVE"
+                ]
+              }
+            }
+          }
         ]
       },
       "CategoriesListResponseBody": {
@@ -38938,11 +39067,11 @@
           "redemptions": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Redemption"
+              "$ref": "#/components/schemas/RedemptionRedeem"
             }
           },
           "parent_redemption": {
-            "$ref": "#/components/schemas/Redemption"
+            "$ref": "#/components/schemas/RedemptionRedeem"
           },
           "order": {
             "description": "Contains the order details associated with the redemption.",
@@ -39560,7 +39689,7 @@
         "description": "Response body schema for **POST** `v1/loyalties/{campaignId}/members/{memberId}/redemption` and for **POST** `v1/loyalties/members/{memberId}/redemption`.",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Redemption"
+            "$ref": "#/components/schemas/MembersRedemption"
           },
           {
             "title": "RedemptionRewardRequired",
