@@ -1,4 +1,11 @@
 export const rawTakeList = {
+  "/management/v1/projects/{projectId}/templates/campaigns": {
+    get: true,
+  },
+  "/management/v1/projects/{projectId}/templates/campaigns/{campaignTemplateId}/copy":
+    {
+      post: true,
+    },
   "/v1/templates/campaigns": {
     post: true,
     get: true,
