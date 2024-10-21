@@ -80,7 +80,10 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 const main = async (languageOptions: LanguageOptions) => {
   //////////////////////////////////////////////////////////////////////////////
   removeStoplightTag(openAPIContent);
-  openAPIContent = removeUnwantedProperties(openAPIContent, ["readmeTitle"]);
+  openAPIContent = removeUnwantedProperties(openAPIContent, [
+    "readmeTitle",
+    "access_settings", //@todo remove when fixed
+  ]);
   openAPIContent.components.schemas = removeUnwantedProperties(
     openAPIContent.components.schemas,
     ["title"],
@@ -112,7 +115,8 @@ const main = async (languageOptions: LanguageOptions) => {
   //Do not do breaking change in `ApplicableTo`
   delete openAPIContent.components.schemas.ApplicableTo.properties.target.enum;
   //ValidationRuleRules fix for Readme – should stay forever
-  openAPIContent.components.schemas.ValidationRuleRules.additionalProperties.properties.rules.$ref = "#/components/schemas/ValidationRuleRules"
+  openAPIContent.components.schemas.ValidationRuleRules.additionalProperties.properties.rules.$ref =
+    "#/components/schemas/ValidationRuleRules";
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(

@@ -163,6 +163,23 @@ const removeOneOf = (schema, schemas, title) => {
           return data;
         })
         .map((el) => {
+          if (el.properties) {
+            el.properties = Object.fromEntries(
+              Object.entries(el.properties).map(([key, entry]) => {
+                if ((entry as any).allOf) {
+                  return [
+                    key,
+                    mergeAllOfObjects(
+                      (entry as any).allOf,
+                      schemas,
+                      `${title}${key}`,
+                    ),
+                  ];
+                }
+                return [key, entry];
+              }),
+            );
+          }
           if (el.allOf) {
             return mergeAllOfObjects(el.allOf, schemas, title);
           }
