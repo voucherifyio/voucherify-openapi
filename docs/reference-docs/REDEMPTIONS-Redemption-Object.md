@@ -11,13 +11,13 @@ order: 1
 ## Redemptions Redeem Response Body
 | Attributes |  Description |
 |:-----|:--------|
-| redemptions</br>`array` | Array of [Redemption Redeem](#redemption-redeem) |
-| parent_redemption | See: [Redemption Redeem](#redemption-redeem) |
+| redemptions</br>`array` | Array of [Redemption](#redemption) |
+| parent_redemption | See: [Redemption](#redemption) |
 | order | <p>Contains the order details associated with the redemption.</p> [Order Calculated No Customer Data](#order-calculated-no-customer-data) |
 | inapplicable_redeemables</br>`array` | <p>Lists validation results of each inapplicable redeemable.</p> Array of [Inapplicable Redeemable](#inapplicable-redeemable) |
 | skipped_redeemables</br>`array` | <p>Lists validation results of each redeemable. If a redeemable can be applied, the API returns <code>&quot;status&quot;: &quot;APPLICABLE&quot;</code>.</p> Array of [Skipped Redeemable](#skipped-redeemable) |
 
-## Redemption Redeem
+## Redemption
 <p>This is an object representing a redemption for <strong>POST</strong> <code>v1/redemptions</code>, <strong>POST</strong> <code>v1/loyalties/{campaignId}/members/{memberId}/redemption</code>, <strong>POST</strong> <code>v1/loyalties/members/{memberId}/redemption</code>, <strong>POST</strong> <code>/client/v1/redemptions</code>.</p>
 
 All of:
