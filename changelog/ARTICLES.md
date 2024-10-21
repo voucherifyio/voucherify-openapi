@@ -7,12 +7,6 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
-## 2024-10-18
-
-Updated the "Webhooks v2024-01-01" article with:
-- new distribution trigger names
-- IP Whitelisting section – removed the callout and info that the addresses are new
-
 ## 2024-10-09
 
 Removed "Advanced Filters for Qualifications" section from the Fetching Data article. The filters were for query and they didn't work – filters are passed only in the request body.
