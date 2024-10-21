@@ -220,7 +220,7 @@ Voucherify sends webhooks from the IP ranges below.
 
 > 🚧 New Addresses
 >
-> The new addresses are not live yet. The actual traffic will begin on 18th October.
+> The new addresses are not live yet. The actual traffic will begin on 8th November 2024.
 
 ## Webhooks Available in Project Settings
 
