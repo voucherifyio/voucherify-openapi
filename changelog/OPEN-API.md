@@ -4,9 +4,23 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-10-22
+
+Fixes and updates:
+- `ValidationEntity` schema has now correct objects for `redeemables`, `skipped_redeemables`, and `inapplicable_redeemables`
+- Added info that each redeemable can be added once in validation/redemption endpoints
+- Improved description for `options.expand.redeemable` option
+- Improved descriptions for `categories.hierarchy`
+- Fixed links to the Stacking Rules documentation throughout descriptions
+- Removed `DISCOUNT_VOUCHER` from `enum` in the `referee_reward` property
+
 ## 2024-10-21
 
-- Changes to POST `v1/qualifications` and POST `v1/validations` – only these endpoints should return `vouchers.categories.stacking_rules_type`
+- Changes to POST `v1/qualifications`, POST `v1/validations` POST `v1/redemptions` and client-side versions – only these endpoints should return `vouchers.categories.stacking_rules_type`
+
+## 2024-10-17
+
+Fixed `security` field in the `/v1/exports/{export_Id}.get` path.
 
 ## 2024-10-11
 
