@@ -15,7 +15,7 @@ Fixes and updates:
 - Removed `DISCOUNT_VOUCHER` from `enum` in the `referee_reward` property
 - Redemption -> RedemptionWithVoucherCategories
 - RedemptionRedeem -> Redemption
-- VoucherQualificationValidationRedemption -> VoucherWithoutCategories
+- VoucherQualificationValidationRedemption -> VoucherWithStackingRulesTypeCategories
 
 ## 2024-10-21
 
