@@ -217,6 +217,7 @@ Contribute with the following good practices in mind:
 - For dates, use `"type": "string", "format": "date-time"` or `"type": "string", "format": "date"`,
 - For the object type `object`, add the `required` attribute which should contain a list of required attributes in the object,
 - A `nullable` cannot be next to a `$ref`. Run `npm run fix-schemas-with-refs` to fix it.
+- `writeOnly` and `readOnly` flags should not be used, because they cause errors in generating SDKs
 
 ## Contribution to Documentation
 
