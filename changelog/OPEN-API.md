@@ -13,6 +13,9 @@ Fixes and updates:
 - Improved descriptions for `categories.hierarchy`
 - Fixed links to the Stacking Rules documentation throughout descriptions
 - Removed `DISCOUNT_VOUCHER` from `enum` in the `referee_reward` property
+- Redemption -> RedemptionWithVoucherCategories
+- RedemptionRedeem -> Redemption
+- VoucherQualificationValidationRedemption -> VoucherWithStackingRulesTypeCategories
 
 ## 2024-10-21
 
