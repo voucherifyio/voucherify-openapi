@@ -9,6 +9,11 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2024-10-09
 
+- Updated the distribution trigger names in `introduction-to-webhooks.md`
+- Added info about template endpoints to `Management-API.md` 
+
+## 2024-10-09
+
 Removed "Advanced Filters for Qualifications" section from the Fetching Data article. The filters were for query and they didn't work – filters are passed only in the request body.
 
 ## 2024-09-26

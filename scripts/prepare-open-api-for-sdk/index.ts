@@ -114,6 +114,10 @@ const main = async (languageOptions: LanguageOptions) => {
     .properties;
   //Do not do breaking change in `ApplicableTo`
   delete openAPIContent.components.schemas.ApplicableTo.properties.target.enum;
+  //Delete `enum`s for redeemables in `ValidationEntity`
+  delete openAPIContent.components.schemas.ValidationEntity.properties.redeemables.items.properties.type.enum;
+  delete openAPIContent.components.schemas.ValidationEntity.properties.skipped_redeemables.items.properties.type.enum;
+  delete openAPIContent.components.schemas.ValidationEntity.properties.inapplicable_redeemables.items.properties.type.enum;
   //ValidationRuleRules fix for Readme – should stay forever
   openAPIContent.components.schemas.ValidationRuleRules.additionalProperties.properties.rules.$ref =
     "#/components/schemas/ValidationRuleRules";

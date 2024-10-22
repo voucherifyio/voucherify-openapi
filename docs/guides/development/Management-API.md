@@ -17,7 +17,8 @@ Management API introduces API endpoints that let you perform account-related ope
 - [Custom event schemas](ref:create-custom-event-schema "Create Custom Event Schema"),
 - [Stacking rules](ref:create-stacking-rules "Create Stacking Rules"),
 - [Webhooks](ref:create-webhook "Create Webhook Configuration"),
-- [Branding](ref:create-brand "Create Brand").
+- [Branding](ref:create-brand "Create Brand"),
+- [Templates](ref:management-list-campaign-templates).
 
 **All of the above-mentioned endpoints must be sent to the following URL: `https://{cluster}.voucherify.io/management/v1/`.**
  
@@ -37,13 +38,13 @@ The three main advantages of the Management API are:
 
 ## Management API Keys
 
-The new tab within Team Settings becomes accessible once it's unlocked for your organization. From there, you can generate Management API keys to facilitate various operations.
+The new tab within Team Settings becomes accessible once it is unlocked for your organization. From there, you can generate Management API keys to facilitate various operations.
 
-Each organization can generate a maximum of 5 API keys. You have the flexibility to delete, edit, and add new keys at your discretion. However, any modification triggers a cache refresh (deletion).
+Each organization can generate a maximum of 5 managament API keys. You have the flexibility to delete, edit, and add new keys at your discretion. However, any modification triggers a cache refresh (deletion).
 
-Should you require more than 5 keys, please reach out to our support team for assistance.
+If you require more than 5 keys, reach out to [Voucherify support team](https://www.voucherify.io/contact-support "Contact Voucherify support") for assistance.
 
-Note that actions performed via the Management API are not logged in the audit log for privacy and security reasons.
+The actions performed via the Management API are not logged in the audit log for privacy and security reasons.
 
 > 🚧
 >
@@ -53,4 +54,4 @@ Note that actions performed via the Management API are not logged in the audit l
 
 ### Tracking Management API Usage
 
-To monitor the usage of Management API calls, navigate to the Team Settings tab. You'll find a comprehensive chart located alongside other usage metrics, allowing you to stay informed about your organization's activity.
+To monitor the usage of Management API calls, navigate to the Team Settings tab. You will find a comprehensive chart located alongside other usage metrics, allowing you to stay informed about your organization's activity.
