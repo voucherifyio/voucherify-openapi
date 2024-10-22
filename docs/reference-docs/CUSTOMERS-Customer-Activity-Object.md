@@ -1091,7 +1091,7 @@ Available values: `POINTS_ACCRUAL`, `POINTS_REDEMPTION`, `POINTS_REFUND`, `POINT
 All of:
 
 1. [Reward Assignment Base](#reward-assignment-base)
-2. [Digital Or Material Reward](#digital-or-material-reward)
+2. [Digital or Material Reward - Parameters](#digital-or-material-reward---parameters)
 
 ## Customer Summary Redemptions
 | Attributes |  Description |
@@ -1329,11 +1329,10 @@ One of:
 | related_object_id</br>`string` | <p>Related object ID to which the reward was assigned.</p> **Example:** <p>camp_wciTvaOfYmAa3EmIIW3QpXXZ</p> |
 | related_object_type</br>`string` | <p>Related object type to which the reward was assigned.</p> Available values: `campaign` |
 
-## Digital Or Material Reward
+## Digital or Material Reward - Parameters
 | Attributes |  Description |
 |:-----|:--------|
-| campaign</br>`string` | <p>The campaign ID of the campaign to which the reward is to be assigned.</p> |
-| parameters</br>`object` | <p>Defines the cost of the reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">loyalty</br><code>object</code></td><td style="text-align:left"><p>Defines the equivalent points value of the reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points that will be subtracted from the loyalty card points balance if the reward is redeemed. Must be positive integer.</p></td></tr><tr><td style="text-align:left">auto_redeem</br><code>boolean</code>, <code>null</code></td><td style="text-align:left"><p>Determines if the reward is redeemed automatically when the customer reaches the sufficient number of points to redeem it. Value <code>true</code> means that the automatic reward redemption is active.</p></td></tr></tbody></table></td></tr></tbody></table> |
+| parameters</br>`object` | <p>Defines the cost of the reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">loyalty</br><code>object</code></td><td style="text-align:left"><p>Defines the equivalent points value of the reward.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>The number of points required to redeem the reward.</p></td></tr><tr><td style="text-align:left">auto_redeem</br><code>boolean</code>, <code>null</code></td><td style="text-align:left"><p>Determines if the reward is redeemed automatically when the customer reaches the sufficient number of points to redeem it. Value <code>true</code> means that the automatic reward redemption is active.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
 ## Discount Amount Vouchers Effect Types
 Available values: `APPLY_TO_ORDER`, `APPLY_TO_ITEMS`, `APPLY_TO_ITEMS_PROPORTIONALLY`, `APPLY_TO_ITEMS_PROPORTIONALLY_BY_QUANTITY`, `APPLY_TO_ITEMS_BY_QUANTITY`
