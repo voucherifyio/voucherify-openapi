@@ -18,7 +18,7 @@ order: 1
 | skipped_redeemables</br>`array` | <p>Lists validation results of each redeemable. If a redeemable can be applied, the API returns <code>&quot;status&quot;: &quot;APPLICABLE&quot;</code>.</p> Array of [Skipped Redeemable](#skipped-redeemable) |
 
 ## Redemption
-<p>This is an object representing a redemption for <strong>POST</strong> <code>v1/redemptions</code>, <strong>POST</strong> <code>v1/loyalties/{campaignId}/members/{memberId}/redemption</code>, <strong>POST</strong> <code>v1/loyalties/members/{memberId}/redemption</code>, <strong>POST</strong> <code>/client/v1/redemptions</code>.</p>
+<p>This is an object representing a redemption for <strong>POST</strong> <code>v1/redemptions</code> and <strong>POST</strong> <code>/client/v1/redemptions</code>.</p>
 
 All of:
 
