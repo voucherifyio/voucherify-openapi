@@ -4,6 +4,11 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-10-23
+
+- Added `auto_redeem` flag to `RewardAssignmentParameters`, `RewardsAssignmentsCreateDigitalOrMaterialRewardRequestBody`, and `RewardsAssignmentsUpdateRequestBody` schemas
+- Added `AUTO_REDEEM` to `channel_type` property in the `RedemptionBase` schema
+
 ## 2024-10-22
 
 Fixes and updates:
