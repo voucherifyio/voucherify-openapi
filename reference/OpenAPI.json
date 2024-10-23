@@ -1789,6 +1789,23 @@
           }
         }
       },
+      "ParametersFiltersListTransactions": {
+        "type": "object",
+        "properties": {
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          },
+          "id": {
+            "$ref": "#/components/schemas/FilterConditionsString"
+          },
+          "voucher_id": {
+            "$ref": "#/components/schemas/FilterConditionsString"
+          },
+          "campaign_id": {
+            "$ref": "#/components/schemas/FilterConditionsString"
+          }
+        }
+      },
       "ParameterFiltersValidatePromotions": {
         "type": "object",
         "title": "Promotion filters",
@@ -38284,6 +38301,16 @@
           }
         ]
       },
+      "CampaignsTransactionsListtResponseBody": {
+        "type": "object",
+        "title": "Campaigns Transactions List Response Body",
+        "description": "Response body schema for **GET** `v1/campaigns/{campaignId}/transactions`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Campaign"
+          }
+        ]
+      },
       "CampaignsCreateResponseBody": {
         "type": "object",
         "title": "Campaigns Create Response Body",
@@ -38605,7 +38632,7 @@
           },
           "operation_type": {
             "type": "string",
-            "default": "MANUAL",
+            "description": "The type of the operation being performed.",
             "enum": [
               "MANUAL"
             ]
@@ -39245,6 +39272,7 @@
           },
           "operation_type": {
             "type": "string",
+            "description": "The type of operation being performed.",
             "enum": [
               "MANUAL",
               "AUTOMATIC"
@@ -52156,6 +52184,81 @@
                       "resource_id": "Spring Campaign",
                       "resource_type": "campaign"
                     }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/campaigns/{campaignId}/transactions": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignId",
+          "description": "You can either pass the campaign ID, which was assigned by Voucherify, or the name of the campaign as the path parameter value.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "list-campaign-transactions",
+        "tags": [
+          "Campaigns"
+        ],
+        "summary": "List Campaign Transactions",
+        "description": "Retrieves all transactions for the campaign with the given campaign ID or campaign name.\n\n> 🚧\n> The endpoint works only for gift card and loyalty campaigns.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListTransactions"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the transactions starting after a transaction with the given ID."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParametersFiltersListTransactions"
+            },
+            "description": "Filters for listing responses.",
+            "style": "deepObject",
+            "explode": true
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a campaign object if a valid identifier was provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignsGetResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {}
                   }
                 }
               }
