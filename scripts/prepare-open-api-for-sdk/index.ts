@@ -225,6 +225,16 @@ const main = async (languageOptions: LanguageOptions) => {
     paths: pathsWithFixedResponses,
   });
 
+  newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
+    newOpenApiFile.components.schemas.LoyaltyPointsBucket;
+  newOpenApiFile.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =
+    newOpenApiFile.components.schemas.VoucherBalance;
+  newOpenApiFile.components.schemas.VoucherTransaction.properties.details.properties.balance =
+    newOpenApiFile.components.schemas.VoucherBalance;
+  newOpenApiFile.components.schemas = fixSchemasTitles(
+    _.cloneDeep(newOpenApiFile.components.schemas),
+  );
+
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
 };
 

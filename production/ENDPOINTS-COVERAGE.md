@@ -93,6 +93,7 @@
 | /v1/campaigns/qualification                | post   | Examine Qualification [Deprecated]         |                                      |  <font color='red'>deprecated</font> |
 | /v1/campaigns/{campaignId}/enable          | post   | Enable Campaign                            | <font color='green'>supported</font> |                                      |
 | /v1/campaigns/{campaignId}/disable         | post   | Disable Campaign                           | <font color='green'>supported</font> |                                      |
+| /v1/campaigns/{campaignId}/transactions    | get    | List Campaign Transactions                 |                                      |                                      |
 ## Promotions
 | endpoint                                       | method | summary                            | is supported                         | is deprecated |
 | ---------------------------------------------- | ------ | ---------------------------------- | ------------------------------------ | ------------- |
