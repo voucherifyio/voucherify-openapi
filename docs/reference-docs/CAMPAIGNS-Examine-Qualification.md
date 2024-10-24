@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: examine-campaigns-qualification
 parentDocSlug: campaigns
 hidden: false
-order: 50
+order: 130
 ---
 [block:html]
 {

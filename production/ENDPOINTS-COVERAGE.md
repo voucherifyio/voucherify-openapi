@@ -141,6 +141,7 @@
 | /v1/loyalties/{campaignId}/members/{memberId}/balance               | post   | Add or Remove Loyalty Card Balance | <font color='green'>supported</font> |               |
 | /v1/loyalties/members/{memberId}/balance                            | post   | Add or Remove Loyalty Card Balance | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/members/{memberId}/transfers             | post   | Transfer Loyalty Points            | <font color='green'>supported</font> |               |
+| /v1/loyalties/{campaignId}/transactions                             | get    | List Campaign Transactions         |                                      |               |
 | /v1/loyalties/{campaignId}/members/{memberId}/transactions          | get    | List Loyalty Card Transactions     | <font color='green'>supported</font> |               |
 | /v1/loyalties/members/{memberId}/transactions                       | get    | List Loyalty Card Transactions     | <font color='green'>supported</font> |               |
 | /v1/loyalties/members/{memberId}/transactions/export                | post   | Export Loyalty Card Transactions   | <font color='green'>supported</font> |               |

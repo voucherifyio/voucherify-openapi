@@ -1,11 +1,11 @@
 ---
-title: List Campaigns
+title: List Loyalty Campaign Transactions
 type: endpoint
 categorySlug: voucherify-api
-slug: list-campaigns
-parentDocSlug: campaigns
+slug: list-loyalty-campaign-transactions
+parentDocSlug: loyalties
 hidden: false
-order: 10
+order: 185
 ---
 [block:html]
 {

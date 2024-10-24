@@ -1,11 +1,11 @@
 ---
-title: List Campaigns
+title: List Campaign Transactions
 type: endpoint
 categorySlug: voucherify-api
-slug: list-campaigns
+slug: list-campaign-transactions
 parentDocSlug: campaigns
 hidden: false
-order: 10
+order: 60
 ---
 [block:html]
 {

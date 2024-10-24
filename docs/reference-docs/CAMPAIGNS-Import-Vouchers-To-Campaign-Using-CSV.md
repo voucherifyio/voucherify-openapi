@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: import-vouchers-to-campaign-using-csv
 parentDocSlug: campaigns
 hidden: false
-order: 10
+order: 100
 ---
 [block:html]
 {

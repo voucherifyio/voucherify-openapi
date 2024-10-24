@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: add-vouchers-to-campaign
 parentDocSlug: campaigns
 hidden: false
-order: 7
+order: 70
 ---
 [block:html]
 {
