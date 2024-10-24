@@ -4,6 +4,14 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-10-24
+
+- Fixes, updates, refactorings:
+  - Added `SimpleEvent`, `VoucherBalance`, `GiftVoucherTransactionsType`, `LoyaltyPointsBucket`, `VoucherTransactionBase` (on the basis of `VoucherTransaction`) schemas and added them where relevant
+  - `VoucherTransaction` includes `VoucherTransactionBase` and relevant gift voucher or loyalty card `type`s
+  - Described `customer_event` in `EventCustomerRewarded` schema
+  - 
+
 ## 2024-10-23
 
 - Added `auto_redeem` flag to `RewardAssignmentParameters`, `RewardsAssignmentsCreateDigitalOrMaterialRewardRequestBody`, and `RewardsAssignmentsUpdateRequestBody` schemas
