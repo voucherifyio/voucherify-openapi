@@ -115,9 +115,12 @@ const main = async (languageOptions: LanguageOptions) => {
   //Do not do breaking change in `ApplicableTo`
   delete openAPIContent.components.schemas.ApplicableTo.properties.target.enum;
   //Delete `enum`s for redeemables in `ValidationEntity`
-  delete openAPIContent.components.schemas.ValidationEntity.properties.redeemables.items.properties.type.enum;
-  delete openAPIContent.components.schemas.ValidationEntity.properties.skipped_redeemables.items.properties.type.enum;
-  delete openAPIContent.components.schemas.ValidationEntity.properties.inapplicable_redeemables.items.properties.type.enum;
+  delete openAPIContent.components.schemas.ValidationEntity.properties
+    .redeemables.items.properties.type.enum;
+  delete openAPIContent.components.schemas.ValidationEntity.properties
+    .skipped_redeemables.items.properties.type.enum;
+  delete openAPIContent.components.schemas.ValidationEntity.properties
+    .inapplicable_redeemables.items.properties.type.enum;
   //ValidationRuleRules fix for Readme – should stay forever
   openAPIContent.components.schemas.ValidationRuleRules.additionalProperties.properties.rules.$ref =
     "#/components/schemas/ValidationRuleRules";
@@ -210,6 +213,16 @@ const main = async (languageOptions: LanguageOptions) => {
     },
     paths: pathsWithFixedResponses,
   });
+
+  newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
+    newOpenApiFile.components.schemas.LoyaltyPointsBucket;
+  newOpenApiFile.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =
+    newOpenApiFile.components.schemas.VoucherBalance;
+  newOpenApiFile.components.schemas.VoucherTransaction.properties.details.properties.balance =
+    newOpenApiFile.components.schemas.VoucherBalance;
+  newOpenApiFile.components.schemas = fixSchemasTitles(
+    newOpenApiFile.components.schemas,
+  );
 
   await savePreparedOpenApiFile(languageOptions.name, newOpenApiFile);
 };
