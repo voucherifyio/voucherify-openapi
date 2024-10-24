@@ -388,7 +388,7 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
   if (schema.$ref) {
     return _.pick(schema, "$ref");
   }
-  if (!skipSettingTitle) {
+  if (skipSettingTitle !== true) {
     if (schema.additionalProperties) {
       schema.title = `${title}Entry`;
     } else {
@@ -400,26 +400,28 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
   }
   if (schema.properties) {
     schema.properties = Object.fromEntries(
-      Object.entries(schema.properties).map(([property, schema]: any) => {
-        const _title = `${title}${_.startCase(
-          snakeToCamel(property),
-        ).replaceAll(" ", "")}`;
-        if ("allOf" in schema && schema.allOf.length > 1) {
-          return [
-            property,
-            fixSchemaTitle(
-              mergeObjectsWithAllOfs(schema, schemas),
-              _title,
-              schemas,
-            ),
-          ];
-        } else if ("allOf" in schema && schema.allOf.length === 1) {
-          return [property, schema.allOf[0]]; // fixSchemaTitle(schema.allOf[0], _title, schemas)
-        } else if (["object", "array"].includes(schema.type)) {
-          return [property, fixSchemaTitle(schema, _title, schemas)];
-        }
-        return [property, schema];
-      }),
+      Object.entries(_.cloneDeep(schema.properties)).map(
+        ([property, schema]: any) => {
+          const _title = `${title}${_.startCase(
+            snakeToCamel(property),
+          ).replaceAll(" ", "")}`;
+          if ("allOf" in schema && schema.allOf.length > 1) {
+            return [
+              property,
+              fixSchemaTitle(
+                mergeObjectsWithAllOfs(schema, schemas),
+                _title,
+                schemas,
+              ),
+            ];
+          } else if ("allOf" in schema && schema.allOf.length === 1) {
+            return [property, fixSchemaTitle(schema.allOf[0], _title, schemas)];
+          } else if (schema.type === "object" || schema.type === "array") {
+            return [property, fixSchemaTitle(schema, _title, schemas)];
+          }
+          return [property, schema];
+        },
+      ),
     );
   }
   if (schema.allOf) {
@@ -435,7 +437,7 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
       true,
     );
   }
-  return { title: schema.title, ..._.omit(schema) };
+  return { title: schema.title, ..._.omit(schema, ["title"]) };
 };
 
 const snakeToCamel = (str) =>
