@@ -1989,6 +1989,47 @@
           }
         ]
       },
+      "SimpleEvent": {
+        "title": "Simple Event",
+        "type": "object",
+        "description": "Simplified event data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier assigned by Voucherify that will be linked to the this event.",
+            "example": "evcus_0e3070fef399b70b00"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the triggering event.",
+            "example": "customer.order.paid"
+          },
+          "category": {
+            "type": "string",
+            "description": "Type of the event.",
+            "enum": [
+              "EFFECT",
+              "ACTION"
+            ]
+          },
+          "entity_id": {
+            "type": "string",
+            "description": "ID of the entity that initiated the event.",
+            "example": "cust_ADqZIwGvWFvugWXVbrHwXRHO"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-01-01T11:11:11.111Z",
+            "description": "Timestamp representing the date and time when the event was created in the ISO 8601 format."
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Unique identifier of the request that triggered the event.",
+            "example": "v-1f36113948e50fc4ge"
+          }
+        }
+      },
       "SimpleOrder": {
         "title": "Simple Order",
         "type": "object",
@@ -6997,7 +7038,7 @@
       "VoucherImportBase": {
         "title": "Voucher Import Base",
         "type": "object",
-        "description": "Object model for gift voucher object being imported.",
+        "description": "Object model for gift card object being imported.",
         "properties": {
           "code": {
             "type": "string",
@@ -7140,7 +7181,7 @@
       "VouchersImportGiftVoucherRequestBody": {
         "title": "Import Gift Voucher",
         "type": "object",
-        "description": "Object model for gift voucher object being imported.",
+        "description": "Object model for gift card object being imported.",
         "properties": {
           "code": {
             "type": "string",
@@ -10938,7 +10979,7 @@
       "4_obj_reward_object_parameters_CAMPAIGN_GIFT_VOUCHERS": {
         "title": "Gift Vouchers",
         "type": "object",
-        "description": "These are parameters representing a gift voucher, which is a subset of a Digital (CAMPAIGN) reward.",
+        "description": "These are parameters representing a gift card, which is a subset of a Digital (CAMPAIGN) reward.",
         "properties": {
           "id": {
             "type": "string",
@@ -26707,9 +26748,12 @@
           "balance": {
             "nullable": true,
             "type": "object",
-            "description": "Balance changed by the event.",
+            "description": "Balance changed by the event. The `amount` property details a change in a gift card. The `points` property details a change in a loyalty card.",
             "properties": {
               "amount": {
+                "type": "integer"
+              },
+              "points": {
                 "type": "integer"
               }
             }
@@ -26718,7 +26762,17 @@
             "$ref": "#/components/schemas/CustomEvent"
           },
           "customer_event": {
-            "type": "object"
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "segment": {
+                "$ref": "#/components/schemas/SimpleSegment"
+              },
+              "event_type": {
+                "type": "string",
+                "description": "Type of activity that triggered the event."
+              }
+            }
           }
         }
       },
@@ -26746,13 +26800,13 @@
             "$ref": "#/components/schemas/EarningRule"
           },
           "balance": {
-            "type": "integer"
+            "$ref": "#/components/schemas/VoucherBalance"
           },
           "order": {
             "$ref": "#/components/schemas/OrderCalculated"
           },
           "event": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleEvent"
           }
         }
       },
@@ -26771,10 +26825,26 @@
             "$ref": "#/components/schemas/SimpleVoucher"
           },
           "balance": {
-            "type": "integer"
+            "$ref": "#/components/schemas/VoucherBalance"
           },
           "transaction": {
-            "$ref": "#/components/schemas/VoucherTransaction"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VoucherTransactionBase"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Transaction type concerning gift card credits.",
+                    "enum": [
+                      "CREDITS_ADDITION"
+                    ]
+                  }
+                }
+              }
+            ]
           }
         }
       },
@@ -26793,10 +26863,26 @@
             "$ref": "#/components/schemas/SimpleVoucher"
           },
           "balance": {
-            "type": "integer"
+            "$ref": "#/components/schemas/VoucherBalance"
           },
           "transaction": {
-            "$ref": "#/components/schemas/VoucherTransaction"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VoucherTransactionBase"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Transaction type concerning loyalty card points.",
+                    "enum": [
+                      "POINTS_ACCRUAL"
+                    ]
+                  }
+                }
+              }
+            ]
           }
         }
       },
@@ -26821,10 +26907,27 @@
             "$ref": "#/components/schemas/SimpleVoucher"
           },
           "balance": {
-            "type": "integer"
+            "$ref": "#/components/schemas/VoucherBalance"
           },
           "transaction": {
-            "$ref": "#/components/schemas/VoucherTransaction"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VoucherTransactionBase"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Transaction type concerning loyalty card points.",
+                    "enum": [
+                      "POINTS_TRANSFER_IN",
+                      "POINTS_TRANSFER_OUT"
+                    ]
+                  }
+                }
+              }
+            ]
           }
         }
       },
@@ -26843,16 +26946,33 @@
             "$ref": "#/components/schemas/SimpleVoucher"
           },
           "points": {
-            "type": "integer"
+            "type": "integer",
+            "description": "The number of expired points."
           },
           "buckets": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/VoucherTransaction"
+              "$ref": "#/components/schemas/LoyaltyPointsBucket"
             }
           },
           "transaction": {
-            "$ref": "#/components/schemas/VoucherTransaction"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VoucherTransactionBase"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "description": "Transaction type concerning loyalty card points.",
+                    "enum": [
+                      "POINTS_EXPIRATION"
+                    ]
+                  }
+                }
+              }
+            ]
           }
         }
       },
@@ -34381,9 +34501,21 @@
           }
         }
       },
-      "LoyaltyCardTransactionsType": {
-        "title": "LoyaltyCardTransactionsType",
+      "GiftVoucherTransactionsType": {
+        "title": "Gift Card Transactions Type",
         "type": "string",
+        "description": "Transaction types concerning gift card credits.",
+        "enum": [
+          "CREDITS_REDEMPTION",
+          "CREDITS_REFUND",
+          "CREDITS_ADDITION",
+          "CREDITS_REMOVAL"
+        ]
+      },
+      "LoyaltyCardTransactionsType": {
+        "title": "Loyalty Card Transactions Type",
+        "type": "string",
+        "description": "Transaction types concerning loyalty points.",
         "enum": [
           "POINTS_ACCRUAL",
           "POINTS_REDEMPTION",
@@ -34395,8 +34527,8 @@
           "POINTS_TRANSFER_OUT"
         ]
       },
-      "VoucherTransaction": {
-        "title": "Voucher Transaction",
+      "VoucherTransactionBase": {
+        "title": "Voucher Transaction Base",
         "type": "object",
         "properties": {
           "id": {
@@ -34426,84 +34558,12 @@
             "nullable": true,
             "description": "Reason why the transaction occurred. In case of a redemption, this value is null."
           },
-          "type": {
-            "description": "Type of transaction.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyCardTransactionsType"
-              }
-            ]
-          },
           "details": {
             "type": "object",
             "description": "Contains the detailed information about the transaction.",
             "properties": {
               "balance": {
-                "type": "object",
-                "description": "Contains information on how the balance was affected by the transaction.",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "pattern": "loyalty_card",
-                    "default": "loyalty_card",
-                    "enum": [
-                      "loyalty_card"
-                    ],
-                    "description": "The type of voucher whose balance is being adjusted due to the transaction."
-                  },
-                  "total": {
-                    "type": "integer",
-                    "description": "The number of all points accumulated on the card as affected by add or subtract operations."
-                  },
-                  "object": {
-                    "type": "string",
-                    "pattern": "balance",
-                    "default": "balance",
-                    "enum": [
-                      "balance"
-                    ],
-                    "description": "The type of the object represented by the JSON."
-                  },
-                  "points": {
-                    "type": "integer",
-                    "description": "Points added or subtracted in the transaction."
-                  },
-                  "balance": {
-                    "type": "integer",
-                    "description": "The available points on the card after the transaction as affected by redemption or rollback."
-                  },
-                  "related_object": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "type"
-                    ],
-                    "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API."
-                      },
-                      "type": {
-                        "type": "string",
-                        "pattern": "voucher",
-                        "default": "voucher",
-                        "enum": [
-                          "voucher"
-                        ],
-                        "description": "The object being modified, i.e. voucher."
-                      }
-                    }
-                  }
-                },
-                "required": [
-                  "type",
-                  "total",
-                  "object",
-                  "points",
-                  "balance",
-                  "related_object"
-                ]
+                "$ref": "#/components/schemas/VoucherBalance"
               },
               "order": {
                 "type": "object",
@@ -34722,12 +34782,197 @@
           "created_at"
         ]
       },
+      "VoucherBalance": {
+        "type": "object",
+        "title": "Voucher Balance",
+        "description": "Contains information on how the balance was affected by the transaction.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of voucher whose balance is being adjusted due to the transaction.",
+            "enum": [
+              "loyalty_card",
+              "gift_voucher"
+            ]
+          },
+          "total": {
+            "type": "integer",
+            "description": "The number of all points or credits accumulated on the card as affected by add or subtract operations."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by the JSON.",
+            "enum": [
+              "balance"
+            ]
+          },
+          "points": {
+            "type": "integer",
+            "description": "Points added or subtracted in the transaction of a loyalty card."
+          },
+          "balance": {
+            "type": "integer",
+            "description": "The available points or credits on the card after the transaction as affected by redemption or rollback."
+          },
+          "operation_type": {
+            "type": "string",
+            "description": "The type of the operation being performed.",
+            "enum": [
+              "MANUAL",
+              "AUTOMATIC"
+            ]
+          },
+          "related_object": {
+            "type": "object",
+            "required": [
+              "id",
+              "type"
+            ],
+            "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Identifies the voucher that is being modified. The ID is assigned by the Voucherify API."
+              },
+              "type": {
+                "type": "string",
+                "description": "The object being modified, i.e. voucher.",
+                "enum": [
+                  "voucher"
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "total",
+          "object",
+          "balance",
+          "related_object"
+        ]
+      },
+      "VoucherTransaction": {
+        "title": "Voucher Transaction",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherTransactionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/GiftVoucherTransactionsType"
+                  },
+                  {
+                    "$ref": "#/components/schemas/LoyaltyCardTransactionsType"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "GiftVoucherTransaction": {
+        "title": "Gift Card Transaction",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherTransactionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "$ref": "#/components/schemas/GiftVoucherTransactionsType"
+              }
+            }
+          }
+        ]
+      },
       "LoyaltyCardTransaction": {
         "title": "Loyalty Card Transaction",
         "allOf": [
           {
-            "$ref": "#/components/schemas/VoucherTransaction"
+            "$ref": "#/components/schemas/VoucherTransactionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "$ref": "#/components/schemas/LoyaltyCardTransactionsType"
+              }
+            }
           }
+        ]
+      },
+      "LoyaltyPointsBucket": {
+        "type": "object",
+        "title": "Loyalty Point Bucket",
+        "description": "Contains the details about expiring loyalty points.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the loyalty points bucket."
+          },
+          "voucher_id": {
+            "type": "string",
+            "description": "Unique identifier of the parent loyalty card."
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unique identifier of the parent campaign."
+          },
+          "bucket": {
+            "type": "object",
+            "required": [
+              "total_points"
+            ],
+            "description": "Defines the number of points stored in this loyalty point bucket.",
+            "properties": {
+              "total_points": {
+                "type": "integer",
+                "description": "Total number of points in the loyalty point bucket."
+              }
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "Loyalty point point bucket status."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date",
+            "description": "Date when the number of points defined in the bucket object are due to expire."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the loyalty point bucket object was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the loyalty point bucket object was updated in ISO 8601 format."
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "loyalty_points_bucket"
+            ],
+            "description": "The type of the object represented by JSON. This object stores information about the loyalty point bucket."
+          }
+        },
+        "required": [
+          "id",
+          "voucher_id",
+          "campaign_id",
+          "bucket",
+          "created_at",
+          "status",
+          "expires_at",
+          "object"
         ]
       },
       "LoyaltyCardTransactionsFields": {
@@ -39613,73 +39858,7 @@
             "type": "array",
             "description": "Contains array of loyalty points expiration buckets.",
             "items": {
-              "title": "Loyalties Members Points Expiration List Response Body Data Item",
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Unique loyalty points bucket ID."
-                },
-                "voucher_id": {
-                  "type": "string",
-                  "description": "Unique parent loyalty card ID."
-                },
-                "campaign_id": {
-                  "type": "string",
-                  "description": "\nUnique parent campaign ID."
-                },
-                "bucket": {
-                  "type": "object",
-                  "required": [
-                    "total_points"
-                  ],
-                  "description": "Defines the number of points stored in the given loyalty points bucket.",
-                  "properties": {
-                    "total_points": {
-                      "type": "integer",
-                      "description": "Total number of points in the loyalty points bucket."
-                    }
-                  }
-                },
-                "created_at": {
-                  "type": "string",
-                  "description": "Timestamp representing the date and time when the loyalty points bucket object was created. The value is shown in the ISO 8601 format.",
-                  "format": "date-time"
-                },
-                "status": {
-                  "type": "string",
-                  "description": "Loyalty points bucket point status."
-                },
-                "expires_at": {
-                  "type": "string",
-                  "format": "date-time",
-                  "description": "Date when the number of points defined in the bucket object are due to expire."
-                },
-                "updated_at": {
-                  "type": "string",
-                  "format": "date-time",
-                  "description": "Timestamp representing the date and time when the loyalty points bucket object was updated. The value is shown in the ISO 8601 format."
-                },
-                "object": {
-                  "type": "string",
-                  "pattern": "loyalty_points_bucket",
-                  "default": "loyalty_points_bucket",
-                  "enum": [
-                    "loyalty_points_bucket"
-                  ],
-                  "description": "The type of the object represented by JSON. This object stores information about the loyalty points bucket."
-                }
-              },
-              "required": [
-                "id",
-                "voucher_id",
-                "campaign_id",
-                "bucket",
-                "created_at",
-                "status",
-                "expires_at",
-                "object"
-              ]
+              "$ref": "#/components/schemas/LoyaltyPointsBucket"
             }
           },
           "total": {
@@ -61766,7 +61945,7 @@
             }
           },
           "400": {
-            "description": "Returns an error if something goes wrong. A common source of error is an invalid or expired voucher, or a valid gift voucher with insufficient available balance.",
+            "description": "Returns an error if something goes wrong. A common source of error is an invalid or expired voucher, or a valid gift card with insufficient available balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -91960,7 +92139,7 @@
             }
           },
           "400": {
-            "description": "Returns an error if something goes wrong. A common source of error is an invalid or expired voucher, or a valid gift voucher with insufficient available balance.",
+            "description": "Returns an error if something goes wrong. A common source of error is an invalid or expired voucher, or a valid gift card with insufficient available balance.",
             "content": {
               "application/json": {
                 "schema": {
