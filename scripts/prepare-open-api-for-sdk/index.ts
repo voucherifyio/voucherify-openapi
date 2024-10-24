@@ -434,7 +434,7 @@ const fixSchemaTitle = (schema, title, schemas, skipSettingTitle?: boolean) => {
       true,
     );
   }
-  return { title: schema.title, ..._.omit(schema) };
+  return { title: title, ..._.omit(schema) };
 };
 
 const snakeToCamel = (str) =>
