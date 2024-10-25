@@ -78,6 +78,17 @@ const savePreparedOpenApiFile = async (lang: string, openAPI: object) => {
 };
 
 const main = async (languageOptions: LanguageOptions) => {
+  const prohibited = [
+    '"readOnly": true',
+    '"readOnly": false',
+    '"writeOnly": true',
+    '"writeOnly": false',
+  ];
+  prohibited.forEach((prohibited) => {
+    if (JSON.stringify(openAPIContent).includes(prohibited)) {
+      throw `Prohibited string found in source OpenAPI file! Found: "${prohibited}"`;
+    }
+  });
   //////////////////////////////////////////////////////////////////////////////
   removeStoplightTag(openAPIContent);
   openAPIContent = removeUnwantedProperties(openAPIContent, [
