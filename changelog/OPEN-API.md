@@ -4,13 +4,15 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-## 2024-10-24
+## 2024-10-25
 
 - Fixes, updates, refactorings:
   - Added `SimpleEvent`, `VoucherBalance`, `GiftVoucherTransactionsType`, `LoyaltyPointsBucket`, `VoucherTransactionBase` (on the basis of `VoucherTransaction`) schemas and added them where relevant
   - `VoucherTransaction` includes `VoucherTransactionBase` and relevant gift voucher or loyalty card `type`s
   - Described `customer_event` in `EventCustomerRewarded` schema
-  - 
+- Added the following endpoints with associated schemas:
+  - `v1/loyalties/{campaignId}/transactions`
+  - `v1/campaigns/{campaignId}/transactions`
 
 ## 2024-10-23
 
