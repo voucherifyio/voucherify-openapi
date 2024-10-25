@@ -79,21 +79,22 @@
 | /v1/vouchers/{code}/sessions/{sessionKey} | delete | Release Validation Session         | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/qualification                | post   | Examine Qualification [Deprecated] |                                      |  <font color='red'>deprecated</font> |
 ## Campaigns
-| endpoint                                   | method | summary                                    | is supported                         | is deprecated                        |
-| ------------------------------------------ | ------ | ------------------------------------------ | ------------------------------------ | ------------------------------------ |
-| /v1/campaigns                              | post   | Create Campaign                            | <font color='green'>supported</font> |                                      |
-| /v1/campaigns                              | get    | List Campaigns                             | <font color='green'>supported</font> |                                      |
-| /v1/campaigns/{campaignId}                 | get    | Get Campaign                               | <font color='green'>supported</font> |                                      |
-| /v1/campaigns/{campaignId}                 | put    | Update Campaign                            | <font color='green'>supported</font> |                                      |
-| /v1/campaigns/{campaignId}                 | delete | Delete Campaign                            | <font color='green'>supported</font> |                                      |
-| /v1/campaigns/{campaignId}/vouchers        | post   | Add Vouchers to Campaign                   | <font color='green'>supported</font> |                                      |
-| /v1/campaigns/{campaignId}/vouchers/{code} | post   | Add Voucher with Specific Code to Campaign | <font color='green'>supported</font> |                                      |
-| /v1/campaigns/{campaignId}/import          | post   | Import Vouchers to Campaign                | <font color='green'>supported</font> |                                      |
-| /v1/campaigns/{campaignId}/importCSV       | post   | Import Vouchers to Campaign by CSV         | <font color='green'>supported</font> |                                      |
-| /v1/campaigns/qualification                | post   | Examine Qualification [Deprecated]         |                                      |  <font color='red'>deprecated</font> |
-| /v1/campaigns/{campaignId}/enable          | post   | Enable Campaign                            | <font color='green'>supported</font> |                                      |
-| /v1/campaigns/{campaignId}/disable         | post   | Disable Campaign                           | <font color='green'>supported</font> |                                      |
-| /v1/campaigns/{campaignId}/transactions    | get    | List Campaign Transactions                 |                                      |                                      |
+| endpoint                                       | method | summary                                    | is supported                         | is deprecated                        |
+| ---------------------------------------------- | ------ | ------------------------------------------ | ------------------------------------ | ------------------------------------ |
+| /v1/campaigns                                  | post   | Create Campaign                            | <font color='green'>supported</font> |                                      |
+| /v1/campaigns                                  | get    | List Campaigns                             | <font color='green'>supported</font> |                                      |
+| /v1/campaigns/{campaignId}                     | get    | Get Campaign                               | <font color='green'>supported</font> |                                      |
+| /v1/campaigns/{campaignId}                     | put    | Update Campaign                            | <font color='green'>supported</font> |                                      |
+| /v1/campaigns/{campaignId}                     | delete | Delete Campaign                            | <font color='green'>supported</font> |                                      |
+| /v1/campaigns/{campaignId}/vouchers            | post   | Add Vouchers to Campaign                   | <font color='green'>supported</font> |                                      |
+| /v1/campaigns/{campaignId}/vouchers/{code}     | post   | Add Voucher with Specific Code to Campaign | <font color='green'>supported</font> |                                      |
+| /v1/campaigns/{campaignId}/import              | post   | Import Vouchers to Campaign                | <font color='green'>supported</font> |                                      |
+| /v1/campaigns/{campaignId}/importCSV           | post   | Import Vouchers to Campaign by CSV         | <font color='green'>supported</font> |                                      |
+| /v1/campaigns/qualification                    | post   | Examine Qualification [Deprecated]         |                                      |  <font color='red'>deprecated</font> |
+| /v1/campaigns/{campaignId}/enable              | post   | Enable Campaign                            | <font color='green'>supported</font> |                                      |
+| /v1/campaigns/{campaignId}/disable             | post   | Disable Campaign                           | <font color='green'>supported</font> |                                      |
+| /v1/campaigns/{campaignId}/transactions        | get    | List Campaign Transactions                 |                                      |                                      |
+| /v1/campaigns/{campaignId}/transactions/export | post   | Export Campaign Transactions               |                                      |                                      |
 ## Promotions
 | endpoint                                       | method | summary                            | is supported                         | is deprecated |
 | ---------------------------------------------- | ------ | ---------------------------------- | ------------------------------------ | ------------- |
