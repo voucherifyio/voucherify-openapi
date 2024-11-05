@@ -4,6 +4,11 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+
+
+## 2024-11-04
+- Added support for returning `campaign_id` and `campaign_name` in stackable validation endpoint, when `redeemable` option is expanded
+
 ## 2024-10-25
 
 - Fixes, updates, refactorings:

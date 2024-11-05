@@ -204,7 +204,7 @@ const removeOneOf = (schema, schemas, title) => {
       }
       return oneOfPartial;
     })
-    .flat();
+    .flat(Infinity);
   if (!oneOfWithNoRefs) {
     return { type: "any" };
   }
@@ -250,8 +250,20 @@ const propertiesIntersection = (
   ]);
   return Object.fromEntries(
     allPropertyKeys.map((key) => {
-      const p1 = currentProperties[key];
-      const p2 = newProperties[key];
+      let p1 = currentProperties[key];
+      let p2 = newProperties[key];
+      if (p1?.allOf) {
+        p1 = mergeAllOfObjects(getObjects(p1, schemas), schemas, title);
+      }
+      if (p2?.allOf) {
+        p2 = mergeAllOfObjects(getObjects(p2, schemas), schemas, title);
+      }
+      if (p1?.oneOf) {
+        p1 = removeOneOf(p1, schemas, p1.title).schema;
+      }
+      if (p2?.oneOf) {
+        p2 = removeOneOf(p2, schemas, p2.title).schema;
+      }
       // console.log(p1, p2);
       return [
         key,
@@ -270,11 +282,20 @@ const propertiesIntersection = (
   );
 };
 
-const getObject = (object, schemas) => {
+const getObjects = (object, schemas) => {
   if (object.$ref) {
-    return schemas[object.$ref.split("/").at(-1)];
+    const refObject = schemas[object.$ref.split("/").at(-1)];
+    return [getObjects(refObject, schemas)];
   }
-  return object;
+  if (object.oneOf) {
+    return [removeOneOf(object, schemas, object.title || "").schema];
+  }
+  if (object.allOf) {
+    return object.allOf
+      .map((object) => getObjects(object, schemas))
+      .flat(Infinity);
+  }
+  return [object];
 };
 
 const typeIntersection = (p1, p2, title, schemas) => {
@@ -292,8 +313,12 @@ const typeIntersection = (p1, p2, title, schemas) => {
   if (p1Local.oneOf && p2Local.oneOf) {
     return mergeAllOfObjects(
       [
-        ...p1Local.oneOf.map((object) => getObject(object, schemas)),
-        ...p2Local.oneOf.map((object) => getObject(object, schemas)),
+        ...p1Local.oneOf
+          .map((object) => getObjects(object, schemas))
+          .flat(Infinity),
+        ...p2Local.oneOf
+          .map((object) => getObjects(object, schemas))
+          .flat(Infinity),
       ],
       schemas,
       title,
@@ -303,15 +328,19 @@ const typeIntersection = (p1, p2, title, schemas) => {
     if (p2Local.allOf) {
       return mergeAllOfObjects(
         [
-          ...p1Local.oneOf.map((object) => getObject(object, schemas)),
-          ...p2Local.allOf.map((object) => getObject(object, schemas)),
+          ...p1Local.oneOf
+            .map((object) => getObjects(object, schemas))
+            .flat(Infinity),
+          ...p2Local.allOf
+            .map((object) => getObjects(object, schemas))
+            .flat(Infinity),
         ],
         schemas,
         title,
       );
     }
     return mergeAllOfObjects(
-      [...p1Local.oneOf.map((object) => getObject(object, schemas)), p2Local],
+      [...p1Local.oneOf.map((object) => getObjects(object, schemas)), p2Local],
       schemas,
       title,
     );
@@ -320,25 +349,35 @@ const typeIntersection = (p1, p2, title, schemas) => {
     if (p1Local.allOf) {
       return mergeAllOfObjects(
         [
-          ...p2Local.oneOf.map((object) => getObject(object, schemas)),
-          ...p1Local.allOf.map((object) => getObject(object, schemas)),
+          ...p2Local.oneOf
+            .map((object) => getObjects(object, schemas))
+            .flat(Infinity),
+          ...p1Local.allOf
+            .map((object) => getObjects(object, schemas))
+            .flat(Infinity),
         ],
         schemas,
         title,
       );
     }
     return mergeAllOfObjects(
-      [...p2Local.oneOf.map((object) => getObject(object, schemas)), p1Local],
+      [
+        ...p2Local.oneOf
+          .map((object) => getObjects(object, schemas))
+          .flat(Infinity),
+        p1Local,
+      ],
       schemas,
       title,
     );
   }
   if (
-    (p1Local.allOf || p1Local.type === "object" || p1Local.properties) &&
-    (p2Local.allOf || p2Local.type === "object" || p2Local.properties)
+    (p1Local.allOf || p1Local.properties) &&
+    (p2Local.allOf || p2Local.properties)
   ) {
-    const allOf = [p1Local.allOf || p1Local, p2Local.allOf || p2Local].flat();
-    //nie tu
+    const allOf = [p1Local.allOf || p1Local, p2Local.allOf || p2Local].flat(
+      Infinity,
+    );
     return mergeAllOfObjects(allOf, schemas, title);
   }
   if (isDeepStrictEqual(p1, p2)) {
@@ -357,7 +396,7 @@ const typeIntersection = (p1, p2, title, schemas) => {
   if (p1Local.type === "string") {
     let enum_;
     if (p1Local.enum?.length > 0 && p2Local.enum?.length > 0) {
-      enum_ = uniq([p1Local.enum, p2Local.enum].flat());
+      enum_ = uniq([p1Local.enum, p2Local.enum].flat(Infinity));
     } else {
       enum_ = undefined;
     }
@@ -406,13 +445,14 @@ const typeIntersection = (p1, p2, title, schemas) => {
   );
 };
 
-const mergeAllOfObjects = (allAreObjects, schemas, title) => {
-  if (allAreObjects.length === 1) {
-    return allAreObjects[0];
+const mergeAllOfObjects = (allOfs, schemas, title) => {
+  if (allOfs.length === 1) {
+    return allOfs[0];
   }
-  const allAreObjectsLocal = allAreObjects.map((object) =>
-    getObject(object, schemas),
-  );
+  const allAreObjectsLocal = allOfs
+    .flat(Infinity)
+    .map((object) => getObjects(object, schemas))
+    .flat(Infinity);
   const areAllObjectsObjects = allAreObjectsLocal.reduce(
     (accumulator, currentValue) => {
       if (currentValue?.type === "object" || currentValue?.properties) {
