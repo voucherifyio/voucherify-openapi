@@ -1789,6 +1789,37 @@
           }
         }
       },
+      "ParametersFiltersListTransactions": {
+        "type": "object",
+        "properties": {
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          },
+          "id": {
+            "$ref": "#/components/schemas/FilterConditionsString"
+          },
+          "voucher_id": {
+            "$ref": "#/components/schemas/FilterConditionsString"
+          },
+          "campaign_id": {
+            "$ref": "#/components/schemas/FilterConditionsString"
+          }
+        }
+      },
+      "ParametersFiltersListCampaignTransactions": {
+        "type": "object",
+        "properties": {
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          },
+          "id": {
+            "$ref": "#/components/schemas/FilterConditionsString"
+          },
+          "voucher_id": {
+            "$ref": "#/components/schemas/FilterConditionsString"
+          }
+        }
+      },
       "ParameterFiltersValidatePromotions": {
         "type": "object",
         "title": "Promotion filters",
@@ -1971,6 +2002,47 @@
             "$ref": "#/components/schemas/VouchersValidateLoyaltyRequestBody"
           }
         ]
+      },
+      "SimpleEvent": {
+        "title": "Simple Event",
+        "type": "object",
+        "description": "Simplified event data.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier assigned by Voucherify that will be linked to the this event.",
+            "example": "evcus_0e3070fef399b70b00"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the triggering event.",
+            "example": "customer.order.paid"
+          },
+          "category": {
+            "type": "string",
+            "description": "Type of the event.",
+            "enum": [
+              "EFFECT",
+              "ACTION"
+            ]
+          },
+          "entity_id": {
+            "type": "string",
+            "description": "ID of the entity that initiated the event.",
+            "example": "cust_ADqZIwGvWFvugWXVbrHwXRHO"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-01-01T11:11:11.111Z",
+            "description": "Timestamp representing the date and time when the event was created in the ISO 8601 format."
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Unique identifier of the request that triggered the event.",
+            "example": "v-1f36113948e50fc4ge"
+          }
+        }
       },
       "SimpleOrder": {
         "title": "Simple Order",
@@ -6980,7 +7052,7 @@
       "VoucherImportBase": {
         "title": "Voucher Import Base",
         "type": "object",
-        "description": "Object model for gift voucher object being imported.",
+        "description": "Object model for gift card object being imported.",
         "properties": {
           "code": {
             "type": "string",
@@ -7123,7 +7195,7 @@
       "VouchersImportGiftVoucherRequestBody": {
         "title": "Import Gift Voucher",
         "type": "object",
-        "description": "Object model for gift voucher object being imported.",
+        "description": "Object model for gift card object being imported.",
         "properties": {
           "code": {
             "type": "string",
@@ -10921,7 +10993,7 @@
       "4_obj_reward_object_parameters_CAMPAIGN_GIFT_VOUCHERS": {
         "title": "Gift Vouchers",
         "type": "object",
-        "description": "These are parameters representing a gift voucher, which is a subset of a Digital (CAMPAIGN) reward.",
+        "description": "These are parameters representing a gift card, which is a subset of a Digital (CAMPAIGN) reward.",
         "properties": {
           "id": {
             "type": "string",
@@ -26717,9 +26789,12 @@
           "balance": {
             "nullable": true,
             "type": "object",
-            "description": "Balance changed by the event.",
+            "description": "Balance changed by the event. The `amount` property details a change in a gift card. The `points` property details a change in a loyalty card.",
             "properties": {
               "amount": {
+                "type": "integer"
+              },
+              "points": {
                 "type": "integer"
               }
             }
@@ -26728,7 +26803,17 @@
             "$ref": "#/components/schemas/CustomEvent"
           },
           "customer_event": {
-            "type": "object"
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "segment": {
+                "$ref": "#/components/schemas/SimpleSegment"
+              },
+              "event_type": {
+                "type": "string",
+                "description": "Type of activity that triggered the event."
+              }
+            }
           }
         }
       },
@@ -26756,13 +26841,13 @@
             "$ref": "#/components/schemas/EarningRule"
           },
           "balance": {
-            "type": "integer"
+            "$ref": "#/components/schemas/VoucherBalance"
           },
           "order": {
             "$ref": "#/components/schemas/OrderCalculated"
           },
           "event": {
-            "type": "object"
+            "$ref": "#/components/schemas/SimpleEvent"
           }
         }
       },
@@ -26781,10 +26866,226 @@
             "$ref": "#/components/schemas/SimpleVoucher"
           },
           "balance": {
-            "type": "integer"
+            "$ref": "#/components/schemas/VoucherBalance"
           },
           "transaction": {
-            "$ref": "#/components/schemas/VoucherTransaction"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VoucherTransactionBase"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "details": {
+                    "type": "object",
+                    "description": "Contains the detailed information about the transaction.",
+                    "properties": {
+                      "balance": {
+                        "$ref": "#/components/schemas/VoucherBalance"
+                      },
+                      "order": {
+                        "type": "object",
+                        "description": "Contains information about the original order.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique order ID."
+                          },
+                          "source_id": {
+                            "type": "string",
+                            "description": "The merchant's order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "source_id"
+                        ]
+                      },
+                      "event": {
+                        "type": "object",
+                        "description": "Contains information about the event that triggers the point accrual.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique event ID."
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "Type of event."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "type"
+                        ]
+                      },
+                      "earning_rule": {
+                        "type": "object",
+                        "description": "Contains information about the earning rule.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique earning rule ID."
+                          },
+                          "source": {
+                            "type": "object",
+                            "required": [
+                              "banner"
+                            ],
+                            "description": "Contains the custom earning rule name.",
+                            "properties": {
+                              "banner": {
+                                "type": "string",
+                                "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+                              }
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "source"
+                        ]
+                      },
+                      "segment": {
+                        "type": "object",
+                        "description": "Contains information about the segment.",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "loyalty_tier": {
+                        "type": "object",
+                        "description": "Contains information about the loyalty tier.",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "redemption": {
+                        "type": "object",
+                        "description": "Contains information about the original redemption.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique redemption ID."
+                          }
+                        },
+                        "required": [
+                          "id"
+                        ]
+                      },
+                      "rollback": {
+                        "type": "object",
+                        "description": "Contains information about the redemption rollback.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique redemption rollback ID."
+                          }
+                        },
+                        "required": [
+                          "id"
+                        ]
+                      },
+                      "custom_event": {
+                        "type": "object",
+                        "description": "Contains information about the custom event that triggers the point accrual.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique event ID."
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "Type of custom event."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "type"
+                        ]
+                      },
+                      "event_schema": {
+                        "type": "object",
+                        "description": "Contains information about the custom event metadata schema.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique metadata schema ID."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Type of custom event."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "reward": {
+                        "type": "object",
+                        "description": "Contains information about the pay with points reward.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique reward ID."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Reward name."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "source_voucher": {
+                        "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction.",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/SimpleVoucher"
+                          }
+                        ]
+                      },
+                      "destination_voucher": {
+                        "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction.",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/SimpleVoucher"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Transaction type concerning gift card credits.",
+                    "enum": [
+                      "CREDITS_ADDITION"
+                    ]
+                  }
+                }
+              }
+            ]
           }
         }
       },
@@ -26803,10 +27104,226 @@
             "$ref": "#/components/schemas/SimpleVoucher"
           },
           "balance": {
-            "type": "integer"
+            "$ref": "#/components/schemas/VoucherBalance"
           },
           "transaction": {
-            "$ref": "#/components/schemas/VoucherTransaction"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VoucherTransactionBase"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "details": {
+                    "type": "object",
+                    "description": "Contains the detailed information about the transaction.",
+                    "properties": {
+                      "balance": {
+                        "$ref": "#/components/schemas/VoucherBalance"
+                      },
+                      "order": {
+                        "type": "object",
+                        "description": "Contains information about the original order.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique order ID."
+                          },
+                          "source_id": {
+                            "type": "string",
+                            "description": "The merchant's order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "source_id"
+                        ]
+                      },
+                      "event": {
+                        "type": "object",
+                        "description": "Contains information about the event that triggers the point accrual.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique event ID."
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "Type of event."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "type"
+                        ]
+                      },
+                      "earning_rule": {
+                        "type": "object",
+                        "description": "Contains information about the earning rule.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique earning rule ID."
+                          },
+                          "source": {
+                            "type": "object",
+                            "required": [
+                              "banner"
+                            ],
+                            "description": "Contains the custom earning rule name.",
+                            "properties": {
+                              "banner": {
+                                "type": "string",
+                                "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+                              }
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "source"
+                        ]
+                      },
+                      "segment": {
+                        "type": "object",
+                        "description": "Contains information about the segment.",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "loyalty_tier": {
+                        "type": "object",
+                        "description": "Contains information about the loyalty tier.",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "redemption": {
+                        "type": "object",
+                        "description": "Contains information about the original redemption.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique redemption ID."
+                          }
+                        },
+                        "required": [
+                          "id"
+                        ]
+                      },
+                      "rollback": {
+                        "type": "object",
+                        "description": "Contains information about the redemption rollback.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique redemption rollback ID."
+                          }
+                        },
+                        "required": [
+                          "id"
+                        ]
+                      },
+                      "custom_event": {
+                        "type": "object",
+                        "description": "Contains information about the custom event that triggers the point accrual.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique event ID."
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "Type of custom event."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "type"
+                        ]
+                      },
+                      "event_schema": {
+                        "type": "object",
+                        "description": "Contains information about the custom event metadata schema.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique metadata schema ID."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Type of custom event."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "reward": {
+                        "type": "object",
+                        "description": "Contains information about the pay with points reward.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique reward ID."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Reward name."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "source_voucher": {
+                        "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction.",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/SimpleVoucher"
+                          }
+                        ]
+                      },
+                      "destination_voucher": {
+                        "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction.",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/SimpleVoucher"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Transaction type concerning loyalty card points.",
+                    "enum": [
+                      "POINTS_ACCRUAL"
+                    ]
+                  }
+                }
+              }
+            ]
           }
         }
       },
@@ -26831,10 +27348,227 @@
             "$ref": "#/components/schemas/SimpleVoucher"
           },
           "balance": {
-            "type": "integer"
+            "$ref": "#/components/schemas/VoucherBalance"
           },
           "transaction": {
-            "$ref": "#/components/schemas/VoucherTransaction"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VoucherTransactionBase"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "details": {
+                    "type": "object",
+                    "description": "Contains the detailed information about the transaction.",
+                    "properties": {
+                      "balance": {
+                        "$ref": "#/components/schemas/VoucherBalance"
+                      },
+                      "order": {
+                        "type": "object",
+                        "description": "Contains information about the original order.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique order ID."
+                          },
+                          "source_id": {
+                            "type": "string",
+                            "description": "The merchant's order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "source_id"
+                        ]
+                      },
+                      "event": {
+                        "type": "object",
+                        "description": "Contains information about the event that triggers the point accrual.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique event ID."
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "Type of event."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "type"
+                        ]
+                      },
+                      "earning_rule": {
+                        "type": "object",
+                        "description": "Contains information about the earning rule.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique earning rule ID."
+                          },
+                          "source": {
+                            "type": "object",
+                            "required": [
+                              "banner"
+                            ],
+                            "description": "Contains the custom earning rule name.",
+                            "properties": {
+                              "banner": {
+                                "type": "string",
+                                "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+                              }
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "source"
+                        ]
+                      },
+                      "segment": {
+                        "type": "object",
+                        "description": "Contains information about the segment.",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "loyalty_tier": {
+                        "type": "object",
+                        "description": "Contains information about the loyalty tier.",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "redemption": {
+                        "type": "object",
+                        "description": "Contains information about the original redemption.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique redemption ID."
+                          }
+                        },
+                        "required": [
+                          "id"
+                        ]
+                      },
+                      "rollback": {
+                        "type": "object",
+                        "description": "Contains information about the redemption rollback.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique redemption rollback ID."
+                          }
+                        },
+                        "required": [
+                          "id"
+                        ]
+                      },
+                      "custom_event": {
+                        "type": "object",
+                        "description": "Contains information about the custom event that triggers the point accrual.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique event ID."
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "Type of custom event."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "type"
+                        ]
+                      },
+                      "event_schema": {
+                        "type": "object",
+                        "description": "Contains information about the custom event metadata schema.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique metadata schema ID."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Type of custom event."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "reward": {
+                        "type": "object",
+                        "description": "Contains information about the pay with points reward.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique reward ID."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Reward name."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "source_voucher": {
+                        "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction.",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/SimpleVoucher"
+                          }
+                        ]
+                      },
+                      "destination_voucher": {
+                        "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction.",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/SimpleVoucher"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Transaction type concerning loyalty card points.",
+                    "enum": [
+                      "POINTS_TRANSFER_IN",
+                      "POINTS_TRANSFER_OUT"
+                    ]
+                  }
+                }
+              }
+            ]
           }
         }
       },
@@ -26853,16 +27587,233 @@
             "$ref": "#/components/schemas/SimpleVoucher"
           },
           "points": {
-            "type": "integer"
+            "type": "integer",
+            "description": "The number of expired points."
           },
           "buckets": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/VoucherTransaction"
+              "$ref": "#/components/schemas/LoyaltyPointsBucket"
             }
           },
           "transaction": {
-            "$ref": "#/components/schemas/VoucherTransaction"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VoucherTransactionBase"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "details": {
+                    "type": "object",
+                    "description": "Contains the detailed information about the transaction.",
+                    "properties": {
+                      "balance": {
+                        "$ref": "#/components/schemas/VoucherBalance"
+                      },
+                      "order": {
+                        "type": "object",
+                        "description": "Contains information about the original order.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique order ID."
+                          },
+                          "source_id": {
+                            "type": "string",
+                            "description": "The merchant's order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "source_id"
+                        ]
+                      },
+                      "event": {
+                        "type": "object",
+                        "description": "Contains information about the event that triggers the point accrual.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique event ID."
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "Type of event."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "type"
+                        ]
+                      },
+                      "earning_rule": {
+                        "type": "object",
+                        "description": "Contains information about the earning rule.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique earning rule ID."
+                          },
+                          "source": {
+                            "type": "object",
+                            "required": [
+                              "banner"
+                            ],
+                            "description": "Contains the custom earning rule name.",
+                            "properties": {
+                              "banner": {
+                                "type": "string",
+                                "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+                              }
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "source"
+                        ]
+                      },
+                      "segment": {
+                        "type": "object",
+                        "description": "Contains information about the segment.",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "loyalty_tier": {
+                        "type": "object",
+                        "description": "Contains information about the loyalty tier.",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "redemption": {
+                        "type": "object",
+                        "description": "Contains information about the original redemption.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique redemption ID."
+                          }
+                        },
+                        "required": [
+                          "id"
+                        ]
+                      },
+                      "rollback": {
+                        "type": "object",
+                        "description": "Contains information about the redemption rollback.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique redemption rollback ID."
+                          }
+                        },
+                        "required": [
+                          "id"
+                        ]
+                      },
+                      "custom_event": {
+                        "type": "object",
+                        "description": "Contains information about the custom event that triggers the point accrual.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique event ID."
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "Type of custom event."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "type"
+                        ]
+                      },
+                      "event_schema": {
+                        "type": "object",
+                        "description": "Contains information about the custom event metadata schema.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique metadata schema ID."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Type of custom event."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "reward": {
+                        "type": "object",
+                        "description": "Contains information about the pay with points reward.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique reward ID."
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "Reward name."
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "source_voucher": {
+                        "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction.",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/SimpleVoucher"
+                          }
+                        ]
+                      },
+                      "destination_voucher": {
+                        "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction.",
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/SimpleVoucher"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "type": {
+                    "type": "string",
+                    "description": "Transaction type concerning loyalty card points.",
+                    "enum": [
+                      "POINTS_EXPIRATION"
+                    ]
+                  }
+                }
+              }
+            ]
           }
         }
       },
@@ -34391,9 +35342,21 @@
           }
         }
       },
-      "LoyaltyCardTransactionsType": {
-        "title": "LoyaltyCardTransactionsType",
+      "GiftVoucherTransactionsType": {
+        "title": "Gift Card Transactions Type",
         "type": "string",
+        "description": "Transaction types concerning gift card credits.",
+        "enum": [
+          "CREDITS_REDEMPTION",
+          "CREDITS_REFUND",
+          "CREDITS_ADDITION",
+          "CREDITS_REMOVAL"
+        ]
+      },
+      "LoyaltyCardTransactionsType": {
+        "title": "Loyalty Card Transactions Type",
+        "type": "string",
+        "description": "Transaction types concerning loyalty points.",
         "enum": [
           "POINTS_ACCRUAL",
           "POINTS_REDEMPTION",
@@ -34405,8 +35368,8 @@
           "POINTS_TRANSFER_OUT"
         ]
       },
-      "VoucherTransaction": {
-        "title": "Voucher Transaction",
+      "VoucherTransactionBase": {
+        "title": "Voucher Transaction Base",
         "type": "object",
         "properties": {
           "id": {
@@ -34436,278 +35399,6 @@
             "nullable": true,
             "description": "Reason why the transaction occurred. In case of a redemption, this value is null."
           },
-          "type": {
-            "description": "Type of transaction.",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/LoyaltyCardTransactionsType"
-              }
-            ]
-          },
-          "details": {
-            "type": "object",
-            "description": "Contains the detailed information about the transaction.",
-            "properties": {
-              "balance": {
-                "type": "object",
-                "description": "Contains information on how the balance was affected by the transaction.",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "pattern": "loyalty_card",
-                    "default": "loyalty_card",
-                    "enum": [
-                      "loyalty_card"
-                    ],
-                    "description": "The type of voucher whose balance is being adjusted due to the transaction."
-                  },
-                  "total": {
-                    "type": "integer",
-                    "description": "The number of all points accumulated on the card as affected by add or subtract operations."
-                  },
-                  "object": {
-                    "type": "string",
-                    "pattern": "balance",
-                    "default": "balance",
-                    "enum": [
-                      "balance"
-                    ],
-                    "description": "The type of the object represented by the JSON."
-                  },
-                  "points": {
-                    "type": "integer",
-                    "description": "Points added or subtracted in the transaction."
-                  },
-                  "balance": {
-                    "type": "integer",
-                    "description": "The available points on the card after the transaction as affected by redemption or rollback."
-                  },
-                  "related_object": {
-                    "type": "object",
-                    "required": [
-                      "id",
-                      "type"
-                    ],
-                    "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API."
-                      },
-                      "type": {
-                        "type": "string",
-                        "pattern": "voucher",
-                        "default": "voucher",
-                        "enum": [
-                          "voucher"
-                        ],
-                        "description": "The object being modified, i.e. voucher."
-                      }
-                    }
-                  }
-                },
-                "required": [
-                  "type",
-                  "total",
-                  "object",
-                  "points",
-                  "balance",
-                  "related_object"
-                ]
-              },
-              "order": {
-                "type": "object",
-                "description": "Contains information about the original order.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique order ID."
-                  },
-                  "source_id": {
-                    "type": "string",
-                    "description": "The merchant's order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
-                  }
-                },
-                "required": [
-                  "id",
-                  "source_id"
-                ]
-              },
-              "event": {
-                "type": "object",
-                "description": "Contains information about the event that triggers the point accrual.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique event ID."
-                  },
-                  "type": {
-                    "type": "string",
-                    "description": "Type of event."
-                  }
-                },
-                "required": [
-                  "id",
-                  "type"
-                ]
-              },
-              "earning_rule": {
-                "type": "object",
-                "description": "Contains information about the earning rule.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique earning rule ID."
-                  },
-                  "source": {
-                    "type": "object",
-                    "required": [
-                      "banner"
-                    ],
-                    "description": "Contains the custom earning rule name.",
-                    "properties": {
-                      "banner": {
-                        "type": "string",
-                        "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
-                      }
-                    }
-                  }
-                },
-                "required": [
-                  "id",
-                  "source"
-                ]
-              },
-              "segment": {
-                "type": "object",
-                "description": "Contains information about the segment.",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "id",
-                  "name"
-                ]
-              },
-              "loyalty_tier": {
-                "type": "object",
-                "description": "Contains information about the loyalty tier.",
-                "properties": {
-                  "id": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "id",
-                  "name"
-                ]
-              },
-              "redemption": {
-                "type": "object",
-                "description": "Contains information about the original redemption.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique redemption ID."
-                  }
-                },
-                "required": [
-                  "id"
-                ]
-              },
-              "rollback": {
-                "type": "object",
-                "description": "Contains information about the redemption rollback.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique redemption rollback ID."
-                  }
-                },
-                "required": [
-                  "id"
-                ]
-              },
-              "custom_event": {
-                "type": "object",
-                "description": "Contains information about the custom event that triggers the point accrual.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique event ID."
-                  },
-                  "type": {
-                    "type": "string",
-                    "description": "Type of custom event."
-                  }
-                },
-                "required": [
-                  "id",
-                  "type"
-                ]
-              },
-              "event_schema": {
-                "type": "object",
-                "description": "Contains information about the custom event metadata schema.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique metadata schema ID."
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Type of custom event."
-                  }
-                },
-                "required": [
-                  "id",
-                  "name"
-                ]
-              },
-              "reward": {
-                "type": "object",
-                "description": "Contains information about the pay with points reward.",
-                "properties": {
-                  "id": {
-                    "type": "string",
-                    "description": "Unique reward ID."
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Reward name."
-                  }
-                },
-                "required": [
-                  "id",
-                  "name"
-                ]
-              },
-              "source_voucher": {
-                "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction.",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/SimpleVoucher"
-                  }
-                ]
-              },
-              "destination_voucher": {
-                "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction.",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/SimpleVoucher"
-                  }
-                ]
-              }
-            }
-          },
           "related_transaction_id": {
             "type": "string",
             "nullable": true,
@@ -34732,12 +35423,797 @@
           "created_at"
         ]
       },
+      "VoucherBalance": {
+        "type": "object",
+        "title": "Voucher Balance",
+        "description": "Contains information on how the balance was affected by the transaction.",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "The type of voucher whose balance is being adjusted due to the transaction.",
+            "enum": [
+              "loyalty_card",
+              "gift_voucher"
+            ]
+          },
+          "total": {
+            "type": "integer",
+            "description": "The number of all points or credits accumulated on the card as affected by add or subtract operations."
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by the JSON.",
+            "enum": [
+              "balance"
+            ]
+          },
+          "points": {
+            "type": "integer",
+            "description": "Points added or subtracted in the transaction of a loyalty card."
+          },
+          "balance": {
+            "type": "integer",
+            "description": "The available points or credits on the card after the transaction as affected by redemption or rollback."
+          },
+          "operation_type": {
+            "type": "string",
+            "description": "The type of the operation being performed.",
+            "enum": [
+              "MANUAL",
+              "AUTOMATIC"
+            ]
+          },
+          "related_object": {
+            "type": "object",
+            "required": [
+              "id",
+              "type"
+            ],
+            "description": "Defines the resource that is being modified with the values that are returned in the balance object.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Identifies the voucher that is being modified. The ID is assigned by the Voucherify API."
+              },
+              "type": {
+                "type": "string",
+                "description": "The object being modified, i.e. voucher.",
+                "enum": [
+                  "voucher"
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "type",
+          "total",
+          "object",
+          "balance",
+          "related_object"
+        ]
+      },
+      "VoucherTransaction": {
+        "title": "Voucher Transaction",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherTransactionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "details": {
+                "type": "object",
+                "description": "Contains the detailed information about the transaction.",
+                "properties": {
+                  "balance": {
+                    "$ref": "#/components/schemas/VoucherBalance"
+                  },
+                  "order": {
+                    "type": "object",
+                    "description": "Contains information about the original order.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique order ID."
+                      },
+                      "source_id": {
+                        "type": "string",
+                        "description": "The merchant's order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "source_id"
+                    ]
+                  },
+                  "event": {
+                    "type": "object",
+                    "description": "Contains information about the event that triggers the point accrual.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique event ID."
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Type of event."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type"
+                    ]
+                  },
+                  "earning_rule": {
+                    "type": "object",
+                    "description": "Contains information about the earning rule.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique earning rule ID."
+                      },
+                      "source": {
+                        "type": "object",
+                        "required": [
+                          "banner"
+                        ],
+                        "description": "Contains the custom earning rule name.",
+                        "properties": {
+                          "banner": {
+                            "type": "string",
+                            "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "source"
+                    ]
+                  },
+                  "segment": {
+                    "type": "object",
+                    "description": "Contains information about the segment.",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "loyalty_tier": {
+                    "type": "object",
+                    "description": "Contains information about the loyalty tier.",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "redemption": {
+                    "type": "object",
+                    "description": "Contains information about the original redemption.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique redemption ID."
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ]
+                  },
+                  "rollback": {
+                    "type": "object",
+                    "description": "Contains information about the redemption rollback.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique redemption rollback ID."
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ]
+                  },
+                  "custom_event": {
+                    "type": "object",
+                    "description": "Contains information about the custom event that triggers the point accrual.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique event ID."
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Type of custom event."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type"
+                    ]
+                  },
+                  "event_schema": {
+                    "type": "object",
+                    "description": "Contains information about the custom event metadata schema.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique metadata schema ID."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Type of custom event."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "reward": {
+                    "type": "object",
+                    "description": "Contains information about the pay with points reward.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique reward ID."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Reward name."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "source_voucher": {
+                    "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/SimpleVoucher"
+                      }
+                    ]
+                  },
+                  "destination_voucher": {
+                    "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/SimpleVoucher"
+                      }
+                    ]
+                  }
+                }
+              },
+              "type": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/GiftVoucherTransactionsType"
+                  },
+                  {
+                    "$ref": "#/components/schemas/LoyaltyCardTransactionsType"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "GiftVoucherTransaction": {
+        "title": "Gift Card Transaction",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/VoucherTransactionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "details": {
+                "type": "object",
+                "description": "Contains the detailed information about the transaction.",
+                "properties": {
+                  "balance": {
+                    "$ref": "#/components/schemas/VoucherBalance"
+                  },
+                  "order": {
+                    "type": "object",
+                    "description": "Contains information about the original order.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique order ID."
+                      },
+                      "source_id": {
+                        "type": "string",
+                        "description": "The merchant's order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "source_id"
+                    ]
+                  },
+                  "event": {
+                    "type": "object",
+                    "description": "Contains information about the event that triggers the point accrual.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique event ID."
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Type of event."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type"
+                    ]
+                  },
+                  "earning_rule": {
+                    "type": "object",
+                    "description": "Contains information about the earning rule.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique earning rule ID."
+                      },
+                      "source": {
+                        "type": "object",
+                        "required": [
+                          "banner"
+                        ],
+                        "description": "Contains the custom earning rule name.",
+                        "properties": {
+                          "banner": {
+                            "type": "string",
+                            "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "source"
+                    ]
+                  },
+                  "segment": {
+                    "type": "object",
+                    "description": "Contains information about the segment.",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "loyalty_tier": {
+                    "type": "object",
+                    "description": "Contains information about the loyalty tier.",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "redemption": {
+                    "type": "object",
+                    "description": "Contains information about the original redemption.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique redemption ID."
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ]
+                  },
+                  "rollback": {
+                    "type": "object",
+                    "description": "Contains information about the redemption rollback.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique redemption rollback ID."
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ]
+                  },
+                  "custom_event": {
+                    "type": "object",
+                    "description": "Contains information about the custom event that triggers the point accrual.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique event ID."
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Type of custom event."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type"
+                    ]
+                  },
+                  "event_schema": {
+                    "type": "object",
+                    "description": "Contains information about the custom event metadata schema.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique metadata schema ID."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Type of custom event."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "reward": {
+                    "type": "object",
+                    "description": "Contains information about the pay with points reward.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique reward ID."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Reward name."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "source_voucher": {
+                    "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/SimpleVoucher"
+                      }
+                    ]
+                  },
+                  "destination_voucher": {
+                    "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/SimpleVoucher"
+                      }
+                    ]
+                  }
+                }
+              },
+              "type": {
+                "$ref": "#/components/schemas/GiftVoucherTransactionsType"
+              }
+            }
+          }
+        ]
+      },
       "LoyaltyCardTransaction": {
         "title": "Loyalty Card Transaction",
         "allOf": [
           {
-            "$ref": "#/components/schemas/VoucherTransaction"
+            "$ref": "#/components/schemas/VoucherTransactionBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "details": {
+                "type": "object",
+                "description": "Contains the detailed information about the transaction.",
+                "properties": {
+                  "balance": {
+                    "$ref": "#/components/schemas/VoucherBalance"
+                  },
+                  "order": {
+                    "type": "object",
+                    "description": "Contains information about the original order.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique order ID."
+                      },
+                      "source_id": {
+                        "type": "string",
+                        "description": "The merchant's order ID if it is different from the Voucherify order ID. It is really useful in case of integration between multiple systems. It can be an order ID from CRM, database or 3rd party service."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "source_id"
+                    ]
+                  },
+                  "event": {
+                    "type": "object",
+                    "description": "Contains information about the event that triggers the point accrual.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique event ID."
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Type of event."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type"
+                    ]
+                  },
+                  "earning_rule": {
+                    "type": "object",
+                    "description": "Contains information about the earning rule.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique earning rule ID."
+                      },
+                      "source": {
+                        "type": "object",
+                        "required": [
+                          "banner"
+                        ],
+                        "description": "Contains the custom earning rule name.",
+                        "properties": {
+                          "banner": {
+                            "type": "string",
+                            "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+                          }
+                        }
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "source"
+                    ]
+                  },
+                  "segment": {
+                    "type": "object",
+                    "description": "Contains information about the segment.",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "loyalty_tier": {
+                    "type": "object",
+                    "description": "Contains information about the loyalty tier.",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "redemption": {
+                    "type": "object",
+                    "description": "Contains information about the original redemption.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique redemption ID."
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ]
+                  },
+                  "rollback": {
+                    "type": "object",
+                    "description": "Contains information about the redemption rollback.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique redemption rollback ID."
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ]
+                  },
+                  "custom_event": {
+                    "type": "object",
+                    "description": "Contains information about the custom event that triggers the point accrual.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique event ID."
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Type of custom event."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "type"
+                    ]
+                  },
+                  "event_schema": {
+                    "type": "object",
+                    "description": "Contains information about the custom event metadata schema.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique metadata schema ID."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Type of custom event."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "reward": {
+                    "type": "object",
+                    "description": "Contains information about the pay with points reward.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique reward ID."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Reward name."
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  },
+                  "source_voucher": {
+                    "description": "Contains information on how the balance on the donor loyalty card was affected by the transaction.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/SimpleVoucher"
+                      }
+                    ]
+                  },
+                  "destination_voucher": {
+                    "description": "Contains information on how the balance on the receiving loyalty card was affected by the transaction.",
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/SimpleVoucher"
+                      }
+                    ]
+                  }
+                }
+              },
+              "type": {
+                "$ref": "#/components/schemas/LoyaltyCardTransactionsType"
+              }
+            }
           }
+        ]
+      },
+      "LoyaltyPointsBucket": {
+        "type": "object",
+        "title": "Loyalty Point Bucket",
+        "description": "Contains the details about expiring loyalty points.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the loyalty points bucket."
+          },
+          "voucher_id": {
+            "type": "string",
+            "description": "Unique identifier of the parent loyalty card."
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unique identifier of the parent campaign."
+          },
+          "bucket": {
+            "type": "object",
+            "required": [
+              "total_points"
+            ],
+            "description": "Defines the number of points stored in this loyalty point bucket.",
+            "properties": {
+              "total_points": {
+                "type": "integer",
+                "description": "Total number of points in the loyalty point bucket."
+              }
+            }
+          },
+          "status": {
+            "type": "string",
+            "description": "Loyalty point point bucket status."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date",
+            "description": "Date when the number of points defined in the bucket object are due to expire."
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the loyalty point bucket object was created in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp representing the date and time when the loyalty point bucket object was updated in ISO 8601 format."
+          },
+          "object": {
+            "type": "string",
+            "enum": [
+              "loyalty_points_bucket"
+            ],
+            "description": "The type of the object represented by JSON. This object stores information about the loyalty point bucket."
+          }
+        },
+        "required": [
+          "id",
+          "voucher_id",
+          "campaign_id",
+          "bucket",
+          "created_at",
+          "status",
+          "expires_at",
+          "object"
         ]
       },
       "LoyaltyCardTransactionsFields": {
@@ -38311,6 +39787,50 @@
           }
         ]
       },
+      "CampaignsTransactionsListResponseBody": {
+        "type": "object",
+        "title": "Campaigns Transactions List Response Body",
+        "description": "Response body schema for **GET** `v1/campaigns/{campaignId}/transactions`.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of transaction objects.",
+            "enum": [
+              "data"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoucherTransaction"
+            },
+            "description": "A dictionary that contains an array of transactions. Each entry in the array is a separate transaction object."
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request (with a different paging or a different start date filter) to get more records returned in the results."
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an ID that can be used to return another page of results. Use the transaction ID in the `starting_after_id` query parameter to display another page of the results starting after the transaction with that ID."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "has_more"
+        ]
+      },
       "CampaignsCreateResponseBody": {
         "type": "object",
         "title": "Campaigns Create Response Body",
@@ -38632,7 +40152,7 @@
           },
           "operation_type": {
             "type": "string",
-            "default": "MANUAL",
+            "description": "The type of the operation being performed.",
             "enum": [
               "MANUAL"
             ]
@@ -39272,6 +40792,7 @@
           },
           "operation_type": {
             "type": "string",
+            "description": "The type of operation being performed.",
             "enum": [
               "MANUAL",
               "AUTOMATIC"
@@ -39530,6 +41051,50 @@
           "created_at"
         ]
       },
+      "LoyaltiesTransactionsListResponseBody": {
+        "type": "object",
+        "title": "Loyalties Transactions List Response Body",
+        "description": "Response body schema for **GET** `v1/loyalties/{campaignId}/transactions`.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON.",
+            "enum": [
+              "list"
+            ]
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of transaction objects.",
+            "enum": [
+              "data"
+            ]
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyCardTransaction"
+            },
+            "description": "A dictionary that contains an array of transactions. Each entry in the array is a separate transaction object."
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request (with a different paging or a different start date filter) to get more records returned in the results."
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an ID that can be used to return another page of results. Use the transaction ID in the `starting_after_id` query parameter to display another page of the results starting after the transaction with that ID."
+          }
+        },
+        "required": [
+          "object",
+          "data_ref",
+          "data",
+          "has_more"
+        ]
+      },
       "LoyaltiesMembersTransactionsListResponseBody": {
         "title": "Loyalties Members Transactions List Response Body",
         "description": "Response body schema for **GET** `v1/loyalties/{campaignId}/members/{memberId}/transactions` and `/loyalties/members/{memberId}/transactions`.",
@@ -39612,73 +41177,7 @@
             "type": "array",
             "description": "Contains array of loyalty points expiration buckets.",
             "items": {
-              "title": "Loyalties Members Points Expiration List Response Body Data Item",
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Unique loyalty points bucket ID."
-                },
-                "voucher_id": {
-                  "type": "string",
-                  "description": "Unique parent loyalty card ID."
-                },
-                "campaign_id": {
-                  "type": "string",
-                  "description": "\nUnique parent campaign ID."
-                },
-                "bucket": {
-                  "type": "object",
-                  "required": [
-                    "total_points"
-                  ],
-                  "description": "Defines the number of points stored in the given loyalty points bucket.",
-                  "properties": {
-                    "total_points": {
-                      "type": "integer",
-                      "description": "Total number of points in the loyalty points bucket."
-                    }
-                  }
-                },
-                "created_at": {
-                  "type": "string",
-                  "description": "Timestamp representing the date and time when the loyalty points bucket object was created. The value is shown in the ISO 8601 format.",
-                  "format": "date-time"
-                },
-                "status": {
-                  "type": "string",
-                  "description": "Loyalty points bucket point status."
-                },
-                "expires_at": {
-                  "type": "string",
-                  "format": "date-time",
-                  "description": "Date when the number of points defined in the bucket object are due to expire."
-                },
-                "updated_at": {
-                  "type": "string",
-                  "format": "date-time",
-                  "description": "Timestamp representing the date and time when the loyalty points bucket object was updated. The value is shown in the ISO 8601 format."
-                },
-                "object": {
-                  "type": "string",
-                  "pattern": "loyalty_points_bucket",
-                  "default": "loyalty_points_bucket",
-                  "enum": [
-                    "loyalty_points_bucket"
-                  ],
-                  "description": "The type of the object represented by JSON. This object stores information about the loyalty points bucket."
-                }
-              },
-              "required": [
-                "id",
-                "voucher_id",
-                "campaign_id",
-                "bucket",
-                "created_at",
-                "status",
-                "expires_at",
-                "object"
-              ]
+              "$ref": "#/components/schemas/LoyaltyPointsBucket"
             }
           },
           "total": {
@@ -52310,6 +53809,153 @@
         }
       }
     },
+    "/v1/campaigns/{campaignId}/transactions": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignId",
+          "description": "You can either pass the campaign ID, which was assigned by Voucherify, or the name of the campaign as the path parameter value.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "list-campaign-transactions",
+        "tags": [
+          "Campaigns"
+        ],
+        "summary": "List Campaign Transactions",
+        "description": "Retrieves all transactions for the campaign with the given campaign ID or campaign name. The `id` filter denotes the unique transaction identifier.\n\n> 🚧\n> The endpoint works only for gift card and loyalty campaigns.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListTransactions"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the transactions starting after a transaction with the given ID."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParametersFiltersListCampaignTransactions"
+            },
+            "description": "Filters for listing responses.",
+            "style": "deepObject",
+            "explode": true
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a dictionary with a `data` property that contains an array of transactions. The maximum number of transactions returned is determined by the `limit` query parameter. Each entry in the array is a separate transaction object. If more results are available, the `has_more` flag has value `true` and the value of the `more_starting_after` property can be used to retrieve another page of results.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignsTransactionsListResponseBody"
+                },
+                "examples": {
+                  "Gift or loyalty campaign": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "vtx_0f9159e2a055e41e16",
+                          "source_id": null,
+                          "voucher_id": "v_GNSRFoVlW2ny8uTOHhXRGvkwocR9jQ44",
+                          "campaign_id": "camp_5Hn0NM3Uf77tC3IV3kX5un36",
+                          "source": null,
+                          "reason": null,
+                          "type": "POINTS_REDEMPTION",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 283,
+                              "object": "balance",
+                              "points": -50,
+                              "balance": 23,
+                              "operation_type": "AUTOMATIC",
+                              "related_object": {
+                                "id": "v_GNSRFoVlW2ny8uTOHhXRGvkwocR9jQ44",
+                                "type": "voucher"
+                              }
+                            },
+                            "redemption": {
+                              "id": "r_0f9159e29815e41e08"
+                            },
+                            "reward": {
+                              "id": "rew_GCq9usMjLffVacs0mlyMmDZo",
+                              "name": "Material"
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2024-10-24T12:19:45.597Z"
+                        },
+                        {
+                          "id": "vtx_0f9159e1a48b219c95",
+                          "source_id": null,
+                          "voucher_id": "v_GNSRFoVlW2ny8uTOHhXRGvkwocR9jQ44",
+                          "campaign_id": "camp_5Hn0NM3Uf77tC3IV3kX5un36",
+                          "source": "voucherify-web-ui",
+                          "reason": "Apology addition",
+                          "type": "POINTS_ADDITION",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 283,
+                              "object": "balance",
+                              "points": 50,
+                              "balance": 73,
+                              "operation_type": "MANUAL",
+                              "related_object": {
+                                "id": "v_GNSRFoVlW2ny8uTOHhXRGvkwocR9jQ44",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2024-10-24T12:19:44.902Z"
+                        }
+                      ],
+                      "has_more": true,
+                      "more_starting_after": "vtx_0f9159e1a48b219c95"
+                    }
+                  },
+                  "Other campaign types - empty data": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [],
+                      "total": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/promotions/tiers": {
       "get": {
         "operationId": "list-promotion-tiers",
@@ -61809,7 +63455,7 @@
             }
           },
           "400": {
-            "description": "Returns an error if something goes wrong. A common source of error is an invalid or expired voucher, or a valid gift voucher with insufficient available balance.",
+            "description": "Returns an error if something goes wrong. A common source of error is an invalid or expired voucher, or a valid gift card with insufficient available balance.",
             "content": {
               "application/json": {
                 "schema": {
@@ -65143,6 +66789,153 @@
                         "url": "/v1/vouchers/MmFAzfDe/publications?page=1&limit=10"
                       },
                       "object": "voucher"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/{campaignId}/transactions": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignId",
+          "description": "You can either pass the campaign ID, which was assigned by Voucherify, or the name of the campaign as the path parameter value.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "list-loyalty-campaign-transactions",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "List Loyalty Campaign Transactions",
+        "description": "Retrieves all transactions for the campaign with the given campaign ID or campaign name.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListTransactions"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Sorts the results using one of the filtering options, where the dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the transactions starting after a transaction with the given ID."
+          },
+          {
+            "name": "filters",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParametersFiltersListCampaignTransactions"
+            },
+            "description": "Filters for listing responses. The `id` filter denotes the unique transaction identifier.",
+            "style": "deepObject",
+            "explode": true
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a dictionary with a `data` property that contains an array of transactions. The maximum number of transactions returned is determined by the `limit` query parameter. Each entry in the array is a separate transaction object. If more results are available, the `has_more` flag has value `true` and the value of the `more_starting_after` property can be used to retrieve another page of results.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesTransactionsListResponseBody"
+                },
+                "examples": {
+                  "Loyalty campaign transactions": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "vtx_0f9159e2a055e41e16",
+                          "source_id": null,
+                          "voucher_id": "v_GNSRFoVlW2ny8uTOHhXRGvkwocR9jQ44",
+                          "campaign_id": "camp_5Hn0NM3Uf77tC3IV3kX5un36",
+                          "source": null,
+                          "reason": null,
+                          "type": "POINTS_REDEMPTION",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 283,
+                              "object": "balance",
+                              "points": -50,
+                              "balance": 23,
+                              "operation_type": "AUTOMATIC",
+                              "related_object": {
+                                "id": "v_GNSRFoVlW2ny8uTOHhXRGvkwocR9jQ44",
+                                "type": "voucher"
+                              }
+                            },
+                            "redemption": {
+                              "id": "r_0f9159e29815e41e08"
+                            },
+                            "reward": {
+                              "id": "rew_GCq9usMjLffVacs0mlyMmDZo",
+                              "name": "Material"
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2024-10-24T12:19:45.597Z"
+                        },
+                        {
+                          "id": "vtx_0f9159e1a48b219c95",
+                          "source_id": null,
+                          "voucher_id": "v_GNSRFoVlW2ny8uTOHhXRGvkwocR9jQ44",
+                          "campaign_id": "camp_5Hn0NM3Uf77tC3IV3kX5un36",
+                          "source": "voucherify-web-ui",
+                          "reason": "Apology addition",
+                          "type": "POINTS_ADDITION",
+                          "details": {
+                            "balance": {
+                              "type": "loyalty_card",
+                              "total": 283,
+                              "object": "balance",
+                              "points": 50,
+                              "balance": 73,
+                              "operation_type": "MANUAL",
+                              "related_object": {
+                                "id": "v_GNSRFoVlW2ny8uTOHhXRGvkwocR9jQ44",
+                                "type": "voucher"
+                              }
+                            }
+                          },
+                          "related_transaction_id": null,
+                          "created_at": "2024-10-24T12:19:44.902Z"
+                        }
+                      ],
+                      "has_more": true,
+                      "more_starting_after": "vtx_0f9159e1a48b219c95"
+                    }
+                  },
+                  "Other campaign types - empty data": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [],
+                      "total": 0
                     }
                   }
                 }
@@ -92003,7 +93796,7 @@
             }
           },
           "400": {
-            "description": "Returns an error if something goes wrong. A common source of error is an invalid or expired voucher, or a valid gift voucher with insufficient available balance.",
+            "description": "Returns an error if something goes wrong. A common source of error is an invalid or expired voucher, or a valid gift card with insufficient available balance.",
             "content": {
               "application/json": {
                 "schema": {

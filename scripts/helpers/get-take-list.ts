@@ -1,11 +1,17 @@
 export const rawTakeList = {
+  //"/v1/campaigns/{campaignId}/transactions": {
+  //  get: false,
+  //},
+  //"/v1/loyalties/{campaignId}/transactions": {
+  //  get: false,
+  //},
   "/management/v1/projects/{projectId}/templates/campaigns": {
     get: true,
   },
   "/management/v1/projects/{projectId}/templates/campaigns/{campaignTemplateId}/copy":
-    {
-      post: true,
-    },
+  {
+    post: true,
+  },
   "/v1/templates/campaigns": {
     post: true,
     get: true,
@@ -448,11 +454,11 @@ export const rawTakeList = {
     get: true,
   },
   "/management/v1/projects/{projectId}/custom-event-schemas/{customEventSchemaId}":
-    {
-      get: true,
-      put: true,
-      delete: true,
-    },
+  {
+    get: true,
+    put: true,
+    delete: true,
+  },
   "/management/v1/projects/{projectId}/stacking-rules": {
     post: true,
     get: true,
@@ -512,15 +518,15 @@ export const getTakeList = (
   language: string = "default",
 ): { endpoint: string; methods: string[] }[] => {
   return Object.entries(rawTakeList)
-    .map(([endpoint, methods]) => {
+    ?.map(([endpoint, methods]) => {
       const supportedMethods = Object.entries(methods)
-        .map(([method, languages]) => {
-          if (languages === true || languages.includes(language)) {
+        ?.map(([method, languages]) => {
+          if (languages === true || languages?.includes(language)) {
             return method;
           }
           return undefined;
         })
-        .filter((e) => e);
+        ?.filter((e) => e) || [];
       if (supportedMethods.length > 0) {
         return { endpoint, methods: supportedMethods };
       }
