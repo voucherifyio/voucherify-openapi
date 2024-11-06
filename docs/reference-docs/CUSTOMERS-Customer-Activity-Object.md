@@ -651,7 +651,7 @@ All of:
 | object</br>`string` | <p>The type of the object represented by the JSON.</p> Available values: `balance` |
 | points</br>`integer` | <p>Points added or subtracted in the transaction of a loyalty card.</p> |
 | balance</br>`integer` | <p>The available points or credits on the card after the transaction as affected by redemption or rollback.</p> |
-| operation_type</br>`string` | <p>The type of the operation being performed.</p> Available values: `MANUAL`, `AUTOMATIC` |
+| operation_type</br>`string` | <p>The type of the operation being performed. The operation type is <code>AUTOMATIC</code> if it is an automatic redemption.</p> Available values: `MANUAL`, `AUTOMATIC` |
 | related_object</br>`object` | <p>Defines the resource that is being modified with the values that are returned in the balance object.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Identifies the voucher that is being modified. The ID is assigned by the Voucherify API.</p></td></tr><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>The object being modified, i.e. voucher.</p> Available values: <code>voucher</code></td></tr></tbody></table> |
 
 ## Order Calculated No Customer Data

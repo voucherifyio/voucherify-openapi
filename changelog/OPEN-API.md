@@ -4,7 +4,14 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-11-06
 
+- Drop `[Beta]` tags from:
+  - `management/v1/projects/{projectId}/templates/campaigns/{campaignTemplateId}/copy` – POST
+  - `management/v1/projects/{projectId}/templates/campaigns` – GET
+  - `v1/templates/campaigns/{campaignTemplateId}/tier-setup` – POST
+  - `v1/templates/campaigns/{campaignTemplateId}/campaign-setup` – POST
+  - `v1/templates/campaigns/{campaignTemplateId}` – GET, DELETE, PUT
 
 ## 2024-11-04
 - Added support for returning `campaign_id` and `campaign_name` in stackable validation endpoint, when `redeemable` option is expanded
