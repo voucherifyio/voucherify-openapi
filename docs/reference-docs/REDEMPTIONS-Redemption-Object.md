@@ -60,8 +60,9 @@ All of:
 | result</br>`object` | <p>Includes the error object with details about the reason why the redeemable is inapplicable</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">error</td><td style="text-align:left">See: <a href="#error-object">Error Object</a></td></tr><tr><td style="text-align:left">details</br><code>object</code></td><td style="text-align:left"><p>Provides details about the reason why the redeemable is inapplicable.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>Generic message from the <code>message</code> string shown in the <code>error</code> object or the message configured in a validation rule.</p></td></tr><tr><td style="text-align:left">key</br><code>string</code></td><td style="text-align:left"><p>Generic message from the <code>key</code> string shown in the <code>error</code> object.</p></td></tr></tbody></table></td></tr></tbody></table> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
 | categories</br>`array` | Array of [Category with Stacking Rules Type](#category-with-stacking-rules-type) |
-| campaign_name</br>`string` | <p>Campaign name</p> |
-| campaign_id</br>`string` | <p>Unique campaign ID assigned by Voucherify.</p> **Example:** <p>camp_pqZjuhG6Mgtp4GD0zD7b8hA3</p> |
+| campaign_name</br>`string` | <p>Campaign name. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> |
+| campaign_id</br>`string` | <p>Unique campaign ID assigned by Voucherify. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> **Example:** <p>camp_pqZjuhG6Mgtp4GD0zD7b8hA3</p> |
+| name</br>`string` | <p>Name of the promotion tier. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> |
 
 ## Skipped Redeemable
 | Attributes |  Description |
@@ -72,8 +73,9 @@ All of:
 | result</br>`object` | <p>Provides details about the reason why the redeemable is skipped.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">details</td><td style="text-align:left">One of: <a href="#validations-redeemable-skipped-result-limit-exceeded">Validations Redeemable Skipped Result Limit Exceeded</a>, <a href="#validations-redeemable-skipped-result-category-limit-exceeded">Validations Redeemable Skipped Result Category Limit Exceeded</a>, <a href="#validations-redeemable-skipped-result-redeemables-limit-exceeded">Validations Redeemable Skipped Result Redeemables Limit Exceeded</a>, <a href="#validations-redeemable-skipped-result-redeemables-category-limit-exceeded">Validations Redeemable Skipped Result Redeemables Category Limit Exceeded</a>, <a href="#validations-redeemable-skipped-result-exclusion-rules-not-met">Validations Redeemable Skipped Result Exclusion Rules Not Met</a>, <a href="#validations-redeemable-skipped-result-preceding-validation-failed">Validations Redeemable Skipped Result Preceding Validation Failed</a></td></tr></tbody></table> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redeemable.</p> |
 | categories</br>`array` | Array of [Category with Stacking Rules Type](#category-with-stacking-rules-type) |
-| campaign_name</br>`string` | <p>Campaign name</p> |
-| campaign_id</br>`string` | <p>Unique campaign ID assigned by Voucherify.</p> **Example:** <p>camp_pqZjuhG6Mgtp4GD0zD7b8hA3</p> |
+| campaign_name</br>`string` | <p>Campaign name. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> |
+| campaign_id</br>`string` | <p>Unique campaign ID assigned by Voucherify. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> **Example:** <p>camp_pqZjuhG6Mgtp4GD0zD7b8hA3</p> |
+| name</br>`string` | <p>Name of the promotion tier. Displayed only if the <code>options.expand</code> is passed with a <code>redeemable</code> value in the validation request body.</p> |
 
 ## Redemption Base
 | Attributes |  Description |
