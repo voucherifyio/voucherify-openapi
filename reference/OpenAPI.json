@@ -37778,6 +37778,22 @@
           }
         }
       },
+      "ExportCampaignTransactionsFilters": {
+        "title": "Export Campaign Transactions Filters",
+        "description": "Data filters and their conditions to narrow down the returned data.",
+        "type": "object",
+        "properties": {
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          },
+          "created_at": {
+            "$ref": "#/components/schemas/FilterConditionsDateTime"
+          },
+          "voucher_id": {
+            "$ref": "#/components/schemas/FilterConditionsString"
+          }
+        }
+      },
       "ExportsGetResponseBody": {
         "type": "object",
         "allOf": [
@@ -39876,23 +39892,30 @@
         "type": "object",
         "properties": {
           "parameters": {
-            "description": "Contains the parameters that define the data to be exported.",
+            "description": "List of available parameters containing fields and filters that can be exported for transactions in a gift card or loyalty card campaign, along with the sorting order of the returned data.",
             "allOf": [
               {
                 "$ref": "#/components/schemas/CampaignsTransactionsExportParameters"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "filters": {
+                    "$ref": "#/components/schemas/ExportCampaignTransactionsFilters"
+                  }
+                }
               }
             ]
           }
         }
       },
       "CampaignsTransactionsExportParameters": {
-        "description": "List of available fields and filters that can be exported for transactions in a gift card or loyalty card campaign, along with the sorting order of the returned data.",
         "title": "Export Campaign Transactions",
         "type": "object",
         "properties": {
           "order": {
             "type": "string",
-            "description": "How the export is filtered, where the dash `-` preceding a sorting option means sorting in a descending order.",
+            "description": "How the export is ordered, where the dash `-` preceding a sorting option means sorting in a descending order.",
             "enum": [
               "-created_at",
               "created_at"
@@ -39900,7 +39923,7 @@
           },
           "fields": {
             "type": "array",
-            "description": "Export transactions that are associated with credit movements on a gift card or point movements on a loyalty card in a campaign.\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| `id` | Unique transaction ID. | `vtx_0cb7811f1c07765800` |\n| `type` | Transaction type. |- `CREDITS_REMOVAL`<br>- `CREDITS_ADDITION`<br>- `CREDITS_REFUND`<br>- `CREDITS_REDEMPTION`<br>- `POINTS_ACCRUAL`<br>- `POINTS_REDEMPTION`<br>- `POINTS_REFUND`<br>- `POINTS_ADDITION`<br>- `POINTS_REMOVAL`<br>- `POINTS_EXPIRATION`<br>- `POINTS_TRANSFER_IN`<br>- `POINTS_TRANSFER_OUT` |\n| `source_id` | Unique transaction source ID. | 8638 |\n| `reason` | Contains the reason for the transaction if one was included originally. |  |\n| `balance` | The gift card or loyalty card balance after the transaction. |  |\n| `amount` | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| `created_at` | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | `2024-10-09T09:16:32.521Z`  |\n| `voucher_id` | Unique voucher ID. | `v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp` |\n| `source`|  Channel through which the transaction was initiated. | `API` |\n| `details` | More detailed information stored in the form of JSON. | Provides more details related to the transaction in the form of an object. |\n| `related_transaction_id` | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | `vtx_0c9afe802593b34b80` |",
+            "description": "Data fields that will be exported for the transactions that are associated with balance movements on cards in a campaign.",
             "items": {
               "type": "string",
               "enum": [
@@ -39965,7 +39988,10 @@
           "channel": {
             "type": "string",
             "description": "The channel through which the export was triggered.",
-            "default": "API"
+            "default": "API",
+            "enum": [
+              "API"
+            ]
           },
           "exported_object": {
             "type": "string",
@@ -39976,7 +40002,26 @@
             ]
           },
           "parameters": {
-            "$ref": "#/components/schemas/CampaignsTransactionsFilters"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CampaignsTransactionsExportParameters"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "filters": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ExportCampaignTransactionsFilters"
+                      },
+                      {
+                        "$ref": "#/components/schemas/CampaignsTransactionsExportFilterConditions"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
           },
           "result": {
             "type": "object",
@@ -40009,47 +40054,6 @@
           "parameters",
           "result",
           "user_id"
-        ]
-      },
-      "CampaignsTransactionsFilters": {
-        "description": "List of available fields and filters that can be exported for transactions in a gift card or loyalty card campaign, along with the sorting order of the returned data.",
-        "title": "Campaign Transactions",
-        "type": "object",
-        "properties": {
-          "order": {
-            "type": "string",
-            "description": "How the export is filtered, where the dash `-` preceding a sorting option means sorting in a descending order.",
-            "enum": [
-              "-created_at",
-              "created_at"
-            ]
-          },
-          "fields": {
-            "type": "array",
-            "description": "Export transactions that are associated with credit movements on a gift card or point movements on a loyalty card in a campaign.\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| `id` | Unique transaction ID. | `vtx_0cb7811f1c07765800` |\n| `type` | Transaction type. |- `CREDITS_REMOVAL`<br>- `CREDITS_ADDITION`<br>- `CREDITS_REFUND`<br>- `CREDITS_REDEMPTION`<br>- `POINTS_ACCRUAL`<br>- `POINTS_REDEMPTION`<br>- `POINTS_REFUND`<br>- `POINTS_ADDITION`<br>- `POINTS_REMOVAL`<br>- `POINTS_EXPIRATION`<br>- `POINTS_TRANSFER_IN`<br>- `POINTS_TRANSFER_OUT` |\n| `source_id` | Unique transaction source ID. | 8638 |\n| `reason` | Contains the reason for the transaction if one was included originally. |  |\n| `balance` | The gift card or loyalty card balance after the transaction. |  |\n| `amount` | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| `created_at` | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | `2024-10-09T09:16:32.521Z`  |\n| `voucher_id` | Unique voucher ID. | `v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp` |\n| `source`|  Channel through which the transaction was initiated. | `API` |\n| `details` | More detailed information stored in the form of JSON. | Provides more details related to the transaction in the form of an object. |\n| `related_transaction_id` | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | `vtx_0c9afe802593b34b80` |",
-            "items": {
-              "type": "string",
-              "enum": [
-                "id",
-                "type",
-                "source_id",
-                "reason",
-                "balance",
-                "amount",
-                "created_at",
-                "voucher_id",
-                "source",
-                "details",
-                "related_transaction_id"
-              ]
-            }
-          },
-          "filters": {
-            "$ref": "#/components/schemas/CampaignsTransactionsExportFilterConditions"
-          }
-        },
-        "required": [
-          "filters"
         ]
       },
       "CampaignsTransactionsExportFilterConditions": {
@@ -51054,7 +51058,7 @@
         "summary": "Export Voucher Transactions",
         "description": "Export transactions that are associated with credit movements on a gift card or loyalty card.\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique transaction ID. | vtx_0cb7811f1c07765800 |\n| type | Transaction type. | - `CREDITS_REMOVAL` <br> - `CREDITS_ADDITION` <br> - `CREDITS_REFUND` <br> - `CREDITS_REDEMPTION` <br> - `POINTS_ACCRUAL` <br> - `POINTS_REDEMPTION`<br> - `POINTS_REFUND`<br> - `POINTS_ADDITION`<br> - `POINTS_REMOVAL`<br> - `POINTS_EXPIRATION`<br> - `POINTS_TRANSFER_IN`<br> - `POINTS_TRANSFER_OUT` |\n| source_id | Unique transaction source ID. | 8638 |\n| reason | Contains the reason for the transaction if one was included originally. |  |\n| balance | The gift card or loyalty card balance after the transaction. |  |\n| amount | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | 2022-03-09T09:16:32.521Z  |\n| voucher_id | Unique Voucher ID. | v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp |\n| campaign_id | Parent campaign ID. | camp_FNYR4jhqZBM9xTptxDGgeNBV |\n| source|  Channel through which the transaction was initiated. | API |\n| details | More detailed information stored in the form of a JSON. | Provides more details related to the transaction in the form of an object. |\n| related_transaction_id | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | vtx_0c9afe802593b34b80 |",
         "requestBody": {
-          "description": "Specify the parameters for the transaction export.",
+          "description": "Specify the parameters for the camapign transaction export.",
           "content": {
             "application/json": {
               "schema": {
@@ -54240,7 +54244,7 @@
           }
         ],
         "summary": "Export Campaign Transactions",
-        "description": "Export transactions that are associated with credit movements on a gift card or point movements on a loyalty card in a campaign.\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| `id` | Unique transaction ID. | `vtx_0cb7811f1c07765800` |\n| `type` | Transaction type. |- `CREDITS_REMOVAL`<br>- `CREDITS_ADDITION`<br>- `CREDITS_REFUND`<br>- `CREDITS_REDEMPTION`<br>- `POINTS_ACCRUAL`<br>- `POINTS_REDEMPTION`<br>- `POINTS_REFUND`<br>- `POINTS_ADDITION`<br>- `POINTS_REMOVAL`<br>- `POINTS_EXPIRATION`<br>- `POINTS_TRANSFER_IN`<br>- `POINTS_TRANSFER_OUT` |\n| `source_id` | Unique transaction source ID. | 8638 |\n| `reason` | Contains the reason for the transaction if one was included originally. |  |\n| `balance` | The gift card or loyalty card balance after the transaction. |  |\n| `amount` | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| `created_at` | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | `2024-10-09T09:16:32.521Z`  |\n| `voucher_id` | Unique voucher ID. | `v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp` |\n| `source`|  Channel through which the transaction was initiated. | `API` |\n| `details` | More detailed information stored in the form of JSON. | Provides more details related to the transaction in the form of an object. |\n| `related_transaction_id` | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | `vtx_0c9afe802593b34b80` |",
+        "description": "Export transactions is an asynchronous process that generates a CSV file with the data about credit movements on a gift card or point movements on a loyalty card in a given campaign.\n\nTo export transactions:\n1. In the export request, use parameters to select which fields will be exported, in what order, and which data will be filtered.\n2. Use the returned `id` to track the export status with the [GET Export](ref:get-export) method.\n3. In the GET Export method, when the returned `status` field has the `DONE` value, the export file has been generated.\n4. Use the URL in the `result` property to download the file. You must be logged to your Voucherify account in the browser to be able to download the file.\n\nAn export request will almost always result in a single file being generated by the system. However, when the volume of your data is large, the system may split the results into multiple files.\n\nAn example export file would contain the following fields:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| `id` | Unique transaction ID. | `vtx_0cb7811f1c07765800` |\n| `type` | Transaction type. |**Gift cards**:<br>- `CREDITS_REMOVAL`<br>- `CREDITS_ADDITION`<br>- `CREDITS_REFUND`<br>- `CREDITS_REDEMPTION`<br>**Loyalty cards**:<br>- `POINTS_ACCRUAL`<br>- `POINTS_REDEMPTION`<br>- `POINTS_REFUND`<br>- `POINTS_ADDITION`<br>- `POINTS_REMOVAL`<br>- `POINTS_EXPIRATION`<br>- `POINTS_TRANSFER_IN`<br>- `POINTS_TRANSFER_OUT` |\n| `source_id` | Unique transaction source ID. | 8638 |\n| `reason` | Contains the reason for the transaction if one was included originally. | `Apology for sending a broken item` |\n| `balance` | The gift card or loyalty card balance after the transaction. |  |\n| `amount` | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| `created_at` | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | `2024-10-09T09:16:32.521Z`  |\n| `voucher_id` | Unique voucher ID. | `v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp` |\n| `source`|  Channel through which the transaction was initiated. | `API` |\n| `details` | More detailed information stored in the form of JSON. | Provides more details related to the transaction in the form of an object. |\n| `related_transaction_id` | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | `vtx_0c9afe802593b34b80` |",
         "requestBody": {
           "description": "Specify the parameters for the transaction export.",
           "content": {
@@ -54251,15 +54255,23 @@
               "examples": {
                 "Example": {
                   "value": {
+                    "order": "-created_at",
                     "parameters": {
                       "fields": [
                         "id",
                         "type",
                         "source_id",
-                        "voucher_id",
-                        "reason",
-                        "balance"
-                      ]
+                        "created_at"
+                      ],
+                      "filters": {
+                        "created_at": {
+                          "conditions": {
+                            "$after": [
+                              "2024-10-01T00:00:00.000Z"
+                            ]
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -54269,7 +54281,7 @@
         },
         "responses": {
           "200": {
-            "description": "Returns an export object.",
+            "description": "An object representing an export.",
             "content": {
               "application/json": {
                 "schema": {
