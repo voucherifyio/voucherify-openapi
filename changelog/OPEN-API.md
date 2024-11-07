@@ -4,6 +4,17 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-11-06
+
+- Drop `[Beta]` tags from:
+  - `management/v1/projects/{projectId}/templates/campaigns/{campaignTemplateId}/copy` – POST
+  - `management/v1/projects/{projectId}/templates/campaigns` – GET
+  - `v1/templates/campaigns/{campaignTemplateId}/tier-setup` – POST
+  - `v1/templates/campaigns/{campaignTemplateId}/campaign-setup` – POST
+  - `v1/templates/campaigns/{campaignTemplateId}` – GET, DELETE, PUT
+- Added `name` property in `ValidationsRedeemableSkipped`, `ValidationsRedeemableApplicable`, and `ValidationsRedeemableInapplicable` schemas as it is a promotion tier name returned in validations with the expand option
+- Added `created_at` filter to `v1/loyalties/members/{memberId}/transactions` and `v1/loyalties/{campaignId}/members/{memberId}/transactions` endpoints
+
 ## 2024-11-04
 - Added support for returning `campaign_id` and `campaign_name` in stackable validation endpoint, when `redeemable` option is expanded
 
