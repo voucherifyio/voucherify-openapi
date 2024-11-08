@@ -4,6 +4,12 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-11-08
+
+- Added the following endpoint methods with associated schemas:
+  - POST `v1/loyalties/{campaignId}/transactionsexport`
+  - POST `v1/campaigns/{campaignId}/transactions/export`
+
 ## 2024-11-06
 
 - Drop `[Beta]` tags from:
