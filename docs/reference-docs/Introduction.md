@@ -16,10 +16,11 @@ JSON is returned by all API responses, including errors, although our API librar
 
 To make the API as explorable as possible, this documentation has a test mode. You can test all methods at no cost.
 
-In general the API consists of 2 sets: 
+In general the API consists of 3 sets: 
 
-* **application API** - full capability, designed to be accessed from your server application
-* **client API** - limited capability, designed to be accessed from your website or mobile application
+* **Application API** - full capability, designed to be accessed from your server application
+* **Client API** - limited capability, designed to be accessed from your website or mobile application
+* **Management API** - endpoints designed to manage Voucherify projects within organization. Enterprise feature only – contact [Voucherify sales team](https://www.voucherify.io/contact-sales "Contact Voucherify Sales") for more details.
 
 > 📘 Your API keys
 >

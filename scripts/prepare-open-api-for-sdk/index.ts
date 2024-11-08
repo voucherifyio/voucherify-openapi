@@ -132,6 +132,9 @@ const main = async (languageOptions: LanguageOptions) => {
     .skipped_redeemables.items.properties.type.enum;
   delete openAPIContent.components.schemas.ValidationEntity.properties
     .inapplicable_redeemables.items.properties.type.enum;
+  //New parameter
+  openAPIContent.paths["/v1/loyalties/{campaignId}/members/{memberId}/transactions"].get.parameters = openAPIContent.paths["/v1/loyalties/{campaignId}/members/{memberId}/transactions"].get.parameters.filter(parameter => parameter.name !== 'filters');
+  openAPIContent.paths["/v1/loyalties/members/{memberId}/transactions"].get.parameters = openAPIContent.paths["/v1/loyalties/members/{memberId}/transactions"].get.parameters.filter(parameter => parameter.name !== 'filters');
   //ValidationRuleRules fix for Readme – should stay forever
   openAPIContent.components.schemas.ValidationRuleRules.additionalProperties.properties.rules.$ref =
     "#/components/schemas/ValidationRuleRules";

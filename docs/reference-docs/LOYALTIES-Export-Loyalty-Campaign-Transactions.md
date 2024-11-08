@@ -1,11 +1,11 @@
 ---
-title: Create Campaign From Template
+title: Export Loyalty Campaign Transactions
 type: endpoint
 categorySlug: voucherify-api
-slug: create-campaign-from-template
-parentDocSlug: templates
+slug: export-loyalty-campaign-transactions
+parentDocSlug: loyalties
 hidden: false
-order: 60
+order: 187
 ---
 [block:html]
 {
