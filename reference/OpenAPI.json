@@ -1050,26 +1050,10 @@
         "type": "object",
         "properties": {
           "created_at": {
-            "type": "object",
-            "description": "Filters the results by the date and time when the transaction occurred.",
-            "properties": {
-              "conditions": {
-                "properties": {
-                  "$before": {
-                    "type": "string",
-                    "example": "2021-12-22T10:13:06.487Z",
-                    "description": "Timestamp representing the date and time before the transaction occurred. The value is shown in the ISO 8601 format.",
-                    "format": "date-time"
-                  },
-                  "$after": {
-                    "type": "string",
-                    "example": "2021-12-22T10:13:06.487Z",
-                    "description": "Timestamp representing the date and time after the transaction occurred. The value is shown in the ISO 8601 format.",
-                    "format": "date-time"
-                  }
-                }
-              }
-            }
+            "$ref": "#/components/schemas/FilterConditionsDateTime"
+          },
+          "id": {
+            "$ref": "#/components/schemas/FilterConditionsString"
           }
         }
       },
@@ -21544,12 +21528,14 @@
           "$after": {
             "type": "string",
             "description": "Value is after this date. The value for this parameter is shown in the ISO 8601 format.",
-            "format": "date-time"
+            "format": "date-time",
+            "example": "2024-01-01T00:00:00.000Z"
           },
           "$before": {
             "type": "string",
             "description": "Value is before this date. The value for this parameter is shown in the ISO 8601 format.",
-            "format": "date-time"
+            "format": "date-time",
+            "example": "2024-01-01T00:00:00.000Z"
           },
           "$has_value": {
             "type": "string",
@@ -37778,6 +37764,22 @@
           }
         }
       },
+      "ExportCampaignTransactionsFilters": {
+        "title": "Export Campaign Transactions Filters",
+        "description": "Data filters and their conditions to narrow down the returned data.",
+        "type": "object",
+        "properties": {
+          "junction": {
+            "$ref": "#/components/schemas/Junction"
+          },
+          "created_at": {
+            "$ref": "#/components/schemas/FilterConditionsDateTime"
+          },
+          "voucher_id": {
+            "$ref": "#/components/schemas/FilterConditionsString"
+          }
+        }
+      },
       "ExportsGetResponseBody": {
         "type": "object",
         "allOf": [
@@ -39870,6 +39872,214 @@
           "has_more"
         ]
       },
+      "CampaignsTransactionsExportCreateRequestBody": {
+        "title": "Campaign Transactions Export Create Request Body",
+        "description": "Request body schema for **POST** `v1/campaigns/{campaignId}/transactions/export`.",
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "description": "List of available parameters containing fields and filters that can be exported for transactions in a gift card or loyalty card campaign, along with the sorting order of the returned data.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CampaignsTransactionsExportParameters"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "filters": {
+                    "$ref": "#/components/schemas/ExportCampaignTransactionsFilters"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "CampaignsTransactionsExportParameters": {
+        "title": "Export Campaign Transactions",
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "string",
+            "description": "How the export is ordered, where the dash `-` preceding a sorting option means sorting in a descending order.",
+            "enum": [
+              "-created_at",
+              "created_at"
+            ]
+          },
+          "fields": {
+            "type": "array",
+            "description": "Data fields that will be exported for the transactions that are associated with balance movements on cards in a campaign.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "id",
+                "type",
+                "source_id",
+                "reason",
+                "balance",
+                "amount",
+                "created_at",
+                "voucher_id",
+                "source",
+                "details",
+                "related_transaction_id"
+              ]
+            }
+          }
+        }
+      },
+      "CampaignsTransactionsExportCreateResponseBody": {
+        "type": "object",
+        "title": "Campaigns Transactions Export Create Response Body",
+        "description": "Response body schema for **POST** `v1/campaigns/{campaignId}/transactions/export`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsTransactionsExport"
+          }
+        ]
+      },
+      "CampaignsTransactionsExport": {
+        "title": "Campaigns Transactions Export",
+        "type": "object",
+        "description": "This is an object representing an export.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique export ID.",
+            "example": "exp_FFfp9o7daWuJqJCKp5xqqli4"
+          },
+          "object": {
+            "type": "string",
+            "default": "export",
+            "description": "The type of object being represented. This object stores information about the `export`.",
+            "enum": [
+              "export"
+            ]
+          },
+          "created_at": {
+            "type": "string",
+            "example": "2022-04-28T11:23:20.922Z",
+            "description": "Timestamp representing the date and time when the export was scheduled in ISO 8601 format.",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the export. Informs you whether the export has already been completed, i.e. indicates whether the file containing the exported data has been generated.",
+            "default": "SCHEDULED",
+            "enum": [
+              "SCHEDULED"
+            ]
+          },
+          "channel": {
+            "type": "string",
+            "description": "The channel through which the export was triggered.",
+            "default": "API",
+            "enum": [
+              "API"
+            ]
+          },
+          "exported_object": {
+            "type": "string",
+            "description": "The type of exported object.",
+            "default": "voucher_transactions",
+            "enum": [
+              "voucher_transactions"
+            ]
+          },
+          "parameters": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CampaignsTransactionsExportParameters"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "filters": {
+                    "allOf": [
+                      {
+                        "$ref": "#/components/schemas/ExportCampaignTransactionsFilters"
+                      },
+                      {
+                        "$ref": "#/components/schemas/TransactionsExportFilterConditionsWithCampaign"
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "result": {
+            "type": "object",
+            "nullable": true,
+            "description": "Contains the URL of the CSV file.",
+            "required": [
+              "url"
+            ],
+            "properties": {
+              "url": {
+                "type": "string",
+                "description": "URL of the CSV file location. It contains the `token` used for authorization in the [Download export](ref:download-export) method."
+              }
+            }
+          },
+          "user_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Identifies the specific user who initiated the export through the Voucherify Dashboard; returned when the `channel` value is `WEBSITE`.",
+            "example": "user_g24UoRO3Caxu7FCT4n5tpYEa3zUG0FrH"
+          }
+        },
+        "required": [
+          "id",
+          "object",
+          "created_at",
+          "status",
+          "channel",
+          "exported_object",
+          "parameters",
+          "result",
+          "user_id"
+        ]
+      },
+      "TransactionsExportFilterConditionsWithCampaign": {
+        "description": "Filter condition.",
+        "title": "Filter by Campaign ID",
+        "type": "object",
+        "required": [
+          "campaign_id"
+        ],
+        "properties": {
+          "campaign_id": {
+            "type": "object",
+            "required": [
+              "conditions"
+            ],
+            "description": "Data filters used to narrow down the data records to be returned in the result.",
+            "properties": {
+              "conditions": {
+                "type": "object",
+                "required": [
+                  "$in"
+                ],
+                "description": "Data filters used to narrow down the data records to be returned in the result.",
+                "properties": {
+                  "$in": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 1,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "CampaignsCreateResponseBody": {
         "type": "object",
         "title": "Campaigns Create Response Body",
@@ -41088,6 +41298,39 @@
           "metadata",
           "is_referral_code",
           "created_at"
+        ]
+      },
+      "LoyaltiesTransactionsExportCreateRequestBody": {
+        "title": "Loyalties Transactions Export Create Request Body",
+        "description": "Request body schema for **POST** `v1/loyalties/{campaignId}/transactions/export`.",
+        "type": "object",
+        "properties": {
+          "parameters": {
+            "description": "List of available parameters containing fields and filters that can be exported for transactions in a loyalty card campaign, along with the sorting order of the returned data.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CampaignsTransactionsExportParameters"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "filters": {
+                    "$ref": "#/components/schemas/ExportCampaignTransactionsFilters"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "LoyaltiesTransactionsExportCreateResponseBody": {
+        "type": "object",
+        "title": "Loyalties Transactions Export Create Response Body",
+        "description": "Response body schema for **POST** `v1/loyalties/{campaignId}/transactions/export`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CampaignsTransactionsExport"
+          }
         ]
       },
       "LoyaltiesTransactionsListResponseBody": {
@@ -50834,7 +51077,7 @@
         "summary": "Export Voucher Transactions",
         "description": "Export transactions that are associated with credit movements on a gift card or loyalty card.\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Unique transaction ID. | vtx_0cb7811f1c07765800 |\n| type | Transaction type. | - `CREDITS_REMOVAL` <br> - `CREDITS_ADDITION` <br> - `CREDITS_REFUND` <br> - `CREDITS_REDEMPTION` <br> - `POINTS_ACCRUAL` <br> - `POINTS_REDEMPTION`<br> - `POINTS_REFUND`<br> - `POINTS_ADDITION`<br> - `POINTS_REMOVAL`<br> - `POINTS_EXPIRATION`<br> - `POINTS_TRANSFER_IN`<br> - `POINTS_TRANSFER_OUT` |\n| source_id | Unique transaction source ID. | 8638 |\n| reason | Contains the reason for the transaction if one was included originally. |  |\n| balance | The gift card or loyalty card balance after the transaction. |  |\n| amount | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| created_at | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | 2022-03-09T09:16:32.521Z  |\n| voucher_id | Unique Voucher ID. | v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp |\n| campaign_id | Parent campaign ID. | camp_FNYR4jhqZBM9xTptxDGgeNBV |\n| source|  Channel through which the transaction was initiated. | API |\n| details | More detailed information stored in the form of a JSON. | Provides more details related to the transaction in the form of an object. |\n| related_transaction_id | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | vtx_0c9afe802593b34b80 |",
         "requestBody": {
-          "description": "Specify the parameters for the transaction export.",
+          "description": "Specify the parameters for the camapign transaction export.",
           "content": {
             "application/json": {
               "schema": {
@@ -53986,6 +54229,186 @@
                       "data_ref": "data",
                       "data": [],
                       "total": 0
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/campaigns/{campaignId}/transactions/export": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignId",
+          "description": "You can either pass the campaign ID, which was assigned by Voucherify, or the name of the campaign as the path parameter value.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "export-campaign-transactions",
+        "tags": [
+          "Campaigns"
+        ],
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "summary": "Export Campaign Transactions",
+        "description": "Export transactions is an asynchronous process that generates a CSV file with the data about credit movements on all gift cards or point movements on all loyalty cards in a given campaign.\n\nTo export transactions:\n1. In the export request, use parameters to select which fields will be exported, in what order, and which data will be filtered.\n2. Use the returned `id` to track the export status with the [GET Export](ref:get-export) method.\n3. In the GET Export method, when the returned `status` field has the `DONE` value, the export file has been generated.\n4. Use the URL in the `result` property to download the file. You must be logged to your Voucherify account on a given cluster in the browser to be able to download the file.\n\nAn export request will almost always result in a single file being generated by the system. However, when the data volume is large, the system may split the results into multiple files.\n\nAn example export file can look as follows:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| `id` | Unique transaction ID. | `vtx_0cb7811f1c07765800` |\n| `type` | Transaction type. |**Gift cards**:<br>- `CREDITS_REMOVAL`<br>- `CREDITS_ADDITION`<br>- `CREDITS_REFUND`<br>- `CREDITS_REDEMPTION`<br>**Loyalty cards**:<br>- `POINTS_ACCRUAL`<br>- `POINTS_REDEMPTION`<br>- `POINTS_REFUND`<br>- `POINTS_ADDITION`<br>- `POINTS_REMOVAL`<br>- `POINTS_EXPIRATION`<br>- `POINTS_TRANSFER_IN`<br>- `POINTS_TRANSFER_OUT` |\n| `source_id` | Unique transaction source ID. | 8638 |\n| `reason` | Contains the reason for the transaction if one was included originally. | `Apology for sending a broken item` |\n| `balance` | The gift card or loyalty card balance after the transaction. |  |\n| `amount` | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| `created_at` | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | `2024-10-09T09:16:32.521Z`  |\n| `voucher_id` | Unique voucher ID. | `v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp` |\n| `source`|  Channel through which the transaction was initiated. | `API` |\n| `details` | More detailed information stored in the form of JSON. | Provides more details related to the transaction in the form of an object. |\n| `related_transaction_id` | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | `vtx_0c9afe802593b34b80` |\n\n> 👍 Export Loyalty Campaign Transactions\n>\n> For loyalty campaigns, this method works in the same way the [POST Export Loyalty Campaign Transactions](ref:export-loyalty-campaign-transactions) does.",
+        "requestBody": {
+          "description": "Specify the parameters for the transaction export.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampaignsTransactionsExportCreateRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "order": "-created_at",
+                    "parameters": {
+                      "fields": [
+                        "id",
+                        "type",
+                        "source_id",
+                        "created_at"
+                      ],
+                      "filters": {
+                        "created_at": {
+                          "conditions": {
+                            "$after": [
+                              "2024-10-01T00:00:00.000Z"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "An object representing an export.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignsTransactionsExportCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "exp_KBunyG5vwkuF3jSWD03kmnLx",
+                      "object": "export",
+                      "created_at": "2024-10-25T14:35:12.019Z",
+                      "status": "SCHEDULED",
+                      "channel": "API",
+                      "exported_object": "voucher_transactions",
+                      "parameters": {
+                        "fields": [
+                          "id",
+                          "type",
+                          "source_id",
+                          "created_at"
+                        ],
+                        "filters": {
+                          "junction": "AND",
+                          "created_at": {
+                            "conditions": {
+                              "$after": [
+                                "2024-10-01T00:00:00.000Z"
+                              ]
+                            }
+                          },
+                          "campaign_id": {
+                            "conditions": {
+                              "$in": [
+                                "camp_5pgKwSKsAeQtFkRz6mfKpxxD"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "result": null,
+                      "user_id": null
+                    }
+                  },
+                  "No request body": {
+                    "value": {
+                      "id": "exp_FE04bvkl4J5GQCb99Q5o7Gxa",
+                      "object": "export",
+                      "created_at": "2024-10-25T15:15:11.698Z",
+                      "status": "SCHEDULED",
+                      "channel": "API",
+                      "exported_object": "voucher_transactions",
+                      "parameters": {
+                        "filters": {
+                          "campaign_id": {
+                            "conditions": {
+                              "$in": [
+                                "camp_5pgKwSKsAeQtFkRz6mfKpxxD"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "result": null,
+                      "user_id": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if an ID of a campaign with a wrong type is sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Transactions are allowed only for loyalty or gift campaigns",
+                      "request_id": "v-0f92ce8ff74946d25f"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the campaign does not exist or has been deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_5pgKwSKsAeQtFkRzmfKpxxD",
+                      "request_id": "v-0f92ccbb058946d005",
+                      "resource_id": "camp_5pgKwSKsAeQtFkRzmfKpxxD",
+                      "resource_type": "campaign"
                     }
                   }
                 }
@@ -66984,6 +67407,186 @@
         }
       }
     },
+    "/v1/loyalties/{campaignId}/transactions/export": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignId",
+          "description": "You can either pass the campaign ID, which was assigned by Voucherify, or the name of the campaign as the path parameter value.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "required": true
+        }
+      ],
+      "post": {
+        "operationId": "export-loyalty-campaign-transactions",
+        "tags": [
+          "Loyalties"
+        ],
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "summary": "Export Loyalty Campaign Transactions",
+        "description": "Export transactions is an asynchronous process that generates a CSV file with the data about or point movements on all loyalty cards in a given campaign.\n\nTo export transactions:\n1. In the export request, use parameters to select which fields will be exported, in what order, and which data will be filtered.\n2. Use the returned `id` to track the export status with the [GET Export](ref:get-export) method.\n3. In the GET Export method, when the returned `status` field has the `DONE` value, the export file has been generated.\n4. Use the URL in the `result` property to download the file. You must be logged to your Voucherify account on a given cluster in the browser to be able to download the file.\n\nAn export request will almost always result in a single file being generated by the system. However, when the data volume is large, the system may split the results into multiple files.\n\nAn example export file can look as follows:\n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| `id` | Unique transaction ID. | `vtx_0cb7811f1c07765800` |\n| `type` | Transaction type. | - `POINTS_ACCRUAL`<br>- `POINTS_REDEMPTION`<br>- `POINTS_REFUND`<br>- `POINTS_ADDITION`<br>- `POINTS_REMOVAL`<br>- `POINTS_EXPIRATION`<br>- `POINTS_TRANSFER_IN`<br>- `POINTS_TRANSFER_OUT` |\n| `source_id` | Unique transaction source ID. | 8638 |\n| `reason` | Contains the reason for the transaction if one was included originally. | `Apology for sending a broken item` |\n| `balance` | The gift card or loyalty card balance after the transaction. |  |\n| `amount` | The amount of gift card or loyalty card credits being allocated during the transaction. This value can either be negative or positive depending on the nature of the transaction. |  |\n| `created_at` | Timestamp in ISO 8601 format representing the date and time when the transaction was created. | `2024-10-09T09:16:32.521Z`  |\n| `voucher_id` | Unique voucher ID. | `v_dky7ksKfPX50Wb2Bxvcoeb1xT20b6tcp` |\n| `source`|  Channel through which the transaction was initiated. | `API` |\n| `details` | More detailed information stored in the form of JSON. | Provides more details related to the transaction in the form of an object. |\n| `related_transaction_id` | Unique transaction ID related to a receiver/donor card in the case of a points transfer from/to another card. | `vtx_0c9afe802593b34b80` |\n\n> 👍 Export Campaign Transactions\n>\n> This method works in the same way the [POST Export Campaign Transactions](ref:export-campaign-transactions) does, but it is limited to loyalty campaigns only. The POST Export Campaign Transactions method can also export gift card campaign transactions.",
+        "requestBody": {
+          "description": "Specify the parameters for the transaction export.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoyaltiesTransactionsExportCreateRequestBody"
+              },
+              "examples": {
+                "Example": {
+                  "value": {
+                    "order": "-created_at",
+                    "parameters": {
+                      "fields": [
+                        "id",
+                        "type",
+                        "source_id",
+                        "created_at"
+                      ],
+                      "filters": {
+                        "created_at": {
+                          "conditions": {
+                            "$after": [
+                              "2024-10-01T00:00:00.000Z"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "An object representing an export.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignsTransactionsExportCreateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "id": "exp_KBunyG5vwkuF3jSWD03kmnLx",
+                      "object": "export",
+                      "created_at": "2024-10-25T14:35:12.019Z",
+                      "status": "SCHEDULED",
+                      "channel": "API",
+                      "exported_object": "voucher_transactions",
+                      "parameters": {
+                        "fields": [
+                          "id",
+                          "type",
+                          "source_id",
+                          "created_at"
+                        ],
+                        "filters": {
+                          "junction": "AND",
+                          "created_at": {
+                            "conditions": {
+                              "$after": [
+                                "2024-10-01T00:00:00.000Z"
+                              ]
+                            }
+                          },
+                          "campaign_id": {
+                            "conditions": {
+                              "$in": [
+                                "camp_5pgKwSKsAeQtFkRz6mfKpxxD"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "result": null,
+                      "user_id": null
+                    }
+                  },
+                  "No request body": {
+                    "value": {
+                      "id": "exp_FE04bvkl4J5GQCb99Q5o7Gxa",
+                      "object": "export",
+                      "created_at": "2024-10-25T15:15:11.698Z",
+                      "status": "SCHEDULED",
+                      "channel": "API",
+                      "exported_object": "voucher_transactions",
+                      "parameters": {
+                        "filters": {
+                          "campaign_id": {
+                            "conditions": {
+                              "$in": [
+                                "camp_5pgKwSKsAeQtFkRz6mfKpxxD"
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "result": null,
+                      "user_id": null
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Returns an error if an ID of a campaign with a wrong type is sent.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "code": 403,
+                      "key": "forbidden",
+                      "message": "Forbidden",
+                      "details": "Transactions are allowed only for loyalty or gift campaigns",
+                      "request_id": "v-0f92ce8ff74946d25f"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Returns an error if the campaign does not exist or has been deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Not Found": {
+                    "value": {
+                      "code": 404,
+                      "key": "not_found",
+                      "message": "Resource not found",
+                      "details": "Cannot find campaign with id camp_5pgKwSKsAeQtFkRzmfKpxxD",
+                      "request_id": "v-0f92ccbb058946d005",
+                      "resource_id": "camp_5pgKwSKsAeQtFkRzmfKpxxD",
+                      "resource_type": "campaign"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/loyalties/{campaignId}/members/{memberId}/transactions": {
       "parameters": [
         {
@@ -67030,7 +67633,7 @@
             "schema": {
               "$ref": "#/components/schemas/ParameterFiltersListMemberTransactions"
             },
-            "description": "Filters for listing member transactions.",
+            "description": "Filters for listing member transactions. `id` is the unique identifier of the transaction.",
             "style": "deepObject",
             "explode": true
           },
@@ -67395,7 +67998,7 @@
             "schema": {
               "$ref": "#/components/schemas/ParameterFiltersListMemberTransactions"
             },
-            "description": "Filters for listing member transactions.",
+            "description": "Filters for listing member transactions. `id` is the unique identifier of the transaction.",
             "style": "deepObject",
             "explode": true
           },
