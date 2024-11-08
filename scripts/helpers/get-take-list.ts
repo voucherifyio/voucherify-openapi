@@ -1,4 +1,10 @@
 export const rawTakeList = {
+  //"/v1/campaigns/{campaignId}/transactions/export": {
+  //  get: false,
+  //},
+  //"/v1/loyalties/{campaignId}/transactions/export": {
+  //    get: false,
+  //  },
   //"/v1/campaigns/{campaignId}/transactions": {
   //  get: false,
   //},
