@@ -20,7 +20,7 @@ The established session is released when one of the following events happens:
 Once the session is established, the API returns a unique session key. The key must be used with each of the following validation or redemption requests to clearly identify the session. Multiple requests with the same key will always override existing session values.
 
 By default, the number of available validation sessions is equal to the Code redemption limit set in the campaign manager. For example:
-- If the code redemption limit is set to `2`, Voucherify will lock two sessions. Next sessions will result in the `quantity_exceeded` error.
+- If the code redemption limit is set to `4`, Voucherify will be able to lock up to four sessions. Next sessions will result in the `quantity_exceeded` error.
 - If the code redemption limit is set to `unlimited`, Voucherify will allow any number of sessions.
 
 ## How to Lock Code Usage
