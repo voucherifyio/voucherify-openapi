@@ -58,16 +58,16 @@ All of:
 | $is_not | See: [Any](#any) |
 | $in | See: [Any](#any) |
 | $not_in | See: [Any](#any) |
-| $less_than | See: [Any](#any) |
-| $less_than_or_equal | See: [Any](#any) |
-| $more_than</br>`array` |  |
-| $more_than_or_equal | See: [Any](#any) |
-| $starts_with | See: [Any](#any) |
-| $ends_with | See: [Any](#any) |
-| $contains | See: [Any](#any) |
-| $timeframe | See: [Any](#any) |
-| $timeframe_absolute | See: [Any](#any) |
-| $dow | See: [Any](#any) |
+| $less_than | See: [Any Number](#any-number) |
+| $less_than_or_equal | See: [Any Number](#any-number) |
+| $more_than | See: [Any Number](#any-number) |
+| $more_than_or_equal | See: [Any Number](#any-number) |
+| $starts_with | See: [Any String](#any-string) |
+| $ends_with | See: [Any String](#any-string) |
+| $contains | See: [Any String](#any-string) |
+| $timeframe | See: [Any String](#any-string) |
+| $timeframe_absolute | See: [Any Date Time](#any-date-time) |
+| $dow</br>`array` |  |
 | $count | See: [Any](#any) |
 | $count_more | See: [Any](#any) |
 | $count_less | See: [Any](#any) |
@@ -91,6 +91,24 @@ One of:
  2. string
  3. number
  4. object
+
+## Any Number
+One of:
+
+ 1. Array any of: number
+ 2. number
+
+## Any String
+One of:
+
+ 1. Array any of: string
+ 2. string
+
+## Any Date Time
+One of:
+
+ 1. Array any of: string
+ 2. string
 
 ## Validation Rule Rules
 | Attributes |  Description |
