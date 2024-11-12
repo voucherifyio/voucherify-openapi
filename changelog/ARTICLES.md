@@ -7,6 +7,13 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2024-11-12
+
+Updated the following articles:
+  - "Webhooks v2024-01-01" – new IP addresses.
+  - "Fetching Data" – added two new list endpoints to the `starting_after_id` list
+  - "Locking Validation Session" – update, explained the behaviour regarding the code redemption limit
+
 ## 2024-10-09
 
 - Updated the distribution trigger names in `introduction-to-webhooks.md`

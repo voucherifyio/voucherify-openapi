@@ -8,7 +8,7 @@ hidden: false
 order: 4
 ---
 
-All top-level API resources have support for fetches via **list** API methods. For instance, you can list redemptions, list publications, list customers, or list products. 
+All top-level API resources have support for fetches via **list** API methods. For instance, you can list redemptions, list publications, list customers, list products, and more. 
 
 These list API methods share a common structure, using at least these _query parameters_: `limit` and `created_at`.  
 
@@ -25,7 +25,9 @@ However, the following list API methods use the `starting_after_id` query parame
 - [List customer activity](ref:list-customer-activity)
 - [List member activity](ref:list-member-activity)
 - [List member activity (with campaign ID)](ref:list-member-activity-1)
+- [List campaign transactions](ref:list-campaign-transactions)
 - [List voucher transactions](ref:list-voucher-transactions)
+- [List loyalty campaign transactions](ref:list-loyalty-campaign-transactions)
 - [List loyalty card transactions](ref:list-loyalty-card-transactions)
 - [List loyalty card transactions (with campaign ID)](ref:list-loyalty-card-transactions-1)
 - [List customer redeemables](ref:list-customer-redeemables)
