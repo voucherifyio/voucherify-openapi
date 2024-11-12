@@ -4,11 +4,22 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-11-12
+
+- Added `404` errors to:
+  - GET `v1/loyalties/members/{memberId}/activity`
+  - GET `v1/loyalties/{id}/members/{memberId}/activity`
+  - GET `v1/customers/{id}/activity`
+
 ## 2024-11-08
 
 - Added the following endpoint methods with associated schemas:
   - POST `v1/loyalties/{campaignId}/transactionsexport`
   - POST `v1/campaigns/{campaignId}/transactions/export`
+- Fixed filtering in:
+  - GET `v1/loyalties/{campaignId}/members/{memberId}/transactions`
+  - GET `v1/loyalties/members/{memberId}/transactions`
+
 
 ## 2024-11-06
 
