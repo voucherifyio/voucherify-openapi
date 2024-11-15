@@ -68,9 +68,9 @@ All of:
 | $timeframe | See: [Any String](#any-string) |
 | $timeframe_absolute | See: [Any Date Time](#any-date-time) |
 | $dow</br>`array` |  |
-| $count | See: [Any](#any) |
-| $count_more | See: [Any](#any) |
-| $count_less | See: [Any](#any) |
+| $count</br>`array` |  |
+| $count_more</br>`array` |  |
+| $count_less</br>`array` |  |
 | $from | See: [Any](#any) |
 | $not_differ</br>`array` | Array any of: string, number, object |
 | $not_intersect</br>`array` | Array any of: string, number, object |
@@ -87,10 +87,7 @@ Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_FROM_CHEAPEST`, 
 ## Any
 One of:
 
- 1. Array any of: string, number, object
- 2. string
- 3. number
- 4. object
+ 1. Array any of: string, string, number, object
 
 ## Any Number
 One of:

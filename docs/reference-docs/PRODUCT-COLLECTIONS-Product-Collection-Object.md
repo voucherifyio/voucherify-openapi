@@ -61,10 +61,7 @@ Available values: `and`, `or`
 ## Any
 One of:
 
- 1. Array any of: string, number, object
- 2. string
- 3. number
- 4. object
+ 1. Array any of: string, string, number, object
 
 [block:html]
 {

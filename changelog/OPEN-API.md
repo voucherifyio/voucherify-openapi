@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-11-14
+
+Fixed `ParameterPage` schema `maximum` value to 99 – bug reported by a client
+
 ## 2024-11-12
 
 - Added `404` errors to:

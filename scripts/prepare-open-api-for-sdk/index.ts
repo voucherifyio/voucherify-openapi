@@ -135,6 +135,31 @@ const main = async (languageOptions: LanguageOptions) => {
   //New parameter
   openAPIContent.paths["/v1/loyalties/{campaignId}/members/{memberId}/transactions"].get.parameters = openAPIContent.paths["/v1/loyalties/{campaignId}/members/{memberId}/transactions"].get.parameters.filter(parameter => parameter.name !== 'filters');
   openAPIContent.paths["/v1/loyalties/members/{memberId}/transactions"].get.parameters = openAPIContent.paths["/v1/loyalties/members/{memberId}/transactions"].get.parameters.filter(parameter => parameter.name !== 'filters');
+  // Rollback the change of the "page" parameter
+  openAPIContent.paths["/v1/customers"].get.parameters = openAPIContent.paths["/v1/customers"].get.parameters.map(parameter => {
+    if (parameter.name === "page") {
+      return {
+        "$ref": "#/components/parameters/page"
+      }
+    }
+    return parameter
+  });
+  openAPIContent.paths["/v1/redemptions"].get.parameters = openAPIContent.paths["/v1/redemptions"].get.parameters.map(parameter => {
+    if (parameter.name === "page") {
+      return {
+        "$ref": "#/components/parameters/page"
+      }
+    }
+    return parameter
+  });
+  openAPIContent.paths["/v1/vouchers"].get.parameters = openAPIContent.paths["/v1/vouchers"].get.parameters.map(parameter => {
+    if (parameter.name === "page") {
+      return {
+        "$ref": "#/components/parameters/page"
+      }
+    }
+    return parameter
+  });
   //ValidationRuleRules fix for Readme – should stay forever
   openAPIContent.components.schemas.ValidationRuleRules.additionalProperties.properties.rules.$ref =
     "#/components/schemas/ValidationRuleRules";
