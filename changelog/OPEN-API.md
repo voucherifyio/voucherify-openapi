@@ -4,6 +4,14 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-11-15
+
+- Restored `ParameterPage` schema `maximum` value to 100 – bug reported by a client
+- Added a new `ParameterPage99` schema with `maximum` value equal to 99, as only the following methods have the page limit set to 99:
+  - GET `v1/customers`
+  - GET `v1/vouchers`
+  - GET `v1/redemptions`
+
 ## 2024-11-14
 
 Fixed `ParameterPage` schema `maximum` value to 99 – bug reported by a client

@@ -72,8 +72,16 @@ All of:
 | $count_more</br>`array` |  |
 | $count_less</br>`array` |  |
 | $from | See: [Any](#any) |
-| $not_differ</br>`array` | Array any of: string, number, object |
-| $not_intersect</br>`array` | Array any of: string, number, object |
+| $not_differ | See: [Any](#any) |
+| $not_intersect | See: [Any](#any) |
+| $after |  |
+| $before |  |
+| $more_than_ago |  |
+| $less_than_ago |  |
+| $is_days_ago |  |
+| $more_than_future |  |
+| $less_than_future |  |
+| $is_days_in_future |  |
 
 ## Validation Rule Rules
 | Attributes |  Description |
@@ -85,27 +93,16 @@ All of:
 Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_FROM_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`, `APPLY_FROM_MOST_EXPENSIVE`
 
 ## Any
-One of:
-
- 1. Array any of: string, string, number, object
+Array any of: string, string, number, object
 
 ## Any Number
-One of:
 
- 1. Array any of: number
- 2. number
 
 ## Any String
-One of:
 
- 1. Array any of: string
- 2. string
 
 ## Any Date Time
-One of:
 
- 1. Array any of: string
- 2. string
 
 ## Validation Rule Rules
 | Attributes |  Description |
