@@ -10,9 +10,10 @@ order: 140
 
 ## Accessing the API Use Summary
 
-> 👍 Access to Team Settings 
+> 👍 Access to Team and Project Settings 
 >
-> Team Settings can be viewed and managed only by an account owner and Project Settings can be managed by the account owner or users with proper access granted by the owner. By default, the Admin role can access the Project Settings.
+> Team Settings can be viewed and managed only by an account owner.
+> Project Settings can be managed by the account owner (by default) or users with proper access granted by the owner. The default Admin role can access Project Settings.
 
 In Team Settings, go to the following tabs:
 - Subscription to view a summary of API calls for each of your projects. 
@@ -38,16 +39,14 @@ Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn mor
 
 ## Notifications
 
-You can receive notifications in your app and through email when you use a certain percentage of your redemptions, API calls, or bulk API calls. The account owner can configure these thresholds and notifications in the `Project settings > API Usage` tab.
+You can receive notifications in your app and through email when you use a certain percentage of your redemptions, API calls, or bulk API calls. The account owner can configure these thresholds and notifications in the API Usage tab in the Project settings.
 
-To set this up, the account owner can:
+If you are the account owner, set this up as follows:
 
-1. Click the bell icon in the left sidebar, then go to Notifications Center and select Account Settings.
-
+1. Click the bell icon in the left sidebar and go to Notifications Center to select Account Settings.
 2. Alternatively, in the Team Settings, Subscription tab, click the pencil icon under one of the charts. This will take you directly to the API usage notification settings.
 
 To get email notifications:
-
 1. Go to Notifications Center and Account Settings.
 2. Click Show details next to the notifications you want to activate.
 3. Turn on the switch next to Email.
@@ -63,7 +62,7 @@ Notifications for webhooks usage will be sent if the usage exceeds the limit for
 >
 > You cannot exceed the number of API calls (both hourly and monthly) defined in your pricing plan. Exceeding this limit will block your access to the API immediately.
 >
-> However, the Enterprise plan can use the automatic subscription upgrade that will upgrade their subscription plan if there is a risk of exceeding the limit. This ensure smooth service operation in case of sudden higher traffic. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more about the Enterprise plan.
+> However, the Enterprise plan can use the automatic subscription upgrade that will upgrade their subscription plan if there is a risk of exceeding the limit. This ensures smooth service operation in case of sudden higher traffic. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more about the Enterprise plan.
 
 ## Buying Additional API Packages
 
