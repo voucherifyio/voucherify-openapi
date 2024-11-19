@@ -25,7 +25,7 @@ The following API limits apply to Business and Organization plans.
 
 | **Limit**                                                      | **Value**                                  |
 | :------------------------------------------------------------- | :----------------------------------------- |
-| API requests per minute                                        | Business: 100<br>Organization: 2000        |
+| API requests per minute                                        | Business: 100<br>Organization: 2,000       |
 | Total API requests per cycle                                   | Business: 100,000<br>Organization: 300,000 |
 | Client-side requests (e.g., validate) from a single IP address | 5 requests per 5 seconds                   |
 
@@ -33,7 +33,7 @@ To understand the basic limits of your account, go to Voucherify [Pricing](https
 
 ## Enterprise Plan
 
-Users with an Enterprise plan have custom API request limits. Depending on the case, it can be counted per hour or per minute.
+Users with an Enterprise plan have custom API request limits.
 
 Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more about the Enterprise plan.
 
@@ -61,8 +61,7 @@ Notifications for webhooks usage will be sent if the usage exceeds the limit for
 > 📘 What Happens If Limits Are Exceeded?
 >
 > You cannot exceed the number of API calls (both hourly and monthly) defined in your pricing plan. Exceeding this limit will block your access to the API immediately.
->
-> However, the Enterprise plan can use the automatic subscription upgrade that will upgrade their subscription plan if there is a risk of exceeding the limit. This ensures smooth service operation in case of sudden higher traffic. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more about the Enterprise plan.
+<!-- >However, the Enterprise plan can use the automatic subscription upgrade that will upgrade the subscription pricing tier if there is a risk of exceeding the limit. This ensures smooth service operation in case of sudden higher traffic. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more about the Enterprise plan. -->
 
 ## Buying Additional API Packages
 
@@ -74,7 +73,7 @@ If you expect to use more API calls than your usual limit, you can [purchase ext
 
 ## Webhooks
 
-Webhook calls coming from integrations are counted in separate daily buckets.
+Webhook calls coming from integrations (third-party webhooks) are counted in separate daily buckets.
 
 The size of the daily bucket is derived from the API request limit. 
 
@@ -84,7 +83,11 @@ The size of the daily bucket is derived from the API request limit.
 
 Webhook calls are gathered in a queue, so their number per hour can exceed the API hourly limit, and they will still be processed. However, if their number exceeds the daily limit, they will get rejected.
 
-## Distribution limits
+> 👍 Project Settings Webhooks
+>
+> The webhooks sent by Voucherify, which include the webhooks configured in the [Project Settings](ref:introduction-to-webhooks#webhooks-available-in-project-settings) are not covered by any limit. The webhooks sent through [Distributions](ref:introduction-to-webhooks#webhooks-available-in-distributions) are covered by [distributipon limits](#distribution-limits).
+
+## Distribution Limits
 
 Voucherify allows the Customer to send messages using the Distribution Manager. According to Voucherify [Anti-Spam](https://www.voucherify.io/legal/anti-spam-policy-v1-1) policy, the Customer has to pass a few checks to unlock the full limits.
 
