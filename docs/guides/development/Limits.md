@@ -61,8 +61,6 @@ Notifications for webhooks usage will be sent if the usage exceeds the limit for
 > 📘 What Happens If Limits Are Exceeded?
 >
 > You cannot exceed the number of API calls (both hourly and monthly) defined in your pricing plan. Exceeding this limit will block your access to the API immediately.
->
-> However, to avoid blocking your access, you can buy an [API call package](https://support.voucherify.io/article/583-how-to-buy-extra-api-calls-packages). The API call package can be used when dealing with sudden usage spikes during intensive promotion activities, like Black Friday.
 
 ## Buying Additional API Packages
 
