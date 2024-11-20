@@ -58,30 +58,30 @@ All of:
 | $is_not | See: [Any](#any) |
 | $in | See: [Any](#any) |
 | $not_in | See: [Any](#any) |
-| $less_than | See: [Any Number](#any-number) |
-| $less_than_or_equal | See: [Any Number](#any-number) |
-| $more_than | See: [Any Number](#any-number) |
-| $more_than_or_equal | See: [Any Number](#any-number) |
+| $less_than | See: [Any](#any) |
+| $less_than_or_equal | See: [Any](#any) |
+| $more_than | See: [Any](#any) |
+| $more_than_or_equal | See: [Any](#any) |
 | $starts_with | See: [Any String](#any-string) |
 | $ends_with | See: [Any String](#any-string) |
 | $contains | See: [Any String](#any-string) |
 | $timeframe | See: [Any String](#any-string) |
-| $timeframe_absolute | See: [Any Date Time](#any-date-time) |
+| $timeframe_absolute | See: [Any String](#any-string) |
 | $dow</br>`array` |  |
-| $count</br>`array` |  |
-| $count_more</br>`array` |  |
-| $count_less</br>`array` |  |
+| $count | See: [Any Number](#any-number) |
+| $count_more | See: [Any Number](#any-number) |
+| $count_less | See: [Any Number](#any-number) |
 | $from | See: [Any](#any) |
 | $not_differ | See: [Any](#any) |
 | $not_intersect | See: [Any](#any) |
-| $after |  |
-| $before |  |
-| $more_than_ago |  |
-| $less_than_ago |  |
-| $is_days_ago |  |
-| $more_than_future |  |
-| $less_than_future |  |
-| $is_days_in_future |  |
+| $after | See: [Any Date Time](#any-date-time) |
+| $before | See: [Any Date Time](#any-date-time) |
+| $more_than_ago | See: [Any Number](#any-number) |
+| $less_than_ago | See: [Any Number](#any-number) |
+| $is_days_ago | See: [Any Number](#any-number) |
+| $more_than_future | See: [Any Number](#any-number) |
+| $less_than_future | See: [Any Number](#any-number) |
+| $is_days_in_future | See: [Any Number](#any-number) |
 
 ## Validation Rule Rules
 | Attributes |  Description |
@@ -95,10 +95,13 @@ Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_FROM_CHEAPEST`, 
 ## Any
 Array any of: string, string, number, object
 
-## Any Number
-
+## Any
+Array any of: string, string, number, object
 
 ## Any String
+
+
+## Any Number
 
 
 ## Any Date Time
