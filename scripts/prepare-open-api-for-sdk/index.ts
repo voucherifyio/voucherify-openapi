@@ -108,6 +108,10 @@ const main = async (languageOptions: LanguageOptions) => {
       };
     }
   });
+  //use JSON.parse to not worry about TS
+  openAPIContent.components.schemas.Any = JSON.parse(`{
+        "title": "Any"
+      }`);
   delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
   //Fix voucher - to prevent breaking changes
   delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
