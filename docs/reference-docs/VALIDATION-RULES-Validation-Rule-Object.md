@@ -74,8 +74,8 @@ All of:
 | $from | See: [Any](#any) |
 | $not_differ | See: [Any](#any) |
 | $not_intersect | See: [Any](#any) |
-| $after | See: [Any Date Time](#any-date-time) |
-| $before | See: [Any Date Time](#any-date-time) |
+| $after | See: [Any Date and Date-Time](#any-date-and-date-time) |
+| $before | See: [Any Date and Date-Time](#any-date-and-date-time) |
 | $more_than_ago | See: [Any Number](#any-number) |
 | $less_than_ago | See: [Any Number](#any-number) |
 | $is_days_ago | See: [Any Number](#any-number) |
@@ -93,7 +93,7 @@ All of:
 Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_FROM_CHEAPEST`, `APPLY_TO_MOST_EXPENSIVE`, `APPLY_FROM_MOST_EXPENSIVE`
 
 ## Any
-Array any of: string, string, number, object
+Array any of: string, string, string, number, object
 
 ## Any
 Array any of: string, string, number, object
@@ -104,8 +104,8 @@ Array any of: string, string, number, object
 ## Any Number
 
 
-## Any Date Time
-
+## Any Date and Date-Time
+Array any of: string, string
 
 ## Validation Rule Rules
 | Attributes |  Description |
