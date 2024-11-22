@@ -484,7 +484,7 @@ All of:
 | id</br>`string` | <p>Campaign ID.</p> |
 | name</br>`string` | <p>Campaign name.</p> |
 | campaign_type</br>`string` | <p>Type of campaign.</p> |
-| type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation.</p><ul><li><code>AUTO_UPDATE</code>: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).</li><li><code>STATIC</code>: vouchers need to be manually published.</li></ul> Available values: `AUTO_UPDATE`, `STATIC` |
+| type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.</p><ul><li><code>AUTO_UPDATE</code>: the campaign is dynamic, i.e. vouchers will generate based on set criteria</li><li><code>STATIC</code>: vouchers need to be manually published</li><li><code>STANDALONE</code>: campaign for single vouchers</li></ul> Available values: `AUTO_UPDATE`, `STATIC`, `STANDALONE` |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 | voucher | See: [Simple Campaign Voucher](#simple-campaign-voucher) |
 | referral_program | See: [Referral Program](#referral-program) |
