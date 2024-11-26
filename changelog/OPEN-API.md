@@ -4,6 +4,24 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-11-26
+
+- Added the `metadata` object to the `sku` in:
+  - `OrderCalculatedItem` schema
+  - `OrderItem` schema
+  - Improved descriptions in `metadata` for products, skus, and items
+
+## 2024-11-25
+
+- Added `error.message` to the `Error` schema.
+- Added `STANDALONE` type to the following schemas:
+  - `CampaignBase`
+  - `CampaignsCreateBase`
+  - `SimpleCampaign`
+  - and respective changes in `OpenAPIWebhooks.json`
+- Updated the descriptions regarding standalone vouchers and campaigns (v20241004)
+- Added the `access_settings_assignments` to the `ParameterExpandListCampaigns` schema
+
 ## 2024-11-21
 
 - Refactored `ValidationRuleConditions`:
