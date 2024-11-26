@@ -67,13 +67,14 @@ All of:
 | $contains | See: [Any String](#any-string) |
 | $timeframe | See: [Any String](#any-string) |
 | $timeframe_absolute | See: [Any String](#any-string) |
+| $timeframe_daily_hours | See: [Any String](#any-string) |
 | $dow</br>`array` |  |
 | $count | See: [Any Number](#any-number) |
 | $count_more | See: [Any Number](#any-number) |
 | $count_less | See: [Any Number](#any-number) |
-| $from | See: [Any](#any) |
 | $not_differ | See: [Any](#any) |
 | $not_intersect | See: [Any](#any) |
+| $from | See: [Any](#any) |
 | $after | See: [Any Date and Date-Time](#any-date-and-date-time) |
 | $before | See: [Any Date and Date-Time](#any-date-and-date-time) |
 | $more_than_ago | See: [Any Number](#any-number) |
@@ -96,7 +97,7 @@ Available values: `APPLY_TO_EVERY`, `APPLY_TO_CHEAPEST`, `APPLY_FROM_CHEAPEST`, 
 Array any of: string, string, string, number, object
 
 ## Any
-Array any of: string, string, number, object
+Array any of: string, string, string, number, object
 
 ## Any String
 
