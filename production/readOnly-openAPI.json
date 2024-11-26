@@ -807,7 +807,7 @@
       "AccessSettingsCampaignAssignmentsList": {
         "title": "Access Settings Campaign Assignments List",
         "type": "object",
-        "description": "Lists all assignments of the campaign to areas and stores.\n\n**NOTE**: This object is returned only if the Areas and Stores enterprise feature is enabled. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.",
+        "description": "Lists all assignments of the campaign to areas and stores. For [GET List Campaigns](ref:list-campaigns), this is returned if the `expand=access_settings_assignments` query parameter is passed in the request.\n\n**NOTE**: This object is returned only if the Areas and Stores enterprise feature is enabled. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.",
         "properties": {
           "object": {
             "type": "string",
@@ -845,41 +845,34 @@
         "required": []
       },
       "Any": {
-        "oneOf": [
-          {
-            "title": "array",
-            "type": "array",
-            "items": {
-              "oneOf": [
-                {
-                  "title": "string",
-                  "type": "string"
-                },
-                {
-                  "title": "number",
-                  "type": "number"
-                },
-                {
-                  "title": "object",
-                  "type": "object"
-                }
-              ]
+        "title": "Any",
+        "type": "array",
+        "items": {
+          "oneOf": [
+            {
+              "title": "string",
+              "type": "string"
+            },
+            {
+              "title": "string - date",
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "title": "string - date-time",
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "title": "number",
+              "type": "number"
+            },
+            {
+              "title": "object",
+              "type": "object"
             }
-          },
-          {
-            "title": "string",
-            "type": "string"
-          },
-          {
-            "title": "number",
-            "type": "number"
-          },
-          {
-            "title": "object",
-            "type": "object"
-          }
-        ],
-        "title": "Any"
+          ]
+        }
       },
       "ApplicableTo": {
         "title": "Applicable To",
@@ -1791,10 +1784,11 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria    \n-  `STATIC`: vouchers need to be manually published",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
             "enum": [
               "AUTO_UPDATE",
-              "STATIC"
+              "STATIC",
+              "STANDALONE"
             ],
             "nullable": true
           },
@@ -1808,7 +1802,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them.",
             "nullable": true
           },
           "use_voucher_metadata_schema": {
@@ -2046,7 +2040,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published",
             "enum": [
               "AUTO_UPDATE",
               "STATIC"
@@ -2523,7 +2517,7 @@
               },
               "join_once": {
                 "type": "boolean",
-                "description": "If this value is set to `true`, customers will be able to join the campaign only once.",
+                "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them.",
                 "nullable": true
               },
               "auto_join": {
@@ -2533,7 +2527,7 @@
               },
               "type": {
                 "type": "string",
-                "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.    \n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).    \n-  `STATIC`: vouchers need to be manually published.",
+                "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.\n\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).\n-  `STATIC`: vouchers need to be manually published.\n\nIf the `type` of the campaign is `STANDALONE`, the type cannot be changed. Also, the `type` cannot be changed to `STANDALONE`.",
                 "enum": [
                   "AUTO_UPDATE",
                   "STATIC"
@@ -16480,7 +16474,7 @@
           },
           "metadata": {
             "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format. It can be used to define business validation rules or discount formulas.",
             "nullable": true
           }
         }
@@ -16566,7 +16560,7 @@
           },
           "metadata": {
             "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format. It can be used to define business validation rules or discount formulas.",
             "nullable": true
           },
           "object": {
@@ -16746,7 +16740,7 @@
               },
               "metadata": {
                 "type": "object",
-                "description": "A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format.",
+                "description": "A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format. It can be used to create product collections.",
                 "nullable": true
               },
               "price": {
@@ -16785,6 +16779,11 @@
                 "type": "number",
                 "description": "SKU price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).",
                 "nullable": true
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format. It can be used to create product collections.",
+                "nullable": true
               }
             },
             "nullable": true
@@ -16800,7 +16799,7 @@
           },
           "metadata": {
             "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format.",
+            "description": "A set of custom key/value pairs that you can attach to an item object. It can be useful for storing additional information about the item in a structured format. It can be used to define business validation rules or discount formulas.",
             "nullable": true
           }
         },
@@ -16895,7 +16894,7 @@
               },
               "metadata": {
                 "type": "object",
-                "description": "A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format.",
+                "description": "A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format. It can be used to create product collections.",
                 "nullable": true
               },
               "price": {
@@ -16934,13 +16933,18 @@
                 "type": "number",
                 "description": "SKU price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).",
                 "nullable": true
+              },
+              "metadata": {
+                "type": "object",
+                "description": "A set of custom key/value pairs that you can attach to an order item. It can be useful for storing additional information about the order item in a structured format. It can be used to create product collections.",
+                "nullable": true
               }
             },
             "nullable": true
           },
           "metadata": {
             "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to an order item. It can be useful for storing additional information about the order item in a structured format.",
+            "description": "A set of custom key/value pairs that you can attach to an order item. It can be useful for storing additional information about the order item in a structured format. It can be used to define business validation rules.",
             "nullable": true
           }
         },
@@ -17428,9 +17432,9 @@
       },
       "ParameterExpandListCampaigns": {
         "type": "string",
-        "default": "category",
         "enum": [
-          "category"
+          "category",
+          "access_settings_assignments"
         ]
       },
       "ParameterExportId": {
@@ -18777,6 +18781,11 @@
         "minimum": 1,
         "maximum": 100
       },
+      "ParameterPage99": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 99
+      },
       "ParameterProductCollectionId": {
         "type": "string",
         "example": "pc_41V4DiQQO8YGqj0J2oZD57j4"
@@ -19630,7 +19639,7 @@
           },
           "metadata": {
             "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format.",
+            "description": "The metadata object stores all custom attributes assigned to the product. A set of key/value pairs that you can attach to a product object. It can be useful for storing additional information about the product in a structured format. It can be used to create product collections.",
             "nullable": true
           },
           "image_url": {
@@ -24472,10 +24481,11 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation.\n- `AUTO_UPDATE`: By choosing the auto update option you will create a campaign that can be enhanced by new vouchers after the time of creation (e.g. by publish vouchers method).\n-  `STATIC`: vouchers need to be manually published.",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
             "enum": [
               "AUTO_UPDATE",
-              "STATIC"
+              "STATIC",
+              "STANDALONE"
             ],
             "nullable": true
           },
@@ -24497,7 +24507,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them.",
             "nullable": true
           },
           "active": {
@@ -24907,7 +24917,7 @@
           },
           "metadata": {
             "type": "object",
-            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format.",
+            "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format. It can be used to define business validation rules or discount formulas.",
             "nullable": true
           },
           "object": {
@@ -25742,7 +25752,7 @@
           },
           "metadata": {
             "type": "object",
-            "description": "The metadata object stores all custom attributes assigned to the SKU. A set of key/value pairs that you can attach to a SKU object. It can be useful for storing additional information about the SKU in a structured format.",
+            "description": "The metadata object stores all custom attributes assigned to the SKU. A set of key/value pairs that you can attach to a SKU object. It can be useful for storing additional information about the SKU in a structured format. It can be used to create product collections.",
             "nullable": true
           },
           "created_at": {
@@ -30675,7 +30685,13 @@
             "$ref": "#/components/parameters/limit"
           },
           {
-            "$ref": "#/components/parameters/page"
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ParameterPage99"
+            },
+            "description": "Which page of results to return. The lowest value is `1`, the highest value is `99`."
           },
           {
             "schema": {
@@ -31268,7 +31284,13 @@
             "$ref": "#/components/parameters/limit"
           },
           {
-            "$ref": "#/components/parameters/page"
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ParameterPage99"
+            },
+            "description": "Which page of results to return. The lowest value is `1`, the highest value is `99`."
           },
           {
             "$ref": "#/components/parameters/category"
@@ -31474,7 +31496,7 @@
           "Vouchers"
         ],
         "summary": "Generate Random Code",
-        "description": "Create a standalone voucher. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. \n\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new stand alone voucher if no `campaign` name or `campaign_id` is provided. In case of the loyalty card, a campaign name is required.\n\nYou can optionally use the `code` parameter to define a specific code or the `code_config` parameter to design rules for Voucherify API to create a random code. If neither of the two parameters are passed, then a random code is generated by the Voucherify API.\n\nThis method will return an error when trying to create a voucher that already exists.",
+        "description": "Create a standalone voucher. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. \n\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new standalone voucher if no `campaign` name or `campaign_id` is provided. However, if an ID or name of a campaign with the `type` set to `STANDALONE` is provided, the voucher will be added to such campaign. In case of the loyalty card, a campaign name is required.\n\nYou can optionally use the `code` parameter to define a specific code or the `code_config` parameter to design rules for Voucherify API to create a random code. If neither of the two parameters are passed, then a random code is generated by the Voucherify API.\n\nThis method will return an error when trying to create a voucher that already exists.\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>In version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), standalone vouchers created through the Voucherify dashboard create a campaign for that voucher. However, vouchers created through the API do not have a campaign attached, so the values for `campaign` and `campaign_id` are `null`.\n>\n>Voucherify developers work on adding an optional feature to create a standalone voucher campaign through the API.\n>\n>Follow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004) for more details about released features.",
         "parameters": [],
         "security": [
           {
@@ -33096,7 +33118,7 @@
           "Vouchers"
         ],
         "summary": "Create Voucher",
-        "description": "Create a standalone voucher. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. The code path parameter can use all letters of the English alphabet, Arabic numerals and special characters.  \n\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new stand alone voucher if no `campaign` name or `campaign_id` is provided. In case of the loyalty card, a campaign name is required.",
+        "description": "Create a standalone voucher. You can choose to create a `GIFT_VOUCHER`, a `DISCOUNT_VOUCHER`, or a `LOYALTY_CARD`. The code path parameter can use all letters of the English alphabet, Arabic numerals and special characters.\n\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new standalone voucher if no `campaign` name or `campaign_id` is provided. However, if an ID or name of a campaign with the `type` set to `STANDALONE` is provided, the voucher will be added to such campaign. In the case of the loyalty card, a campaign name or ID is required.\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>In version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), standalone vouchers created through the Voucherify dashboard create a campaign for that voucher. However, vouchers created through the API do not have a campaign attached, so the values for `campaign` and `campaign_id` are `null`.\n>\n>Voucherify developers work on adding an optional feature to create a standalone voucher campaign through the API.\n>\n>Follow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004) for more details about released features.",
         "parameters": [],
         "security": [
           {
@@ -34303,7 +34325,7 @@
           "Vouchers"
         ],
         "summary": "Import Vouchers",
-        "description": "Import standalone vouchers and gift cards into the repository.\n\n<!-- theme: info -->\n\n> 📘 Important notes\n>\n> - **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify Project.\n\nAny parameters not provided in the payload will be left blank or null.\n\nFor both **standalone discount vouchers and gift cards**, you can import the following fields:  \n\n- code\n- category\n- active\n- type\n- start_date\n- expiration_date\n- redemption.quantity\n- additional_info\n- metadata\n\nFor **gift cards**, you can also import the following field:\n\n- gift.amount\n\nFor **discount vouchers**, you can import the `discount` object. The object will slightly vary depending on the type of discount. Each discount type **requires** the `type` to be defined in the import.\n\n| **Discount Type** | **Required fields** |\n|:---|:---|\n| Amount | amount_off, effect |\n| Percent | percent_off, effect |\n| Fixed | fixed_amount, effect |\n| Unit - One item | unit_off, unit_type, effect |\n| Unit - Multiple items | unit_off, unit_type, effect |\n| Shipping | unit_off, unit_type, effect |\n\nFields other than the ones listed above won't be imported. Even if provided, they will be silently skipped.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
+        "description": "Import standalone vouchers and gift cards into the repository.\n\n<!-- theme: info -->\n\n> 📘 Important notes\n>\n> - **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify Project.\n\nAny parameters not provided in the payload will be left blank or null.\n\nFor both **standalone discount vouchers and gift cards**, you can import the following fields:  \n\n- code\n- category\n- active\n- type\n- start_date\n- expiration_date\n- redemption.quantity\n- additional_info\n- metadata\n\nFor **gift cards**, you can also import the following field:\n\n- gift.amount\n\nFor **discount vouchers**, you can import the `discount` object. The object will slightly vary depending on the type of discount. Each discount type **requires** the `type` to be defined in the import.\n\n| **Discount Type** | **Required fields** |\n|:---|:---|\n| Amount | amount_off, effect |\n| Percent | percent_off, effect |\n| Fixed | fixed_amount, effect |\n| Unit - One item | unit_off, unit_type, effect |\n| Unit - Multiple items | unit_off, unit_type, effect |\n| Shipping | unit_off, unit_type, effect |\n\nFields other than the ones listed above won't be imported. Even if provided, they will be silently skipped.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>In version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), standalone vouchers created through the Voucherify dashboard create a campaign for that voucher. However, vouchers imported through the dashboard in the Vouchers section or through the API do not have a campaign attached, so the values for `campaign` and `campaign_id` are `null`.",
         "parameters": [],
         "security": [
           {
@@ -34576,7 +34598,7 @@
           "Vouchers"
         ],
         "summary": "Import Vouchers using CSV",
-        "description": "Import standalone vouchers into the repository using a CSV file.\n\nThe CSV file has to include headers in the first line. All properties listed in the file headers that cannot be mapped to standard voucher fields will be added to the metadata object.  \n\nYou can find an example CSV file [here](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally#coupons).\n___\n<!--\ntitle: \"cURL Example Request\"\nlineNumbers: true\n-->\n```cURL cURL example\ncurl -X **POST** \\\n  https://api.voucherify.io/v1/vouchers/importCSV \\\n  -F file=@/path/to/vouchers.csv \\\n  -H \"X-App-Id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\" \\\n  -H \"X-App-Token: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"\n```\n\n<!-- theme: info -->\n\n> 📘 Standard voucher fields mapping\n>\n> - Go to the <!-- [import vouchers](OpenAPI.json/paths/~1vouchers~1import) -->[import vouchers](ref:import-vouchers) endpoint to see all standard CSV fields description (body params section).\n> - Supported CSV file headers: Code,Voucher Type,Value,Discount Type,Category,Start Date,Expiration Date,Redemption Limit,Redeemed Quantity, Redeemed Amount,Active,Additional Info,Custom Metadata Property Name\n>- **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.  \n>    - `YYYY-MM-DD`\n>    - `YYYY-MM-DDTHH`\n>    - `YYYY-MM-DDTHH:mm`\n>    - `YYYY-MM-DDTHH:mm:ss`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ss.SSSZ`\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify Project.\n\n<!-- theme: info -->\n\n> 📘 Categories\n>\n> In the structure representing your data, you can define a category that the voucher belongs to. You can later use the category of a voucher to group and search by specific criteria in the Dashboard and using the [List Vouchers](ref:list-vouchers) endpoint.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).",
+        "description": "Import standalone vouchers into the repository using a CSV file.\n\nThe CSV file has to include headers in the first line. All properties listed in the file headers that cannot be mapped to standard voucher fields will be added to the metadata object.  \n\nYou can find an example CSV file [here](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally#coupons).\n___\n<!--\ntitle: \"cURL Example Request\"\nlineNumbers: true\n-->\n```cURL cURL example\ncurl -X **POST** \\\n  https://api.voucherify.io/v1/vouchers/importCSV \\\n  -F file=@/path/to/vouchers.csv \\\n  -H \"X-App-Id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\" \\\n  -H \"X-App-Token: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\"\n```\n\n<!-- theme: info -->\n\n> 📘 Standard voucher fields mapping\n>\n> - Go to the <!-- [import vouchers](OpenAPI.json/paths/~1vouchers~1import) -->[import vouchers](ref:import-vouchers) endpoint to see all standard CSV fields description (body params section).\n> - Supported CSV file headers: Code,Voucher Type,Value,Discount Type,Category,Start Date,Expiration Date,Redemption Limit,Redeemed Quantity, Redeemed Amount,Active,Additional Info,Custom Metadata Property Name\n>- **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.  \n>    - `YYYY-MM-DD`\n>    - `YYYY-MM-DDTHH`\n>    - `YYYY-MM-DDTHH:mm`\n>    - `YYYY-MM-DDTHH:mm:ss`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ssZ`\n>    - `YYYY-MM-DDTHH:mm:ss.SSSZ`\n> - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n> - You **cannot import the same codes** to a single Voucherify Project.\n\n<!-- theme: info -->\n\n> 📘 Categories\n>\n> In the structure representing your data, you can define a category that the voucher belongs to. You can later use the category of a voucher to group and search by specific criteria in the Dashboard and using the [List Vouchers](ref:list-vouchers) endpoint.\n\nThis API request starts a process that affects Voucherify data in bulk. \n\nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the `IN_PROGRESS` status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \n\nThe result will return the async ID. You can verify the status of your request via this [API request](ref:get-async-action).\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>In version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), standalone vouchers created through the Voucherify dashboard create a campaign for that voucher. However, vouchers imported through the dashboard in the Vouchers section or through the API do not have a campaign attached, so the values for `campaign` and `campaign_id` are `null`.",
         "parameters": [],
         "security": [
           {
@@ -34794,7 +34816,7 @@
           "Campaigns"
         ],
         "summary": "Create Campaign",
-        "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n<!-- theme: info -->\n\n> 📘 Global uniqueness\n>\n> All campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.  \n<!-- theme: warning -->\n> 🚧 Code generation status\n>\n> This is an asynchronous action; you can't read or modify a newly created campaign until the code generation is completed. See the `creation_status` field in the <!-- [campaign object](OpenAPI.json/components/schemas/Campaign) -->[campaign object](ref:get-campaign) description.",
+        "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n<!-- theme: info -->\n\n> 📘 Global uniqueness\n>\n> All campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.  \n<!-- theme: warning -->\n> 🚧 Code generation status\n>\n> This is an asynchronous action; you can't read or modify a newly created campaign until the code generation is completed. See the `creation_status` field in the <!-- [campaign object](OpenAPI.json/components/schemas/Campaign) -->[campaign object](ref:get-campaign) description.\n\n>🚧 Standalone Vouchers and Campaigns\n>\n>In version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), standalone vouchers created through the Voucherify dashboard create a campaign for that voucher. However, you cannot create a standalone discount or gift voucher campaign with the `\"type\": \"STANDALONE\"` through the API. Voucherify developers work on adding that feature.\n>\n>Follow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004) for more details about released features.",
         "parameters": [],
         "security": [
           {
@@ -35599,7 +35621,7 @@
             },
             "in": "query",
             "name": "expand",
-            "description": "Include an expanded `categories` object in the response."
+            "description": "Includes an expanded `categories` object in the response. If the [Areas and Stores](https://support.voucherify.io/article/623-areas-and-stores) Enterprise feature is enabled, add `access_settings_assignments` to return assigned areas and stores."
           },
           {
             "schema": {
@@ -51265,7 +51287,13 @@
             "$ref": "#/components/parameters/limit"
           },
           {
-            "$ref": "#/components/parameters/page"
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/ParameterPage99"
+            },
+            "description": "Which page of results to return. The lowest value is `1`, the highest value is `99`."
           },
           {
             "schema": {

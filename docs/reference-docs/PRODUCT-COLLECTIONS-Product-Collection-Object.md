@@ -59,12 +59,7 @@ Available values: `and`, `or`
 | $count_more | See: [Any](#any) |
 
 ## Any
-One of:
-
- 1. Array any of: string, number, object
- 2. string
- 3. number
- 4. object
+Array any of: string, string, string, number, object
 
 [block:html]
 {

@@ -270,12 +270,7 @@ Available values: `and`, `or`
 | conditions | <p>Data filters used to narrow down the data records to be returned in the result.</p> [Filters Condition](#filters-condition) |
 
 ## Any
-One of:
-
- 1. Array any of: string, number, object
- 2. string
- 3. number
- 4. object
+Array any of: string, string, string, number, object
 
 ## Filters Condition
 | Attributes |  Description |
