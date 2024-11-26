@@ -172,6 +172,7 @@ All of:
 | request_id</br>`string` | <p>This ID is useful when troubleshooting and/or finding the root cause of an error response by our support team.</p> **Example:** <p>v-0a885062c80375740f</p> |
 | resource_id</br>`string` | <p>Unique resource ID that can be used in another endpoint to get more details.</p> **Example:** <p>rf_0c5d710a87c8a31f86</p> |
 | resource_type</br>`string` | <p>The resource type.</p> **Example:** <p>voucher</p> |
+| error</br>`object` | <p>Includes additional information about the error.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>The message configured by the user in a validation rule.</p></td></tr></tbody></table> |
 
 ## Category with Stacking Rules Type
 <p>Category object with <code>stacking_rules_type</code></p>
