@@ -4,6 +4,29 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-11-21
+
+- Refactored `ValidationRuleConditions`:
+  - Added the description of new conditions: `$after`, `$before`, `$more_than_ago`, `$less_than_ago`, `$is_days_ago`, `$more_than_future`, `$less_than_future`, `$is_days_in_future`
+  - Added or changed the following schemas:
+    - `Any` – remodelled it allow strings, strings in a date-time format, numbers, and objects in an array
+    - `AnyOne` – this is the `Any` schema but accepts only one item in the array
+    - `AnyNumber` – `AnyOne`, but only for numbers
+    - `AnyString` – `Any`, but only for strings
+    - `AnyDateTime` – `AnyString`, but only for date-time format
+
+## 2024-11-15
+
+- Restored `ParameterPage` schema `maximum` value to 100 – bug reported by a client
+- Added a new `ParameterPage99` schema with `maximum` value equal to 99, as only the following methods have the page limit set to 99:
+  - GET `v1/customers`
+  - GET `v1/vouchers`
+  - GET `v1/redemptions`
+
+## 2024-11-14
+
+Fixed `ParameterPage` schema `maximum` value to 99 – bug reported by a client
+
 ## 2024-11-12
 
 - Added `404` errors to:
