@@ -4,6 +4,13 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-11-26
+
+- Added the `metadata` object to the `sku` in:
+  - `OrderCalculatedItem` schema
+  - `OrderItem` schema
+  - Improved descriptions in `metadata` for products, skus, and items
+
 ## 2024-11-25
 
 - Added `error.message` to the `Error` schema.
