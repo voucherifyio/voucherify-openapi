@@ -4,6 +4,12 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-11-28
+
+Make `access_settings_assignments` appear in GET `v1/campaigns` response:
+- Remove `access_settings_assignments` from the `Campaign` schema
+- Add `access_settings_assignments` to the `CampaignBase` schema
+
 ## 2024-11-26
 
 - Added the `metadata` object to the `sku` in:
