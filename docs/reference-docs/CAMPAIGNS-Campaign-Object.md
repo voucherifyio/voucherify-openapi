@@ -12,7 +12,7 @@ order: 1
 All of:
 
 1. [Campaign Base](#campaign-base)
-2. <h3>Campaign Additional Data</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">promotion</td><td style="text-align:left">See: <a href="#promotion-tiers">Promotion Tiers</a></td></tr><tr><td style="text-align:left">validation_rules_assignments</td><td style="text-align:left">See: <a href="#validation-rules-assignments-list">Validation Rules Assignments List</a></td></tr><tr><td style="text-align:left">access_settings_assignments</td><td style="text-align:left">See: <a href="#access-settings-campaign-assignments-list">Access Settings Campaign Assignments List</a></td></tr></tbody></table>
+2. <h3>Campaign Additional Data</h3><table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">promotion</td><td style="text-align:left">See: <a href="#promotion-tiers">Promotion Tiers</a></td></tr><tr><td style="text-align:left">validation_rules_assignments</td><td style="text-align:left">See: <a href="#validation-rules-assignments-list">Validation Rules Assignments List</a></td></tr></tbody></table>
 
 ## Campaign Base
 | Attributes |  Description |
@@ -47,6 +47,7 @@ All of:
 | object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the campaign.</p> |
 | referral_program | See: [Referral Program](#referral-program) |
 | loyalty_tiers_expiration | See: [Loyalty Tiers Expiration](#loyalty-tiers-expiration) |
+| access_settings_assignments | See: [Access Settings Campaign Assignments List](#access-settings-campaign-assignments-list) |
 
 ## Promotion Tiers
 | Attributes |  Description |
@@ -64,14 +65,6 @@ All of:
 | data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of validation rules assignments.</p> Available values: `data` |
 | data</br>`array` | <p>Contains array of validation rules assignments.</p> Array of [Business Validation Rule Assignment](#business-validation-rule-assignment) |
 | total</br>`integer` | <p>Total number of validation rules assignments.</p> |
-
-## Access Settings Campaign Assignments List
-| Attributes |  Description |
-|:-----|:--------|
-| object</br>`string` | <p>The type of the object represented by JSON. Default is <code>list</code>. This object stores information about campaign assignments to areas and stores</p> Available values: `list` |
-| data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of campaign assignments.</p> Available values: `data` |
-| data</br>`array` | <p>Contains an array of campaign assignments.</p> Array of [Areas and Stores Campain Assignment](#areas-and-stores-campain-assignment) |
-| total</br>`integer` | <p>Total number of areas and stores to which the campaign is assigned.</p> |
 
 ## Campaign Voucher
 | Attributes |  Description |
@@ -128,6 +121,14 @@ All of:
 | start_date</br>`object` | <p>Defines the conditions for the start date of the tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to be valid for a customer.<br><code>IMMEDIATE</code>: After reaching the minimum required points.<br><code>NEXT_PERIOD</code>: When the next qualification period starts.</p> Available values: <code>IMMEDIATE</code>, <code>NEXT_PERIOD</code></td></tr></tbody></table> |
 | expiration_date</br>`object` | <p>Defines the conditions for the expiration date of a tier.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">type</br><code>string</code></td><td style="text-align:left"><p>What triggers the tier to expire for a customer.<br><code>END_OF_PERIOD</code>: Expire tier at the end of the period.<br><code>END_OF_NEXT_PERIOD</code>:  Expire tier at the end of the next period.<br><code>BALANCE_DROP</code>: Tier expires when the points balance drops below the required range of the tier.<br><code>CUSTOM</code>: Tier expires after a certain time period passes following the instance the points balance drops below the required range of the tier.</p> Available values: <code>END_OF_PERIOD</code>, <code>END_OF_NEXT_PERIOD</code>, <code>BALANCE_DROP</code>, <code>CUSTOM</code></td></tr><tr><td style="text-align:left">extend</br><code>string</code></td><td style="text-align:left"><p>Extend the expiration by adding extra months or days in ISO 8601 format. The tier will remain active even though it reaches its expiration time period. For example, a tier with a duration of <code>P3M</code> will be valid for an additional duration of 3 months and a tier with a duration of <code>P1D</code> will be valid for an additional duration of 1 day.</p></td></tr><tr><td style="text-align:left">rounding</td><td style="text-align:left"><p>Defines the rounding mechanism for tier expiration.</p></td></tr></tbody></table> |
 
+## Access Settings Campaign Assignments List
+| Attributes |  Description |
+|:-----|:--------|
+| object</br>`string` | <p>The type of the object represented by JSON. Default is <code>list</code>. This object stores information about campaign assignments to areas and stores</p> Available values: `list` |
+| data_ref</br>`string` | <p>Identifies the name of the attribute that contains the array of campaign assignments.</p> Available values: `data` |
+| data</br>`array` | <p>Contains an array of campaign assignments.</p> Array of [Areas and Stores Campain Assignment](#areas-and-stores-campain-assignment) |
+| total</br>`integer` | <p>Total number of areas and stores to which the campaign is assigned.</p> |
+
 ## Promotion Tier
 | Attributes |  Description |
 |:-----|:--------|
@@ -167,15 +168,6 @@ All of:
 | validation_status</br>`string` | <p>The validation status of the assignment</p> Available values: `VALID`, `PARTIALLY_VALID`, `INVALID` |
 | validation_omitted_rules</br>`array` | <p>The list of omitted rules</p> |
 
-## Areas and Stores Campain Assignment
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique identifier of the campaign assignment.</p> **Example:** <p>arsca_0ef5ee192117ae2416</p> |
-| area_id</br>`string` | <p>Unique identifier of the area to which the campaign is assigned.</p> **Example:** <p>ar_0ea6cd7b781b8f857f</p> |
-| area_store_id</br>`string` | <p>Unique identifier of the store to which the campaign is assigned.</p> **Example:** <p>ars_0ec347e2016bed85f4</p> |
-| created_at</br>`string` | <p>Date and time when the assignment was made. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-06-25T19:04:16.260Z</p> |
-| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the campaign assignment to areas or stores.</p> Available values: `area_store_campaign_assignment` |
-
 ## Discount
 <p>Contains information about discount.</p>
 
@@ -205,6 +197,15 @@ One of:
 | postfix</br>`string` | <p>A text appended after the code.</p> |
 | pattern</br>`string` | <p>A pattern for codes where hashes (#) will be replaced with random characters. Overrides <code>length</code>.</p> |
 | initial_count</br>`integer` | <p>Internal value, does not change anything if provided.</p> |
+
+## Areas and Stores Campain Assignment
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique identifier of the campaign assignment.</p> **Example:** <p>arsca_0ef5ee192117ae2416</p> |
+| area_id</br>`string` | <p>Unique identifier of the area to which the campaign is assigned.</p> **Example:** <p>ar_0ea6cd7b781b8f857f</p> |
+| area_store_id</br>`string` | <p>Unique identifier of the store to which the campaign is assigned.</p> **Example:** <p>ars_0ec347e2016bed85f4</p> |
+| created_at</br>`string` | <p>Date and time when the assignment was made. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-06-25T19:04:16.260Z</p> |
+| object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the campaign assignment to areas or stores.</p> Available values: `area_store_campaign_assignment` |
 
 ## Validation Rule Assignments List
 | Attributes |  Description |
