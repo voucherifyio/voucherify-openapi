@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-12-03
+
+Remove `validation_rules` from Create Loyalty Campaign endpoints by swapping `CampaignsCreateBaseValidationRules` to `CampaignsCreateBase` in `CampaignsCreateLoyaltyCampaign`.
+
 ## 2024-11-26
 
 - Added the `metadata` object to the `sku` in:
