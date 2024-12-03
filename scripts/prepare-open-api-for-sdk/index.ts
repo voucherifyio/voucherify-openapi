@@ -113,6 +113,14 @@ const main = async (languageOptions: LanguageOptions) => {
         "title": "Any"
       }`);
   delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
+  //Restore validation_rules for creat loyalty campaigns
+  openAPIContent.components.schemas.CampaignsCreateLoyaltyCampaign.allOf.map((object) => {
+    if (object.$ref === "#/components/schemas/CampaignsCreateBase") {
+      return {
+        $ref: "#/components/schemas/CampaignsCreateBaseValidationRules",
+      };
+    } return object
+  })
   //Fix voucher - to prevent breaking changes
   delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
   delete openAPIContent.components.schemas.AsyncActionBase.properties
