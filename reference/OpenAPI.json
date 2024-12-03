@@ -29524,6 +29524,128 @@
           "total"
         ]
       },
+      "ValidationRuleBundleRules": {
+        "title": "Validation Rule Bundle Rules",
+        "type": "object",
+        "nullable": true,
+        "description": "Contains all the rule definitions for the bundle rule. It is a set of key value pairs representing the rules and logic between the rules. The keys are numbered consecutively beginning from `1`. The values are objects containing the rule conditions.",
+        "properties": {
+          "logic": {
+            "type": "string",
+            "example": "(1 and 2) and (3)",
+            "description": "Defines the logic between the rules."
+          }
+        },
+        "additionalProperties": {
+          "type": "object",
+          "description": "Contains the name of the validation rule.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Voucherify specific rule name. Currently, it is only `order.items.any`.",
+              "enum": [
+                "order.items.any"
+              ]
+            },
+            "conditions": {
+              "type": "object",
+              "description": "Defines the conditions of the bundle rule. The order items in the customer's cart must meet the conditions. Because the rule concerns order items, the only permissible condition is `$is`.",
+              "properties": {
+                "$is": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "description": "",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique identifier of the product, SKU, or collection assigned by Voucherify."
+                      },
+                      "type": {
+                        "type": "string",
+                        "description": "Type of the order item. It can be a `product_or_sku` or `products_collection`",
+                        "enum": [
+                          "product_or_sku",
+                          "products_collection"
+                        ]
+                      },
+                      "object": {
+                        "type": "string",
+                        "description": "Object used in the bundle rule. It can be a `products_collection`, `product`, or `sku`.",
+                        "enum": [
+                          "products_collection",
+                          "product",
+                          "sku"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "rules": {
+              "properties": {
+                "logic": {
+                  "type": "string",
+                  "example": "(1 and 2) and (3)",
+                  "description": "Defines the logic between the sub-rules."
+                }
+              },
+              "additionalProperties": {
+                "type": "object",
+                "description": "Contains the name of the validation sub-rule.",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Voucherify specific sub-rule name. Currently, it is only `order.items.aggregated_quantity`.",
+                    "enum": [
+                      "order.items.aggregated_quantity"
+                    ]
+                  },
+                  "conditions": {
+                    "type": "object",
+                    "description": "Defines the conditions of the bundle rule. The quantity of order items in the customer's cart must meet the conditions.",
+                    "properties": {
+                      "$more_than_or_equal": {
+                        "type": "array",
+                        "items": {
+                          "type": "number",
+                          "minimum": 1,
+                          "description": ""
+                        }
+                      }
+                    }
+                  },
+                  "rules": {
+                    "type": "object",
+                    "description": "An empty object."
+                  },
+                  "error": {
+                    "type": "object",
+                    "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
+                    "properties": {
+                      "message": {
+                        "type": "string",
+                        "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rule."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "error": {
+              "type": "object",
+              "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rule.",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "description": "The error message returned from API when validation / redemption fails to meet requirements of defined rule."
+                }
+              }
+            }
+          }
+        }
+      },
       "ValidationRuleRules": {
         "title": "Validation Rule Rules",
         "type": "object",
@@ -29859,6 +29981,9 @@
           },
           "rules": {
             "$ref": "#/components/schemas/ValidationRuleRules"
+          },
+          "bundle_rules": {
+            "$ref": "#/components/schemas/ValidationRuleBundleRules"
           },
           "error": {
             "type": "object",
@@ -39863,9 +39988,10 @@
           },
           "target": {
             "type": "string",
-            "description": "Determines to which kinds of objects the discount is applicable. `\"ITEM\"` includes products and SKUs.",
+            "description": "Determines to which kinds of objects the discount is applicable. `ITEM` includes products and SKUs. `UNIT` means particular units within an order line.",
             "enum": [
-              "ITEM"
+              "ITEM",
+              "UNIT"
             ]
           }
         },

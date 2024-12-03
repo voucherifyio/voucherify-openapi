@@ -129,7 +129,7 @@ One of:
 | order_item_indices</br>`array` | <p>Determines the order in which the discount is applied to the products or SKUs sent in the <code>order</code> object in the request. The counting begins from <code>0</code>.</p> |
 | repeat</br>`integer` | <p>Determines the recurrence of the discount, e.g. <code>&quot;repeat&quot;: 3</code> means that the discount is applied to every third item.</p> |
 | skip_initially</br>`integer` | <p>Determines how many items are skipped before the discount is applied.</p> |
-| target</br>`string` | <p>Determines to which kinds of objects the discount is applicable. <code>&quot;ITEM&quot;</code> includes products and SKUs.</p> Available values: `ITEM` |
+| target</br>`string` | <p>Determines to which kinds of objects the discount is applicable. <code>ITEM</code> includes products and SKUs. <code>UNIT</code> means particular units within an order line.</p> Available values: `ITEM`, `UNIT` |
 
 ## Inapplicable To
 [Applicable To](#applicable-to)
