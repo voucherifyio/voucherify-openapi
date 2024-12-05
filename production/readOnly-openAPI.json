@@ -952,9 +952,30 @@
           },
           "order_item_indices": {
             "type": "array",
-            "description": "Determines the order in which the discount is applied to the products or SKUs sent in the `order` object in the request. The counting begins from `0`.",
+            "description": "Lists which order lines are (not) covered by the discount. The order in the array is determined by the sequence of applied discounts, while the numbers correspond to the order lines sent in the `order` object in the request. The first order line is assigned `0`, the second order line is assigned `1`, and so on.",
             "items": {
               "type": "integer"
+            },
+            "nullable": true
+          },
+          "order_item_units": {
+            "type": "array",
+            "description": "Lists which units within order lines are covered by the discount. The order line items are listed according to sequence of applied discounts while the `index` corresponds to the order line sent in the `order` object in the request.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "index": {
+                  "type": "integer",
+                  "description": "Number assigned to the order line item in accordance with the order sent in the request."
+                },
+                "units": {
+                  "type": "array",
+                  "description": "Numbers of units in the order line covered by the discount; e.g. `2, 5, 8` for 10 units with the setting `\"skip_initially\": 1`, `\"repeat\": 3`. The counting of units starts from `1`.",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
             },
             "nullable": true
           },
@@ -970,9 +991,10 @@
           },
           "target": {
             "type": "string",
-            "description": "Determines to which kinds of objects the discount is applicable. `\"ITEM\"` includes products and SKUs.",
+            "description": "Determines to which kinds of objects the discount is applicable. `ITEM` includes products and SKUs. `UNIT` means particular units within an order line.",
             "enum": [
-              "ITEM"
+              "ITEM",
+              "UNIT"
             ],
             "nullable": true
           }
@@ -26836,6 +26858,9 @@
           "rules": {
             "$ref": "#/components/schemas/ValidationRuleRules"
           },
+          "bundle_rules": {
+            "$ref": "#/components/schemas/ValidationRuleBundleRules"
+          },
           "error": {
             "type": "object",
             "description": "Contains the error message returned from API when validation / redemption fails to meet requirements of defined rules.",
@@ -26951,6 +26976,11 @@
             "nullable": true
           }
         }
+      },
+      "ValidationRuleBundleRules": {
+        "title": "Validation Rule Bundle Rules",
+        "type": "object",
+        "description": "Contains all the definitions for the bundle rules. It is a set of key value pairs representing the rules and logic between them. The keys are numbered consecutively beginning from `1`. The values are objects containing the rule conditions.\n\nWhile updating with the PUT method, you can pass `\"bundle_rules\": null` to delete the configuration; in the response, an empty object is then returned."
       },
       "ValidationRuleRules": {
         "title": "Validation Rule Rules",
@@ -44821,7 +44851,7 @@
         "tags": [
           "Loyalties"
         ],
-        "summary": "Get Points Expiration",
+        "summary": "List Loyalty Card Point Expiration",
         "description": "Retrieve loyalty point expiration buckets for a given loyalty card. Expired point buckets are not returned in this endpoint. You can use the [Exports API](ref:create-export) to retrieve a list of both `ACTIVE` and `EXPIRED` point buckets.",
         "parameters": [
           {
@@ -44928,7 +44958,7 @@
         "tags": [
           "Loyalties"
         ],
-        "summary": "Create Points Expiration Export",
+        "summary": "Export Loyalty Campaign Point Expiration",
         "description": "Schedule the generation of a points expiration CSV file for a particular campaign.",
         "parameters": [],
         "security": [
