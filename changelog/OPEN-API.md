@@ -6,7 +6,11 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2024-12-05
 
-Added the `order_item_units` array to the `ApplicableTo` schema
+- Added the `order_item_units` array to the `ApplicableTo` schema
+- Changed the following summary, file names, and titles:
+  - `Get Points Expiration` to `List Loyalty Card Point Expiration`
+  - `Create Points Expiration Export` to `Export Loyalty Campaign Point Expiration`
+
 
 ## 2024-12-04
 
