@@ -5645,6 +5645,15 @@
           }
         ]
       },
+      "VouchersEnableAsyncResponseBody": {
+        "title": "Vouchers Enable Async Response Body",
+        "description": "Response body schema for **POST** `v1/vouchers/enable/async`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AsyncActions"
+          }
+        ]
+      },
       "VouchersAsyncFilters": {
         "title": "Vouchers Bulk Async Action Filters",
         "type": "object",
@@ -5658,9 +5667,56 @@
             "type": "string",
             "description": "Unique campaign identifier, assigned by Voucherify."
           },
+          "campaign": {
+            "type": "string",
+            "description": "Campaign name set by the user."
+          },
           "customer": {
             "type": "string",
             "description": "Unique customer identifier, assigned by Voucherify or customer `source_id`."
+          },
+          "created_at": {
+            "type": "object",
+            "description": "Timestamp representing the date and time when the voucher was created. The value is shown in the ISO 8601 format.",
+            "properties": {
+              "before": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Filters the results that occurred before the date and time."
+              },
+              "after": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Filters the results that occurred after the date and time."
+              }
+            }
+          },
+          "updated_at": {
+            "type": "object",
+            "description": "Timestamp representing the date and time when the voucher was last updated. The value is shown in the ISO 8601 format.",
+            "properties": {
+              "before": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Filters the results that occurred before the date and time."
+              },
+              "after": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Filters the results that occurred after the date and time."
+              }
+            }
+          },
+          "ids": {
+            "type": "array",
+            "description": "Unique voucher identifiers assigned by Voucherify",
+            "items": {
+              "type": "string"
+            }
+          },
+          "code": {
+            "type": "string",
+            "description": "Voucher code."
           }
         }
       },
@@ -39004,7 +39060,7 @@
           "async_action_id": {
             "type": "string",
             "example": "aa_0a875d56c805df6601",
-            "description": "The ID of the scheduled asynchronous action."
+            "description": "The unique identifier of the scheduled asynchronous action."
           }
         },
         "required": [
@@ -48968,8 +49024,8 @@
         "tags": [
           "Vouchers"
         ],
-        "summary": "Bulk Enable Vouchers",
-        "description": "",
+        "summary": "Enable Vouchers in Bulk",
+        "description": "Enables all disabled vouchers that meet the criteria sent in the request body. The vouchers are enabled in an asynchronous action.\n\nIf the request body is empty, all disabled vouchers in the project will be enabled.\n\nTo use this endpoint, you must have the following permissions:\n\n- Enable vouchers (`vouchers.enable`)\n\nThe endpoint cannot be accessed by a custom role that has an assigned API key with `limit.vouchers.update`.",
         "parameters": [],
         "security": [
           {
@@ -48978,31 +49034,34 @@
           }
         ],
         "requestBody": {
-          "description": "",
+          "description": "The action will be performed for all the vouchers that meet all the criteria. An empty request body will enable all disabled vouchers in the project.",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VouchersCreateRequestBody"
+                "$ref": "#/components/schemas/VouchersEnableAsyncRequestBody"
               },
               "examples": {
-                "": {
-                  "value": {}
+                "Enable Codes in a Campaign for a Customer": {
+                  "value": {
+                    "campaign": "Influencer Codes",
+                    "customer": "cust_KiZa6C6R30sgqqpU76o6B7u0"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": {
+          "202": {
             "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/VouchersListResponseBody"
+                  "$ref": "#/components/schemas/VouchersEnableAsyncResponseBody"
                 },
                 "examples": {
-                  "Example": {
-                    "value": {}
+                  "Async Action Response": {
+                    "$ref": "#/components/examples/res_async_actions"
                   }
                 }
               }

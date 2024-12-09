@@ -63,6 +63,7 @@
 | ----------------------------------------- | ------ | ---------------------------------- | ------------------------------------ | ------------------------------------ |
 | /v1/vouchers                              | get    | List Vouchers                      | <font color='green'>supported</font> |                                      |
 | /v1/vouchers                              | post   | Generate Random Code               | <font color='green'>supported</font> |                                      |
+| /v1/vouchers/enable/async                 | post   | Enable Vouchers in Bulk            |                                      |                                      |
 | /v1/vouchers/{code}                       | get    | Get Voucher                        | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/{code}                       | put    | Update Voucher                     | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/{code}                       | delete | Delete Voucher                     | <font color='green'>supported</font> |                                      |
