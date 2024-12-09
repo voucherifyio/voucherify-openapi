@@ -1,11 +1,11 @@
 ---
-title: Enable Voucher
+title: Enable Vouchers in Bulk
 type: endpoint
 categorySlug: voucherify-api
-slug: enable-vouchers
+slug: enable-voucher
 parentDocSlug: vouchers
 hidden: false
-order: 70
+order: 80
 ---
 [block:html]
 {
