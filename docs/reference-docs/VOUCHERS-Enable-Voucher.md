@@ -2,10 +2,10 @@
 title: Enable Voucher
 type: endpoint
 categorySlug: voucherify-api
-slug: enable-voucher
+slug: enable-vouchers
 parentDocSlug: vouchers
 hidden: false
-order: 8
+order: 70
 ---
 [block:html]
 {

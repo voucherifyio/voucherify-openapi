@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: update-vouchers-in-bulk
 parentDocSlug: vouchers
 hidden: false
-order: 16
+order: 190
 ---
 [block:html]
 {
