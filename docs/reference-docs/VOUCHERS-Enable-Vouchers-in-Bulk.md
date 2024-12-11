@@ -2,7 +2,7 @@
 title: Enable Vouchers in Bulk
 type: endpoint
 categorySlug: voucherify-api
-slug: enable-voucher
+slug: enable-vouchers-in-bulk
 parentDocSlug: vouchers
 hidden: false
 order: 80
