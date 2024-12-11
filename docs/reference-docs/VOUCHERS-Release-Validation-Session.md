@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: release-validation-session
 parentDocSlug: vouchers
 hidden: false
-order: 18
+order: 210
 ---
 [block:html]
 {

@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: export-voucher-transactions
 parentDocSlug: vouchers
 hidden: false
-order: 12
+order: 150
 ---
 [block:html]
 {

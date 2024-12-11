@@ -5,7 +5,7 @@ categorySlug: voucherify-api
 slug: update-voucher-balance
 parentDocSlug: vouchers
 hidden: false
-order: 10
+order: 130
 ---
 [block:html]
 {
