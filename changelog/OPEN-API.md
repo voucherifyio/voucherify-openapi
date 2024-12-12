@@ -6,7 +6,14 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2024-12-12
 
-Remvoed `bundle_rules` from the `ValidationRuleBase` schema – the feature is not released yet
+- Removed `bundle_rules` from the `ValidationRuleBase` schema – the feature is not released yet
+- Added `holder_loyalty_tier` to OpenAPIWebhooks.json and OpenAPI.json with the following schemas:
+  - `EventCustomerLoyaltyCardPointsAdded`
+  - `EventCustomerVouchersLoyaltyPointsExpired`
+  - `EventCustomerLoyaltyCardPointsTransferred`
+  - `LoyaltyCardTransaction`
+  - `VoucherTransaction`
+
 
 ## 2024-12-05
 
