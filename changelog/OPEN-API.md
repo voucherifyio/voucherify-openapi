@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-12-12
+
+Remvoed `bundle_rules` from the `ValidationRuleBase` schema – the feature is not released yet
+
 ## 2024-12-05
 
 - Added the `order_item_units` array to the `ApplicableTo` schema
