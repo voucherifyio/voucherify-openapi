@@ -2129,7 +2129,7 @@
           },
           "items": {
             "type": "array",
-            "description": "Array of items applied to the order. It can include up 500 items.",
+            "description": "Array of items applied to the order. It can include up to 500 items.",
             "items": {
               "$ref": "#/components/schemas/SimpleOrderItem"
             }
@@ -2185,7 +2185,7 @@
           },
           "items": {
             "type": "array",
-            "description": "Array of items applied to the order. It can include up 500 items.",
+            "description": "Array of items applied to the order. It can include up to 500 items.",
             "items": {
               "$ref": "#/components/schemas/OrderItem"
             }
@@ -2275,13 +2275,6 @@
             "type": "integer",
             "description": "Sum of all order-level AND all product-specific discounts applied in a particular request. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).  \n`total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount`"
           },
-          "items": {
-            "type": "array",
-            "description": "Array of items applied to the order. It can include up 500 items.",
-            "items": {
-              "$ref": "#/components/schemas/OrderCalculatedItem"
-            }
-          },
           "metadata": {
             "type": "object",
             "description": "A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format. It can be used to define business validation rules or discount formulas."
@@ -2347,6 +2340,18 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/OrderCalculated"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "description": "Array of items applied to the order. It can include up to 500 items.",
+                "items": {
+                  "$ref": "#/components/schemas/OrderCalculatedItem"
+                }
+              }
+            }
           }
         ]
       },
@@ -3589,6 +3594,47 @@
           "object"
         ]
       },
+      "ApplicationDetails": {
+        "type": "array",
+        "description": "Array containing details about the items that are replaced and the items that are replacements for discounts with the `REPLACE_ITEMS` effect.",
+        "items": {
+          "type": "object",
+          "description": "Object representing item replacement.",
+          "properties": {
+            "source_index": {
+              "type": "integer",
+              "description": "Index number of the source item that is replaced. The enumeration starts from `0`, which represents the first item in the request, e.g., if the replaced item is passed as the second in the request, `source_index` equals `3`.",
+              "minimum": 0
+            },
+            "source_applied_quantity": {
+              "type": "integer",
+              "description": "Number of source units that are replaced.",
+              "maximum": -1
+            },
+            "source_applied_quantity_amount": {
+              "type": "integer",
+              "description": "Amount equal to the price of the units that are replaced. Determines the change of the amount of the source item quantity.",
+              "maximum": 0
+            },
+            "target_index": {
+              "type": "integer",
+              "description": "Index number of the target item that is a replacement of the source item. The enumeration continues the values for the order items, e.g. if there are three items in the request, `target_index` equals `3`, as enumeration starts from `0`."
+            },
+            "target_applied_quantity": {
+              "type": "integer",
+              "description": "Number of added target units that are replacements."
+            },
+            "target_applied_quantity_amount": {
+              "type": "integer",
+              "description": "Amount equal to the price of the units that are replacements. Determines the change in the amount of the target item quantity."
+            },
+            "target_applied_discount_amount": {
+              "type": "integer",
+              "description": "Discount amount applied to the target item with regard to the replacement. Equals the `target_applied_quantity_amount` minus `source_applied_quantity_amount`."
+            }
+          }
+        }
+      },
       "Session": {
         "type": "object",
         "title": "Session",
@@ -3714,7 +3760,23 @@
             ]
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    }
+                  }
+                }
+              }
+            ]
           },
           "session": {
             "description": "Schema model for session lock object. The session object contains information about the session key that was used to establish a session between multiple parallel validation and redemption requests.\n\n\n",
@@ -15587,7 +15649,35 @@
             }
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "application_details": {
+                              "$ref": "#/components/schemas/ApplicationDetails"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
           },
           "tracking_id": {
             "type": "string",
@@ -15632,7 +15722,23 @@
             ]
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    }
+                  }
+                }
+              }
+            ]
           },
           "applicable_to": {
             "$ref": "#/components/schemas/ApplicableToResultList"
@@ -16639,6 +16745,30 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "application_details": {
+                              "$ref": "#/components/schemas/ApplicationDetails"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
               }
             ]
           },
@@ -17823,6 +17953,18 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    }
+                  }
+                }
               }
             ]
           },
@@ -18127,6 +18269,18 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    }
+                  }
+                }
               }
             ]
           },
@@ -18272,10 +18426,42 @@
             "description": "If the result is `FAILURE`, this parameter will provide a more expanded reason as to why the redemption failed."
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    }
+                  }
+                }
+              }
+            ]
           },
           "previous_order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    }
+                  }
+                }
+              }
+            ]
           },
           "reward": {
             "$ref": "#/components/schemas/RedemptionRewardResult"
@@ -26886,7 +27072,23 @@
             "$ref": "#/components/schemas/VoucherBalance"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    }
+                  }
+                }
+              }
+            ]
           },
           "event": {
             "$ref": "#/components/schemas/SimpleEvent"
@@ -28080,7 +28282,23 @@
             "$ref": "#/components/schemas/SimpleCustomer"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    }
+                  }
+                }
+              }
+            ]
           },
           "redemption": {
             "$ref": "#/components/schemas/RedemptionInternal"
@@ -28523,6 +28741,18 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/OrderCalculated"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "description": "Array of items applied to the order. It can include up to 500 items.",
+                "items": {
+                  "$ref": "#/components/schemas/OrderCalculatedItem"
+                }
+              }
+            }
           }
         ]
       },
@@ -28533,6 +28763,18 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/OrderCalculated"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "description": "Array of items applied to the order. It can include up to 500 items.",
+                "items": {
+                  "$ref": "#/components/schemas/OrderCalculatedItem"
+                }
+              }
+            }
           }
         ]
       },
@@ -28632,7 +28874,23 @@
             "type": "array",
             "description": "Contains array of order objects.",
             "items": {
-              "$ref": "#/components/schemas/OrderCalculated"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/OrderCalculated"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "description": "Array of items applied to the order. It can include up to 500 items.",
+                      "items": {
+                        "$ref": "#/components/schemas/OrderCalculatedItem"
+                      }
+                    }
+                  }
+                }
+              ]
             }
           },
           "total": {
@@ -33903,6 +34161,22 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        }
+                      ]
+                    }
+                  }
+                }
               }
             ]
           },
@@ -34386,7 +34660,35 @@
             "$ref": "#/components/schemas/RedeemableResult"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "application_details": {
+                              "$ref": "#/components/schemas/ApplicationDetails"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
           },
           "validation_rule_id": {
             "type": "string",
@@ -41257,6 +41559,30 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "application_details": {
+                              "$ref": "#/components/schemas/ApplicationDetails"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
               }
             ]
           },
@@ -41300,9 +41626,23 @@
           "parent_rollback": {
             "$ref": "#/components/schemas/RedemptionRollback"
           },
-          "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
-          }
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/OrderCalculated"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "description": "Array of items applied to the order. It can include up to 500 items.",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderCalculatedItem"
+                  }
+                }
+              }
+            }
+          ]
         }
       },
       "LoyaltiesMembersBalanceUpdateResponseBody": {
@@ -42212,6 +42552,30 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "application_details": {
+                              "$ref": "#/components/schemas/ApplicationDetails"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
               }
             ]
           },

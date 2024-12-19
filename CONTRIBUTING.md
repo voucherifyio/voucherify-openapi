@@ -271,7 +271,7 @@ In order to remove a category, remove its title from the list. Make sure to remo
 - Make changes in the repository following the [patterns](#naming-convention) and [good practices](#good-practices).
 - Run `npm run create-clean-version -- --vt={your name}-{pull request number}` to create a new project version with your tag number.
     - then follow instructions from the console or add `--ua` or `--uploadAll` option to the script
-- If you need to make a change, run `npm run create-clean-version -- --vt={your name}-{pull request number}-{!!!any number!!!}`
+- If you need to make a change, run `npm run create-clean-version -- --vt={your name}-{pull request number}-{!!!any number!!!}`; note that the underscore `_` symbol in the version name will fail the upload
     - then follow instructions from the console or add `--ua` or `--uploadAll` option to the script
     - on the readme dashboard delete version that is not good.
 - If changes are fine, then:
