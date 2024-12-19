@@ -299,7 +299,16 @@ const main = async (languageOptions: LanguageOptions) => {
     },
     paths: pathsWithFixedResponses,
   });
-
+  //Do not add breaking change on application_details
+  newOpenApiFile.components.schemas.ClientValidationsValidateResponseBody.properties.redeemables.items.properties.order =
+    {
+      $ref: "#/components/schemas/OrderCalculated",
+    };
+  newOpenApiFile.components.schemas.ValidationsValidateResponseBody.properties.redeemables.items.properties.order =
+    {
+      $ref: "#/components/schemas/OrderCalculated",
+    };
+  ////////////////
   newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
     newOpenApiFile.components.schemas.LoyaltyPointsBucket;
   newOpenApiFile.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =
