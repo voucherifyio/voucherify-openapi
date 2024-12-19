@@ -5,7 +5,7 @@ import minimist from "minimist";
 import colors from "colors";
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 import originalOpenAPIContent from "../../reference/OpenAPI.json";
-import _ from "lodash";
+import _, { omit } from "lodash";
 
 let openAPIContent = originalOpenAPIContent;
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
@@ -91,10 +91,7 @@ const main = async (languageOptions: LanguageOptions) => {
   });
   //////////////////////////////////////////////////////////////////////////////
   removeStoplightTag(openAPIContent);
-  openAPIContent = removeUnwantedProperties(openAPIContent, [
-    "readmeTitle",
-    "access_settings", //@todo remove when fixed
-  ]);
+  openAPIContent = removeUnwantedProperties(openAPIContent, ["readmeTitle"]);
   openAPIContent.components.schemas = removeUnwantedProperties(
     openAPIContent.components.schemas,
     ["title"],
@@ -195,6 +192,24 @@ const main = async (languageOptions: LanguageOptions) => {
   //ValidationRuleRules fix for Readme – should stay forever
   openAPIContent.components.schemas.ValidationRuleRules.additionalProperties.properties.rules.$ref =
     "#/components/schemas/ValidationRuleRules";
+  //Do not add breaking change on application_details
+  openAPIContent.components.schemas.OrderCalculated.properties["items"] = {
+    type: "array",
+    description:
+      "Array of items applied to the order. It can include up 500 items.",
+    items: {
+      $ref: "#/components/schemas/OrderCalculatedItem",
+    },
+    nullable: true,
+  };
+  openAPIContent.components.schemas.OrderCalculatedItem.properties[
+    "application_details"
+  ] = {
+    $ref: "#/components/schemas/ApplicationDetails",
+  };
+  openAPIContent.components.schemas = fixOrderCalculated(
+    openAPIContent.components.schemas,
+  );
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
@@ -521,6 +536,28 @@ const moveSchemasOnTheBack = (schemas: any, schemasNames: string[]) => ({
   ..._.omit(schemas, schemasNames),
   ..._.pick(schemas, schemasNames),
 });
+
+const fixOrderCalculated = (object: any) => {
+  if (Array.isArray(object)) {
+    return object.map((value) => fixOrderCalculated(value));
+  }
+  if (object instanceof Object) {
+    if (
+      object.allOf?.find(
+        (e) => e?.$ref === "#/components/schemas/OrderCalculated",
+      )
+    ) {
+      object.allOf = object.allOf.filter((e) => !e?.properties?.items);
+    }
+    return Object.fromEntries(
+      Object.entries(object).map((keyAndEntry) => {
+        const [key, entry] = keyAndEntry;
+        return [key, fixOrderCalculated(entry)];
+      }),
+    );
+  }
+  return object;
+};
 
 if (!("language" in options)) {
   console.log(colors.red("invalid arguments, missing language parameter"));
