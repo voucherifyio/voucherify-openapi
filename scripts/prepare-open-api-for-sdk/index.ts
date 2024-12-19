@@ -299,15 +299,6 @@ const main = async (languageOptions: LanguageOptions) => {
     },
     paths: pathsWithFixedResponses,
   });
-  //Do not add breaking change on application_details
-  newOpenApiFile.components.schemas.ClientValidationsValidateResponseBody.properties.redeemables.items.properties.order =
-    {
-      $ref: "#/components/schemas/OrderCalculated",
-    };
-  newOpenApiFile.components.schemas.ValidationsValidateResponseBody.properties.redeemables.items.properties.order =
-    {
-      $ref: "#/components/schemas/OrderCalculated",
-    };
   ////////////////
   newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
     newOpenApiFile.components.schemas.LoyaltyPointsBucket;
@@ -552,11 +543,30 @@ const fixOrderCalculated = (object: any) => {
   }
   if (object instanceof Object) {
     if (
-      object.allOf?.find(
+      object.properties?.order?.allOf?.find(
         (e) => e?.$ref === "#/components/schemas/OrderCalculated",
       )
     ) {
-      object.allOf = object.allOf.filter((e) => !e?.properties?.items);
+      object.properties.order.allOf = object.properties?.order?.allOf.filter(
+        (e) => !e?.properties?.items,
+      );
+      if (object.properties.order.allOf.length === 1) {
+        object.properties.order = object.properties.order.allOf[0];
+      }
+    }
+    if (
+      object.properties?.orders?.items?.allOf?.find(
+        (e) => e?.$ref === "#/components/schemas/OrderCalculated",
+      )
+    ) {
+      object.properties.orders.items.allOf =
+        object.properties?.orders.items?.allOf.filter(
+          (e) => !e?.properties?.items,
+        );
+      if (object.properties.orders.items.allOf.length === 1) {
+        object.properties.orders.items =
+          object.properties.orders.items.allOf[0];
+      }
     }
     return Object.fromEntries(
       Object.entries(object).map((keyAndEntry) => {
