@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-12-19
+
+Added `application_details` property to Qualifications, Validations, and Redemptions, and the associated `ApplicationDetails` schema
+
 ## 2024-12-12
 
 - Removed `bundle_rules` from the `ValidationRuleBase` schema – the feature is not released yet
