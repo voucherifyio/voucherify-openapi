@@ -17,7 +17,8 @@ order: 1
 |:-----|:--------|
 | redeemables | See: [Redeemables](#redeemables) |
 | tracking_id</br>`string` | <p>This identifier is generated during voucher qualification based on your internal id (e.g., email, database ID). This is a hashed customer source ID.</p> |
-| order</br>`object` | [Order Calculated No Customer Data](#order-calculated-no-customer-data) |
+| order</br>`object` | All of: 1. [Order Calculated No Customer Data](#order-calculated-no-customer-data)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">items</br><code>array</code></td><td style="text-align:left"><p>Array of items applied to the order. It can include up to 500 items.</p></td></tr></tbody></table> |
 | stacking_rules | See: [Stacking Rules](#stacking-rules) |
 
 ## Redeemables
@@ -36,16 +37,15 @@ order: 1
 | id</br>`string` | <p>Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.</p> |
 | source_id</br>`string`, `null` | <p>Unique source ID of an existing order that will be linked to the redemption of this request.</p> |
 | status</br>`string` | <p>The order status.</p> Available values: `CREATED`, `PAID`, `CANCELED`, `FULFILLED` |
-| amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.</p> |
-| initial_amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.</p> |
-| discount_amount</br>`integer` | <p>Sum of all order-level discounts applied to the order.</p> |
-| items_discount_amount</br>`integer` | <p>Sum of all product-specific discounts applied to the order.</p> |
-| total_discount_amount</br>`integer` | <p>Sum of all order-level AND all product-specific discounts applied to the order.</p> |
-| total_amount</br>`integer` | <p>Order amount after undoing all the discounts through the rollback redemption.</p> |
-| applied_discount_amount</br>`integer` | <p>This field shows the order-level discount applied.</p> |
-| items_applied_discount_amount</br>`integer` | <p>Sum of all product-specific discounts applied in a particular request.<br><code>sum(items, i =&gt; i.applied_discount_amount)</code></p> |
-| total_applied_discount_amount</br>`integer` | <p>Sum of all order-level AND all product-specific discounts applied in a particular request.<br><code>total_applied_discount_amount</code> = <code>applied_discount_amount</code> + <code>items_applied_discount_amount</code></p> |
-| items</br>`array` | <p>Array of items applied to the order. It can include up 500 items.</p> Array of [Order Item Calculated](#order-item-calculated) |
+| amount</br>`integer` | <p>This is the sum of the order items' amounts. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).</p> |
+| initial_amount</br>`integer` | <p>This is the sum of the order items' amounts before any discount or other effect (e.g. add missing units) is applied. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).</p> |
+| discount_amount</br>`integer` | <p>Sum of all order-level discounts applied to the order. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).</p> |
+| items_discount_amount</br>`integer` | <p>Sum of all product-specific discounts applied to the order. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).</p> |
+| total_discount_amount</br>`integer` | <p>Sum of all order-level AND all product-specific discounts applied to the order. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).</p> |
+| total_amount</br>`integer` | <p>Order amount after undoing all the discounts through the rollback redemption. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).</p> |
+| applied_discount_amount</br>`integer` | <p>This field shows the order-level discount applied. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).</p> |
+| items_applied_discount_amount</br>`integer` | <p>Sum of all product-specific discounts applied in a particular request. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).<br><code>sum(items, i =&gt; i.applied_discount_amount)</code></p> |
+| total_applied_discount_amount</br>`integer` | <p>Sum of all order-level AND all product-specific discounts applied in a particular request. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).<br><code>total_applied_discount_amount</code> = <code>applied_discount_amount</code> + <code>items_applied_discount_amount</code></p> |
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format. It can be used to define business validation rules or discount formulas.</p> |
 | object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `order` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
@@ -77,31 +77,6 @@ All of:
 1. [Single redeemable](#single-redeemable)
 2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">redeemables</br><code>array</code></td><td style="text-align:left">Array of <a href="#single-redeemable">Single redeemable</a></td></tr></tbody></table>
 
-## Order Item Calculated
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique identifier of the order line item.</p> |
-| sku_id</br>`string` | <p>Unique identifier of the SKU. It is assigned by Voucherify.</p> |
-| product_id</br>`string` | <p>Unique identifier of the product. It is assigned by Voucherify.</p> |
-| related_object</br>`string` | <p>Used along with the source_id property, can be set to either sku or product.</p> Available values: `product`, `sku` |
-| source_id</br>`string` | <p>The merchant's product/SKU ID (if it is different from the Voucherify product/SKU ID). It is useful in the integration between multiple systems. It can be an ID from an eCommerce site, a database, or a third-party service.</p> |
-| quantity</br>`integer` | <p>The quantity of the particular item in the cart.</p> |
-| discount_quantity</br>`integer` | <p>Number of dicounted items.</p> |
-| initial_quantity</br>`integer` | <p>A positive integer in the smallest unit quantity representing the total amount of the order; this is the sum of the order items' quantity.</p> |
-| amount</br>`integer` | <p>The total amount of the order item (price * quantity).</p> |
-| discount_amount</br>`integer` | <p>Sum of all order-item-level discounts applied to the order.</p> |
-| applied_discount_amount</br>`integer` | <p>This field shows the order-level discount applied.</p> |
-| applied_discount_quantity</br>`integer` | <p>Number of the discounted items applied in the transaction.</p> |
-| applied_quantity</br>`integer` | <p>Quantity of items changed by the application of a new quantity items. It can be positive when an item is added or negative if an item is replaced.</p> |
-| applied_quantity_amount</br>`integer` | <p>Amount for the items changed by the application of a new quantity items. It can be positive when an item is added or negative if an item is replaced.</p> |
-| initial_amount</br>`integer` | <p>A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.</p> |
-| price</br>`integer` | <p>Unit price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
-| subtotal_amount</br>`integer` | <p>Final order item amount after the applied item-level discount.  If there are no item-level discounts applied, this item is equal to the <code>amount</code>.<br><code>subtotal_amount</code>=<code>amount</code>-<code>applied_discount_amount</code></p> |
-| product</br>`object` | <p>An object containing details of the related product.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier that represents the product and is assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant's product ID (if it is different than Voucherify's product ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.</p></td></tr><tr><td style="text-align:left">override</br><code>boolean</code></td><td style="text-align:left"><p>The override set to <code>true</code> is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.</p></td></tr><tr><td style="text-align:left">name</br><code>string</code></td><td style="text-align:left"><p>Product name.</p></td></tr><tr><td style="text-align:left">metadata</br><code>object</code></td><td style="text-align:left"><p>A set of custom key/value pairs that you can attach to a product. It can be useful for storing additional information about the product in a structured format. It can be used to create product collections.</p></td></tr><tr><td style="text-align:left">price</br><code>number</code></td><td style="text-align:left"><p>Product price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
-| sku</br>`object` | <p>An object containing details of the related SKU.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>A unique identifier that represents the SKU and is assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code></td><td style="text-align:left"><p>The merchant's SKU ID (if it is different than Voucherify's SKU ID). It is really useful in case of integration between multiple systems. It can be an ID from an eCommerce site, a database or a 3rd party service.</p></td></tr><tr><td style="text-align:left">override</br><code>boolean</code></td><td style="text-align:left"><p>The override set to <code>true</code> is used to store the product information in the system. If the product does not exist, it will be created with a source_id; if it does exist, the provided values for the name, price, and metadata will replace those already stored in the system.</p></td></tr><tr><td style="text-align:left">sku</br><code>string</code></td><td style="text-align:left"><p>The SKU name.</p></td></tr><tr><td style="text-align:left">price</br><code>number</code></td><td style="text-align:left"><p>SKU price. A positive integer in the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr><tr><td style="text-align:left">metadata</br><code>object</code></td><td style="text-align:left"><p>A set of custom key/value pairs that you can attach to an SKU. It can be useful for storing additional information about the SKU in a structured format. It can be used to create product collections.</p></td></tr></tbody></table> |
-| object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `order_item` |
-| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an item object. It can be useful for storing additional information about the item in a structured format. It can be used to define business validation rules or discount formulas.</p> |
-
 ## Customer Id
 | Attributes |  Description |
 |:-----|:--------|
@@ -130,7 +105,8 @@ All of:
 | object</br>`string` | <p>Object type of the redeemable.</p> Available values: `campaign`, `promotion_tier`, `promotion_stack`, `voucher` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the object was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-03-09T11:19:04.819Z</p> |
 | result | See: [Redeemable Result](#redeemable-result) |
-| order | See: [Order Calculated No Customer Data](#order-calculated-no-customer-data) |
+| order | All of: 1. [Order Calculated No Customer Data](#order-calculated-no-customer-data)
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">items</br><code>array</code></td><td style="text-align:left"><p>Array of items applied to the order. It can include up to 500 items.</p></td></tr></tbody></table> |
 | validation_rule_id</br>`string` | <p>A unique validation rule identifier assigned by the Voucherify API. The validation rule is verified before points are added to the balance.</p> |
 | applicable_to | <p>Contains list of items that qualify in the scope of the discount. These are definitions of included products, SKUs, and product collections. These can be discounted.</p> [Applicable To Result List](#applicable-to-result-list) |
 | inapplicable_to | <p>Contains list of items that do not qualify in the scope of the discount. These are definitions of excluded products, SKUs, and product collections. These CANNOT be discounted.</p> [Inapplicable To Result List](#inapplicable-to-result-list) |
@@ -232,10 +208,11 @@ One of:
 | aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
 | amount_limit</br>`integer` | <p>Upper limit allowed to be applied as a discount per order line item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount on the entire order is written as 600. This value is definable for the following discount effects:</p><ul><li><code>APPLY_TO_ITEMS</code> (each item subtotal is discounted equally)</li><li><code>APPLY_TO_ITEMS_BY_QUANTITY</code> (each unit of matched products has the same discount value)</li></ul> |
-| order_item_indices</br>`array` | <p>Determines the order in which the discount is applied to the products or SKUs sent in the <code>order</code> object in the request. The counting begins from <code>0</code>.</p> |
+| order_item_indices</br>`array` | <p>Lists which order lines are (not) covered by the discount. The order in the array is determined by the sequence of applied discounts, while the numbers correspond to the order lines sent in the <code>order</code> object in the request. The first order line is assigned <code>0</code>, the second order line is assigned <code>1</code>, and so on.</p> |
+| order_item_units</br>`array` | <p>Lists which units within order lines are covered by the discount. The order line items are listed according to sequence of applied discounts while the <code>index</code> corresponds to the order line sent in the <code>order</code> object in the request.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">index</br><code>integer</code></td><td style="text-align:left"><p>Number assigned to the order line item in accordance with the order sent in the request.</p></td></tr><tr><td style="text-align:left">units</br><code>array</code></td><td style="text-align:left"><p>Numbers of units in the order line covered by the discount; e.g. <code>2, 5, 8</code> for 10 units with the setting <code>&quot;skip_initially&quot;: 1</code>, <code>&quot;repeat&quot;: 3</code>. The counting of units starts from <code>1</code>.</p></td></tr></tbody></table> |
 | repeat</br>`integer` | <p>Determines the recurrence of the discount, e.g. <code>&quot;repeat&quot;: 3</code> means that the discount is applied to every third item.</p> |
 | skip_initially</br>`integer` | <p>Determines how many items are skipped before the discount is applied.</p> |
-| target</br>`string` | <p>Determines to which kinds of objects the discount is applicable. <code>&quot;ITEM&quot;</code> includes products and SKUs.</p> Available values: `ITEM` |
+| target</br>`string` | <p>Determines to which kinds of objects the discount is applicable. <code>ITEM</code> includes products and SKUs. <code>UNIT</code> means particular units within an order line.</p> Available values: `ITEM`, `UNIT` |
 
 ## Inapplicable To
 [Applicable To](#applicable-to)
@@ -278,7 +255,7 @@ One of:
 |:-----|:--------|
 | type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
 | unit_off</br>`integer` | <p>Number of units to be granted a full value discount.</p> |
-| unit_off_formula</br>`string` |  |
+| unit_off_formula</br>`string` | <p>Formula used to calculate the number of units.</p> |
 | effect | <p>Defines how the unit is added to the customer's order.</p> [Discount Unit Vouchers Effect Types](#discount-unit-vouchers-effect-types) |
 | unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
 | product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |
@@ -347,7 +324,7 @@ Available values: `ADD_MISSING_ITEMS`, `ADD_NEW_ITEMS`, `ADD_MANY_ITEMS`
 | Attributes |  Description |
 |:-----|:--------|
 | unit_off</br>`number` | <p>Number of units to be granted a full value discount.</p> |
-| unit_off_formula</br>`string` |  |
+| unit_off_formula</br>`string` | <p>Formula used to calculate the number of units.</p> |
 | effect</br>`string` | <p>Defines how the unit is added to the customer's order.</p> Available values: `ADD_NEW_ITEMS`, `ADD_MISSING_ITEMS` |
 | unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
 | product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |

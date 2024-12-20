@@ -1,11 +1,11 @@
 ---
-title: Get Points Expiration
+title: Export Loyalty Campaign Point Expiration
 type: endpoint
 categorySlug: voucherify-api
-slug: list-points-expiration
+slug: create-points-expiration-export
 parentDocSlug: loyalties
 hidden: false
-order: 230
+order: 240
 ---
 [block:html]
 {

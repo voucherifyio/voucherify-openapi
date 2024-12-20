@@ -952,9 +952,30 @@
           },
           "order_item_indices": {
             "type": "array",
-            "description": "Determines the order in which the discount is applied to the products or SKUs sent in the `order` object in the request. The counting begins from `0`.",
+            "description": "Lists which order lines are (not) covered by the discount. The order in the array is determined by the sequence of applied discounts, while the numbers correspond to the order lines sent in the `order` object in the request. The first order line is assigned `0`, the second order line is assigned `1`, and so on.",
             "items": {
               "type": "integer"
+            },
+            "nullable": true
+          },
+          "order_item_units": {
+            "type": "array",
+            "description": "Lists which units within order lines are covered by the discount. The order line items are listed according to sequence of applied discounts while the `index` corresponds to the order line sent in the `order` object in the request.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "index": {
+                  "type": "integer",
+                  "description": "Number assigned to the order line item in accordance with the order sent in the request."
+                },
+                "units": {
+                  "type": "array",
+                  "description": "Numbers of units in the order line covered by the discount; e.g. `2, 5, 8` for 10 units with the setting `\"skip_initially\": 1`, `\"repeat\": 3`. The counting of units starts from `1`.",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              }
             },
             "nullable": true
           },
@@ -970,9 +991,10 @@
           },
           "target": {
             "type": "string",
-            "description": "Determines to which kinds of objects the discount is applicable. `\"ITEM\"` includes products and SKUs.",
+            "description": "Determines to which kinds of objects the discount is applicable. `ITEM` includes products and SKUs. `UNIT` means particular units within an order line.",
             "enum": [
-              "ITEM"
+              "ITEM",
+              "UNIT"
             ],
             "nullable": true
           }
@@ -1030,6 +1052,47 @@
           }
         },
         "required": []
+      },
+      "ApplicationDetails": {
+        "type": "array",
+        "description": "Array containing details about the items that are replaced and the items that are replacements for discounts with the `REPLACE_ITEMS` effect.",
+        "items": {
+          "type": "object",
+          "description": "Object representing item replacement.",
+          "properties": {
+            "source_index": {
+              "type": "integer",
+              "description": "Index number of the source item that is replaced. The enumeration starts from `0`, which represents the first item in the request, e.g., if the replaced item is passed as the second in the request, `source_index` equals `3`.",
+              "minimum": 0
+            },
+            "source_applied_quantity": {
+              "type": "integer",
+              "description": "Number of source units that are replaced.",
+              "maximum": -1
+            },
+            "source_applied_quantity_amount": {
+              "type": "integer",
+              "description": "Amount equal to the price of the units that are replaced. Determines the change of the amount of the source item quantity.",
+              "maximum": 0
+            },
+            "target_index": {
+              "type": "integer",
+              "description": "Index number of the target item that is a replacement of the source item. The enumeration continues the values for the order items, e.g. if there are three items in the request, `target_index` equals `3`, as enumeration starts from `0`."
+            },
+            "target_applied_quantity": {
+              "type": "integer",
+              "description": "Number of added target units that are replacements."
+            },
+            "target_applied_quantity_amount": {
+              "type": "integer",
+              "description": "Amount equal to the price of the units that are replacements. Determines the change in the amount of the target item quantity."
+            },
+            "target_applied_discount_amount": {
+              "type": "integer",
+              "description": "Discount amount applied to the target item with regard to the replacement. Equals the `target_applied_quantity_amount` minus `source_applied_quantity_amount`."
+            }
+          }
+        }
       },
       "AreaStoreCampaignAssignment": {
         "title": "Areas and Stores Campain Assignment",
@@ -3387,6 +3450,31 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "application_details": {
+                              "$ref": "#/components/schemas/ApplicationDetails"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "nullable": true
+                  }
+                }
               }
             ],
             "nullable": true
@@ -3452,6 +3540,31 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "application_details": {
+                              "$ref": "#/components/schemas/ApplicationDetails"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "nullable": true
+                  }
+                }
               }
             ]
           },
@@ -5295,6 +5408,7 @@
           },
           "unit_off_formula": {
             "type": "string",
+            "description": "Formula used to calculate the number of units.",
             "nullable": true
           },
           "effect": {
@@ -5372,6 +5486,7 @@
           },
           "unit_off_formula": {
             "type": "string",
+            "description": "Formula used to calculate the number of units.",
             "nullable": true
           },
           "effect": {
@@ -6956,6 +7071,24 @@
                         "required": [],
                         "nullable": true
                       },
+                      "holder_loyalty_tier": {
+                        "type": "object",
+                        "description": "Loyalty tier of the loyalty card holder at the moment when the transaction occurred. The loyalty tier is the tier in which the holder was before the loyalty point balance changed.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
+                            "nullable": true
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "User-defined name of the loyalty tier.",
+                            "nullable": true
+                          }
+                        },
+                        "required": [],
+                        "nullable": true
+                      },
                       "event_schema": {
                         "type": "object",
                         "description": "Contains information about the custom event metadata schema.",
@@ -7213,6 +7346,24 @@
                           "name": {
                             "type": "string",
                             "description": "Type of custom event.",
+                            "nullable": true
+                          }
+                        },
+                        "required": [],
+                        "nullable": true
+                      },
+                      "holder_loyalty_tier": {
+                        "type": "object",
+                        "description": "Loyalty tier of the loyalty card holder at the moment when the transaction occurred. The loyalty tier is the tier in which the holder was before the loyalty point balance changed.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
+                            "nullable": true
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "User-defined name of the loyalty tier.",
                             "nullable": true
                           }
                         },
@@ -7523,7 +7674,24 @@
             "$ref": "#/components/schemas/SimpleCustomer"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    },
+                    "nullable": true
+                  }
+                }
+              }
+            ]
           },
           "redemption": {
             "$ref": "#/components/schemas/RedemptionInternal"
@@ -7837,7 +8005,24 @@
             "$ref": "#/components/schemas/VoucherBalance"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    },
+                    "nullable": true
+                  }
+                }
+              }
+            ]
           },
           "event": {
             "$ref": "#/components/schemas/SimpleEvent"
@@ -8268,6 +8453,24 @@
                           "name": {
                             "type": "string",
                             "description": "Type of custom event.",
+                            "nullable": true
+                          }
+                        },
+                        "required": [],
+                        "nullable": true
+                      },
+                      "holder_loyalty_tier": {
+                        "type": "object",
+                        "description": "Loyalty tier of the loyalty card holder at the moment when the transaction occurred. The loyalty tier is the tier in which the holder was before the loyalty point balance changed.",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
+                            "nullable": true
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "User-defined name of the loyalty tier.",
                             "nullable": true
                           }
                         },
@@ -12887,6 +13090,24 @@
                     "required": [],
                     "nullable": true
                   },
+                  "holder_loyalty_tier": {
+                    "type": "object",
+                    "description": "Loyalty tier of the loyalty card holder at the moment when the transaction occurred. The loyalty tier is the tier in which the holder was before the loyalty point balance changed.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
+                        "nullable": true
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "User-defined name of the loyalty tier.",
+                        "nullable": true
+                      }
+                    },
+                    "required": [],
+                    "nullable": true
+                  },
                   "reward": {
                     "type": "object",
                     "description": "Contains information about the pay with points reward.",
@@ -16461,12 +16682,12 @@
           },
           "discount_amount": {
             "type": "integer",
-            "description": "Sum of all order-level discounts applied to the order.",
+            "description": "Sum of all order-level discounts applied to the order. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "items": {
             "type": "array",
-            "description": "Array of items applied to the order. It can include up 500 items.",
+            "description": "Array of items applied to the order. It can include up to 500 items.",
             "items": {
               "$ref": "#/components/schemas/OrderItem"
             },
@@ -16507,55 +16728,47 @@
           },
           "amount": {
             "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
+            "description": "This is the sum of the order items' amounts. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "initial_amount": {
             "type": "integer",
-            "description": "A positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the total amount of the order. This is the sum of the order items' amounts.",
+            "description": "This is the sum of the order items' amounts before any discount or other effect (e.g. add missing units) is applied. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "discount_amount": {
             "type": "integer",
-            "description": "Sum of all order-level discounts applied to the order.",
+            "description": "Sum of all order-level discounts applied to the order. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "items_discount_amount": {
             "type": "integer",
-            "description": "Sum of all product-specific discounts applied to the order.",
+            "description": "Sum of all product-specific discounts applied to the order. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "total_discount_amount": {
             "type": "integer",
-            "description": "Sum of all order-level AND all product-specific discounts applied to the order.",
+            "description": "Sum of all order-level AND all product-specific discounts applied to the order. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "total_amount": {
             "type": "integer",
-            "description": "Order amount after undoing all the discounts through the rollback redemption.",
+            "description": "Order amount after undoing all the discounts through the rollback redemption. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "applied_discount_amount": {
             "type": "integer",
-            "description": "This field shows the order-level discount applied.",
+            "description": "This field shows the order-level discount applied. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "items_applied_discount_amount": {
             "type": "integer",
-            "description": "Sum of all product-specific discounts applied in a particular request.  \n`sum(items, i => i.applied_discount_amount)`",
+            "description": "Sum of all product-specific discounts applied in a particular request. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).  \n`sum(items, i => i.applied_discount_amount)`",
             "nullable": true
           },
           "total_applied_discount_amount": {
             "type": "integer",
-            "description": "Sum of all order-level AND all product-specific discounts applied in a particular request.  \n`total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount`",
-            "nullable": true
-          },
-          "items": {
-            "type": "array",
-            "description": "Array of items applied to the order. It can include up 500 items.",
-            "items": {
-              "$ref": "#/components/schemas/OrderCalculatedItem"
-            },
+            "description": "Sum of all order-level AND all product-specific discounts applied in a particular request. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).  \n`total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount`",
             "nullable": true
           },
           "metadata": {
@@ -17062,6 +17275,19 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/OrderCalculated"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "description": "Array of items applied to the order. It can include up to 500 items.",
+                "items": {
+                  "$ref": "#/components/schemas/OrderCalculatedItem"
+                },
+                "nullable": true
+              }
+            }
           }
         ]
       },
@@ -17121,6 +17347,19 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/OrderCalculated"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "description": "Array of items applied to the order. It can include up to 500 items.",
+                "items": {
+                  "$ref": "#/components/schemas/OrderCalculatedItem"
+                },
+                "nullable": true
+              }
+            }
           }
         ]
       },
@@ -17208,7 +17447,23 @@
             "type": "array",
             "description": "Contains array of order objects.",
             "items": {
-              "$ref": "#/components/schemas/OrderCalculated"
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/OrderCalculated"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "description": "Array of items applied to the order. It can include up to 500 items.",
+                      "items": {
+                        "$ref": "#/components/schemas/OrderCalculatedItem"
+                      }
+                    }
+                  }
+                }
+              ]
             },
             "nullable": true
           },
@@ -17271,6 +17526,19 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/OrderCalculated"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "description": "Array of items applied to the order. It can include up to 500 items.",
+                "items": {
+                  "$ref": "#/components/schemas/OrderCalculatedItem"
+                },
+                "nullable": true
+              }
+            }
           }
         ]
       },
@@ -20833,6 +21101,23 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        }
+                      ]
+                    },
+                    "nullable": true
+                  }
+                }
               }
             ],
             "nullable": true
@@ -21163,7 +21448,36 @@
             "$ref": "#/components/schemas/RedeemableResult"
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "application_details": {
+                              "$ref": "#/components/schemas/ApplicationDetails"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "nullable": true
+                  }
+                }
+              }
+            ]
           },
           "validation_rule_id": {
             "type": "string",
@@ -22155,6 +22469,31 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "application_details": {
+                              "$ref": "#/components/schemas/ApplicationDetails"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "nullable": true
+                  }
+                }
               }
             ]
           },
@@ -22314,10 +22653,44 @@
             "nullable": true
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    },
+                    "nullable": true
+                  }
+                }
+              }
+            ]
           },
           "previous_order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    },
+                    "nullable": true
+                  }
+                }
+              }
+            ]
           },
           "reward": {
             "$ref": "#/components/schemas/RedemptionRewardResult"
@@ -22774,6 +23147,19 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    },
+                    "nullable": true
+                  }
+                }
               }
             ]
           },
@@ -22976,6 +23362,31 @@
             "allOf": [
               {
                 "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "application_details": {
+                              "$ref": "#/components/schemas/ApplicationDetails"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "nullable": true
+                  }
+                }
               }
             ]
           },
@@ -23078,9 +23489,23 @@
           "parent_rollback": {
             "$ref": "#/components/schemas/RedemptionRollback"
           },
-          "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
-          }
+          "allOf": [
+            {
+              "$ref": "#/components/schemas/OrderCalculated"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "description": "Array of items applied to the order. It can include up to 500 items.",
+                  "items": {
+                    "$ref": "#/components/schemas/OrderCalculatedItem"
+                  }
+                }
+              }
+            }
+          ]
         }
       },
       "RedemptionWithVoucherWithoutStackingRulesTypeCategories": {
@@ -24874,42 +25299,42 @@
           },
           "discount_amount": {
             "type": "integer",
-            "description": "Sum of all order-level discounts applied to the order.",
+            "description": "Sum of all order-level discounts applied to the order. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "applied_discount_amount": {
             "type": "integer",
-            "description": "This field shows the order-level discount applied.",
+            "description": "This field shows the order-level discount applied. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "items_discount_amount": {
             "type": "integer",
-            "description": "Sum of all product-specific discounts applied to the order.",
+            "description": "Sum of all product-specific discounts applied to the order.  It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "items_applied_discount_amount": {
             "type": "integer",
-            "description": "Sum of all product-specific discounts applied in a particular request.  \n`sum(items, i => i.applied_discount_amount)`",
+            "description": "Sum of all product-specific discounts applied in a particular request. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).  \n`sum(items, i => i.applied_discount_amount)`",
             "nullable": true
           },
           "total_discount_amount": {
             "type": "integer",
-            "description": "Sum of all order-level AND all product-specific discounts applied to the order.",
+            "description": "Sum of all order-level AND all product-specific discounts applied to the order. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "total_applied_discount_amount": {
             "type": "integer",
-            "description": "Sum of all order-level AND all product-specific discounts applied in a particular request.  \n`total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount`",
+            "description": "Sum of all order-level AND all product-specific discounts applied in a particular request. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).\n`total_applied_discount_amount` = `applied_discount_amount` + `items_applied_discount_amount`",
             "nullable": true
           },
           "total_amount": {
             "type": "integer",
-            "description": "Order amount after undoing all the discounts through the rollback redemption.",
+            "description": "Order amount after undoing all the discounts through the rollback redemption. It is expressed as an integer in the smallest currency unit (e.g. 100 cents for $1.00).",
             "nullable": true
           },
           "items": {
             "type": "array",
-            "description": "Array of items applied to the order. It can include up 500 items.",
+            "description": "Array of items applied to the order. It can include up to 500 items.",
             "items": {
               "$ref": "#/components/schemas/SimpleOrderItem"
             },
@@ -27158,7 +27583,24 @@
             "nullable": true
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    },
+                    "nullable": true
+                  }
+                }
+              }
+            ]
           },
           "applicable_to": {
             "$ref": "#/components/schemas/ApplicableToResultList"
@@ -27600,7 +28042,36 @@
             "nullable": true
           },
           "order": {
-            "$ref": "#/components/schemas/OrderCalculated"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/OrderCalculatedItem"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "application_details": {
+                              "$ref": "#/components/schemas/ApplicationDetails"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "nullable": true
+                  }
+                }
+              }
+            ]
           },
           "tracking_id": {
             "type": "string",
@@ -29240,6 +29711,24 @@
                       "name": {
                         "type": "string",
                         "description": "Type of custom event.",
+                        "nullable": true
+                      }
+                    },
+                    "required": [],
+                    "nullable": true
+                  },
+                  "holder_loyalty_tier": {
+                    "type": "object",
+                    "description": "Loyalty tier of the loyalty card holder at the moment when the transaction occurred. The loyalty tier is the tier in which the holder was before the loyalty point balance changed.",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
+                        "nullable": true
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "User-defined name of the loyalty tier.",
                         "nullable": true
                       }
                     },
@@ -44821,7 +45310,7 @@
         "tags": [
           "Loyalties"
         ],
-        "summary": "Get Points Expiration",
+        "summary": "List Loyalty Card Point Expiration",
         "description": "Retrieve loyalty point expiration buckets for a given loyalty card. Expired point buckets are not returned in this endpoint. You can use the [Exports API](ref:create-export) to retrieve a list of both `ACTIVE` and `EXPIRED` point buckets.",
         "parameters": [
           {
@@ -44928,7 +45417,7 @@
         "tags": [
           "Loyalties"
         ],
-        "summary": "Create Points Expiration Export",
+        "summary": "Export Loyalty Campaign Point Expiration",
         "description": "Schedule the generation of a points expiration CSV file for a particular campaign.",
         "parameters": [],
         "security": [

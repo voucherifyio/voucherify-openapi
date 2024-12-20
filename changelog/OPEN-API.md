@@ -4,6 +4,33 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-12-19
+
+Added `application_details` property to Qualifications, Validations, and Redemptions, and the associated `ApplicationDetails` schema
+
+## 2024-12-12
+
+- Removed `bundle_rules` from the `ValidationRuleBase` schema – the feature is not released yet
+- Added `holder_loyalty_tier` to OpenAPIWebhooks.json and OpenAPI.json with the following schemas:
+  - `EventCustomerLoyaltyCardPointsAdded`
+  - `EventCustomerVouchersLoyaltyPointsExpired`
+  - `EventCustomerLoyaltyCardPointsTransferred`
+  - `LoyaltyCardTransaction`
+  - `VoucherTransaction`
+
+
+## 2024-12-05
+
+- Added the `order_item_units` array to the `ApplicableTo` schema
+- Changed the following summary, file names, and titles:
+  - `Get Points Expiration` to `List Loyalty Card Point Expiration`
+  - `Create Points Expiration Export` to `Export Loyalty Campaign Point Expiration`
+
+
+## 2024-12-04
+
+Added `ValidationRuleBundleRules` schema and `bundle_rules` to the `ValidationRuleBase` schema
+
 ## 2024-12-03
 
 Remove `validation_rules` from Create Loyalty Campaign endpoints by swapping `CampaignsCreateBaseValidationRules` to `CampaignsCreateBase` in `CampaignsCreateLoyaltyCampaign`.
