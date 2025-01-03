@@ -207,9 +207,14 @@ const main = async (languageOptions: LanguageOptions) => {
   ] = {
     $ref: "#/components/schemas/ApplicationDetails",
   };
-  openAPIContent.components.schemas = fixOrderCalculated(
-    openAPIContent.components.schemas,
-  );
+  openAPIContent.components.schemas = Object.fromEntries(
+    Object.entries(openAPIContent.components.schemas).map(([key, value]) => {
+      if (key.endsWith("Body")) {
+        return [key, value];
+      }
+      return [key, fixOrderCalculated(value)];
+    }),
+  ) as any;
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
