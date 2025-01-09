@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-01-09
+
+- Changed descriptions of the `points` property which relate to overall points accrued during the lifetime of a loyalty card.
+
 ## 2024-12-19
 
 Added `application_details` property to Qualifications, Validations, and Redemptions, and the associated `ApplicationDetails` schema
