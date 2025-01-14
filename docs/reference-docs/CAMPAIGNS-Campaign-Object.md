@@ -203,6 +203,7 @@ One of:
 |:-----|:--------|
 | id</br>`string` | <p>Unique identifier of the campaign assignment.</p> **Example:** <p>arsca_0ef5ee192117ae2416</p> |
 | area_id</br>`string` | <p>Unique identifier of the area to which the campaign is assigned.</p> **Example:** <p>ar_0ea6cd7b781b8f857f</p> |
+| all_stores</br>`boolean` | <p>Determines if the campaign is assigned to all of the stores in the area, i.e. if an area ID is passed in the <code>access_settings.assign.area_all_stores_ids</code> in the request.</p> |
 | area_store_id</br>`string` | <p>Unique identifier of the store to which the campaign is assigned.</p> **Example:** <p>ars_0ec347e2016bed85f4</p> |
 | created_at</br>`string` | <p>Date and time when the assignment was made. The value is shown in the ISO 8601 format.</p> **Example:** <p>2024-06-25T19:04:16.260Z</p> |
 | object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the campaign assignment to areas or stores.</p> Available values: `area_store_campaign_assignment` |

@@ -4,6 +4,12 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-01-14
+
+- Added `expand` query parameter to GET `/v1/loyalties`
+- Added `all_stores` to the `AreaStoreCampaignAssignment` schema and `AccessSettingsAssignmentsList` (OpenAPIWebhooks.json)
+- Added `area_all_stores_ids` to the `AccessSettings` schema
+
 ## 2024-01-09
 
 - Changed descriptions of the `points` property which relate to overall points accrued during the lifetime of a loyalty card.
