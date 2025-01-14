@@ -10,14 +10,12 @@ Are slightly modified from the original ones for our needs.
 ## Requirements
 
 - Node.js ^16 || ^18 and npm
-- installed `@openapitools/openapi-generator-cli` globally
 - docker (optional)
 - java runtime v18 or higher
 
 ## How to generate sdk
 
 - `npm install` (if you have not already installed)
-- `npm install @openapitools/openapi-generator-cli -g` (if you have not already installed)
 - `npm run generate-sdk-ruby`/`generate-sdk-python`/`generate-sdk-java`/`generate-sdk-php`
 
 SDK will be generated in `./sdks` directory in associated language folder.
@@ -84,14 +82,3 @@ Manual steps checklist:
 - **patch** - backward compatible changes - bug fixes, small changes, refactoring
 - **minor** - backward compatible changes - new endpoints or properties
 - **major** - breaking changes - new schemas, naming changes, removing endpoints or properties, changes in the mustache logic
-
-
-### Publishing for remote repositories 
-
-#### Ruby
-
-1. Ensure changes are on main branch and all tests has passed.
-2. Ensure that all data are correct in the `VoucherifySdk.gemspec` file. 
-3. Ensure which version You want to build.
-4. Use command `git tag vx.y.z` to add tag
-5. Use command `git push origin vx.y.z` this will run GitHub action that will publish new version of ruby SDK
