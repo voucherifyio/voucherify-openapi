@@ -147,6 +147,12 @@ const main = async (languageOptions: LanguageOptions) => {
     .inapplicable_redeemables.items.properties.type.enum;
   openAPIContent.components.schemas.LoyaltyPointsBucket.properties.expires_at.format =
     "date-time";
+  // Remove expand query parameter in GET v1/loyalties
+  openAPIContent.paths[
+    "/v1/loyalties"
+  ].get.parameters = openAPIContent.paths[
+    "/v1/loyalties"
+  ].get.parameters.filter((parameter) => parameter.name !== "expand");
   //New parameter
   openAPIContent.paths[
     "/v1/loyalties/{campaignId}/members/{memberId}/transactions"
