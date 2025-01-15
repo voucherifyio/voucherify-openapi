@@ -2379,7 +2379,7 @@
           },
           "rollback_date": {
             "type": "string",
-            "description": "Timestamp representing the date and tiem when the redemption rollback was created. The value is shown in the ISO 8601 format.",
+            "description": "Timestamp representing the date and time when the redemption rollback was created. The value is shown in the ISO 8601 format.",
             "example": "2023-01-31T14:18:37.150Z",
             "format": "date-time"
           },
@@ -15201,7 +15201,7 @@
                   },
                   "rollback_date": {
                     "type": "string",
-                    "description": "Timestamp representing the date and tiem when the redemption rollback was created. The value is shown in the ISO 8601 format.",
+                    "description": "Timestamp representing the date and time when the redemption rollback was created. The value is shown in the ISO 8601 format.",
                     "example": "2023-01-31T14:18:37.150Z",
                     "format": "date-time"
                   },
@@ -17014,7 +17014,7 @@
                   },
                   "rollback_date": {
                     "type": "string",
-                    "description": "Timestamp representing the date and tiem when the redemption rollback was created. The value is shown in the ISO 8601 format.",
+                    "description": "Timestamp representing the date and time when the redemption rollback was created. The value is shown in the ISO 8601 format.",
                     "example": "2023-01-31T14:18:37.150Z",
                     "format": "date-time"
                   },
@@ -25539,7 +25539,130 @@
         "title": "Pending Point Details",
         "type": "object",
         "description": "Details about how the pending points were earned.",
-        "properties": {}
+        "properties": {
+          "loyalty_tier": {
+            "type": "object",
+            "description": "The loyalty tier that is mapped for the earning rule and used in the pending point transaction.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the loyalty tier, assigned by Voucherify."
+              },
+              "name": {
+                "type": "string",
+                "description": "User-defined name of the loyalty tier."
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ]
+          },
+          "holder_loyalty_tier": {
+            "type": "object",
+            "description": "Loyalty tier of the loyalty card holder at the moment when the transaction occurred. The loyalty tier is the tier in which the holder was at the moment pending points were created.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the loyalty tier, assigned by Voucherify."
+              },
+              "name": {
+                "type": "string",
+                "description": "User-defined name of the loyalty tier."
+              }
+            },
+            "required": [
+              "id",
+              "name"
+            ]
+          },
+          "event": {
+            "type": "object",
+            "description": "Details about the event that created pending points.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique event identifier, assigned by Voucherify."
+              },
+              "type": {
+                "type": "string",
+                "description": "Type of the event that triggered the creation of pending points.",
+                "enum": [
+                  "customer.order.paid"
+                ]
+              },
+              "group_id": {
+                "type": "string",
+                "description": "Unique identifier of the request that triggered the event, assigned by Voucherify."
+              },
+              "entity_id": {
+                "type": "string",
+                "description": "Unique identifier of the entity that triggered the event, assigned by Voucherify."
+              },
+              "created_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the event occurred. The value is shown in the ISO 8601 format.",
+                "format": "date-time"
+              },
+              "category": {
+                "type": "string",
+                "description": "Type of the event.",
+                "enum": [
+                  "EFFECT"
+                ]
+              },
+              "event_source": {
+                "$ref": "#/components/schemas/EventSource"
+              }
+            }
+          },
+          "earning_rule": {
+            "type": "object",
+            "description": "Contains information about the earning rule.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of an earning rule, assigned by Voucherify."
+              },
+              "source": {
+                "type": "object",
+                "required": [
+                  "banner"
+                ],
+                "description": "Contains the custom earning rule name.",
+                "properties": {
+                  "banner": {
+                    "type": "string",
+                    "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard."
+                  }
+                }
+              }
+            },
+            "required": [
+              "id",
+              "source"
+            ]
+          },
+          "order": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique order identifier, assigned by Voucherify."
+              },
+              "source_id": {
+                "type": "string",
+                "description": "User-defined order identifier."
+              }
+            }
+          }
+        },
+        "required": [
+          "event",
+          "earning_rule",
+          "order"
+        ]
       },
       "LoyaltiesListMembersResponseBody": {
         "title": "Loyalties List Members Response Body",
@@ -26644,6 +26767,56 @@
           }
         ]
       },
+      "EventSource": {
+        "type": "object",
+        "description": "Contains the source of the object that initiated the event.",
+        "required": [
+          "channel"
+        ],
+        "properties": {
+          "channel": {
+            "type": "string",
+            "description": "Determines the channel that initiated the event.",
+            "enum": [
+              "USER_PORTAL",
+              "API",
+              "CLIENT_API",
+              "INTERNAL"
+            ],
+            "example": "API"
+          },
+          "user": {
+            "type": "object",
+            "description": "Defines the Voucherify user who triggered the event.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the user.",
+                "example": "user_xyzfghSTprSTUVWXYlk6tuvXYst7FGH7"
+              }
+            }
+          },
+          "api_key": {
+            "type": "object",
+            "description": "Determines the API key used to initiate the sendout.",
+            "required": [
+              "name",
+              "app_id"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Channel name in the application keys."
+              },
+              "app_id": {
+                "type": "string",
+                "description": "Contains the application ID from the Voucherify API key pair.",
+                "example": "1XXXX5XX-0XXX-XXXb-X7XX-XX2XXaXXX6XX"
+              }
+            }
+          }
+        }
+      },
       "EventCustomerSent": {
         "title": "Event Customer Sent",
         "type": "object",
@@ -27331,7 +27504,7 @@
                         "properties": {
                           "id": {
                             "type": "string",
-                            "description": "Unique earning rule ID."
+                            "description": "Unique identifier of an earning rule, assigned by Voucherify."
                           },
                           "source": {
                             "type": "object",
@@ -27373,10 +27546,12 @@
                         "description": "Contains information about the loyalty tier.",
                         "properties": {
                           "id": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "Unique identifier of the loyalty tier, assigned by Voucherify."
                           },
                           "name": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "User-defined name of the loyalty tier."
                           }
                         },
                         "required": [
@@ -27569,7 +27744,7 @@
                         "properties": {
                           "id": {
                             "type": "string",
-                            "description": "Unique earning rule ID."
+                            "description": "Unique identifier of an earning rule, assigned by Voucherify."
                           },
                           "source": {
                             "type": "object",
@@ -27611,10 +27786,12 @@
                         "description": "Contains information about the loyalty tier.",
                         "properties": {
                           "id": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "Unique identifier of the loyalty tier, assigned by Voucherify."
                           },
                           "name": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "User-defined name of the loyalty tier."
                           }
                         },
                         "required": [
@@ -27831,7 +28008,7 @@
                         "properties": {
                           "id": {
                             "type": "string",
-                            "description": "Unique earning rule ID."
+                            "description": "Unique identifier of an earning rule, assigned by Voucherify."
                           },
                           "source": {
                             "type": "object",
@@ -27873,10 +28050,12 @@
                         "description": "Contains information about the loyalty tier.",
                         "properties": {
                           "id": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "Unique identifier of the loyalty tier, assigned by Voucherify."
                           },
                           "name": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "User-defined name of the loyalty tier."
                           }
                         },
                         "required": [
@@ -28095,7 +28274,7 @@
                         "properties": {
                           "id": {
                             "type": "string",
-                            "description": "Unique earning rule ID."
+                            "description": "Unique identifier of an earning rule, assigned by Voucherify."
                           },
                           "source": {
                             "type": "object",
@@ -28137,10 +28316,12 @@
                         "description": "Contains information about the loyalty tier.",
                         "properties": {
                           "id": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "Unique identifier of the loyalty tier, assigned by Voucherify."
                           },
                           "name": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "User-defined name of the loyalty tier."
                           }
                         },
                         "required": [
@@ -36237,7 +36418,7 @@
                     "properties": {
                       "id": {
                         "type": "string",
-                        "description": "Unique earning rule ID."
+                        "description": "Unique identifier of an earning rule, assigned by Voucherify."
                       },
                       "source": {
                         "type": "object",
@@ -36276,13 +36457,15 @@
                   },
                   "loyalty_tier": {
                     "type": "object",
-                    "description": "Contains information about the loyalty tier.",
+                    "description": "Contains information about the loyalty tier that is mapped for the earning rule and used in the transaction.",
                     "properties": {
                       "id": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Unique identifier of the loyalty tier, assigned by Voucherify."
                       },
                       "name": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "User-defined name of the loyalty tier."
                       }
                     },
                     "required": [
@@ -36478,7 +36661,7 @@
                     "properties": {
                       "id": {
                         "type": "string",
-                        "description": "Unique earning rule ID."
+                        "description": "Unique identifier of an earning rule, assigned by Voucherify."
                       },
                       "source": {
                         "type": "object",
@@ -36694,7 +36877,7 @@
                     "properties": {
                       "id": {
                         "type": "string",
-                        "description": "Unique earning rule ID."
+                        "description": "Unique identifier of an earning rule, assigned by Voucherify."
                       },
                       "source": {
                         "type": "object",
@@ -36736,10 +36919,12 @@
                     "description": "Contains information about the loyalty tier that is mapped for the earning rule and used in the transaction.",
                     "properties": {
                       "id": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "Unique identifier of the loyalty tier, assigned by Voucherify."
                       },
                       "name": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "User-defined name of the loyalty tier."
                       }
                     },
                     "required": [
@@ -72203,7 +72388,7 @@
           "name": "earningRuleId",
           "in": "path",
           "required": true,
-          "description": "Unique earning rule ID."
+          "description": "Unique identifier of an earning rule, assigned by Voucherify."
         }
       ],
       "post": {
@@ -72309,7 +72494,7 @@
           "name": "earningRuleId",
           "in": "path",
           "required": true,
-          "description": "Unique earning rule ID."
+          "description": "Unique identifier of an earning rule, assigned by Voucherify."
         }
       ],
       "post": {
