@@ -20,6 +20,12 @@ export const rawTakeList = {
   //"/v1/loyalties/members/{memberId}/pending-points": {
   //  get: false,
   //}
+  //"/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/activate": {
+  //  get: false,
+  //}
+  //"/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/cancel": {
+  //  get: false,
+  //}
   "/management/v1/projects/{projectId}/templates/campaigns": {
     get: true,
   },

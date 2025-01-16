@@ -10,6 +10,8 @@ Added the following endpoints:
 - GET `/loyalties/{campaignId}/pending-points`
 - GET `/loyalties/{campaignId}/members/{memberId}/pending-points`
 - GET `/loyalties/members/{memberId}/pending-points`
+- POST `/loyalties/members/{memberId}/pending-points/{pendingPointsId}/activate`
+- POST `/loyalties/members/{memberId}/pending-points/{pendingPointsId}/cancel`
 
 Added the following schemas:
 - `LoyaltiesCampaignPendingPointsListResponseBody`
@@ -17,6 +19,7 @@ Added the following schemas:
 - `ListPendingPoints`
 - `LoyaltyPendingPoints`
 - `LoyaltyPendingPointsDetails`
+- `LoyaltiesMembersPendingPointsActivateResponseBody`
 
 ## 2024-01-15
 - Removed [Beta] tag from the Management endpoints.
