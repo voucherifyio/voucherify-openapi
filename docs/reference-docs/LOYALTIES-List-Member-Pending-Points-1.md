@@ -2,10 +2,10 @@
 title: List Member Pending Points
 type: endpoint
 categorySlug: voucherify-api
-slug: list-member-pending-points
+slug: list-member-pending-points-1
 parentDocSlug: loyalties
 hidden: true
-order: 187
+order: 186
 ---
 [block:html]
 {
