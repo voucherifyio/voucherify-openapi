@@ -11,6 +11,15 @@ export const rawTakeList = {
   //"/v1/loyalties/{campaignId}/transactions": {
   //  get: false,
   //},
+  //"/v1/loyalties/{campaignId}/pending-points": {
+  //  get: false,
+  //}
+  //"/v1/loyalties/{campaignId}/members/{memberId}/pending-points": {
+  //  get: false,
+  //}
+  //"/v1/loyalties/members/{memberId}/pending-points": {
+  //  get: false,
+  //}
   "/management/v1/projects/{projectId}/templates/campaigns": {
     get: true,
   },
