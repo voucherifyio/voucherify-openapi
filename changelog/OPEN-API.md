@@ -4,6 +4,20 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-01-16
+
+Added the following endpoints:
+- GET `/loyalties/{campaignId}/pending-points`
+- GET `/loyalties/{campaignId}/members/{memberId}/pending-points`
+- GET `/loyalties/members/{memberId}/pending-points`
+
+Added the following schemas:
+- `LoyaltiesCampaignPendingPointsListResponseBody`
+- `LoyaltiesMembersPendingPointsListResponseBody`
+- `ListPendingPoints`
+- `LoyaltyPendingPoints`
+- `LoyaltyPendingPointsDetails`
+
 ## 2024-01-14
 
 - Added `expand` query parameter to GET `/v1/loyalties`
