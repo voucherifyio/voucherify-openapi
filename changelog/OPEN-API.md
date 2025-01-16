@@ -18,6 +18,9 @@ Added the following schemas:
 - `LoyaltyPendingPoints`
 - `LoyaltyPendingPointsDetails`
 
+## 2024-01-15
+- Removed [Beta] tag from the Management endpoints.
+
 ## 2024-01-14
 
 - Added `expand` query parameter to GET `/v1/loyalties`
