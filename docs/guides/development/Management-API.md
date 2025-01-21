@@ -32,10 +32,6 @@ The three main advantages of the Management API are:
 >
 > The Management API is an Enterprise feature. [Contact Voucherify Sales Team](https://www.voucherify.io/contact-sales "Contact Voucherify Sales") for more details.
 
-> 🚧 Beta Version
->
-> The Management API is still in beta. Voucherify developers are working on improving the endpoints.
-
 ## Management API Keys
 
 The new tab within Team Settings becomes accessible once it is unlocked for your organization. From there, you can generate Management API keys to facilitate various operations.
