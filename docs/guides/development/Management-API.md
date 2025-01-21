@@ -48,6 +48,6 @@ The actions performed via the Management API are not logged in the audit log for
 >
 > Write your secret keys down and keep them in a safe place.
 
-### Tracking Management API Usage
+## Tracking Management API Usage
 
 To monitor the usage of Management API calls, navigate to the Team Settings tab. You will find a comprehensive chart located alongside other usage metrics, allowing you to stay informed about your organization's activity.
