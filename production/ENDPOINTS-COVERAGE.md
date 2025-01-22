@@ -137,9 +137,9 @@
 | /v1/loyalties/{campaignId}/members                                         | post   | Add Member                               | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/members/{memberId}                              | get    | Get Member                               | <font color='green'>supported</font> |               |
 | /v1/loyalties/members/{memberId}                                           | get    | Get Member                               | <font color='green'>supported</font> |               |
-| /v1/loyalties/{campaignId}/pending-points                                  | get    | List Campaign Pending Points             |                                      |               |
-| /v1/loyalties/{campaignId}/members/{memberId}/pending-points               | get    | List Member Pending Points               |                                      |               |
-| /v1/loyalties/members/{memberId}/pending-points                            | get    | List Member Pending Points               |                                      |               |
+| /v1/loyalties/{campaignId}/pending-points                                  | get    | List Campaign Pending Points             | <font color='green'>supported</font> |               |
+| /v1/loyalties/{campaignId}/members/{memberId}/pending-points               | get    | List Member Pending Points               | <font color='green'>supported</font> |               |
+| /v1/loyalties/members/{memberId}/pending-points                            | get    | List Member Pending Points               | <font color='green'>supported</font> |               |
 | /v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/activate | post   | Activate Member Pending Points           |                                      |               |
 | /v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/cancel   | post   | Cancel Member Pending Points             |                                      |               |
 | /v1/loyalties/{campaignId}/members/{memberId}/activity                     | get    | List Member Activity                     | <font color='green'>supported</font> |               |

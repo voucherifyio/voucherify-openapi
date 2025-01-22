@@ -11,21 +11,21 @@ export const rawTakeList = {
   //"/v1/loyalties/{campaignId}/transactions": {
   //  get: false,
   //},
-  //"/v1/loyalties/{campaignId}/pending-points": {
-  //  get: false,
-  //}
-  //"/v1/loyalties/{campaignId}/members/{memberId}/pending-points": {
-  //  get: false,
-  //}
-  //"/v1/loyalties/members/{memberId}/pending-points": {
-  //  get: false,
-  //}
-  //"/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/activate": {
-  //  get: false,
-  //}
-  //"/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/cancel": {
-  //  get: false,
-  //}
+  "/v1/loyalties/{campaignId}/pending-points": {
+    get: true,
+  },
+  "/v1/loyalties/{campaignId}/members/{memberId}/pending-points": {
+    get: true,
+  },
+  "/v1/loyalties/members/{memberId}/pending-points": {
+    get: true,
+  },
+  "/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/activate": {
+    get: true,
+  },
+  "/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/cancel": {
+    get: true,
+  },
   "/management/v1/projects/{projectId}/templates/campaigns": {
     get: true,
   },
