@@ -264,7 +264,7 @@ One of:
 | voucher | See: [Simple Voucher](#simple-voucher) |
 | voucher_pending_points_balance | See: [Voucher Balance](#voucher-balance) |
 | order | See: [Simple Order](#simple-order) |
-| pending_points | See: [Loyalty Point Entry](#loyalty-point-entry) |
+| pending_points | See: [Loyalty Pending Point Entry](#loyalty-pending-point-entry) |
 
 ## Event Customer Loyalty Card Points Added
 | Attributes |  Description |
@@ -766,7 +766,7 @@ All of:
 | metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to an order. It can be useful for storing additional information about the order in a structured format. It can be used to define business validation rules or discount formulas.</p> |
 | object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `order` |
 
-## Loyalty Point Entry
+## Loyalty Pending Point Entry
 | Attributes |  Description |
 |:-----|:--------|
 | id</br>`string` | <p>Unique identifier of the pending point entry, assigned by Voucherify.</p> **Example:** <p>lopp_0ffd593d5ad207ba6b</p> |
