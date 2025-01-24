@@ -4,6 +4,16 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2024-01-23
+
+- Added the `pending_points` property to schemas:
+  - `VoucherBase`
+  - `LoyaltyMember`
+  - `RedeemableVoucher`
+  - `SimpleLoyaltyCard`
+  - `LoyaltiesMembersTransfersCreateResponseBody`
+- Added the `pending_points` property to `EarningRuleBase`
+
 ## 2024-01-16
 
 Added the following endpoints:
