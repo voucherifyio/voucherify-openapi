@@ -13,6 +13,8 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - `SimpleLoyaltyCard`
   - `LoyaltiesMembersTransfersCreateResponseBody`
 - Added the `pending_points` property to `EarningRuleBase`
+- Added `PENDING_POINTS_ACTIVATION` to `LoyaltyCardTransactionsType`
+- Added `EventCustomerLoyaltyCardPendingPointsAdded` to `MemberActivityData` and `CustomerActivityData`
 
 ## 2024-01-16
 
