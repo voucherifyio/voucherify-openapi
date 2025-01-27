@@ -7,7 +7,7 @@ import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 import originalOpenAPIContent from "../../reference/OpenAPI.json";
 import _, { omit } from "lodash";
 
-let openAPIContent = originalOpenAPIContent;
+let openAPIContent: any = originalOpenAPIContent;
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
 import { removeNotUsedSchemas } from "./remove-not-used-schemas";
 import { getPathsWithoutDeprecated } from "./get-paths-without-deprecated";

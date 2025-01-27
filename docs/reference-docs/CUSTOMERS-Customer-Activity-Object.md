@@ -22,7 +22,7 @@ order: 20
 
 One of:
 
-[Event Customer Confirmed](#event-customer-confirmed), [Event Customer Created](#event-customer-created), [Event Customer Updated](#event-customer-updated), [Event Customer Deleted](#event-customer-deleted), [Event Customer Referred](#event-customer-referred), [Event Customer Custom Event](#event-customer-custom-event), [Event Customer Segment Entered](#event-customer-segment-entered), [Event Customer Segment Left](#event-customer-segment-left), [Event Customer SMS Sent](#event-customer-sms-sent), [Event Customer SMS Recovered](#event-customer-sms-recovered), [Event Customer SMS Failed](#event-customer-sms-failed), [Event Customer Email Sent](#event-customer-email-sent), [Event Customer Email Recovered](#event-customer-email-recovered), [Event Customer Email Failed](#event-customer-email-failed), [Event Customer ActiveCampaign Sent](#event-customer-activecampaign-sent), [Event Customer ActiveCampaign Recovered](#event-customer-activecampaign-recovered), [Event Customer ActiveCampaign Failed](#event-customer-activecampaign-failed), [Event Customer Braze Sent](#event-customer-braze-sent), [Event Customer Braze Recovered](#event-customer-braze-recovered), [Event Customer Braze Failed](#event-customer-braze-failed), [Event Customer Mailchimp Sent](#event-customer-mailchimp-sent), [Event Customer Mailchimp Recovered](#event-customer-mailchimp-recovered), [Event Customer Mailchimp Failed](#event-customer-mailchimp-failed), [Event Customer Intercom Sent](#event-customer-intercom-sent), [Event Customer Intercom Recovered](#event-customer-intercom-recovered), [Event Customer Intercom Failed](#event-customer-intercom-failed), [Event Customer Shopify Sent](#event-customer-shopify-sent), [Event Customer Shopify Recovered](#event-customer-shopify-recovered), [Event Customer Shopify Failed](#event-customer-shopify-failed), [Event Customer Klaviyo Sent](#event-customer-klaviyo-sent), [Event Customer Klaviyo Recovered](#event-customer-klaviyo-recovered), [Event Customer Klaviyo Failed](#event-customer-klaviyo-failed), [Event Customer Batch Sent](#event-customer-batch-sent), [Event Customer Batch Recovered](#event-customer-batch-recovered), [Event Customer Batch Failed](#event-customer-batch-failed), [Event Customer Rewarded](#event-customer-rewarded), [Event Customer Rewarded Loyalty Points](#event-customer-rewarded-loyalty-points), [Event Customer Gift Voucher Balance Added](#event-customer-gift-voucher-balance-added), [Event Customer Loyalty Card Pending Points Activated](#event-customer-loyalty-card-pending-points-activated), [Event Customer Loyalty Card Pending Points Added](#event-customer-loyalty-card-pending-points-added), [Event Customer Loyalty Card Points Added](#event-customer-loyalty-card-points-added), [Event Customer Loyalty Card Points Transferred](#event-customer-loyalty-card-points-transferred), [Event Customer Loyalty Card Points Expired](#event-customer-loyalty-card-points-expired), [Event Customer Voucher Deleted](#event-customer-voucher-deleted), [Event Customer Publication Succeeded](#event-customer-publication-succeeded), [Event Customer Publication Failed](#event-customer-publication-failed), [Event Customer Validation Succeeded](#event-customer-validation-succeeded), [Event Customer Validation Failed](#event-customer-validation-failed), [Event Customer Redemption Succeeded](#event-customer-redemption-succeeded), [Event Customer Redemption Failed](#event-customer-redemption-failed), [Event Customer Redemption Rollback Succeeded](#event-customer-redemption-rollback-succeeded), [Event Customer Redemption Rollback Failed](#event-customer-redemption-rollback-failed), [Event Customer Order Canceled](#event-customer-order-canceled), [Event Customer Order Created](#event-customer-order-created), [Event Customer Order Fulfilled](#event-customer-order-fulfilled), [Event Customer Order Paid](#event-customer-order-paid), [Event Customer Order Processing](#event-customer-order-processing), [Event Customer Order Updated](#event-customer-order-updated), [Event Customer Reward Redemptions Created](#event-customer-reward-redemptions-created), [Event Customer Reward Redemptions Pending](#event-customer-reward-redemptions-pending), [Event Customer Reward Redemptions Completed](#event-customer-reward-redemptions-completed), [Event Customer Reward Redemptions Rolled Back](#event-customer-reward-redemptions-rolled-back), [Event Customer Loyalty Updated](#event-customer-loyalty-updated), [Event Customer Loyalty Tier Upgraded](#event-customer-loyalty-tier-upgraded), [Event Customer Loyalty Tier Downgraded](#event-customer-loyalty-tier-downgraded), [Event Customer Loyalty Tier Prolonged](#event-customer-loyalty-tier-prolonged), [Event Customer Loyalty Tier Expiration Changed](#event-customer-loyalty-tier-expiration-changed), [Event Customer Loyalty Tier Joined](#event-customer-loyalty-tier-joined), [Event Customer Loyalty Tier Left](#event-customer-loyalty-tier-left), [Event Customer Holder Assignment Created](#event-customer-holder-assignment-created), [Event Customer Holder Assignment Deleted](#event-customer-holder-assignment-deleted)
+[Event Customer Confirmed](#event-customer-confirmed), [Event Customer Created](#event-customer-created), [Event Customer Updated](#event-customer-updated), [Event Customer Deleted](#event-customer-deleted), [Event Customer Referred](#event-customer-referred), [Event Customer Custom Event](#event-customer-custom-event), [Event Customer Segment Entered](#event-customer-segment-entered), [Event Customer Segment Left](#event-customer-segment-left), [Event Customer SMS Sent](#event-customer-sms-sent), [Event Customer SMS Recovered](#event-customer-sms-recovered), [Event Customer SMS Failed](#event-customer-sms-failed), [Event Customer Email Sent](#event-customer-email-sent), [Event Customer Email Recovered](#event-customer-email-recovered), [Event Customer Email Failed](#event-customer-email-failed), [Event Customer ActiveCampaign Sent](#event-customer-activecampaign-sent), [Event Customer ActiveCampaign Recovered](#event-customer-activecampaign-recovered), [Event Customer ActiveCampaign Failed](#event-customer-activecampaign-failed), [Event Customer Braze Sent](#event-customer-braze-sent), [Event Customer Braze Recovered](#event-customer-braze-recovered), [Event Customer Braze Failed](#event-customer-braze-failed), [Event Customer Mailchimp Sent](#event-customer-mailchimp-sent), [Event Customer Mailchimp Recovered](#event-customer-mailchimp-recovered), [Event Customer Mailchimp Failed](#event-customer-mailchimp-failed), [Event Customer Intercom Sent](#event-customer-intercom-sent), [Event Customer Intercom Recovered](#event-customer-intercom-recovered), [Event Customer Intercom Failed](#event-customer-intercom-failed), [Event Customer Shopify Sent](#event-customer-shopify-sent), [Event Customer Shopify Recovered](#event-customer-shopify-recovered), [Event Customer Shopify Failed](#event-customer-shopify-failed), [Event Customer Klaviyo Sent](#event-customer-klaviyo-sent), [Event Customer Klaviyo Recovered](#event-customer-klaviyo-recovered), [Event Customer Klaviyo Failed](#event-customer-klaviyo-failed), [Event Customer Batch Sent](#event-customer-batch-sent), [Event Customer Batch Recovered](#event-customer-batch-recovered), [Event Customer Batch Failed](#event-customer-batch-failed), [Event Customer Rewarded](#event-customer-rewarded), [Event Customer Rewarded Loyalty Points](#event-customer-rewarded-loyalty-points), [Event Customer Gift Voucher Balance Added](#event-customer-gift-voucher-balance-added), [Event Customer Loyalty Card Pending Points Activated](#event-customer-loyalty-card-pending-points-activated), [Event Customer Loyalty Card Pending Points Added](#event-customer-loyalty-card-pending-points-added), [Event Customer Loyalty Card Pending Points Canceled](#event-customer-loyalty-card-pending-points-canceled), [Event Customer Loyalty Card Points Added](#event-customer-loyalty-card-points-added), [Event Customer Loyalty Card Points Transferred](#event-customer-loyalty-card-points-transferred), [Event Customer Loyalty Card Points Expired](#event-customer-loyalty-card-points-expired), [Event Customer Voucher Deleted](#event-customer-voucher-deleted), [Event Customer Publication Succeeded](#event-customer-publication-succeeded), [Event Customer Publication Failed](#event-customer-publication-failed), [Event Customer Validation Succeeded](#event-customer-validation-succeeded), [Event Customer Validation Failed](#event-customer-validation-failed), [Event Customer Redemption Succeeded](#event-customer-redemption-succeeded), [Event Customer Redemption Failed](#event-customer-redemption-failed), [Event Customer Redemption Rollback Succeeded](#event-customer-redemption-rollback-succeeded), [Event Customer Redemption Rollback Failed](#event-customer-redemption-rollback-failed), [Event Customer Order Canceled](#event-customer-order-canceled), [Event Customer Order Created](#event-customer-order-created), [Event Customer Order Fulfilled](#event-customer-order-fulfilled), [Event Customer Order Paid](#event-customer-order-paid), [Event Customer Order Processing](#event-customer-order-processing), [Event Customer Order Updated](#event-customer-order-updated), [Event Customer Reward Redemptions Created](#event-customer-reward-redemptions-created), [Event Customer Reward Redemptions Pending](#event-customer-reward-redemptions-pending), [Event Customer Reward Redemptions Completed](#event-customer-reward-redemptions-completed), [Event Customer Reward Redemptions Rolled Back](#event-customer-reward-redemptions-rolled-back), [Event Customer Loyalty Updated](#event-customer-loyalty-updated), [Event Customer Loyalty Tier Upgraded](#event-customer-loyalty-tier-upgraded), [Event Customer Loyalty Tier Downgraded](#event-customer-loyalty-tier-downgraded), [Event Customer Loyalty Tier Prolonged](#event-customer-loyalty-tier-prolonged), [Event Customer Loyalty Tier Expiration Changed](#event-customer-loyalty-tier-expiration-changed), [Event Customer Loyalty Tier Joined](#event-customer-loyalty-tier-joined), [Event Customer Loyalty Tier Left](#event-customer-loyalty-tier-left), [Event Customer Holder Assignment Created](#event-customer-holder-assignment-created), [Event Customer Holder Assignment Deleted](#event-customer-holder-assignment-deleted)
 
 ## Event Source
 | Attributes |  Description |
@@ -275,6 +275,17 @@ One of:
 | voucher | See: [Simple Voucher](#simple-voucher) |
 | voucher_pending_points_balance | See: [Voucher Balance](#voucher-balance) |
 | order | See: [Simple Order](#simple-order) |
+| pending_points | See: [Loyalty Pending Point Entry](#loyalty-pending-point-entry) |
+
+## Event Customer Loyalty Card Pending Points Canceled
+| Attributes |  Description |
+|:-----|:--------|
+| customer | See: [Simple Customer](#simple-customer) |
+| campaign | See: [Simple Campaign](#simple-campaign) |
+| voucher | See: [Simple Voucher](#simple-voucher) |
+| voucher_pending_points_balance | See: [Voucher Balance](#voucher-balance) |
+| order | See: [Simple Order](#simple-order) |
+| redemption | See: [Simple Redemption](#simple-redemption) |
 | pending_points | See: [Loyalty Pending Point Entry](#loyalty-pending-point-entry) |
 
 ## Event Customer Loyalty Card Points Added
@@ -797,6 +808,24 @@ All of:
 | created_at</br>`string` | <p>Timestamp representing the date and time when the pending point entry was created. The value is shown in the ISO 8601 format.</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the pending point entry was modified. The value is shown in the ISO 8601 format.</p> |
 
+## Simple Redemption
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique redemption ID.</p> **Example:** <p>r_0bc92f81a6801f9bca</p> |
+| customer_id</br>`string`, `null` | <p>Unique customer ID of the redeeming customer.</p> **Example:** <p>cust_i8t5Tt6eiKG5K79KQlJ0Vs64</p> |
+| tracking_id</br>`string` | <p>Hashed customer source ID.</p> |
+| date</br>`string` | <p>Timestamp representing the date and time when the redemption was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
+| amount</br>`integer` | <p>For gift cards, this is a positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the number of redeemed credits.<br>For loyalty cards, this is the number of loyalty points used in the transaction.<br>In the case of redemption rollback, the numbers are expressed as negative integers.</p> **Example:** <p>10000</p> |
+| order | See: [Simple Order](#simple-order) |
+| reward | See: [Simple Redemption Reward Result](#simple-redemption-reward-result) |
+| customer | See: [Simple Customer](#simple-customer) |
+| result</br>`string` | <p>Redemption result.</p> Available values: `SUCCESS`, `FAILURE` |
+| status</br>`string`, `null` | Available values: `SUCCEEDED`, `FAILED`, `ROLLED BACK` |
+| voucher | <p>Defines the details of the voucher being redeemed.</p> [Simple Voucher](#simple-voucher) |
+| promotion_tier | See: [Simple Promotion Tier](#simple-promotion-tier) |
+| redemption</br>`string` | <p>Unique redemption ID of the parent redemption.</p> **Example:** <p>r_0c656311b5878a2031</p> |
+| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the <code>redemption</code>.</p> |
+
 ## Loyalty Point Bucket
 | Attributes |  Description |
 |:-----|:--------|
@@ -839,24 +868,6 @@ All of:
 | promotion_tier | See: [Simple Promotion Tier](#simple-promotion-tier) |
 | promotion_stack | See: [Simple Promotion Stack](#simple-promotion-stack) |
 | redemption | See: [Simple Redemption](#simple-redemption) |
-
-## Simple Redemption
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique redemption ID.</p> **Example:** <p>r_0bc92f81a6801f9bca</p> |
-| customer_id</br>`string`, `null` | <p>Unique customer ID of the redeeming customer.</p> **Example:** <p>cust_i8t5Tt6eiKG5K79KQlJ0Vs64</p> |
-| tracking_id</br>`string` | <p>Hashed customer source ID.</p> |
-| date</br>`string` | <p>Timestamp representing the date and time when the redemption was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
-| amount</br>`integer` | <p>For gift cards, this is a positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the number of redeemed credits.<br>For loyalty cards, this is the number of loyalty points used in the transaction.<br>In the case of redemption rollback, the numbers are expressed as negative integers.</p> **Example:** <p>10000</p> |
-| order | See: [Simple Order](#simple-order) |
-| reward | See: [Simple Redemption Reward Result](#simple-redemption-reward-result) |
-| customer | See: [Simple Customer](#simple-customer) |
-| result</br>`string` | <p>Redemption result.</p> Available values: `SUCCESS`, `FAILURE` |
-| status</br>`string`, `null` | Available values: `SUCCEEDED`, `FAILED`, `ROLLED BACK` |
-| voucher | <p>Defines the details of the voucher being redeemed.</p> [Simple Voucher](#simple-voucher) |
-| promotion_tier | See: [Simple Promotion Tier](#simple-promotion-tier) |
-| redemption</br>`string` | <p>Unique redemption ID of the parent redemption.</p> **Example:** <p>r_0c656311b5878a2031</p> |
-| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the <code>redemption</code>.</p> |
 
 ## Event Customer Order
 | Attributes |  Description |
@@ -1168,6 +1179,15 @@ Available values: `PENDING_POINTS_ACTIVATION`, `POINTS_ACCRUAL`, `POINTS_REDEMPT
 | earning_rule</br>`object` | <p>Contains information about the earning rule.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of an earning rule, assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source</br><code>object</code></td><td style="text-align:left"><p>Contains the custom earning rule name.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">banner</br><code>string</code></td><td style="text-align:left"><p>Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard.</p></td></tr></tbody></table></td></tr></tbody></table> |
 | order</br>`object` | <p>Details about the order that caused adding pending points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique order identifier, assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>User-defined order identifier.</p></td></tr></tbody></table> |
 
+## Simple Promotion Tier
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique promotion tier ID.</p> **Example:** <p>promo_63fYCt81Aw0h7lzyRkrGZh9p</p> |
+| name</br>`string` | <p>Name of the promotion tier.</p> |
+| banner</br>`string` | <p>Text to be displayed to your customers on your website.</p> |
+| campaign</br>`object` | <p>Contains details about promotion tier's parent campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique campaign ID.</p></td></tr></tbody></table> |
+| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a promotion tier. The metadata object stores all custom attributes assigned to the promotion tier.</p> |
+
 ## List Publications Item Base
 | Attributes |  Description |
 |:-----|:--------|
@@ -1193,15 +1213,6 @@ Available values: `PENDING_POINTS_ACTIVATION`, `POINTS_ACCRUAL`, `POINTS_REDEMPT
 | loyalty_card</br>`object` | <p>Defines the loyalty card details.</p> |
 | discount | See: [Discount](#discount) |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
-
-## Simple Promotion Tier
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique promotion tier ID.</p> **Example:** <p>promo_63fYCt81Aw0h7lzyRkrGZh9p</p> |
-| name</br>`string` | <p>Name of the promotion tier.</p> |
-| banner</br>`string` | <p>Text to be displayed to your customers on your website.</p> |
-| campaign</br>`object` | <p>Contains details about promotion tier's parent campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique campaign ID.</p></td></tr></tbody></table> |
-| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a promotion tier. The metadata object stores all custom attributes assigned to the promotion tier.</p> |
 
 ## Simple Promotion Stack
 | Attributes |  Description |
