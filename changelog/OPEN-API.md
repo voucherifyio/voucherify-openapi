@@ -4,7 +4,7 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-## 2024-01-23
+## 2024-01-27
 
 - Added the `pending_points` property to schemas:
   - `VoucherBase`
@@ -12,10 +12,11 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - `RedeemableVoucher`
   - `SimpleLoyaltyCard`
   - `LoyaltiesMembersTransfersCreateResponseBody`
+  - `LoyaltyCardTransaction`
 - Added the `pending_points` property to `EarningRuleBase`
 - Added `PENDING_POINTS_ACTIVATION` to `LoyaltyCardTransactionsType`
 - Added the `pending_points` property to `VoucherTransaction`
-- Added `EventCustomerLoyaltyCardPendingPointsAdded` to `MemberActivityData` and `CustomerActivityData`
+- Added `EventCustomerLoyaltyCardPendingPointsActivated` `EventCustomerLoyaltyCardPendingPointsAdded`, and `EventCustomerLoyaltyCardPendingPointsCanceled` to `MemberActivityData` and `CustomerActivityData`
 
 ## 2024-01-16
 
