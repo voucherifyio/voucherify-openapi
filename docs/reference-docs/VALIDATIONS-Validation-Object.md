@@ -43,7 +43,7 @@ One of:
 | code</br>`string` | <p>Voucher code.</p> |
 | error</br>`object` | <p>Detailed failure cause for the invalid voucher if the reason has a translation defined in the Dashboard → Project Settings → Error Messages.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">code</br><code>number</code></td><td style="text-align:left"><p>Voucher code.</p></td></tr><tr><td style="text-align:left">key</br><code>string</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">message</br><code>string</code></td><td style="text-align:left"><p>Customized error message.</p></td></tr><tr><td style="text-align:left">details</br><code>string</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">request_id</br><code>string</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">resource_id</br><code>string</code></td><td style="text-align:left"></td></tr><tr><td style="text-align:left">resource_type</br><code>string</code></td><td style="text-align:left"></td></tr></tbody></table> |
 | tracking_id</br>`string` | <p>Hashed customer source ID.</p> |
-| customer_id</br>`string` | <p>Unique customer ID of the customer making the purchase.</p> |
+| customer_id</br>`string` | <p>Unique customer identifier of the customer making the purchase. The ID is assigned by Voucherify.</p> |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the code. A set of key/value pairs that you can attach to a voucher object. It can be useful for storing additional information about the voucher in a structured format.</p> |
 | reason</br>`string` |  |
 
@@ -96,7 +96,7 @@ One of:
 | object</br>`string` | <p>The type of the object represented by JSON.</p> Available values: `order` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the order was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | updated_at</br>`string`, `null` | <p>Timestamp representing the date and time when the order was last updated in ISO 8601 format.</p> **Example:** <p>2021-12-22T10:14:45.316Z</p> |
-| customer_id</br>`string`, `null` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
+| customer_id</br>`string`, `null` | <p>Unique customer identifier of the customer making the purchase. The ID is assigned by Voucherify.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
 | referrer_id</br>`string`, `null` | <p>Unique referrer ID.</p> **Example:** <p>cust_nM4jqPiaXUvQdVSA6vTRUnix</p> |
 | customer | [Customer Id](#customer-id) |
 | referrer | [Referrer Id](#referrer-id) |
