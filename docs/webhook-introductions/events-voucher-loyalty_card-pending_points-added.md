@@ -1,4 +1,4 @@
-The `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.ADDED` event indicates that loyalty pending points have been successfully added to a customer's loyalty card associated with a voucher. The pending points activate automatically after a predefined time set in days or they can be activated manually with the [**POST** Activate Member Pending Points](ref:activate-member-pending-points) endpoint.
+The `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.ADDED` event indicates that loyalty pending points have been successfully added to a customer's loyalty card associated with a voucher. The pending points activate automatically after a predefined time set in days or they can be activated manually with the [**POST** Activate Member Pending Points](ref:activate-member-pending-points) endpoint. The pending points can be also canceled manually with the [**POST** Cancel Member Pending Points](ref:cancel-member-pending-points) endpoint.
 
 > 📘 Webhook documentation
 >

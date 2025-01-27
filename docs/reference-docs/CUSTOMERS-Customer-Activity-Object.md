@@ -285,7 +285,7 @@ One of:
 | voucher | See: [Simple Voucher](#simple-voucher) |
 | voucher_pending_points_balance | See: [Voucher Balance](#voucher-balance) |
 | order | See: [Simple Order](#simple-order) |
-| redemption | See: [Simple Redemption](#simple-redemption) |
+| redemption | <p>Returns a null.</p> |
 | pending_points | See: [Loyalty Pending Point Entry](#loyalty-pending-point-entry) |
 
 ## Event Customer Loyalty Card Points Added
@@ -808,24 +808,6 @@ All of:
 | created_at</br>`string` | <p>Timestamp representing the date and time when the pending point entry was created. The value is shown in the ISO 8601 format.</p> |
 | updated_at</br>`string` | <p>Timestamp representing the date and time when the pending point entry was modified. The value is shown in the ISO 8601 format.</p> |
 
-## Simple Redemption
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique redemption ID.</p> **Example:** <p>r_0bc92f81a6801f9bca</p> |
-| customer_id</br>`string`, `null` | <p>Unique customer ID of the redeeming customer.</p> **Example:** <p>cust_i8t5Tt6eiKG5K79KQlJ0Vs64</p> |
-| tracking_id</br>`string` | <p>Hashed customer source ID.</p> |
-| date</br>`string` | <p>Timestamp representing the date and time when the redemption was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
-| amount</br>`integer` | <p>For gift cards, this is a positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the number of redeemed credits.<br>For loyalty cards, this is the number of loyalty points used in the transaction.<br>In the case of redemption rollback, the numbers are expressed as negative integers.</p> **Example:** <p>10000</p> |
-| order | See: [Simple Order](#simple-order) |
-| reward | See: [Simple Redemption Reward Result](#simple-redemption-reward-result) |
-| customer | See: [Simple Customer](#simple-customer) |
-| result</br>`string` | <p>Redemption result.</p> Available values: `SUCCESS`, `FAILURE` |
-| status</br>`string`, `null` | Available values: `SUCCEEDED`, `FAILED`, `ROLLED BACK` |
-| voucher | <p>Defines the details of the voucher being redeemed.</p> [Simple Voucher](#simple-voucher) |
-| promotion_tier | See: [Simple Promotion Tier](#simple-promotion-tier) |
-| redemption</br>`string` | <p>Unique redemption ID of the parent redemption.</p> **Example:** <p>r_0c656311b5878a2031</p> |
-| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the <code>redemption</code>.</p> |
-
 ## Loyalty Point Bucket
 | Attributes |  Description |
 |:-----|:--------|
@@ -868,6 +850,24 @@ All of:
 | promotion_tier | See: [Simple Promotion Tier](#simple-promotion-tier) |
 | promotion_stack | See: [Simple Promotion Stack](#simple-promotion-stack) |
 | redemption | See: [Simple Redemption](#simple-redemption) |
+
+## Simple Redemption
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique redemption ID.</p> **Example:** <p>r_0bc92f81a6801f9bca</p> |
+| customer_id</br>`string`, `null` | <p>Unique customer ID of the redeeming customer.</p> **Example:** <p>cust_i8t5Tt6eiKG5K79KQlJ0Vs64</p> |
+| tracking_id</br>`string` | <p>Hashed customer source ID.</p> |
+| date</br>`string` | <p>Timestamp representing the date and time when the redemption was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
+| amount</br>`integer` | <p>For gift cards, this is a positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the number of redeemed credits.<br>For loyalty cards, this is the number of loyalty points used in the transaction.<br>In the case of redemption rollback, the numbers are expressed as negative integers.</p> **Example:** <p>10000</p> |
+| order | See: [Simple Order](#simple-order) |
+| reward | See: [Simple Redemption Reward Result](#simple-redemption-reward-result) |
+| customer | See: [Simple Customer](#simple-customer) |
+| result</br>`string` | <p>Redemption result.</p> Available values: `SUCCESS`, `FAILURE` |
+| status</br>`string`, `null` | Available values: `SUCCEEDED`, `FAILED`, `ROLLED BACK` |
+| voucher | <p>Defines the details of the voucher being redeemed.</p> [Simple Voucher](#simple-voucher) |
+| promotion_tier | See: [Simple Promotion Tier](#simple-promotion-tier) |
+| redemption</br>`string` | <p>Unique redemption ID of the parent redemption.</p> **Example:** <p>r_0c656311b5878a2031</p> |
+| object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the <code>redemption</code>.</p> |
 
 ## Event Customer Order
 | Attributes |  Description |
@@ -1179,15 +1179,6 @@ Available values: `PENDING_POINTS_ACTIVATION`, `POINTS_ACCRUAL`, `POINTS_REDEMPT
 | earning_rule</br>`object` | <p>Contains information about the earning rule.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of an earning rule, assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source</br><code>object</code></td><td style="text-align:left"><p>Contains the custom earning rule name.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">banner</br><code>string</code></td><td style="text-align:left"><p>Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard.</p></td></tr></tbody></table></td></tr></tbody></table> |
 | order</br>`object` | <p>Details about the order that caused adding pending points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique order identifier, assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">source_id</br><code>string</code>, <code>null</code></td><td style="text-align:left"><p>User-defined order identifier.</p></td></tr></tbody></table> |
 
-## Simple Promotion Tier
-| Attributes |  Description |
-|:-----|:--------|
-| id</br>`string` | <p>Unique promotion tier ID.</p> **Example:** <p>promo_63fYCt81Aw0h7lzyRkrGZh9p</p> |
-| name</br>`string` | <p>Name of the promotion tier.</p> |
-| banner</br>`string` | <p>Text to be displayed to your customers on your website.</p> |
-| campaign</br>`object` | <p>Contains details about promotion tier's parent campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique campaign ID.</p></td></tr></tbody></table> |
-| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a promotion tier. The metadata object stores all custom attributes assigned to the promotion tier.</p> |
-
 ## List Publications Item Base
 | Attributes |  Description |
 |:-----|:--------|
@@ -1213,6 +1204,15 @@ Available values: `PENDING_POINTS_ACTIVATION`, `POINTS_ACCRUAL`, `POINTS_REDEMPT
 | loyalty_card</br>`object` | <p>Defines the loyalty card details.</p> |
 | discount | See: [Discount](#discount) |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
+
+## Simple Promotion Tier
+| Attributes |  Description |
+|:-----|:--------|
+| id</br>`string` | <p>Unique promotion tier ID.</p> **Example:** <p>promo_63fYCt81Aw0h7lzyRkrGZh9p</p> |
+| name</br>`string` | <p>Name of the promotion tier.</p> |
+| banner</br>`string` | <p>Text to be displayed to your customers on your website.</p> |
+| campaign</br>`object` | <p>Contains details about promotion tier's parent campaign.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique campaign ID.</p></td></tr></tbody></table> |
+| metadata</br>`object` | <p>A set of custom key/value pairs that you can attach to a promotion tier. The metadata object stores all custom attributes assigned to the promotion tier.</p> |
 
 ## Simple Promotion Stack
 | Attributes |  Description |
