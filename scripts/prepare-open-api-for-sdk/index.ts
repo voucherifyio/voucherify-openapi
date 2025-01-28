@@ -148,9 +148,7 @@ const main = async (languageOptions: LanguageOptions) => {
   openAPIContent.components.schemas.LoyaltyPointsBucket.properties.expires_at.format =
     "date-time";
   // Remove expand query parameter in GET v1/loyalties
-  openAPIContent.paths[
-    "/v1/loyalties"
-  ].get.parameters = openAPIContent.paths[
+  openAPIContent.paths["/v1/loyalties"].get.parameters = openAPIContent.paths[
     "/v1/loyalties"
   ].get.parameters.filter((parameter) => parameter.name !== "expand");
   //New parameter
@@ -215,12 +213,18 @@ const main = async (languageOptions: LanguageOptions) => {
   };
   openAPIContent.components.schemas = Object.fromEntries(
     Object.entries(openAPIContent.components.schemas).map(([key, value]) => {
-      if (key.endsWith("Body")) {
+      if (key.endsWith("Body") || ["RedemptionRollback"].includes(key)) {
         return [key, value];
       }
       return [key, fixOrderCalculated(value)];
     }),
   ) as any;
+
+  openAPIContent.components.schemas.LoyaltyCardTransactionsType.enum =
+    openAPIContent.components.schemas.LoyaltyCardTransactionsType.enum.map(
+      (v) =>
+        v === "PENDING_POINTS_ACTIVATION" ? "POINTS_PENDING_ACTIVATION" : v,
+    );
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
@@ -311,6 +315,27 @@ const main = async (languageOptions: LanguageOptions) => {
     paths: pathsWithFixedResponses,
   });
   ////////////////
+  //fix order breaking change - in next major remove it.:
+  [
+    "ClientQualificationsCheckEligibilityResponseBody",
+    "ClientRedemptionsRedeemResponseBody",
+    "ClientValidationsValidateResponseBody",
+    "QualificationsCheckEligibilityResponseBody",
+    "RedemptionRollback",
+    "RedemptionsRollbackCreateResponseBody",
+    "RedemptionsRollbacksCreateResponseBody",
+    "ValidationsValidateResponseBody",
+    "RedemptionsRedeemResponseBody",
+  ].forEach((key) => {
+    newOpenApiFile.components.schemas[key].properties.order = {
+      $ref: "#/components/schemas/OrderCalculated",
+    };
+  });
+  newOpenApiFile.components.schemas.OrdersListResponseBody.properties.orders.items =
+    {
+      $ref: "#/components/schemas/OrderCalculated",
+    };
+  ///
   newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
     newOpenApiFile.components.schemas.LoyaltyPointsBucket;
   newOpenApiFile.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =
