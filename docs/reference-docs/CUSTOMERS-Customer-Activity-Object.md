@@ -285,7 +285,6 @@ One of:
 | voucher | See: [Simple Voucher](#simple-voucher) |
 | voucher_pending_points_balance | See: [Voucher Balance](#voucher-balance) |
 | order | See: [Simple Order](#simple-order) |
-| redemption | <p>Returns a null.</p> |
 | pending_points | See: [Loyalty Pending Point Entry](#loyalty-pending-point-entry) |
 
 ## Event Customer Loyalty Card Points Added

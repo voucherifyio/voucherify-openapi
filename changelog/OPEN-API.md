@@ -17,7 +17,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - Added `PENDING_POINTS_ACTIVATION` to `LoyaltyCardTransactionsType`
 - Added the `pending_points` property to `VoucherTransaction`, `LoyaltyCardTransaction`
 - Added new schemas `EventCustomerLoyaltyCardPendingPointsActivated` `EventCustomerLoyaltyCardPendingPointsAdded`, and `EventCustomerLoyaltyCardPendingPointsCanceled` to `MemberActivityData` and `CustomerActivityData`
-- Added `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.ACTIVATED` and associated schemas to OpenAPIWebhooks.json
+- Added `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.ACTIVATED` `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.ADDED`, and `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.CANCELED` together with associated schemas to OpenAPIWebhooks.json
 
 ## 2024-01-16
 
