@@ -9296,6 +9296,80 @@
         },
         "description": "Response body schema for **GET** `/loyalties/{campaignId}/members/{memberId}` and **GET** `/loyalties/members/{memberId}`."
       },
+      "LoyaltiesMembersPendingPointsActivateResponseBody": {
+        "title": "LoyaltiesMembersPendingPointsActivateResponseBody",
+        "type": "object",
+        "description": "Response body schema for **POST** `/loyalties/members/{memberId}/pending-points/{pendingPointsId}/activate`.",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "The number of pending points added to the loyalty card.",
+            "nullable": true
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of points incurred over the lifespan of the loyalty card, minus the expired points.",
+            "nullable": true
+          },
+          "balance": {
+            "type": "integer",
+            "description": "The current number of loyalty points after the pendint points have been added.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the voucher being modified. For pending points, it is always `loyalty_card`.",
+            "default": "loyalty_card",
+            "enum": [
+              "loyalty_card"
+            ],
+            "nullable": true
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. Default is `balance`.",
+            "default": "balance",
+            "enum": [
+              "balance"
+            ],
+            "nullable": true
+          },
+          "related_object": {
+            "title": "LoyaltiesMembersPendingPointsActivateResponseBodyRelatedObject",
+            "type": "object",
+            "description": "Defines the resource that is being modified.",
+            "required": [],
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The object being modified, i.e. `voucher`.",
+                "default": "voucher",
+                "enum": [
+                  "voucher"
+                ],
+                "nullable": true
+              },
+              "id": {
+                "type": "string",
+                "description": "Identifies the voucher that is being modified. This is the unique identifer that was assigned by Voucherify.",
+                "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq",
+                "nullable": true
+              }
+            },
+            "nullable": true
+          },
+          "operation_type": {
+            "type": "string",
+            "description": "The type of the operation being performed.",
+            "default": "MANUAL",
+            "enum": [
+              "MANUAL"
+            ],
+            "nullable": true
+          }
+        },
+        "required": []
+      },
       "LoyaltiesMembersPendingPointsListResponseBody": {
         "title": "LoyaltiesMembersPendingPointsListResponseBody",
         "type": "object",
@@ -56522,7 +56596,50 @@
           "required": true,
           "description": "Unique pending point identifier, assigned by Voucherify."
         }
-      ]
+      ],
+      "post": {
+        "operationId": "activate-member-pending-points",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "Activate Member Pending Points",
+        "description": ">🚧 Beta endpoint\nThe endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\nAll current parameters and fields are listed and described.\nActivate manually the pending points and add them to the loyalty card. The pending points are determined by the pending point ID.\nOnce activated, the pending point entry with that ID is not listed by the endpoints: List member (with campaign ID, without campaign ID), List campaign pending points.\nThis **POST** method does not require a request body.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns details about the activated pending points, the current point balance, and loyalty card in general.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMembersPendingPointsActivateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "points": 1,
+                      "total": 11,
+                      "balance": 10,
+                      "type": "loyalty_card",
+                      "object": "balance",
+                      "related_object": {
+                        "type": "voucher",
+                        "id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc"
+                      },
+                      "operation_type": "MANUAL"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/cancel": {
       "parameters": [
@@ -56544,7 +56661,27 @@
           "required": true,
           "description": "Unique pending point identifier, assigned by Voucherify."
         }
-      ]
+      ],
+      "post": {
+        "operationId": "cancel-member-pending-points",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "Cancel Member Pending Points",
+        "description": ">🚧 Beta endpoint\nThe endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\nAll current parameters and fields are listed and described.\nCancel manually the pending points for the loyalty card. The pending points are determined by the pending point ID.\nOnce canceled, the pending point entry with that ID is not listed by the endpoints: List member (with campaign ID, without campaign ID), List campaign pending points.\nThis **POST** method does not require a request body and it returns an empty, 204, response.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if the pending points are canceled successfully."
+          }
+        }
+      }
     },
     "/v1/loyalties/{campaignId}/members/{memberId}/activity": {
       "parameters": [
