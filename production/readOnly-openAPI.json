@@ -3863,6 +3863,10 @@
               "customer.rewarded",
               "customer.rewarded.loyalty_points",
               "customer.voucher.gift.balance_added",
+              "customer.voucher.loyalty_card.pending_points.activated",
+              "customer.voucher.loyalty_card.pending_points.added",
+              "customer.voucher.loyalty_card.pending_points.canceled",
+              "customer.voucher.loyalty_card.points_activated",
               "customer.voucher.loyalty_card.points_added",
               "customer.voucher.loyalty_card.points_transferred",
               "customer.voucher.loyalty_card.points_expired",
@@ -3905,56 +3909,7 @@
                 "$ref": "#/components/schemas/CustomerActivityData"
               },
               "event_source": {
-                "type": "object",
-                "description": "Contains the source of the object that initiated the sendout.",
-                "required": [],
-                "properties": {
-                  "channel": {
-                    "type": "string",
-                    "description": "Determines the channel that initiated the sendout.",
-                    "enum": [
-                      "USER_PORTAL",
-                      "API",
-                      "CLIENT_API",
-                      "INTERNAL"
-                    ],
-                    "example": "API",
-                    "nullable": true
-                  },
-                  "user": {
-                    "type": "object",
-                    "description": "Defines the user who triggered the event.",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "Unique identifier of the user.",
-                        "example": "user_xyzfghSTprSTUVWXYlk6tuvXYst7FGH7",
-                        "nullable": true
-                      }
-                    },
-                    "nullable": true
-                  },
-                  "api_key": {
-                    "type": "object",
-                    "description": "Determines the API key used to initiate the sendout.",
-                    "required": [],
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "Channel name in the application keys.",
-                        "nullable": true
-                      },
-                      "app_id": {
-                        "type": "string",
-                        "description": "Contains the application ID from the Voucherify API key pair.",
-                        "example": "1XXXX5XX-0XXX-XXXb-X7XX-XX2XXaXXX6XX",
-                        "nullable": true
-                      }
-                    },
-                    "nullable": true
-                  }
-                },
-                "nullable": true
+                "$ref": "#/components/schemas/EventSource"
               }
             },
             "nullable": true
@@ -4092,6 +4047,15 @@
           },
           {
             "$ref": "#/components/schemas/EventCustomerGiftVoucherBalanceAdded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyCardPendingPointsActivated"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyCardPendingPointsAdded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyCardPendingPointsCanceled"
           },
           {
             "$ref": "#/components/schemas/EventCustomerLoyaltyCardPointsAdded"
@@ -5654,6 +5618,28 @@
             },
             "nullable": true
           },
+          "pending_points": {
+            "type": "object",
+            "description": "Defines the configuration for pending points. Pending points can be used only with the `order.paid` event.",
+            "properties": {
+              "period_type": {
+                "type": "string",
+                "description": "Defines the type of the period during which the points are in the pending state. Currently, only `DAY` value is accepted.",
+                "enum": [
+                  "DAY"
+                ],
+                "nullable": true
+              },
+              "period_value": {
+                "type": "integer",
+                "description": "Defines for how long the points are in the pending state. The minimum value is 1, maximum is 90.",
+                "minimum": 1,
+                "maximum": 90,
+                "nullable": true
+              }
+            },
+            "nullable": true
+          },
           "source": {
             "type": "object",
             "required": [],
@@ -6655,7 +6641,7 @@
                         "properties": {
                           "id": {
                             "type": "string",
-                            "description": "Unique earning rule ID.",
+                            "description": "Unique identifier of an earning rule, assigned by Voucherify.",
                             "nullable": true
                           },
                           "source": {
@@ -6697,10 +6683,12 @@
                         "properties": {
                           "id": {
                             "type": "string",
+                            "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
                             "nullable": true
                           },
                           "name": {
                             "type": "string",
+                            "description": "User-defined name of the loyalty tier.",
                             "nullable": true
                           }
                         },
@@ -6922,6 +6910,109 @@
           }
         ]
       },
+      "EventCustomerLoyaltyCardPendingPointsActivated": {
+        "title": "Event Customer Loyalty Card Pending Points Activated",
+        "description": "Event data object schema for `customer.voucher.loyalty_card.pending_points.activated`.",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "balance": {
+            "$ref": "#/components/schemas/VoucherBalance"
+          },
+          "order": {
+            "$ref": "#/components/schemas/SimpleOrder"
+          },
+          "transaction": {
+            "$ref": "#/components/schemas/VoucherTransaction"
+          },
+          "pending_points": {
+            "$ref": "#/components/schemas/LoyaltyPendingPoints"
+          }
+        },
+        "required": [
+          "customer",
+          "campaign",
+          "voucher",
+          "balance",
+          "order",
+          "transaction",
+          "pending_points"
+        ]
+      },
+      "EventCustomerLoyaltyCardPendingPointsAdded": {
+        "title": "Event Customer Loyalty Card Pending Points Added",
+        "description": "Event data object schema for `customer.voucher.loyalty_card.pending_points.added`.",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "voucher_pending_points_balance": {
+            "$ref": "#/components/schemas/VoucherBalance"
+          },
+          "order": {
+            "$ref": "#/components/schemas/SimpleOrder"
+          },
+          "pending_points": {
+            "$ref": "#/components/schemas/LoyaltyPendingPoints"
+          }
+        },
+        "required": [
+          "customer",
+          "campaign",
+          "voucher",
+          "voucher_pending_points_balance",
+          "order",
+          "pending_points"
+        ]
+      },
+      "EventCustomerLoyaltyCardPendingPointsCanceled": {
+        "title": "Event Customer Loyalty Card Pending Points Canceled",
+        "description": "Event data object schema for `customer.voucher.loyalty_card.pending_points.canceled`.",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "voucher_pending_points_balance": {
+            "$ref": "#/components/schemas/VoucherBalance"
+          },
+          "order": {
+            "$ref": "#/components/schemas/SimpleOrder"
+          },
+          "pending_points": {
+            "$ref": "#/components/schemas/LoyaltyPendingPoints"
+          }
+        },
+        "required": [
+          "customer",
+          "campaign",
+          "voucher",
+          "voucher_pending_points_balance",
+          "order",
+          "pending_points"
+        ]
+      },
       "EventCustomerLoyaltyCardPointsAdded": {
         "title": "Event Customer Loyalty Card Points Added",
         "description": "Event data object schema for `customer.voucher.loyalty_card.points_added`.",
@@ -6996,7 +7087,7 @@
                         "properties": {
                           "id": {
                             "type": "string",
-                            "description": "Unique earning rule ID.",
+                            "description": "Unique identifier of an earning rule, assigned by Voucherify.",
                             "nullable": true
                           },
                           "source": {
@@ -7038,10 +7129,12 @@
                         "properties": {
                           "id": {
                             "type": "string",
+                            "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
                             "nullable": true
                           },
                           "name": {
                             "type": "string",
+                            "description": "User-defined name of the loyalty tier.",
                             "nullable": true
                           }
                         },
@@ -7259,7 +7352,7 @@
                         "properties": {
                           "id": {
                             "type": "string",
-                            "description": "Unique earning rule ID.",
+                            "description": "Unique identifier of an earning rule, assigned by Voucherify.",
                             "nullable": true
                           },
                           "source": {
@@ -7301,10 +7394,12 @@
                         "properties": {
                           "id": {
                             "type": "string",
+                            "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
                             "nullable": true
                           },
                           "name": {
                             "type": "string",
+                            "description": "User-defined name of the loyalty tier.",
                             "nullable": true
                           }
                         },
@@ -8366,7 +8461,7 @@
                         "properties": {
                           "id": {
                             "type": "string",
-                            "description": "Unique earning rule ID.",
+                            "description": "Unique identifier of an earning rule, assigned by Voucherify.",
                             "nullable": true
                           },
                           "source": {
@@ -8408,10 +8503,12 @@
                         "properties": {
                           "id": {
                             "type": "string",
+                            "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
                             "nullable": true
                           },
                           "name": {
                             "type": "string",
+                            "description": "User-defined name of the loyalty tier.",
                             "nullable": true
                           }
                         },
@@ -8657,6 +8754,59 @@
         "required": [
           "customer"
         ]
+      },
+      "EventSource": {
+        "type": "object",
+        "title": "Event Source",
+        "description": "Contains the source of the object that initiated the event.",
+        "required": [],
+        "properties": {
+          "channel": {
+            "type": "string",
+            "description": "Determines the channel that initiated the event.",
+            "enum": [
+              "USER_PORTAL",
+              "API",
+              "CLIENT_API",
+              "INTERNAL"
+            ],
+            "example": "API",
+            "nullable": true
+          },
+          "user": {
+            "type": "object",
+            "description": "Determines the Voucherify user who triggered the event.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the user.",
+                "example": "user_xyzfghSTprSTUVWXYlk6tuvXYst7FGH7",
+                "nullable": true
+              }
+            },
+            "required": [],
+            "nullable": true
+          },
+          "api_key": {
+            "type": "object",
+            "description": "Determines the API key used to initiate the event.",
+            "required": [],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Channel name in the application keys.",
+                "nullable": true
+              },
+              "app_id": {
+                "type": "string",
+                "description": "Contains the application ID from the Voucherify API key pair.",
+                "example": "1XXXX5XX-0XXX-XXXb-X7XX-XX2XXaXXX6XX",
+                "nullable": true
+              }
+            },
+            "nullable": true
+          }
+        }
       },
       "Export": {
         "title": "Export",
@@ -10088,6 +10238,50 @@
         ],
         "type": "string"
       },
+      "ListPendingPoints": {
+        "title": "Loyalties Members Pending Points List Response Body",
+        "type": "object",
+        "description": "Lists pending point entries.",
+        "properties": {
+          "object": {
+            "type": "string",
+            "default": "list",
+            "description": "The type of the object represented by JSON.",
+            "enum": [
+              "list"
+            ],
+            "nullable": true
+          },
+          "data_ref": {
+            "type": "string",
+            "default": "data",
+            "description": "Identifies the name of the attribute that contains the array of pending point objects.",
+            "enum": [
+              "data"
+            ],
+            "nullable": true
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LoyaltyPendingPoints"
+            },
+            "description": "A dictionary that contains an array of pending point entries. Each entry in the array is a separate pending point object.",
+            "nullable": true
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited (by the limit parameter), the `has_more` flag indicates if there are more records for given filter parameters. This lets you know if you can run another request to get more records returned in the results.",
+            "nullable": true
+          },
+          "more_starting_after": {
+            "type": "string",
+            "description": "Returns an ID that can be used to return another page of results. Use the pending point entry ID in the `starting_after_id` query parameter to display another page of the results starting after the entry with that ID.",
+            "nullable": true
+          }
+        },
+        "required": []
+      },
       "ListPublicationsItemBase": {
         "title": "List Publications Item Base",
         "type": "object",
@@ -11398,6 +11592,89 @@
           }
         ]
       },
+      "LoyaltiesMembersPendingPointsActivateResponseBody": {
+        "title": "Loyalties Members Pending Points Activate Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/loyalties/members/{memberId}/pending-points/{pendingPointsId}/activate`.",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "The number of pending points added to the loyalty card.",
+            "nullable": true
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of points incurred over the lifespan of the loyalty card, minus the expired points.",
+            "nullable": true
+          },
+          "balance": {
+            "type": "integer",
+            "description": "The current number of loyalty points after the pendint points have been added.",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the voucher being modified. For pending points, it is always `loyalty_card`.",
+            "default": "loyalty_card",
+            "enum": [
+              "loyalty_card"
+            ],
+            "nullable": true
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. Default is `balance`.",
+            "default": "balance",
+            "enum": [
+              "balance"
+            ],
+            "nullable": true
+          },
+          "related_object": {
+            "type": "object",
+            "description": "Defines the resource that is being modified.",
+            "required": [],
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The object being modified, i.e. `voucher`.",
+                "default": "voucher",
+                "enum": [
+                  "voucher"
+                ],
+                "nullable": true
+              },
+              "id": {
+                "type": "string",
+                "description": "Identifies the voucher that is being modified. This is the unique identifer that was assigned by Voucherify.",
+                "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq",
+                "nullable": true
+              }
+            },
+            "nullable": true
+          },
+          "operation_type": {
+            "type": "string",
+            "description": "The type of the operation being performed.",
+            "default": "MANUAL",
+            "enum": [
+              "MANUAL"
+            ],
+            "nullable": true
+          }
+        },
+        "required": []
+      },
+      "LoyaltiesMembersPendingPointsListResponseBody": {
+        "title": "Loyalties Members Pending Points List Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/loyalties/{campaignId}/members/{memberId}/pending-points` and **GET** `/loyalties/members/{memberId}/pending-points`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListPendingPoints"
+          }
+        ]
+      },
       "LoyaltiesMembersPointsExpirationListResponseBody": {
         "title": "Loyalties Members Points Expiration List Response Body",
         "description": "Response body schema for **GET** `v1/loyalties/{campaignId}/members/{memberId}/points-expiration`.",
@@ -11773,6 +12050,11 @@
                 "type": "integer",
                 "description": "The amount of points that are set to expire next.",
                 "nullable": true
+              },
+              "pending_points": {
+                "type": "integer",
+                "description": "Determines the number of pending points that will be added to the loyalty card after the predefined time.",
+                "nullable": true
               }
             },
             "nullable": true
@@ -11954,6 +12236,16 @@
         "required": [
           "validity_timeframe",
           "validity_day_of_week"
+        ]
+      },
+      "LoyaltiesPendingPointsListResponseBody": {
+        "title": "Loyalties Campaign Pending Points List Response Body",
+        "type": "object",
+        "description": "Response body schema for **GET** `/loyalties/{campaignId}/pending-points`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ListPendingPoints"
+          }
         ]
       },
       "LoyaltiesPointsExpirationExportCreateRequestBody": {
@@ -12997,7 +13289,7 @@
                     "properties": {
                       "id": {
                         "type": "string",
-                        "description": "Unique earning rule ID.",
+                        "description": "Unique identifier of an earning rule, assigned by Voucherify.",
                         "nullable": true
                       },
                       "source": {
@@ -13035,14 +13327,16 @@
                   },
                   "loyalty_tier": {
                     "type": "object",
-                    "description": "Contains information about the loyalty tier.",
+                    "description": "Contains information about the loyalty tier that is mapped for the earning rule and used in the transaction.",
                     "properties": {
                       "id": {
                         "type": "string",
+                        "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
                         "nullable": true
                       },
                       "name": {
                         "type": "string",
+                        "description": "User-defined name of the loyalty tier.",
                         "nullable": true
                       }
                     },
@@ -13129,6 +13423,9 @@
                     "required": [],
                     "nullable": true
                   },
+                  "pending_points": {
+                    "$ref": "#/components/schemas/LoyaltyPendingPoints"
+                  },
                   "reward": {
                     "type": "object",
                     "description": "Contains information about the pay with points reward.",
@@ -13178,6 +13475,7 @@
         "type": "string",
         "description": "Transaction types concerning loyalty points.",
         "enum": [
+          "PENDING_POINTS_ACTIVATION",
           "POINTS_ACCRUAL",
           "POINTS_REDEMPTION",
           "POINTS_REFUND",
@@ -13271,6 +13569,11 @@
               "next_expiration_points": {
                 "type": "integer",
                 "description": "The amount of points that are set to expire next.",
+                "nullable": true
+              },
+              "pending_points": {
+                "type": "integer",
+                "description": "Determines the number of pending points that will be added to the loyalty card after the predefined time.",
                 "nullable": true
               }
             },
@@ -13410,6 +13713,208 @@
             "nullable": true
           }
         }
+      },
+      "LoyaltyPendingPoints": {
+        "type": "object",
+        "title": "Loyalty Pending Point Entry",
+        "description": "Contains details about the pending point entry.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the pending point entry, assigned by Voucherify.",
+            "example": "lopp_0ffd593d5ad207ba6b",
+            "nullable": true
+          },
+          "voucher_id": {
+            "type": "string",
+            "description": "Unique identifier of the loyalty card, assigned by Voucherify.",
+            "example": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
+            "nullable": true
+          },
+          "campaign_id": {
+            "type": "string",
+            "description": "Unique campaign identifier, assigned by Voucherify.",
+            "example": "camp_weer1c3p5ZgktqfW56RfoNaG",
+            "nullable": true
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "Unique customer identifier, assigned by Voucherify.",
+            "example": "cust_IdgAFZxYwwHctOk9ppZMu319",
+            "nullable": true
+          },
+          "order_id": {
+            "type": "string",
+            "description": "Unique order identifier, assigned by Voucherify.",
+            "example": "ord_0ffc0fa65f15d2df17",
+            "nullable": true
+          },
+          "points": {
+            "type": "integer",
+            "description": "Number of points in the pending state.",
+            "nullable": true
+          },
+          "activates_at": {
+            "type": "string",
+            "description": "Date when the pending points are activated and added to the customer's loyalty card.",
+            "format": "date",
+            "nullable": true
+          },
+          "details": {
+            "$ref": "#/components/schemas/LoyaltyPendingPointsDetails"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the pending point entry was created. The value is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "Timestamp representing the date and time when the pending point entry was modified. The value is shown in the ISO 8601 format.",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "details"
+        ]
+      },
+      "LoyaltyPendingPointsDetails": {
+        "title": "Pending Point Details",
+        "type": "object",
+        "description": "Details about how the pending points were earned.",
+        "properties": {
+          "loyalty_tier": {
+            "type": "object",
+            "description": "The loyalty tier that is mapped for the earning rule and used in the pending point transaction.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "description": "User-defined name of the loyalty tier.",
+                "nullable": true
+              }
+            },
+            "required": [],
+            "nullable": true
+          },
+          "holder_loyalty_tier": {
+            "type": "object",
+            "description": "Loyalty tier of the loyalty card holder at the moment when the transaction occurred. The loyalty tier is the tier in which the holder was at the moment pending points were created.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
+                "nullable": true
+              },
+              "name": {
+                "type": "string",
+                "description": "User-defined name of the loyalty tier.",
+                "nullable": true
+              }
+            },
+            "required": [],
+            "nullable": true
+          },
+          "event": {
+            "type": "object",
+            "description": "Details about the event that created pending points.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique event identifier, assigned by Voucherify.",
+                "nullable": true
+              },
+              "type": {
+                "type": "string",
+                "description": "Type of the event that triggered the creation of pending points.",
+                "enum": [
+                  "customer.order.paid"
+                ],
+                "nullable": true
+              },
+              "group_id": {
+                "type": "string",
+                "description": "Unique identifier of the request that triggered the event, assigned by Voucherify.",
+                "nullable": true
+              },
+              "entity_id": {
+                "type": "string",
+                "description": "Unique identifier of the entity that triggered the event, assigned by Voucherify. For pending points, it is the `customer_id` of the customer who paid for the order.",
+                "nullable": true
+              },
+              "created_at": {
+                "type": "string",
+                "description": "Timestamp representing the date and time when the event occurred. The value is shown in the ISO 8601 format.",
+                "format": "date-time",
+                "nullable": true
+              },
+              "category": {
+                "type": "string",
+                "description": "Type of the event.",
+                "enum": [
+                  "ACTION",
+                  "EFFECT"
+                ],
+                "nullable": true
+              },
+              "event_source": {
+                "$ref": "#/components/schemas/EventSource"
+              }
+            },
+            "nullable": true
+          },
+          "earning_rule": {
+            "type": "object",
+            "description": "Contains information about the earning rule.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique identifier of an earning rule, assigned by Voucherify.",
+                "nullable": true
+              },
+              "source": {
+                "type": "object",
+                "required": [],
+                "description": "Contains the custom earning rule name.",
+                "properties": {
+                  "banner": {
+                    "type": "string",
+                    "description": "Name of the earning rule. This is displayed as a header for the earning rule in the Dashboard.",
+                    "nullable": true
+                  }
+                },
+                "nullable": true
+              }
+            },
+            "required": [],
+            "nullable": true
+          },
+          "order": {
+            "type": "object",
+            "description": "Details about the order that caused adding pending points.",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Unique order identifier, assigned by Voucherify.",
+                "nullable": true
+              },
+              "source_id": {
+                "nullable": true,
+                "type": "string",
+                "description": "User-defined order identifier."
+              }
+            },
+            "required": [],
+            "nullable": true
+          }
+        },
+        "required": []
       },
       "LoyaltyPointsBucket": {
         "type": "object",
@@ -13608,7 +14113,7 @@
         "properties": {
           "customer_id": {
             "type": "string",
-            "description": "Unique customer ID of the customer making the purchase.",
+            "description": "Unique customer identifier of the customer making the purchase. The ID is assigned by Voucherify.",
             "example": "cust_7iUa6ICKyU6gH40dBU25kQU1",
             "nullable": true
           },
@@ -16256,6 +16761,9 @@
               "customer.reward_redemptions.completed",
               "customer.reward_redemptions.rolledback",
               "customer.voucher.deleted",
+              "customer.voucher.loyalty_card.pending_points.activated",
+              "customer.voucher.loyalty_card.pending_points.added",
+              "customer.voucher.loyalty_card.pending_points.canceled",
               "customer.voucher.loyalty_card.points_added",
               "customer.voucher.loyalty_card.points_transferred",
               "customer.voucher.loyalty_card.points_expired"
@@ -16270,56 +16778,7 @@
                 "$ref": "#/components/schemas/MemberActivityData"
               },
               "event_source": {
-                "type": "object",
-                "description": "Contains the source of the object that initiated the sendout.",
-                "required": [],
-                "properties": {
-                  "channel": {
-                    "type": "string",
-                    "description": "Determines the channel that initiated the sendout.",
-                    "enum": [
-                      "USER_PORTAL",
-                      "API",
-                      "CLIENT_API",
-                      "INTERNAL"
-                    ],
-                    "example": "API",
-                    "nullable": true
-                  },
-                  "user": {
-                    "type": "object",
-                    "description": "Defines the user who triggered the event.",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "Unique identifier of the user.",
-                        "example": "user_xyzfghSTprSTUVWXYlk6tuvXYst7FGH7",
-                        "nullable": true
-                      }
-                    },
-                    "nullable": true
-                  },
-                  "api_key": {
-                    "type": "object",
-                    "description": "Determines the API key used to initiate the sendout.",
-                    "required": [],
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "Channel name in the application keys.",
-                        "nullable": true
-                      },
-                      "app_id": {
-                        "type": "string",
-                        "description": "Contains the application ID from the Voucherify API key pair.",
-                        "example": "1XXXX5XX-0XXX-XXXb-X7XX-XX2XXaXXX6XX",
-                        "nullable": true
-                      }
-                    },
-                    "nullable": true
-                  }
-                },
-                "nullable": true
+                "$ref": "#/components/schemas/EventSource"
               }
             },
             "nullable": true
@@ -16399,6 +16858,15 @@
           },
           {
             "$ref": "#/components/schemas/EventCustomerVoucherDeleted"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyCardPendingPointsActivated"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyCardPendingPointsAdded"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyCardPendingPointsCanceled"
           },
           {
             "$ref": "#/components/schemas/EventCustomerLoyaltyCardPointsAdded"
@@ -16823,7 +17291,7 @@
           "customer_id": {
             "type": "string",
             "nullable": true,
-            "description": "Unique customer ID of the customer making the purchase.",
+            "description": "Unique customer identifier of the customer making the purchase. The ID is assigned by Voucherify.",
             "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
           },
           "referrer_id": {
@@ -17205,7 +17673,7 @@
           },
           "rollback_date": {
             "type": "string",
-            "description": "Timestamp representing the date and tiem when the redemption rollback was created. The value is shown in the ISO 8601 format.",
+            "description": "Timestamp representing the date and time when the redemption rollback was created. The value is shown in the ISO 8601 format.",
             "example": "2023-01-31T14:18:37.150Z",
             "format": "date-time",
             "nullable": true
@@ -18966,6 +19434,13 @@
           "-created_at",
           "updated_at",
           "-updated_at"
+        ]
+      },
+      "ParameterOrderListPendingPoints": {
+        "type": "string",
+        "enum": [
+          "id",
+          "-id"
         ]
       },
       "ParameterOrderListPromotionTiers": {
@@ -22058,6 +22533,11 @@
                 "type": "integer",
                 "description": "The amount of points that are set to expire next.",
                 "nullable": true
+              },
+              "pending_points": {
+                "type": "integer",
+                "description": "Determines the number of pending points that will be added to the loyalty card after the predefined time.",
+                "nullable": true
               }
             },
             "nullable": true
@@ -23510,23 +23990,26 @@
           "parent_rollback": {
             "$ref": "#/components/schemas/RedemptionRollback"
           },
-          "allOf": [
-            {
-              "$ref": "#/components/schemas/OrderCalculated"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "items": {
-                  "type": "array",
-                  "description": "Array of items applied to the order. It can include up to 500 items.",
+          "order": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrderCalculated"
+              },
+              {
+                "type": "object",
+                "properties": {
                   "items": {
-                    "$ref": "#/components/schemas/OrderCalculatedItem"
+                    "type": "array",
+                    "description": "Array of items applied to the order. It can include up to 500 items.",
+                    "items": {
+                      "$ref": "#/components/schemas/OrderCalculatedItem"
+                    },
+                    "nullable": true
                   }
                 }
               }
-            }
-          ]
+            ]
+          }
         }
       },
       "RedemptionWithVoucherWithoutStackingRulesTypeCategories": {
@@ -25272,6 +25755,11 @@
             "type": "integer",
             "description": "The amount of points that are set to expire next.",
             "nullable": true
+          },
+          "pending_points": {
+            "type": "integer",
+            "description": "Determines the number of pending points that will be added to the loyalty card after the predefined time.",
+            "nullable": true
           }
         }
       },
@@ -25282,12 +25770,12 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Unique ID assigned by Voucherify of an existing order that will be linked to the redemption of this request.\n\n",
+            "description": "Unique identifier of an existing order that will be linked to the redemption of this request.",
             "nullable": true
           },
           "source_id": {
             "type": "string",
-            "description": "Unique source ID of an existing order that will be linked to the redemption of this request.",
+            "description": "Unique source identifier of an existing order that will be linked to the redemption of this request.",
             "nullable": true
           },
           "status": {
@@ -25304,13 +25792,13 @@
           "customer_id": {
             "type": "string",
             "nullable": true,
-            "description": "Unique customer ID of the customer making the purchase.",
+            "description": "Unique customer identifier of the customer making the purchase. The ID is assigned by Voucherify.",
             "example": "cust_7iUa6ICKyU6gH40dBU25kQU1"
           },
           "referrer_id": {
             "type": "string",
             "nullable": true,
-            "description": "Unique referrer ID.",
+            "description": "Unique identifier of the referrer assigned by Voucherify.",
             "example": "cust_nM4jqPiaXUvQdVSA6vTRUnix"
           },
           "amount": {
@@ -27052,7 +27540,7 @@
           },
           "customer_id": {
             "type": "string",
-            "description": "Unique customer ID of the customer making the purchase.",
+            "description": "Unique customer identifier of the customer making the purchase. The ID is assigned by Voucherify.",
             "example": "cust_7iUa6ICKyU6gH40dBU25kQU1",
             "nullable": true
           },
@@ -28442,6 +28930,11 @@
                 "type": "integer",
                 "description": "The amount of points that are set to expire next.",
                 "nullable": true
+              },
+              "pending_points": {
+                "type": "integer",
+                "description": "Determines the number of pending points that will be added to the loyalty card after the predefined time.",
+                "nullable": true
               }
             },
             "nullable": true
@@ -29624,7 +30117,7 @@
                     "properties": {
                       "id": {
                         "type": "string",
-                        "description": "Unique earning rule ID.",
+                        "description": "Unique identifier of an earning rule, assigned by Voucherify.",
                         "nullable": true
                       },
                       "source": {
@@ -29650,10 +30143,12 @@
                     "properties": {
                       "id": {
                         "type": "string",
+                        "description": "Unique identifier of the segment.",
                         "nullable": true
                       },
                       "name": {
                         "type": "string",
+                        "description": "Name of the segment.",
                         "nullable": true
                       }
                     },
@@ -29662,14 +30157,16 @@
                   },
                   "loyalty_tier": {
                     "type": "object",
-                    "description": "Contains information about the loyalty tier.",
+                    "description": "Contains information about the loyalty tier that is mapped for the earning rule and used in the transaction.",
                     "properties": {
                       "id": {
                         "type": "string",
+                        "description": "Unique identifier of the loyalty tier, assigned by Voucherify.",
                         "nullable": true
                       },
                       "name": {
                         "type": "string",
+                        "description": "User-defined name of the loyalty tier.",
                         "nullable": true
                       }
                     },
@@ -29695,7 +30192,7 @@
                     "properties": {
                       "id": {
                         "type": "string",
-                        "description": "Unique redemption rollback ID.",
+                        "description": "Unique identifier of the redemption rollback.",
                         "nullable": true
                       }
                     },
@@ -29708,12 +30205,12 @@
                     "properties": {
                       "id": {
                         "type": "string",
-                        "description": "Unique event ID.",
+                        "description": "Unique identifier of the event.",
                         "nullable": true
                       },
                       "type": {
                         "type": "string",
-                        "description": "Type of custom event.",
+                        "description": "Type of the custom event.",
                         "nullable": true
                       }
                     },
@@ -29726,12 +30223,12 @@
                     "properties": {
                       "id": {
                         "type": "string",
-                        "description": "Unique metadata schema ID.",
+                        "description": "Unique identifier of the metadata schema.",
                         "nullable": true
                       },
                       "name": {
                         "type": "string",
-                        "description": "Type of custom event.",
+                        "description": "Type of the custom event.",
                         "nullable": true
                       }
                     },
@@ -29755,6 +30252,9 @@
                     },
                     "required": [],
                     "nullable": true
+                  },
+                  "pending_points": {
+                    "$ref": "#/components/schemas/LoyaltyPendingPoints"
                   },
                   "reward": {
                     "type": "object",
@@ -43859,6 +44359,719 @@
         }
       }
     },
+    "/v1/loyalties/{campaignId}/pending-points": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "description": "Unique campaign ID."
+        }
+      ],
+      "get": {
+        "operationId": "list-campaign-pending-points",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "List Campaign Pending Points",
+        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\nLists all pending points that are currently assigned to all loyalty cards in a campaign. Once the points are added to the card, the entry is no longer returned.",
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterLimit"
+            },
+            "in": "query",
+            "name": "limit",
+            "description": "Limit the number of the pending point entries that the API returns in the response."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListPendingPoints"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Orders the pending point entries according the pending point entry ID. The dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the results starting after a result with the given ID."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns all pending point entries for all loyalty cards in the campaign.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesPendingPointsListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "lopp_0ffdbd86f0120789f2",
+                          "voucher_id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
+                          "campaign_id": "camp_AQZ1GLRlbGaC2dETd31VbJQ9",
+                          "customer_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                          "order_id": "ord_0ffc73eff092dea295",
+                          "points": 1,
+                          "activates_at": "2025-01-16",
+                          "details": {
+                            "holder_loyalty_tier": {
+                              "id": "ltr_0e30613ad01f044515",
+                              "name": "Silver Tier"
+                            },
+                            "event": {
+                              "id": "evcus_0ffc73eff212dea29f",
+                              "type": "customer.order.paid",
+                              "group_id": "v-0ffc73efe71d5053fa",
+                              "entity_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                              "created_at": "2025-01-15T16:51:03.745Z",
+                              "category": "EFFECT",
+                              "event_source": {
+                                "channel": "USER_PORTAL",
+                                "user": {
+                                  "id": "user_xyzaBcDEfgHOIJKLmn1opqr2Stu3VWX4"
+                                }
+                              }
+                            },
+                            "earning_rule": {
+                              "id": "ern_FQxftbKUq9E93k00Z3qkC0sX",
+                              "source": {
+                                "banner": "Order-paid"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_0ffc73eff092dea295",
+                              "source_id": "dashboard-source-20250115-001"
+                            }
+                          },
+                          "created_at": "2025-01-15T16:51:04.708Z"
+                        },
+                        {
+                          "id": "lopp_0ffd968aa8d207eb38",
+                          "voucher_id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
+                          "campaign_id": "camp_AQZ1GLRlbGaC2dETd31VbJQ9",
+                          "customer_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                          "order_id": "ord_0ffc4cf3aa55d28bae",
+                          "points": 1,
+                          "activates_at": "2025-01-16",
+                          "details": {
+                            "holder_loyalty_tier": {
+                              "id": "ltr_0e30613ad01f044515",
+                              "name": "Silver Tier"
+                            },
+                            "event": {
+                              "id": "evcus_0ffc4cf3ad15d28bb8",
+                              "type": "customer.order.paid",
+                              "group_id": "v-0ffc4cf39e2d7d9ade",
+                              "entity_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                              "created_at": "2025-01-15T14:00:43.940Z",
+                              "category": "EFFECT",
+                              "event_source": {
+                                "channel": "API",
+                                "api_key": {
+                                  "name": "Primary",
+                                  "app_id": "3XxxX483-0YYd-XX8z-aXXX-YYY7a3d3698"
+                                }
+                              }
+                            },
+                            "earning_rule": {
+                              "id": "ern_FQxftbKUq9E93k00Z3qkC0sX",
+                              "source": {
+                                "banner": "Order-paid"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_0ffc4cf3aa55d28bae",
+                              "source_id": "your_own_source_id_20250115-006"
+                            }
+                          },
+                          "created_at": "2025-01-15T14:00:44.934Z"
+                        },
+                        {
+                          "id": "lopp_0ffd9661bd5207eb0a",
+                          "voucher_id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
+                          "campaign_id": "camp_AQZ1GLRlbGaC2dETd31VbJQ9",
+                          "customer_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                          "order_id": "ord_0ffc4ccac0d5d28b7a",
+                          "points": 1,
+                          "activates_at": "2025-01-16",
+                          "details": {
+                            "holder_loyalty_tier": {
+                              "id": "ltr_0e30613ad01f044515",
+                              "name": "Silver Tier"
+                            },
+                            "event": {
+                              "id": "evcus_0ffc4ccac5d5d28b84",
+                              "type": "customer.order.paid",
+                              "group_id": "v-0ffc4ccaafdd50214b",
+                              "entity_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                              "created_at": "2025-01-15T14:00:02.038Z",
+                              "category": "EFFECT",
+                              "event_source": {
+                                "channel": "API",
+                                "api_key": {
+                                  "name": "Primary",
+                                  "app_id": "34fdc483-066d-478b-a707-be2c7a3d3698"
+                                }
+                              }
+                            },
+                            "earning_rule": {
+                              "id": "ern_FQxftbKUq9E93k00Z3qkC0sX",
+                              "source": {
+                                "banner": "Order-paid"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_0ffc4ccac0d5d28b7a",
+                              "source_id": "your_own_source_id_20250115-005"
+                            }
+                          },
+                          "created_at": "2025-01-15T14:00:02.586Z"
+                        }
+                      ],
+                      "has_more": true,
+                      "more_starting_after": "lopp_0ffd9661bd5207eb0a"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/{campaignId}/members/{memberId}/pending-points": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "name": "campaignId",
+          "in": "path",
+          "required": true,
+          "description": "Unique campaign ID."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty card code assigned to a particular customer."
+        }
+      ],
+      "get": {
+        "operationId": "list-member-pending-points-1",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "List Member Pending Points",
+        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\nLists all pending points that are currently assigned to the loyalty card. Once the points are added to the card, the entry is no longer returned.",
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterLimit"
+            },
+            "in": "query",
+            "name": "limit",
+            "description": "Limit the number of the pending point entries that the API returns in the response."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListPendingPoints"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Orders the pending point entries according the pending point entry ID. The dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the results starting after a result with the given ID."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns all pending point entries.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMembersPendingPointsListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "lopp_0ffdbd86f0120789f2",
+                          "voucher_id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
+                          "campaign_id": "camp_AQZ1GLRlbGaC2dETd31VbJQ9",
+                          "customer_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                          "order_id": "ord_0ffc73eff092dea295",
+                          "points": 1,
+                          "activates_at": "2025-01-16",
+                          "details": {
+                            "holder_loyalty_tier": {
+                              "id": "ltr_0e30613ad01f044515",
+                              "name": "Silver Tier"
+                            },
+                            "event": {
+                              "id": "evcus_0ffc73eff212dea29f",
+                              "type": "customer.order.paid",
+                              "group_id": "v-0ffc73efe71d5053fa",
+                              "entity_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                              "created_at": "2025-01-15T16:51:03.745Z",
+                              "category": "EFFECT",
+                              "event_source": {
+                                "channel": "USER_PORTAL",
+                                "user": {
+                                  "id": "user_xyzaBcDEfgHOIJKLmn1opqr2Stu3VWX4"
+                                }
+                              }
+                            },
+                            "earning_rule": {
+                              "id": "ern_FQxftbKUq9E93k00Z3qkC0sX",
+                              "source": {
+                                "banner": "Order-paid"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_0ffc73eff092dea295",
+                              "source_id": "dashboard-source-20250115-001"
+                            }
+                          },
+                          "created_at": "2025-01-15T16:51:04.708Z"
+                        },
+                        {
+                          "id": "lopp_0ffd968aa8d207eb38",
+                          "voucher_id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
+                          "campaign_id": "camp_AQZ1GLRlbGaC2dETd31VbJQ9",
+                          "customer_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                          "order_id": "ord_0ffc4cf3aa55d28bae",
+                          "points": 1,
+                          "activates_at": "2025-01-16",
+                          "details": {
+                            "holder_loyalty_tier": {
+                              "id": "ltr_0e30613ad01f044515",
+                              "name": "Silver Tier"
+                            },
+                            "event": {
+                              "id": "evcus_0ffc4cf3ad15d28bb8",
+                              "type": "customer.order.paid",
+                              "group_id": "v-0ffc4cf39e2d7d9ade",
+                              "entity_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                              "created_at": "2025-01-15T14:00:43.940Z",
+                              "category": "EFFECT",
+                              "event_source": {
+                                "channel": "API",
+                                "api_key": {
+                                  "name": "Primary",
+                                  "app_id": "3XxxX483-0YYd-XX8z-aXXX-YYY7a3d3698"
+                                }
+                              }
+                            },
+                            "earning_rule": {
+                              "id": "ern_FQxftbKUq9E93k00Z3qkC0sX",
+                              "source": {
+                                "banner": "Order-paid"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_0ffc4cf3aa55d28bae",
+                              "source_id": "your_own_source_id_20250115-006"
+                            }
+                          },
+                          "created_at": "2025-01-15T14:00:44.934Z"
+                        },
+                        {
+                          "id": "lopp_0ffd9661bd5207eb0a",
+                          "voucher_id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
+                          "campaign_id": "camp_AQZ1GLRlbGaC2dETd31VbJQ9",
+                          "customer_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                          "order_id": "ord_0ffc4ccac0d5d28b7a",
+                          "points": 1,
+                          "activates_at": "2025-01-16",
+                          "details": {
+                            "holder_loyalty_tier": {
+                              "id": "ltr_0e30613ad01f044515",
+                              "name": "Silver Tier"
+                            },
+                            "event": {
+                              "id": "evcus_0ffc4ccac5d5d28b84",
+                              "type": "customer.order.paid",
+                              "group_id": "v-0ffc4ccaafdd50214b",
+                              "entity_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                              "created_at": "2025-01-15T14:00:02.038Z",
+                              "category": "EFFECT",
+                              "event_source": {
+                                "channel": "API",
+                                "api_key": {
+                                  "name": "Primary",
+                                  "app_id": "34fdc483-066d-478b-a707-be2c7a3d3698"
+                                }
+                              }
+                            },
+                            "earning_rule": {
+                              "id": "ern_FQxftbKUq9E93k00Z3qkC0sX",
+                              "source": {
+                                "banner": "Order-paid"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_0ffc4ccac0d5d28b7a",
+                              "source_id": "your_own_source_id_20250115-005"
+                            }
+                          },
+                          "created_at": "2025-01-15T14:00:02.586Z"
+                        }
+                      ],
+                      "has_more": true,
+                      "more_starting_after": "lopp_0ffd9661bd5207eb0a"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/members/{memberId}/pending-points": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty card code assigned to a particular customer."
+        }
+      ],
+      "get": {
+        "operationId": "list-member-pending-points",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "List Member Pending Points",
+        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\n\n> 📘 Alternative endpoint\n> This endpoint is an alternative to this [endpoint](ref:list-member-pending-points-1). The URL was re-designed to list member pending points without having to provide the `campaignId` as a path parameter.\n\nLists all pending points that are currently assigned to the loyalty card. Once the points are added to the card, the entry is no longer returned.",
+        "parameters": [
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterLimit"
+            },
+            "in": "query",
+            "name": "limit",
+            "description": "Limit the number of the pending point entries that the API returns in the response."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterOrderListPendingPoints"
+            },
+            "in": "query",
+            "name": "order",
+            "description": "Orders the pending point entries according the pending point entry ID. The dash `-` preceding a sorting option means sorting in a descending order."
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/ParameterString"
+            },
+            "in": "query",
+            "name": "starting_after_id",
+            "description": "A cursor for pagination. It retrieves the results starting after a result with the given ID."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns all pending point entries.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMembersPendingPointsListResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "object": "list",
+                      "data_ref": "data",
+                      "data": [
+                        {
+                          "id": "lopp_0ffdbd86f0120789f2",
+                          "voucher_id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
+                          "campaign_id": "camp_AQZ1GLRlbGaC2dETd31VbJQ9",
+                          "customer_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                          "order_id": "ord_0ffc73eff092dea295",
+                          "points": 1,
+                          "activates_at": "2025-01-16",
+                          "details": {
+                            "holder_loyalty_tier": {
+                              "id": "ltr_0e30613ad01f044515",
+                              "name": "Silver Tier"
+                            },
+                            "event": {
+                              "id": "evcus_0ffc73eff212dea29f",
+                              "type": "customer.order.paid",
+                              "group_id": "v-0ffc73efe71d5053fa",
+                              "entity_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                              "created_at": "2025-01-15T16:51:03.745Z",
+                              "category": "EFFECT",
+                              "event_source": {
+                                "channel": "USER_PORTAL",
+                                "user": {
+                                  "id": "user_xyzaBcDEfgHOIJKLmn1opqr2Stu3VWX4"
+                                }
+                              }
+                            },
+                            "earning_rule": {
+                              "id": "ern_FQxftbKUq9E93k00Z3qkC0sX",
+                              "source": {
+                                "banner": "Order-paid"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_0ffc73eff092dea295",
+                              "source_id": "dashboard-source-20250115-001"
+                            }
+                          },
+                          "created_at": "2025-01-15T16:51:04.708Z"
+                        },
+                        {
+                          "id": "lopp_0ffd968aa8d207eb38",
+                          "voucher_id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
+                          "campaign_id": "camp_AQZ1GLRlbGaC2dETd31VbJQ9",
+                          "customer_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                          "order_id": "ord_0ffc4cf3aa55d28bae",
+                          "points": 1,
+                          "activates_at": "2025-01-16",
+                          "details": {
+                            "holder_loyalty_tier": {
+                              "id": "ltr_0e30613ad01f044515",
+                              "name": "Silver Tier"
+                            },
+                            "event": {
+                              "id": "evcus_0ffc4cf3ad15d28bb8",
+                              "type": "customer.order.paid",
+                              "group_id": "v-0ffc4cf39e2d7d9ade",
+                              "entity_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                              "created_at": "2025-01-15T14:00:43.940Z",
+                              "category": "EFFECT",
+                              "event_source": {
+                                "channel": "API",
+                                "api_key": {
+                                  "name": "Primary",
+                                  "app_id": "3XxxX483-0YYd-XX8z-aXXX-YYY7a3d3698"
+                                }
+                              }
+                            },
+                            "earning_rule": {
+                              "id": "ern_FQxftbKUq9E93k00Z3qkC0sX",
+                              "source": {
+                                "banner": "Order-paid"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_0ffc4cf3aa55d28bae",
+                              "source_id": "your_own_source_id_20250115-006"
+                            }
+                          },
+                          "created_at": "2025-01-15T14:00:44.934Z"
+                        },
+                        {
+                          "id": "lopp_0ffd9661bd5207eb0a",
+                          "voucher_id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
+                          "campaign_id": "camp_AQZ1GLRlbGaC2dETd31VbJQ9",
+                          "customer_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                          "order_id": "ord_0ffc4ccac0d5d28b7a",
+                          "points": 1,
+                          "activates_at": "2025-01-16",
+                          "details": {
+                            "holder_loyalty_tier": {
+                              "id": "ltr_0e30613ad01f044515",
+                              "name": "Silver Tier"
+                            },
+                            "event": {
+                              "id": "evcus_0ffc4ccac5d5d28b84",
+                              "type": "customer.order.paid",
+                              "group_id": "v-0ffc4ccaafdd50214b",
+                              "entity_id": "cust_IdgAFZxYwwHctOk9ppZMu319",
+                              "created_at": "2025-01-15T14:00:02.038Z",
+                              "category": "EFFECT",
+                              "event_source": {
+                                "channel": "API",
+                                "api_key": {
+                                  "name": "Primary",
+                                  "app_id": "34fdc483-066d-478b-a707-be2c7a3d3698"
+                                }
+                              }
+                            },
+                            "earning_rule": {
+                              "id": "ern_FQxftbKUq9E93k00Z3qkC0sX",
+                              "source": {
+                                "banner": "Order-paid"
+                              }
+                            },
+                            "order": {
+                              "id": "ord_0ffc4ccac0d5d28b7a",
+                              "source_id": "your_own_source_id_20250115-005"
+                            }
+                          },
+                          "created_at": "2025-01-15T14:00:02.586Z"
+                        }
+                      ],
+                      "has_more": true,
+                      "more_starting_after": "lopp_0ffd9661bd5207eb0a"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/activate": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty card code assigned to a particular customer."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterString"
+          },
+          "name": "pendingPointsId",
+          "in": "path",
+          "required": true,
+          "description": "Unique pending point identifier, assigned by Voucherify."
+        }
+      ],
+      "post": {
+        "operationId": "activate-member-pending-points",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "Activate Member Pending Points",
+        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\nActivate manually the pending points and add them to the loyalty card. The pending points are determined by the pending point ID.\n\nOnce activated, the pending point entry with that ID is not listed by the endpoints: List member ([with campaign ID](ref:list-member-pending-points-1), [without campaign ID](ref:list-member-pending-points)), [List campaign pending points](ref:list-campaign-pending-points).\n\nThis **POST** method does not require a request body.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns details about the activated pending points, the current point balance, and loyalty card in general.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMembersPendingPointsActivateResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "points": 1,
+                      "total": 11,
+                      "balance": 10,
+                      "type": "loyalty_card",
+                      "object": "balance",
+                      "related_object": {
+                        "type": "voucher",
+                        "id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc"
+                      },
+                      "operation_type": "MANUAL"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/cancel": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty card code assigned to a particular customer."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterString"
+          },
+          "name": "pendingPointsId",
+          "in": "path",
+          "required": true,
+          "description": "Unique pending point identifier, assigned by Voucherify."
+        }
+      ],
+      "post": {
+        "operationId": "cancel-member-pending-points",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "Cancel Member Pending Points",
+        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\nCancel manually the pending points for the loyalty card. The pending points are determined by the pending point ID.\n\nOnce canceled, the pending point entry with that ID is not listed by the endpoints: List member ([with campaign ID](ref:list-member-pending-points-1), [without campaign ID](ref:list-member-pending-points)), [List campaign pending points](ref:list-campaign-pending-points).\n\nThis **POST** method does not require a request body and it returns an empty, 204, response.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Returns no content if the pending points are canceled successfully."
+          }
+        }
+      }
+    },
     "/v1/loyalties/{campaignId}/members/{memberId}/activity": {
       "parameters": [
         {
@@ -47772,7 +48985,7 @@
           "name": "earningRuleId",
           "in": "path",
           "required": true,
-          "description": "Unique earning rule ID."
+          "description": "Unique identifier of an earning rule, assigned by Voucherify."
         }
       ],
       "post": {
@@ -47855,7 +49068,7 @@
           "name": "earningRuleId",
           "in": "path",
           "required": true,
-          "description": "Unique earning rule ID."
+          "description": "Unique identifier of an earning rule, assigned by Voucherify."
         }
       ],
       "post": {
@@ -60704,7 +61917,7 @@
             },
             "in": "query",
             "name": "order",
-            "description": "Orders the bin entries according the date and time when they were moved to the bin or according to the bin entry ID. The dash `-` preceding a sorting option means sorting in a descending order."
+            "description": "Orders the bin entries according to the bin entry ID. The dash `-` preceding a sorting option means sorting in a descending order."
           },
           {
             "schema": {
@@ -60712,7 +61925,7 @@
             },
             "in": "query",
             "name": "starting_after_id",
-            "description": "A cursor for pagination. It retrieves the events starting after an event with the given ID."
+            "description": "A cursor for pagination. It retrieves the results starting after a result with the given ID."
           },
           {
             "schema": {

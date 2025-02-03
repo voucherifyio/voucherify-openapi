@@ -25,7 +25,7 @@ All of:
 ## Loyalty Tier Expiration
 | Attributes |  Description |
 |:-----|:--------|
-| customer_id</br>`string` | <p>Unique customer ID of the customer making the purchase.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
+| customer_id</br>`string` | <p>Unique customer identifier of the customer making the purchase. The ID is assigned by Voucherify.</p> **Example:** <p>cust_7iUa6ICKyU6gH40dBU25kQU1</p> |
 | campaign_id</br>`string` | <p>Unique campaign ID, assigned by Voucherify.</p> **Example:** <p>camp_rRsfatlwN7unSeUIJDCYedal</p> |
 | tier_id</br>`string` | <p>Unique tier ID, assigned by Voucherify.</p> |
 | start_date</br>`string` | <p>Activation timestamp defines when the loyalty tier starts to be active in ISO 8601 format. Loyalty tier is inactive before this date.</p> |
