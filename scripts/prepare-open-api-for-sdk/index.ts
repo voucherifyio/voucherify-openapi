@@ -225,6 +225,10 @@ const main = async (languageOptions: LanguageOptions) => {
       (v) =>
         v === "PENDING_POINTS_ACTIVATION" ? "POINTS_PENDING_ACTIVATION" : v,
     );
+  //Do not add a `access_settings` query param to GET List campaigns
+  openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
+    "/v1/campaigns"
+  ].get.parameters.filter((parameter) => parameter.name !== "access_settings");
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
@@ -332,9 +336,9 @@ const main = async (languageOptions: LanguageOptions) => {
     };
   });
   newOpenApiFile.components.schemas.OrdersListResponseBody.properties.orders.items =
-    {
-      $ref: "#/components/schemas/OrderCalculated",
-    };
+  {
+    $ref: "#/components/schemas/OrderCalculated",
+  };
   ///
   newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
     newOpenApiFile.components.schemas.LoyaltyPointsBucket;
