@@ -243,7 +243,7 @@ The following events can send a webhook:
   - [Voucher published](ref:events-voucher-published "Voucher published event documentation")
   - [Voucher loyalty card pending points activated](ref:events-voucher-loyalty_card-pending_points-activated "Voucher loyalty card pending points activated event documentation")
   - [Voucher loyalty card pending points added](ref:events-voucher-loyalty_card-pending_points-added "Voucher loyalty card pending points added event documentation")
-  - Voucher loyalty card pending points canceled](ref:events-voucher-loyalty_card-pending_points-canceled "Voucher loyalty card pending points canceled event documentation")
+  - [Voucher loyalty card pending points canceled](ref:events-voucher-loyalty_card-pending_points-canceled "Voucher loyalty card pending points canceled event documentation")
   - [Voucher loyalty card points added](ref:events-voucher-loyalty_card-points_added "Voucher loyalty card points added event documentation")
   - [Voucher loyalty card points expired](ref:events-voucher-loyalty_card-points_expired "Voucher loyalty card points expired event documentation")
   - [Voucher loyalty card transaction created](ref:events-voucher-loyalty_card-transaction-created "Voucher loyalty card transaction created event documentation")
