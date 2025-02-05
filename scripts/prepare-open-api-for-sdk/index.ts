@@ -225,10 +225,13 @@ const main = async (languageOptions: LanguageOptions) => {
       (v) =>
         v === "PENDING_POINTS_ACTIVATION" ? "POINTS_PENDING_ACTIVATION" : v,
     );
-  //Do not add a `access_settings` query param to GET List campaigns
+  //Do not add the `access_settings` query param to GET List campaigns
   openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
     "/v1/campaigns"
   ].get.parameters.filter((parameter) => parameter.name !== "access_settings");
+  //Do not add the `type` query param to GET List campaigns by deleting the `type` property in the schema
+  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties
+    .type;
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(

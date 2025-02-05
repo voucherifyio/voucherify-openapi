@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-02-05
+
+- Added `type` filter to the `ParameterFiltersListCampaigns` schema
+
 ## 2025-02-04
 
 - Added the `access_settings` query parameter to GET `v1/campaigns` and associated `ParameterCampaignsAccessSetttings` schema. Updated the `index.ts` file as a result.
