@@ -866,6 +866,7 @@ All of:
 | voucher | <p>Defines the details of the voucher being redeemed.</p> [Simple Voucher](#simple-voucher) |
 | promotion_tier | See: [Simple Promotion Tier](#simple-promotion-tier) |
 | redemption</br>`string` | <p>Unique redemption ID of the parent redemption.</p> **Example:** <p>r_0c656311b5878a2031</p> |
+| channel</br>`object` | <p>Defines the details of the channel through which the redemption was issued.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">channel_id</br><code>string</code></td><td style="text-align:left"><p>Unique channel ID of the user performing the redemption. This is either a user ID from a user using the Voucherify Dashboard, an X-APP-Id of a user using the API, or the reward assignment ID for automatic reward redemption.</p></td></tr><tr><td style="text-align:left">channel_type</br><code>string</code></td><td style="text-align:left"><p>The source of the channel for the redemption:<br><code>USER</code> - the redemption was made in the Voucherify Dashboard by a user,<br><code>API</code> - redemption was made through the API,<br><code>AUTO_REDEEM - the redemption was made for a reward and it was made automatically.&lt;/p&gt; Available values: </code>API<code>, </code>AUTO_REDEEM<code>, </code>USER`</td></tr></tbody></table> |
 | object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the <code>redemption</code>.</p> |
 
 ## Event Customer Order

@@ -6,7 +6,8 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2025-02-05
 
-- Added `type` filter to the `ParameterFiltersListCampaigns` schema
+- Added `type` filter to the `ParameterFiltersListCampaigns` schema. Updated the `index.ts` file as a result.
+- Added the `channel` property to `SimpleRedemption` schemas in the OpenAPI.json and OpenAPIWebhooks.json files.
 
 ## 2025-02-04
 
