@@ -7,7 +7,8 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 ## 2025-02-05
 
 - Added `type` filter to the `ParameterFiltersListCampaigns` schema. Updated the `index.ts` file as a result.
-- Added the `channel` property to `SimpleRedemption` schemas in the OpenAPI.json and OpenAPIWebhooks.json files.
+- Added the `channel` property to `SimpleRedemption` schemas in the OpenAPI.json and OpenAPIWebhooks.json files. Also, updated the `SimpleRedemption` schema in the OpenAPI.json.
+- Added `id` to the `ValidationsValidateResponseBody` schema.
 - Added the `redemption_rollback_mode` property to the `RedemptionRollback` and `ManagementProjectsStackingRulesBase` schemas.
 
 ## 2025-02-04
