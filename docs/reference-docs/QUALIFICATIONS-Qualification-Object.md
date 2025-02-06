@@ -70,6 +70,7 @@ order: 1
 | redeemables_sorting_rule</br>`string` | <p>Defines redeemables sorting rule.</p> Available values: `CATEGORY_HIERARCHY`, `REQUESTED_ORDER` |
 | redeemables_products_application_mode</br>`string` | <p>Defines redeemables products application mode.</p> Available values: `STACK`, `ONCE` |
 | redeemables_no_effect_rule</br>`string` | <p>Defines redeemables no effect rule.</p> Available values: `REDEEM_ANYWAY`, `SKIP` |
+| redeemables_rollback_order_mode</br>`string` | <p>Defines the rollback mode for the order. <code>WITH_ORDER</code> is a default setting. The redemption is rolled back together with the data about the order, including related discount values. <code>WITHOUT_ORDER</code> allows rolling the redemption back without affecting order data.</p> Available values: `WITH_ORDER`, `WITHOUT_ORDER` |
 
 ## Combined response of redeemable object and multiple redeemables within
 All of:

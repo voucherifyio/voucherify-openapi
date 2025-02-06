@@ -856,7 +856,7 @@ All of:
 | id</br>`string` | <p>Unique redemption ID.</p> **Example:** <p>r_0bc92f81a6801f9bca</p> |
 | customer_id</br>`string`, `null` | <p>Unique customer ID of the redeeming customer.</p> **Example:** <p>cust_i8t5Tt6eiKG5K79KQlJ0Vs64</p> |
 | tracking_id</br>`string` | <p>Hashed customer source ID.</p> |
-| date</br>`string` | <p>Timestamp representing the date and time when the redemption was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
+| date</br>`string` | <p>Timestamp representing the date and time when the redemption was created in the ISO 8601 format.</p> **Example:** <p>2021-12-22T10:13:06.487Z</p> |
 | amount</br>`integer` | <p>For gift cards, this is a positive integer in the smallest currency unit (e.g. 100 cents for $1.00) representing the number of redeemed credits.<br>For loyalty cards, this is the number of loyalty points used in the transaction.<br>In the case of redemption rollback, the numbers are expressed as negative integers.</p> **Example:** <p>10000</p> |
 | order | See: [Simple Order](#simple-order) |
 | reward | See: [Simple Redemption Reward Result](#simple-redemption-reward-result) |
@@ -866,6 +866,11 @@ All of:
 | voucher | <p>Defines the details of the voucher being redeemed.</p> [Simple Voucher](#simple-voucher) |
 | promotion_tier | See: [Simple Promotion Tier](#simple-promotion-tier) |
 | redemption</br>`string` | <p>Unique redemption ID of the parent redemption.</p> **Example:** <p>r_0c656311b5878a2031</p> |
+| metadata</br>`object` | <p>The metadata object stores all custom attributes in the form of key/value pairs assigned to the redemption.</p> |
+| failure_code</br>`string` | <p>If the result is <code>FAILURE</code>, this parameter will provide a generic reason as to why the redemption failed.</p> **Example:** <p>customer_rules_violated</p> |
+| failure_message</br>`string` | <p>If the result is <code>FAILURE</code>, this parameter will provide an expanded reason as to why the redemption failed.</p> |
+| reason</br>`string` | <p>The reason for the redemption rollback.</p> |
+| channel</br>`object` | <p>Defines the details of the channel through which the redemption was issued.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">channel_id</br><code>string</code></td><td style="text-align:left"><p>Unique channel ID of the user performing the redemption. This is either a user ID from a user using the Voucherify Dashboard, an X-APP-Id of a user using the API, or the reward assignment ID for automatic reward redemption.</p></td></tr><tr><td style="text-align:left">channel_type</br><code>string</code></td><td style="text-align:left"><p>The source of the channel for the redemption:<br><code>USER</code> - the redemption was made in the Voucherify Dashboard by a user,<br><code>API</code> - redemption was made through the API,<br><code>AUTO_REDEEM</code> - the redemption was made automatically for a reward.</p> Available values: <code>API</code>, <code>AUTO_REDEEM</code>, <code>USER</code></td></tr></tbody></table> |
 | object</br>`string` | <p>The type of the object represented by the JSON. This object stores information about the <code>redemption</code>.</p> |
 
 ## Event Customer Order

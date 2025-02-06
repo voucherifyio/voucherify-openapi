@@ -4,14 +4,27 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-## 2024-01-28
+## 2025-02-05
+
+- Added `type` filter to the `ParameterFiltersListCampaigns` schema. Updated the `index.ts` file as a result.
+- Added the `channel` property to `SimpleRedemption` schemas in the OpenAPI.json and OpenAPIWebhooks.json files. Also, updated the `SimpleRedemption` schema in the OpenAPI.json.
+- Added `id` to the `ValidationsValidateResponseBody` schema.
+- Added the `rollback_order_mode` property to the `RedemptionBase` schema.
+- Added the `redeemables_rollback_order_mode` to the `ManagementProjectsStackingRulesBase` schema.
+- Removed the `related_redemptions` object from the `RedemptionRollback` schema.
+
+## 2025-02-04
+
+- Added the `access_settings` query parameter to GET `v1/campaigns` and associated `ParameterCampaignsAccessSetttings` schema. Updated the `index.ts` file as a result.
+
+## 2025-01-28
 
 - Added distribution events to OpenAPIWebhooks.json:
   - `EVENTS.CUSTOMER.VOUCHER.LOYALTY_CARD.PENDING_POINTS.ACTIVATED`
   - `EVENTS.CUSTOMER.VOUCHER.LOYALTY_CARD.PENDING_POINTS.ADDED`
   - `EVENTS.CUSTOMER.VOUCHER.LOYALTY_CARD.PENDING_POINTS.CANCELED`
 
-## 2024-01-27
+## 2025-01-27
 
 - Added the `pending_points` property to schemas:
   - `VoucherBase`
@@ -26,7 +39,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - Added new schemas `EventCustomerLoyaltyCardPendingPointsActivated` `EventCustomerLoyaltyCardPendingPointsAdded`, and `EventCustomerLoyaltyCardPendingPointsCanceled` to `MemberActivityData` and `CustomerActivityData`
 - Added `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.ACTIVATED` `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.ADDED`, and `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.CANCELED` together with associated schemas to OpenAPIWebhooks.json
 
-## 2024-01-16
+## 2025-01-16
 
 Added the following endpoints:
 - GET `/loyalties/{campaignId}/pending-points`
@@ -43,16 +56,16 @@ Added the following schemas:
 - `LoyaltyPendingPointsDetails`
 - `LoyaltiesMembersPendingPointsActivateResponseBody`
 
-## 2024-01-15
+## 2025-01-15
 - Removed [Beta] tag from the Management endpoints.
 
-## 2024-01-14
+## 2025-01-14
 
 - Added `expand` query parameter to GET `/v1/loyalties`
 - Added `all_stores` to the `AreaStoreCampaignAssignment` schema and `AccessSettingsAssignmentsList` (OpenAPIWebhooks.json)
 - Added `area_all_stores_ids` to the `AccessSettings` schema
 
-## 2024-01-09
+## 2025-01-09
 
 - Changed descriptions of the `points` property which relate to overall points accrued during the lifetime of a loyalty card.
 

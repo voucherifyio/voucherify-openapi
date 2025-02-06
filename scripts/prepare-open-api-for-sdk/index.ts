@@ -225,6 +225,59 @@ const main = async (languageOptions: LanguageOptions) => {
       (v) =>
         v === "PENDING_POINTS_ACTIVATION" ? "POINTS_PENDING_ACTIVATION" : v,
     );
+  //Do not add the `access_settings` query param to GET List campaigns
+  openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
+    "/v1/campaigns"
+  ].get.parameters.filter((parameter) => parameter.name !== "access_settings");
+  //Do not add the `type` query param to GET List campaigns by deleting the `type` property in the schema
+  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties
+    .type;
+  // Restore `related_redemptions` to `RedemptionRollback`
+  openAPIContent.components.schemas.RedemptionRollback.properties["related_redemptions"] = {
+    "type": "object",
+    "properties": {
+      "rollbacks": {
+        "type": "array",
+        "items": {
+          "title": "Redemption Rollback Related Redemptions Rollbacks Item",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "example": "rr_0bc92f81a6801f9bca",
+              "description": "Unique identifier of the redemption rollback."
+            },
+            "date": {
+              "type": "string",
+              "example": "2021-12-22T10:13:06.487Z",
+              "description": "Timestamp representing the date and time when the object was created. The value is shown in the ISO 8601 format.",
+              "format": "date-time"
+            }
+          }
+        }
+      },
+      "redemptions": {
+        "type": "array",
+        "items": {
+          "title": "Redemption Rollback Related Redemptions Item",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "example": "r_0bc92f81a6801f9bca",
+              "description": "Unique redemption ID."
+            },
+            "date": {
+              "type": "string",
+              "example": "2021-12-22T10:13:06.487Z",
+              "description": "Timestamp representing the date and time when the object was created. The value is shown in the ISO 8601 format.",
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    }
+  };
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
@@ -332,9 +385,9 @@ const main = async (languageOptions: LanguageOptions) => {
     };
   });
   newOpenApiFile.components.schemas.OrdersListResponseBody.properties.orders.items =
-    {
-      $ref: "#/components/schemas/OrderCalculated",
-    };
+  {
+    $ref: "#/components/schemas/OrderCalculated",
+  };
   ///
   newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
     newOpenApiFile.components.schemas.LoyaltyPointsBucket;
