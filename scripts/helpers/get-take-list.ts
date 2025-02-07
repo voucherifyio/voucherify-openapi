@@ -11,6 +11,9 @@ export const rawTakeList = {
   //"/v1/loyalties/{campaignId}/transactions": {
   //  get: false,
   //},
+  //"/v1/oauth/token": {
+  //  post: false,
+  //},
   "/v1/loyalties/{campaignId}/pending-points": {
     get: true,
   },
@@ -21,9 +24,9 @@ export const rawTakeList = {
     get: true,
   },
   "/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/activate":
-    {
-      post: true,
-    },
+  {
+    post: true,
+  },
   "/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/cancel": {
     post: true,
   },
@@ -31,9 +34,9 @@ export const rawTakeList = {
     get: true,
   },
   "/management/v1/projects/{projectId}/templates/campaigns/{campaignTemplateId}/copy":
-    {
-      post: true,
-    },
+  {
+    post: true,
+  },
   "/v1/templates/campaigns": {
     post: true,
     get: true,
@@ -476,11 +479,11 @@ export const rawTakeList = {
     get: true,
   },
   "/management/v1/projects/{projectId}/custom-event-schemas/{customEventSchemaId}":
-    {
-      get: true,
-      put: true,
-      delete: true,
-    },
+  {
+    get: true,
+    put: true,
+    delete: true,
+  },
   "/management/v1/projects/{projectId}/stacking-rules": {
     post: true,
     get: true,

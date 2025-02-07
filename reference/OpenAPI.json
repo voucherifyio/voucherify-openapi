@@ -2085,7 +2085,7 @@
       "ParameterObject": {
         "type": "object"
       },
-      "OAuthTokenRequestBody": {
+      "OAuthTokenGenerateRequestBody": {
         "title": "OAuth Token Request Body",
         "type": "object",
         "description": "Request body schema for **POST** `/oauth/token`.",
@@ -2156,6 +2156,95 @@
           "grant_type",
           "scope"
         ]
+      },
+      "OAuthTokenGenerateResponseBody": {
+        "title": "OAuth Token Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/oauth/token`.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/OAuthToken"
+          }
+        ]
+      },
+      "OAuthToken": {
+        "title": "OAuth Token Details",
+        "type": "object",
+        "description": "Details about the OAuth token.",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "The access token used to authorize access to the Voucherify API."
+          },
+          "client_id": {
+            "type": "string",
+            "description": "Unique client identifier, assigned by Voucherify, for OAuth."
+          },
+          "expires_at": {
+            "type": "integer",
+            "description": ""
+          },
+          "expires_in": {
+            "type": "integer",
+            "description": "Number of seconds left until the token expires."
+          },
+          "scope": {
+            "type": "string",
+            "description": "Defines the scope of possible actions that can be done with the OAuth token. The `api` scope allows using the whole application API. The `client_api` scope allows using the whole client-side API.",
+            "enum": [
+              "api",
+              "assets",
+              "async-actions",
+              "campaigns",
+              "categories",
+              "client_api",
+              "client_consents",
+              "client_customers",
+              "client_events",
+              "client_promotions",
+              "client_publish",
+              "client_qualifications",
+              "client_redeem",
+              "client_redemptions",
+              "client_validate",
+              "client_validations",
+              "client_vouchers",
+              "consents",
+              "customers",
+              "events",
+              "exports",
+              "locations",
+              "loyalties",
+              "metadata-schemas",
+              "orders",
+              "product-collections",
+              "products",
+              "promotions",
+              "publications",
+              "qualifications",
+              "redemptions",
+              "referrals",
+              "rewards",
+              "segments",
+              "skus",
+              "task-results",
+              "templates",
+              "trash-bin",
+              "validation-rules-assignments",
+              "validation-rules",
+              "validations",
+              "vouchers"
+            ]
+          },
+          "token_type": {
+            "type": "string",
+            "description": "Type of the token. Use the value as the header prefix for authorization.",
+            "default": "Bearer",
+            "enum": [
+              "Bearer"
+            ]
+          }
+        }
       },
       "VouchersValidateRequestBody": {
         "title": "Validate Voucher Request Body",
@@ -95132,7 +95221,7 @@
           "content": {
             "application/x-www-form-urlencoded": {
               "schema": {
-                "$ref": "#/components/schemas/OAuthTokenRequestBody"
+                "$ref": "#/components/schemas/OAuthTokenGenerateRequestBody"
               },
               "examples": {
                 "Request example": {
@@ -95151,15 +95240,48 @@
         },
         "responses": {
           "200": {
-            "description": "",
+            "description": "Returns necessary use details about the token and expiration times.",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OAuthTokenRequestBody"
+                  "$ref": "#/components/schemas/OAuthTokenGenerateResponseBody"
                 },
                 "examples": {
                   "OAuth response": {
-                    "value": {}
+                    "value": {
+                      "access_token": "1ABCde2FGHijKl3m4NO5pqR6STUv7wxYzAbc8dE90FgH1IJkLm",
+                      "client_id": "a1Bcdefg2HI3Jkl4m5nOP",
+                      "expires_at": 1738945086,
+                      "expires_in": 900,
+                      "scope": "api",
+                      "token_type": "Bearer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if an invalid request body is provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Invalid scope": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_scope",
+                      "message": "Invalid scope: vouchers,campaigns"
+                    }
+                  },
+                  "Invalid grant type": {
+                    "value": {
+                      "code": 400,
+                      "key": "invalid_grant_type",
+                      "message": "Invalid grant_type"
+                    }
                   }
                 }
               }
