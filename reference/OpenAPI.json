@@ -2128,11 +2128,37 @@
           "token_type"
         ]
       },
+      "OAuthTokenIntrospectRequestBody": {
+        "title": "OAuth Token Introspect Request Body",
         "type": "object",
-        "description": "Response body schema for **POST** `/oauth/token`.",
+        "description": "Request body schema for **POST** `/oauth/introspect.",
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "description": "An OAuth 2.0 token generated with the API token and key.",
+            "example": "1ABCde2FGHijKl3m4NO5pqR6STUv7wxYzAbc8dE90FgH1IJkLm"
+          }
+        },
+        "required": [
+          "access_token"
+        ]
+      },
+      "OAuthTokenIntrospectResponseBody": {
+        "title": "OAuth Token Introspect Response Body",
+        "type": "object",
+        "description": "Response body schema for **POST** `/oauth/introspect`.",
         "allOf": [
           {
             "$ref": "#/components/schemas/OAuthToken"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "active": {
+                "type": "boolean",
+                "description": "Determines if the token is active. Non-existing tokens are also marked as inactive."
+              }
+            }
           }
         ],
         "required": [
@@ -2141,7 +2167,8 @@
           "expires_at",
           "expires_in",
           "scope",
-          "token_type"
+          "token_type",
+          "active"
         ]
       },
       "OAuthToken": {
@@ -92920,7 +92947,7 @@
           "Management"
         ],
         "summary": "Update Metadata Schema",
-        "description": "Updates a metadata schema.\n\nWith this request, you can:\n- Add a non-existing attribute definition to the metadata schema.\n- Update an existing attribute definition by overwriting its current values.\n\nIn the request, you can provide only those definitions you want to add or update. Definitions omitted in the request remain unchanged.\n\nHowever, if you want to update a definition, you will have to add all its current key-value pairs as well. Only the pairs sent in the request are saved for this definition. This means that the key-value pairs that are not sent in a request are restored to default values. For example, if your definition has an array with values and it is not sent in an update request, the array values will be deleted.\n\n> 👍 Additional Notes\n>\n>- You cannot change the type of an existing schema, e.g. from `\"string\"` to `\"number\"`.\n>\n>- You can remove a definition with this endpoint by providing `\"deleted\": true` in the request. It will be moved to the Removed definitions section in the user interface. However, you cannot permanently remove a definition with this endpoint.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
+        "description": "Updates a metadata schema.\n\nWith this request, you can:\n- Add a nonexistent attribute definition to the metadata schema.\n- Update an existing attribute definition by overwriting its current values.\n\nIn the request, you can provide only those definitions you want to add or update. Definitions omitted in the request remain unchanged.\n\nHowever, if you want to update a definition, you will have to add all its current key-value pairs as well. Only the pairs sent in the request are saved for this definition. This means that the key-value pairs that are not sent in a request are restored to default values. For example, if your definition has an array with values and it is not sent in an update request, the array values will be deleted.\n\n> 👍 Additional Notes\n>\n>- You cannot change the type of an existing schema, e.g. from `\"string\"` to `\"number\"`.\n>\n>- You can remove a definition with this endpoint by providing `\"deleted\": true` in the request. It will be moved to the Removed definitions section in the user interface. However, you cannot permanently remove a definition with this endpoint.\n\n> 📘 Metadata Documentation\n>\n> Read [the Getting Started with Metadata](https://support.voucherify.io/article/99-schema-validation-metadata) and [Metadata Mapping](doc:metadata-mapping) articles to learn how metadata work in Voucherify.",
         "parameters": [],
         "security": [
           {
@@ -93555,7 +93582,7 @@
           "Management"
         ],
         "summary": "Update Custom Event Schema",
-        "description": "Updates a custom event schema.\n\nWith this request, you can:\n- Add a non-existing property to a custom event schema.\n- Update an existing property.\n\nIn the request, you can provide only those properties you want to add or update. Definitions omitted in the request remain unchanged.\n\n> 👍 Additional Notes\n>\n>- You can change the type of an existing property, e.g. from `\"string\"` to `\"number\"`.\n>\n>- You can remove a custom property with this endpoint by providing `\"deleted\": true` in the request. However, you cannot permanently remove an event definition or its property with this endpoint.\n\n> 📘 Custom Event Documentation\n>\n> Read [Custom Events](https://support.voucherify.io/article/111-custom-events) article to learn how custom events work in Voucherify.\n>\n>Read also the details about the [Track Custom Event](ref:track-custom-event) endpoint and the [Custom Event Object](ref:custom-event-object).",
+        "description": "Updates a custom event schema.\n\nWith this request, you can:\n- Add a nonexistent property to a custom event schema.\n- Update an existing property.\n\nIn the request, you can provide only those properties you want to add or update. Definitions omitted in the request remain unchanged.\n\n> 👍 Additional Notes\n>\n>- You can change the type of an existing property, e.g. from `\"string\"` to `\"number\"`.\n>\n>- You can remove a custom property with this endpoint by providing `\"deleted\": true` in the request. However, you cannot permanently remove an event definition or its property with this endpoint.\n\n> 📘 Custom Event Documentation\n>\n> Read [Custom Events](https://support.voucherify.io/article/111-custom-events) article to learn how custom events work in Voucherify.\n>\n>Read also the details about the [Track Custom Event](ref:track-custom-event) endpoint and the [Custom Event Object](ref:custom-event-object).",
         "parameters": [],
         "security": [
           {
@@ -95140,7 +95167,7 @@
           "OAuth"
         ],
         "summary": "Generate OAuth 2.0 Token",
-        "description": "Generate an OAuth 2.0 token for an API client. The token can be used to authorize access to the Voucherify API. The token inherits the permissions and IP whitelists of the API key and token that is used to generete the OAuth token. You can define the scope that limits its usage. You can generate up to 200 OAuth tokens. The token expires in 900 seconds (15 minutes).\n\nIf the API key and token that is used to generate the OAuth token expires or it is deleted or blocked, you cannot generate new OAuth tokens and the existing ones will stop working after one minute.\n\nIf the API key used to generate an OAuth token is regenerated, the OAuth token can still be used.\n\n>🚧 Values for scope and space-delimited\n>\n>Separate the values of the `scope` property with spaces.",
+        "description": "Generate an OAuth 2.0 token for an API client. The token can be used to authorize access to the Voucherify API. The token inherits the permissions and IP whitelists of the API key and token that is used to generete the OAuth token. You can define the scope that limits its usage. You can generate up to 200 OAuth tokens per project. The token expires in 900 seconds (15 minutes).\n\nIf the API key and token that is used to generate the OAuth token expires or it is deleted or blocked, you cannot generate new OAuth tokens and the existing ones will stop working after one minute.\n\nIf the API key used to generate an OAuth token is regenerated, the OAuth token can still be used.\n\n>🚧 Values for scope and space-delimited\n>\n>Separate the values of the `scope` property with spaces.",
         "parameters": [],
         "security": [
           {
@@ -95209,6 +95236,90 @@
                       "code": 400,
                       "key": "invalid_grant_type",
                       "message": "Invalid grant_type"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/oauth/introspect": {
+      "parameters": [],
+      "post": {
+        "operationId": "introspect-oauth-token",
+        "tags": [
+          "OAuth"
+        ],
+        "summary": "Introspect OAuth 2.0 Token",
+        "description": "Introspect an OAuth 2.0 token for an API client.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": []
+          }
+        ],
+        "requestBody": {
+          "description": "Send the request as `x-www-form-urlencoded`.",
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/OAuthTokenIntrospectRequestBody"
+              },
+              "examples": {
+                "Request example": {
+                  "value": {
+                    "access_token": "1ABCde2FGHijKl3m4NO5pqR6STUv7wxYzAbc8dE90FgH1IJkLm"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns details about an existing token and its expiration times. If an nonexistent token is sent in the request, the response returns that it is inactive.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OAuthTokenIntrospectResponseBody"
+                },
+                "examples": {
+                  "OAuth active token": {
+                    "value": {
+                      "access_token": "1ABCde2FGHijKl3m4NO5pqR6STUv7wxYzAbc8dE90FgH1IJkLm",
+                      "client_id": "a1Bcdefg2HI3Jkl4m5nOP",
+                      "expires_at": 1738945086,
+                      "expires_in": 555,
+                      "scope": "api",
+                      "token_type": "Bearer",
+                      "active": true
+                    }
+                  },
+                  "OAuth inactive token": {
+                    "value": {
+                      "active": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Returns an error if an invalid request body is provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "Missing parameters": {
+                    "value": {
+                      "code": 400,
+                      "key": "missing_parameters",
+                      "message": "Missing parameters"
                     }
                   }
                 }
