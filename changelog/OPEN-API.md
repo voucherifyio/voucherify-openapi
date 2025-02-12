@@ -4,6 +4,13 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-02-12
+
+- Added POST `/v1/oauth/` with associated schemas:
+  - `OAuthTokenGenerateRequestBody`
+  - `OAuthTokenGenerateResponseBody`
+  - `OAuthToken`
+
 ## 2025-02-05
 
 - Added `type` filter to the `ParameterFiltersListCampaigns` schema. Updated the `index.ts` file as a result.
