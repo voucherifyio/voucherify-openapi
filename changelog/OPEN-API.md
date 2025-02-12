@@ -6,10 +6,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 ## 2025-02-12
 
-- Added POST `/v1/oauth/` with associated schemas:
-  - `OAuthTokenGenerateRequestBody`
-  - `OAuthTokenGenerateResponseBody`
-  - `OAuthToken`
+- Added POST `/v1/oauth/token`, POST `/v1/oauth/introspect`, POST `/v1/oauth/token/revoke` with associated schemas: `OAuthTokenGenerateRequestBody`, `OAuthTokenGenerateResponseBody`, `OAuthTokenIntrospectRequestBody`, `OAuthTokenIntrospectResponseBody`, `OAuthTokenRevokeRequestBody`, `OAuthToken`.
 
 ## 2025-02-05
 
