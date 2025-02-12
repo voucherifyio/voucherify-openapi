@@ -10,6 +10,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 ## 2025-02-12
 
 - Updated Authentication.md with OAuth 2.0
+- Updated Security.md with OAuth 2.0
 
 ## 2024-11-12
 
