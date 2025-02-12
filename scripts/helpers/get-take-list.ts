@@ -17,6 +17,9 @@ export const rawTakeList = {
   //"/v1/oauth/introspect": {
   //  post: false,
   //},
+  //"/v1/oauth/token/revoke": {
+  //  post: false,
+  //},
   "/v1/loyalties/{campaignId}/pending-points": {
     get: true,
   },
