@@ -1,5 +1,5 @@
 ---
-title: Authentication
+title: Authentication and Authorization
 excerpt: Authorization methods and principles used to access the Voucherify platform HTTP APIs.
 categorySlug: development
 slug: authentication
@@ -126,3 +126,18 @@ curl -X GET \
   }' \
   "https://api.voucherify.io/client/v1/validate?code=BLCKFRDY"
 ```
+
+## OAuth 2.0
+
+Voucherify supports also OAuth 2.0 authorization method.
+
+You can use a pair of Voucherify API key and token to generate OAuth tokens for the authorization of an API client. The tokens can access the whole application API, the whole client-side API, or you can limit its scope to specific parts, like campaigns, vouchers, or validations.
+
+The OAuth token inherits all the permissions and IP whitelists of the API key that is used to generate it. The token is valid for 15 minutes.
+
+If the API key and token that is used to generate the OAuth token expires or it is deleted or blocked, you cannot generate new OAuth tokens and the existing ones will stop working after one minute. However, regenerating the API key used to generate an OAuth token does not affect the token.
+
+The OAuth 2.0 is supported with the following endpoints:
+- [Generate OAuth token](ref:generate-oauth-token)
+- [Introspect OAuth token](ref:introspect-oauth-token)
+- [Revoke OAuth token](ref:revoke-oauth-token)
