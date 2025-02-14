@@ -1,5 +1,5 @@
 ---
-title: Authentication
+title: Authentication and Authorization
 excerpt: Authorization methods and principles used to access the Voucherify platform HTTP APIs.
 categorySlug: development
 slug: authentication
@@ -126,3 +126,32 @@ curl -X GET \
   }' \
   "https://api.voucherify.io/client/v1/validate?code=BLCKFRDY"
 ```
+
+## OAuth 2.0
+
+Voucherify supports also OAuth 2.0 authorization method.
+
+You can use a Voucherify API key to generate OAuth tokens for the authorization of an API client. The tokens can access the whole server-side or client-side API, or you can limit its access to specific parts, like campaigns, vouchers, or validations, by using the `scope` parameter.
+
+The OAuth token inherits all the permissions and IP whitelists of the API key that is used to generate it. The token is valid for 15 minutes.
+
+If the API key that is used to generate the OAuth token is deleted or blocked, you cannot generate new OAuth tokens and the existing ones will stop working after one minute. However, regenerating the API key used to generate an OAuth token does not affect the token.
+
+The OAuth 2.0 is supported with the following endpoints:
+- [Generate OAuth token](ref:generate-oauth-token)
+- [Introspect OAuth token](ref:introspect-oauth-token)
+- [Revoke OAuth token](ref:revoke-oauth-token)
+
+### Use Case Ideas
+
+You can use Voucherify OAuth 2.0 in the following ways.
+
+For example, you can generate OAuth tokens inside each application with a Voucherify API key and token delivered to them directly. Such app should monitor the expiration time to create a new token, so that it works without interruptions. Also, you can limit the access of the token to specific parts of the Voucherify API with the `scope` parameter.
+
+Alternatively, you can have a dedicated app or service to generate OAuth tokens with a Voucherify API key and token. This app serves the OAuth tokens to other apps, for example with a limited access as defined with the `scope` parameter. This way, you can restrict the access  to the Voucherify API key and token to this service and ensure better security and dedicated log tracking.
+
+By using OAuth 2.0, you can lower the risk of a negative impact on your organization if such token is exposed or leaked, as they:
+
+- can be limited with the `scope` parameter,
+- expire in 15 minutes,
+- can be revoked at any time.
