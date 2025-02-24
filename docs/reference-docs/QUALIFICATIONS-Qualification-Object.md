@@ -175,7 +175,7 @@ One of:
 ## Redeemable Loyalty Card
 | Attributes |  Description |
 |:-----|:--------|
-| points</br>`integer` | <p>Total points incurred over the lifespan of the loyalty card, minus the expired points.</p> **Example:** <p>7000</p> |
+| points</br>`integer` | <p>Total number of points added to the loyalty card over its lifespan.</p> **Example:** <p>7000</p> |
 | balance</br>`integer` | <p>Points available for reward redemption.</p> **Example:** <p>6970</p> |
 | exchange_ratio</br>`number` | <p>The cash equivalent of the points defined in the points_ratio property.</p> |
 | points_ratio</br>`integer` | <p>The number of loyalty points that will map to the predefined cash amount defined by the exchange_ratio property.</p> |
