@@ -176,7 +176,7 @@ One of:
 | Attributes |  Description |
 |:-----|:--------|
 | points</br>`integer` | <p>Total number of points added to the loyalty card over its lifespan.</p> **Example:** <p>7000</p> |
-| balance</br>`integer` | <p>Points available for reward redemption.</p> **Example:** <p>6970</p> |
+| balance</br>`integer` | <p>Points available for reward redemption. This is calculated as follows: <code>balance</code> = <code>points</code> - <code>expired_points</code> - <code>subtracted_points</code> - <code>redemption.redeemed_points</code>.</p> **Example:** <p>6970</p> |
 | exchange_ratio</br>`number` | <p>The cash equivalent of the points defined in the points_ratio property.</p> |
 | points_ratio</br>`integer` | <p>The number of loyalty points that will map to the predefined cash amount defined by the exchange_ratio property.</p> |
 | transfers</br>`array` | Array of [Loyalties Transfer Points](#loyalties-transfer-points) |
