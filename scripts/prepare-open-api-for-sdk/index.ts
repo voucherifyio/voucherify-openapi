@@ -278,6 +278,39 @@ const main = async (languageOptions: LanguageOptions) => {
       }
     }
   };
+  // Restore loyalty_card in VoucherUpdateLoyaltyCard
+  openAPIContent.components.schemas.VoucherUpdateLoyaltyCard.allOf.push(
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "LOYALTY_CARD"
+          ],
+          "description": "Defines the type of the voucher. "
+        },
+        "loyalty_card": {
+          "$ref": "#/components/schemas/SimpleLoyaltyCard"
+        }
+      }
+    });
+  // Restore gift in VoucherUpdateGift
+  openAPIContent.components.schemas.VoucherUpdateGift.allOf.push({
+    "type": "object",
+    "properties": {
+      "type": {
+        "type": "string",
+        "enum": [
+          "GIFT_VOUCHER"
+        ],
+        "description": "Defines the type of the voucher. "
+      },
+      "gift": {
+        "$ref": "#/components/schemas/Gift"
+      }
+    }
+  });
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
