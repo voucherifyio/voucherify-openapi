@@ -4,6 +4,13 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-02-27
+
+- Added `subtracted_amount` to the following schemas: `Gift`, `RedeemableVoucher`, `VoucherBase`.
+- Added `expired_points` and `subtracted_points` to the following schemas: `LoyaltyMember`, `LoyaltiesMembersTransfersCreateResponseBody`, `RedeemableVoucher`, `SimpleLoyaltyCard`, `VoucherBase`.
+- Removed an object with a `SimpleLoyaltyCard` schema from `VoucherUpdateLoyaltyCard`.
+- Removed an object with a `Gift` schema from `VoucherUpdateGift`.
+
 ## 2025-02-12
 
 - Added POST `/v1/oauth/token`, POST `/v1/oauth/introspect`, POST `/v1/oauth/token/revoke` with associated schemas: `OAuthTokenGenerateRequestBody`, `OAuthTokenGenerateResponseBody`, `OAuthTokenIntrospectRequestBody`, `OAuthTokenIntrospectResponseBody`, `OAuthTokenRevokeRequestBody`, `OAuthToken`.
