@@ -169,14 +169,14 @@ One of:
 ## Redeemable Gift
 | Attributes |  Description |
 |:-----|:--------|
-| balance</br>`number` | <p>Available funds. Value is multiplied by 100 to precisely represent 2 decimal places. For example, $100 amount is written as 10000.</p> |
-| credits</br>`number` | <p>The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. Value is multiplied by 100 to precisely represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
+| balance</br>`number` | <p>Available funds. The value is multiplied by 100 to represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
+| credits</br>`number` | <p>The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. The value is multiplied by 100 to represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
 
 ## Redeemable Loyalty Card
 | Attributes |  Description |
 |:-----|:--------|
-| points</br>`integer` | <p>Total points incurred over the lifespan of the loyalty card, minus the expired points.</p> **Example:** <p>7000</p> |
-| balance</br>`integer` | <p>Points available for reward redemption.</p> **Example:** <p>6970</p> |
+| points</br>`integer` | <p>Total number of points added to the loyalty card over its lifespan.</p> **Example:** <p>7000</p> |
+| balance</br>`integer` | <p>Points available for reward redemption. This is calculated as follows: <code>balance</code> = <code>points</code> - <code>expired_points</code> - <code>subtracted_points</code> - <code>redemption.redeemed_points</code>.</p> **Example:** <p>6970</p> |
 | exchange_ratio</br>`number` | <p>The cash equivalent of the points defined in the points_ratio property.</p> |
 | points_ratio</br>`integer` | <p>The number of loyalty points that will map to the predefined cash amount defined by the exchange_ratio property.</p> |
 | transfers</br>`array` | Array of [Loyalties Transfer Points](#loyalties-transfer-points) |
