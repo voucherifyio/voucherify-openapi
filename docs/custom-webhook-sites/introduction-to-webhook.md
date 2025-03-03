@@ -235,7 +235,7 @@ The following events can send a webhook:
   - [Customer deleted](ref:events-customer-deleted "Customer deleted event documentation")
   - [Customer rewarded](ref:events-customer-rewarded "Customer rewarded event documentation")
   - [Customer rewarded loyalty points](ref:events-customer-rewarded-loyalty_points "Customer rewarded loyalty points event documentation")
-  - [Customer confirmed]()
+  - Customer confirmed
 - Voucher events:
   - [Voucher created](ref:events-voucher-created "Voucher created event documentation")
   - [Voucher disabled](ref:events-voucher-disabled "Voucher disabled event documentation")
@@ -259,7 +259,7 @@ The following events can send a webhook:
   - [Campaign enabled](ref:events-campaign-enabled "Campaign enabled event documentation")
   - [Campaign updated](ref:events-campaign-updated "Campaign updated event documentation")
   - [Campaign deleted](ref:events-campaign-deleted "Campaign deleted event documentation")
-  - [Vouchers added]()
+  - Vouchers added
 - Promotion tier events:
   - [Promotion tier created](ref:events-campaign-promotion_tier-created "Promotion tier created event documentation") 
   - [Promotion tier disabled](ref:events-campaign-promotion_tier-disabled "Promotion tier disabled event documentation") 
@@ -273,29 +273,29 @@ The following events can send a webhook:
   - [Business validation rule assignment deleted](ref:events-bus_val_rule-assignment-deleted "Validation rule assignment deleted event documentation")
   - [Business validation rule deleted](ref:events-bus_val_rule-deleted "Validation rule deleted event documentation")
 - Earning rule events:
-  - [Earning rule assigned]()
-  - [Earning rule delete]()
-  - [Earning rule disabled]()
-  - [Earning rule enabled]()
-  - [Earning rule updated]()
+  - Earning rule assigned
+  - Earning rule delete
+  - Earning rule disabled
+  - Earning rule enabled
+  - Earning rule updated
 - Loyalty related events:
-  - [Loyalty tier created]()
-  - [Loyalty tier deleted]()
-  - [Loyalty tier updated]()
+  - Loyalty tier created
+  - Loyalty tier deleted
+  - Loyalty tier updated
 - Promotion stack events:
- - [Promotion stack created]()
- - [Promotion stack updated]()
+  - Promotion stack created
+  - Promotion stack updated
 - Referral related events:
-  - [Referral tier created]()
-  - [Referral tier deleted]()
-  - [Referral tier updated]()
+  - Referral tier created
+  - Referral tier deleted
+  - Referral tier updated
 - Reward assingment events:
-  - [Reward assignment created]()
-  - [Reward assignment deleted]()
-  - [Reward assignment updated]()
+  - Reward assignment created
+  - Reward assignment deleted
+  - Reward assignment updated
 - Voucher generation events:
-  - [Voucher generation failed]()
-  - [Voucher generation started]()
+  - Voucher generation failed
+  - Voucher generation started
 
 **Documentation for some events is in progress. Updates will be provided soon.**
 
