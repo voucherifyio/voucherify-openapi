@@ -172,3 +172,97 @@ Moreover, API methods for fetching resources offer extended capabilities for fil
 | **Campaigns**                 | `[filters][metadata.seq_number][conditions][$is]=1`<br>`[filters][metadata.test][conditions][$is]=true`                                                                                                                                                                                                                                                                                                                                                                                                              |
 | **Products and Skus**         | `[filters][updated_at][conditions][$after][0]=2020-08-20T14:17:09Z`<br>`[filters][updated_at][conditions][$before][0]=2020-08-20T14:17:09Z`<br>`[filters][created_at][conditions][$after][0]=2020-08-20T14:17:09Z`<br>`[filters][created_at][conditions][$before][0]=2020-08-20T14:17:09Z`                                                                                                                                                                                                                           |
 | **List all promotion stacks** | `[created_at][before]=2021-12-30T13:52:18.227Z`<br>`[created_at][after]=2021-12-30T13:52:18.227Z`<br>`[filters][created_at][conditions][$before][0]=2021-12-30T13:52:18.227Z`<br>`[filters][created_at][conditions][$after][0]=2021-12-30T13:52:18.227Z`<br>`[updated_at][before]=2021-12-30T13:52:18.227Z`<br>`[updated_at][after]=2021-12-30T13:52:18.227Z`<br>`[filters][updated_at][conditions][$before][0]=2021-12-30T13:52:18.227Z`<br>`[filters][updated_at][conditions][$after][0]=2021-12-30T13:52:18.227Z` |
+
+<!---
+## Filtering metadata
+
+To filter metadata, you can use the following request:
+
+```String
+filters[metadata.brandName][conditions][$is]=Voucherify
+```
+```Array
+filters[metadata.shirtSize][conditions][$in][0]=S&filters[metadata.shirtSize][conditions][$includes][1]=M&filters[metadata.shirtSize][conditions][$in][1]=L
+```
+
+You can use different conditions to filter data; see the table below.
+
+> 🚧 Documentation in progress
+>
+> The list of conditions is not complete yet.
+
+| Condition                    | Allowed data types         | Description                                                                                   |
+| ---------------------------- | -------------------------- | --------------------------------------------------------------------------------------------- |
+| `$active`                    |                            |                                                                                               |
+| `$after_equal`               |                            |                                                                                               |
+| `$after`                     | date, date time            | Returns results which occur after the specified value.                                        |
+| `$before_equal`              |                            |                                                                                               |
+| `$before_start`              |                            |                                                                                               |
+| `$before`                    | date, date time            | Returns results which occur before the specified value.                                       |
+| `$contains`                  |                            |                                                                                               |
+| `$count_less`                |                            |                                                                                               |
+| `$count_more`                |                            |                                                                                               |
+| `$count`                     |                            |                                                                                               |
+| `$disabled`                  |                            |                                                                                               |
+| `$enabled`                   |                            |                                                                                               |
+| `$ends_with`                 | image URL, string          | Returns results that end with the specified value.                                            |
+| `$expired`                   |                            |                                                                                               |
+| `$failed`                    |                            |                                                                                               |
+| `$has_value`                 | boolean, image URL, string | Returns results that have any value.                                                          |
+| `$in_location`               |                            |                                                                                               |
+| `$in_progress`               |                            |                                                                                               |
+| `$in`                        | image URL, string          |                                                                                               |
+| `$includes`                  | array of different types   | Compares values in an array. Returns results that have **all** of the values listed.          |
+| `$intersects`                | array of different types   | Compares values in an array. Returns results that have **at least one** of the values listed. |
+| `$is_day_of_month`           |                            |                                                                                               |
+| `$is_day`                    |                            |                                                                                               |
+| `$is_days_ago_md`            |                            |                                                                                               |
+| `$is_days_ago`               |                            |                                                                                               |
+| `$is_days_in_future_md`      |                            |                                                                                               |
+| `$is_days_in_future`         |                            |                                                                                               |
+| `$is_less_days_ago_md`       |                            |                                                                                               |
+| `$is_less_days_in_future_md` |                            |                                                                                               |
+| `$is_month`                  |                            |                                                                                               |
+| `$is_more_days_ago_md`       |                            |                                                                                               |
+| `$is_more_days_in_future_md` |                            |                                                                                               |
+| `$is_not`                    | boolean, image URL, string |                                                                                               |
+| `$is_unknown`                | boolean, image URL, string | Returns results that have an unkown or no value.                                              |
+| `$is_year`                   |                            |                                                                                               |
+| `$is_years_ago`              | date, date time            | Returns results that occurred exactly the specified number of years ago.                      |
+| `$is`                        | boolean, image URL, string |                                                                                               |
+| `$last_month_md`             |                            |                                                                                               |
+| `$last_month`                |                            |                                                                                               |
+| `$last_week_md`              |                            |                                                                                               |
+| `$last_week`                 |                            |                                                                                               |
+| `$last_year`                 |                            |                                                                                               |
+| `$less_than_ago`             |                            |                                                                                               |
+| `$less_than_equal`           |                            |                                                                                               |
+| `$less_than_future`          |                            |                                                                                               |
+| `$less_than`                 |                            |                                                                                               |
+| `$more_than_ago`             |                            |                                                                                               |
+| `$more_than_equal`           |                            |                                                                                               |
+| `$more_than_future`          |                            |                                                                                               |
+| `$more_than`                 |                            |                                                                                               |
+| `$next_month_md`             |                            |                                                                                               |
+| `$next_month`                |                            |                                                                                               |
+| `$next_week_md`              |                            |                                                                                               |
+| `$next_week`                 |                            |                                                                                               |
+| `$next_year`                 |                            |                                                                                               |
+| `$not_contain`               |                            |                                                                                               |
+| `$not_in_location`           |                            |                                                                                               |
+| `$not_in`                    | image URL, string          |                                                                                               |
+| `$redeemable`                |                            |                                                                                               |
+| `$redeemed`                  |                            |                                                                                               |
+| `$starts_with`               | image URL, string          | Returns results that begin with the specified value.                                          |
+| `$this_month_md`             |                            |                                                                                               |
+| `$this_month`                |                            |                                                                                               |
+| `$this_week_md`              |                            |                                                                                               |
+| `$this_week`                 |                            |                                                                                               |
+| `$this_year`                 |                            |                                                                                               |
+| `$today_md`                  |                            |                                                                                               |
+| `$today`                     |                            |                                                                                               |
+| `$tomorrow_md`               |                            |                                                                                               |
+| `$tomorrow`                  |                            |                                                                                               |
+| `$yesterday_md`              |                            |                                                                                               |
+| `$yesterday`                 |                            |                                                                                               |
+--->
