@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-03-04
+
+- Added POST `/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/balance` with associated schemas: `LoyaltiesMembersPendingPointsBalanceRequestBody`, `LoyaltiesMembersPendingPointsBalanceResponseBody`
+
 ## 2025-02-27
 
 - Added `subtracted_amount` to the following schemas: `Gift`, `RedeemableVoucher`, `VoucherBase`.
