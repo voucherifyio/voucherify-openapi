@@ -14,6 +14,8 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - Added `expired_points` and `subtracted_points` to the following schemas: `LoyaltyMember`, `LoyaltiesMembersTransfersCreateResponseBody`, `RedeemableVoucher`, `SimpleLoyaltyCard`, `VoucherBase`.
 - Removed an object with a `SimpleLoyaltyCard` schema from `VoucherUpdateLoyaltyCard`.
 - Removed an object with a `Gift` schema from `VoucherUpdateGift`.
+- Unified part of descriptions involving values for decimal places.
+- Fixed `filters` query object in GET `v1/publications` by adding `"style": "deepObject"`.
 
 ## 2025-02-12
 
