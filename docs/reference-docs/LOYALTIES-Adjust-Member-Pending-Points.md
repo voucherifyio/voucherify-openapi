@@ -1,8 +1,8 @@
 ---
-title: Update Member Pending Points [Beta]
+title: Adjust Member Pending Points [Beta]
 type: endpoint
 categorySlug: voucherify-api
-slug: update-member-pending-points
+slug: adjust-member-pending-points
 parentDocSlug: loyalties
 hidden: false
 order: 184
