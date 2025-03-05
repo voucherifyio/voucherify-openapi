@@ -6,7 +6,7 @@ The following transaction types trigger the event:
 - `CREDITS_REFUND`
 - `CREDITS_REDEMPTION`
 
-It is both a project settings and a distribution webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
 
 > 📘 Webhook documentation
 >

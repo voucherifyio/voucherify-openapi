@@ -1,6 +1,6 @@
 The `EVENTS.CUSTOMER.REWARDED` event indicates that a customer received a reward in exchange for points in a loyalty campaign. The action is usually a manual process started by the customer.
 
-It is both a project settings and a distribution webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
 
 > 📘 Webhook documentation
 >

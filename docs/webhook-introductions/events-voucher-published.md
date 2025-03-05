@@ -3,7 +3,7 @@ The `EVENTS.VOUCHER.PUBLISHED` event indicates that a voucher has been successfu
 - Associated campaign and its type,
 - Expiration date.
 
-It is both a project settings and a distribution webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
 
 > 📘 Webhook documentation
 >

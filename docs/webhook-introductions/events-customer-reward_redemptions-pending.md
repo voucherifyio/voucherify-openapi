@@ -1,3 +1,3 @@
 The `EVENTS.CUSTOMER.REWARD_REDEMPTIONS.PENDING` event indicates that redemption of a reward is in progress.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.

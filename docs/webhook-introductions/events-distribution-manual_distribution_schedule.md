@@ -15,7 +15,7 @@ Additional objects are also sent depending on the purpose:
   - `publication`,
 - "Send plain message to customers" is unavailable for this distribution webhook.
 
-It is a distribution webhook.
+This event is used in a webhook configured in Distributions in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

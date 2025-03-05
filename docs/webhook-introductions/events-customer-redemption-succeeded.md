@@ -1,6 +1,6 @@
 The `EVENTS.CUSTOMER.REDEMPTION.SUCCEEDED` event indicates that the redemption process was successful with regard to a customer. It confirms that the associated voucher codes and promotional tiers have been effectively applied.
 
-It is both a project settings and a distribution webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
 
 > 📘 Webhook documentation
 >

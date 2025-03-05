@@ -1,6 +1,6 @@
 The `EVENTS.CUSTOMER.CREATED` event indicates that a new customer was successfully created in Voucherify.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

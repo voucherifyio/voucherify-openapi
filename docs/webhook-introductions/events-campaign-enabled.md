@@ -1,6 +1,6 @@
 The `EVENTS.CAMPAIGN.ENABLED` event indicates that the campaign is now active and can be utilized for its intended purpose.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

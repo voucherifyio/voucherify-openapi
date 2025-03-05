@@ -1,6 +1,6 @@
 The `EVENTS.CUSTOMER.LOYALTY.TIER.LEFT` event indicates that a customer has exited a loyalty campaign tier structure or a specific tier.
 
-It is a distribution webhook.
+This event is used in a webhook configured in Distributions in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

@@ -7,7 +7,7 @@ The webhook provides, among others, the following details:
 - Creation date,
 - Other relevant details.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

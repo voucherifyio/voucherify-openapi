@@ -2,7 +2,7 @@ The `EVENTS.CUSTOMER.REWARD_REDEMPTIONS.COMPLETED` event indicates that redempti
 
 If this event is sent as a notification in a Loyalty campaign, it is also sent with the `publication` object.
 
-It is both a project settings and a distribution webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
 
 > 📘 Webhook documentation
 >

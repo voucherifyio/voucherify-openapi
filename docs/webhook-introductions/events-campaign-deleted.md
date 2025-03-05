@@ -1,6 +1,6 @@
 The `EVENTS.CAMPAIGN.DELETED` event indicates that a specific campaign was removed. This serves as a real-time notification about this event.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

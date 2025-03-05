@@ -1,6 +1,6 @@
 The `EVENTS.CAMPAIGN.PROMOTION_TIER.DELETED` event indicates that the promotion tier was deleted.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

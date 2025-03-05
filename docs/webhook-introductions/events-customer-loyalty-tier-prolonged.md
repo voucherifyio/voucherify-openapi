@@ -1,6 +1,6 @@
 The `EVENTS.CUSTOMER.LOYALTY.TIER.PROLONGED` event indicates that a customer has remained on a loyalty tier or a specific tier in a loyalty campaign under campaign rules even though they no longer qualify for it.
 
-It is a distribution webhook.
+This event is used in a webhook configured in Distributions in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

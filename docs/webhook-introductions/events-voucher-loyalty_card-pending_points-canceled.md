@@ -1,6 +1,6 @@
 The `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.CANCELED` event indicates that loyalty pending points have been successfully canceled for a customer's loyalty card associated with a voucher. The pending points can be canceled manually with the [**POST** Cancel Member Pending Points](ref:cancel-member-pending-points) endpoint.
 
-It is both a project settings and a distribution webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
 
 > 📘 Webhook documentation
 >

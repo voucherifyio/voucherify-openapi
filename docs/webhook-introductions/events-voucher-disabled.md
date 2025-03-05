@@ -1,6 +1,6 @@
 The `EVENTS.VOUCHER.DISABLED` event indicates that a voucher has been successfully disabled for use. It indicates that the voucher is now inactive and it cannot be redeemed.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

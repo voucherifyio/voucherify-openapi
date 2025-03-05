@@ -1,6 +1,6 @@
 The `EVENTS.BUS_VAL_RULE.UPDATED` event indicates that an existing business validation rule has been successfully modified. The event provides the details about the business validation rule with the changes included.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

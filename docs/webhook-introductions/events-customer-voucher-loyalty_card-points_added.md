@@ -1,6 +1,6 @@
 The `EVENTS.CUSTOMER.VOUCHER.LOYALTY_CARD.POINTS_ADDED` event indicates that loyalty points have been successfully added to a customer's loyalty card. It informs about the accumulation of loyalty points.
 
-It is both a project settings and a distribution webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
 
 > 📘 Webhook documentation
 >

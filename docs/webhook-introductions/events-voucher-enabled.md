@@ -1,6 +1,6 @@
 The `EVENTS.VOUCHER.ENABLED` event indicates that a voucher has been successfully enabled for use. It indicates that the voucher is now active and it can be redeemed.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

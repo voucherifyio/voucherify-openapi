@@ -2,7 +2,7 @@ The `EVENTS.CUSTOMER.VOUCHER.LOYALTY_CARD.PENDING_POINTS.CANCELED` event indicat
 
 This event is triggered by distribution – Loyalty pending points canceled.
 
-It is both a project settings and a distribution webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
 
 > 📘 Webhook documentation
 >

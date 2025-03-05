@@ -5,7 +5,7 @@ The webhook provides, among others, the following details:
 - Associated campaign and its type,
 - Expiration date.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

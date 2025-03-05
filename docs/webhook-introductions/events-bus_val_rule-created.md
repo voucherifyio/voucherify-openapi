@@ -3,7 +3,7 @@ The `EVENTS.BUS_VAL_RULE.CREATED` event indicates that a new business validation
 - Conditions,
 - Logic.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

@@ -1,6 +1,6 @@
 The `EVENTS.CUSTOMER.LOYALTY.TIER.DOWNGRADED` event indicates that a customer has moved to a lower tier or a specific tier in a loyalty campaign.
 
-It is a distribution webhook.
+This event is used in a webhook configured in Distributions in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

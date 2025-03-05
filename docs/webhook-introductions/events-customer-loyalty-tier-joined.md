@@ -1,6 +1,6 @@
 The `EVENTS.CUSTOMER.LOYALTY.TIER.JOINED` event indicates that a customer has entered a loyalty campaign tier structure or a specific tier.
 
-It is a distribution webhook.
+This event is used in a webhook configured in Distributions in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

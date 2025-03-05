@@ -1,6 +1,6 @@
 The `EVENTS.REDEMPTION.FAILED` event indicates that the redemption process encountered issues while applying the voucher codes or promotions tiers. As a result, the redemption was unsuccesssful.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

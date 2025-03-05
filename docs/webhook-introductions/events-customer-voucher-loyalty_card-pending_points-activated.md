@@ -2,7 +2,7 @@ The `EVENTS.CUSTOMER.VOUCHER.LOYALTY_CARD.PENDING_POINTS.ACTIVATED` event indica
 
 This event is triggered by distribution – Loyalty pending points activated.
 
-It is both a project settings and a distribution webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
 
 > 📘 Webhook documentation
 >

@@ -1,6 +1,6 @@
 The `EVENTS.VOUCHER.DELETED` event indicates that a voucher has been successfully deleted. It provides ą real-time notification of that the voucher has been removed.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

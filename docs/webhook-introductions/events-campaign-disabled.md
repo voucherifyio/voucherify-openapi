@@ -1,6 +1,6 @@
 The `EVENTS.CAMPAIGN.DISABLED` event indicates that the campaign is temporarily or permanently inactive. It cannot be utilized during that period.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

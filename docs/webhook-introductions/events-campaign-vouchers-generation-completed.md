@@ -1,6 +1,6 @@
 The `EVENTS.CAMPAIGN.VOUCHERS.GENERATION.COMPLETED` event indicates that voucher generation for a given campaign was completed. It includes details about the campaign for which voucher were generated, the number of generated vouchers, and the date when the process was completed.
 
-It is a project settings webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

@@ -1,6 +1,6 @@
 The `EVENTS.VOUCHER.LOYALTY_CARD.POINTS_EXPIRED` event indicates that loyalty points have expired on a loyalty card. It informs about the loyalty points that were removed under the expiration rules set in the loyalty campaign.
 
-It is both a project settings and a distribution webhook.
+This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
 
 > 📘 Webhook documentation
 >
