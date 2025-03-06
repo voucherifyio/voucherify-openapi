@@ -8,6 +8,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 - Added `EventCustomerLoyaltyCardPendingPointsUpdated` schema and linked to `CustomerActivityData` and `MemberActivityData`
 - Added `EVENTS.CUSTOMER.VOUCHER.LOYALTY_CARD.PENDING_POINTS.UPDATED` and associated schemas to OpenAPIWebhooks.json
+- Added `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.UPDATED` and associated schemas to OpenAPIWebhooks.json
 
 ## 2025-03-04
 
