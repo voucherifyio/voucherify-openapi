@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2025-03-06
+
+Updated `introduction-to-webhook` with new webhooks.
+
 ## 2025-02-12
 
 - Updated Authentication.md with OAuth 2.0

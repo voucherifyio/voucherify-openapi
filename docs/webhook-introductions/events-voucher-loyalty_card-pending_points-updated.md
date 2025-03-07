@@ -1,11 +1,4 @@
-The `EVENTS.CAMPAIGN.CREATED` event indicates that a new campaign was created.
-
-The webhook provides, among others, the following details:
-- Campaign ID,
-- Campaign name
-- Campaign type,
-- Creation date,
-- Other relevant details.
+The `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.UPDATED` event indicates that loyalty pending points have been updated on a customer's loyalty card associated with a voucher. The pending points can be updated by adding or subtracting points.
 
 This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
