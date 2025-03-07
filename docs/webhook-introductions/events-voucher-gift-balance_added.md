@@ -1,6 +1,6 @@
 The `EVENTS.VOUCHER.GIFT.BALANCE_ADDED` event indicates that additional balance has been successfully added to a gift voucher. It provides real-time notification that the gift voucher's balance has been increased.
 
-This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

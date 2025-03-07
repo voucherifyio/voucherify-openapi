@@ -2,7 +2,7 @@ The `EVENTS.CUSTOMER.PUBLICATION.SUCCEEDED` event indicates that a voucher code 
 
 This event serves as a real-time notification mechanism and it can notify other systems or applications that a voucher was assigned. As a result, the systems can react by, for example, sending a notification about an assignment to a customer.
 
-This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
+This event is used in a webhook configured in Distributions in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

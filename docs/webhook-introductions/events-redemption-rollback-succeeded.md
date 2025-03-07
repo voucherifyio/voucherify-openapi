@@ -1,6 +1,6 @@
 The `EVENTS.REDEMPTION.ROLLBACK.SUCCEEDED` event indicates a redemption was successfully reversed. This occurs when a previously redeemed voucher code or promotional tier has been rolled back or undone.
 
-This event is used in a webhook configured in Project settings in Voucherify dashboard as well as in Voucherify Distributions.
+This event is used in a webhook configured in Project settings in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >
