@@ -1,4 +1,4 @@
-The `EVENTS.CUSTOMER.LOYALTY.TIER.UPGRADED` event indicates that a customer has moved to a higher tier or a specific tier in a loyalty campaign.
+The `EVENTS.CUSTOMER.VOUCHER.LOYALTY_CARD.PENDING_POINTS.UPDATED` event indicates that loyalty pending points have been updated on a customer's loyalty card associated with a voucher. The pending points can be updated by adding or subtracting points.
 
 This event is used in a webhook configured in Distributions in Voucherify dashboard.
 
