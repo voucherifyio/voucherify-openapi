@@ -216,12 +216,12 @@ You can use different conditions to filter data; see the table below.
 | `$intersects`                | array of different types   | Compares values in an array. Returns results that have **at least one** of the values listed.                                  |
 | `$is_day_of_month`           |                            |                                                                                                                                |
 | `$is_day`                    |                            |                                                                                                                                |
-| `$is_days_ago_md`            |                            |                                                                                                                                |
+| `$is_days_ago_md`            | date                       | Returns results that occurred exactly the specified number of days ago.                                                        |
 | `$is_days_ago`               |                            |                                                                                                                                |
-| `$is_days_in_future_md`      |                            |                                                                                                                                |
+| `$is_days_in_future_md`      | date                       | Returns results that will occur exactly in the specified number of days in the future.                                         |
 | `$is_days_in_future`         |                            |                                                                                                                                |
-| `$is_less_days_ago_md`       |                            |                                                                                                                                |
-| `$is_less_days_in_future_md` |                            |                                                                                                                                |
+| `$is_less_days_ago_md`       | date                       | Returns results that occurred exactly the specified number of days ago or less than that number.                               |
+| `$is_less_days_in_future_md` | date                       | Returns results that will occur exactly in the specified number of days in the future or less than that number.                |
 | `$is_month`                  |                            |                                                                                                                                |
 | `$is_more_days_ago_md`       |                            |                                                                                                                                |
 | `$is_more_days_in_future_md` |                            |                                                                                                                                |
