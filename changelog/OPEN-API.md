@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-03-11
+
+- Add `has_more` property to the `AsyncActionsListResponseBody` schema.
+
 ## 2025-03-06
 
 - Added `EventCustomerLoyaltyCardPendingPointsUpdated` schema and linked to `CustomerActivityData` and `MemberActivityData`
