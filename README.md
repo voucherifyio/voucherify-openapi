@@ -8,7 +8,7 @@
 This repository contains OpenAPI specification for Voucherify's API.
 
  - **Version supported**: `3.0.1`
- - **Spec location**: `/production/readOnly-openAPI.json`
+ - **Spec location**: [/production/readOnly-openAPI.json](/production/readOnly-openAPI.json)
  - **Changelog**: `Changelog.md`
  - **Status**: _Released_
 
