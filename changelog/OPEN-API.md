@@ -4,6 +4,11 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+
+## 2025-03-17
+
+- Added `EVENTS.CAMPAIGN.LOYALTY_TIER.CREATED`, `EVENTS.CAMPAIGN.LOYALTY_TIER.DELETED`, `EVENTS.CAMPAIGN.LOYALTY_TIER.UPDATED` and associated schemas to OpenAPIWebhooks.json
+
 ## 2025-03-14
 
 - Changed `200 OAuth tokens` to `1000 OAuth tokens` as per v20250224.
