@@ -5,6 +5,10 @@
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 
+## 2025-03-19
+
+- Added `pending_points` property to the `LoyaltiesEarningRulesCreateOrderPaidRequestBody` and `LoyaltiesEarningRulesUpdateRequestBody` schemas.
+
 ## 2025-03-17
 
 - Added `EVENTS.CAMPAIGN.LOYALTY_TIER.CREATED`, `EVENTS.CAMPAIGN.LOYALTY_TIER.DELETED`, `EVENTS.CAMPAIGN.LOYALTY_TIER.UPDATED` and associated schemas to OpenAPIWebhooks.json
