@@ -5,6 +5,10 @@
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 
+## 2025-03-20
+
+Added new events to the `ManagementProjectsWebhookBase` schema.
+
 ## 2025-03-19
 
 - Added `pending_points` property to the `LoyaltiesEarningRulesCreateOrderPaidRequestBody` and `LoyaltiesEarningRulesUpdateRequestBody` schemas.
