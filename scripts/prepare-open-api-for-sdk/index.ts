@@ -311,6 +311,8 @@ const main = async (languageOptions: LanguageOptions) => {
       }
     }
   });
+  // Delete `bundle_rules`
+  delete openAPIContent.components.schemas.ValidationRuleBase.properties.bundle_rules;
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
