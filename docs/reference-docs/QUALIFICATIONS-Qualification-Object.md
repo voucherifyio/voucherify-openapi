@@ -123,6 +123,7 @@ All of:
 | Attributes |  Description |
 |:-----|:--------|
 | discount | See: [Discount](#discount) |
+| bundle | See: [Bundle Details](#bundle-details) |
 | gift | See: [Redeemable Gift](#redeemable-gift) |
 | loyalty_card | <p>Loyalty Card object response</p> [Redeemable Loyalty Card](#redeemable-loyalty-card) |
 | error | <p>Error in result</p> [Error Object](#error-object) |
@@ -165,6 +166,13 @@ All of:
 One of:
 
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
+
+## Bundle Details
+| Attributes |  Description |
+|:-----|:--------|
+| quantity</br>`integer` | <p>Determines how many bundles are qualified. If there are missing bundle products, the value is <code>0</code>.</p> |
+| identified</br>`array` | <p>Determines products from the customer's cart that meet bundle conditions.</p> |
+| missing</br>`array` | <p>Determines products, SKUs, or collection products from the bundle that are missing in the customer's cart. Determines also the missing quantity.</p> |
 
 ## Redeemable Gift
 | Attributes |  Description |
