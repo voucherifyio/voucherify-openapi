@@ -5,6 +5,10 @@
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 
+## 2025-03-24
+
+Added `balance` to the `RedeemableResultGiftCard` schema.
+
 ## 2025-03-20
 
 Added new events to the `ManagementProjectsWebhookBase` schema.
