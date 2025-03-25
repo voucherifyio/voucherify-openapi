@@ -170,8 +170,8 @@ One of:
 ## Bundle Details
 | Attributes |  Description |
 |:-----|:--------|
-| quantity</br>`integer` | <p>Determines how many bundles are qualified. If there are missing bundle products, the value is <code>0</code>.</p> |
-| identified</br>`array` | <p>Determines products from the customer's cart that meet bundle conditions.</p> |
+| quantity</br>`integer` | <p>Determines how many bundles are qualified. If there are missing bundle products, the value is <code>0</code>. If the bundle is qualified, the value is <code>1</code>.</p> |
+| identified</br>`array` | <p>Determines products from the customer's cart that meet bundle conditions. SKU products meet the conditions for their main product that is configured in the bundle.</p> |
 | missing</br>`array` | <p>Determines products, SKUs, or collection products from the bundle that are missing in the customer's cart. Determines also the missing quantity.</p> |
 
 ## Redeemable Gift
