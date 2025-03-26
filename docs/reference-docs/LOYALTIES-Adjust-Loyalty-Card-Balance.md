@@ -1,5 +1,5 @@
 ---
-title: Add or Remove Loyalty Card Balance
+title: Adjust Loyalty Card Balance
 type: endpoint
 categorySlug: voucherify-api
 slug: update-loyalty-card-balance
