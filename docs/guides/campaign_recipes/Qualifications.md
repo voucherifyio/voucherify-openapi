@@ -1987,7 +1987,7 @@ Because the customer's cart (`order.items`) include only 1 Star Thermal Bottle, 
     "scenario": "AUDIENCE_ONLY"
 }
 ```
-```json Qualification response (partial)
+```json Qualification response
 {
     "redeemables": {
         "object": "list",
