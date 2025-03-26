@@ -26,8 +26,8 @@ The qualifications API can be applied (among others) for:
 
 There are two dedicated API Endpoints for checking eligibility:
 
-| **Endpoint**                         | **Link**                                                                               |
-| :----------------------------------- | :------------------------------------------------------------------------------------- |
+| **Endpoint**                           | **Link**                                                                               |
+| :------------------------------------- | :------------------------------------------------------------------------------------- |
 | **POST** `v1/v1/qualifications`        | Check eligibility using the [server-side endpoint](ref:check-eligibility).             |
 | **POST** `v1/client/v1/qualifications` | Check eligibility using the [client-side endpoint](ref:check-eligibility-client-side). |
 
@@ -1896,3 +1896,324 @@ The upsell scenario displays all the incentives within customer's reach in their
 >
 > Based on the customer order, Voucherify will encourage customers to buy a more expensive version of a product or add extra products from a matching theme adding various incentives. This process focuses on enhancing the customer's purchase to increase the total sale.
 
+### Bundles
+
+With bundles, you can create discount incentives that depend on the content of the customer's cart (`order.items` array in the request). For example, you can create a bundle of two thermal bottles and five products from a product collection that the customer must have in their cart to be eligible for a $10 discount for a hoodie.
+
+The incentives based on a bundle behave differently depending on the qualification scenario. The incentives are returned depending on how the customer's cart meets bundle requirements:
+- `ALL` – the cart must meet the bundle conditions for the incentive to be returned;
+- `AUDIENCE_ONLY` – the cart does not have to meet the bundle conditions for the incentive to be returned;
+- `CUSTOMER_WALLET` – the cart must meet the bundle conditions;
+- `PRODUCTS` – the cart does not have to meet the bundle conditions;
+- `PRODUCTS_DISCOUNT` – the incentive is returned if it is a discount that target products and if that discounted product is in the cart; however, the cart does not have to meet the bundle conditions;
+- `PROMOTION_STACKS` – the cart must meet the bundle conditions;
+- `PRODUCTS_BY_CUSTOMER` – the cart does not have to meet the bundle conditions
+- `PRODUCTS_DISCOUNT_BY_CUSTOMER` – the incentive is returned if it is a discount that target products and if that discounted product is in the cart; however, the cart does not have to meet the bundle conditions.
+
+If the bundle conditions are not met, but the incentive is returned nevertheless, the qualification will return the data showing which SKUs, products, or collections are missing and the missing quantity.
+
+In the following example, the bundle conditions are:
+- 2 Star Thermal Bottles
+- 5 Adventure-brand products
+
+
+Because the customer's cart (`order.items`) include only 1 Star Thermal Bottle, 1 Adventure T-shirt, and 2 pairs of Adventure Socks, the qualification returns data with `identified` products and their quantities that meet the bundle conditions and what is `missing` in the bundle, namely 1 Star Thermal Bottle and 2 items from the Adventure-brand collection (`"id": "pc_pWu3TzRFhJ99Xak7Z7QlynNa"`).
+
+```json Qualification request
+{
+    "customer": {
+        "source_id": "rdmr01"
+    },
+    "order": {
+        "items": [
+            {
+                "product": {
+                    "id": "prod_0fc35dfe978defeb6b",
+                    "name": "Star Thermal Bottle",
+                    "price": 2499,
+                    "metadata": {
+                        "brand": "Star"
+                    }
+                },
+                "quantity": 1
+            },
+            {
+                "product": {
+                    "id": "prod_0fc35dfeaa0defeb73",
+                    "name": "Adventure T-shirt",
+                    "price": 1999,
+                    "metadata": {
+                        "brand": "Adventure"
+                    }
+                },
+                "quantity": 1
+            },
+            {
+                "product": {
+                    "id": "prod_0fc35dfeabcdefeb80",
+                    "name": "Adventure Socks",
+                    "price": 499,
+                    "metadata": {
+                        "brand": "Adventure"
+                    }
+                },
+                "quantity": 2
+            }
+        ]
+    },
+    "options": {
+        "filters": {
+            "campaign_type": {
+                "conditions": {
+                    "$is": [
+                        "DISCOUNT_COUPONS"
+                    ]
+                }
+            },
+            "resource_type": {
+                "conditions": {
+                    "$is": [
+                        "voucher"
+                    ]
+                }
+            }
+        },
+        "expand": [
+            "redeemable",
+            "validation_rules"
+        ],
+        "limit": 1
+    },
+    "scenario": "AUDIENCE_ONLY"
+}
+```
+```json Qualification response (partial)
+{
+    "redeemables": {
+        "object": "list",
+        "data_ref": "data",
+        "data": [
+            {
+                "id": "BUNDLE-PROD-1c",
+                "object": "voucher",
+                "created_at": "2025-03-26T11:00:17.987Z",
+                "result": {
+                    "discount": {
+                        "type": "AMOUNT",
+                        "effect": "APPLY_TO_ITEMS",
+                        "amount_off": 1000,
+                        "aggregated_amount_limit": 10000,
+                        "is_dynamic": false
+                    },
+                    "bundle": {
+                        "quantity": 0,
+                        "identified": [
+                            {
+                                "id": "prod_0fc35dfe978defeb6b",
+                                "object": "product",
+                                "item_index": 0,
+                                "item_quantity": 1
+                            },
+                            {
+                                "id": "prod_0fc35dfeaa0defeb73",
+                                "object": "product",
+                                "item_index": 1,
+                                "item_quantity": 1
+                            },
+                            {
+                                "id": "prod_0fc35dfeabcdefeb80",
+                                "object": "product",
+                                "item_index": 2,
+                                "item_quantity": 2
+                            }
+                        ],
+                        "missing": [
+                            {
+                                "id": "prod_0fc35dfe978defeb6b",
+                                "object": "product",
+                                "item_quantity": 1
+                            },
+                            {
+                                "id": "pc_pWu3TzRFhJ99Xak7Z7QlynNa",
+                                "object": "products_collection",
+                                "item_quantity": 2
+                            }
+                        ]
+                    }
+                },
+                "order": {
+                    "amount": 5496,
+                    "total_amount": 5496,
+                    "items": [
+                        {
+                            "object": "order_item",
+                            "id": "ordli_10568b16f101e97576",
+                            "quantity": 1,
+                            "initial_quantity": 1,
+                            "amount": 2499,
+                            "initial_amount": 2499,
+                            "price": 2499,
+                            "subtotal_amount": 2499,
+                            "product": {
+                                "id": "prod_0fc35dfe978defeb6b",
+                                "source_id": "star-th-bottle",
+                                "name": "Star Thermal Bottle",
+                                "metadata": {
+                                    "brand": "Star"
+                                },
+                                "price": 2499
+                            }
+                        },
+                        {
+                            "object": "order_item",
+                            "id": "ordli_10568b16f101e97577",
+                            "quantity": 1,
+                            "initial_quantity": 1,
+                            "amount": 1999,
+                            "initial_amount": 1999,
+                            "price": 1999,
+                            "subtotal_amount": 1999,
+                            "product": {
+                                "id": "prod_0fc35dfeaa0defeb73",
+                                "source_id": "adv-tshirt",
+                                "name": "Adventure T-shirt",
+                                "metadata": {
+                                    "brand": "Adventure"
+                                },
+                                "price": 1999
+                            }
+                        },
+                        {
+                            "object": "order_item",
+                            "id": "ordli_10568b16f101e97578",
+                            "quantity": 2,
+                            "initial_quantity": 2,
+                            "amount": 998,
+                            "initial_amount": 998,
+                            "price": 499,
+                            "subtotal_amount": 998,
+                            "product": {
+                                "id": "prod_0fc35dfeabcdefeb80",
+                                "source_id": "adv-scks",
+                                "name": "Adventure Socks",
+                                "metadata": {
+                                    "brand": "Adventure"
+                                },
+                                "price": 499
+                            }
+                        }
+                    ],
+                    "customer_id": null,
+                    "referrer_id": null,
+                    "object": "order"
+                },
+                "applicable_to": {
+                    "data": [
+                        {
+                            "object": "products_collection",
+                            "id": "pc_nw1xRgXB8cBzDJSrSbdSqJP4",
+                            "strict": false,
+                            "effect": "APPLY_TO_EVERY",
+                            "skip_initially": 0,
+                            "repeat": 1,
+                            "target": "ITEM"
+                        }
+                    ],
+                    "total": 1,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "inapplicable_to": {
+                    "data": [],
+                    "total": 0,
+                    "data_ref": "data",
+                    "object": "list"
+                },
+                "metadata": {},
+                "campaign_id": "camp_vzuF8JZdh1tdQqw3R6rS63ci",
+                "campaign_name": "Bundle-Product-Discount",
+                "validation_rules_assignments": {
+                    "object": "list",
+                    "data_ref": "data",
+                    "data": [
+                        {
+                            "id": "asgm_e9RsrtXBMCJ5ti1S",
+                            "rule_id": "val_g1rAIcaPuxAd",
+                            "related_object_id": "v_XXSJVTBFFKLPiy585UqtTPiYJMF1bnBW",
+                            "related_object_type": "voucher",
+                            "object": "validation_rules_assignment",
+                            "validation_status": "VALID"
+                        }
+                    ],
+                    "total": 1
+                }
+            }
+        ],
+        "total": 1,
+        "has_more": true,
+        "more_starting_after": "2025-03-26T11:00:17.987Z"
+    },
+    "tracking_id": "track_C7TLT9aBmso=",
+    "order": {
+        "items": [
+            {
+                "object": "order_item",
+                "id": "ordli_10568b16f101e97576",
+                "quantity": 1,
+                "product": {
+                    "id": "prod_0fc35dfe978defeb6b",
+                    "source_id": "star-th-bottle",
+                    "name": "Star Thermal Bottle",
+                    "metadata": {
+                        "brand": "Star"
+                    },
+                    "price": 2499
+                }
+            },
+            {
+                "object": "order_item",
+                "id": "ordli_10568b16f101e97577",
+                "quantity": 1,
+                "product": {
+                    "id": "prod_0fc35dfeaa0defeb73",
+                    "source_id": "adv-tshirt",
+                    "name": "Adventure T-shirt",
+                    "metadata": {
+                        "brand": "Adventure"
+                    },
+                    "price": 1999
+                }
+            },
+            {
+                "object": "order_item",
+                "id": "ordli_10568b16f101e97578",
+                "quantity": 2,
+                "product": {
+                    "id": "prod_0fc35dfeabcdefeb80",
+                    "source_id": "adv-scks",
+                    "name": "Adventure Socks",
+                    "metadata": {
+                        "brand": "Adventure"
+                    },
+                    "price": 499
+                }
+            }
+        ],
+        "customer_id": null,
+        "referrer_id": null,
+        "object": "order"
+    },
+    "stacking_rules": {
+        "redeemables_limit": 25,
+        "applicable_redeemables_limit": 5,
+        "applicable_exclusive_redeemables_limit": 1,
+        "exclusive_categories": [],
+        "joint_categories": [],
+        "redeemables_application_mode": "PARTIAL",
+        "redeemables_sorting_rule": "REQUESTED_ORDER",
+        "redeemables_no_effect_rule": "REDEEM_ANYWAY",
+        "redeemables_products_application_mode": "STACK",
+        "redeemables_rollback_order_mode": "WITH_ORDER"
+    }
+}
+```
