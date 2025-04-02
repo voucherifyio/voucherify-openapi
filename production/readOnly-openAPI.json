@@ -1699,6 +1699,11 @@
               "$ref": "#/components/schemas/AsyncActionBase"
             },
             "nullable": true
+          },
+          "has_more": {
+            "type": "boolean",
+            "description": "As query results are always limited by parameters, the `has_more` flag indicates if there are more records available. This lets you know if you can run another request to get more records returned in the results.",
+            "nullable": true
           }
         }
       },
@@ -3870,6 +3875,7 @@
               "customer.voucher.loyalty_card.pending_points.activated",
               "customer.voucher.loyalty_card.pending_points.added",
               "customer.voucher.loyalty_card.pending_points.canceled",
+              "customer.voucher.loyalty_card.pending_points.updated",
               "customer.voucher.loyalty_card.points_activated",
               "customer.voucher.loyalty_card.points_added",
               "customer.voucher.loyalty_card.points_transferred",
@@ -4060,6 +4066,9 @@
           },
           {
             "$ref": "#/components/schemas/EventCustomerLoyaltyCardPendingPointsCanceled"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyCardPendingPointsUpdated"
           },
           {
             "$ref": "#/components/schemas/EventCustomerLoyaltyCardPointsAdded"
@@ -6987,6 +6996,39 @@
       "EventCustomerLoyaltyCardPendingPointsCanceled": {
         "title": "Event Customer Loyalty Card Pending Points Canceled",
         "description": "Event data object schema for `customer.voucher.loyalty_card.pending_points.canceled`.",
+        "type": "object",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/SimpleCustomer"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/SimpleCampaign"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/SimpleVoucher"
+          },
+          "voucher_pending_points_balance": {
+            "$ref": "#/components/schemas/VoucherBalance"
+          },
+          "order": {
+            "$ref": "#/components/schemas/SimpleOrder"
+          },
+          "pending_points": {
+            "$ref": "#/components/schemas/LoyaltyPendingPoints"
+          }
+        },
+        "required": [
+          "customer",
+          "campaign",
+          "voucher",
+          "voucher_pending_points_balance",
+          "order",
+          "pending_points"
+        ]
+      },
+      "EventCustomerLoyaltyCardPendingPointsUpdated": {
+        "title": "Event Customer Loyalty Card Pending Points Updated",
+        "description": "Event data object schema for `customer.voucher.loyalty_card.pending_points.updated`.",
         "type": "object",
         "properties": {
           "customer": {
@@ -10986,6 +11028,28 @@
             "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default.",
             "nullable": true
           },
+          "pending_points": {
+            "type": "object",
+            "nullable": true,
+            "description": "Defines the configuration for pending points. Pending points can be used only with the `order.paid` event.",
+            "properties": {
+              "period_type": {
+                "type": "string",
+                "description": "Defines the type of the period during which the points are in the pending state. Currently, only `DAY` value is accepted.",
+                "enum": [
+                  "DAY"
+                ],
+                "nullable": true
+              },
+              "period_value": {
+                "type": "integer",
+                "description": "Defines for how long the points are in the pending state. The minimum value is 1, maximum is 90.",
+                "minimum": 1,
+                "maximum": 90,
+                "nullable": true
+              }
+            }
+          },
           "validity_timeframe": {
             "$ref": "#/components/schemas/ValidityTimeframe"
           },
@@ -11276,6 +11340,28 @@
             "example": "2022-03-03T14:30:00.000Z",
             "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default.",
             "nullable": true
+          },
+          "pending_points": {
+            "type": "object",
+            "nullable": true,
+            "description": "Defines the configuration for pending points. Pending points can be used only with the `order.paid` event. Pass `null` to remove pending points from the earning rule.",
+            "properties": {
+              "period_type": {
+                "type": "string",
+                "description": "Defines the type of the period during which the points are in the pending state. Currently, only `DAY` value is accepted.",
+                "enum": [
+                  "DAY"
+                ],
+                "nullable": true
+              },
+              "period_value": {
+                "type": "integer",
+                "description": "Defines for how long the points are in the pending state. The minimum value is 1, maximum is 90.",
+                "minimum": 1,
+                "maximum": 90,
+                "nullable": true
+              }
+            }
           },
           "validity_timeframe": {
             "$ref": "#/components/schemas/ValidityTimeframe"
@@ -11656,7 +11742,7 @@
               "id": {
                 "type": "string",
                 "description": "Identifies the voucher that is being modified. This is the unique identifer that was assigned by Voucherify.",
-                "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq",
+                "example": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
                 "nullable": true
               }
             },
@@ -12062,7 +12148,7 @@
               },
               "pending_points": {
                 "type": "integer",
-                "description": "Shows the total number of pending points over the lifetime of the loyalty card.",
+                "description": "Shows the number of pending points that will be added to the loyalty card when they are activated automatically or manually.",
                 "nullable": true
               },
               "expired_points": {
@@ -13592,7 +13678,7 @@
               },
               "pending_points": {
                 "type": "integer",
-                "description": "Shows the total number of pending points over the lifetime of the loyalty card.",
+                "description": "Shows the number of pending points that will be added to the loyalty card when they are activated automatically or manually.",
                 "nullable": true
               },
               "expired_points": {
@@ -16579,34 +16665,66 @@
             "items": {
               "type": "string",
               "enum": [
-                "redemption.succeeded",
-                "redemption.failed",
-                "redemption.rollback.succeeded",
-                "redemption.rollback.failed",
-                "publication.succeeded",
-                "voucher.published",
-                "voucher.updated",
-                "voucher.deleted",
-                "voucher.created",
-                "voucher.enabled",
-                "voucher.disabled",
-                "voucher.loyalty_card.points_added",
-                "voucher.gift.balance_added",
-                "campaign.enabled",
-                "campaign.deleted",
-                "campaign.created",
-                "campaign.updated",
-                "campaign.disabled",
-                "campaign.vouchers.generation.completed",
                 "business_validation_rule.assignment.created",
                 "business_validation_rule.assignment.deleted",
                 "business_validation_rule.created",
                 "business_validation_rule.deleted",
                 "business_validation_rule.updated",
+                "campaign.created",
+                "campaign.deleted",
+                "campaign.disabled",
+                "campaign.enabled",
+                "campaign.earning_rule.assigned",
+                "campaign.earning_rule.deleted",
+                "campaign.earning_rule.disabled",
+                "campaign.earning_rule.enabled",
+                "campaign.earning_rule.updated",
+                "campaign.loyalty_tier.created",
+                "campaign.loyalty_tier.deleted",
+                "campaign.loyalty_tier.updated",
+                "campaign.promotion_stack.created",
+                "campaign.promotion_stack.updated",
+                "campaign.promotion_tier.created",
+                "campaign.promotion_tier.deleted",
+                "campaign.promotion_tier.disabled",
+                "campaign.promotion_tier.enabled",
+                "campaign.promotion_tier.updated",
+                "campaign.referral_tier.created",
+                "campaign.referral_tier.deleted",
+                "campaign.referral_tier.updated",
+                "campaign.reward.assignment.created",
+                "campaign.reward.assignment.deleted",
+                "campaign.reward.assignment.updated",
+                "campaign.updated",
+                "campaign.vouchers.aded",
+                "campaign.vouchers.generation.completed",
+                "campaign.vouchers.generation.failed",
+                "campaign.vouchers.generation.started",
+                "customer.confirmed",
                 "customer.created",
                 "customer.deleted",
                 "customer.rewarded",
-                "customer.rewarded.loyalty_points"
+                "customer.rewarded.loyalty_points",
+                "publication.succeeded",
+                "redemption.failed",
+                "redemption.rollback.failed",
+                "redemption.rollback.succeeded",
+                "redemption.succeeded",
+                "voucher.created",
+                "voucher.deleted",
+                "voucher.disabled",
+                "voucher.enabled",
+                "voucher.gift.balance_aded",
+                "voucher.gift.transaction.created",
+                "voucher.loyalty_card.pending_points.activated",
+                "voucher.loyalty_card.pending_points.aded",
+                "voucher.loyalty_card.pending_points.canceled",
+                "voucher.loyalty_card.pending_points.updated",
+                "voucher.loyalty_card.points_aded",
+                "voucher.loyalty_card.points_expired",
+                "voucher.loyalty_card.transaction.created",
+                "voucher.published",
+                "voucher.updated"
               ]
             },
             "nullable": true
@@ -16725,7 +16843,7 @@
             "enum": [
               "CUSTOM"
             ],
-            "description": "Type of calculation.\n\n",
+            "description": "Type of calculation.",
             "nullable": true
           },
           "points": {
@@ -16757,6 +16875,7 @@
       },
       "MappingPoints": {
         "title": "MappingPoints",
+        "type": "object",
         "oneOf": [
           {
             "$ref": "#/components/schemas/MappingMultiply"
@@ -16803,6 +16922,7 @@
               "customer.voucher.loyalty_card.pending_points.activated",
               "customer.voucher.loyalty_card.pending_points.added",
               "customer.voucher.loyalty_card.pending_points.canceled",
+              "customer.voucher.loyalty_card.pending_points.updated",
               "customer.voucher.loyalty_card.points_added",
               "customer.voucher.loyalty_card.points_transferred",
               "customer.voucher.loyalty_card.points_expired"
@@ -16906,6 +17026,9 @@
           },
           {
             "$ref": "#/components/schemas/EventCustomerLoyaltyCardPendingPointsCanceled"
+          },
+          {
+            "$ref": "#/components/schemas/EventCustomerLoyaltyCardPendingPointsUpdated"
           },
           {
             "$ref": "#/components/schemas/EventCustomerLoyaltyCardPointsAdded"
@@ -22428,12 +22551,17 @@
         "description": "This is a `result` object representing the results for a gift card.",
         "properties": {
           "gift": {
-            "description": "Stores the amount of gift card credits to be applied in the redemption.",
+            "description": "Stores the amount of gift card credits to be applied.",
             "type": "object",
             "properties": {
+              "balance": {
+                "type": "integer",
+                "description": "Available funds at the moment of validation. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`.",
+                "nullable": true
+              },
               "credits": {
                 "type": "integer",
-                "description": "Total number of gift card credits to be applied in the redemption expressed as the smallest currency unit (e.g. 100 cents for $1.00).",
+                "description": "Total number of gift card credits to be applied. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`.",
                 "nullable": true
               }
             },
@@ -22657,7 +22785,7 @@
               },
               "pending_points": {
                 "type": "integer",
-                "description": "Shows the total number of pending points over the lifetime of the loyalty card.",
+                "description": "Shows the number of pending points that will be added to the loyalty card when they are activated automatically or manually.",
                 "nullable": true
               },
               "expired_points": {
@@ -25849,7 +25977,7 @@
           },
           "pending_points": {
             "type": "integer",
-            "description": "Shows the total number of pending points over the lifetime of the loyalty card.",
+            "description": "Shows the number of pending points that will be added to the loyalty card when they are activated automatically or manually.",
             "nullable": true
           },
           "expired_points": {
@@ -29103,7 +29231,7 @@
               },
               "pending_points": {
                 "type": "integer",
-                "description": "Shows the total number of pending points over the lifetime of the loyalty card.",
+                "description": "Shows the number of pending points that will be added to the loyalty card when they are activated automatically or manually.",
                 "nullable": true
               },
               "expired_points": {
@@ -29847,7 +29975,7 @@
               "id": {
                 "type": "string",
                 "description": "Identifies the voucher that is being modified, this is the ID that was assigned by the Voucherify API.",
-                "example": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq",
+                "example": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
                 "nullable": true
               }
             },
@@ -35042,7 +35170,7 @@
                       "object": "balance",
                       "related_object": {
                         "type": "voucher",
-                        "id": "v_4Bd3aX7eXjHbe7Ef7on8YsLWBynsT4jq"
+                        "id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc"
                       }
                     }
                   }
@@ -42448,7 +42576,7 @@
           "Redemptions"
         ],
         "summary": "Rollback Redemption",
-        "description": "Your business logic may include a case when you need to undo a redemption. You can revert a redemption by calling this API endpoint. \n>🚧 \n>You can roll back a redemption up to 3 months back. \n\n ## Effect \nThe operation \n- creates a rollback entry in voucher's redemption history (`redemption.redemption_entries`) and \n- gives 1 redemption back to the pool (decreases `redeemed_quantity` by 1). \n## Returned funds \nIn case of *gift card vouchers*, this method returns funds back according to the source redemption. In case of *loyalty card vouchers*, this method returns points back according to the source redemption.",
+        "description": "Your business logic may include a case when you need to undo a redemption. You can revert a redemption by calling this API endpoint. This endpoint rolls back only single redemptions, meaning those that are not stacked. Stacked redemptions belong to a parent redemption. To roll back a parent redemption, including all of its individual redemptions, use the [POST Rollback Stackable Redemptions](ref:rollback-stacked-redemptions) \n>🚧 \n>You can roll back a redemption up to 3 months back. \n\n ## Effect \nThe operation \n- creates a rollback entry in voucher's redemption history (`redemption.redemption_entries`) and \n- gives 1 redemption back to the pool (decreases `redeemed_quantity` by 1). \n## Returned funds \nIn case of *gift card vouchers*, this method returns funds back according to the source redemption. In case of *loyalty card vouchers*, this method returns points back according to the source redemption.",
         "parameters": [
           {
             "schema": {
@@ -43135,7 +43263,7 @@
           "Redemptions"
         ],
         "summary": "Rollback Stackable Redemptions",
-        "description": "Rollback a stackable redemption. When you rollback a stacked redemption, all child redemptions will be rolled back. Provide the parent redemption ID as the path parameter. \n>🚧 \n> You can roll back a redemption up to 3 months back.",
+        "description": "Rollback a stackable redemption. When you roll back a stacked redemption, all child redemptions will be rolled back. Provide the parent redemption ID as the path parameter. However, you can use this endpoint to roll back a single redemption that does not have a parent, similarly to [POST Rollback redemption](ref:rollback-redemption).\n>🚧 \n> You can roll back a redemption up to 3 months back.",
         "parameters": [
           {
             "schema": {
@@ -44537,7 +44665,7 @@
           "Loyalties"
         ],
         "summary": "List Campaign Pending Points",
-        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\nLists all pending points that are currently assigned to all loyalty cards in a campaign. Once the points are added to the card, the entry is no longer returned.",
+        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\nLists all pending points that are currently assigned to all loyalty cards in a campaign. Once the points are added to the card, the entry is no longer returned.\n\n>👍 Configuring pending points\n>\n>Pending points are configured as part of an earning rule with [POST Create earning rule](ref:create-earning-rule) or [PUT Update earning rule](ref:update-earning-rule).",
         "parameters": [
           {
             "schema": {
@@ -44745,7 +44873,7 @@
           "Loyalties"
         ],
         "summary": "List Member Pending Points",
-        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\nLists all pending points that are currently assigned to the loyalty card. Once the points are added to the card, the entry is no longer returned.",
+        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\nLists all pending points that are currently assigned to the loyalty card. Once the points are added to the card, the entry is no longer returned.\n\n>👍 Configuring pending points\n>\n>Pending points are configured as part of an earning rule with [POST Create earning rule](ref:create-earning-rule) or [PUT Update earning rule](ref:update-earning-rule).",
         "parameters": [
           {
             "schema": {
@@ -44944,7 +45072,7 @@
           "Loyalties"
         ],
         "summary": "List Member Pending Points",
-        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\n\n> 📘 Alternative endpoint\n> This endpoint is an alternative to this [endpoint](ref:list-member-pending-points-1). The URL was re-designed to list member pending points without having to provide the `campaignId` as a path parameter.\n\nLists all pending points that are currently assigned to the loyalty card. Once the points are added to the card, the entry is no longer returned.",
+        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\n\n> 📘 Alternative endpoint\n> This endpoint is an alternative to this [endpoint](ref:list-member-pending-points-1). The URL was re-designed to list member pending points without having to provide the `campaignId` as a path parameter.\n\nLists all pending points that are currently assigned to the loyalty card. Once the points are added to the card, the entry is no longer returned.\n\n>👍 Configuring pending points\n>\n>Pending points are configured as part of an earning rule with [POST Create earning rule](ref:create-earning-rule) or [PUT Update earning rule](ref:update-earning-rule).",
         "parameters": [
           {
             "schema": {
@@ -45152,7 +45280,7 @@
           "Loyalties"
         ],
         "summary": "Activate Member Pending Points",
-        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\nActivate manually the pending points and add them to the loyalty card. The pending points are determined by the pending point ID.\n\nOnce activated, the pending point entry with that ID is not listed by the endpoints: List member ([with campaign ID](ref:list-member-pending-points-1), [without campaign ID](ref:list-member-pending-points)), [List campaign pending points](ref:list-campaign-pending-points).\n\nThis **POST** method does not require a request body.",
+        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\nActivate manually the pending points and add them to the loyalty card. The pending points are determined by the pending point ID.\n\nOnce activated, the pending point entry with that ID is not listed by the endpoints: List member ([with campaign ID](ref:list-member-pending-points-1), [without campaign ID](ref:list-member-pending-points)), [List campaign pending points](ref:list-campaign-pending-points).\n\nThis **POST** method does not require a request body.\n\n>👍 Configuring pending points\n>\n>Pending points are configured as part of an earning rule with [POST Create earning rule](ref:create-earning-rule) or [PUT Update earning rule](ref:update-earning-rule).",
         "parameters": [],
         "security": [
           {
@@ -45217,7 +45345,7 @@
           "Loyalties"
         ],
         "summary": "Cancel Member Pending Points",
-        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\nCancel manually the pending points for the loyalty card. The pending points are determined by the pending point ID.\n\nOnce canceled, the pending point entry with that ID is not listed by the endpoints: List member ([with campaign ID](ref:list-member-pending-points-1), [without campaign ID](ref:list-member-pending-points)), [List campaign pending points](ref:list-campaign-pending-points).\n\nThis **POST** method does not require a request body and it returns an empty, 204, response.",
+        "description": ">🚧 Beta endpoint\n>\n>The endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\n>\n>All current parameters and fields are listed and described.\n\nCancel manually the pending points for the loyalty card. The pending points are determined by the pending point ID.\n\nOnce canceled, the pending point entry with that ID is not listed by the endpoints: List member ([with campaign ID](ref:list-member-pending-points-1), [without campaign ID](ref:list-member-pending-points)), [List campaign pending points](ref:list-campaign-pending-points).\n\nThis **POST** method does not require a request body and it returns an empty, 204, response.\n\n>👍 Configuring pending points\n>\n>Pending points are configured as part of an earning rule with [POST Create earning rule](ref:create-earning-rule) or [PUT Update earning rule](ref:update-earning-rule).",
         "parameters": [],
         "security": [
           {

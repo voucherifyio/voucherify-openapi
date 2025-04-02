@@ -1,6 +1,6 @@
 The `EVENTS.CUSTOMER.VOUCHER.LOYALTY_CARD.PENDING_POINTS.ACTIVATED` event indicates that loyalty pending points have been successfully activated and added to a customer's loyalty card associated with a voucher. The pending points can be activated automatically after a predefined time set in days or manually with the [**POST** Activate Member Pending Points](ref:activate-member-pending-points) endpoint.
 
-This event is triggered by distribution – Loyalty pending points activated.
+This event is used in a webhook configured in Distributions in Voucherify dashboard.
 
 > 📘 Webhook documentation
 >

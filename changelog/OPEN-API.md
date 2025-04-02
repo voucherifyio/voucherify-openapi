@@ -4,6 +4,41 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+
+## 2025-03-24
+
+Added `balance` to the `RedeemableResultGiftCard` schema.
+
+## 2025-03-20
+
+Added new events to the `ManagementProjectsWebhookBase` schema.
+
+## 2025-03-19
+
+- Added `pending_points` property to the `LoyaltiesEarningRulesCreateOrderPaidRequestBody` and `LoyaltiesEarningRulesUpdateRequestBody` schemas.
+
+## 2025-03-17
+
+- Added `EVENTS.CAMPAIGN.LOYALTY_TIER.CREATED`, `EVENTS.CAMPAIGN.LOYALTY_TIER.DELETED`, `EVENTS.CAMPAIGN.LOYALTY_TIER.UPDATED` and associated schemas to OpenAPIWebhooks.json
+
+## 2025-03-14
+
+- Changed `200 OAuth tokens` to `1000 OAuth tokens` as per v20250224.
+
+## 2025-03-11
+
+- Add `has_more` property to the `AsyncActionsListResponseBody` schema.
+
+## 2025-03-06
+
+- Added `EventCustomerLoyaltyCardPendingPointsUpdated` schema and linked to `CustomerActivityData` and `MemberActivityData`
+- Added `EVENTS.CUSTOMER.VOUCHER.LOYALTY_CARD.PENDING_POINTS.UPDATED` and associated schemas to OpenAPIWebhooks.json
+- Added `EVENTS.VOUCHER.LOYALTY_CARD.PENDING_POINTS.UPDATED` and associated schemas to OpenAPIWebhooks.json
+
+## 2025-03-04
+
+- Added POST `/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/balance` with associated schemas: `LoyaltiesMembersPendingPointsBalanceRequestBody`, `LoyaltiesMembersPendingPointsBalanceResponseBody`
+
 ## 2025-02-27
 
 - Added `subtracted_amount` to the following schemas: `Gift`, `RedeemableVoucher`, `VoucherBase`.
