@@ -22,6 +22,7 @@ If you think something is missing here, please update it.
         - Some objects cannot have both `additionalProperties` and regular properties simultaneously, so we need the `simplifyAllObjectsThatHaveAdditionalProperties` option.
         - In some cases, OpenAPI must be structured in a specific way, such as using the `putNotObjectSchemasIntoObjectSchemas` option to ensure enums are correctly placed inside object models.
         - There is no universal solution for these issues. Start without additional options, then test the generated SDK and make sure everything works as expected.
+        - New sdk should contain all breaking changes, so provide `breakingChangesVersion` option with the highest number (+1 if the highest number already have known breaking changes `see if (languageOptions.breakingChangesVersion <= {highestNumber}) {`)
     2. The new SDK should include all breaking changes.
 
 3. Open `scripts/helpers/get-take-list.ts` and add support for the new SDK. All non-deprecated paths should be included.
