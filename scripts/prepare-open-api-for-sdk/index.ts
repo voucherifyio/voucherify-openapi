@@ -311,8 +311,6 @@ const main = async (languageOptions: LanguageOptions) => {
       }
     }
   });
-  // Delete `bundle_rules`
-  delete openAPIContent.components.schemas.ValidationRuleBase.properties.bundle_rules;
   // Delete new query params for GET List campaigns
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.created_date;
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.expiration_date;
