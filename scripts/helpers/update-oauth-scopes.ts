@@ -39,7 +39,6 @@ originalOpenAPIContent.paths = Object.fromEntries(
     }
 
     const scopesPerMethod = routesOauthScopes[path];
-    console.log(scopesPerMethod);
 
     return [
       pathRaw,
