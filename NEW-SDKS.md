@@ -1,9 +1,10 @@
-# NEW SDKs FROM OPENAPI FILE
+# NEW SDKs FROM THE OPENAPI FILE
 
 ## Introduction
 
-Sometimes, we need to generate an entirely new SDK from an OpenAPI file. This README is dedicated to guiding you through the steps required to create a new SDK.  
-If you think something is missing here, please update it.
+Sometimes, we need to generate an entirely new SDK from the OpenAPI file. This guide covers the steps required to create a new SDK.
+
+If there are missing steps or any other content here, feel free to update this guide.
 
 ## Requirements
 
@@ -11,18 +12,19 @@ If you think something is missing here, please update it.
 
 ## How to generate an SDK
 
-1. Check the latest version of the [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) and download the `cli-X.X.X.jar` file if it is not already present in the `./openapi-generator-jar` folder for the required version.
-    1. Go to the repository and read `README.md`. You may need to generate the CLI yourself (instructions should be in the README; Java is required). The file you need is called `openapi-generator-cli-*****.jar`. Alternatively, you might find a prebuilt [SNAPSHOT](https://oss.sonatype.org/content/repositories/snapshots/org/openapitools/openapi-generator-cli/7.12.0-SNAPSHOT/).
+1. Check the latest version of the [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator). Download the `cli-X.X.X.jar` file if it is not already present in the `./openapi-generator-jar` folder for the required version.
+    1. Go to the repository and read `README.md`. You may need to generate the CLI yourself. Instructions should be in the README file. Java is required. The needed file is `openapi-generator-cli-*****.jar`. Alternatively, you can find a prebuilt [SNAPSHOT](https://oss.sonatype.org/content/repositories/snapshots/org/openapitools/openapi-generator-cli/7.12.0-SNAPSHOT/).
     2. Add the new `openapi-generator-cli-*****.jar` to the `./openapi-generator-jar` folder.
-    3. Go to the repository and locate the Mustache template. It should be in `modules/openapi-generator/src/main/resources/{language}`. Copy it to `./mustache-templates`.
+    3. Go to the repository and find the Mustache template. It should be in `modules/openapi-generator/src/main/resources/{language}`.
+    4. Copy the Mustache template to `./mustache-templates`.
 
-2. Open `./scripts/prepare-open-api-for-sdk/index.ts` and add support for the new SDK, following the structure of previous SDKs.
-    1. This step may be tricky since some SDKs have specific limitations. For example:
-        - **Python** does not allow multiple response statuses for a single path, so we must merge them using the `use2XX` option.
-        - Some sdks cannot have both `additionalProperties` and regular properties simultaneously, so we need the `simplifyAllObjectsThatHaveAdditionalProperties` option.
+2. Open `./scripts/prepare-open-api-for-sdk/index.ts` and add support for the new SDK, following the structure of the previous SDKs.
+    1. This step may require special care since some SDKs have specific limitations. For example:
+        - **Python** does not allow multiple response statuses for a single path, it is needed to merge them using the `use2XX` option.
+        - Some SDKs cannot have both `additionalProperties` and regular properties simultaneously, so the `simplifyAllObjectsThatHaveAdditionalProperties` option is needed.
         - In some cases, OpenAPI must be structured in a specific way, such as using the `putNotObjectSchemasIntoObjectSchemas` option to ensure enums are correctly placed inside object models.
         - There is no universal solution for these issues. Start without additional options, then test the generated SDK and make sure everything works as expected.
-        - New sdk should contain all breaking changes, so provide `breakingChangesVersion` option with the highest number (+1 if the highest number already have known breaking changes see `if (languageOptions.breakingChangesVersion <= {highestNumber}) {`)
+        - A new SDK should contain all breaking changes, so provide `breakingChangesVersion` option with the highest number (+1 if the highest number already has all known breaking changes see `if (languageOptions.breakingChangesVersion <= {highestNumber}) {`)
     2. The new SDK should include all breaking changes.
 
 3. Open `scripts/helpers/get-take-list.ts` and add support for the new SDK. All non-deprecated paths should be included.
@@ -40,16 +42,16 @@ If you think something is missing here, please update it.
 
 7. Add your script to `generate-sdks` in `package.json`.
 
-8. Generate the SDK using your script.
+8. Generate the SDK with your script.
     - If a repository already exists for this SDK, use it instead of creating a new one.
 
 9. *(Recommended)* Remove auto-generated SDK tests.
     - Add a command to your `generate-sdk-{language}` script that removes the tests automatically.
-    - This is recommended since we have found them to be of limited use.
+    - This is recommended since it was found they have limited use.
 
 10. Modify the Mustache templates:
     - Remove all safety guards that throw errors due to model mismatches.
-    - We have decided not to enforce these checks, as new API properties are frequently added, and such safety guards could break the SDK.
+    - It is best not to enforce these checks, as new API properties are frequently added, and such safety guards could break the SDK.
     - Look for error-throwing conditions in the generated SDK language and remove them.
 
 11. Create tests that ensure:
@@ -64,7 +66,7 @@ If you think something is missing here, please update it.
     2. Using `X_APP_ID` and `X_APP_TOKEN`:
         - Create a simple campaign and a customer.
         - Query qualifications.
-        - Retrieve a voucher from the campaign.
+        - Retrieve a voucher from a campaign.
         - Perform validation and redemption successfully.
         - Compare at least a few response parameters using `expect()`.
     3. Using `X_MANAGEMENT_ID` and `X_MANAGEMENT_TOKEN`:
