@@ -65,8 +65,9 @@ If there are missing steps or any other content here, feel free to update this g
        ```  
     2. Using `X_APP_ID` and `X_APP_TOKEN`:
         - Create a simple campaign and a customer.
-        - Query qualifications.
         - Retrieve a voucher from a campaign.
+        - Import CSV with vouchers, make sure upload was successful.
+        - Query qualifications.
         - Perform validation and redemption successfully.
         - Compare at least a few response parameters using `expect()`.
     3. Using `X_MANAGEMENT_ID` and `X_MANAGEMENT_TOKEN`:
