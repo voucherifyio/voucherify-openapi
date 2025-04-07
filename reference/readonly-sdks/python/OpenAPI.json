@@ -25856,6 +25856,9 @@
           "rules": {
             "$ref": "#/components/schemas/ValidationRuleRules"
           },
+          "bundle_rules": {
+            "$ref": "#/components/schemas/ValidationRuleBundleRules"
+          },
           "error": {
             "title": "ValidationRulesCreateRequestBodyError",
             "type": "object",
@@ -25989,6 +25992,9 @@
           },
           "rules": {
             "$ref": "#/components/schemas/ValidationRuleRules"
+          },
+          "bundle_rules": {
+            "$ref": "#/components/schemas/ValidationRuleBundleRules"
           },
           "error": {
             "title": "ValidationRulesCreateResponseBodyError",
@@ -26154,6 +26160,9 @@
           },
           "rules": {
             "$ref": "#/components/schemas/ValidationRuleRules"
+          },
+          "bundle_rules": {
+            "$ref": "#/components/schemas/ValidationRuleBundleRules"
           },
           "error": {
             "title": "ValidationRulesGetResponseBodyError",
@@ -26354,6 +26363,9 @@
           "rules": {
             "$ref": "#/components/schemas/ValidationRuleRules"
           },
+          "bundle_rules": {
+            "$ref": "#/components/schemas/ValidationRuleBundleRules"
+          },
           "error": {
             "title": "ValidationRulesUpdateRequestBodyError",
             "type": "object",
@@ -26487,6 +26499,9 @@
           },
           "rules": {
             "$ref": "#/components/schemas/ValidationRuleRules"
+          },
+          "bundle_rules": {
+            "$ref": "#/components/schemas/ValidationRuleBundleRules"
           },
           "error": {
             "title": "ValidationRulesUpdateResponseBodyError",
@@ -29518,7 +29533,8 @@
               "properties": {
                 "index": {
                   "type": "integer",
-                  "description": "Number assigned to the order line item in accordance with the order sent in the request."
+                  "description": "Number assigned to the order line item in accordance with the order sent in the request.",
+                  "minimum": 0
                 },
                 "units": {
                   "title": "ApplicableToOrderItemUnitsItemUnits",
@@ -38969,6 +38985,9 @@
           "rules": {
             "$ref": "#/components/schemas/ValidationRuleRules"
           },
+          "bundle_rules": {
+            "$ref": "#/components/schemas/ValidationRuleBundleRules"
+          },
           "error": {
             "title": "ValidationRuleError",
             "type": "object",
@@ -39208,6 +39227,11 @@
           }
         },
         "required": []
+      },
+      "ValidationRuleBundleRules": {
+        "title": "ValidationRuleBundleRules",
+        "type": "object",
+        "description": "Contains all the definitions for the bundle rules. It is a set of key value pairs representing the rules and logic between them. The keys are numbered consecutively beginning from `1`. The values are objects containing the rule conditions.\n\nWhile updating with the PUT method, you can pass `\"bundle_rules\": null` to delete the configuration; in the response, an empty object is then returned."
       },
       "ValidationRuleRules": {
         "title": "ValidationRuleRules",
@@ -41043,7 +41067,8 @@
               "properties": {
                 "index": {
                   "type": "integer",
-                  "description": "Number assigned to the order line item in accordance with the order sent in the request."
+                  "description": "Number assigned to the order line item in accordance with the order sent in the request.",
+                  "minimum": 0
                 },
                 "units": {
                   "title": "InapplicableToOrderItemUnitsItemUnits",
@@ -42410,6 +42435,9 @@
           "discount": {
             "$ref": "#/components/schemas/Discount"
           },
+          "bundle": {
+            "$ref": "#/components/schemas/Bundle"
+          },
           "gift": {
             "$ref": "#/components/schemas/RedeemableGift"
           },
@@ -42423,6 +42451,94 @@
       },
       "Any": {
         "title": "Any"
+      },
+      "Bundle": {
+        "title": "Bundle",
+        "type": "object",
+        "description": "Determines how the bundle conditions are met by the customer's order items. The items in the order meet the bundle condition in the following way: SKU, then product, then collection.",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "description": "Determines how many bundles are qualified. If there are missing bundle products, the value is `0`. If the bundle is qualified, the value is `1`.",
+            "minimum": 0,
+            "nullable": true
+          },
+          "identified": {
+            "title": "BundleIdentified",
+            "type": "array",
+            "description": "Determines products from the customer's order items that meet bundle conditions. SKUs meet the conditions for their product that is used in the bundle. Returns only the products and their quantity that meet the bundle.",
+            "items": {
+              "title": "BundleIdentifiedItem",
+              "type": "object",
+              "description": "Determines a product from the customer's order items that meets bundle conditions.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier of the product or SKU that meets the bundle condition. This is an ID assigned by Voucherify."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "Determines the type of the object that meets the bundle condition.",
+                  "enum": [
+                    "product",
+                    "sku"
+                  ]
+                },
+                "item_index": {
+                  "type": "integer",
+                  "description": "Number assigned to the order line item in accordance with the order sent in the request. It starts with `0` for the first order line item in the request.",
+                  "minimum": 0
+                },
+                "item_quantity": {
+                  "type": "integer",
+                  "description": "Quantity of items that meet the bundle conditions. If the quantity in the order is higher than the quantity required by the bundle, this returns only the number that meets the bundle. For example, if the bundle requires `5` coffees, but the order includes `10` coffees, `item_quantity` returns `5`."
+                }
+              },
+              "required": [
+                "id",
+                "object",
+                "item_index",
+                "item_quantity"
+              ]
+            },
+            "nullable": true
+          },
+          "missing": {
+            "title": "BundleMissing",
+            "type": "array",
+            "description": "Determines products, SKUs, or collections from the bundle that are missing in the customer's order items. Determines also the missing quantity. For collections, this means that order items do not include a sufficient number of items that belong to the collection.",
+            "items": {
+              "title": "BundleMissingItem",
+              "type": "object",
+              "description": "Determines a product, SKU, or collection that is in bundle conditions, but is missing in the customer's order items. Determines also the missing quantity.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier of the collection, product, or SKU that is missing in the customer's order items. This is an ID assigned by Voucherify."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "Determines the type of the object that is missing in the customer's order items.",
+                  "enum": [
+                    "product",
+                    "products_collection",
+                    "sku"
+                  ]
+                },
+                "item_quantity": {
+                  "type": "integer",
+                  "description": "Quantity of items that are missing in the order items to meet the bundle conditions."
+                }
+              },
+              "required": [
+                "id",
+                "object",
+                "item_quantity"
+              ]
+            },
+            "nullable": true
+          }
+        }
       },
       "RedeemableGift": {
         "title": "RedeemableGift",
@@ -42710,6 +42826,238 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/QualificationsCheckEligibilityResponseBody"
+                },
+                "examples": {
+                  "Qualification for bundles": {
+                    "value": {
+                      "redeemables": {
+                        "object": "list",
+                        "data_ref": "data",
+                        "data": [
+                          {
+                            "id": "BUNDLE-PROD-1c",
+                            "object": "voucher",
+                            "created_at": "2025-03-26T11:00:17.987Z",
+                            "result": {
+                              "discount": {
+                                "type": "AMOUNT",
+                                "effect": "APPLY_TO_ITEMS",
+                                "amount_off": 900,
+                                "aggregated_amount_limit": 9000,
+                                "is_dynamic": false
+                              },
+                              "bundle": {
+                                "quantity": 0,
+                                "identified": [
+                                  {
+                                    "id": "prod_0fc35dfe978defeb6b",
+                                    "object": "product",
+                                    "item_index": 0,
+                                    "item_quantity": 1
+                                  },
+                                  {
+                                    "id": "prod_0fc35dfeaa0defeb73",
+                                    "object": "product",
+                                    "item_index": 1,
+                                    "item_quantity": 1
+                                  },
+                                  {
+                                    "id": "prod_0fc35dfeabcdefeb80",
+                                    "object": "product",
+                                    "item_index": 2,
+                                    "item_quantity": 2
+                                  }
+                                ],
+                                "missing": [
+                                  {
+                                    "id": "prod_0fc35dfe978defeb6b",
+                                    "object": "product",
+                                    "item_quantity": 1
+                                  },
+                                  {
+                                    "id": "pc_pWu3TzRFhJ99Xak7Z7QlynNa",
+                                    "object": "products_collection",
+                                    "item_quantity": 2
+                                  }
+                                ]
+                              }
+                            },
+                            "order": {
+                              "amount": 5496,
+                              "total_amount": 5496,
+                              "items": [
+                                {
+                                  "object": "order_item",
+                                  "id": "ordli_105e1f56dc0bc19187",
+                                  "quantity": 1,
+                                  "initial_quantity": 1,
+                                  "amount": 2499,
+                                  "initial_amount": 2499,
+                                  "price": 2499,
+                                  "subtotal_amount": 2499,
+                                  "product": {
+                                    "id": "prod_0fc35dfe978defeb6b",
+                                    "source_id": "star-th-bottle",
+                                    "name": "Star Thermal Bottle",
+                                    "metadata": {
+                                      "brand": "Star"
+                                    },
+                                    "price": 2499
+                                  }
+                                },
+                                {
+                                  "object": "order_item",
+                                  "id": "ordli_105e1f56dc0bc19188",
+                                  "quantity": 1,
+                                  "initial_quantity": 1,
+                                  "amount": 1999,
+                                  "initial_amount": 1999,
+                                  "price": 1999,
+                                  "subtotal_amount": 1999,
+                                  "product": {
+                                    "id": "prod_0fc35dfeaa0defeb73",
+                                    "source_id": "adv-tshirt",
+                                    "name": "Adventure T-shirt",
+                                    "metadata": {
+                                      "brand": "Adventure"
+                                    },
+                                    "price": 1999
+                                  }
+                                },
+                                {
+                                  "object": "order_item",
+                                  "id": "ordli_105e1f56dc0bc19189",
+                                  "quantity": 2,
+                                  "initial_quantity": 2,
+                                  "amount": 998,
+                                  "initial_amount": 998,
+                                  "price": 499,
+                                  "subtotal_amount": 998,
+                                  "product": {
+                                    "id": "prod_0fc35dfeabcdefeb80",
+                                    "source_id": "adv-scks",
+                                    "name": "Adventure Socks",
+                                    "metadata": {
+                                      "brand": "Adventure"
+                                    },
+                                    "price": 499
+                                  }
+                                }
+                              ],
+                              "customer_id": null,
+                              "referrer_id": null,
+                              "object": "order"
+                            },
+                            "applicable_to": {
+                              "data": [
+                                {
+                                  "object": "products_collection",
+                                  "id": "pc_nw1xRgXB8cBzDJSrSbdSqJP4",
+                                  "strict": false,
+                                  "effect": "APPLY_TO_EVERY",
+                                  "skip_initially": 0,
+                                  "repeat": 1,
+                                  "target": "ITEM"
+                                }
+                              ],
+                              "total": 1,
+                              "data_ref": "data",
+                              "object": "list"
+                            },
+                            "inapplicable_to": {
+                              "data": [],
+                              "total": 0,
+                              "data_ref": "data",
+                              "object": "list"
+                            },
+                            "metadata": {},
+                            "campaign_id": "camp_vzuF8JZdh1tdQqw3R6rS63ci",
+                            "campaign_name": "Bundle-Product-Discount",
+                            "validation_rules_assignments": {
+                              "object": "list",
+                              "data_ref": "data",
+                              "data": [
+                                {
+                                  "id": "asgm_e9RsrtXBMCJ5ti1S",
+                                  "rule_id": "val_g1rAIcaPuxAd",
+                                  "related_object_id": "v_XXSJVTBFFKLPiy585UqtTPiYJMF1bnBW",
+                                  "related_object_type": "voucher",
+                                  "object": "validation_rules_assignment",
+                                  "validation_status": "VALID"
+                                }
+                              ],
+                              "total": 1
+                            }
+                          }
+                        ],
+                        "total": 1,
+                        "has_more": true,
+                        "more_starting_after": "2025-03-26T11:00:17.987Z"
+                      },
+                      "tracking_id": "track_C7TLT9aBmso=",
+                      "order": {
+                        "items": [
+                          {
+                            "object": "order_item",
+                            "id": "ordli_105e1f56dc0bc19187",
+                            "quantity": 1,
+                            "product": {
+                              "id": "prod_0fc35dfe978defeb6b",
+                              "source_id": "star-th-bottle",
+                              "name": "Star Thermal Bottle",
+                              "metadata": {
+                                "brand": "Star"
+                              },
+                              "price": 2499
+                            }
+                          },
+                          {
+                            "object": "order_item",
+                            "id": "ordli_105e1f56dc0bc19188",
+                            "quantity": 1,
+                            "product": {
+                              "id": "prod_0fc35dfeaa0defeb73",
+                              "source_id": "adv-tshirt",
+                              "name": "Adventure T-shirt",
+                              "metadata": {
+                                "brand": "Adventure"
+                              },
+                              "price": 1999
+                            }
+                          },
+                          {
+                            "object": "order_item",
+                            "id": "ordli_105e1f56dc0bc19189",
+                            "quantity": 2,
+                            "product": {
+                              "id": "prod_0fc35dfeabcdefeb80",
+                              "source_id": "adv-scks",
+                              "name": "Adventure Socks",
+                              "metadata": {
+                                "brand": "Adventure"
+                              },
+                              "price": 499
+                            }
+                          }
+                        ],
+                        "customer_id": null,
+                        "referrer_id": null,
+                        "object": "order"
+                      },
+                      "stacking_rules": {
+                        "redeemables_limit": 30,
+                        "applicable_redeemables_limit": 5,
+                        "applicable_exclusive_redeemables_limit": 1,
+                        "exclusive_categories": [],
+                        "joint_categories": [],
+                        "redeemables_application_mode": "PARTIAL",
+                        "redeemables_sorting_rule": "REQUESTED_ORDER",
+                        "redeemables_no_effect_rule": "REDEEM_ANYWAY",
+                        "redeemables_products_application_mode": "STACK",
+                        "redeemables_rollback_order_mode": "WITH_ORDER"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -46588,8 +46936,8 @@
             "X-App-Token": []
           }
         ],
-        "summary": "Add or Remove Voucher Balance",
-        "description": "Add balance to an existing gift card or loyalty card.",
+        "summary": "Adjust Voucher Balance",
+        "description": "Add balance to an existing gift card or loyalty card. For loyalty cards, it must be assigned to a holder.",
         "requestBody": {
           "required": true,
           "description": "Provide the amount to be added to/subtracted from the voucher.",
@@ -48380,7 +48728,7 @@
             },
             "in": "query",
             "name": "filters",
-            "description": "Filters the results by campaign status or whether the campaign is a referral campaign.",
+            "description": "Filters the results by various campaign properties.",
             "style": "deepObject",
             "explode": true
           }
@@ -56943,8 +57291,8 @@
         "tags": [
           "Loyalties"
         ],
-        "summary": "Add or Remove Loyalty Card Balance",
-        "description": "This method adds or removes balance to an existing loyalty card. The removal of points will consume the points that expire the soonest. \n >🚧 Async Action\n \n This is an async action. If you want to perform several add or remove loyalty card balance actions in a short time and their order matters, set up sufficient time-out between the calls.",
+        "summary": "Adjust Loyalty Card Balance",
+        "description": "This method adds or removes balance to an existing loyalty card that is assigned to a holder. The removal of points will consume the points that expire the soonest. \n >🚧 Async Action\n \n This is an async action. If you want to perform several add or remove loyalty card balance actions in a short time and their order matters, set up sufficient time-out between the calls.",
         "parameters": [],
         "security": [
           {
@@ -57035,8 +57383,8 @@
         "tags": [
           "Loyalties"
         ],
-        "summary": "Add or Remove Loyalty Card Balance",
-        "description": "This method gives adds or removes balance to an existing loyalty card. The removal of points will consume the points that expire the soonest. \n >🚧 Async Action\n \n This is an async action. If you want to perform several add or remove loyalty card balance actions in a short time and their order matters, set up sufficient time-out between the calls.\n 📘 Alternative endpoint\n This endpoint is an alternative to this endpoint. The URL was re-designed to allow you to add or remove loyalty card balance without having to provide the campaignId as a path parameter.",
+        "summary": "Adjust Loyalty Card Balance",
+        "description": "This method gives adds or removes balance to an existing loyalty card that is assigned to a holder. The removal of points will consume the points that expire the soonest. \n >🚧 Async Action\n \n This is an async action. If you want to perform several add or remove loyalty card balance actions in a short time and their order matters, set up sufficient time-out between the calls.\n 📘 Alternative endpoint\n This endpoint is an alternative to this endpoint. The URL was re-designed to allow you to add or remove loyalty card balance without having to provide the campaignId as a path parameter.",
         "parameters": [],
         "security": [
           {
@@ -57124,7 +57472,7 @@
           "Loyalties"
         ],
         "summary": "Transfer Loyalty Points",
-        "description": "Transfer points between different loyalty cards. You need to provide the campaign ID and the loyalty card ID you want the points to be transferred to as path parameters in the URL. In the request body, you provide the loyalty cards you want the points to be transferred from and the number of points to transfer from each card.",
+        "description": "Transfer points between different loyalty cards which have holders. You need to provide the campaign ID and the loyalty card ID you want the points to be transferred to as path parameters in the URL. In the request body, you provide the loyalty cards you want the points to be transferred from and the number of points to transfer from each card.\nTransfer works only for loyalty cards that have holders, meaning they were published to customers.",
         "parameters": [],
         "security": [
           {

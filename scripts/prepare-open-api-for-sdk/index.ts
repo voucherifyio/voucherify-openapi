@@ -311,6 +311,9 @@ const main = async (languageOptions: LanguageOptions) => {
       }
     }
   });
+  // Delete new query params for GET List campaigns
+  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.created_date;
+  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.expiration_date;
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(

@@ -5,6 +5,12 @@
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 
+## 2025-04-01
+
+Added `created_date` and `expiration_date` to the `ParameterFiltersListCampaigns` schema for GET `/v1/campaigns`.
+ - Added relevant code to `index.ts` to remove the changes.
+- Added `Bundle` schema for POST `v1/qualifications`.
+
 ## 2025-03-24
 
 Added `balance` to the `RedeemableResultGiftCard` schema.
