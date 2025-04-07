@@ -70,7 +70,7 @@
 | /v1/vouchers/{code}                       | post   | Create Voucher                     | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/{code}/enable                | post   | Enable Voucher                     | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/{code}/disable               | post   | Disable Voucher                    | <font color='green'>supported</font> |                                      |
-| /v1/vouchers/{code}/balance               | post   | Add or Remove Voucher Balance      | <font color='green'>supported</font> |                                      |
+| /v1/vouchers/{code}/balance               | post   | Adjust Voucher Balance             | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/{code}/transactions          | get    | List Voucher Transactions          | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/{code}/transactions/export   | post   | Export Voucher Transactions        | <font color='green'>supported</font> |                                      |
 | /v1/vouchers/import                       | post   | Import Vouchers                    | <font color='green'>supported</font> |                                      |
@@ -146,7 +146,7 @@
 | /v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/cancel   | post   | Cancel Member Pending Points             | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/members/{memberId}/activity                     | get    | List Member Activity                     | <font color='green'>supported</font> |               |
 | /v1/loyalties/members/{memberId}/activity                                  | get    | List Member Activity                     | <font color='green'>supported</font> |               |
-| /v1/loyalties/{campaignId}/members/{memberId}/balance                      | post   | Add or Remove Loyalty Card Balance       | <font color='green'>supported</font> |               |
+| /v1/loyalties/{campaignId}/members/{memberId}/balance                      | post   | Adjust Loyalty Card Balance              | <font color='green'>supported</font> |               |
 | /v1/loyalties/members/{memberId}/balance                                   | post   | Adjust Loyalty Card Balance              | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/members/{memberId}/transfers                    | post   | Transfer Loyalty Points                  | <font color='green'>supported</font> |               |
 | /v1/loyalties/{campaignId}/transactions                                    | get    | List Loyalty Campaign Transactions       |                                      |               |
