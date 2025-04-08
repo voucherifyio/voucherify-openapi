@@ -312,6 +312,10 @@ const main = async (languageOptions: LanguageOptions) => {
     }
   });
   // Delete new query params for GET List campaigns
+  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.campaigns;
+  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.campaigns_id;
+  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.updated_at;
+  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.start_date;
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.created_date;
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.expiration_date;
   //////////////////////////////////////////////////////////////////////////////
