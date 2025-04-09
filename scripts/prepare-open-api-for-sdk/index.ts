@@ -318,6 +318,37 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.start_date;
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.created_date;
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.expiration_date;
+  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.validity_day_of_week;
+  // Restore previous voucher_type filter
+  openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.voucher_type = {
+    "type": "object",
+    "description": "Filter by voucher type",
+    "properties": {
+      "conditions": {
+        "$ref": "#/components/schemas/FilterConditionsString"
+
+      }
+    }
+  }
+  // Restore previous is_referral_code filter
+  openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.is_referral_code.properties = {
+    "$is": {
+      "type": "string",
+      "description": "Value is exactly this value (single value).",
+      "enum": [
+        "TRUE",
+        "FALSE"
+      ]
+    },
+    "$is_not": {
+      "type": "string",
+      "description": "Results omit this value (single value).",
+      "enum": [
+        "TRUE",
+        "FALSE"
+      ]
+    }
+  }
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
