@@ -319,6 +319,8 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.created_date;
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.expiration_date;
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.validity_day_of_week;
+  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.status;
+  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.active;
   // Restore previous voucher_type filter
   openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.voucher_type = {
     "type": "object",
