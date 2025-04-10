@@ -351,6 +351,9 @@ const main = async (languageOptions: LanguageOptions) => {
       ]
     }
   }
+  // Remove new conditions – $contains, $not_contain from FilterConditionsString
+  delete openAPIContent.components.schemas.FilterConditionsString.properties.$contains;
+  delete openAPIContent.components.schemas.FilterConditionsString.properties.$not_contain;
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
