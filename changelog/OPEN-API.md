@@ -4,12 +4,16 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
-## 2025-04-08
+## 2025-04-10
 
 - Added `bundle_rules` to the `ValidationRuleBase` schema in OpenAPIWebhooks.json.
 - Added `contains`, `not_contain` conditions to the `FilterConditionsString` schema.
-- Added `campaigns`, `campaigns_id`, `updated_at`, `start_date` filters to the `ParameterFiltersListCampaigns` schema.
   - Added relevant code to `index.ts` to remove the changes.
+- Added `campaigns`, `campaigns_id`, `status`, `active`, `created_date`, `updated_at`, `start_date`, `expiration_date`, `validity_day_of_week` filters to the `ParameterFiltersListCampaigns` schema.
+  - Added relevant code to `index.ts` to remove the changes.
+- Fixed `is_referral_code` and improved `voucher_code` filters in the `ParameterFiltersListCampaigns` schema.
+  - Added relevant code to `index.ts` to remove the changes.
+- Changed name from `Add or Remove Voucher Balance` to `Adjust Voucher Balance`, `Add or Remove Loyalty Card Balance` to `Adjust Loyalty Card Balance`, `Add or Remove Loyalty Card Balance` to `Adjust Loyalty Card Balance`
 
 ## 2025-04-01
 
