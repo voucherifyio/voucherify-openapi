@@ -3,15 +3,15 @@
   <PropertyGroup>{{#useGenericHost}}
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo> <!-- setting GenerateAssemblyInfo to false causes this bug https://github.com/dotnet/project-system/issues/3934 -->{{/useGenericHost}}{{^useGenericHost}}
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo><!-- setting GenerateAssemblyInfo to false causes this bug https://github.com/dotnet/project-system/issues/3934 -->{{/useGenericHost}}
-    <TargetFramework{{#multiTarget}}s{{/multiTarget}}>{{targetFramework}}</TargetFramework{{#multiTarget}}s{{/multiTarget}}>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net48;net8.0,net9.0</TargetFrameworks>
     <AssemblyName>{{packageName}}</AssemblyName>
     <PackageId>{{packageName}}</PackageId>
     <OutputType>Library</OutputType>
     <Authors>{{packageAuthors}}</Authors>
     <Company>{{packageCompany}}</Company>
-    <AssemblyTitle>{{packageTitle}}</AssemblyTitle>
-    <Description>{{packageDescription}}</Description>
-    <Copyright>{{packageCopyright}}</Copyright>
+    <AssemblyTitle>VoucherifySDK</AssemblyTitle>
+    <Description>A library generated from a OpenAPI doc</Description>
+    <Copyright>MIT</Copyright>
     <RootNamespace>{{packageName}}</RootNamespace>
     <Version>{{packageVersion}}</Version>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\{{packageName}}.xml</DocumentationFile>{{#licenseId}}
@@ -24,61 +24,34 @@
     <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
-  <ItemGroup>
-    {{#useCompareNetObjects}}
-    <PackageReference Include="CompareNETObjects" Version="4.83.0" />
-    {{/useCompareNetObjects}}
-    {{^useGenericHost}}
-    <PackageReference Include="JsonSubTypes" Version="2.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    {{/useGenericHost}}
-    {{#useRestSharp}}
-    <PackageReference Include="RestSharp" Version="112.0.0" />
-    {{/useRestSharp}}
-    {{#useGenericHost}}
-    <PackageReference Include="Microsoft.Extensions.Http" Version="{{#lambda.first}}{{#netStandard}}5.0.0  {{/netStandard}}{{#net47}}7.0.0  {{/net47}}{{#net48}}7.0.0  {{/net48}}{{#net6.0}}6.0.0  {{/net6.0}}{{#net7.0}}7.0.0  {{/net7.0}}{{#net8.0}}8.0.0  {{/net8.0}}{{#net9.0}}9.0.0  {{/net9.0}}{{/lambda.first}}" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="{{#lambda.first}}{{#netStandard}}5.0.0  {{/netStandard}}{{#net47}}7.0.0  {{/net47}}{{#net48}}7.0.0  {{/net48}}{{#net6.0}}6.0.1  {{/net6.0}}{{#net7.0}}7.0.1  {{/net7.0}}{{#net8.0}}8.0.0  {{/net8.0}}{{#net9.0}}9.0.0  {{/net9.0}}{{/lambda.first}}" />
-    {{#supportsRetry}}
-    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="{{#lambda.first}}{{#netStandard}}5.0.1  {{/netStandard}}{{#net47}}7.0.0  {{/net47}}{{#net48}}7.0.0  {{/net48}}{{#net6.0}}6.0.19  {{/net6.0}}{{#net7.0}}7.0.11  {{/net7.0}}{{#net8.0}}8.0.8  {{/net8.0}}{{#net9.0}}9.0.0  {{/net9.0}}{{/lambda.first}}" />
-    {{/supportsRetry}}
-    {{#net80OrLater}}
-    <PackageReference Include="Microsoft.Net.Http.Headers" Version="{{#lambda.first}}{{#net8.0}}8.0.8  {{/net8.0}}{{#net9.0}}9.0.0  {{/net9.0}}{{/lambda.first}}" />
-    {{/net80OrLater}}
-    {{^net60OrLater}}
-    <PackageReference Include="System.Threading.Channels" Version="8.0.0" />
-    {{#net47OrLater}}
+  <!-- References specific to .NET Framework 4.8 -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <!-- Remove any files named System.Web or System.Net.Http if present -->
+    <None Remove="System.Web" />
+    <None Remove="System.Net.Http" />
+    <!-- Add framework references -->
     <Reference Include="System.Web" />
-    {{/net47OrLater}}
-    {{/net60OrLater}}
-    {{/useGenericHost}}
-    {{^useGenericHost}}
-    {{#supportsRetry}}
-    <PackageReference Include="Polly" Version="{{^netStandard}}8.1.0{{/netStandard}}{{#netStandard}}8.1.0{{/netStandard}}" />
-    {{/supportsRetry}}
-    {{/useGenericHost}}
-    {{#validatable}}
-    {{^net60OrLater}}
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    {{/net60OrLater}}
-    {{/validatable}}
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
-{{^useGenericHost}}
-  <ItemGroup>
-    {{^net60OrLater}}
+  <!-- References specific to .NET Standard 2.0 and 2.1 -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' Or '$(TargetFramework)' == 'netstandard2.1'">
+    <!-- Remove any files named System.Web if present -->
     <None Remove="System.Web" />
-    {{/net60OrLater}}
-    {{#net48}}
-    <None Remove="System.Net.Http" />
-    {{/net48}}
-  </ItemGroup>
-  <ItemGroup>
-    {{^net60OrLater}}
+    <!-- Add System.Web reference manually -->
     <Reference Include="System.Web" />
-    {{/net60OrLater}}
-    {{#net48}}
-    <Reference Include="System.Net.Http" />
-    {{/net48}}
   </ItemGroup>
-{{/useGenericHost}}
+
+  <!-- Common NuGet package references -->
+  <ItemGroup>
+    <PackageReference Include="JsonSubTypes" Version="2.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="RestSharp" Version="112.0.0" />
+    <PackageReference Include="Polly" Version="8.1.0" />
+  </ItemGroup>
+
+  <!-- Add System.ComponentModel.Annotations only when not targeting net8.0 or net9.0 -->
+  <ItemGroup Condition="'$(TargetFramework)' != 'net8.0' And '$(TargetFramework)' != 'net9.0'">
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  </ItemGroup>
 {{>netcore_project.additions}}</Project>

@@ -55,8 +55,8 @@ const supportedLanguages: {
     name: "java",
     breakingChangesVersion: 1,
   },
-  csharp: {
-    name: "csharp",
+  dotnet: {
+    name: "dotnet",
     breakingChangesVersion: 2,
   },
 };
@@ -121,6 +121,13 @@ const main = async (languageOptions: LanguageOptions) => {
         "title": "Any"
       }`);
   delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
+  if (openAPIContent.components.schemas.CustomerActivity?.properties?.data) {
+    openAPIContent.components.schemas.CustomerActivity.properties.data = {
+      type: "object",
+      description:
+        "Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.",
+    };
+  }
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////END OF CLEANUP OPEN API FILE///////////////////////////
   //////////////////////////////////////////////////////////////////////////////
@@ -216,9 +223,6 @@ const main = async (languageOptions: LanguageOptions) => {
       }
       return parameter;
     });
-    //ValidationRuleRules fix for Readme – should stay forever
-    openAPIContent.components.schemas.ValidationRuleRules.additionalProperties.properties.rules.$ref =
-      "#/components/schemas/ValidationRuleRules";
     //Do not add breaking change on application_details
     openAPIContent.components.schemas.OrderCalculated.properties["items"] = {
       type: "array",
@@ -337,7 +341,7 @@ const main = async (languageOptions: LanguageOptions) => {
     });
   }
   if (languageOptions.breakingChangesVersion <= 2) {
-    //ADD MORE TO IT ONCE CSHARP IS RELEASED
+    //ADD MORE TO IT ONCE DOTNET IS RELEASED
   }
   //////////////////////////////////////////////////////////////////////////////
   ///////////////////////////END OF BREAKING CHANGES////////////////////////////
@@ -370,7 +374,6 @@ const main = async (languageOptions: LanguageOptions) => {
     openAPIContent.components.parameters,
     languageOptions,
   );
-
   const pathsWithoutBuggedTags = removeBuggedTagsFromOpenAPIPaths(paths);
   const pathsWithFixedResponses = Object.fromEntries(
     Object.entries(pathsWithoutBuggedTags).map(([path, pathEntry]) => {

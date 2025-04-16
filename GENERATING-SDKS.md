@@ -16,7 +16,7 @@ Are slightly modified from the original ones for our needs.
 ## How to generate sdk
 
 - `npm install` (if you have not already installed)
-- `npm run generate-sdk-ruby`/`generate-sdk-python`/`generate-sdk-java`/`generate-sdk-php`
+- `npm run generate-sdk-ruby`/`generate-sdk-python`/`generate-sdk-java`/`generate-sdk-php`/`generate-sdk-dotnet`
 
 SDK will be generated in `./sdks` directory in associated language folder.
 

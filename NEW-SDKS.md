@@ -43,7 +43,8 @@ If there are missing steps or any other content here, feel free to update this g
 7. Add your script to `generate-sdks` in `package.json`.
 
 8. Generate the SDK with your script.
-    - If a repository already exists for this SDK, use it instead of creating a new one.
+    - Add submodule, it might be something like: `git submodule add https://github.com/voucherifyio/voucherify-{language}-sdk sdks/{language}`
+    - If a repository does not exist, you need to create a new one - using old repository is recommended.
 
 9. *(Recommended)* Remove auto-generated SDK tests.
     - Add a command to your `generate-sdk-{language}` script that removes the tests automatically.
