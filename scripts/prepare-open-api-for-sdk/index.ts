@@ -327,18 +327,73 @@ const main = async (languageOptions: LanguageOptions) => {
     });
     // Restore gift in VoucherUpdateGift
     openAPIContent.components.schemas.VoucherUpdateGift.allOf.push({
-      type: "object",
-      properties: {
-        type: {
-          type: "string",
-          enum: ["GIFT_VOUCHER"],
-          description: "Defines the type of the voucher. ",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "GIFT_VOUCHER"
+          ],
+          "description": "Defines the type of the voucher. "
         },
-        gift: {
-          $ref: "#/components/schemas/Gift",
-        },
-      },
+        "gift": {
+          "$ref": "#/components/schemas/Gift"
+        }
+      }
     });
+    // Delete new query params for GET List campaigns
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.campaigns;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.campaigns_id;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.updated_at;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.start_date;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.created_date;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.expiration_date;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.validity_day_of_week;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.status;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.active;
+    openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
+      "/v1/campaigns"
+      ].get.parameters.filter((parameter) => parameter.name !== "campaign_status");
+    openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
+      "/v1/campaigns"
+      ].get.parameters.filter((parameter) => parameter.name !== "is_referral_code");
+    // Restore previous voucher_type filter
+    openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.voucher_type = {
+      "type": "object",
+      "description": "Filter by voucher type",
+      "properties": {
+        "conditions": {
+          "$ref": "#/components/schemas/FilterConditionsString"
+
+        }
+      }
+    }
+    // Restore previous is_referral_code filter
+    openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.is_referral_code.properties = {
+      "$is": {
+        "type": "string",
+        "description": "Value is exactly this value (single value).",
+        "enum": [
+          "TRUE",
+          "FALSE"
+        ]
+      },
+      "$is_not": {
+        "type": "string",
+        "description": "Results omit this value (single value).",
+        "enum": [
+          "TRUE",
+          "FALSE"
+        ]
+      }
+    }
+    // Remove new conditions – $contains, $not_contain from FilterConditionsString
+    delete openAPIContent.components.schemas.FilterConditionsString.properties.$contains;
+    delete openAPIContent.components.schemas.FilterConditionsString.properties.$not_contain;
+    // Restore `strict`
+    openAPIContent.components.schemas.ApplicableTo.properties.strict = {
+      "type": "boolean"
+    };
   }
   if (languageOptions.breakingChangesVersion <= 2) {
     //ADD MORE TO IT ONCE DOTNET IS RELEASED

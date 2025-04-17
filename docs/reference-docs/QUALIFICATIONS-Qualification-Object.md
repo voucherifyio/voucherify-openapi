@@ -123,6 +123,7 @@ All of:
 | Attributes |  Description |
 |:-----|:--------|
 | discount | See: [Discount](#discount) |
+| bundle | See: [Bundle Details](#bundle-details) |
 | gift | See: [Redeemable Gift](#redeemable-gift) |
 | loyalty_card | <p>Loyalty Card object response</p> [Redeemable Loyalty Card](#redeemable-loyalty-card) |
 | error | <p>Error in result</p> [Error Object](#error-object) |
@@ -166,6 +167,13 @@ One of:
 
 [Amount](#amount), [Unit](#unit), [Unit Multiple](#unit-multiple), [Percent](#percent), [Fixed](#fixed)
 
+## Bundle Details
+| Attributes |  Description |
+|:-----|:--------|
+| quantity</br>`integer` | <p>Determines how many bundles are qualified. If there are missing bundle products, the value is <code>0</code>. If the bundle is qualified, the value is <code>1</code>.</p> |
+| identified</br>`array` | <p>Determines products from the customer's order items that meet bundle conditions. SKUs meet the conditions for their product that is used in the bundle. Returns only the products and their quantity that meet the bundle.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the product or SKU that meets the bundle condition. This is an ID assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Determines the type of the object that meets the bundle condition.</p> Available values: <code>product</code>, <code>sku</code></td></tr><tr><td style="text-align:left">item_index</br><code>integer</code></td><td style="text-align:left"><p>Number assigned to the order line item in accordance with the order sent in the request. It starts with <code>0</code> for the first order line item in the request.</p></td></tr><tr><td style="text-align:left">item_quantity</br><code>integer</code></td><td style="text-align:left"><p>Quantity of items that meet the bundle conditions. If the quantity in the order is higher than the quantity required by the bundle, this returns only the number that meets the bundle. For example, if the bundle requires <code>5</code> coffees, but the order includes <code>10</code> coffees, <code>item_quantity</code> returns <code>5</code>.</p></td></tr></tbody></table> |
+| missing</br>`array` | <p>Determines products, SKUs, or collections from the bundle that are missing in the customer's order items. Determines also the missing quantity. For collections, this means that order items do not include a sufficient number of items that belong to the collection.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the collection, product, or SKU that is missing in the customer's order items. This is an ID assigned by Voucherify.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Determines the type of the object that is missing in the customer's order items.</p> Available values: <code>product</code>, <code>products_collection</code>, <code>sku</code></td></tr><tr><td style="text-align:left">item_quantity</br><code>integer</code></td><td style="text-align:left"><p>Quantity of items that are missing in the order items to meet the bundle conditions.</p></td></tr></tbody></table> |
+
 ## Redeemable Gift
 | Attributes |  Description |
 |:-----|:--------|
@@ -201,7 +209,6 @@ One of:
 | source_id</br>`string` | <p>The source identifier from your inventory system.</p> |
 | product_id</br>`string` | <p>Parent product's unique ID assigned by Voucherify.</p> |
 | product_source_id</br>`string` | <p>Parent product's source ID from your inventory system.</p> |
-| strict</br>`boolean` |  |
 | price</br>`number` | <p>New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the price_formula parameter is present in the fixed price definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price.</p> |
 | price_formula</br>`number` | <p>Formula used to calculate the discounted price of an item.</p> |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> [Applicable To Effect](#applicable-to-effect) |

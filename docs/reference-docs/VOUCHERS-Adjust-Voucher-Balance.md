@@ -1,5 +1,5 @@
 ---
-title: Add or Remove Voucher Balance
+title: Adjust Voucher Balance
 type: endpoint
 categorySlug: voucherify-api
 slug: update-voucher-balance
