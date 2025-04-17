@@ -4,6 +4,11 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-04-16
+
+- Added `campaign_status` and `is_referral_code` query parameters to GET List campaigns.
+  - Added relevant code to `index.ts` to remove the changes.
+
 ## 2025-04-10
 
 - Added `bundle_rules` to the `ValidationRuleBase` schema in OpenAPIWebhooks.json.

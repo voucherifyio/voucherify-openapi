@@ -321,6 +321,12 @@ const main = async (languageOptions: LanguageOptions) => {
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.validity_day_of_week;
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.status;
   delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.active;
+  openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
+    "/v1/campaigns"
+  ].get.parameters.filter((parameter) => parameter.name !== "campaign_status");
+  openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
+    "/v1/campaigns"
+  ].get.parameters.filter((parameter) => parameter.name !== "is_referral_code");
   // Restore previous voucher_type filter
   openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.voucher_type = {
     "type": "object",
@@ -354,6 +360,10 @@ const main = async (languageOptions: LanguageOptions) => {
   // Remove new conditions – $contains, $not_contain from FilterConditionsString
   delete openAPIContent.components.schemas.FilterConditionsString.properties.$contains;
   delete openAPIContent.components.schemas.FilterConditionsString.properties.$not_contain;
+  // Restore `strict`
+  openAPIContent.components.schemas.ApplicableTo.properties.strict = {
+    "type": "boolean"
+  };
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
