@@ -24,7 +24,7 @@ The values for multi-tenant clusters may change depending on the configuration o
 >[Contact us](https://www.voucherify.io/contact-sales) to discuss how Voucherify can meet your requirements, including:
 > * Custom SLA
 > * Premium Support
-> * **Single-tenant infrastructure with up to 30% better performance and stability**
+> * **Single-tenant infrastructure with significantly better performance and stability**
 
 ## What happens in the background?
 
