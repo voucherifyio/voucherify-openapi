@@ -1,5 +1,5 @@
 ---
-title: Getting Started
+title: Get started
 excerpt: Set up your Voucherify project 
 categorySlug: getting-started
 slug: getting-started
@@ -8,19 +8,78 @@ hidden: false
 order: 3
 ---
 
-## Creating an Account
+## Creating an account
 
 Create an [account](http://app.voucherify.io/#/signup).
 
-Provide all the necessary details and select your preferred region. The selected region affects where your data is stored. To decrease the latency time, setting the region in your operating region is advised.
+Provide all the necessary details and select your preferred region. The selected region affects where your data is stored. To decrease the latency time, it's good to set the region in your operating region.
 
-> 📘 Europe region
+> 📘 Europe
 >
-> Remember that if your organization sells products or services to customers based in the EU, you must adhere to the General Data Protection Regulation (GDPR).
+> If your organization sells products or services to customers based in the EU, you must adhere to the General Data Protection Regulation (GDPR).
 >
 > Learn more in the [security and data protection article](https://support.voucherify.io/article/125-security-data-protection "Voucherify, GDPR and CCPA compliance").
 
-Once you click sign up, you should receive a verification email. If you do not receive the email or if you have lost it, [contact our support](https://support.voucherify.io/article/125-security-data-protection "Voucherify support").
+Once you sign up, you'll receive a verification email. If you don't receive the email or if you have lost it, [contact Voucherify support](https://support.voucherify.io/article/125-security-data-protection "Voucherify support").
+
+## Get your API keys
+
+To access the Voucherify API, the client application needs to pass Application ID and Application secret key. They must be attached to every HTTP request as custom headers `X-App-Id`, `X-App-Token`, respectively.
+
+To find your keys, go to Project settings and in the General tab, scroll down to the Application keys section.
+
+There are two pairs of authentication keys. The first, Application keys, are meant to authorize your requests to Voucherify API. You can create more Application Keys for each user. The second, Client-side keys, are meant for publicly available client applications, such as mobile apps and web applications.
+
+In Project settings, below Application keys, you can generate your integration keys and see the client-side keys. Integration keys are used to integrate with other platforms.
+
+> 🚧 API key visibility
+>
+> **The API keys in the Sandbox project are never hidden.**
+> 
+> In other projects, the primary secret key is visible for 14 days when it is generated for the first time and for 15 minutes when the token is regenerated. Secondary secret keys are visible for 15 minutes when they are generated for the first time or regenerated.
+>
+> Write your secret keys down and keep them in a safe place.
+
+## Making your first API call
+
+Your Sandbox project comes with several test campaigns and codes.
+
+One of the most frequent API calls is validation, which checks if incentives, such as codes, can be applied by the customer to their order.
+
+Make your first validation call:
+1. Log in with your Voucherify account details in the top right corner. Your Sandbox API keys will be used as credentials in the interactive documentation to make API calls.
+2. Go to [Validate stackable discounts](ref:validate-stacked-discounts).
+3. In Base URL, select your region depending on the region you've chosen when creating a new account:
+   - `api` for Europe
+   - `us1.api` for North America
+   - `as1.api` for Asia
+4. Unroll EXAMPLES and select Sandbox onboarding validation.
+5. Click `Try it!` to send the request.
+
+Check the response in the window below the request.
+
+You can use the interactive documentation on the left to add more details to the request.
+
+Alternatively, you can use [Postman collection](#postman-collection) to make your first API call.
+
+As the next step, take a look at the [Sandbox project and the Demo shop](https://support.voucherify.io/article/538-sandbox) to test your first campaigns. In the Demo shop, use the test campaigns with pre-defined validation rules to learn Voucherify possibilities or create your campaigns and experiment with the platform. You can also check API calls made.
+
+## Voucherify API Postman collection
+
+Start exploring the Voucherify API with minimum effort.
+
+You can view all of the Voucherify API endpoints with the public collection available on [Postman](https://www.postman.com/), which is an app you can use to test and work with APIs. Check out the examples of the basic processes required to integrate Voucherify with your system, advanced interactions, and industry-specific cases.
+
+1. Go to [Voucherify Postman collection](https://www.postman.com/voucherify/voucherify-s-public-workspace/overview).
+2. Fork the collection to create a copy in your own Postman workspace. For onboarding, fork [Voucherify API – Onboarding](https://www.postman.com/voucherify/voucherify-s-public-workspace/collection/iut4une/voucherify-api-onboarding).
+3. Provide the required credentials in the Environments.
+4. Make your first [validation request](https://www.postman.com/voucherify/voucherify-s-public-workspace/request/m646u4g/onboarding-validations-request?tab=body)!
+
+
+The Voucherify public workspace in Postman work includes:
+- [Core API endpoints](https://www.postman.com/voucherify/voucherify-s-public-workspace/collection/z8gcn5w/voucherify-api-core-api-endpoints): Lists all Voucherify endpoints.
+- [Integration examples](https://www.postman.com/voucherify/voucherify-s-public-workspace/collection/ymwnigh/voucherify-api-integration-examples): Shows examples of integrations and business scenarios.
+- [Sandbox onboarding](https://www.postman.com/voucherify/voucherify-s-public-workspace/collection/iut4une/voucherify-api-onboarding): Contains API requests that help you with learning about Voucherify.
 
 ## Managing Roles and Inviting Users
 
@@ -29,32 +88,6 @@ Manage your team roles and invite your team members:
 2. Go to **Team Settings**.
 3. Go to **Roles** to manage the roles.
 4. Go to **Team** to invite members and assign roles to them. <!-- I'm leaving this as simple as that because a new V% user won't have many projects -->
-
-## Get Your API Keys
-
-To access Voucherify API, the client application needs to pass `Application ID` and `Application Secret Key`. To find your keys, head to the Project Settings and in the General tab, scroll down to the Application Keys section. Below that section, you can generate your integration keys and see the client-side keys.
-
-By default, there are two pairs of authentication keys. The first, Application Keys, are meant to authorize your requests to Voucherify API. You can create more Application Keys for each user. The second, Client-Side Keys, are meant for publicly available client applications (mobile apps and web applications).
-
-A generated pair of Application ID and Application Secret Key must be attached to every HTTP request as custom headers: `X-App-Id`, `X-App-Token`.
-
-> 🚧 API Key Visibility
->
-> The primary secret key is visible for 14 days only when it is generated for the first time and for 15 minutes when the token is regenerated. Secondary secret keys are visible for 15 minutes when they are generated for the first time or regenerated.
->
-> Write your secret keys down and keep them in a safe place.
->
-> **The API keys in the Sandbox Project are never hidden.**
-
-## Testing Your First Campaign
-
-Take a look at the [Sandbox project and the Demo Shop](https://support.voucherify.io/article/538-sandbox) to test your first campaigns. Use the already created test campaigns with pre-defined validation rules to learn Voucherify possibilities or create your campaigns and experiment with the platform.
-
-<!-- Add links in this section -->
-
-## Postman Collection
-
-Take a look at the Voucherify [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/collection/31663208-927de30f-b9ba-4723-a7ad-9984d835d939), where you can test examples of the basic processes required to integrate Voucherify with your system, advanced interactions, and industry-specific cases.
 
 ## Enabling Distributions
 
