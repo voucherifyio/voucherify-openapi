@@ -1,5 +1,5 @@
 ---
-title: Getting Started
+title: Get started
 excerpt: Set up your Voucherify project 
 categorySlug: getting-started
 slug: getting-started
@@ -62,11 +62,24 @@ You can use the interactive documentation on the left to add more details to the
 
 Alternatively, you can use [Postman collection](#postman-collection) to make your first API call.
 
-As a next step, take a look at the [Sandbox project and the Demo shop](https://support.voucherify.io/article/538-sandbox) to test your first campaigns. In the Demo shop, use the test campaigns with pre-defined validation rules to learn Voucherify possibilities or create your campaigns and experiment with the platform. You can also check API calls made.
+As the next step, take a look at the [Sandbox project and the Demo shop](https://support.voucherify.io/article/538-sandbox) to test your first campaigns. In the Demo shop, use the test campaigns with pre-defined validation rules to learn Voucherify possibilities or create your campaigns and experiment with the platform. You can also check API calls made.
 
-## Postman collection
+## Voucherify API Postman collection
 
-Take a look at the Voucherify [Postman collection](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/collection/31663208-927de30f-b9ba-4723-a7ad-9984d835d939), where you can test examples of the basic processes required to integrate Voucherify with your system, advanced interactions, and industry-specific cases.
+Start exploring the Voucherify API with minimum effort.
+
+You can view all of the Voucherify API endpoints with the public collection available on [Postman](https://www.postman.com/), which is an app you can use to test and work with APIs. Check out the examples of the basic processes required to integrate Voucherify with your system, advanced interactions, and industry-specific cases.
+
+1. Go to [Voucherify Postman collection](https://www.postman.com/voucherify/voucherify-s-public-workspace/overview).
+2. Fork the collection to create a copy in your own Postman workspace. For onboarding, fork [Voucherify API – Onboarding](https://www.postman.com/voucherify/voucherify-s-public-workspace/collection/iut4une/voucherify-api-onboarding).
+3. Provide the required credentials in the Environments.
+4. Make your first [validation request](https://www.postman.com/voucherify/voucherify-s-public-workspace/request/m646u4g/onboarding-validations-request?tab=body)!
+
+
+The Voucherify public workspace in Postman work includes:
+- [Core API endpoints](https://www.postman.com/voucherify/voucherify-s-public-workspace/collection/z8gcn5w/voucherify-api-core-api-endpoints): Lists all Voucherify endpoints.
+- [Integration examples](https://www.postman.com/voucherify/voucherify-s-public-workspace/collection/ymwnigh/voucherify-api-integration-examples): Shows examples of integrations and business scenarios.
+- [Sandbox onboarding](https://www.postman.com/voucherify/voucherify-s-public-workspace/collection/iut4une/voucherify-api-onboarding): Contains API requests that help you with learning about Voucherify.
 
 ## Managing Roles and Inviting Users
 
