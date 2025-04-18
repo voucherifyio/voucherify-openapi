@@ -3,9 +3,9 @@ import path from "path";
 import fs from "fs";
 import fsPromises from "fs/promises";
 import "./build-production-openapi";
-
 import { removeAdditionalPropertiesFromSchemas } from "./remove-additional-properties-for-some-schemas";
 import { readmeReplaceTitle } from "./readme-replace-title";
+import _ from "lodash";
 
 const createOpenAPIVersionToUpload = async () => {
   console.log(
@@ -30,10 +30,26 @@ const createOpenAPIVersionToUpload = async () => {
     fs.mkdirSync(pathToTmpReferenceToUpload);
   }
 
+  //Removing OAuth, since Readme.io does not support optional parameters
+  Object.values(openAPIContent.paths).forEach((methods) => {
+    Object.values(methods).forEach((method) => {
+      if (method?.security) {
+        method.security = [
+          _.omit(method.security?.[0] || {}, "X-Voucherify-OAuth"),
+        ];
+      }
+    });
+  });
+
   let newOpenApiFile = {
+    paths: openAPIContent.paths,
     ...openAPIContent,
     components: {
       ...openAPIContent.components,
+      //Removing OAuth, since Readme.io does not support optional parameters
+      securitySchemes: _.omit(openAPIContent.components.securitySchemes, [
+        "X-Voucherify-OAuth",
+      ]),
       schemas: removeAdditionalPropertiesFromSchemas(
         openAPIContent.components.schemas,
         ["ExportsCreateRequestBody", "ExportsCreateResponseBody"],

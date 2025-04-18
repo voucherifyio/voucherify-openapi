@@ -2,8 +2,8 @@
 
 ## Introduction
 
-We use [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) with version 7.0.1
-to generate SDKs for different languages.
+We use [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) with version 7.0.1, 7.1.0, 7.8.0 and 7.12.0 (depending on the SDK)
+we use jar file generators located in `./openapi-generator-jar` to generate SDKs for different languages.
 Our template aka mustache files are located in `./mustache-templates` directory. 
 Are slightly modified from the original ones for our needs.
 
@@ -16,7 +16,7 @@ Are slightly modified from the original ones for our needs.
 ## How to generate sdk
 
 - `npm install` (if you have not already installed)
-- `npm run generate-sdk-ruby`/`generate-sdk-python`/`generate-sdk-java`/`generate-sdk-php`
+- `npm run generate-sdk-ruby`/`generate-sdk-python`/`generate-sdk-java`/`generate-sdk-php`/`generate-sdk-dotnet`
 
 SDK will be generated in `./sdks` directory in associated language folder.
 

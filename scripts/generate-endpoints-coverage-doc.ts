@@ -9,8 +9,15 @@ const generateForOptions: GenerateForOption[] = [
   "default",
   "php",
   "python",
+  "dotnet",
 ];
-type GenerateForOption = "java" | "ruby" | "default" | "php" | "python";
+type GenerateForOption =
+  | "java"
+  | "ruby"
+  | "default"
+  | "php"
+  | "python"
+  | "dotnet";
 const generateFor =
   generateForOptions.includes(options.generateFor) && options.generateFor;
 import colors from "colors";
@@ -20,6 +27,7 @@ type SdkLink = {
   php?: string;
   python?: string;
   ruby?: string;
+  dotnet?: string;
 };
 
 type Method = {
@@ -33,6 +41,7 @@ type Method = {
     ruby?: boolean;
     php?: boolean;
     python?: boolean;
+    dotnet?: boolean;
   };
 };
 
