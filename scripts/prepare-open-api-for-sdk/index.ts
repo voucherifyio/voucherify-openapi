@@ -31,27 +31,32 @@ type LanguageOptions = {
   putNotObjectSchemasIntoObjectSchemas?: true;
   use2XX?: true;
   breakingChangesVersion: number;
+  removeOauth?: true;
 };
 
 const supportedLanguages: {
   [language: string]: LanguageOptions;
 } = {
   python: {
+    removeOauth: true,
     name: "python",
     simplifyAllObjectsThatHaveAdditionalProperties: true, //MUST STAY!
     use2XX: true, //MUST STAY!
     breakingChangesVersion: 1,
   },
   ruby: {
+    removeOauth: true,
     name: "ruby",
     breakingChangesVersion: 1,
   },
   php: {
+    removeOauth: true,
     name: "php",
     putNotObjectSchemasIntoObjectSchemas: true, //MUST STAY!
     breakingChangesVersion: 1,
   },
   java: {
+    removeOauth: true,
     name: "java",
     breakingChangesVersion: 1,
   },
@@ -485,6 +490,22 @@ const main = async (languageOptions: LanguageOptions) => {
     languageOptions,
     {},
   );
+
+  if (languageOptions.removeOauth) {
+    openAPIContent.components.securitySchemes = _.omit(
+      openAPIContent.components.securitySchemes,
+      ["X-Voucherify-OAuth"],
+    );
+    Object.values(pathsWithFixedResponses).forEach((methods) => {
+      Object.values(methods).forEach((method) => {
+        if (method?.security) {
+          method.security = [
+            _.omit(method.security?.[0] || {}, "X-Voucherify-OAuth"),
+          ];
+        }
+      });
+    });
+  }
 
   // Building all together
   const newOpenApiFile = cleanUpDescriptionsInEntireObject({
