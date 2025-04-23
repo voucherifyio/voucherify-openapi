@@ -4,7 +4,6 @@ import fs from "fs";
 import fsPromises from "fs/promises";
 import "./build-production-openapi";
 import { removeAdditionalPropertiesFromSchemas } from "./remove-additional-properties-for-some-schemas";
-import { readmeReplaceTitle } from "./readme-replace-title";
 import _ from "lodash";
 
 const createOpenAPIVersionToUpload = async () => {
@@ -57,9 +56,6 @@ const createOpenAPIVersionToUpload = async () => {
     },
   };
   newOpenApiFile.openapi = "3.1.0";
-
-  //replaceTitles
-  newOpenApiFile = readmeReplaceTitle(newOpenApiFile);
 
   await fsPromises.writeFile(
     path.join(__dirname, "../tmp/referenceToUpload/OpenAPI.json"),
