@@ -24,7 +24,7 @@ order: 1
 All of:
 
 1. [Redemption Base](#redemption-base)
-2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">voucher</td><td style="text-align:left"><p>Defines the details of the voucher being redeemed.</p> All of: 1. <a href="#voucher">Voucher</a></td></tr></tbody></table><ol start="2"><li><a href="#voucher-holder">Voucher Holder</a> |</li></ol>
+2. <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">voucher</td><td style="text-align:left"><p>Defines the details of the voucher being redeemed.</p> All of: 1. <a href="#voucher-with-categories-and-validation-rules-assignments">Voucher with categories and validation rules assignments</a></td></tr></tbody></table><ol start="2"><li><a href="#voucher-holder">Voucher Holder</a> |</li></ol>
 
 ## Order Calculated No Customer Data
 | Attributes |  Description |
@@ -104,7 +104,7 @@ All of:
 | gift</br>`object` | <p>Contains the amount subtracted from the gift card for the redemption.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">amount</br><code>integer</code></td><td style="text-align:left"><p>Amount subtracted from the gift card as a result of the redemption. The amount is expressed as the smallest currency unit (e.g. 100 cents for $1.00).</p></td></tr></tbody></table> |
 | loyalty_card</br>`object` | <p>Contains the number of points subtracted from the loyalty card for the redemption.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points subtracted from the loyalty card as a result of the redemption.</p></td></tr></tbody></table> |
 
-## Voucher
+## Voucher with categories and validation rules assignments
 <p>This is an object representing a voucher with categories and validation rules assignments for <strong>POST</strong> <code>v1/qualifications</code>, <strong>POST</strong> <code>v1/redemptions</code>, and <strong>POST</strong> <code>v1/validations</code>.</p>
 
 All of:

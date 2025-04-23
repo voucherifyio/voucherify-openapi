@@ -19,7 +19,7 @@ All of:
 |:-----|:--------|
 | id</br>`string` | <p>Assigned by the Voucherify API, identifies the earning rule object.</p> |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the earning rule was created. The value is shown in the ISO 8601 format.</p> |
-| loyalty | One of: [EarningRuleFixed](#earningrulefixed), [Earning Rule Proportional](#earning-rule-proportional) |
+| loyalty | One of: [Define fixed amount of points](#define-fixed-amount-of-points), [Calculate points proportionally](#calculate-points-proportionally) |
 | event | <p>Defines the event which triggers the earning rule to add points to a loyalty card.</p> [Earning Rule Event](#earning-rule-event) |
 | custom_event</br>`object` | <p>Contains details about the custom event.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">schema_id</br><code>string</code></td><td style="text-align:left"><p>Unique identifier of the custom event schema</p></td></tr></tbody></table> |
 | segment</br>`object` | <p>Contains the ID of a customer segment. Required for the <code>customer.segment.entered</code> option in the event.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Contains a unique identifier of a customer segment. Assigned by the Voucherify API.</p></td></tr></tbody></table> |
@@ -35,16 +35,16 @@ All of:
 | validity_hours | See: [Validity Hours](#validity-hours) |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format.</p> |
 
-## EarningRuleFixed
+## Define fixed amount of points
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>The number of points to be added to the loyalty card.</p> Available values: `FIXED` |
 | points</br>`integer` | <p>Defines how the points will be added to the loyalty card. FIXED adds a fixed number of points.</p> |
 
-## Earning Rule Proportional
+## Calculate points proportionally
 One of:
 
-[Earning Rule Proportional Order](#earning-rule-proportional-order), [Earning Rule Proportional Order Items](#earning-rule-proportional-order-items), [Earning Rule Proportional Customer Metadata](#earning-rule-proportional-customer-metadata), [Earning Rule Proportional Custom Event](#earning-rule-proportional-custom-event)
+[Define amount of points proportional to the order](#define-amount-of-points-proportional-to-the-order), [Define amount of points proportional to order items](#define-amount-of-points-proportional-to-order-items), [Define amount of points proportional to customer metadata](#define-amount-of-points-proportional-to-customer-metadata), [Earning Rule Proportional Custom Event](#earning-rule-proportional-custom-event)
 
 ## Earning Rule Event
 
@@ -63,17 +63,17 @@ One of:
 |:-----|:--------|
 | daily</br>`array` | <p>Defines the reccuring period(s) when the resource is active. The periods should not overlap.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">start_time</br><code>string</code></td><td style="text-align:left"><p>Defines the starting hour of validity in the HH:mm format. The resource is <em>inactive before</em> this time.</p> <strong>Example:</strong> <p>12:00</p></td></tr><tr><td style="text-align:left">days_of_week</br><code>array</code></td><td style="text-align:left"><p>Integer array corresponding to the particular days of the week in which the resource is valid.</p><ul><li><code>0</code> Sunday</li><li><code>1</code> Monday</li><li><code>2</code> Tuesday</li><li><code>3</code>  Wednesday</li><li><code>4</code> Thursday</li><li><code>5</code> Friday</li><li><code>6</code> Saturday</li></ul></td></tr><tr><td style="text-align:left">expiration_time</br><code>string</code></td><td style="text-align:left"><p>Defines the ending hour of validity in the HH:mm format. The resource is <em>inactive after</em> this time.</p> <strong>Example:</strong> <p>14:00</p></td></tr></tbody></table> |
 
-## Earning Rule Proportional Order
+## Define amount of points proportional to the order
 One of:
 
 [Order Amount](#order-amount), [Order Total Amount](#order-total-amount), [Order Metadata](#order-metadata)
 
-## Earning Rule Proportional Order Items
+## Define amount of points proportional to order items
 One of:
 
-[Earning Rule Proportional Order Items Quantity](#earning-rule-proportional-order-items-quantity), [Earning Rule Proportional Order Items Amount](#earning-rule-proportional-order-items-amount), [Earning Rule Proportional Order Items Subtotal Amount](#earning-rule-proportional-order-items-subtotal-amount)
+[Order Items Quantity](#order-items-quantity), [Order Items Amount](#order-items-amount), [Order Items Subtotal Amount](#order-items-subtotal-amount)
 
-## Earning Rule Proportional Customer Metadata
+## Define amount of points proportional to customer metadata
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio.</p> Available values: `PROPORTIONAL` |
@@ -108,21 +108,21 @@ One of:
 | calculation_type</br>`string` | <p><code>ORDER_METADATA</code>: Order Metadata (X points for every Y in metadata attribute, defined in the property key under the order.metadata object)</p> Available values: `ORDER_METADATA` |
 | order</br>`object` | <p>Defines the formula for calculating points proportionally.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">metadata</br><code>object</code></td><td style="text-align:left"><p>Defines the ratio based on the property defined in the calculation_type parameter. For every given increment of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every order metadata property value, give points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">every</br><code>integer</code></td><td style="text-align:left"><p>For how many increments of the order metadata property to grant points for.</p></td></tr><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points to be awarded, i.e. how many points to be added to the loyalty card.</p></td></tr><tr><td style="text-align:left">property</br><code>string</code></td><td style="text-align:left"><p>Order metadata property.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
-## Earning Rule Proportional Order Items Quantity
+## Order Items Quantity
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio.</p> Available values: `PROPORTIONAL` |
 | calculation_type</br>`string` | <p><code>ORDER_ITEMS_QUANTITY</code>: Quantity of items defined in order_items.quantity.object &amp; .id (X points for every Y items excluding free items)</p> Available values: `ORDER_ITEMS_QUANTITY` |
 | order_items</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">quantity</br><code>object</code></td><td style="text-align:left"><p>Defines the ratio based on the property defined in the calculation_type parameter. For every set of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every calculation_type, give points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">every</br><code>integer</code></td><td style="text-align:left"><p>Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 order amount is written as 1000.</p></td></tr><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points to be awarded, i.e. how many points to be added to the loyalty card.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Type of object taken under consideration.</p> Available values: <code>products_collection</code>, <code>product</code>, <code>sku</code></td></tr><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
-## Earning Rule Proportional Order Items Amount
+## Order Items Amount
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio.</p> Available values: `PROPORTIONAL` |
 | calculation_type</br>`string` | <p>ORDER_ITEMS_AMOUNT; Pre-discount amount spent on items defined in the order_items.amount.object &amp; .id (X points for every Y spent on items excluding discounts)</p> Available values: `ORDER_ITEMS_AMOUNT` |
 | order_items</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">amount</br><code>object</code></td><td style="text-align:left"><p>Defines the ratio based on the property defined in the calculation_type parameter. For every set of value (1, 10, etc) defined in the every parameter for the property defined in calculation_type, give the customer the number of points defined in the points parameter. In other words, for every calculation_type, give points.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">every</br><code>integer</code></td><td style="text-align:left"><p>Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 order amount is written as 1000.</p></td></tr><tr><td style="text-align:left">points</br><code>integer</code></td><td style="text-align:left"><p>Number of points to be awarded, i.e. how many points to be added to the loyalty card.</p></td></tr><tr><td style="text-align:left">object</br><code>string</code></td><td style="text-align:left"><p>Type of object taken under consideration.</p> Available values: <code>products_collection</code>, <code>product</code>, <code>sku</code></td></tr><tr><td style="text-align:left">id</br><code>string</code></td><td style="text-align:left"><p>Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619.</p></td></tr></tbody></table></td></tr></tbody></table> |
 
-## Earning Rule Proportional Order Items Subtotal Amount
+## Order Items Subtotal Amount
 | Attributes |  Description |
 |:-----|:--------|
 | type</br>`string` | <p>Defines how the points will be added to the loyalty card.PROPORTIONAL adds points based on a pre-defined ratio.</p> Available values: `PROPORTIONAL` |
