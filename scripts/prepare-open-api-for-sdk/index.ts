@@ -31,37 +31,36 @@ type LanguageOptions = {
   putNotObjectSchemasIntoObjectSchemas?: true;
   use2XX?: true;
   breakingChangesVersion: number;
-  removeOauth?: true;
+  supportOauth?: true;
+  removeAllSchemasDefaults?: true;
 };
 
 const supportedLanguages: {
   [language: string]: LanguageOptions;
 } = {
   python: {
-    removeOauth: true,
     name: "python",
     simplifyAllObjectsThatHaveAdditionalProperties: true, //MUST STAY!
     use2XX: true, //MUST STAY!
     breakingChangesVersion: 1,
   },
   ruby: {
-    removeOauth: true,
     name: "ruby",
     breakingChangesVersion: 1,
   },
   php: {
-    removeOauth: true,
     name: "php",
     putNotObjectSchemasIntoObjectSchemas: true, //MUST STAY!
     breakingChangesVersion: 1,
   },
   java: {
-    removeOauth: true,
     name: "java",
     breakingChangesVersion: 1,
   },
   dotnet: {
     name: "dotnet",
+    supportOauth: true,
+    removeAllSchemasDefaults: true,
     breakingChangesVersion: 2,
   },
 };
@@ -107,7 +106,6 @@ const main = async (languageOptions: LanguageOptions) => {
   ////////////////////BEGINNING OF CLEANUP OPEN API FILE////////////////////////
   //////////////////////////////////////////////////////////////////////////////
   removeStoplightTag(openAPIContent);
-  // openAPIContent = removeUnwantedProperties(openAPIContent, []); - KEEP IT JUST IN CASE THIS WILL BE NEEDED IN THE FUTURE
   openAPIContent.components.schemas = removeUnwantedProperties(
     openAPIContent.components.schemas,
     ["title"],
@@ -490,8 +488,13 @@ const main = async (languageOptions: LanguageOptions) => {
     languageOptions,
     {},
   );
+  if (languageOptions.removeAllSchemasDefaults) {
+    schemasWithoutNotUsed = removeUnwantedProperties(schemasWithoutNotUsed, [
+      "default",
+    ]);
+  }
 
-  if (languageOptions.removeOauth) {
+  if (!languageOptions.supportOauth) {
     openAPIContent.components.securitySchemes = _.omit(
       openAPIContent.components.securitySchemes,
       ["X-Voucherify-OAuth"],
@@ -609,6 +612,14 @@ const mergeObjectsWithAllOfs = (object, schemas) => {
   return _object;
 };
 
+const fixRefUagesInAllSchemasProperties = (schemas) => {
+  return Object.fromEntries(
+    Object.entries(schemas).map(([title, schema]) => {
+      return [title, fixRefsUsages(schema)];
+    }),
+  );
+};
+
 const copySchemasIfUsedAsAllOfInBase = (schemas): Record<string, any> => {
   return Object.fromEntries(
     Object.entries(schemas).map(([schemaName, schema]): any => {
@@ -674,16 +685,12 @@ const copySchemasIfUsedAsAllOfInBase = (schemas): Record<string, any> => {
   );
 };
 
-const fixRefUagesInAllSchemasProperties = (schemas) => {
-  return Object.fromEntries(
-    Object.entries(schemas).map(([title, schema]) => {
-      return [title, fixRefsUsages(schema)];
-    }),
-  );
-};
-
 const returnRefSchemaIfAllOfContainsOnly1Reference = (schema) => {
-  if (schema?.allOf?.length === 1 && schema.allOf[0]?.$ref) {
+  if (
+    schema?.allOf?.length === 1 &&
+    schema.allOf[0]?.$ref &&
+    !schema.required?.length
+  ) {
     return schema.allOf[0];
   }
   return false;
