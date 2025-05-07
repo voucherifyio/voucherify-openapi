@@ -1,6 +1,6 @@
 ---
 title: Get started
-excerpt: Set up your Voucherify project 
+excerpt: Get started with your Voucherify project 
 categorySlug: getting-started
 slug: getting-started
 type: basic
@@ -81,30 +81,42 @@ The Voucherify public workspace in Postman work includes:
 - [Integration examples](https://www.postman.com/voucherify/voucherify-s-public-workspace/collection/ymwnigh/voucherify-api-integration-examples): Shows examples of integrations and business scenarios.
 - [Sandbox onboarding](https://www.postman.com/voucherify/voucherify-s-public-workspace/collection/iut4une/voucherify-api-onboarding): Contains API requests that help you with learning about Voucherify.
 
-## Managing Roles and Inviting Users
+## Setting up your Sandbox project
+
+You can further configure your Voucherify Sandbox project by inviting your team members or configuring distributions.
+
+> 👍 Advanced feature – Management API
+>
+> Enterprise clients can use the [Management API](docs:management-api) to perform account-related activities regarding projects, users, and other settings through the API.
+
+### Managing roles and inviting users
 
 Manage your team roles and invite your team members:
-1. Click your name in the upper tab.
+1. In Voucherify, click your name in the lower left corner.
 2. Go to **Team Settings**.
-3. Go to **Roles** to manage the roles.
-4. Go to **Team** to invite members and assign roles to them. <!-- I'm leaving this as simple as that because a new V% user won't have many projects -->
+3. Go to **Team** to invite members and assign [roles](https://support.voucherify.io/article/40-how-does-the-access-control-work-in-voucherify).
 
-## Enabling Distributions
+### Enabling Distributions
 
-If you want to test the distribution of vouchers, your account must be verified as part of our [anti-spam policy](https://www.voucherify.io/legal/anti-spam-policy-v1-1 "Voucherify anti-spam policy"). You can send 10 messages per day, per month, and no emails from an unverified account.
+If you want to test the [distribution](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work) of vouchers, your account must be verified as part of our [anti-spam policy](https://www.voucherify.io/legal/anti-spam-policy-v1-1 "Voucherify anti-spam policy"). If your account is unverified, you can send 10 messages per day and per month, and no emails .
 
-To unlock the limits for trial accounts, [set up brand details](#setting-up-brand-details) and [contact our support](https://support.voucherify.io/article/125-security-data-protection "Voucherify support").
+To unlock the limits for trial accounts, [set up brand details](#setting-up-brand-details) and [contact Voucherify support](https://support.voucherify.io/article/125-security-data-protection "Voucherify support").
 
-### Setting up Brand Details
+#### Setting up Brand details
 
-To set up your brand details:
-1. Click your name in the upper tab.
-2. Go to **Team Settings**.
-3. Go to **Brand details**.
-4. Provide the necessary details. You can also provide your logo, a link to your privacy policy or your website.
+To set up your brand details, in Voucherify dashboard:
+1. In Home, go to **Project settings**.
+2. Go to **Brand details**.
+3. Provide the necessary details. You can also provide your logo, a link to your privacy policy, or your website.
 
-### Distribution Limits
+### Distribution limits
 
-The limits for verified trial accounts are 10 messages per day and 100 messages per month. Note that these limits do not apply to third-party email distribution services.
+The limits for verified trial accounts are 10 messages per day and 100 messages per month. These limits don't apply to third-party email distribution services.
 
-Learn more about distribution limits in our [fair use policy](https://www.voucherify.io/legal/fair-use-policy-v2-1).
+Learn more about distribution limits in the [fair use policy](https://www.voucherify.io/legal/fair-use-policy-v2-1).
+
+## Exploring the Voucherify API through the Sandbox project
+
+If you explore the Voucherify API by sending requests and analyzing responses through the interactive API reference or the Postman collection, you can also
+
+<!-- AUDIT LOG, DEMO SHOP, Check API calls -->
