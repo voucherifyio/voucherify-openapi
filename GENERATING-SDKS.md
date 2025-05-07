@@ -3,9 +3,11 @@
 ## Introduction
 
 We use [OpenAPI Generator](https://github.com/OpenAPITools/openapi-generator) with version 7.0.1, 7.1.0, 7.8.0 and 7.12.0 (depending on the SDK)
-we use jar file generators located in `./openapi-generator-jar` to generate SDKs for different languages.
-Our template aka mustache files are located in `./mustache-templates` directory. 
-Are slightly modified from the original ones for our needs.
+
+We use jar file generators located in `./openapi-generator-jar` to generate SDKs for different languages.
+
+The template (mustache) files are located in `./mustache-templates` directory. 
+They are slightly modified from the original ones for our needs.
 
 ## Requirements
 
@@ -13,72 +15,129 @@ Are slightly modified from the original ones for our needs.
 - docker (optional)
 - java runtime v18 or higher
 
-## How to generate sdk
+## How to generate an SDK
 
-- `npm install` (if you have not already installed)
-- `npm run generate-sdk-ruby`/`generate-sdk-python`/`generate-sdk-java`/`generate-sdk-php`/`generate-sdk-dotnet`
+1. Run `npm install`, if you have not already installed.
+2. Run `npm run generate-sdk-ruby`/`generate-sdk-python`/`generate-sdk-java`/`generate-sdk-php`/`generate-sdk-dotnet`.
 
-SDK will be generated in `./sdks` directory in associated language folder.
+SDK will be generated in `./sdks` directory in the respective language folder.
 
-## Commands explanation
+## Command explanation
 
-- **build-update-md-tables-from-openapi** - creating and updates docs in `./docs/reference-docs` directory
-- **remove-stoplight-tags-from-openapi** - spotlight is gui software for editing openapi files. Each usage added some tags to openapi file. This command removes them.  
-- **prepare-open-api-for-sdk** - scripts in the basic form are not ready for generating sdks without errors or bugs. This command make bunch of actions which mostly language specific.
-  - (all) removing not supported endpoints (deprecated or those wasn't refactored to the newest versions of the API)
+### `build-update-md-tables-from-openapi`
+
+Creates and updates docs in `./docs/reference-docs` directory.
+
+### `remove-stoplight-tags-from-openapi`
+
+Spotlight is GUI software for editing OpenAPI files. Each usage added some tags to an OpenAPI file. This command removes them.
+
+### `prepare-open-api-for-sdk`
+ 
+Scripts in the basic form are not ready for generating SDKs without errors or bugs. This command performs actions which are mostly language-specific.
+  - (all) removing unsupported endpoints (deprecated or those that wasn't refactored to the newest versions of the API)
   - (all) removing not used schemas and parameters 
-  - (all) removing `additional properties` from schemas
-  - (java / python) removing `required` property from schema's parameters that is assigned as `nullable`
+  - (all) removing `additionalProperties` from schemas
+  - (java / python) removing `required` property from schema parameters that is assigned as `nullable`
   - (java) merging multiple response schemas with 2xx status code into one schema
-  - (php) merging oneOf schemas into one schema
+  - (php) merging `oneOf` schemas into one schema
   - (php) associating each element into object
-- **create-clean-project** - running `build-update-md-tables-from-openapi` command and uploading openapi file to the server
-- **fix-schemas-with-refs** - script for fixing `oneOf` schemas with `$ref`
-- **fix-schemas-properties-with-single-enum** - script for adding default value to schemas with single enum
-- **readme-upload-missing-images** - script for uploading images to the server
-- **count-important-statistics-about-openapi** - script for counting occurrences and counting statistics which are important for openapi correctness
-- **build-production-openapi** - creating openapi snapshot file which was uploaded to openapi server 
-- **fix-zero-level-schemas** - script generating openapi with correct zero level schemas for requests and responses consistent with the arrangements from [CONTRIBUTING.md](CONTRIBUTING.md#naming-convention)
-- **generate-endpoints-coverage-docs** - script for generating readme file with endpoints coverage
-- **generate-sdk-xxx** - script for generating sdk in associated language 
-- **generate-sdks** - script for concurrently generating all sdks
-- **test** - tests are used to check openapi schema didn't change after scripts refactoring
+
+### `create-clean-project`
+
+Run `build-update-md-tables-from-openapi` command to upload the OpenAPI file to the ReadMe server.
+
+### `fix-schemas-with-refs
+
+Fixes `oneOf` schemas with `$ref`.
+
+### `fix-schemas-properties-with-single-enum`
+
+Adds default values to schemas with a single enum.
+
+### `readme-upload-missing-images`
+
+Uploads images to the ReadMe server.
+
+### `count-important-statistics-about-openapi`
+
+Counts occurrences and statistics which are important for OpenAPI correctness.
+
+### `build-production-openapi`
+
+Creates an OpenAPI snapshot file which is uploaded to the ReadMe server.
+
+### `fix-zero-level-schemas`
+
+Generates an OpenAPI file with correct zero-level schemas for requests and responses consistent with the arrangements from [CONTRIBUTING.md](CONTRIBUTING.md#naming-convention).
+
+### `generate-endpoints-coverage-docs`
+
+Generates a readme file with endpoints coverage.
+
+### `generate-sdk-xxx`
+
+Generates an SDK in a given language.
+
+### `generate-sdks`
+
+Generates all SDKs at the same time.
+
+## `test
+
+Checks if the OpenAPI schemas haven't changed after scripts refactoring.
 
 ## Creating changes 
 
 1. Init all submodules `git submodule update --init --recursive`.
 2. Create a new branch: `git checkout -b MY_BRANCH_NAME`
-3. Add changes (sticking to the rules from [CONTRIBUTING.md](./CONTRIBUTING.md))
-4. [Generate SDKs](#how-to-generate-sdk)
-5. Create new ones for Your changes and [ensure everything run without errors](#running-tests)
-6. Commit all changes to main repo and submodules
-7. Push your branch and create a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork) against `main` branch
-8. When the changes are merged, [publish new version to remote repositories](#publishing-for-remote-repositories-).
+3. Add changes in accordance with [CONTRIBUTING.md](./CONTRIBUTING.md).
+4. [Generate SDKs](#how-to-generate-sdk).
+5. Create new ones for your changes and [ensure everything runs without errors](#running-tests).
+6. Commit all changes to the main repo and submodules.
+7. Push your branch and create a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork) against the `main` branch.
+8. When the changes are merged, [publish the new version to remote repositories](#publishing-for-remote-repositories-).
 
-### Running tests
+## Running tests
 
-Easiest way for running tests is to use `docker-compose` file.
+The easiest way for running tests is to use the `docker-compose` file.
 1. Ensure that you have installed `docker`.
-2. Ensure that You have init submodules `git submodule update --init --recursive`
-3. `docker-compose build` - build docker images for containers
-4. `docker-compose up` - run containers (running commands separately for better readability of logs)
+2. Ensure that you have the init submodules with `git submodule update --init --recursive`.
+3. Build docker images for containers with `docker-compose build`.
+4. Run containers with `docker-compose up`.
+   - Run commands separately for better log readability.
 
-For running SDK separately or on Your local machine without docker go in to the directory of the SDK and read `README.md` file.
+To run SDKs separately or on your local machine without docker, go to the SDK directory and read the `README.md` file.
 
-**Note that running tests will affect your Voucherify project data. Run tests only on development projects.**
+**Running tests will affect your Voucherify project data. Run tests only on development projects!**
 
 ## Uploading new versions
 
 Manual steps checklist:
-- [ ] Ensure that all SDKs were generated without error.
+- [ ] Ensure that all SDKs were generated without errors.
 - [ ] Ensure new tests were created for changes.
 - [ ] Ensure that all SDKs tests passed.
-- [ ] Decide whether the changes concern the minor, major or patch version.
-- [ ] Commit all generated changes to submodules and main module.
-- [ ] Publish new version of the SDKs to repositories manager
+- [ ] Decide if the changes concern a minor, major or patch version.
+- [ ] Commit all generated changes to the submodules and main module.
+- [ ] Publish the new version of the SDKs to repositories manager.
 
 ### Versioning 
 
-- **patch** - backward compatible changes - bug fixes, small changes, refactoring
-- **minor** - backward compatible changes - new endpoints or properties
-- **major** - breaking changes - new schemas, naming changes, removing endpoints or properties, changes in the mustache logic
+- **patch** - backward compatible changes - bug fixes, small changes, refactoring.
+- **minor** - backward compatible changes - new endpoints or properties.
+- **major** - breaking changes - new schemas, naming changes, removing endpoints or properties, changes in the mustache logic.
+
+#### Breaking changes
+
+The following changes to the `OpenAPI.json` file consistute breaking changes:
+- Adding a new query parameter.
+- Deleting anything: a query property, a schema, property schema, etc.
+- Changing the order of query parameters.
+- When an object is replaced with a `$ref`.
+- Deleting an element from an `enum`.
+- Adding an `enum` if, until now, the type was `string`.
+- Adding `format` or its change in a schema which has `"type": "string"`.
+- Adding a `default` (**most likely**).
+- Adding a new `enum` value if the existing values have the same prefix.
+
+To avoid breaking changes, fix them in the [`index.ts` file](./scripts/prepare-open-api-for-sdk/index.ts).
