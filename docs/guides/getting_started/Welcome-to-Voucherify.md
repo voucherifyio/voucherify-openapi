@@ -71,6 +71,6 @@ Additionally, you can use webhooks to track customer activity or even how your p
 
 You can manage your promotional campaigns with a visual dashboard. There, you can set up your marketing and development team, configure projects, run campaigns, define rules, and more.
 
-Developers use Voucherify dashboard to get API keys, manage integrations with other platforms, and configure integration-sensitive details, like metadata schemas. Marketers, on the other hand, use the dashboard to create and manage promotional campaigns.
+Developers use Voucherify dashboard to get API keys, manage integrations with other platforms, check logs, and configure integration-sensitive details, like metadata schemas. Marketers, on the other hand, use the dashboard to create and manage promotional campaigns.
 
 If you want to learn more about the Voucherify dashboard, visit [the support documentation](https://support.voucherify.io/ "Voucherify support documentation").
