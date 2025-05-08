@@ -5,7 +5,7 @@ import minimist from "minimist";
 import colors from "colors";
 import { parseNullsToNullableObjects, removeStoplightTag } from "./utils";
 import originalOpenAPIContent from "../../reference/OpenAPI.json";
-import _, { omit } from "lodash";
+import _ from "lodash";
 
 let openAPIContent: any = originalOpenAPIContent;
 import { removedNotUsedParameters } from "./removed-not-used-parameters";
@@ -30,6 +30,9 @@ type LanguageOptions = {
   simplifyAllObjectsThatHaveAdditionalProperties?: true;
   putNotObjectSchemasIntoObjectSchemas?: true;
   use2XX?: true;
+  breakingChangesVersion: number;
+  supportOauth?: true;
+  removeAllSchemasDefaults?: true;
 };
 
 const supportedLanguages: {
@@ -39,16 +42,26 @@ const supportedLanguages: {
     name: "python",
     simplifyAllObjectsThatHaveAdditionalProperties: true, //MUST STAY!
     use2XX: true, //MUST STAY!
+    breakingChangesVersion: 1,
   },
   ruby: {
     name: "ruby",
+    breakingChangesVersion: 1,
   },
   php: {
     name: "php",
     putNotObjectSchemasIntoObjectSchemas: true, //MUST STAY!
+    breakingChangesVersion: 1,
   },
   java: {
     name: "java",
+    breakingChangesVersion: 1,
+  },
+  dotnet: {
+    name: "dotnet",
+    supportOauth: true,
+    removeAllSchemasDefaults: true,
+    breakingChangesVersion: 2,
   },
 };
 
@@ -90,8 +103,9 @@ const main = async (languageOptions: LanguageOptions) => {
     }
   });
   //////////////////////////////////////////////////////////////////////////////
+  ////////////////////BEGINNING OF CLEANUP OPEN API FILE////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
   removeStoplightTag(openAPIContent);
-  openAPIContent = removeUnwantedProperties(openAPIContent, ["readmeTitle"]);
   openAPIContent.components.schemas = removeUnwantedProperties(
     openAPIContent.components.schemas,
     ["title"],
@@ -110,260 +124,293 @@ const main = async (languageOptions: LanguageOptions) => {
         "title": "Any"
       }`);
   delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
-  //Restore validation_rules for creat loyalty campaigns
-  openAPIContent.components.schemas.CampaignsCreateLoyaltyCampaign.allOf =
-    openAPIContent.components.schemas.CampaignsCreateLoyaltyCampaign.allOf.map(
-      (object) => {
-        if (object.$ref === "#/components/schemas/CampaignsCreateBase") {
-          return {
-            $ref: "#/components/schemas/CampaignsCreateBaseValidationRules",
-          };
-        }
-        return object;
-      },
-    );
-  //Fix voucher - to prevent breaking changes
-  delete openAPIContent.components.schemas.AsyncActionBase.properties.type.enum;
-  delete openAPIContent.components.schemas.AsyncActionBase.properties
-    .operation_status.enum;
-  //Fix `CustomerActivity`
-  delete openAPIContent.components.schemas.CustomerActivity.properties.type
-    .enum;
-  delete openAPIContent.components.schemas.CustomerActivity.properties.data
-    .properties;
-  delete openAPIContent.components.schemas.ParameterCustomerEvent.enum;
-  //Fix `MemberActivity`
-  delete openAPIContent.components.schemas.MemberActivity.properties.type.enum;
-  delete openAPIContent.components.schemas.MemberActivity.properties.data
-    .properties;
-  //Do not do breaking change in `ApplicableTo`
-  delete openAPIContent.components.schemas.ApplicableTo.properties.target.enum;
-  //Delete `enum`s for redeemables in `ValidationEntity`
-  delete openAPIContent.components.schemas.ValidationEntity.properties
-    .redeemables.items.properties.type.enum;
-  delete openAPIContent.components.schemas.ValidationEntity.properties
-    .skipped_redeemables.items.properties.type.enum;
-  delete openAPIContent.components.schemas.ValidationEntity.properties
-    .inapplicable_redeemables.items.properties.type.enum;
-  openAPIContent.components.schemas.LoyaltyPointsBucket.properties.expires_at.format =
-    "date-time";
-  // Remove expand query parameter in GET v1/loyalties
-  openAPIContent.paths["/v1/loyalties"].get.parameters = openAPIContent.paths[
-    "/v1/loyalties"
-  ].get.parameters.filter((parameter) => parameter.name !== "expand");
-  //New parameter
-  openAPIContent.paths[
-    "/v1/loyalties/{campaignId}/members/{memberId}/transactions"
-  ].get.parameters = openAPIContent.paths[
-    "/v1/loyalties/{campaignId}/members/{memberId}/transactions"
-  ].get.parameters.filter((parameter) => parameter.name !== "filters");
-  openAPIContent.paths[
-    "/v1/loyalties/members/{memberId}/transactions"
-  ].get.parameters = openAPIContent.paths[
-    "/v1/loyalties/members/{memberId}/transactions"
-  ].get.parameters.filter((parameter) => parameter.name !== "filters");
-  // Rollback the change of the "page" parameter
-  openAPIContent.paths["/v1/customers"].get.parameters = openAPIContent.paths[
-    "/v1/customers"
-  ].get.parameters.map((parameter) => {
-    if (parameter.name === "page") {
-      return {
-        $ref: "#/components/parameters/page",
-      };
-    }
-    return parameter;
-  });
-  openAPIContent.paths["/v1/redemptions"].get.parameters = openAPIContent.paths[
-    "/v1/redemptions"
-  ].get.parameters.map((parameter) => {
-    if (parameter.name === "page") {
-      return {
-        $ref: "#/components/parameters/page",
-      };
-    }
-    return parameter;
-  });
-  openAPIContent.paths["/v1/vouchers"].get.parameters = openAPIContent.paths[
-    "/v1/vouchers"
-  ].get.parameters.map((parameter) => {
-    if (parameter.name === "page") {
-      return {
-        $ref: "#/components/parameters/page",
-      };
-    }
-    return parameter;
-  });
-  //ValidationRuleRules fix for Readme – should stay forever
-  openAPIContent.components.schemas.ValidationRuleRules.additionalProperties.properties.rules.$ref =
-    "#/components/schemas/ValidationRuleRules";
-  //Do not add breaking change on application_details
-  openAPIContent.components.schemas.OrderCalculated.properties["items"] = {
-    type: "array",
-    description:
-      "Array of items applied to the order. It can include up 500 items.",
-    items: {
-      $ref: "#/components/schemas/OrderCalculatedItem",
-    },
-    nullable: true,
-  };
-  openAPIContent.components.schemas.OrderCalculatedItem.properties[
-    "application_details"
-  ] = {
-    $ref: "#/components/schemas/ApplicationDetails",
-  };
-  openAPIContent.components.schemas = Object.fromEntries(
-    Object.entries(openAPIContent.components.schemas).map(([key, value]) => {
-      if (key.endsWith("Body") || ["RedemptionRollback"].includes(key)) {
-        return [key, value];
-      }
-      return [key, fixOrderCalculated(value)];
-    }),
-  ) as any;
+  if (openAPIContent.components.schemas.CustomerActivity?.properties?.data) {
+    openAPIContent.components.schemas.CustomerActivity.properties.data = {
+      type: "object",
+      description:
+        "Contains details about the event. The objects that are returned in the data attribute differ based on the context of the event type.",
+    };
+  }
+  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////END OF CLEANUP OPEN API FILE///////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
 
-  openAPIContent.components.schemas.LoyaltyCardTransactionsType.enum =
-    openAPIContent.components.schemas.LoyaltyCardTransactionsType.enum.map(
-      (v) =>
-        v === "PENDING_POINTS_ACTIVATION" ? "POINTS_PENDING_ACTIVATION" : v,
-    );
-  //Do not add the `access_settings` query param to GET List campaigns
-  openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
-    "/v1/campaigns"
-  ].get.parameters.filter((parameter) => parameter.name !== "access_settings");
-  //Do not add the `type` query param to GET List campaigns by deleting the `type` property in the schema
-  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties
-    .type;
-  // Restore `related_redemptions` to `RedemptionRollback`
-  openAPIContent.components.schemas.RedemptionRollback.properties["related_redemptions"] = {
-    "type": "object",
-    "properties": {
-      "rollbacks": {
-        "type": "array",
-        "items": {
-          "title": "Redemption Rollback Related Redemptions Rollbacks Item",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "example": "rr_0bc92f81a6801f9bca",
-              "description": "Unique identifier of the redemption rollback."
-            },
-            "date": {
-              "type": "string",
-              "example": "2021-12-22T10:13:06.487Z",
-              "description": "Timestamp representing the date and time when the object was created. The value is shown in the ISO 8601 format.",
-              "format": "date-time"
-            }
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////BEGINNING OF BREAKING CHANGES///////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  if (languageOptions.breakingChangesVersion <= 1) {
+    //Restore validation_rules for creat loyalty campaigns
+    openAPIContent.components.schemas.CampaignsCreateLoyaltyCampaign.allOf =
+      openAPIContent.components.schemas.CampaignsCreateLoyaltyCampaign.allOf.map(
+        (object) => {
+          if (object.$ref === "#/components/schemas/CampaignsCreateBase") {
+            return {
+              $ref: "#/components/schemas/CampaignsCreateBaseValidationRules",
+            };
           }
-        }
-      },
-      "redemptions": {
-        "type": "array",
-        "items": {
-          "title": "Redemption Rollback Related Redemptions Item",
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "example": "r_0bc92f81a6801f9bca",
-              "description": "Unique redemption ID."
-            },
-            "date": {
-              "type": "string",
-              "example": "2021-12-22T10:13:06.487Z",
-              "description": "Timestamp representing the date and time when the object was created. The value is shown in the ISO 8601 format.",
-              "format": "date-time"
-            }
-          }
-        }
-      }
-    }
-  };
-  // Restore loyalty_card in VoucherUpdateLoyaltyCard
-  openAPIContent.components.schemas.VoucherUpdateLoyaltyCard.allOf.push(
-    {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "LOYALTY_CARD"
-          ],
-          "description": "Defines the type of the voucher. "
+          return object;
         },
-        "loyalty_card": {
-          "$ref": "#/components/schemas/SimpleLoyaltyCard"
-        }
+      );
+    //Fix voucher - to prevent breaking changes
+    delete openAPIContent.components.schemas.AsyncActionBase.properties.type
+      .enum;
+    delete openAPIContent.components.schemas.AsyncActionBase.properties
+      .operation_status.enum;
+    //Fix `CustomerActivity`
+    delete openAPIContent.components.schemas.CustomerActivity.properties.type
+      .enum;
+    delete openAPIContent.components.schemas.CustomerActivity.properties.data
+      .properties;
+    delete openAPIContent.components.schemas.ParameterCustomerEvent.enum;
+    //Fix `MemberActivity`
+    delete openAPIContent.components.schemas.MemberActivity.properties.type
+      .enum;
+    delete openAPIContent.components.schemas.MemberActivity.properties.data
+      .properties;
+    //Do not do breaking change in `ApplicableTo`
+    delete openAPIContent.components.schemas.ApplicableTo.properties.target
+      .enum;
+    //Delete `enum`s for redeemables in `ValidationEntity`
+    delete openAPIContent.components.schemas.ValidationEntity.properties
+      .redeemables.items.properties.type.enum;
+    delete openAPIContent.components.schemas.ValidationEntity.properties
+      .skipped_redeemables.items.properties.type.enum;
+    delete openAPIContent.components.schemas.ValidationEntity.properties
+      .inapplicable_redeemables.items.properties.type.enum;
+    openAPIContent.components.schemas.LoyaltyPointsBucket.properties.expires_at.format =
+      "date-time";
+    // Remove expand query parameter in GET v1/loyalties
+    openAPIContent.paths["/v1/loyalties"].get.parameters = openAPIContent.paths[
+      "/v1/loyalties"
+    ].get.parameters.filter((parameter) => parameter.name !== "expand");
+    //New parameter
+    openAPIContent.paths[
+      "/v1/loyalties/{campaignId}/members/{memberId}/transactions"
+    ].get.parameters = openAPIContent.paths[
+      "/v1/loyalties/{campaignId}/members/{memberId}/transactions"
+    ].get.parameters.filter((parameter) => parameter.name !== "filters");
+    openAPIContent.paths[
+      "/v1/loyalties/members/{memberId}/transactions"
+    ].get.parameters = openAPIContent.paths[
+      "/v1/loyalties/members/{memberId}/transactions"
+    ].get.parameters.filter((parameter) => parameter.name !== "filters");
+    // Rollback the change of the "page" parameter
+    openAPIContent.paths["/v1/customers"].get.parameters = openAPIContent.paths[
+      "/v1/customers"
+    ].get.parameters.map((parameter) => {
+      if (parameter.name === "page") {
+        return {
+          $ref: "#/components/parameters/page",
+        };
       }
+      return parameter;
     });
-  // Restore gift in VoucherUpdateGift
-  openAPIContent.components.schemas.VoucherUpdateGift.allOf.push({
-    "type": "object",
-    "properties": {
-      "type": {
-        "type": "string",
-        "enum": [
-          "GIFT_VOUCHER"
-        ],
-        "description": "Defines the type of the voucher. "
+    openAPIContent.paths["/v1/redemptions"].get.parameters =
+      openAPIContent.paths["/v1/redemptions"].get.parameters.map(
+        (parameter) => {
+          if (parameter.name === "page") {
+            return {
+              $ref: "#/components/parameters/page",
+            };
+          }
+          return parameter;
+        },
+      );
+    openAPIContent.paths["/v1/vouchers"].get.parameters = openAPIContent.paths[
+      "/v1/vouchers"
+    ].get.parameters.map((parameter) => {
+      if (parameter.name === "page") {
+        return {
+          $ref: "#/components/parameters/page",
+        };
+      }
+      return parameter;
+    });
+    //Do not add breaking change on application_details
+    openAPIContent.components.schemas.OrderCalculated.properties["items"] = {
+      type: "array",
+      description:
+        "Array of items applied to the order. It can include up 500 items.",
+      items: {
+        $ref: "#/components/schemas/OrderCalculatedItem",
       },
-      "gift": {
-        "$ref": "#/components/schemas/Gift"
-      }
-    }
-  });
-  // Delete new query params for GET List campaigns
-  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.campaigns;
-  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.campaigns_id;
-  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.updated_at;
-  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.start_date;
-  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.created_date;
-  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.expiration_date;
-  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.validity_day_of_week;
-  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.status;
-  delete openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.active;
-  openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
-    "/v1/campaigns"
-  ].get.parameters.filter((parameter) => parameter.name !== "campaign_status");
-  openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
-    "/v1/campaigns"
-  ].get.parameters.filter((parameter) => parameter.name !== "is_referral_code");
-  // Restore previous voucher_type filter
-  openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.voucher_type = {
-    "type": "object",
-    "description": "Filter by voucher type",
-    "properties": {
-      "conditions": {
-        "$ref": "#/components/schemas/FilterConditionsString"
+      nullable: true,
+    };
+    openAPIContent.components.schemas.OrderCalculatedItem.properties[
+      "application_details"
+    ] = {
+      $ref: "#/components/schemas/ApplicationDetails",
+    };
+    openAPIContent.components.schemas = Object.fromEntries(
+      Object.entries(openAPIContent.components.schemas).map(([key, value]) => {
+        if (key.endsWith("Body") || ["RedemptionRollback"].includes(key)) {
+          return [key, value];
+        }
+        return [key, fixOrderCalculated(value)];
+      }),
+    ) as any;
 
-      }
-    }
+    openAPIContent.components.schemas.LoyaltyCardTransactionsType.enum =
+      openAPIContent.components.schemas.LoyaltyCardTransactionsType.enum.map(
+        (v) =>
+          v === "PENDING_POINTS_ACTIVATION" ? "POINTS_PENDING_ACTIVATION" : v,
+      );
+    //Do not add the `access_settings` query param to GET List campaigns
+    openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
+      "/v1/campaigns"
+    ].get.parameters.filter(
+      (parameter) => parameter.name !== "access_settings",
+    );
+    //Do not add the `type` query param to GET List campaigns by deleting the `type` property in the schema
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns
+      .properties.type;
+    // Restore `related_redemptions` to `RedemptionRollback`
+    openAPIContent.components.schemas.RedemptionRollback.properties[
+      "related_redemptions"
+    ] = {
+      type: "object",
+      properties: {
+        rollbacks: {
+          type: "array",
+          items: {
+            title: "Redemption Rollback Related Redemptions Rollbacks Item",
+            type: "object",
+            properties: {
+              id: {
+                type: "string",
+                example: "rr_0bc92f81a6801f9bca",
+                description: "Unique identifier of the redemption rollback.",
+              },
+              date: {
+                type: "string",
+                example: "2021-12-22T10:13:06.487Z",
+                description:
+                  "Timestamp representing the date and time when the object was created. The value is shown in the ISO 8601 format.",
+                format: "date-time",
+              },
+            },
+          },
+        },
+        redemptions: {
+          type: "array",
+          items: {
+            title: "Redemption Rollback Related Redemptions Item",
+            type: "object",
+            properties: {
+              id: {
+                type: "string",
+                example: "r_0bc92f81a6801f9bca",
+                description: "Unique redemption ID.",
+              },
+              date: {
+                type: "string",
+                example: "2021-12-22T10:13:06.487Z",
+                description:
+                  "Timestamp representing the date and time when the object was created. The value is shown in the ISO 8601 format.",
+                format: "date-time",
+              },
+            },
+          },
+        },
+      },
+    };
+    // Restore loyalty_card in VoucherUpdateLoyaltyCard
+    openAPIContent.components.schemas.VoucherUpdateLoyaltyCard.allOf.push({
+      type: "object",
+      properties: {
+        type: {
+          type: "string",
+          enum: ["LOYALTY_CARD"],
+          description: "Defines the type of the voucher. ",
+        },
+        loyalty_card: {
+          $ref: "#/components/schemas/SimpleLoyaltyCard",
+        },
+      },
+    });
+    // Restore gift in VoucherUpdateGift
+    openAPIContent.components.schemas.VoucherUpdateGift.allOf.push({
+      type: "object",
+      properties: {
+        type: {
+          type: "string",
+          enum: ["GIFT_VOUCHER"],
+          description: "Defines the type of the voucher. ",
+        },
+        gift: {
+          $ref: "#/components/schemas/Gift",
+        },
+      },
+    });
+    // Delete new query params for GET List campaigns
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns
+      .properties.campaigns;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns
+      .properties.campaigns_id;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns
+      .properties.updated_at;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns
+      .properties.start_date;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns
+      .properties.created_date;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns
+      .properties.expiration_date;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns
+      .properties.validity_day_of_week;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns
+      .properties.status;
+    delete openAPIContent.components.schemas.ParameterFiltersListCampaigns
+      .properties.active;
+    openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
+      "/v1/campaigns"
+    ].get.parameters.filter(
+      (parameter) => parameter.name !== "campaign_status",
+    );
+    openAPIContent.paths["/v1/campaigns"].get.parameters = openAPIContent.paths[
+      "/v1/campaigns"
+    ].get.parameters.filter(
+      (parameter) => parameter.name !== "is_referral_code",
+    );
+    // Restore previous voucher_type filter
+    openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.voucher_type =
+      {
+        type: "object",
+        description: "Filter by voucher type",
+        properties: {
+          conditions: {
+            $ref: "#/components/schemas/FilterConditionsString",
+          },
+        },
+      };
+    // Restore previous is_referral_code filter
+    openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.is_referral_code.properties =
+      {
+        $is: {
+          type: "string",
+          description: "Value is exactly this value (single value).",
+          enum: ["TRUE", "FALSE"],
+        },
+        $is_not: {
+          type: "string",
+          description: "Results omit this value (single value).",
+          enum: ["TRUE", "FALSE"],
+        },
+      };
+    // Remove new conditions – $contains, $not_contain from FilterConditionsString
+    delete openAPIContent.components.schemas.FilterConditionsString.properties
+      .$contains;
+    delete openAPIContent.components.schemas.FilterConditionsString.properties
+      .$not_contain;
+    // Restore `strict`
+    openAPIContent.components.schemas.ApplicableTo.properties.strict = {
+      type: "boolean",
+    };
   }
-  // Restore previous is_referral_code filter
-  openAPIContent.components.schemas.ParameterFiltersListCampaigns.properties.is_referral_code.properties = {
-    "$is": {
-      "type": "string",
-      "description": "Value is exactly this value (single value).",
-      "enum": [
-        "TRUE",
-        "FALSE"
-      ]
-    },
-    "$is_not": {
-      "type": "string",
-      "description": "Results omit this value (single value).",
-      "enum": [
-        "TRUE",
-        "FALSE"
-      ]
-    }
+  if (languageOptions.breakingChangesVersion <= 2) {
+    //ADD MORE TO IT ONCE DOTNET IS RELEASED
   }
-  // Remove new conditions – $contains, $not_contain from FilterConditionsString
-  delete openAPIContent.components.schemas.FilterConditionsString.properties.$contains;
-  delete openAPIContent.components.schemas.FilterConditionsString.properties.$not_contain;
-  // Restore `strict`
-  openAPIContent.components.schemas.ApplicableTo.properties.strict = {
-    "type": "boolean"
-  };
+  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////END OF BREAKING CHANGES////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
   openAPIContent = addMissingDefaults(openAPIContent);
   const { paths, newSchemas } = getPathsWithoutDeprecated(
@@ -393,7 +440,6 @@ const main = async (languageOptions: LanguageOptions) => {
     openAPIContent.components.parameters,
     languageOptions,
   );
-
   const pathsWithoutBuggedTags = removeBuggedTagsFromOpenAPIPaths(paths);
   const pathsWithFixedResponses = Object.fromEntries(
     Object.entries(pathsWithoutBuggedTags).map(([path, pathEntry]) => {
@@ -442,6 +488,27 @@ const main = async (languageOptions: LanguageOptions) => {
     languageOptions,
     {},
   );
+  if (languageOptions.removeAllSchemasDefaults) {
+    schemasWithoutNotUsed = removeUnwantedProperties(schemasWithoutNotUsed, [
+      "default",
+    ]);
+  }
+
+  if (!languageOptions.supportOauth) {
+    openAPIContent.components.securitySchemes = _.omit(
+      openAPIContent.components.securitySchemes,
+      ["X-Voucherify-OAuth"],
+    );
+    Object.values(pathsWithFixedResponses).forEach((methods) => {
+      Object.values(methods).forEach((method) => {
+        if (method?.security) {
+          method.security = [
+            _.omit(method.security?.[0] || {}, "X-Voucherify-OAuth"),
+          ];
+        }
+      });
+    });
+  }
 
   // Building all together
   const newOpenApiFile = cleanUpDescriptionsInEntireObject({
@@ -453,34 +520,42 @@ const main = async (languageOptions: LanguageOptions) => {
     },
     paths: pathsWithFixedResponses,
   });
-  ////////////////
-  //fix order breaking change - in next major remove it.:
-  [
-    "ClientQualificationsCheckEligibilityResponseBody",
-    "ClientRedemptionsRedeemResponseBody",
-    "ClientValidationsValidateResponseBody",
-    "QualificationsCheckEligibilityResponseBody",
-    "RedemptionRollback",
-    "RedemptionsRollbackCreateResponseBody",
-    "RedemptionsRollbacksCreateResponseBody",
-    "ValidationsValidateResponseBody",
-    "RedemptionsRedeemResponseBody",
-  ].forEach((key) => {
-    newOpenApiFile.components.schemas[key].properties.order = {
-      $ref: "#/components/schemas/OrderCalculated",
-    };
-  });
-  newOpenApiFile.components.schemas.OrdersListResponseBody.properties.orders.items =
-  {
-    $ref: "#/components/schemas/OrderCalculated",
-  };
-  ///
-  newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
-    newOpenApiFile.components.schemas.LoyaltyPointsBucket;
-  newOpenApiFile.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =
-    newOpenApiFile.components.schemas.VoucherBalance;
-  newOpenApiFile.components.schemas.VoucherTransaction.properties.details.properties.balance =
-    newOpenApiFile.components.schemas.VoucherBalance;
+
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////BEGINNING OF BREAKING CHANGES///////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  if (languageOptions.breakingChangesVersion <= 1) {
+    [
+      "ClientQualificationsCheckEligibilityResponseBody",
+      "ClientRedemptionsRedeemResponseBody",
+      "ClientValidationsValidateResponseBody",
+      "QualificationsCheckEligibilityResponseBody",
+      "RedemptionRollback",
+      "RedemptionsRollbackCreateResponseBody",
+      "RedemptionsRollbacksCreateResponseBody",
+      "ValidationsValidateResponseBody",
+      "RedemptionsRedeemResponseBody",
+    ].forEach((key) => {
+      newOpenApiFile.components.schemas[key].properties.order = {
+        $ref: "#/components/schemas/OrderCalculated",
+      };
+    });
+    newOpenApiFile.components.schemas.OrdersListResponseBody.properties.orders.items =
+      {
+        $ref: "#/components/schemas/OrderCalculated",
+      };
+    ///
+    newOpenApiFile.components.schemas.LoyaltiesMembersPointsExpirationListResponseBody.properties.data.items =
+      newOpenApiFile.components.schemas.LoyaltyPointsBucket;
+    newOpenApiFile.components.schemas.LoyaltyCardTransaction.properties.details.properties.balance =
+      newOpenApiFile.components.schemas.VoucherBalance;
+    newOpenApiFile.components.schemas.VoucherTransaction.properties.details.properties.balance =
+      newOpenApiFile.components.schemas.VoucherBalance;
+  }
+  //////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////END OF BREAKING CHANGES////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
   newOpenApiFile.components.schemas = fixSchemasTitles(
     _.cloneDeep(newOpenApiFile.components.schemas),
   );
@@ -535,6 +610,14 @@ const mergeObjectsWithAllOfs = (object, schemas) => {
     }
   });
   return _object;
+};
+
+const fixRefUagesInAllSchemasProperties = (schemas) => {
+  return Object.fromEntries(
+    Object.entries(schemas).map(([title, schema]) => {
+      return [title, fixRefsUsages(schema)];
+    }),
+  );
 };
 
 const copySchemasIfUsedAsAllOfInBase = (schemas): Record<string, any> => {
@@ -602,16 +685,12 @@ const copySchemasIfUsedAsAllOfInBase = (schemas): Record<string, any> => {
   );
 };
 
-const fixRefUagesInAllSchemasProperties = (schemas) => {
-  return Object.fromEntries(
-    Object.entries(schemas).map(([title, schema]) => {
-      return [title, fixRefsUsages(schema)];
-    }),
-  );
-};
-
 const returnRefSchemaIfAllOfContainsOnly1Reference = (schema) => {
-  if (schema?.allOf?.length === 1 && schema.allOf[0]?.$ref) {
+  if (
+    schema?.allOf?.length === 1 &&
+    schema.allOf[0]?.$ref &&
+    !schema.required?.length
+  ) {
     return schema.allOf[0];
   }
   return false;
