@@ -35,6 +35,8 @@ Applying targeted promotions at every stage of the customer lifecycle can help y
 
 At its core, the integration of Voucherify with your system relies on passing relevant context to the Voucherify API, which validates and redeems incentives and rewards in accordance with the rules you set up with the Rules Engine. For more about integrating with Voucherify, explore [Integration overview](ref:integration-overview).
 
+![Integration example](/docs/assets/img/guides_getting_started_welcome-to-voucherify-03.png "A schema of an integration between a store and Voucherify, showing the flow of cart and promo code changes between the customer behavior and Voucherify.")
+
 As a [MACH-certified vendor](https://machalliance.org/), Voucherify follows the principles of composability, giving you flexibility and decreasing the time needed for integration. This way, you can more easily combine Voucherify with your existing tech-stack that may include:
 - Customer Data Platform (CDP)
 - Customer Engagement Platform (CEP)
@@ -51,7 +53,7 @@ Thanks to Voucherify, you can solve the following issues:
 - Generating unsatisfactory ROI caused by generic offers, simplistic loyalty programs, and promotional fraud.
 - Continuously mediating between marketing and development teams' priorities.
 - Wasting development time to write extra code to keep multiple promotion and loyalty platforms in sync across applications, brands, and teams.
-- Struggling to build branded customer-facing UIs using legacy and monolithic services <!-- Is this still true since we've removed LP and are about to get rid of cockpits?-->
+- Struggling to build branded customer-facing UIs using legacy and monolithic services. <!-- Is this still true since we've removed LP and are about to get rid of cockpits?-->
 - Failing to effectively manage traffic spikes and priority changes.
 <!-- Anything else? -->
 

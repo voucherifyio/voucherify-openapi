@@ -1,5 +1,5 @@
 ---
-title: Key Concepts
+title: Key concepts
 excerpt: Learn the key concepts to help you implement promotional campaigns and integrate Voucherify with your stack.
 categorySlug: getting-started
 slug: key-concepts

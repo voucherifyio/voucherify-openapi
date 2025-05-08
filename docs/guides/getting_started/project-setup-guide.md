@@ -12,7 +12,9 @@ order: 3
 
 Create an [account](http://app.voucherify.io/#/signup).
 
-Provide all the necessary details and select your preferred region. The selected region affects where your data is stored. To decrease the latency time, it's good to set the region in your operating region.
+Provide all the necessary details and select your preferred region. The selected region affects where your data is stored. To decrease the latency time, it's good to set the region in your operating area.
+
+Once you sign up, you'll receive a verification email. If you don't receive the email or if you have lost it, [contact Voucherify support](https://support.voucherify.io/article/125-security-data-protection "Voucherify support").
 
 > 📘 Europe
 >
@@ -20,7 +22,6 @@ Provide all the necessary details and select your preferred region. The selected
 >
 > Learn more in the [security and data protection article](https://support.voucherify.io/article/125-security-data-protection "Voucherify, GDPR and CCPA compliance").
 
-Once you sign up, you'll receive a verification email. If you don't receive the email or if you have lost it, [contact Voucherify support](https://support.voucherify.io/article/125-security-data-protection "Voucherify support").
 
 ## Get your API keys
 
@@ -47,7 +48,7 @@ Your Sandbox project comes with several test campaigns and codes.
 One of the most frequent API calls is validation, which checks if incentives, such as codes, can be applied by the customer to their order.
 
 Make your first validation call:
-1. Log in with your Voucherify account details in the top right corner. Your Sandbox API keys will be used as credentials in the interactive documentation to make API calls.
+1. Log in with your Voucherify account details in the top right corner here in this page. Your Sandbox API keys will be used as credentials in the interactive documentation to make API calls.
 2. Go to [Validate stackable discounts](ref:validate-stacked-discounts).
 3. In Base URL, select your region depending on the region you've chosen when creating a new account:
    - `api` for Europe
@@ -60,9 +61,9 @@ Check the response in the window below the request.
 
 You can use the interactive documentation on the left to add more details to the request.
 
-Alternatively, you can use [Postman collection](#postman-collection) to make your first API call.
+Alternatively, you can use Voucherify [Postman collection](#postman-collection) to make your first API call.
 
-As the next step, take a look at the [Sandbox project and the Demo shop](https://support.voucherify.io/article/538-sandbox) to test your first campaigns. In the Demo shop, use the test campaigns with pre-defined validation rules to learn Voucherify possibilities or create your campaigns and experiment with the platform. You can also check API calls made.
+As the next step, take a look at the [Sandbox project and the Demo shop](#exploring-the-voucherify-api-in-the-sandbox-project) to test your first campaigns. In the Demo shop, use the test campaigns with pre-defined validation rules to learn Voucherify possibilities or create your campaigns and experiment with the platform. You can also check the payloads of the API calls.
 
 ## Voucherify API Postman collection
 
@@ -98,7 +99,7 @@ Manage your team roles and invite your team members:
 
 ### Enabling Distributions
 
-If you want to test the [distribution](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work) of vouchers, your account must be verified as part of our [anti-spam policy](https://www.voucherify.io/legal/anti-spam-policy-v1-1 "Voucherify anti-spam policy"). If your account is unverified, you can send 10 messages per day and per month, and no emails .
+If you want to test the [distribution](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work) of vouchers, your account must be verified as part of our [anti-spam policy](https://www.voucherify.io/legal/anti-spam-policy-v1-1 "Voucherify anti-spam policy"). If your account is unverified, you can send 10 messages per day and per month, and no emails.
 
 To unlock the limits for trial accounts, [set up brand details](#setting-up-brand-details) and [contact Voucherify support](https://support.voucherify.io/article/125-security-data-protection "Voucherify support").
 
@@ -117,16 +118,16 @@ Learn more about distribution limits in the [fair use policy](https://www.vouche
 
 ## Exploring the Voucherify API in the Sandbox project
 
-You can learn more about Voucherify API also through the dashboard in the Sandbox project even if you explore the Voucherify API by sending requests and analyzing responses through the interactive API reference or the Postman collection.
+You can learn more about Voucherify API also through the dashboard in the [Sandbox project](https://support.voucherify.io/article/538-sandbox) even if you explore the Voucherify API by sending requests and analyzing responses through the interactive API reference or the Postman collection.
 
 ### Audit log
 
 You can track more API details in the [Audit log](https://support.voucherify.io/article/524-project-logs).
 
 In Voucherify:
-1. Go to Audit log in the left bar.
-2. Click Add filter.
-3. Click Channel.
+1. Go to **Audit log** in the left bar.
+2. Click **Add filter**.
+3. Click **Channel**.
 4. Select condition `in` and select `API` to filter the logs.
 
 The log list show the status, method, URL, log ID, channel, and creation date.
@@ -138,8 +139,8 @@ Log details show more information, including the request and response bodies, qu
 The Demo shop shows how the integration between Voucherify and customer touchpoints works in practice. You can use the Demo shop to test the campaigns and check how they work for test customers. In particular, you can monitor API calls and their payloads made during customer journey.
 
 In Voucherify:
-1. Go to Marketer hub in the left bar.
-2. Click Demo shop.
-3. In the bottom of the screen, unroll the API calls bar.
+1. Go to **Marketer hub** in the left bar.
+2. Click **Demo shop**.
+3. In the bottom of the screen, unroll the **API calls** bar.
 
 The API calls section shows details about particular endpoints and methods. You can also copy the JSON payload or go the API documentation of a given method.
