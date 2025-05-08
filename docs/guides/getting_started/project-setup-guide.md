@@ -87,7 +87,7 @@ You can further configure your Voucherify Sandbox project by inviting your team 
 
 > 👍 Advanced feature – Management API
 >
-> Enterprise clients can use the [Management API](docs:management-api) to perform account-related activities regarding projects, users, and other settings through the API.
+> Enterprise clients can use the [Management API](doc:management-api) to perform account-related activities regarding projects, users, and other settings through the API.
 
 ### Managing roles and inviting users
 
@@ -115,8 +115,31 @@ The limits for verified trial accounts are 10 messages per day and 100 messages 
 
 Learn more about distribution limits in the [fair use policy](https://www.voucherify.io/legal/fair-use-policy-v2-1).
 
-## Exploring the Voucherify API through the Sandbox project
+## Exploring the Voucherify API in the Sandbox project
 
-If you explore the Voucherify API by sending requests and analyzing responses through the interactive API reference or the Postman collection, you can also
+You can learn more about Voucherify API also through the dashboard in the Sandbox project even if you explore the Voucherify API by sending requests and analyzing responses through the interactive API reference or the Postman collection.
 
-<!-- AUDIT LOG, DEMO SHOP, Check API calls -->
+### Audit log
+
+You can track more API details in the [Audit log](https://support.voucherify.io/article/524-project-logs).
+
+In Voucherify:
+1. Go to Audit log in the left bar.
+2. Click Add filter.
+3. Click Channel.
+4. Select condition `in` and select `API` to filter the logs.
+
+The log list show the status, method, URL, log ID, channel, and creation date.
+
+Log details show more information, including the request and response bodies, query parameters, and related events.
+
+### Demo shop
+
+The Demo shop shows how the integration between Voucherify and customer touchpoints works in practice. You can use the Demo shop to test the campaigns and check how they work for test customers. In particular, you can monitor API calls and their payloads made during customer journey.
+
+In Voucherify:
+1. Go to Marketer hub in the left bar.
+2. Click Demo shop.
+3. In the bottom of the screen, unroll the API calls bar.
+
+The API calls section shows details about particular endpoints and methods. You can also copy the JSON payload or go the API documentation of a given method.
