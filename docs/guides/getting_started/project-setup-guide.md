@@ -69,7 +69,7 @@ As the next step, take a look at the [Sandbox project and the Demo shop](#explor
 
 Start exploring the Voucherify API with minimum effort.
 
-You can view all of the Voucherify API endpoints with the public collection available on [Postman](https://www.postman.com/), which is an app you can use to test and work with APIs. Check out the examples of the basic processes required to integrate Voucherify with your system, advanced interactions, and industry-specific cases.
+You can view all of the Voucherify API endpoints with the public collection available in [Postman](https://www.postman.com/), which is an app you can use to test and work with APIs. Check out the examples of the basic processes required to integrate Voucherify with your system, advanced interactions, and industry-specific cases.
 
 1. Go to [Voucherify Postman collection](https://www.postman.com/voucherify/voucherify-s-public-workspace/overview).
 2. Fork the collection to create a copy in your own Postman workspace. For onboarding, fork [Voucherify API – Onboarding](https://www.postman.com/voucherify/voucherify-s-public-workspace/collection/iut4une/voucherify-api-onboarding).
@@ -99,7 +99,7 @@ Manage your team roles and invite your team members:
 
 ### Enabling Distributions
 
-If you want to test the [distribution](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work) of vouchers, your account must be verified as part of our [anti-spam policy](https://www.voucherify.io/legal/anti-spam-policy-v1-1 "Voucherify anti-spam policy"). If your account is unverified, you can send 10 messages per day and per month, and no emails.
+If you want to test the [distribution](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work) of vouchers, your account must be verified as part of our [anti-spam policy](https://www.voucherify.io/legal/anti-spam-policy-v1-1 "Voucherify anti-spam policy"). If your account is unverified, you can send up to 10 messages total — whether all in one day or spread across the month, and no emails.
 
 To unlock the limits for trial accounts, [set up brand details](#setting-up-brand-details) and [contact Voucherify support](https://support.voucherify.io/article/125-security-data-protection "Voucherify support").
 

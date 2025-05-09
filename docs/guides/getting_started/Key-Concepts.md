@@ -29,7 +29,7 @@ Each project has a set of unique API keys. Also, the data, e.g. customers, produ
 
 A campaign is a basic entity that is used to carry out promotional activities. 
 
-There are six basic campaign types, which create:
+There are five basic campaign types, which create:
 - [discount coupons](doc:discount-effects),
 - [gift vouchers](doc:prepaid-gift-cards),
 - [referral codes](doc:referral-program),
