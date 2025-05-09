@@ -35,7 +35,7 @@ Applying targeted promotions at every stage of the customer lifecycle can help y
 
 At its core, the integration of Voucherify with your system relies on passing relevant context to the Voucherify API, which validates and redeems incentives and rewards in accordance with the rules you set up with the Rules Engine. For more about integrating with Voucherify, explore [Integration overview](ref:integration-overview).
 
-![Integration example](/docs/assets/img/guides_getting_started_welcome-to-voucherify-03.png "A schema of an integration between a store and Voucherify, showing the flow of cart and promo code changes between the customer behavior and Voucherify.")
+![Integration example](https://files.readme.io/259371c0c8bc05e57bfb6ff42f4184174ffaefad0ce69154071a8c33c0d214b8-guides_getting_started_welcome-to-voucherify-03.png "A schema of an integration between a store and Voucherify, showing the flow of cart and promo code changes between the customer behavior and Voucherify.")
 
 As a [MACH-certified vendor](https://machalliance.org/), Voucherify follows the principles of composability, giving you flexibility and decreasing the time needed for integration. This way, you can more easily combine Voucherify with your existing tech-stack that may include:
 - Customer Data Platform (CDP)
