@@ -10,7 +10,7 @@ order: 1
 
 The Voucherify documentation is divided into four main categories.
 
-1. **[Getting started with Voucherify](doc:welcome-to-voucherify)** – Learn more about Voucherify and what’s possible with the platform. Set up your account and make your first API call.
+1. **[Voucherify overview](doc:welcome-to-voucherify)** – Learn more about Voucherify and what’s possible with the platform. Set up your account and make your [first API call](doc:getting-started).
 2. **[Integration Blueprint](doc:integration-overview)** – Discover how to seamlessly plan your integration and learn how to build advanced promotion limits to personalize your campaigns and prevent fraud. Recommended for architects and readers who want to know how to plan out the integration.
 3. **[Development](doc:welcome)** - Dive into detailed development options, including example data mapping, processes, and more. Recommended for developers and integrators.
 4. **[API Reference](ref:introduction-1)** – Explore endpoints and attributes with request/response examples and error messages.
