@@ -1,5 +1,5 @@
 ---
-title: Metadata Mapping
+title: Metadata mapping
 excerpt: Custom attributes (metadata) and their use in Voucherify
 categorySlug: development
 slug: metadata-mapping

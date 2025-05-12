@@ -1,5 +1,5 @@
 ---
-title: API Optimization
+title: API optimization
 excerpt: Learn how to optimize your API calls
 categorySlug: development
 slug: api-optimization

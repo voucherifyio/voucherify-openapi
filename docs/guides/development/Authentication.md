@@ -1,5 +1,5 @@
 ---
-title: Authentication and Authorization
+title: Authentication and authorization
 excerpt: Authorization methods and principles used to access the Voucherify platform HTTP APIs.
 categorySlug: development
 slug: authentication

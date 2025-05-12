@@ -1,5 +1,5 @@
 ---
-title: Integration Processes
+title: Integration processes
 excerpt: Integrate Voucherify with your system and apply different scenarios
 categorySlug: development
 slug: integration-processes

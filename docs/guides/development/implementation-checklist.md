@@ -1,5 +1,5 @@
 ---
-title: Development Checklist
+title: Development checklist
 excerpt: Learn what development steps you need to take to integrate with Voucherify
 categorySlug: development
 slug: welcome

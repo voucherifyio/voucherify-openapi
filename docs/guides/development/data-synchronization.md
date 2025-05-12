@@ -1,5 +1,5 @@
 ---
-title: Data Synchronization
+title: Data synchronization
 excerpt: Learn what kind of data you can synchronize with Voucherify and how you can do this
 categorySlug: development
 slug: data-synchronization
