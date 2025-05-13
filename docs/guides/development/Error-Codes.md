@@ -1,5 +1,5 @@
 ---
-title: Error Codes
+title: Error codes
 excerpt: 
 categorySlug: development
 slug: error-codes

@@ -1,5 +1,5 @@
 ---
-title: Data Parsing
+title: Data parsing
 excerpt: Learn how to read and use data sent by Voucherify
 categorySlug: development
 slug: data-parsing

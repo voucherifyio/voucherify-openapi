@@ -1,5 +1,5 @@
 ---
-title: Fraud Prevention Mechanisms
+title: Fraud prevention mechanisms
 excerpt: Get familiar with fraud prevention mechanisms.
 categorySlug: development
 slug: fraud-prevention-mechanisms
