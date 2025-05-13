@@ -1,8 +1,8 @@
 ---
-title: Distributions
+title: Setting up distributions
 excerpt:
 categorySlug: development
-slug: webhooks
+slug: distribution-set-up
 type: link
 hidden: false
 order: 95
