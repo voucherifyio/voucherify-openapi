@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-05-23
+
+- Added `expiration_rules` to the `EarningRuleBase` schema.
+
 ## 2025-04-16
 
 - Added `campaign_status` and `is_referral_code` query parameters to GET List campaigns.
