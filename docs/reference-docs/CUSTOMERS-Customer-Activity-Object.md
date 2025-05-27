@@ -1135,7 +1135,7 @@ One of:
 | validity_day_of_week | See: [Validity Day Of Week](#validity-day-of-week) |
 | validity_hours | See: [Validity Hours](#validity-hours) |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format.</p> |
-| expiration_rules</br>`object` | <p>Defines the loyalty point expiration rule. This expiration rule applies only to this earning rule and supersedes <code>expiration_rules</code> defined in the <code>voucher.loyalty_card</code> object.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">period_type</br><code>string</code></td><td style="text-align:left"><p>Type of period. Currently, only <code>MONTH</code> is allowed.</p> Available values: <code>MONTH</code></td></tr><tr><td style="text-align:left">period_value</br><code>integer</code></td><td style="text-align:left"><p>Value of the period.</p></td></tr><tr><td style="text-align:left">rounding_type</br><code>string</code></td><td style="text-align:left"><p>Type of rounding of the expiration period.</p> Available values: <code>END_OF_MONTH</code>, <code>END_OF_QUARTER</code>, <code>END_OF_HALF_YEAR</code>, <code>END_OF_YEAR</code>, <code>PARTICULAR_MONTH</code></td></tr><tr><td style="text-align:left">rounding_value</br><code>integer</code></td><td style="text-align:left"><p>Value of rounding of the expiration period.</p></td></tr></tbody></table> |
+| expiration_rules | See: [Earning Rule Expiration Rules](#earning-rule-expiration-rules) |
 
 ## Customer Id
 | Attributes |  Description |
@@ -1451,6 +1451,14 @@ One of:
 
 ## Earning Rule Event
 
+
+## Earning Rule Expiration Rules
+| Attributes |  Description |
+|:-----|:--------|
+| period_type</br>`string` | <p>Type of period. Currently, only <code>MONTH</code> is allowed.</p> Available values: `MONTH` |
+| period_value</br>`integer` | <p>Value of the period.</p> |
+| rounding_type</br>`string` | <p>Type of rounding of the expiration period.</p> Available values: `END_OF_MONTH`, `END_OF_QUARTER`, `END_OF_HALF_YEAR`, `END_OF_YEAR`, `PARTICULAR_MONTH` |
+| rounding_value</br>`integer` | <p>Value of rounding of the expiration period.</p> |
 
 ## Reward Assignment Base
 | Attributes |  Description |
