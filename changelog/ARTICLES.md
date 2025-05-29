@@ -7,6 +7,17 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2025-05-29
+
+Small improvements to `Welcome-to-Voucherify.md`.
+
+## 2025-04-14
+
+Changes to:
+- `Introduction.md`
+- `Welcome-to-Voucherify.md`
+- `project-setup-guide.md`
+
 ## 2025-03-06
 
 Updated `introduction-to-webhook` with new webhooks.
