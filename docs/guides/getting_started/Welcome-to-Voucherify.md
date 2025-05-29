@@ -37,7 +37,7 @@ At its core, the integration of Voucherify with your system relies on passing re
 
 ![Integration example](https://files.readme.io/259371c0c8bc05e57bfb6ff42f4184174ffaefad0ce69154071a8c33c0d214b8-guides_getting_started_welcome-to-voucherify-03.png "A schema of an integration between a store and Voucherify, showing the flow of cart and promo code changes between the customer behavior and Voucherify.")
 
-As a [MACH-certified vendor](https://machalliance.org/), Voucherify follows the principles of composability, giving you flexibility and decreasing the time needed for integration. This way, you can more easily combine Voucherify with your existing tech-stack that may include:
+As a [MACH-certified vendor](https://machalliance.org/), Voucherify follows the principles of composability, giving you flexibility and decreasing the time needed for [integration with different tools](https://www.voucherify.io/integrations "Powerful integrations with Voucherify"). This way, you can more easily combine Voucherify with your existing tech-stack that may include:
 - Customer Data Platform (CDP)
 - Customer Engagement Platform (CEP)
 - Customer Relationship Management (CRM) solutions
@@ -47,7 +47,7 @@ As a [MACH-certified vendor](https://machalliance.org/), Voucherify follows the 
 
 ## What problems does Voucherify solve?
 
-Thanks to Voucherify, you can solve the following issues:
+Thanks to Voucherify, you can solve the following problems:
 - Integrating promotions with external tools and dynamic customer touchpoints.
 - Paying too much for promotion maintenance and real-time monitoring of all digital offers.
 - Generating unsatisfactory ROI caused by generic offers, simplistic loyalty programs, and promotional fraud.
@@ -55,6 +55,7 @@ Thanks to Voucherify, you can solve the following issues:
 - Wasting development time to write extra code to keep multiple promotion and loyalty platforms in sync across applications, brands, and teams.
 - Struggling to build branded customer-facing UIs using legacy and monolithic services. <!-- Is this still true since we've removed LP and are about to get rid of cockpits?-->
 - Failing to effectively manage traffic spikes and priority changes.
+- [Many different promotion cases and issues](https://www.voucherify.io/promotion-examples "Voucherify recipes").
 <!-- Anything else? -->
 
 You can achieve this thanks to Voucherify's promotion and loyalty **REST API endpoints** and **a visual Dashboard** to help you with configuration.
@@ -63,7 +64,7 @@ You can achieve this thanks to Voucherify's promotion and loyalty **REST API end
 
 Thanks to the [Voucherify API](ref:introduction-1), you can support your system or tech-stack with a platform that creates different promotional campaigns. In a basic scenario, Voucherify can show your customers if they are eligible to the incentives you offer them with qualification, check if they can apply them through validation, and then handle incentive use with redemption.
 
-You can pick whatever you need from the API and build your integration in a smart way.
+As the Voucherify API is unopinionated, you can pick whatever you need and build your integration in a smart and flexible way.
 
 Additionally, you can use webhooks to track customer activity or even how your promotional campaigns are managed.
 
