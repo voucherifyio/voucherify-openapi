@@ -14376,7 +14376,7 @@
           "exclusive_categories": {
             "title": "ManagementProjectsStackingRulesCreateRequestBodyExclusiveCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are exclusive.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "ManagementProjectsStackingRulesCreateRequestBodyExclusiveCategoriesItem",
               "type": "string"
@@ -14386,7 +14386,7 @@
           "joint_categories": {
             "title": "ManagementProjectsStackingRulesCreateRequestBodyJointCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are joint.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "ManagementProjectsStackingRulesCreateRequestBodyJointCategoriesItem",
               "type": "string"
@@ -14395,25 +14395,28 @@
           },
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "minimum": 1,
             "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
+            "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "minimum": 1,
+            "maximum": 5
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 5,
             "nullable": true
@@ -14421,7 +14424,7 @@
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`. The number must be less than or equal to `applicable_exclusive_redeemables_limit`."
           },
           "discount_calculation_mode": {
             "type": "string",
@@ -14463,11 +14466,49 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
             ],
+            "nullable": true
+          },
+          "redeemables_products_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
+            "enum": [
+              "STACK",
+              "ONCE"
+            ],
+            "nullable": true
+          },
+          "redeemables_no_effect_rule": {
+            "type": "string",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
+            "enum": [
+              "REDEEM_ANYWAY",
+              "SKIP"
+            ],
+            "nullable": true
+          },
+          "no_effect_skip_categories": {
+            "title": "ManagementProjectsStackingRulesCreateRequestBodyNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesCreateRequestBodyNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "ManagementProjectsStackingRulesCreateRequestBodyNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesCreateRequestBodyNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
             "nullable": true
           },
           "redeemables_rollback_order_mode": {
@@ -14495,7 +14536,7 @@
           "exclusive_categories": {
             "title": "ManagementProjectsStackingRulesCreateResponseBodyExclusiveCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are exclusive.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "ManagementProjectsStackingRulesCreateResponseBodyExclusiveCategoriesItem",
               "type": "string"
@@ -14505,7 +14546,7 @@
           "joint_categories": {
             "title": "ManagementProjectsStackingRulesCreateResponseBodyJointCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are joint.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "ManagementProjectsStackingRulesCreateResponseBodyJointCategoriesItem",
               "type": "string"
@@ -14514,25 +14555,28 @@
           },
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "minimum": 1,
             "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
+            "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "minimum": 1,
+            "maximum": 5
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 5,
             "nullable": true
@@ -14540,7 +14584,7 @@
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`. The number must be less than or equal to `applicable_exclusive_redeemables_limit`."
           },
           "discount_calculation_mode": {
             "type": "string",
@@ -14582,11 +14626,49 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
             ],
+            "nullable": true
+          },
+          "redeemables_products_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
+            "enum": [
+              "STACK",
+              "ONCE"
+            ],
+            "nullable": true
+          },
+          "redeemables_no_effect_rule": {
+            "type": "string",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
+            "enum": [
+              "REDEEM_ANYWAY",
+              "SKIP"
+            ],
+            "nullable": true
+          },
+          "no_effect_skip_categories": {
+            "title": "ManagementProjectsStackingRulesCreateResponseBodyNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesCreateResponseBodyNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "ManagementProjectsStackingRulesCreateResponseBodyNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesCreateResponseBodyNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
             "nullable": true
           },
           "redeemables_rollback_order_mode": {
@@ -14627,7 +14709,7 @@
           "exclusive_categories": {
             "title": "ManagementProjectsStackingRulesGetResponseBodyExclusiveCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are exclusive.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "ManagementProjectsStackingRulesGetResponseBodyExclusiveCategoriesItem",
               "type": "string"
@@ -14637,7 +14719,7 @@
           "joint_categories": {
             "title": "ManagementProjectsStackingRulesGetResponseBodyJointCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are joint.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "ManagementProjectsStackingRulesGetResponseBodyJointCategoriesItem",
               "type": "string"
@@ -14646,25 +14728,28 @@
           },
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "minimum": 1,
             "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
+            "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "minimum": 1,
+            "maximum": 5
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 5,
             "nullable": true
@@ -14672,7 +14757,7 @@
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`. The number must be less than or equal to `applicable_exclusive_redeemables_limit`."
           },
           "discount_calculation_mode": {
             "type": "string",
@@ -14714,11 +14799,49 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
             ],
+            "nullable": true
+          },
+          "redeemables_products_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
+            "enum": [
+              "STACK",
+              "ONCE"
+            ],
+            "nullable": true
+          },
+          "redeemables_no_effect_rule": {
+            "type": "string",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
+            "enum": [
+              "REDEEM_ANYWAY",
+              "SKIP"
+            ],
+            "nullable": true
+          },
+          "no_effect_skip_categories": {
+            "title": "ManagementProjectsStackingRulesGetResponseBodyNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesGetResponseBodyNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "ManagementProjectsStackingRulesGetResponseBodyNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesGetResponseBodyNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
             "nullable": true
           },
           "redeemables_rollback_order_mode": {
@@ -14793,7 +14916,7 @@
           "exclusive_categories": {
             "title": "ManagementProjectsStackingRulesUpdateRequestBodyExclusiveCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are exclusive.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "ManagementProjectsStackingRulesUpdateRequestBodyExclusiveCategoriesItem",
               "type": "string"
@@ -14803,7 +14926,7 @@
           "joint_categories": {
             "title": "ManagementProjectsStackingRulesUpdateRequestBodyJointCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are joint.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "ManagementProjectsStackingRulesUpdateRequestBodyJointCategoriesItem",
               "type": "string"
@@ -14812,25 +14935,28 @@
           },
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "minimum": 1,
             "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
+            "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "minimum": 1,
+            "maximum": 5
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 5,
             "nullable": true
@@ -14838,7 +14964,7 @@
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`. The number must be less than or equal to `applicable_exclusive_redeemables_limit`."
           },
           "discount_calculation_mode": {
             "type": "string",
@@ -14880,11 +15006,49 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
             ],
+            "nullable": true
+          },
+          "redeemables_products_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
+            "enum": [
+              "STACK",
+              "ONCE"
+            ],
+            "nullable": true
+          },
+          "redeemables_no_effect_rule": {
+            "type": "string",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
+            "enum": [
+              "REDEEM_ANYWAY",
+              "SKIP"
+            ],
+            "nullable": true
+          },
+          "no_effect_skip_categories": {
+            "title": "ManagementProjectsStackingRulesUpdateRequestBodyNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesUpdateRequestBodyNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "ManagementProjectsStackingRulesUpdateRequestBodyNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesUpdateRequestBodyNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
             "nullable": true
           },
           "redeemables_rollback_order_mode": {
@@ -14912,7 +15076,7 @@
           "exclusive_categories": {
             "title": "ManagementProjectsStackingRulesUpdateResponseBodyExclusiveCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are exclusive.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "ManagementProjectsStackingRulesUpdateResponseBodyExclusiveCategoriesItem",
               "type": "string"
@@ -14922,7 +15086,7 @@
           "joint_categories": {
             "title": "ManagementProjectsStackingRulesUpdateResponseBodyJointCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are joint.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "ManagementProjectsStackingRulesUpdateResponseBodyJointCategoriesItem",
               "type": "string"
@@ -14931,25 +15095,28 @@
           },
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "minimum": 1,
             "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
+            "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "minimum": 1,
+            "maximum": 5
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 5,
             "nullable": true
@@ -14957,7 +15124,7 @@
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`. The number must be less than or equal to `applicable_exclusive_redeemables_limit`."
           },
           "discount_calculation_mode": {
             "type": "string",
@@ -14999,11 +15166,49 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
             ],
+            "nullable": true
+          },
+          "redeemables_products_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
+            "enum": [
+              "STACK",
+              "ONCE"
+            ],
+            "nullable": true
+          },
+          "redeemables_no_effect_rule": {
+            "type": "string",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
+            "enum": [
+              "REDEEM_ANYWAY",
+              "SKIP"
+            ],
+            "nullable": true
+          },
+          "no_effect_skip_categories": {
+            "title": "ManagementProjectsStackingRulesUpdateResponseBodyNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesUpdateResponseBodyNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "ManagementProjectsStackingRulesUpdateResponseBodyNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesUpdateResponseBodyNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
             "nullable": true
           },
           "redeemables_rollback_order_mode": {
@@ -34877,7 +35082,7 @@
           "exclusive_categories": {
             "title": "ManagementProjectsStackingRulesExclusiveCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are exclusive.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "ManagementProjectsStackingRulesExclusiveCategoriesItem",
               "type": "string"
@@ -34887,7 +35092,7 @@
           "joint_categories": {
             "title": "ManagementProjectsStackingRulesJointCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are joint.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "ManagementProjectsStackingRulesJointCategoriesItem",
               "type": "string"
@@ -34896,25 +35101,28 @@
           },
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "minimum": 1,
             "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
+            "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "minimum": 1,
+            "maximum": 5
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 5,
             "nullable": true
@@ -34922,7 +35130,7 @@
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`. The number must be less than or equal to `applicable_exclusive_redeemables_limit`."
           },
           "discount_calculation_mode": {
             "type": "string",
@@ -34964,11 +35172,49 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
             ],
+            "nullable": true
+          },
+          "redeemables_products_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
+            "enum": [
+              "STACK",
+              "ONCE"
+            ],
+            "nullable": true
+          },
+          "redeemables_no_effect_rule": {
+            "type": "string",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
+            "enum": [
+              "REDEEM_ANYWAY",
+              "SKIP"
+            ],
+            "nullable": true
+          },
+          "no_effect_skip_categories": {
+            "title": "ManagementProjectsStackingRulesNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "ManagementProjectsStackingRulesNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
             "nullable": true
           },
           "redeemables_rollback_order_mode": {
@@ -39514,7 +39760,7 @@
         "properties": {
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent in one stacking request (note: more redeemables means more processing time!).",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "default": 30,
             "maximum": 30,
             "minimum": 1,
@@ -39522,7 +39768,7 @@
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many of the sent redeemables will be applied to the order. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be labelled as SKIPPED.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "default": 5,
             "maximum": 30,
             "minimum": 1,
@@ -39530,7 +39776,7 @@
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables per category can be applied in one request.",
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "default": 1,
             "maximum": 5,
             "minimum": 1,
@@ -39538,7 +39784,7 @@
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an exclusive category can be applied in one request.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "default": 1,
             "maximum": 5,
             "minimum": 1,
@@ -39546,7 +39792,7 @@
           },
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an exclusive category per category in stacking rules can be applied in one request.",
+            "description": "Defines how many redeemables with an exclusive category per category in stacking rules can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "default": 1,
             "maximum": 5,
             "minimum": 1,
@@ -39555,7 +39801,7 @@
           "exclusive_categories": {
             "title": "StackingRulesExclusiveCategories",
             "type": "array",
-            "description": "Lists all exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "default": [],
             "items": {
               "title": "StackingRulesExclusiveCategoriesItem",
@@ -39566,7 +39812,7 @@
           "joint_categories": {
             "title": "StackingRulesJointCategories",
             "type": "array",
-            "description": "Lists all joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "default": [],
             "items": {
               "title": "StackingRulesJointCategoriesItem",
@@ -39576,7 +39822,7 @@
           },
           "redeemables_application_mode": {
             "type": "string",
-            "description": "Defines redeemables application mode.",
+            "description": "Defines the application mode for redeemables.\n`\"ALL\"` means that all redeemables must be validated for the redemption to be successful.\n`\"PARTIAL\"` means that only those redeemables that can be validated will be redeemed. The redeemables that fail validaton will be skipped.",
             "enum": [
               "ALL",
               "PARTIAL"
@@ -39585,7 +39831,7 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines redeemables sorting rule.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
@@ -39595,7 +39841,7 @@
           },
           "redeemables_products_application_mode": {
             "type": "string",
-            "description": "Defines redeemables products application mode.",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
             "enum": [
               "STACK",
               "ONCE"
@@ -39604,16 +39850,36 @@
           },
           "redeemables_no_effect_rule": {
             "type": "string",
-            "description": "Defines redeemables no effect rule.",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
             "enum": [
               "REDEEM_ANYWAY",
               "SKIP"
             ],
             "nullable": true
           },
+          "no_effect_skip_categories": {
+            "title": "StackingRulesNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`.",
+            "items": {
+              "title": "StackingRulesNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "StackingRulesNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`.",
+            "items": {
+              "title": "StackingRulesNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
           "redeemables_rollback_order_mode": {
             "type": "string",
-            "description": "Defines the rollback mode for the order. `WITH_ORDER` is a default setting. The redemption is rolled back together with the data about the order, including related discount values. `WITHOUT_ORDER` allows rolling the redemption back without affecting order data.",
+            "description": "Defines the rollback mode for the order. `WITH_ORDER` is a default setting. The redemption is rolled back together with the data about the order, including related discount values. `WITHOUT_ORDER` allows rolling the redemption back without affecting order data, including the applied discount values.",
             "enum": [
               "WITH_ORDER",
               "WITHOUT_ORDER"
