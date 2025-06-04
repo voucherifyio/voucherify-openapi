@@ -4,6 +4,12 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-06-04
+
+- Improved descriptions in the `StackingRules` and `ManagementProjectsStackingRules` schemas.
+- Added `no_effect_skip_categories`, `no_effect_redeem_anyway_categories` to the `StackingRules` schema.
+- Added `no_effect_skip_categories`, `redeemables_products_application_mode`, `redeemables_no_effect_rule`, `no_effect_redeem_anyway_categories` to the `ManagementProjectsStackingRules` schema.
+
 ## 2025-05-23
 
 - Added `expiration_rules` to the `EarningRuleBase` schema.
