@@ -265,4 +265,34 @@ You can use different conditions to filter data; see the table below.
 | `$tomorrow`                  | date                       | Returns results that will occur the following day, e.g. 02 January 2025 if today is 01 January. It takes `true` as the value.  |
 | `$yesterday_md`              |                            |                                                                                                                                |
 | `$yesterday`                 | date                       | Returns results that occurred the day before, e.g. 31 December 2024 if today is 01 January 2025. It takes `true` as the value. |
+| `$is_days_ago_md`              |                            |                                                                                                                                |
+| `$is_days_ago`                 | date                       | Returns results that occurred on the specified day. |
+| `$is_more_days_ago_md`              |                            |                                                                                                                                |
+| `$is_more_days_ago`                 | date                       | Returns results that occurred more than X days ago. |
+| `$is_less_days_ago_md`              |                            |                                                                                                                                |
+| `$is_less_days_ago`                 | date                       | Returns results that occurred less than X days ago. |
+| `$more_than_ago`                 | date                       | Returns results that occurred more than X days ago. |
+| `$less_than_ago`                 | date                       | Returns results that occurred less than X days ago. |
+| `$is_days_ago`                 | date                       | Returns results that occurred exactly X days ago. |
+| `$more_than_future`                 | date                       | Returns results that will occur in more than X days. |
+| `$less_than_future`                 | date                       | Returns results that will occur in less than X days. |
+| `$is_days_in_future`                 | date                       | Returns results that will occur exactly in X days. |
+| `$is_days_in_future`                 | date                       | Returns results that will occur exactly in X days. |
+| `$today`                 | date                       | Returns results that are occurring today. It takes `true` as the value. |
+| `$tomorrow`                 | date                       | Returns results that will occur tomorrow. It takes `true` as the value. |
+| `$yesterday`                 | date                       | Returns results that occurred yesterday. It takes `true` as the value. |
+| `$this_week`                 | date                       | Returns results that are occurring this week. It takes `true` as the value. |
+| `$last_week`                 | date                       | Returns results that occurred last week. It takes `true` as the value. |
+| `$next_week`                 | date                       | Returns results that will occur next week. It takes `true` as the value. |
+| `$this_month`                 | date                       | Returns results that are occurring this month. It takes `true` as the value. |
+| `$last_month`                 | date                       | Returns results that occurred last month. It takes `true` as the value. |
+| `$next_month`                 | date                       | Returns results that will occur next month. It takes `true` as the value. |
+| `$this_year`                 | date                       | Returns results that are occurring this year. It takes `true` as the value. |
+| `$last_year`                 | date                       | Returns results that occurred last year. It takes `true` as the value. |
+| `$next_year`                 | date                       | Returns results that will occur next year. It takes `true` as the value. |
+| `$is_years_ago`                 | date                       | Returns results that occurred exactly X years ago. |
+| `$is_day_of_month`                 | date                       | Returns results that occurred on the specified day of the month, regardless of month or year. |
+| `$is_day`                 | date                       | Returns results that occurred on the specified day and month, regardless of year. |
+| `$is_month`                 | date                       | Returns results that occurred in the specified month, regardless of year. |
+| `$is_year`                 | date                       | Returns results that occurred in the specified year. |
 --->
