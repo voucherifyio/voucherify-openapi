@@ -199,7 +199,7 @@ You can use different conditions to filter data; see the table below.
 | `$before_equal`              |                            |                                                                                                                                |
 | `$before_start`              |                            |                                                                                                                                |
 | `$before`                    | date, date time            | Returns results which occur before the specified value.                                                                        |
-| `$contains`                  |                            |                                                                                                                                |
+| `$contains`                  | image URL, string                           | Returns results that contain the specified value.                                                                                                                               |
 | `$count_less`                |                            |                                                                                                                                |
 | `$count_more`                |                            |                                                                                                                                |
 | `$count`                     |                            |                                                                                                                                |
@@ -209,7 +209,7 @@ You can use different conditions to filter data; see the table below.
 | `$expired`                   |                            |                                                                                                                                |
 | `$failed`                    |                            |                                                                                                                                |
 | `$has_value`                 | boolean, image URL, string | Returns results that have any value.                                                                                           |
-| `$in_location`               |                            |                                                                                                                                |
+| `$in_location`               | geopoint                           | Returns results from the specified area.                                                                                                                               |
 | `$in_progress`               |                            |                                                                                                                                |
 | `$in`                        | image URL, string          |                                                                                                                                |
 | `$includes`                  | array of different types   | Compares values in an array. Returns results that have **all** of the values listed.                                           |
@@ -236,11 +236,11 @@ You can use different conditions to filter data; see the table below.
 | `$last_week`                 | date                       | Returns results that occurred in the previous week. It takes `true` as the value.                                              |
 | `$last_year`                 | date                       | Returns results that occurred in the previous year, e.g. 2024. It takes `true` as the value.                                   |
 | `$less_than_ago`             |                            |                                                                                                                                |
-| `$less_than_equal`           |                            |                                                                                                                                |
+| `$less_than_equal`           | string                           | Returns results with the same or lower value.                                                                                                                                |
 | `$less_than_future`          |                            |                                                                                                                                |
 | `$less_than`                 |                            |                                                                                                                                |
 | `$more_than_ago`             |                            |                                                                                                                                |
-| `$more_than_equal`           |                            |                                                                                                                                |
+| `$more_than_equal`           | string                           | Returns results with the same or higher value.                                                                                                                                |
 | `$more_than_future`          |                            |                                                                                                                                |
 | `$more_than`                 |                            |                                                                                                                                |
 | `$next_month_md`             |                            |                                                                                                                                |
@@ -249,7 +249,7 @@ You can use different conditions to filter data; see the table below.
 | `$next_week`                 | date                       | Returns results that will occur in the next week. It takes `true` as the value.                                                |
 | `$next_year`                 | date                       | Returns results that will occur in the next year, e.g. 2026. It takes `true` as the value.                                     |
 | `$not_contain`               |                            |                                                                                                                                |
-| `$not_in_location`           |                            |                                                                                                                                |
+| `$not_in_location`           |geopoint                            | Returns results outside from the specified area.                                                                                                                                |
 | `$not_in`                    | image URL, string          |                                                                                                                                |
 | `$redeemable`                |                            |                                                                                                                                |
 | `$redeemed`                  |                            |                                                                                                                                |
