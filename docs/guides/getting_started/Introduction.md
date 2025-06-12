@@ -46,7 +46,7 @@ The Voucherify documentation is divided into four main categories.
 
 [block:html]
 {
-  "html": "<div>\n  <hr/>\n<table style=\"border: none;\">\n  <colgroup>\n    <col style=\"width: 33%\" />\n    <col style=\"width: 33%\" />\n    <col style=\"width: 33%\" />\n  </colgroup>\n  <tr style=\"border: none;\">\n    <td style=\"border: none;\"><a href=\"https://www.voucherify.io/community\"><strong>Community Chat</strong></a><br>Join Voucherify Slack channel to get more help.</td>\n    <td style=\"border: none;\"><a href=\"https://status.voucherify.io/\"><strong>Status Page</strong></a><br>See Voucherify system status and get updates.</td>\n    <td style=\"border: none;\"><a href=\"https://www.voucherify.io/blog\"><strong>Blog</strong></a><br>Follow our blog for product updates and use cases.</td>\n  </tr>\n</table>\n</div>\n\n<style>\n  \n</style>\n"
+  "html": "<div>\n  <hr/>\n<table style=\"border: none;\">\n  <colgroup>\n    <col style=\"width: 33%\" />\n    <col style=\"width: 33%\" />\n    <col style=\"width: 33%\" />\n  </colgroup>\n  <tr style=\"border: none;\">\n    <td style=\"border: none;\"><a href=\"https://www.voucherify.io/community\" target=\"_blank\"><strong>Community Chat</strong></a><br>Join Voucherify Slack channel to get more help</td>\n    <td style=\"border: none;\"><a href=\"https://status.voucherify.io/\" target=\"_blank\"><strong>Status Page</strong></a><br>See Voucherify system status and get updates</td>\n    <td style=\"border: none;\"><a href=\"https://roadmap.voucherify.io/tabs/4-under-development\" target=\"_blank\"><strong>Roadmap</strong></a><br>Follow the roadmap to learn what new features we develop</td>\n  </tr>\n</table>\n</div>\n\n<style>\n  \n</style>\n"
 }
 [/block]
 
