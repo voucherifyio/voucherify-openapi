@@ -96,6 +96,7 @@
 | /v1/campaigns/{campaignId}/disable             | post   | Disable Campaign                           | <font color='green'>supported</font> |                                      |
 | /v1/campaigns/{campaignId}/transactions        | get    | List Campaign Transactions                 |                                      |                                      |
 | /v1/campaigns/{campaignId}/transactions/export | post   | Export Campaign Transactions               |                                      |                                      |
+| /v1/campaigns/{campaignId}/summary             | get    | Get Campaign Summary                       |                                      |                                      |
 ## Promotions
 | endpoint                                       | method | summary                            | is supported                         | is deprecated |
 | ---------------------------------------------- | ------ | ---------------------------------- | ------------------------------------ | ------------- |
