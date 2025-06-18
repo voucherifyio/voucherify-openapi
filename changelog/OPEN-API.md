@@ -4,9 +4,23 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-06-17
+
+- Added a new endpoint: GET `/v1/campaigns/{campaignId}/summary` and associated schemas: `ParameterDateOnly`, `CampaignsSummaryGetResponseBody`, `CampaignsSummaryDiscountCampaign`, `CampaignsSummaryGiftCampaign`, `CampaignsSummaryLoyaltyCampaign`, `CampaignsSummaryPromotionCampaign`, `CampaignsSummaryReferralCampaign`, `CampaignsSummaryCampaignBase`, `CampaignsSummaryVouchersPublications`, `CampaignsSummaryDiscounts`, `CampaignsSummaryLoyalty`.
+
 ## 2025-06-11
 
 Remove `Beta` tag from pending point endpoints
+
+## 2025-06-04
+
+- Improved descriptions in the `StackingRules` and `ManagementProjectsStackingRules` schemas.
+- Added `no_effect_skip_categories`, `no_effect_redeem_anyway_categories` to the `StackingRules` schema.
+- Added `no_effect_skip_categories`, `redeemables_products_application_mode`, `redeemables_no_effect_rule`, `no_effect_redeem_anyway_categories` to the `ManagementProjectsStackingRules` schema.
+
+## 2025-05-23
+
+- Added `expiration_rules` to the `EarningRuleBase` schema.
 
 ## 2025-04-16
 

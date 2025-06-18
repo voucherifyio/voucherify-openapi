@@ -33,7 +33,7 @@ As an **ISO-27001-certified product**, Voucherify implements several security st
 * All critical systems secured with multi-factor authentication and/or authenticating through SSO (enforced).
 * Disaster Recovery Plan and custom disaster recovery protocols defined in the SLA. 
 * [GDPR & CCPA compliance](https://support.voucherify.io/article/125-security-data-protection).
-* Redundancy of all underlying for High Availability.
+* Redundancy of all underlying services for High Availability.
 * Reliability and backup (RAID class hardware, AWS S3).
 * Two-factor authentication, strong password policies, SAML- Voucherify prioritizes account security by implementing features like strong password policies, session management, and access monitoring. These measures help protect user accounts and prevent unauthorized access. For more details, read the [Account Security article](https://support.voucherify.io/article/437-account-security).
 * OAuth 2.0 authorization for generating access tokens. Voucherify can generate [OAuth 2.0 tokens](doc:authentication#oauth-20) to be temporarily used with API clients. The tokens can have a limited scope to access specific parts of the Voucherify server-sde or client-side API.

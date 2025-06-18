@@ -4,7 +4,7 @@ excerpt: How to use free shipping discounts?
 categorySlug: discounts-recipes
 slug: free-shipping-discount
 type: basic
-hidden: false
+hidden: true
 order: 4
 ---
 

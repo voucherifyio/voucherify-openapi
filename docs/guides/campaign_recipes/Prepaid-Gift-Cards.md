@@ -4,7 +4,7 @@ excerpt: null
 categorySlug: campaigns-recipes
 slug: prepaid-gift-cards
 type: basic
-hidden: false
+hidden: true
 order: 4
 ---
 
