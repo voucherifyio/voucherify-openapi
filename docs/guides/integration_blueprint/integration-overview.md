@@ -24,6 +24,8 @@ A key factor for evaluating the total cost of integration is to understand how V
   - [CMS integrations](#cms-integrations)
 - [Data model and handling](#data-model-and-handling)
   - [Data model](#data-model)
+    - [IDs in Voucherify](#ids-in-voucherify)
+    - [Modelling your data](#modelling-your-data)
   - [Use synchronized data](#use-synchronized-data)
   - [Data privacy](#data-privacy)
   - [Bulding customer experience](#bulding-customer-experience)
@@ -119,40 +121,30 @@ Most Voucherify implementations are built on top of the following workflow.
 
 ### Data model
 
-Defining the business-appropriate data model for customer traits, custom events, and even custom incentives, for example, a free e-scooter unlocks or subscription periods.
+A Voucherify integration requires a business-appropriate data model for customer traits, custom events, and even custom incentives.
 
-<!-- START OF THE DATA MODEL ARTICLE
+With Voucherify's modular API, it is possible to run different types of incentives with any data. Voucherify supports brands operating in various models and industries, covering ecommerce, subscription-based brands in B2C, B2B, or D2C models.
 
-Personalized offers are a top focus for brands. However, moving data to **manage targeted incentives at scale** is a major operational challenge.
+To ensure high flexibility, the Voucherify data model can be extended with [custom fields and objects (metadata)](https://support.voucherify.io/article/99-schema-validation-metadata "Getting stared with Metadata"). Metadata allow you run fully custom campaigns with the support of arrays and nesting for deeper targeting.
 
-With native integrations and robust API connectivity across the customer data & experience stack, **Voucherify empowers marketers to run any incentive using any data.** 
+You can also track [custom events](https://support.voucherify.io/article/111-custom-events) to run campaigns that are relevant to your business model and audience.
 
-Voucherify **supports brands operating in various models and industries** – from ecommerce to subscription-based brands in B2C, B2B, or D2C models. For maximum flexibility, the Voucherify data model can be easily extended with [custom fields and objects (metadata)](https://support.voucherify.io/article/99-schema-validation-metadata "Getting stared with Metadata") that let you run fully custom campaigns with the support of **arrays** and **nesting** for deeper targeting. 
+#### IDs in Voucherify
 
-By verifying and defining the data model early by translating data and actions into attributes and events that Voucherify can consume, **you can run campaigns relevant to your business model and audience.**
+Voucherify operates on top of two types of identifiers:
+- external master ID (`source_id`), provided by, for example, a Customer Data Platform,
+- unique identifier assigned by Voucherify.
 
-The next step is to **plan the frequency of data sync.** Voucherify can work with real-time traffic, which might impact your subscription plan's monthly API call usage.
+This approach lets you sync various pieces of information under a unified ID.
+<!-- I DON'T UNDERSTAND FULLY – ASK FOR SOMEONE'S REVIEW -->
 
-> 📘 IDs in Voucherify
->
-> Voucherify operates on top of an external master ID (source_id), which lets you sync various pieces of information under a unified ID. 
+#### Modelling your data
 
-To quickly map out your data model, consider using the ready connectors with [Segment](https://voucherify.io/integrations/segment "Integration with Segment") and [mParticle](https://voucherify.io/integrations/mparticle "Integration with mParticle") CDPs. 
+To quickly map your data model, consider using ready connectors with [Segment](https://voucherify.io/integrations/segment "Integration with Segment") and [mParticle](https://voucherify.io/integrations/mparticle "Integration with mParticle") CDPs.
 
-For the initial data migration, use asynchronous bulk API import endpoints or upload CSV files in the Dashboard. [Learn more about data integration](https://support.voucherify.io/article/574-data-import "Data Import").
+For the initial data migration, use different [data import options](https://support.voucherify.io/article/574-data-import "Data Import"), like Voucherify dashboard or asynchronous bulk API import endpoints.
 
-> 📘 Data synchronization with Voucherify
-> 
-> Voucherify gives you complete control over **how and when to [synchronize data](doc:data-synchronization)** needed for incentive validation and redemption. You can sync the data before the final stage of the checkout process or send us relevant customer, product, order, and other data right in the validation and redemption requests on the fly. 
-
-### Customer story – TIER Mobility
-
-TIER Mobility uses free unlocks and free minutes as incentives. The custom attributes 
-(metadata) let TIER attach minutes and unlocks to a given customer for a predefined period of time.
-
-[Discover the full story](https://voucherify.io/ebooks/tier-mobility-case-study "Tier mobility case study")
-
-# Sample data models
+See the table below to find examples of modelled data:
 
 |   Industry    |                                    Ecommerce                                     |                                      Services                                       |                                    Travel                                    |                                                QSR & Food Delivery                                                |
 | :-----------: | :------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------: | :--------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------: |
@@ -161,13 +153,13 @@ TIER Mobility uses free unlocks and free minutes as incentives. The custom attri
 
 Learn more about [tracking custom events](ref:custom-event-object)
 
---->
-
 ### Use synchronized data
 
 Set up the data scope and sync policies to ensure that Voucherify can access any relevant information when needed. 
 
-The Voucherify API can **ingest** and **egress** data like product information or customer attributes from and to other systems in real-time, at scale. This, together with **a flexible schema editor** and **auto-complete inputs** in the Dashboard, makes creating new promotion scenarios less error-prone. It will help you ensure data integrity if you have a lot of product-specific discounts or you want to trigger incentives based on aggregated customer attributes.
+The Voucherify API can ingest and egress data like product information or customer attributes from and to other systems in real-time, at scale. This, together with a flexible schema editor and auto-complete inputs in the Dashboard, makes creating new promotion scenarios less error-prone. It will help you ensure data integrity if you have a lot of product-specific discounts or you want to trigger incentives based on aggregated customer attributes.
+
+The next step is to plan the frequency of data sync. As Voucherify can work with real-time traffic, this may impact your subscription plan's monthly API call usage.
 
 ### Data privacy
 
