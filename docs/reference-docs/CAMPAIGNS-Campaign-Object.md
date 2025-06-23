@@ -43,7 +43,7 @@ All of:
 | readonly</br>`boolean` | <p>Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles.</p> |
 | protected</br>`boolean` | <p>Indicates whether the resource can be deleted.</p> |
 | category_id</br>`string`, `null` | <p>Unique category ID that this campaign belongs to.</p> **Example:** <p>cat_0b688929a2476386a7</p> |
-| categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
+| categories</br>`array` | <p>Contains details about the campaign category. For the GET <a href="ref:list-campaigns">List campaigns</a> endpoint, this is returned only if the <code>expand=category</code> query parameter is passed in the request. Otherwise, it is returned as an empty array. For GET <a href="ref:get-campaign-summary">Campaign summary</a> endpoint, it is always returned as an empty array.</p> Array of [Category](#category) |
 | object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the campaign.</p> |
 | referral_program | See: [Referral Program](#referral-program) |
 | loyalty_tiers_expiration | See: [Loyalty Tiers Expiration](#loyalty-tiers-expiration) |
