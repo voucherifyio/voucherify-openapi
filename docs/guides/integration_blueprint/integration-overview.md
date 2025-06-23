@@ -10,7 +10,7 @@ order: 2
 
 Voucherify offers **a business-agnostic API to model any promotion case**. You can start with a single campaign type and expand to other types later. Thanks to the modular API, you can choose which building blocks you need at the moment. This way, you can start small and run bigger projects later without large upfront costs.
 
-A key factor for evaluating the total cost of integration is to understand how Voucherify can be connected to your e-commerce and marketing infrastructure that runs your business. A successful integration is based on the following aspects:
+A key factor for evaluating the total cost of integration is to understand how Voucherify can be connected to your ecommerce and marketing infrastructure that runs your business. A successful integration is based on the following aspects:
 - [Integration method](#integration-method)
   - [REST API](#rest-api)
   - [Webhooks](#webhooks)
@@ -22,10 +22,10 @@ A key factor for evaluating the total cost of integration is to understand how V
   - [CDP integrations](#cdp-integrations)
   - [CEP integrations](#cep-integrations)
   - [CMS integrations](#cms-integrations)
-  - [CRM integrations](#crm-integrations)
-- [Data handling](#data-handling)
+- [Data model and handling](#data-model-and-handling)
+  - [Data model](#data-model)
   - [Use synchronized data](#use-synchronized-data)
-  - [Evaluate data at runtime](#evaluate-data-at-runtime)
+  - [Data privacy](#data-privacy)
 
 ![How Voucherify works with your system and our rules engine](https://files.readme.io/494bc1a-guides_getting_started_welcome_to_voucherify_voucherify_workflow_scheme_01.png "How Voucherify works with your system and our rules engine")
 
@@ -76,8 +76,8 @@ The promotion experience comes next. Depending on the CDP, CEP, CMS, and CRM pla
 ### CDP integrations
 
 Voucherify integrates with popular Customer Data Platforms, such as:
-- [Twilio Segment](https://www.voucherify.io/integrations/segment "Make customer data easy to manage and a pleasure to use with Segment"),
 - [mParticle](https://www.voucherify.io/integrations/mparticle "Use granular customer data to build better promotions"), allowing you to stream data.
+- [Twilio Segment](https://www.voucherify.io/integrations/segment "Make customer data easy to manage and a pleasure to use with Segment"),
 
 ### CEP integrations
 
@@ -96,17 +96,33 @@ Voucherify provides ready connectors with Customer Engagement Platforms, such as
 
 ### CMS integrations
 
-### CRM integrations
+Voucherify provides ready connectors with Customer Management Systems, such as:
+- [Amplience](https://support.voucherify.io/article/607-amplience-integration "Elevate digital promotions with personalized content"),
+- [Bloomreach](https://support.voucherify.io/article/600-bloomreach-cms-integration "Show customers the right promotion data at the right time"),
+- [Contentful](https://support.voucherify.io/article/599-contentful-integration "Unlock the power of timely promotion data").
 
-## Data handling
+## Data model and handling
 
-The data transfer between Voucherify and marketing technology platforms should be considered with respect to **volume** and **data privacy**. Voucherify offers two modes of operations here.
+The data transfer between Voucherify and marketing technology platforms should be considered with respect to
+- [data model](#data-model),
+- [volume to be synchronized](#use-synchronized-data),
+- [data privacy](#data-privacy).
+
+The scope of campaign flexibility and personalization you can achieve with Voucherify is made possible by feeding Voucherify with appropriate data. 
+
+Once the data model is set, you can move on to build a promotion experience on top of your user journey to lead customers to validate and redeem offers.
+
+Most Voucherify implementations are built on top of the following workflow:
+
+### Data model
+
+Defining the business-appropriate data model for customer traits, custom events, and even custom incentives (e.g., free e-scooter unlocks or subscription periods).
 
 ### Use synchronized data
 
 The Voucherify API can **ingest** and **egress** data like product information or customer attributes from and to other systems in real-time, at scale. This, together with **a flexible schema editor** and **auto-complete inputs** in the Dashboard, makes creating new promotion scenarios less error-prone. It will help you ensure data integrity if you have a lot of product-specific discounts or you want to trigger incentives based on aggregated customer attributes.
 
-### Evaluate data at runtime
+### Data privacy
 
 For security reasons, you may not want to synchronize and maintain customer attributes or product information in Voucherify. In this case, you can send the business context with a validation request and Voucherify will calculate the discount – the “meaning” will be offloaded to the “source of truth” system.
 
