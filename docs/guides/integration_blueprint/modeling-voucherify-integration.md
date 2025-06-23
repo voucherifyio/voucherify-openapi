@@ -54,7 +54,7 @@ Most Voucherify implementations are built on top of the following workflow:
 > 
 > Voucherify API is **universal**. This means that if you already integrated the Redemption or Validation endpoints into your checkout for promo codes, **you can effortlessly run other campaign types**, such as gift cards or referrals, without any additional input from the tech team, significantly lowering the costs associated with extending Voucherify usage risk-free.
 >
->The same goes for various discount types and effects – **your technical team does not need to introduce any changes to the integration if you are interested in running new discount types** (e.g., absolute instead of percentage).
+> The same goes for various discount types and effects – **your technical team does not need to introduce any changes to the integration if you are interested in running new discount types** (e.g., absolute instead of percentage).
 
 ![Diagram of how Voucherify is integrated with a store](https://files.readme.io/2c7eff2-guides_integration_blueprint_modeling-voucherify-integration-01.png "How Voucherify is integrated with a store")
 
