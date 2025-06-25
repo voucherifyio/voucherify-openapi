@@ -538,7 +538,7 @@ All of:
 | voucher | See: [Simple Campaign Voucher](#simple-campaign-voucher) |
 | referral_program | See: [Referral Program](#referral-program) |
 | auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join the campaign if any earning rule is fulfilled.</p> |
-| join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once. It is always <code>false</code> for generic (standalone) vouchers campaigns and it cannot be changed in them.</p> |
+| join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once. It is always <code>false</code> for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always <code>true</code> for loyalty campaigns and it cannot be changed in them.</p> |
 | active</br>`boolean` | <p>Indicates whether the campaign is active.</p> |
 | category_id</br>`string`, `null` | <p>The unique category ID that this campaign belongs to.</p> |
 | category</br>`string` | <p>Unique category name.</p> |

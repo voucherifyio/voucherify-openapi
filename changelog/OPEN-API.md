@@ -9,6 +9,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 - Added `webhooks_enabled` property to the `VouchersImportCSVRequestBody` schema.
 - Added `404` errors with examples to the `/v1/vouchers/{code}/sessions/{sessionKey}` endpoint and improved its description.
 - Added `locked_credits` to the `RedeemableGift` schema and `session` to the `QualificationsCheckEligibilityRequestBody` and `ClientQualificationsCheckEligibilityRequestBody`.
+- Added the info about `join_once` being always set to `true` for loyalty campaigns.
 
 ## 2025-06-17
 
