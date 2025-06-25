@@ -7,6 +7,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2025-06-25
+
+Add info about the Brand new day to `Loyalty program.md`
+
 ## 2025-06-18
 
 - Hid the following articles:
