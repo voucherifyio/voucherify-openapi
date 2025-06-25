@@ -181,6 +181,7 @@ One of:
 |:-----|:--------|
 | balance</br>`number` | <p>Available funds. The value is multiplied by 100 to represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
 | credits</br>`number` | <p>The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. The value is multiplied by 100 to represent 2 decimal places. For example <code>10000 cents</code> for <code>$100.00</code>.</p> |
+| locked_credits</br>`number` | <p>The number of credits that are locked under a validation session. This is returned if the qualification request includes <code>session.type: LOCK</code> parameter in the body. The value is multiplied by 100 to represent 2 decimal places. For example <code>10000</code> for <code>$100.00</code>. Returns <code>0</code> if there aren't any active validation sessions for the gift card.</p> |
 
 ## Redeemable Loyalty Card
 | Attributes |  Description |
