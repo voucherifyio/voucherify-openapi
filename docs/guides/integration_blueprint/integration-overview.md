@@ -35,6 +35,7 @@ A key factor for evaluating the total cost of integration is to understand how V
     - [IDs in Voucherify](#ids-in-voucherify)
     - [Modelling your data](#modelling-your-data)
   - [Use synchronized data](#use-synchronized-data)
+  - [Data volume estimation](#data-volume-estimation)
   - [Data privacy](#data-privacy)
   - [Universal approach of Voucherify](#universal-approach-of-voucherify)
 
@@ -107,6 +108,8 @@ The most popular services use cases are:
 - Sustainability promotions.
 
 ### Customer experience (CX)
+
+<!-- MOVE TO A SECTION CONCERNING BUILDING SOMETHING? PROMOTE IT TO H2? -->
 
 After you define your pilot campaign, the next step is to choose where and how to embed Voucherify API in your customer journey flow. Consider what touchpoints must be connected to Voucherify APIs to execute your scenario.
 
@@ -265,6 +268,19 @@ Set up the data scope and sync policies to ensure that Voucherify can access any
 The Voucherify API can ingest and egress data like product information or customer attributes from and to other systems in real-time, at scale. This, together with a flexible schema editor and auto-complete inputs in the Dashboard, makes creating new promotion scenarios less error-prone. It will help you ensure data integrity if you have a lot of product-specific discounts or you want to trigger incentives based on aggregated customer attributes.
 
 The next step is to plan the frequency of data sync. As Voucherify can work with real-time traffic, this may impact your subscription plan's monthly API call usage.
+
+### Data volume estimation
+
+Voucherify works in a [pay-as-you-grow pricing model](https://www.voucherify.io/pricing "Fair plans that scale with you"): the price grows with the API usage. If you want to estimate the total cost of ownership in the long run, you may want to calculate API usage with assumptions about your growth.
+
+Initial data migration might be an API-heavy operation. To reduce the impact on pricing, Voucherify provides bulk API endpoints.
+
+Depending on your data volume or security policies, your account may require additional activities from the Voucherify team. One of them is setting up a dedicated cluster near your customers. This can impact the pricing significantly, so remember to provide this information to your Technical Account Manager.
+
+> 📘 API usage and availability
+>
+> Besides API usage, you should define your minimum availability requirements. These will be included in a custom SLA.
+> [Check system status for historical performance](https://status.voucherify.io/)
 
 ### Data privacy
 
