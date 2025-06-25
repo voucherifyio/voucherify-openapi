@@ -533,12 +533,12 @@ All of:
 | id</br>`string` | <p>Campaign ID.</p> |
 | name</br>`string` | <p>Campaign name.</p> |
 | campaign_type</br>`string` | <p>Type of campaign.</p> |
-| type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.</p><ul><li><code>AUTO_UPDATE</code>: the campaign is dynamic, i.e. vouchers will generate based on set criteria</li><li><code>STATIC</code>: vouchers need to be manually published</li><li><code>STANDALONE</code>: campaign for single vouchers</li></ul> Available values: `AUTO_UPDATE`, `STATIC`, `STANDALONE` |
+| type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.</p><ul><li><code>AUTO_UPDATE</code>: the campaign is dynamic, i.e. vouchers will generate based on set criteria</li><li><code>STATIC</code>: vouchers need to be manually published</li><li><code>STANDALONE</code>: campaign for single vouchers</li></ul> Available values: `AUTO_UPDATE`, `STATIC`, `STANDALONE` |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 | voucher | See: [Simple Campaign Voucher](#simple-campaign-voucher) |
 | referral_program | See: [Referral Program](#referral-program) |
 | auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join the campaign if any earning rule is fulfilled.</p> |
-| join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once. It is always <code>false</code> for standalone voucher campaigns and it cannot be changed in them.</p> |
+| join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once. It is always <code>false</code> for generic (standalone) vouchers campaigns and it cannot be changed in them.</p> |
 | active</br>`boolean` | <p>Indicates whether the campaign is active.</p> |
 | category_id</br>`string`, `null` | <p>The unique category ID that this campaign belongs to.</p> |
 | category</br>`string` | <p>Unique category name.</p> |
