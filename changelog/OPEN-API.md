@@ -7,6 +7,7 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 ## 2025-06-25
 
 - Added `webhooks_enabled` property to the `VouchersImportCSVRequestBody` schema.
+- Added `404` errors with examples to the `/v1/vouchers/{code}/sessions/{sessionKey}` endpoint and improved its description.
 
 ## 2025-06-17
 
