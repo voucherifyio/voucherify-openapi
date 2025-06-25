@@ -21,10 +21,10 @@ All of:
 | name</br>`string` | <p>Campaign name.</p> |
 | description</br>`string` | <p>An optional field to keep any extra textual information about the campaign such as a campaign description and details.</p> |
 | campaign_type</br>`string` | <p>Type of campaign.</p> Available values: `LOYALTY_PROGRAM`, `GIFT_VOUCHERS`, `DISCOUNT_COUPONS`, `PROMOTION`, `REFERRAL_PROGRAM` |
-| type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.</p><ul><li><code>AUTO_UPDATE</code>: the campaign is dynamic, i.e. vouchers will generate based on set criteria</li><li><code>STATIC</code>: vouchers need to be manually published</li><li><code>STANDALONE</code>: campaign for single vouchers</li></ul> Available values: `AUTO_UPDATE`, `STATIC`, `STANDALONE` |
+| type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.</p><ul><li><code>AUTO_UPDATE</code>: the campaign is dynamic, i.e. vouchers will generate based on set criteria</li><li><code>STATIC</code>: vouchers need to be manually published</li><li><code>STANDALONE</code>: campaign for single vouchers</li></ul> Available values: `AUTO_UPDATE`, `STATIC`, `STANDALONE` |
 | voucher | See: [Campaign Voucher](#campaign-voucher) |
 | auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled.</p> |
-| join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once. It is always <code>false</code> for standalone voucher campaigns and it cannot be changed in them.</p> |
+| join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once. It is always <code>false</code> for generic (standalone) vouchers campaigns and it cannot be changed in them.</p> |
 | use_voucher_metadata_schema</br>`boolean` | <p>Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema.</p> |
 | validity_timeframe | See: [Validity Timeframe](#validity-timeframe) |
 | validity_day_of_week | See: [Validity Day Of Week](#validity-day-of-week) |
