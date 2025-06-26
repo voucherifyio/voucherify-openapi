@@ -1,6 +1,6 @@
 ---
-title: Integration Overview
-excerpt: What does the integration entail?
+title: Integration blueprint
+excerpt: What does Voucherify integration entail?
 categorySlug: integration-blueprint
 slug: integration-overview
 type: basic
@@ -8,36 +8,9 @@ hidden: false
 order: 2
 ---
 
-Voucherify offers **a business-agnostic API to model any promotion case**. You can start with a single campaign type, for example discount campaigns, and expand to other types later, like gift card campaigns. Thanks to the modular API, you can choose which building blocks you need at the moment. This way, you can start small and run bigger projects later without large upfront costs.
+Voucherify offers a business-agnostic API to model any promotion case. You can start with a single campaign type, for example, a discount campaign, and expand to other types later, such as gift card campaigns. Thanks to its modular API, you can choose the specific building blocks you need at the moment. This approach allows you to start small and scale to larger projects without significant upfront costs.
 
-A key factor for evaluating the total cost of integration is to understand how Voucherify can be connected to your ecommerce and marketing infrastructure that runs your business. A successful integration is based on the following aspects:
-- [Scenario discovery](#scenario-discovery)
-  - [Choose between available campaign types](#choose-between-available-campaign-types)
-  - [How to write a use case?](#how-to-write-a-use-case)
-  - [Sample campaigns based on industry](#sample-campaigns-based-on-industry)
-    - [Ecommerce](#ecommerce)
-    - [Travel](#travel)
-    - [Services](#services)
-  - [Customer experience (CX)](#customer-experience-cx)
-- [Integration method](#integration-method)
-  - [REST API](#rest-api)
-  - [Webhooks](#webhooks)
-  - [Event-bus – Kafka](#event-bus--kafka)
-- [Ecommerce engine](#ecommerce-engine)
-  - [Frontend decoupled from the order management logic](#frontend-decoupled-from-the-order-management-logic)
-  - [Monolithic commerce solution](#monolithic-commerce-solution)
-- [Marketing ecosystem](#marketing-ecosystem)
-  - [CDP integrations](#cdp-integrations)
-  - [CEP integrations](#cep-integrations)
-  - [CMS integrations](#cms-integrations)
-- [Data model and handling](#data-model-and-handling)
-  - [Data model](#data-model)
-    - [IDs in Voucherify](#ids-in-voucherify)
-    - [Modelling your data](#modelling-your-data)
-  - [Use synchronized data](#use-synchronized-data)
-  - [Data volume estimation](#data-volume-estimation)
-  - [Data privacy](#data-privacy)
-  - [Universal approach of Voucherify](#universal-approach-of-voucherify)
+A key factor in evaluating the total cost of integration is understanding how Voucherify connects to your existing e-commerce and marketing infrastructure.
 
 ![How Voucherify works with your system and our rules engine](https://files.readme.io/494bc1a-guides_getting_started_welcome_to_voucherify_voucherify_workflow_scheme_01.png "How Voucherify works with your system and our rules engine")
 
@@ -45,7 +18,7 @@ A key factor for evaluating the total cost of integration is to understand how V
 
 Before you start your integration with Voucherify, work with your team to:
 - Identify a campaign type for your scenario,
-- Learn key capabilities for each campaign type,
+- Learn key capabilities for each campaign type.
 
 ### Choose between available campaign types
 
@@ -56,29 +29,29 @@ Voucherify supports the following campaign types:
 - Loyalty programs (earn and burn points, tiers, cashback, paid membership, and more) – [Read the loyalty program guide](https://support.voucherify.io/article/491-getting-started-with-loyalty-programs "Getting Started with Loyalty Programs")
 - Referral programs (affiliate programs) – [Read the referral program guide](https://support.voucherify.io/article/48-referral-program-basics "Getting Started with Referral Program")
 
-Each campaign type follows a different flow, but all of them can be parametrized with customer attributes, order structure, or any custom data (metadata). 
+Each campaign type has a different operational flow, but all of them can be parametrized with customer attributes, order structure, or any custom data (metadata). 
 
-Voucherify supports your team across the entire promotion lifecycle:
-- Selecting campaign type and defining eligibility conditions (*if* condition).
-- Defining discount/reward value and effect (*then* effect).
-- Distributing incentives and rewards via a built-in engine or third parties. 
+Voucherify supports your team throughout the entire promotion lifecycle:
+- Selecting campaign type and defining eligibility conditions (*if* conditions).
+- Defining discount or reward values and effects (*then* effects).
+- Distributing incentives and rewards via a built-in engine or third-party solutions. 
 - Validating and redeeming offers. 
-- Managing campaigns and monitoring performance across channels in real-time.
+- Managing campaigns and monitoring real-time performance across channels.
 
-After selecting the promotion type for the pilot campaign, you should come up with an exact promotion scenario (use case) you want to model.
+After selecting the promotion type for the pilot campaign, the next step is to define the precise promotion scenario (use case) you want to model.
 
 ### How to write a use case?
 
-A use case should specify the scenario you want to launch using Voucherify:
-- **Campaign type**: Do you want to create discount coupons, automatic promotions, gift cards, a referral program, loyalty a program, or a combination of some?
-- **Promotion effect**: Wwhat should the promotion do? What is the end goal of the campaign?
-- **Target audience**: Which customers should it target? Should it exclude some groups? You should define all customer-level rules.
-- **Promotion distribution**: How do you plan to distribute the incentives? When should customers get the promotional message or qualify for the promotion?
-- **Time constraints**: Should the promotion have time limits? Should it be certain days, hours, or a recurring event?
-- **Qualifying orders and products**: What kind of order- and product-level limits should be applied? For example, the promotion will apply to a minimum order value or the campaign excludes specific items.
-- **Other limitations**: Are there any other restrictions or limits that should apply?
-- **Customer journey**: Where will the promotion be displayed and what should the entire workflow look like across touchpoints?
-- **Budget limits**: Should the campaign end automatically if a specific redemption threshold is reached? Do you need any other budget limits?
+A use case should specify the scenario you want to launch using Voucherify, covering the following aspects:
+- **Campaign type**: Determine the type of campaign, such as discount coupons, automatic promotions, gift cards, a referral program, a loyalty program, or a combination of them.
+- **Campaign effect**: Define the primary goal and intended outcome of the campaign.
+- **Target audience**: Identify the specific customers the campaign should target, including any groups to be excluded. This involves defining all customer-level rules.
+- **Promotion distribution**: Outline how incentives will be distributed. Specify when customers should receive the promotional message or qualify for the promotion.
+- **Time constraints**: Determine if the promotion requires time limitations, such as specific days, hours, or recurring events.
+- **Qualifying orders and products**: Establish any order- and product-level restrictions. For instance, whether the promotion applies to a minimum order value or excludes specific items.
+- **Other limitations**:  Detail any additional restrictions or limits that should apply to the campaign.
+- **Customer journey**: Map out where the promotion will be displayed and the entire workflow across various customer touchpoints.
+- **Budget limits**: Specify if the campaign should automatically conclude upon reaching a predefined redemption threshold or if other budget constraints are necessary.
 
 ### Sample campaigns based on industry
 
@@ -107,40 +80,42 @@ The most popular services use cases are:
 - Booking a service during dead hours, for example, a taxi service between 10 AM and 2 PM.
 - Sustainability promotions.
 
-### Customer experience (CX)
+## Customer experience (CX)
 
-<!-- MOVE TO A SECTION CONCERNING BUILDING SOMETHING? PROMOTE IT TO H2? -->
+After defining your pilot campaign, the next step is deciding where and how to use the Voucherify API in your customer journey. Think about which customer touchpoints need to connect to Voucherify APIs to make your scenario happen.
 
-After you define your pilot campaign, the next step is to choose where and how to embed Voucherify API in your customer journey flow. Consider what touchpoints must be connected to Voucherify APIs to execute your scenario.
+Your integration can combine qualification, validation, and redemption mechanisms.
 
-You can create a [qualification mechanism](doc:checking-eligibility) to hint and share relevant offers to customers as recommendations at any journey stage. For example, customers can be shown vouchers that apply to the content of their cart.
+You can use the [qualification mechanism](doc:checking-eligibility) to show customers relevant offers as recommendations at any point of their journey. For example, you can show vouchers that apply to the items in their cart.
 
 ![Qualification with Voucherify](https://files.readme.io/6203025-guides_integration_blueprint_modeling-voucherify-integration-07.png "Qualification API example")
 
-You can also use the [validation](ref:validate-stacked-discounts) only as the initial eligibility check. Validation can return the discount amount, allowing customers to see the effect of the applied incentive.
+You can also use [validation](ref:validate-stacked-discounts) on its own, without qualification, as the initial check for eligibility. Validation can show the discount amount, letting customers see the effect of an applied incentive.
 
-[Redemption](ref:redeem-stacked-discounts) refers to the actual usage of the incentive. If the incentive can be applied, it's used, so for single-use discount codes this means they can't be used again.
+[Redemption](ref:redeem-stacked-discounts) is when the incentive is actually used. If an incentive can be applied, it's consumed. For single-use discount codes, this means they can't be used again.
 
-In your integration can include the combination of qualification, validation, and redemption requests. You can also use the redemption only, as it also validates the customer’s eligibility.
+You can even use redemption by itself, as it also checks a customer's eligibility.
 
-Each Voucherify-generated incentive (redeemable) can be validated against a set of predefined limits set as [validation rules](https://support.voucherify.io/article/529-validation-rules-campaign-limits "Validation rules limiting customer eligibility"). A validation rule determines if the customer's incentive is eligible for the offer and if it can result in a successful validation or redemption.
+Each incentive (`redeemable` in the API) generated by Voucherify can be validated against [validation rules](https://support.voucherify.io/article/529-validation-rules-campaign-limits "Validation rules limiting customer eligibility"). These rules determine if a customer's incentive is eligible for an offer and if it can lead to a successful validation or redemption.
 
-Here are some of the most popular ways to enhance CX with Voucherify APIs:
-- **Various validation and redemption methods**: Choose between API, ecommerce plugins, offline mobile app scanning, widgets, landing pages, and manual redemption methods.
-- **Strikethrough pricing**: Use the qualification API to display product- and SKU-level discounts.
-- **Customer wallets**: Use Voucherify's GET API requests to receive relevant customer data, such as assigned incentives, customer status, and other details. These endpoints can be used to create customer-facing UIs such as progress trackers or wallets.### 
-- **Discount stacking**: Customers can redeem multiple incentives with defined stacking rules. The [Stackable discount API](doc:manage-stackable-discounts "Stackable discounts API in Voucherify") supports validation and redemption of all types of incentives with the same endpoint for redeeming promo codes, applying loyalty points, counting successful referrals, or updating the gift card balance.
+Here are some popular ways to improve customer experience with Voucherify APIs:
+- **Various validation and redemption methods**: You have several options for validating and using incentives, including API calls, e-commerce plugins, offline mobile app scanning, widgets, landing pages, and manual redemption.
+- **Strikethrough pricing**: Use the qualification API to display product and SKU prices.
+- **Customer wallets**: Use Voucherify's GET API requests to get important customer information, such as their assigned incentives, status, and other details. These can be used to build customer-facing tools like progress trackers or digital wallets.
+- **Discount stacking**: Customers can redeem multiple incentives based on defined stacking rules. The [Stackable discount API](doc:manage-stackable-discounts "Stackable discounts API in Voucherify") supports validation and redemption of all types of incentives with one endpoint for redeeming promo codes, applying loyalty points, counting successful referrals, or updating gift card balances.
 ![Stackable discounts API and order](https://files.readme.io/ee30b2e-guides_integration_blueprint_modeling-voucherify-integration-05.png "Stackable discounts API and order")
-- **Dynamic discounts**: Run [dynamic promotions](https://support.voucherify.io/article/568-how-to-create-dynamic-discount-value "Dynamic Discount Value Builder") with variable effects based on context. For example, a promo code grants a 20% discount to all users and a bonus 10% off to loyalty program members.
+- **Dynamic discounts**: Run [dynamic promotions](https://support.voucherify.io/article/568-how-to-create-dynamic-discount-value "Dynamic Discount Value Builder") with different effects based on context.  For example, a promo code might give all users 20% off, but loyalty members get an extra 10% off.
 
-Voucherify is responsible for the backend logic and maintenance of digital promotions. Following **the headless approach** of separating the back- and front-end, you can make the integration faster, have total control over the final look of your offers, and minimize the risk that a back-end error will cause disruption to your front-end applications.
+Voucherify handles the backend logic and maintenance of digital promotions. By using the headless approach, which separates the back- and frontend, you can achieve faster integration, have complete control over your offer's appearance, and reduce the risk of backend errors disrupting your frontend applications.
 
 To make prototyping easier, you can use [client-side APIs](doc:client-side-api).
 
-For inspiration on the front-end promotion experience, refer to Voucherify UX kits:
-- [Coupons and promotions UI kit](https://www.figma.com/community/file/1100356622702326488/ecommerce-coupons-promotions-ui-kit "Ecommerce coupons and promotions UI kit")
-- [Referral programs UI kit](https://www.figma.com/community/file/1039555483777372722/referral-programs-ui-kit "Referral programs UI kit")
-- [Loyalty programs UI kit](https://www.figma.com/community/file/1162414825186962172/loyalty-programs-ui-kit "Loyalty programs UI kit")
+For inspiration on the frontend promotion experience, refer to Voucherify UX kits:
+- [Coupons and promotions UI kit](https://www.figma.com/community/file/1100356622702326488/ecommerce-coupons-promotions-ui-kit "Ecommerce coupons and promotions UI kit"),
+- [Referral programs UI kit](https://www.figma.com/community/file/1039555483777372722/referral-programs-ui-kit "Referral programs UI kit"),
+- [Loyalty programs UI kit](https://www.figma.com/community/file/1162414825186962172/loyalty-programs-ui-kit "Loyalty programs UI kit").
+
+Your customer experience can be further improved with the way your integration is made with other tools.
 
 ## Integration method
 
@@ -148,31 +123,27 @@ As a developer-first tool, Voucherify exposes several integration paths.
 
 ### REST API
 
-A rich set of granular REST APIs that help you deliver personalized incentives to any channel, device, and commerce solution while keeping your data in secure, highly available environments in a multi-tenant or dedicated cluster near you.
+Voucherify provides granular REST APIs to deliver personalized incentives across any channel, device, or commerce solution. Your data remains secure in highly available environments, whether in a multi-tenant or dedicated cluster, located conveniently in a cluster close to you.
 
-> 📘 API reference
->
-> Check Voucherify's interactive [API Reference](https://docs.voucherify.io/reference/introduction-1 "Voucherify interactive API reference").
+Learn more by exploring Voucherify's interactive [API reference](https://docs.voucherify.io/reference/introduction-1 "Voucherify interactive API reference").
 
 ### Webhooks
 
-Allow Voucherify to send instant updates to your app or URL endpoints when specific events occur. Rather than constantly checking endpoints for new data, you can **set up webhooks to receive notifications** about critical campaign-related events. 
+With Voucherify, you can set up webhooks to receive instant updates directly to your app or URL endpoints when specific events happen. This means you don't have to constantly check for new data; instead, you'll get notifications about critical campaign-related events as they occur.
   
-> 📘 Webhook documentation
->
-> Learn more about [webhooks](https://support.voucherify.io/article/68-webhooks-notifications "Webhooks notifications in Voucherify").
+Learn more about Voucherify's [webhooks](https://support.voucherify.io/article/68-webhooks-notifications "Webhooks notifications in Voucherify").
 
 ### Event-bus – Kafka
 
 Voucherify can work with event buses as producers and subscribers.
 
-## Ecommerce engine
+## Integration with an ecommerce engine
 
 Voucherify can be integrated with both headless and monolithic ecommerce solutions.
 
-### Frontend decoupled from the order management logic
+### Frontend decoupled from order management logic
 
-This is offered by headless commerce solutions or mobile apps and makes the integration swift. Voucherify [fits well](https://machalliance.org/newsroom/voucherify-io-joins-the-mach-alliance "Voucherify joins the MACH alliance") in the composable commerce ecosystem and has been [successfully deployed](https://www.voucherify.io/customers/breville "How Breville is Winning Digital Transformation with Voucherify and Friends") on a global scale, in both digital and brick-and-mortar scenarios. In addition, Voucherify provides numerous native accelerator plugins to the top ecommerce providers such as:
+Headless commerce solutions allow decoupling the frontend from order management logic, so you can quickly integrate your platforms. Voucherify [fits well](https://machalliance.org/newsroom/voucherify-io-joins-the-mach-alliance "Voucherify joins the MACH alliance") in the composable commerce ecosystem and has been [successfully deployed](https://www.voucherify.io/customers/breville "How Breville is Winning Digital Transformation with Voucherify and Friends") on a global scale, in both digital and physical stores. In addition, Voucherify provides numerous native accelerator plugins to the top ecommerce providers such as:
 - [commercetools](https://www.voucherify.io/integrations/commercetools "Next-gen promotions for modern commerce"),
 - [Bigcommerce](https://www.voucherify.io/integrations/bigcommerce "Supercharge your online store with personalized promotions"),
 - [Emporix](https://www.voucherify.io/integrations/emporix "Enhance the Emporix Digital Commerce Platform with targeted promotions and loyalty programs").
@@ -180,17 +151,19 @@ This is offered by headless commerce solutions or mobile apps and makes the inte
 
 ### Monolithic commerce solution
 
-The integrated frontend and backend may require extra work to ensure a bi-directional sync with Voucherify. Voucherify's professional services team together with [SI partners](https://www.voucherify.io/partners-directory "Partners who trust Voucherify") gained experience in estimating the total cost of integration and are open to consult your business case. Voucherify's and partners' joint case studies include success stories of connecting Voucherify to various ecommerce platforms from Shopify to SAP Hybris.
+An integrated frontend and backend setup may require additional effort to ensure bi-directional synchronization with Voucherify. Voucherify's professional services team, along with together with [SI partners](https://www.voucherify.io/partners-directory "Partners who trust Voucherify"), has extensive experience in estimating total integration costs and is available to consult on your business case. Joint case studies with Voucherify's partners highlight successful integrations with various e-commerce platforms, from Shopify to SAP Hybris.
 
-## Marketing ecosystem
+## Integration with a marketing ecosystem
 
-The promotion experience comes next. Depending on the CDP, CEP, CMS, and CRM platforms you use, Voucherify's team can suggest how to improve the implementation of customer-facing touchpoints, including offer placements and messages. Voucherify can work at scale thanks to integrations with CDP or CEPs and stream processing systems like Kafka. CMS integrations on the other hand help us localize promotions and adjust their format to meet distribution channels’ requirements.
+Next, define the promotion experience. Voucherify's team can suggest ways to improve how you implement customer-facing touchpoints, including offer placements and messages, depending on the CDP, CEP, CMS, and CRM platforms you use.
+
+Voucherify scales effectively thanks to its integrations with CDP or CEPs and stream processing systems like Kafka. On the other hand, CMS integrations help us localize promotions and adapt their format to meet the specific requirements of your distribution channels.
 
 ### CDP integrations
 
 Voucherify integrates with popular Customer Data Platforms, such as:
-- [mParticle](https://www.voucherify.io/integrations/mparticle "Use granular customer data to build better promotions"), allowing you to stream data.
-- [Twilio Segment](https://www.voucherify.io/integrations/segment "Make customer data easy to manage and a pleasure to use with Segment"),
+- [mParticle](https://www.voucherify.io/integrations/mparticle "Use granular customer data to build better promotions"),
+- [Twilio Segment](https://www.voucherify.io/integrations/segment "Make customer data easy to manage and a pleasure to use with Segment").
 
 ### CEP integrations
 
@@ -214,16 +187,16 @@ Voucherify provides ready connectors with Customer Management Systems, such as:
 - [Bloomreach](https://support.voucherify.io/article/600-bloomreach-cms-integration "Show customers the right promotion data at the right time"),
 - [Contentful](https://support.voucherify.io/article/599-contentful-integration "Unlock the power of timely promotion data").
 
-## Data model and handling
+## Data modeling and handling
 
 The data transfer between Voucherify and marketing technology platforms should be considered with respect to:
-- [data model](#data-model),
-- [volume to be synchronized](#use-synchronized-data),
-- [data privacy](#data-privacy).
+- [Data model](#data-model),
+- [Volume to be synchronized](#use-synchronized-data),
+- [Data privacy](#data-privacy).
 
-The scope of campaign flexibility and personalization you can achieve with Voucherify is made possible by feeding Voucherify with appropriate data.
+To achieve the desired scope of campaign flexibility and personalization, you have to send appropriate data to Voucherify.
 
-Once the data model is set, you can move on to build a promotion experience on top of your user journey to lead customers to validate and redeem offers.
+That's why a data model is needed. Once it's created, you can move on to build a promotion experience on top of your user journey and lead customers to validate and redeem incentives.
 
 Most Voucherify implementations are built on top of the following workflow.
 
@@ -231,7 +204,7 @@ Most Voucherify implementations are built on top of the following workflow.
 
 A Voucherify integration requires a business-appropriate data model for customer traits, custom events, and even custom incentives.
 
-With Voucherify's modular API, it is possible to run different types of incentives with any data. Voucherify supports brands operating in various models and industries, covering ecommerce, subscription-based brands in B2C, B2B, or D2C models.
+With Voucherify's modular API, it's possible to run different types of incentives with any data. This means Voucherify supports brands across diverse industries and business models, including e-commerce, subscription-based brands, and those operating in B2C, B2B, or D2C sectors.
 
 To ensure high flexibility, the Voucherify data model can be extended with [custom fields and objects (metadata)](https://support.voucherify.io/article/99-schema-validation-metadata "Getting stared with Metadata"). Metadata allow you run fully custom campaigns with the support of arrays and nesting for deeper targeting.
 
@@ -240,34 +213,34 @@ You can also track [custom events](https://support.voucherify.io/article/111-cus
 #### IDs in Voucherify
 
 Voucherify operates on top of two types of identifiers:
-- external master ID (`source_id`), provided by, for example, a Customer Data Platform,
-- unique identifier assigned by Voucherify.
+- External master ID (`source_id`), provided by, for example, a Customer Data Platform,
+- Unique identifier assigned by Voucherify.
 
 This approach lets you sync various pieces of information under a unified ID.
 <!-- I DON'T UNDERSTAND FULLY – ASK FOR SOMEONE'S REVIEW -->
 
 #### Modelling your data
 
-To quickly map your data model, consider using ready connectors with [Segment](https://voucherify.io/integrations/segment "Integration with Segment") and [mParticle](https://voucherify.io/integrations/mparticle "Integration with mParticle") CDPs.
+To quickly map your data model, consider ready connectors with [Segment](https://voucherify.io/integrations/segment "Integration with Segment") and [mParticle](https://voucherify.io/integrations/mparticle "Integration with mParticle") CDPs.
 
 For the initial data migration, use different [data import options](https://support.voucherify.io/article/574-data-import "Data Import"), like Voucherify dashboard or asynchronous bulk API import endpoints.
 
+For custom events, read the [custom event documentation](ref:custom-event-object)
+
 See the table below to find examples of modelled data:
 
-|   Industry    |                                    Ecommerce                                     |                                      Services                                       |                                    Travel                                    |                                                QSR & Food Delivery                                                |
+|               |                                    Ecommerce                                     |                                      Services                                       |                                    Travel                                    |                                                QSR & Food Delivery                                                |
 | :-----------: | :------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------: | :--------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------: |
 |  User traits  |                  locale, currency, lifetime value, order count                   | device, app version, session duration, subscription group, notification preferences | traveler status, age range, destinations, travel companions, booking channel | order history, favorite items, delivery address, dietary preferences, favorite restaurants, delivery instructions |
 | Custom events | product_viewed, product_added, checkout_started, order_completed, cart_abandoned |                  account_set, user_login, searches, feature_usage                   |          destination_search, car_rental, booking_type, booking_date          |                    menu_item_view, app_rating, menu_search, order_tracking, delivery_completed                    |
 
-Learn more about [tracking custom events](ref:custom-event-object)
-
 ### Use synchronized data
 
-Set up the data scope and sync policies to ensure that Voucherify can access any relevant information when needed. 
+In a successful integration, Voucherify needs access to any relevant information at the right time. That's why it's important to set up the data scope and sync policies.
 
-The Voucherify API can ingest and egress data like product information or customer attributes from and to other systems in real-time, at scale. This, together with a flexible schema editor and auto-complete inputs in the Dashboard, makes creating new promotion scenarios less error-prone. It will help you ensure data integrity if you have a lot of product-specific discounts or you want to trigger incentives based on aggregated customer attributes.
+The Voucherify API can ingest and egress data, like product information or customer attributes to and from other systems in real-time and at scale. This, together with a flexible schema editor and auto-complete inputs in the Dashboard, makes creating new promotion scenarios less error-prone. It'll help you ensure data integrity if you have many product-specific discounts or want to trigger incentives based on aggregated customer attributes.
 
-The next step is to plan the frequency of data sync. As Voucherify can work with real-time traffic, this may impact your subscription plan's monthly API call usage.
+The next step is to plan the frequency of data synchronization. Since Voucherify can work with real-time traffic, this may affect your subscription plan's monthly API call usage.
 
 ### Data volume estimation
 
@@ -280,22 +253,25 @@ Depending on your data volume or security policies, your account may require add
 > 📘 API usage and availability
 >
 > Besides API usage, you should define your minimum availability requirements. These will be included in a custom SLA.
+> 
 > [Check system status for historical performance](https://status.voucherify.io/)
 
 ### Data privacy
 
-For security reasons, you may not want to synchronize and maintain customer attributes or product information in Voucherify. In this case, you can send the business context with a validation request and Voucherify will calculate the discount – the “meaning” will be offloaded to the “source of truth” system.
+For security reasons, you may not want to synchronize and maintain customer or product details in Voucherify. In this case, you can send the necessary business context with a validation request and Voucherify will calculate the discount. As a result, the "meaning" will be offloaded to the "source of truth" system.
 
 ### Universal approach of Voucherify
 
-Voucherify API is universal. If you already integrated the redemption or validation endpoints into your checkout for discount codes, you can easily run other campaign types, such as gift cards or referrals. You won't need any additional input from the tech team. This significantly lowers the costs associated with extending Voucherify usage.
+Voucherify's API is universal. If you've already integrated the redemption or validation endpoints into your checkout for discount codes, you can easily run other campaign types, like gift cards or referrals. This requires no additional input from your tech team, significantly lowering the costs of extending Voucherify's use.
 
-The same goes for various discount types and effects. Your technical team doesn't have to introduce any changes to the integration if you are interested in running new discount types, for example amount instead of percentage discounts.
+The same applies to various discount types and effects. Your technical team won't need to make any changes to the integration if you want to run new discount types, such as amount-based instead of percentage-based discounts.
+
+Voucherify's API is universal. If you've already integrated the redemption or validation endpoints into your checkout for discount codes, you can easily run other campaign types, like gift cards or referrals. This doesn't need any additional effort from the technical team, which significantly lowers the costs associated with extending Voucherify usage.
+
+The same applies to various discount types and effects. Your technical team won't need to make any changes to the integration if you want to run new discount types, such as amount-based instead of percentage-based discounts.
 
 ![Diagram of how Voucherify is integrated with a store](https://files.readme.io/2c7eff2-guides_integration_blueprint_modeling-voucherify-integration-01.png "How Voucherify is integrated with a store")
 
-> 📘 Voucherify partners
-> 
-> Voucherify partners with leading Solution Integrators that can help you build and maintain promotions and loyalty programs.
->
-> Learn more about [our partners](https://www.voucherify.io/partners-directory "Voucherify Partners").
+## Voucherify partners
+
+Voucherify partners with leading [Solution Integrators](https://www.voucherify.io/partners-directory "Voucherify Partners") that can help you build and maintain promotions and loyalty programs.
