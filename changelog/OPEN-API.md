@@ -4,6 +4,10 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-06-26
+
+- Added `session` object to the `RedemptionBase` schema.
+
 ## 2025-06-25
 
 - Added `webhooks_enabled` property to the `VouchersImportCSVRequestBody` schema.
