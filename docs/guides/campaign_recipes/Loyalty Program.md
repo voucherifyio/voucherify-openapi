@@ -69,6 +69,10 @@ Here are some ideas of the earning rules that you can use in your loyalty campai
 5. 5 points for every $1 spent on the new collection,
 6. 10 points for leaving a 5/5 star review.
 
+> 🚧 Maximum number of earning rules
+>
+> You can create up to 100 earning rules per project. The limit can be customized for clients with a single-tenant setup.
+
 ## Assigning Rewards
 
 You can assign multiple rewards to a loyalty program by using the [Create Reward Assignment](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/699307-c3e60c24-99c8-4236-9f0e-11dd4a43bc98?tab=body "Create Reward Assignment Endpoint in the Voucherify Postman Collection") API call. 
