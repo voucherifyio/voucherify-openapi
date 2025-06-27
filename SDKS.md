@@ -116,7 +116,7 @@ Manual steps checklist:
 - [ ] Ensure that all SDKs were generated without errors.
 - [ ] Ensure new tests were created for changes.
 - [ ] Ensure that all SDKs tests passed.
-- [ ] Make sure no breaking changes have been introduced - only as a last resort can such changes be added.
+- [ ] Make sure no breaking changes have been introduced - only as a last resort can such changes be added (read section "Releasing major version")
 - [ ] Commit all generated changes to the submodules and main module.
 - [ ] Publish the new version of the SDKs to repositories manager.
 
