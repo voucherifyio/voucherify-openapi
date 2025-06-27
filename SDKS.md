@@ -128,7 +128,7 @@ Manual steps checklist:
 
 #### Breaking changes
 
-The following changes to the `OpenAPI.json` file consistute breaking changes:
+The following changes to the `OpenAPI.json` file consistent breaking changes:
 - Adding a new query parameter.
 - Deleting anything: a query property, a schema, property schema, etc.
 - Changing the order of query parameters.
@@ -140,3 +140,7 @@ The following changes to the `OpenAPI.json` file consistute breaking changes:
 - Adding a new `enum` value if the existing values have the same prefix.
 
 To avoid breaking changes, fix them in the [`index.ts` file](./scripts/prepare-open-api-for-sdk/index.ts).
+
+#### Releasing major version
+
+Before releasing new major version please go to [`index.ts` file](./scripts/prepare-open-api-for-sdk/index.ts) and update `breakingChangesVersion` to make sure that all breaking changes will be applied at the same time. 
