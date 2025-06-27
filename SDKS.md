@@ -11,7 +11,7 @@ They are slightly modified from the original ones for our needs.
 
 ## Requirements
 
-- Node.js ^16 || ^18 and npm
+- Node.js ^22 and npm
 - docker (optional)
 - java runtime v18 or higher
 
@@ -103,9 +103,8 @@ Checks if the OpenAPI schemas haven't changed after scripts refactoring.
 The easiest way for running tests is to use the `docker-compose` file.
 1. Ensure that you have installed `docker`.
 2. Ensure that you have the init submodules with `git submodule update --init --recursive`.
-3. Build docker images for containers with `docker-compose build`.
-4. Run containers with `docker-compose up`.
-   - Run commands separately for better log readability.
+3. Make sure you filled up `./env` file in root directory and `./scripts/copy-env-to-sdks.sh` have been launched.
+4. Run `npm run test-sdks` or `npm run test-python-sdk/test-php-sdk/test-java-sdk/test-ruby-sdk/test-dotnet-sdk`
 
 To run SDKs separately or on your local machine without docker, go to the SDK directory and read the `README.md` file.
 
@@ -117,7 +116,7 @@ Manual steps checklist:
 - [ ] Ensure that all SDKs were generated without errors.
 - [ ] Ensure new tests were created for changes.
 - [ ] Ensure that all SDKs tests passed.
-- [ ] Decide if the changes concern a minor, major or patch version.
+- [ ] Make sure no breaking changes have been introduced - only as a last resort can such changes be added.
 - [ ] Commit all generated changes to the submodules and main module.
 - [ ] Publish the new version of the SDKs to repositories manager.
 
