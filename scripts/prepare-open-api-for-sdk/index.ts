@@ -102,6 +102,14 @@ const main = async (languageOptions: LanguageOptions) => {
       throw `Prohibited string found in source OpenAPI file! Found: "${prohibited}"`;
     }
   });
+  //TEMPORARY - PLEASE REMOVE IT ONCE NEW TYPE WILL BE PRESENT IN OPENAPI SPEC
+  openAPIContent.components.schemas.Segment.properties.type.enum.push(
+    "passive",
+  );
+  openAPIContent.components.schemas.Segment.properties.type.enum = _.uniq(
+    openAPIContent.components.schemas.Segment.properties.type.enum,
+  );
+
   //////////////////////////////////////////////////////////////////////////////
   ////////////////////BEGINNING OF CLEANUP OPEN API FILE////////////////////////
   //////////////////////////////////////////////////////////////////////////////
