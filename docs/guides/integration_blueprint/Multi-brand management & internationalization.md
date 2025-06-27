@@ -21,7 +21,7 @@ order: 13
 Voucherify supports **different approaches to campaign management**. You can use multiple projects to map different contexts or a shared project by using categories, labels, promo code prefixes, or custom fields to differentiate campaigns. Learn how projects can be used to isolate business context and its impact on maintenance and reporting:
 
 * Currency and timezone.
-* Users and user roles.
+* [Users and user roles](https://support.voucherify.io/article/40-how-does-the-access-control-work-in-voucherify "User roles and access control").
 * Metadata schema.
 * Categories. 
 * API keys, usage & webhooks.

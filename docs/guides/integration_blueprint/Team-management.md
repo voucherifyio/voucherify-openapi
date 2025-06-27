@@ -22,7 +22,7 @@ order: 13
 
 User management starts with mapping how various departments, such as marketing, customer support, and engineering, can **collaborate to create and maintain Voucherify campaigns**. To restrict access to campaigns, Voucherify provides **four layers of protection**:
 
-* **Default and custom user roles** – Admin, User, Viewer, Merchant, and Custom with fine-grained rights.
+* **[Default and custom user roles](https://support.voucherify.io/article/40-how-does-the-access-control-work-in-voucherify "User roles and access control")** – Admin, User, Viewer, Merchant, and Custom with fine-grained rights.
 * **Approval workflows** – requesting campaign approval with email and in-app notifications.
 * **Separate API keys** – each user can have separate API keys. You can also add separate API keys per integration. 
 * **Account security** – MFA and SAML. 
