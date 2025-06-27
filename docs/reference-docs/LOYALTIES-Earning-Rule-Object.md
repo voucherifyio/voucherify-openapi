@@ -67,10 +67,12 @@ One of:
 ## Earning Rule Expiration Rules
 | Attributes |  Description |
 |:-----|:--------|
-| period_type</br>`string` | <p>Type of period. Currently, only <code>MONTH</code> is allowed.</p> Available values: `MONTH` |
-| period_value</br>`integer` | <p>Value of the period.</p> |
-| rounding_type</br>`string` | <p>Type of rounding of the expiration period.</p> Available values: `END_OF_MONTH`, `END_OF_QUARTER`, `END_OF_HALF_YEAR`, `END_OF_YEAR`, `PARTICULAR_MONTH` |
-| rounding_value</br>`integer` | <p>Value of rounding of the expiration period.</p> |
+| period_type</br>`string` | <p>Type of period. Can be set for <code>MONTH</code> or <code>FIXED_DAY_OF_YEAR</code>. <code>MONTH</code> requires the <code>period_value</code> field. <code>FIXED_DAY_OF_YEAR</code> requires the <code>fixed_month</code> and <code>fixed_day</code> fields.</p> Available values: `FIXED_DAY_OF_YEAR`, `MONTH` |
+| period_value</br>`integer` | <p>Value of the period. Required for the <code>period_type: MONTH</code>.</p> |
+| rounding_type</br>`string` | <p>Type of rounding of the expiration period. Optional  for the <code>period_type: MONTH</code>.</p> Available values: `END_OF_MONTH`, `END_OF_QUARTER`, `END_OF_HALF_YEAR`, `END_OF_YEAR`, `PARTICULAR_MONTH` |
+| rounding_value</br>`integer` | <p>Value of rounding of the expiration period. Required for the <code>rounding_type</code>.</p> |
+| fixed_month</br>`integer` | <p>Determines the month when the points expire; <code>1</code> is January, <code>2</code> is February, and so on. Required for the <code>period_type: FIXED_DAY_OF_YEAR</code></p> |
+| fixed_day</br>`integer` | <p>Determines the day of the month when the points expire. Required for the <code>period_type: FIXED_DAY_OF_YEAR</code></p> |
 
 ## Define amount of points proportional to the order
 One of:
