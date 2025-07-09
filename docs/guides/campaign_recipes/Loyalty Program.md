@@ -3,10 +3,13 @@ title: Loyalty Program
 excerpt: Learn how to use Voucherify API to build a loyalty program
 categorySlug: campaigns-recipes
 slug: loyalty-program
-type: basic
+type: link
 hidden: false
 order: 5
+link_url: https://support.voucherify.io/article/491-getting-started-with-loyalty-programs
 ---
+
+<!-- IT'S A REDIRECT UNTIL WE GET BACK TO THIS WITH A MORE DEV-ORIENTED CONTENT -->
 
 > 👍 Before you start
 >
