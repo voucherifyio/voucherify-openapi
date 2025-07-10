@@ -82,6 +82,14 @@ Promotion tiers can be applied together as a promotion stack or arranged in a hi
 > 📘 Learn more
 > - [Promotion tier](ref:promotion-tier-object) API reference
 
+### Template
+
+A template saves a campaign configuration, so it links with all resources used in the original campaign, such as the validation rule, metadata, rewards, distribution setup, and other details. You can use the template to create a new campaign with the same configuration without setting it up again manually or edit its details, if necessary.
+
+> 📘 Learn more
+> - [Create campaign template](ref:create-campaign-template) API endpoint
+> - [Campaign templates](https://support.voucherify.io/article/620-campaign-templates) article
+
 ## Order
 
 An order represents an order placed by a customer in your system. It contains details about the items and details about any incentives as well as discounts applied to the order.
