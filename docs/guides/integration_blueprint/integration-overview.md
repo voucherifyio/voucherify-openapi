@@ -266,10 +266,6 @@ Voucherify's API is universal. If you've already integrated the redemption or va
 
 The same applies to various discount types and effects. Your technical team won't need to make any changes to the integration if you want to run new discount types, such as amount-based instead of percentage-based discounts.
 
-Voucherify's API is universal. If you've already integrated the redemption or validation endpoints into your checkout for discount codes, you can easily run other campaign types, like gift cards or referrals. This doesn't need any additional effort from the technical team, which significantly lowers the costs associated with extending Voucherify usage.
-
-The same applies to various discount types and effects. Your technical team won't need to make any changes to the integration if you want to run new discount types, such as amount-based instead of percentage-based discounts.
-
 ![Diagram of how Voucherify is integrated with a store](https://files.readme.io/2c7eff2-guides_integration_blueprint_modeling-voucherify-integration-01.png "How Voucherify is integrated with a store")
 
 ## Voucherify partners
