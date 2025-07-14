@@ -2977,6 +2977,9 @@
                         }
                       }
                     },
+                    "bundle": {
+                      "$ref": "#/components/schemas/Bundle"
+                    },
                     "gift": {
                       "title": "ClientValidationsValidateResponseBodyRedeemablesItemResultGift",
                       "description": "Stores the amount of gift card credits to be applied.",
@@ -2997,6 +3000,7 @@
                     },
                     "loyalty_card": {
                       "title": "ClientValidationsValidateResponseBodyRedeemablesItemResultLoyaltyCard",
+                      "description": "Stores the amount of loyalty card points to be applied in the redemption.",
                       "type": "object",
                       "properties": {
                         "points": {
@@ -3004,7 +3008,8 @@
                           "description": "Total number of loyalty points to be applied in the redemption.",
                           "nullable": true
                         }
-                      }
+                      },
+                      "nullable": true
                     },
                     "error": {
                       "$ref": "#/components/schemas/Error"
@@ -27253,6 +27258,9 @@
                         }
                       }
                     },
+                    "bundle": {
+                      "$ref": "#/components/schemas/Bundle"
+                    },
                     "gift": {
                       "title": "ValidationsValidateResponseBodyRedeemablesItemResultGift",
                       "description": "Stores the amount of gift card credits to be applied.",
@@ -27273,6 +27281,7 @@
                     },
                     "loyalty_card": {
                       "title": "ValidationsValidateResponseBodyRedeemablesItemResultLoyaltyCard",
+                      "description": "Stores the amount of loyalty card points to be applied in the redemption.",
                       "type": "object",
                       "properties": {
                         "points": {
@@ -27280,7 +27289,8 @@
                           "description": "Total number of loyalty points to be applied in the redemption.",
                           "nullable": true
                         }
-                      }
+                      },
+                      "nullable": true
                     },
                     "error": {
                       "$ref": "#/components/schemas/Error"
@@ -29860,11 +29870,11 @@
                   "items": {
                     "title": "ApplicableToOrderItemUnitsItemUnitsItem",
                     "type": "integer"
-                  },
-                  "units_limit_exceeded": {
-                    "type": "boolean",
-                    "description": "Returned as `true` only when the sum total of `quantity` of all order items exceeds 1000."
                   }
+                },
+                "units_limit_exceeded": {
+                  "type": "boolean",
+                  "description": "Returned as `true` only when the sum total of `quantity` of all order items exceeds 1000."
                 }
               }
             },
@@ -30052,6 +30062,103 @@
             "nullable": true
           }
         }
+      },
+      "Bundle": {
+        "title": "Bundle",
+        "type": "object",
+        "description": "Determines how the bundle conditions are met by the customer's order items. The items in the order meet the bundle condition in the following way: SKU, then product, then collection.",
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "description": "Determines how many bundles are qualified. If there are missing bundle products, the value is `0`. If the bundle is qualified, the value is `1`. The maximum number of identified bundles can equal the number set in `limit`. Also defines the multiplier of the discount for `AMOUNT`, `PERCENT`, and `UNIT` discount types. To inform end-customers that more products can be added to meet additional bundles, compare this parameter with `limit`.",
+            "minimum": 0,
+            "maximum": 100,
+            "nullable": true
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Determines the maximum number of identified bundles. This also defines the maximum multiplier of the bundle discount.",
+            "minimum": 1,
+            "maximum": 100,
+            "nullable": true
+          },
+          "identified": {
+            "title": "BundleIdentified",
+            "type": "array",
+            "description": "Determines products from the customer's order items that meet bundle conditions. SKUs meet the conditions for their product that is used in the bundle. Returns only the products and their quantity that meet the bundle.",
+            "items": {
+              "title": "BundleIdentifiedItem",
+              "type": "object",
+              "description": "Determines a product from the customer's order items that meets bundle conditions.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier of the product or SKU that meets the bundle condition. This is an ID assigned by Voucherify."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "Determines the type of the object that meets the bundle condition.",
+                  "enum": [
+                    "product",
+                    "sku"
+                  ]
+                },
+                "item_index": {
+                  "type": "integer",
+                  "description": "Number assigned to the order line item in accordance with the order sent in the request. It starts with `0` for the first order line item in the request.",
+                  "minimum": 0
+                },
+                "item_quantity": {
+                  "type": "integer",
+                  "description": "Quantity of items that meet the bundle conditions. If the quantity in the order is higher than the quantity required by the bundle, this returns only the number that meets the bundle. For example, if the bundle requires `5` coffees, but the order includes `10` coffees, `item_quantity` returns `5`."
+                }
+              },
+              "required": [
+                "id",
+                "object",
+                "item_index",
+                "item_quantity"
+              ]
+            },
+            "nullable": true
+          },
+          "missing": {
+            "title": "BundleMissing",
+            "type": "array",
+            "description": "Determines products, SKUs, or collections from the bundle that are missing in the customer's order items. Determines also the missing quantity. For collections, this means that order items do not include a sufficient number of items that belong to the collection. Not returned when all required bundle items are in the order.",
+            "items": {
+              "title": "BundleMissingItem",
+              "type": "object",
+              "description": "Determines a product, SKU, or collection that is in bundle conditions, but is missing in the customer's order items. Determines also the missing quantity.",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Unique identifier of the collection, product, or SKU that is missing in the customer's order items. This is an ID assigned by Voucherify."
+                },
+                "object": {
+                  "type": "string",
+                  "description": "Determines the type of the object that is missing in the customer's order items.",
+                  "enum": [
+                    "product",
+                    "products_collection",
+                    "sku"
+                  ]
+                },
+                "item_quantity": {
+                  "type": "integer",
+                  "description": "Quantity of items that are missing in the order items to meet the bundle conditions."
+                }
+              },
+              "required": [
+                "id",
+                "object",
+                "item_quantity"
+              ]
+            },
+            "nullable": true
+          }
+        },
+        "required": []
       },
       "Campaign": {
         "title": "Campaign",
@@ -39814,6 +39921,9 @@
                   }
                 },
                 "nullable": true
+              },
+              "bundle": {
+                "$ref": "#/components/schemas/Bundle"
               }
             },
             "nullable": true
@@ -41557,11 +41667,11 @@
                   "items": {
                     "title": "InapplicableToOrderItemUnitsItemUnitsItem",
                     "type": "integer"
-                  },
-                  "units_limit_exceeded": {
-                    "type": "boolean",
-                    "description": "Returned as `true` only when the sum total of `quantity` of all order items exceeds 1000."
                   }
+                },
+                "units_limit_exceeded": {
+                  "type": "boolean",
+                  "description": "Returned as `true` only when the sum total of `quantity` of all order items exceeds 1000."
                 }
               }
             },
@@ -42939,94 +43049,6 @@
       },
       "Any": {
         "title": "Any"
-      },
-      "Bundle": {
-        "title": "Bundle",
-        "type": "object",
-        "description": "Determines how the bundle conditions are met by the customer's order items. The items in the order meet the bundle condition in the following way: SKU, then product, then collection.",
-        "properties": {
-          "quantity": {
-            "type": "integer",
-            "description": "Determines how many bundles are qualified. If there are missing bundle products, the value is `0`. If the bundle is qualified, the value is `1`.",
-            "minimum": 0,
-            "nullable": true
-          },
-          "identified": {
-            "title": "BundleIdentified",
-            "type": "array",
-            "description": "Determines products from the customer's order items that meet bundle conditions. SKUs meet the conditions for their product that is used in the bundle. Returns only the products and their quantity that meet the bundle.",
-            "items": {
-              "title": "BundleIdentifiedItem",
-              "type": "object",
-              "description": "Determines a product from the customer's order items that meets bundle conditions.",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Unique identifier of the product or SKU that meets the bundle condition. This is an ID assigned by Voucherify."
-                },
-                "object": {
-                  "type": "string",
-                  "description": "Determines the type of the object that meets the bundle condition.",
-                  "enum": [
-                    "product",
-                    "sku"
-                  ]
-                },
-                "item_index": {
-                  "type": "integer",
-                  "description": "Number assigned to the order line item in accordance with the order sent in the request. It starts with `0` for the first order line item in the request.",
-                  "minimum": 0
-                },
-                "item_quantity": {
-                  "type": "integer",
-                  "description": "Quantity of items that meet the bundle conditions. If the quantity in the order is higher than the quantity required by the bundle, this returns only the number that meets the bundle. For example, if the bundle requires `5` coffees, but the order includes `10` coffees, `item_quantity` returns `5`."
-                }
-              },
-              "required": [
-                "id",
-                "object",
-                "item_index",
-                "item_quantity"
-              ]
-            },
-            "nullable": true
-          },
-          "missing": {
-            "title": "BundleMissing",
-            "type": "array",
-            "description": "Determines products, SKUs, or collections from the bundle that are missing in the customer's order items. Determines also the missing quantity. For collections, this means that order items do not include a sufficient number of items that belong to the collection.",
-            "items": {
-              "title": "BundleMissingItem",
-              "type": "object",
-              "description": "Determines a product, SKU, or collection that is in bundle conditions, but is missing in the customer's order items. Determines also the missing quantity.",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "Unique identifier of the collection, product, or SKU that is missing in the customer's order items. This is an ID assigned by Voucherify."
-                },
-                "object": {
-                  "type": "string",
-                  "description": "Determines the type of the object that is missing in the customer's order items.",
-                  "enum": [
-                    "product",
-                    "products_collection",
-                    "sku"
-                  ]
-                },
-                "item_quantity": {
-                  "type": "integer",
-                  "description": "Quantity of items that are missing in the order items to meet the bundle conditions."
-                }
-              },
-              "required": [
-                "id",
-                "object",
-                "item_quantity"
-              ]
-            },
-            "nullable": true
-          }
-        }
       },
       "RedeemableGift": {
         "title": "RedeemableGift",
