@@ -1042,11 +1042,11 @@
                   "description": "Numbers of units in the order line covered by the discount; e.g. `2, 5, 8` for 10 units with the setting `\"skip_initially\": 1`, `\"repeat\": 3`. The counting of units starts from `1`. The maximum quantity of all handled units is 1000. If the quantity of all order items exceeds 1000, this array is not returned, but `units_limit_exceeded: true`. However, the discount is calculated properly for all relevant units.",
                   "items": {
                     "type": "integer"
-                  },
-                  "units_limit_exceeded": {
-                    "type": "boolean",
-                    "description": "Returned as `true` only when the sum total of `quantity` of all order items exceeds 1000."
                   }
+                },
+                "units_limit_exceeded": {
+                  "type": "boolean",
+                  "description": "Returned as `true` only when the sum total of `quantity` of all order items exceeds 1000."
                 }
               }
             },
@@ -1883,7 +1883,8 @@
             },
             "nullable": true
           }
-        }
+        },
+        "required": []
       },
       "BusValRuleAssignment": {
         "title": "Business Validation Rule Assignment",
@@ -23168,23 +23169,34 @@
         "title": "Promotion Stack",
         "description": "This is a `result` object representing the results for a promotion stack.",
         "properties": {
-          "loyalty_card": {
-            "description": "Stores the amount of loyalty card points to be applied in the redemption.",
-            "type": "object",
-            "properties": {
-              "points": {
-                "type": "integer",
-                "description": "Total number of loyalty points to be applied in the redemption.",
-                "nullable": true
+          "discount": {
+            "description": "Discount details about the type of discount to be applied for the redeemable.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/DiscountAmount"
+              },
+              {
+                "$ref": "#/components/schemas/DiscountUnit"
+              },
+              {
+                "$ref": "#/components/schemas/DiscountUnitMultiple"
+              },
+              {
+                "$ref": "#/components/schemas/DiscountPercent"
+              },
+              {
+                "$ref": "#/components/schemas/DiscountFixed"
               }
-            },
-            "nullable": true
+            ]
+          },
+          "bundle": {
+            "$ref": "#/components/schemas/Bundle"
           }
         }
       },
       "RedeemableResultPromotionTier": {
         "type": "object",
-        "title": "Redeemable Result Promotion Tier",
+        "title": "Promotion Tier",
         "description": "This is a `result` object representing the results for a promotion tier.",
         "properties": {
           "discount": {
@@ -23206,6 +23218,9 @@
                 "$ref": "#/components/schemas/DiscountFixed"
               }
             ]
+          },
+          "bundle": {
+            "$ref": "#/components/schemas/Bundle"
           }
         }
       },
@@ -29014,11 +29029,6 @@
           },
           "result": {
             "description": "Specifies the redeemable's end effect on the order. This object is unique to each type of redeemable.",
-            "properties": {
-              "bundle": {
-                "$ref": "#/components/schemas/Bundle"
-              }
-            },
             "oneOf": [
               {
                 "$ref": "#/components/schemas/RedeemableResultVoucherCode"
