@@ -84,7 +84,7 @@ Webhook calls are gathered in a queue, so their number per hour can exceed the A
 
 > 👍 Project Settings Webhooks
 >
-> The webhooks sent by Voucherify, which include the webhooks configured in the [Project Settings](ref:introduction-to-webhooks#webhooks-available-in-project-settings) are not covered by any limit. The webhooks sent through [Distributions](ref:introduction-to-webhooks#webhooks-available-in-distributions) are covered by [distributipon limits](#distribution-limits).
+> The webhooks sent by Voucherify, which include the webhooks configured in the [Project Settings](ref:introduction-to-webhooks#webhooks-available-in-project-settings) are not covered by any limit. The webhooks sent through [Distributions](ref:introduction-to-webhooks#webhooks-available-in-distributions) are covered by [distribution limits](#distribution-limits).
 
 ## Distribution Limits
 
