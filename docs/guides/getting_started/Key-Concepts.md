@@ -106,7 +106,7 @@ Orders work together with other Voucherify entities, see examples in the table b
 > 📘 Learn more
 > - [Order object](ref:order-object) API reference
 
-## Products and product segments
+## Products and product collections
 
 Voucherify can store your product catalog. The products can be also grouped together in collections.
 
