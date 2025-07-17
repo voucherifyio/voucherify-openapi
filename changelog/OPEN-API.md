@@ -4,6 +4,11 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-07-16
+
+- Added `points_formula` to earning rule schemas.
+- Added `applicable_to` to earning rule schemas related to proportional calculation for order items.
+
 ## 2025-07-14
 
 - Added `limit` to the `Bundle` and `ValidationRuleBundleRules` schemas.

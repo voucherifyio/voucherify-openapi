@@ -987,7 +987,7 @@
           },
           "price_formula": {
             "type": "number",
-            "description": "Formula used to calculate the discounted price of an item.",
+            "description": "Formula used to dynamically calculate the discounted price of an item.",
             "nullable": true
           },
           "effect": {
@@ -5392,6 +5392,7 @@
           },
           "amount_off_formula": {
             "type": "string",
+            "description": "Formula used to dynamically calculate the discount.",
             "nullable": true
           },
           "aggregated_amount_limit": {
@@ -5481,6 +5482,7 @@
           },
           "fixed_amount_formula": {
             "type": "string",
+            "description": "Formula used to dynamically calculate the discount.",
             "nullable": true
           },
           "effect": {
@@ -5527,6 +5529,7 @@
           },
           "percent_off_formula": {
             "type": "string",
+            "description": "Formula used to dynamically calculate the discount.",
             "nullable": true
           },
           "amount_limit": {
@@ -5583,7 +5586,7 @@
           },
           "unit_off_formula": {
             "type": "string",
-            "description": "Formula used to calculate the number of units.",
+            "description": "Formula used to dynamically calculate the number of units.",
             "nullable": true
           },
           "effect": {
@@ -5661,7 +5664,7 @@
           },
           "unit_off_formula": {
             "type": "string",
-            "description": "Formula used to calculate the number of units.",
+            "description": "Formula used to dynamically calculate the number of units.",
             "nullable": true
           },
           "effect": {
@@ -5978,6 +5981,11 @@
             "type": "integer",
             "description": "Defines how the points will be added to the loyalty card. FIXED adds a fixed number of points.",
             "nullable": true
+          },
+          "points_formula": {
+            "type": "string",
+            "description": "Formula used to dynamically calculate the rewarded points.",
+            "nullable": true
           }
         },
         "required": []
@@ -6040,6 +6048,11 @@
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
                     "nullable": true
                   },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
+                    "nullable": true
+                  },
                   "property": {
                     "type": "string",
                     "description": "Customer metadata property.",
@@ -6093,6 +6106,11 @@
                   "points": {
                     "type": "integer",
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
+                    "nullable": true
+                  },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
                     "nullable": true
                   },
                   "property": {
@@ -6163,6 +6181,11 @@
                     "type": "integer",
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
                     "nullable": true
+                  },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
+                    "nullable": true
                   }
                 },
                 "nullable": true
@@ -6206,7 +6229,7 @@
             "enum": [
               "ORDER_ITEMS_AMOUNT"
             ],
-            "description": "ORDER_ITEMS_AMOUNT; Pre-discount amount spent on items defined in the order_items.amount.object & .id (X points for every Y spent on items excluding discounts)",
+            "description": "ORDER_ITEMS_AMOUNT; Pre-discount amount spent on items defined in the `order_items.quantity.applicable_to` array or `order_items.quantity.object` & `.id` (X points for every Y spent on items excluding discounts)",
             "nullable": true
           },
           "order_items": {
@@ -6228,9 +6251,14 @@
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
                     "nullable": true
                   },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
+                    "nullable": true
+                  },
                   "object": {
                     "type": "string",
-                    "description": "Type of object taken under consideration.",
+                    "description": "Type of object which will be covered by the earning rule. This is required together with `id`. Can be replaced by the `applicable_to` array. In response, the value of the first object is returned even if `applicable_to` array was used.",
                     "enum": [
                       "products_collection",
                       "product",
@@ -6240,7 +6268,30 @@
                   },
                   "id": {
                     "type": "string",
-                    "description": "Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619.",
+                    "description": "Unique ID of the resource assigned by Voucherify. This is required together with `object`. Can be replaced by the `applicable_to` array. In response, the value of the first object is returned even if `applicable_to` array was used. Values are, for example, `pc_75U0dHlr7u75BJodrW1AE3t6` for product collection, `prod_0bae32322150fd0546` for a product, or `sku_0b7d7dfb090be5c619` for a SKU.",
+                    "nullable": true
+                  },
+                  "applicable_to": {
+                    "type": "array",
+                    "description": "Defines products, SKUs, or product collections covered by the earning rule. Can be replaced by `object` and `id` to define only one object.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "object": {
+                          "type": "string",
+                          "description": "Type of object which will be covered by the earning rule.",
+                          "enum": [
+                            "products_collection",
+                            "product",
+                            "sku"
+                          ]
+                        },
+                        "id": {
+                          "type": "string",
+                          "description": "Unique ID of the resource assigned by Voucherify. Values are, for example, `pc_75U0dHlr7u75BJodrW1AE3t6` for product collection, `prod_0bae32322150fd0546` for a product, or `sku_0b7d7dfb090be5c619` for a SKU."
+                        }
+                      }
+                    },
                     "nullable": true
                   }
                 },
@@ -6271,7 +6322,7 @@
             "enum": [
               "ORDER_ITEMS_QUANTITY"
             ],
-            "description": "`ORDER_ITEMS_QUANTITY`: Quantity of items defined in order_items.quantity.object & .id (X points for every Y items excluding free items)",
+            "description": "`ORDER_ITEMS_QUANTITY`: Quantity of items defined in the `order_items.quantity.applicable_to` array or `order_items.quantity.object` & `.id` (X points for every Y items excluding free items).",
             "nullable": true
           },
           "order_items": {
@@ -6293,9 +6344,14 @@
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
                     "nullable": true
                   },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
+                    "nullable": true
+                  },
                   "object": {
                     "type": "string",
-                    "description": "Type of object taken under consideration.",
+                    "description": "Type of object which will be covered by the earning rule. This is required together with `id`. Can be replaced by the `applicable_to` array. In response, the value of the first object is returned even if `applicable_to` array was used.",
                     "enum": [
                       "products_collection",
                       "product",
@@ -6305,7 +6361,30 @@
                   },
                   "id": {
                     "type": "string",
-                    "description": "Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619.",
+                    "description": "Unique ID of the resource assigned by Voucherify. This is required together with `object`. Can be replaced by the `applicable_to` array. In response, the value of the first object is returned even if `applicable_to` array was used. Values are, for example, `pc_75U0dHlr7u75BJodrW1AE3t6` for product collection, `prod_0bae32322150fd0546` for a product, or `sku_0b7d7dfb090be5c619` for a SKU.",
+                    "nullable": true
+                  },
+                  "applicable_to": {
+                    "type": "array",
+                    "description": "Defines products, SKUs, or product collections covered by the earning rule. Can be replaced by `object` and `id` to define only one object.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "object": {
+                          "type": "string",
+                          "description": "Type of object which will be covered by the earning rule.",
+                          "enum": [
+                            "products_collection",
+                            "product",
+                            "sku"
+                          ]
+                        },
+                        "id": {
+                          "type": "string",
+                          "description": "Unique ID of the resource assigned by Voucherify. Values are, for example, `pc_75U0dHlr7u75BJodrW1AE3t6` for product collection, `prod_0bae32322150fd0546` for a product, or `sku_0b7d7dfb090be5c619` for a SKU."
+                        }
+                      }
+                    },
                     "nullable": true
                   }
                 },
@@ -6358,9 +6437,14 @@
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
                     "nullable": true
                   },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
+                    "nullable": true
+                  },
                   "object": {
                     "type": "string",
-                    "description": "Type of object taken under consideration.",
+                    "description": "Type of object which will be covered by the earning rule. This is required together with `id`. Can be replaced by the `applicable_to` array. In response, the value of the first object is returned even if `applicable_to` array was used.",
                     "enum": [
                       "products_collection",
                       "product",
@@ -6370,7 +6454,30 @@
                   },
                   "id": {
                     "type": "string",
-                    "description": "Unique ID of the resource, i.e. pc_75U0dHlr7u75BJodrW1AE3t6, prod_0bae32322150fd0546, or sku_0b7d7dfb090be5c619.",
+                    "description": "Unique ID of the resource assigned by Voucherify. This is required together with `object`. Can be replaced by the `applicable_to` array. In response, the value of the first object is returned even if `applicable_to` array was used. Values are, for example, `pc_75U0dHlr7u75BJodrW1AE3t6` for product collection, `prod_0bae32322150fd0546` for a product, or `sku_0b7d7dfb090be5c619` for a SKU.",
+                    "nullable": true
+                  },
+                  "applicable_to": {
+                    "type": "array",
+                    "description": "Defines products, SKUs, or product collections covered by the earning rule. Can be replaced by `object` and `id` to define only one object.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "object": {
+                          "type": "string",
+                          "description": "Type of object which will be covered by the earning rule.",
+                          "enum": [
+                            "products_collection",
+                            "product",
+                            "sku"
+                          ]
+                        },
+                        "id": {
+                          "type": "string",
+                          "description": "Unique ID of the resource assigned by Voucherify. Values are, for example, `pc_75U0dHlr7u75BJodrW1AE3t6` for product collection, `prod_0bae32322150fd0546` for a product, or `sku_0b7d7dfb090be5c619` for a SKU."
+                        }
+                      }
+                    },
                     "nullable": true
                   }
                 },
@@ -6422,6 +6529,11 @@
                   "points": {
                     "type": "integer",
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
+                    "nullable": true
+                  },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
                     "nullable": true
                   },
                   "property": {
@@ -6477,6 +6589,11 @@
                   "points": {
                     "type": "integer",
                     "description": "Number of points to be awarded, i.e. how many points to be added to the loyalty card.",
+                    "nullable": true
+                  },
+                  "points_formula": {
+                    "type": "string",
+                    "description": "Formula used to dynamically calculate the rewarded points.",
                     "nullable": true
                   }
                 },
@@ -11353,7 +11470,7 @@
             "nullable": true
           },
           "loyalty": {
-            "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`\n- `PROPORTIONAL` adds points proportionally based on a pre-defined ratio",
+            "description": "An object that defines the number of points that will be added to a loyalty card and how the points will be added.\n\n- `FIXED` adds a fixed number of `points`.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/EarningRuleFixed"

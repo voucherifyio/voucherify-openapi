@@ -46,7 +46,7 @@ All of:
 | product_id</br>`string` | <p>Parent product's unique ID assigned by Voucherify.</p> |
 | product_source_id</br>`string` | <p>Parent product's source ID from your inventory system.</p> |
 | price</br>`number` | <p>New fixed price of an item. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 price is written as 1000. In case of the fixed price being calculated by the formula, i.e. the price_formula parameter is present in the fixed price definition, this value becomes the fallback value. Such that in a case where the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed price.</p> |
-| price_formula</br>`number` | <p>Formula used to calculate the discounted price of an item.</p> |
+| price_formula</br>`number` | <p>Formula used to dynamically calculate the discounted price of an item.</p> |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> [Applicable To Effect](#applicable-to-effect) |
 | quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted per order line item.</p> |
 | aggregated_quantity_limit</br>`integer` | <p>The maximum number of units allowed to be discounted combined across all matched order line items.</p> |
