@@ -104,7 +104,7 @@ All of:
 ## Single redeemable
 | Attributes |  Description |
 |:-----|:--------|
-| id</br>`string` | <p>Id of the redeemable.</p> |
+| id</br>`string` | <p>ID of the redeemable. For a voucher, it's its <code>code</code> value.</p> |
 | object</br>`string` | <p>Object type of the redeemable.</p> Available values: `campaign`, `promotion_tier`, `promotion_stack`, `voucher` |
 | created_at</br>`string` | <p>Timestamp representing the date and time when the object was created. The value is shown in the ISO 8601 format.</p> **Example:** <p>2022-03-09T11:19:04.819Z</p> |
 | result | See: [Redeemable Result](#redeemable-result) |
