@@ -27,7 +27,7 @@ Each project has a set of unique API keys. Also, the data, for example customers
 
 ## Campaigns, vouchers, and promotions
 
-A project consists of two major campaign types: voucher campaigns and promotion campaigns.
+A project consists of campaigns that are based on vouchers and promotion campaigns, which don't need them.
 
 ### Campaign
 
@@ -35,10 +35,10 @@ A campaign is a basic entity that is used to carry out promotional activities.
 
 There are five basic campaign types, which create:
 - [discount coupons](doc:discount-effects),
+- [loyalty cards](doc:loyalty-program).
 - [gift vouchers](doc:prepaid-gift-cards),
 - [referral codes](doc:referral-program),
-- [promotions](doc:stacking-promotion-tiers),
-- [loyalty cards](doc:loyalty-program).
+- [promotions](doc:stacking-promotion-tiers) (without vouchers),
 
 For voucher-based campaigns, each campaign has a set of unique voucher codes, which work in the same way.
 
