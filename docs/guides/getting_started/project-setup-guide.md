@@ -14,7 +14,7 @@ Create an [account](http://app.voucherify.io/#/signup).
 
 Provide all the necessary details and select your preferred region. The selected region affects where your data is stored. To decrease the latency time, it's good to set the region in your operating area.
 
-Once you sign up, you'll receive a verification email. If you don't receive the email or if you have lost it, [contact Voucherify support](https://support.voucherify.io/article/125-security-data-protection "Voucherify support").
+Once you sign up, you'll receive a verification email. If you don't receive the email or if you have lost it, [contact Voucherify support](https://www.voucherify.io/contact-support "Voucherify support").
 
 > 📘 Europe
 >

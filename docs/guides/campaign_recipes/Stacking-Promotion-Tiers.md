@@ -4,7 +4,7 @@ excerpt: 'In this tutorial, you will learn how to validate, redeem, and manage p
 categorySlug: campaigns-recipes
 slug: stacking-promotion-tiers
 type: basic
-hidden: false
+hidden: true
 order: 7
 ---
 
@@ -37,13 +37,13 @@ There are two modes for creating the promotion stacks.
 
 Dedicated endpoints in [Promotions API](https://docs.voucherify.io/reference/create-promotion-stack) enable you to create, list and edit promotion stacks.
 
-|  Method  |  Endpoint | Description |
-| :---------: | ----------| ----------- |
-|  POST     | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks](ref:create-promotion-stack) | Create a stack within a promotion |
-|  GET        | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks](ref:list-promotion-stacks) | List stacks within a promotion |
-|  GET        | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks/{stack_id}](ref:get-promotion-stack) | Return a stack assigned to the given id |
-|  PUT        | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks/{stack_id}](ref:update-promotion-stack) | Update a given stack |
-|  DELETE | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks/{stack_id}](ref:delete-promotion-stack) | Delete a stack |  
+| Method | Endpoint                                                                                              | Description                             |
+| :----: | ----------------------------------------------------------------------------------------------------- | --------------------------------------- |
+|  POST  | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks](ref:create-promotion-stack)            | Create a stack within a promotion       |
+|  GET   | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks](ref:list-promotion-stacks)             | List stacks within a promotion          |
+|  GET   | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks/{stack_id}](ref:get-promotion-stack)    | Return a stack assigned to the given id |
+|  PUT   | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks/{stack_id}](ref:update-promotion-stack) | Update a given stack                    |
+| DELETE | [https://api.voucherify.io/v1/promotions/{campaign_id}/stacks/{stack_id}](ref:delete-promotion-stack) | Delete a stack                          |
 
 ## Validation and redemption of promotion stack
 

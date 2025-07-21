@@ -206,7 +206,7 @@ One of:
 |:-----|:--------|
 | type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `AMOUNT` |
 | amount_off</br>`number` | <p>Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000.</p> |
-| amount_off_formula</br>`string` |  |
+| amount_off_formula</br>`string` | <p>Formula used to dynamically calculate the discount.</p> |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order.</p> |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Amount Vouchers Effect Types](#discount-amount-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
@@ -216,7 +216,7 @@ One of:
 |:-----|:--------|
 | type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
 | unit_off</br>`integer` | <p>Number of units to be granted a full value discount.</p> |
-| unit_off_formula</br>`string` | <p>Formula used to calculate the number of units.</p> |
+| unit_off_formula</br>`string` | <p>Formula used to dynamically calculate the number of units.</p> |
 | effect | <p>Defines how the unit is added to the customer's order.</p> [Discount Unit Vouchers Effect Types](#discount-unit-vouchers-effect-types) |
 | unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
 | product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |
@@ -235,7 +235,7 @@ One of:
 |:-----|:--------|
 | type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `PERCENT` |
 | percent_off</br>`number` | <p>The percent discount that the customer will receive.</p> |
-| percent_off_formula</br>`string` |  |
+| percent_off_formula</br>`string` | <p>Formula used to dynamically calculate the discount.</p> |
 | amount_limit</br>`number` | <p>Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order.</p> |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Percent Vouchers Effect Types](#discount-percent-vouchers-effect-types) |
@@ -246,7 +246,7 @@ One of:
 |:-----|:--------|
 | type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `FIXED` |
 | fixed_amount</br>`number` | <p>Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the <code>fixed_amount_formula</code> parameter is present in the fixed amount definition, this value becomes the <strong>fallback value</strong>. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
-| fixed_amount_formula</br>`string` |  |
+| fixed_amount_formula</br>`string` | <p>Formula used to dynamically calculate the discount.</p> |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
@@ -274,7 +274,7 @@ Available values: `ADD_MISSING_ITEMS`, `ADD_NEW_ITEMS`, `ADD_MANY_ITEMS`
 | Attributes |  Description |
 |:-----|:--------|
 | unit_off</br>`number` | <p>Number of units to be granted a full value discount.</p> |
-| unit_off_formula</br>`string` | <p>Formula used to calculate the number of units.</p> |
+| unit_off_formula</br>`string` | <p>Formula used to dynamically calculate the number of units.</p> |
 | effect</br>`string` | <p>Defines how the unit is added to the customer's order.</p> Available values: `ADD_NEW_ITEMS`, `ADD_MISSING_ITEMS` |
 | unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
 | product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |

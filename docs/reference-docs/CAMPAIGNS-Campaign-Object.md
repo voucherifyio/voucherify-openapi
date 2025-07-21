@@ -21,10 +21,10 @@ All of:
 | name</br>`string` | <p>Campaign name.</p> |
 | description</br>`string` | <p>An optional field to keep any extra textual information about the campaign such as a campaign description and details.</p> |
 | campaign_type</br>`string` | <p>Type of campaign.</p> Available values: `LOYALTY_PROGRAM`, `GIFT_VOUCHERS`, `DISCOUNT_COUPONS`, `PROMOTION`, `REFERRAL_PROGRAM` |
-| type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.</p><ul><li><code>AUTO_UPDATE</code>: the campaign is dynamic, i.e. vouchers will generate based on set criteria</li><li><code>STATIC</code>: vouchers need to be manually published</li><li><code>STANDALONE</code>: campaign for single vouchers</li></ul> Available values: `AUTO_UPDATE`, `STATIC`, `STANDALONE` |
+| type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.</p><ul><li><code>AUTO_UPDATE</code>: the campaign is dynamic, i.e. vouchers will generate based on set criteria</li><li><code>STATIC</code>: vouchers need to be manually published</li><li><code>STANDALONE</code>: campaign for single vouchers</li></ul> Available values: `AUTO_UPDATE`, `STATIC`, `STANDALONE` |
 | voucher | See: [Campaign Voucher](#campaign-voucher) |
 | auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join a loyalty campaign if any earning rule is fulfilled.</p> |
-| join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once. It is always <code>false</code> for standalone voucher campaigns and it cannot be changed in them.</p> |
+| join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once. It is always <code>false</code> for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always <code>true</code> for loyalty campaigns and it cannot be changed in them.</p> |
 | use_voucher_metadata_schema</br>`boolean` | <p>Flag indicating whether the campaign is to use the voucher's metadata schema instead of the campaign metadata schema.</p> |
 | validity_timeframe | See: [Validity Timeframe](#validity-timeframe) |
 | validity_day_of_week | See: [Validity Day Of Week](#validity-day-of-week) |
@@ -40,10 +40,10 @@ All of:
 | category</br>`string` | <p>Unique category name.</p> |
 | creation_status</br>`string` | <p>Indicates the status of the campaign creation.</p> Available values: `DONE`, `IN_PROGRESS`, `FAILED`, `DRAFT`, `MODIFYING` |
 | vouchers_generation_status</br>`string` | <p>Indicates the status of the campaign's voucher generation.</p> Available values: `DONE`, `IN_PROGRESS`, `FAILED`, `DRAFT`, `MODIFYING` |
-| readonly</br>`boolean` | <p>Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles.</p> |
+| readonly</br>`boolean` | <p>Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles. It is also not returned for restricted users who use the <a href="ref:campaign-summary">GET Campaign summary</a> endpoint.</p> |
 | protected</br>`boolean` | <p>Indicates whether the resource can be deleted.</p> |
 | category_id</br>`string`, `null` | <p>Unique category ID that this campaign belongs to.</p> **Example:** <p>cat_0b688929a2476386a7</p> |
-| categories</br>`array` | <p>Contains details about the category.</p> Array of [Category](#category) |
+| categories</br>`array` | <p>Contains details about the campaign category. For the GET <a href="ref:list-campaigns">List campaigns</a> endpoint, this is returned only if the <code>expand=category</code> query parameter is passed in the request. Otherwise, it is returned as an empty array. For GET <a href="ref:get-campaign-summary">Campaign summary</a> endpoint, it is always returned as an empty array.</p> Array of [Category](#category) |
 | object</br>`string` | <p>The type of the object represented by JSON. This object stores information about the campaign.</p> |
 | referral_program | See: [Referral Program](#referral-program) |
 | loyalty_tiers_expiration | See: [Loyalty Tiers Expiration](#loyalty-tiers-expiration) |
@@ -187,7 +187,7 @@ One of:
 | Attributes |  Description |
 |:-----|:--------|
 | points</br>`integer` | <p>The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card.</p> |
-| expiration_rules</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">period_type</br><code>string</code></td><td style="text-align:left"><p>Type of period</p> Available values: <code>MONTH</code></td></tr><tr><td style="text-align:left">period_value</br><code>integer</code></td><td style="text-align:left"><p>Value of the period</p></td></tr><tr><td style="text-align:left">rounding_type</br><code>string</code></td><td style="text-align:left"><p>Type of rounding</p> Available values: <code>END_OF_MONTH</code>, <code>END_OF_QUARTER</code>, <code>END_OF_HALF_YEAR</code>, <code>END_OF_YEAR</code>, <code>PARTICULAR_MONTH</code></td></tr><tr><td style="text-align:left">rounding_value</br><code>integer</code></td><td style="text-align:left"><p>Value of rounding</p></td></tr></tbody></table> |
+| expiration_rules</br>`object` | <p>Defines the loyalty point expiration rule. This expiration rule applies when there are no <code>expiration_rules</code> defined for an earning rule.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">period_type</br><code>string</code></td><td style="text-align:left"><p>Type of period. Can be set for <code>MONTH</code> or <code>FIXED_DAY_OF_YEAR</code>. <code>MONTH</code> requires the <code>period_value</code> field. <code>FIXED_DAY_OF_YEAR</code> requires the <code>fixed_month</code> and <code>fixed_day</code> fields.</p> Available values: <code>FIXED_DAY_OF_YEAR</code>, <code>MONTH</code></td></tr><tr><td style="text-align:left">period_value</br><code>integer</code></td><td style="text-align:left"><p>Value of the period. Required for the <code>period_type: MONTH</code>.</p></td></tr><tr><td style="text-align:left">rounding_type</br><code>string</code></td><td style="text-align:left"><p>Type of rounding of the expiration period. Optional for the <code>period_type: MONTH</code>.</p> Available values: <code>END_OF_MONTH</code>, <code>END_OF_QUARTER</code>, <code>END_OF_HALF_YEAR</code>, <code>END_OF_YEAR</code>, <code>PARTICULAR_MONTH</code></td></tr><tr><td style="text-align:left">rounding_value</br><code>integer</code></td><td style="text-align:left"><p>Value of rounding of the expiration period. Required for the <code>rounding_type</code>.</p></td></tr><tr><td style="text-align:left">fixed_month</br><code>integer</code></td><td style="text-align:left"><p>Determines the month when the points expire; <code>1</code> is January, <code>2</code> is February, and so on. Required for the <code>period_type: FIXED_DAY_OF_YEAR</code>.</p></td></tr><tr><td style="text-align:left">fixed_day</br><code>integer</code></td><td style="text-align:left"><p>Determines the day of the month when the points expire. Required for the <code>period_type: FIXED_DAY_OF_YEAR</code>.</p></td></tr></tbody></table> |
 
 ## Code Config
 | Attributes |  Description |
@@ -222,7 +222,7 @@ One of:
 |:-----|:--------|
 | type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `AMOUNT` |
 | amount_off</br>`number` | <p>Amount taken off the subtotal of a price. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000.</p> |
-| amount_off_formula</br>`string` |  |
+| amount_off_formula</br>`string` | <p>Formula used to dynamically calculate the discount.</p> |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order.</p> |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Amount Vouchers Effect Types](#discount-amount-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
@@ -232,7 +232,7 @@ One of:
 |:-----|:--------|
 | type</br>`string` | <p>Discount type.</p> Available values: `UNIT` |
 | unit_off</br>`integer` | <p>Number of units to be granted a full value discount.</p> |
-| unit_off_formula</br>`string` | <p>Formula used to calculate the number of units.</p> |
+| unit_off_formula</br>`string` | <p>Formula used to dynamically calculate the number of units.</p> |
 | effect | <p>Defines how the unit is added to the customer's order.</p> [Discount Unit Vouchers Effect Types](#discount-unit-vouchers-effect-types) |
 | unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
 | product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |
@@ -251,7 +251,7 @@ One of:
 |:-----|:--------|
 | type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `PERCENT` |
 | percent_off</br>`number` | <p>The percent discount that the customer will receive.</p> |
-| percent_off_formula</br>`string` |  |
+| percent_off_formula</br>`string` | <p>Formula used to dynamically calculate the discount.</p> |
 | amount_limit</br>`number` | <p>Upper limit allowed to be applied as a discount. Value is multiplied by 100 to precisely represent 2 decimal places. For example, a $6 maximum discount is written as 600.</p> |
 | aggregated_amount_limit</br>`integer` | <p>Maximum discount amount per order.</p> |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Percent Vouchers Effect Types](#discount-percent-vouchers-effect-types) |
@@ -262,7 +262,7 @@ One of:
 |:-----|:--------|
 | type</br>`string` | <p>Defines the type of the voucher.</p> Available values: `FIXED` |
 | fixed_amount</br>`number` | <p>Sets a fixed value for an order total or the item price. The value is multiplied by 100 to precisely represent 2 decimal places. For example, a $10 discount is written as 1000. If the fixed amount is calculated by the formula, i.e. the <code>fixed_amount_formula</code> parameter is present in the fixed amount definition, this value becomes the <strong>fallback value</strong>. As a result, if the formula cannot be calculated due to missing metadata, for example, this value will be used as the fixed value.</p> |
-| fixed_amount_formula</br>`string` |  |
+| fixed_amount_formula</br>`string` | <p>Formula used to dynamically calculate the discount.</p> |
 | effect | <p>Defines how the discount is applied to the customer's order.</p> [Discount Fixed Vouchers Effect Types](#discount-fixed-vouchers-effect-types) |
 | is_dynamic</br>`boolean` | <p>Flag indicating whether the discount was calculated using a formula.</p> |
 
@@ -300,7 +300,7 @@ Available values: `ADD_MISSING_ITEMS`, `ADD_NEW_ITEMS`, `ADD_MANY_ITEMS`
 | Attributes |  Description |
 |:-----|:--------|
 | unit_off</br>`number` | <p>Number of units to be granted a full value discount.</p> |
-| unit_off_formula</br>`string` | <p>Formula used to calculate the number of units.</p> |
+| unit_off_formula</br>`string` | <p>Formula used to dynamically calculate the number of units.</p> |
 | effect</br>`string` | <p>Defines how the unit is added to the customer's order.</p> Available values: `ADD_NEW_ITEMS`, `ADD_MISSING_ITEMS` |
 | unit_type</br>`string` | <p>The product deemed as free, chosen from product inventory (e.g. time, items).</p> |
 | product | <p>Contains information about the product.</p> [Simple Product Discount Unit](#simple-product-discount-unit) |

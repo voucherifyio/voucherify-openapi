@@ -31,7 +31,7 @@ Voucherify offers a variety of tools to keep you informed about **campaign perfo
 If you want to add campaign insights to your BI tool, there are several handy features:
 
 * Dedicated API endpoints (including bulk operations).
-* Webhooks.
+* [Webhooks](ref:introduction-to-webhooks).
 * [Async CSV export](https://support.voucherify.io/article/543-data-export "Data Export").
 * Event streaming (Kafka).
 * Customer Data Platform integrations.

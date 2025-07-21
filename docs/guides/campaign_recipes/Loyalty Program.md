@@ -3,10 +3,13 @@ title: Loyalty Program
 excerpt: Learn how to use Voucherify API to build a loyalty program
 categorySlug: campaigns-recipes
 slug: loyalty-program
-type: basic
+type: link
 hidden: false
 order: 5
+link_url: https://support.voucherify.io/article/491-getting-started-with-loyalty-programs
 ---
+
+<!-- IT'S A REDIRECT UNTIL WE GET BACK TO THIS WITH A MORE DEV-ORIENTED CONTENT -->
 
 > 👍 Before you start
 >
@@ -69,6 +72,10 @@ Here are some ideas of the earning rules that you can use in your loyalty campai
 5. 5 points for every $1 spent on the new collection,
 6. 10 points for leaving a 5/5 star review.
 
+> 🚧 Maximum number of earning rules
+>
+> You can create up to 100 earning rules per project. The limit can be customized for clients with a single-tenant setup.
+
 ## Assigning Rewards
 
 You can assign multiple rewards to a loyalty program by using the [Create Reward Assignment](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/699307-c3e60c24-99c8-4236-9f0e-11dd4a43bc98?tab=body "Create Reward Assignment Endpoint in the Voucherify Postman Collection") API call. 
@@ -76,6 +83,25 @@ You can assign multiple rewards to a loyalty program by using the [Create Reward
 ## Tiers 
 
 You can create tiers during the campaign creation process in the dashboard or by using the [Create Loyalty Tiers](https://www.postman.com/voucherify/workspace/voucherify-s-public-workspace/request/699307-5361f9d7-fa58-4ef5-b1e3-e1dac5be5913?tab=body "Create Loyalty Tier Endpoint in the Voucherify Postman Collection") API call.
+
+## Point and tier calculation on a new day
+
+Loyalty points and tiers are recalculated on a midnight of a new day according to an internal Voucherify mechanism. This occurs every day on a midnight in the timezone set in Project settings.
+
+This mechanism works as follows:
+
+1. Pending point activation  
+   At a pending point bucket level, the activation date is set by specifying when the points are going to be activated. For example, a 2026-01-01 activation date means that points will be activated on 2026-01-01 00:00.
+2. Auto-redeem  
+   After the pending points have been activated, there is a check if the points have to be automatically spent on a reward, so no other effect occurs, like a tier upgrade.
+3. Loyalty tier recalculation  
+   Based on tier settings, the following actions are performed:
+   - Recalculation of expiring tiers: an expiration date is set by specifying when the tier will expire. For example, a 2025-12-31 expiration date means that tier will expire on 2026-01-01 00:00 (this is the same date and time as pending point buckets). As a result, the customer can upgrade, downgrade, leave, or prolong their tier.
+   - Recalculation of tiers if a new calculation period starts.
+4. Loyalty point expiration  
+   At an expiration bucket level, the expiration date is set by specifying when the points are going to be deducted. For example, a 2025-12-31 expiration date means that points will be deducted on 2026-01-01 00:00 (this is the same date and time as pending point buckets).
+5. Loyalty tier recalculation based on the point balance after point expiration  
+   Once the points are deducted, the balance changes so that the balance-based tiers are updated accordingly.
 
 ## Customer Experience
 
