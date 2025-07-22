@@ -55,7 +55,7 @@ const supportedLanguages: {
   },
   java: {
     name: "java",
-    breakingChangesVersion: 1,
+    breakingChangesVersion: 2,
   },
   dotnet: {
     name: "dotnet",
