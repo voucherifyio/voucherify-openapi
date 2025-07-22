@@ -4,6 +4,15 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-07-14
+
+- Added `limit` to the `Bundle` and `ValidationRuleBundleRules` schemas.
+- Removed `logic` from the `ValidationRuleBundleRules` schema, as it was hidden.
+
+## 2025-07-11
+
+- Added `units_limit_exceeded` to the `ApplicableTo` schema.
+
 ## 2025-06-27
 
 - Updated `expiration_rules` with `FIXED_DAY_OF_YEAR` in the following schemas: `CampaignLoyaltyCard` (also in OpenAPIWebhooks.json), `EarningRuleExpirationRules`.
