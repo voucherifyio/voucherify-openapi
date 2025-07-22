@@ -533,12 +533,12 @@ All of:
 | id</br>`string` | <p>Campaign ID.</p> |
 | name</br>`string` | <p>Campaign name.</p> |
 | campaign_type</br>`string` | <p>Type of campaign.</p> |
-| type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.</p><ul><li><code>AUTO_UPDATE</code>: the campaign is dynamic, i.e. vouchers will generate based on set criteria</li><li><code>STATIC</code>: vouchers need to be manually published</li><li><code>STANDALONE</code>: campaign for single vouchers</li></ul> Available values: `AUTO_UPDATE`, `STATIC`, `STANDALONE` |
+| type</br>`string` | <p>Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.</p><ul><li><code>AUTO_UPDATE</code>: the campaign is dynamic, i.e. vouchers will generate based on set criteria</li><li><code>STATIC</code>: vouchers need to be manually published</li><li><code>STANDALONE</code>: campaign for single vouchers</li></ul> Available values: `AUTO_UPDATE`, `STATIC`, `STANDALONE` |
 | is_referral_code</br>`boolean` | <p>Flag indicating whether this voucher is a referral code; <code>true</code> for campaign type <code>REFERRAL_PROGRAM</code>.</p> |
 | voucher | See: [Simple Campaign Voucher](#simple-campaign-voucher) |
 | referral_program | See: [Referral Program](#referral-program) |
 | auto_join</br>`boolean` | <p>Indicates whether customers will be able to auto-join the campaign if any earning rule is fulfilled.</p> |
-| join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once. It is always <code>false</code> for standalone voucher campaigns and it cannot be changed in them.</p> |
+| join_once</br>`boolean` | <p>If this value is set to <code>true</code>, customers will be able to join the campaign only once. It is always <code>false</code> for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always <code>true</code> for loyalty campaigns and it cannot be changed in them.</p> |
 | active</br>`boolean` | <p>Indicates whether the campaign is active.</p> |
 | category_id</br>`string`, `null` | <p>The unique category ID that this campaign belongs to.</p> |
 | category</br>`string` | <p>Unique category name.</p> |
@@ -1135,6 +1135,7 @@ One of:
 | validity_day_of_week | See: [Validity Day Of Week](#validity-day-of-week) |
 | validity_hours | See: [Validity Hours](#validity-hours) |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format.</p> |
+| expiration_rules | See: [Earning Rule Expiration Rules](#earning-rule-expiration-rules) |
 
 ## Customer Id
 | Attributes |  Description |
@@ -1271,7 +1272,7 @@ All of:
 | Attributes |  Description |
 |:-----|:--------|
 | points</br>`integer` | <p>The initial number of points to assign to the loyalty card. This is the current loyalty card score i.e. the number of loyalty points on the card.</p> |
-| expiration_rules</br>`object` | <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">period_type</br><code>string</code></td><td style="text-align:left"><p>Type of period</p> Available values: <code>MONTH</code></td></tr><tr><td style="text-align:left">period_value</br><code>integer</code></td><td style="text-align:left"><p>Value of the period</p></td></tr><tr><td style="text-align:left">rounding_type</br><code>string</code></td><td style="text-align:left"><p>Type of rounding</p> Available values: <code>END_OF_MONTH</code>, <code>END_OF_QUARTER</code>, <code>END_OF_HALF_YEAR</code>, <code>END_OF_YEAR</code>, <code>PARTICULAR_MONTH</code></td></tr><tr><td style="text-align:left">rounding_value</br><code>integer</code></td><td style="text-align:left"><p>Value of rounding</p></td></tr></tbody></table> |
+| expiration_rules</br>`object` | <p>Defines the loyalty point expiration rule. This expiration rule applies when there are no <code>expiration_rules</code> defined for an earning rule.</p> <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">period_type</br><code>string</code></td><td style="text-align:left"><p>Type of period. Can be set for <code>MONTH</code> or <code>FIXED_DAY_OF_YEAR</code>. <code>MONTH</code> requires the <code>period_value</code> field. <code>FIXED_DAY_OF_YEAR</code> requires the <code>fixed_month</code> and <code>fixed_day</code> fields.</p> Available values: <code>FIXED_DAY_OF_YEAR</code>, <code>MONTH</code></td></tr><tr><td style="text-align:left">period_value</br><code>integer</code></td><td style="text-align:left"><p>Value of the period. Required for the <code>period_type: MONTH</code>.</p></td></tr><tr><td style="text-align:left">rounding_type</br><code>string</code></td><td style="text-align:left"><p>Type of rounding of the expiration period. Optional for the <code>period_type: MONTH</code>.</p> Available values: <code>END_OF_MONTH</code>, <code>END_OF_QUARTER</code>, <code>END_OF_HALF_YEAR</code>, <code>END_OF_YEAR</code>, <code>PARTICULAR_MONTH</code></td></tr><tr><td style="text-align:left">rounding_value</br><code>integer</code></td><td style="text-align:left"><p>Value of rounding of the expiration period. Required for the <code>rounding_type</code>.</p></td></tr><tr><td style="text-align:left">fixed_month</br><code>integer</code></td><td style="text-align:left"><p>Determines the month when the points expire; <code>1</code> is January, <code>2</code> is February, and so on. Required for the <code>period_type: FIXED_DAY_OF_YEAR</code>.</p></td></tr><tr><td style="text-align:left">fixed_day</br><code>integer</code></td><td style="text-align:left"><p>Determines the day of the month when the points expire. Required for the <code>period_type: FIXED_DAY_OF_YEAR</code>.</p></td></tr></tbody></table> |
 
 ## Code Config
 | Attributes |  Description |
@@ -1450,6 +1451,16 @@ One of:
 
 ## Earning Rule Event
 
+
+## Earning Rule Expiration Rules
+| Attributes |  Description |
+|:-----|:--------|
+| period_type</br>`string` | <p>Type of period. Can be set for <code>MONTH</code> or <code>FIXED_DAY_OF_YEAR</code>. <code>MONTH</code> requires the <code>period_value</code> field. <code>FIXED_DAY_OF_YEAR</code> requires the <code>fixed_month</code> and <code>fixed_day</code> fields.</p> Available values: `FIXED_DAY_OF_YEAR`, `MONTH` |
+| period_value</br>`integer` | <p>Value of the period. Required for the <code>period_type: MONTH</code>.</p> |
+| rounding_type</br>`string` | <p>Type of rounding of the expiration period. Optional for the <code>period_type: MONTH</code>.</p> Available values: `END_OF_MONTH`, `END_OF_QUARTER`, `END_OF_HALF_YEAR`, `END_OF_YEAR`, `PARTICULAR_MONTH` |
+| rounding_value</br>`integer` | <p>Value of rounding of the expiration period. Required for the <code>rounding_type</code>.</p> |
+| fixed_month</br>`integer` | <p>Determines the month when the points expire; <code>1</code> is January, <code>2</code> is February, and so on. Required for the <code>period_type: FIXED_DAY_OF_YEAR</code>.</p> |
+| fixed_day</br>`integer` | <p>Determines the day of the month when the points expire. Required for the <code>period_type: FIXED_DAY_OF_YEAR</code>.</p> |
 
 ## Reward Assignment Base
 | Attributes |  Description |

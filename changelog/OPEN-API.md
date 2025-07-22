@@ -4,9 +4,38 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-06-27
+
+- Updated `expiration_rules` with `FIXED_DAY_OF_YEAR` in the following schemas: `CampaignLoyaltyCard` (also in OpenAPIWebhooks.json), `EarningRuleExpirationRules`.
+
+## 2025-06-26
+
+- Added `session` object to the `RedemptionBase` schema.
+
+## 2025-06-25
+
+- Added `webhooks_enabled` property to the `VouchersImportCSVRequestBody` schema.
+- Added `404` errors with examples to the `/v1/vouchers/{code}/sessions/{sessionKey}` endpoint and improved its description.
+- Added `locked_credits` to the `RedeemableGift` schema and `session` to the `QualificationsCheckEligibilityRequestBody` and `ClientQualificationsCheckEligibilityRequestBody`.
+- Added the info about `join_once` being always set to `true` for loyalty campaigns.
+
+## 2025-06-17
+
+- Added a new endpoint: GET `/v1/campaigns/{campaignId}/summary` and associated schemas: `ParameterDateOnly`, `CampaignsSummaryGetResponseBody`, `CampaignsSummaryDiscountCampaign`, `CampaignsSummaryGiftCampaign`, `CampaignsSummaryLoyaltyCampaign`, `CampaignsSummaryPromotionCampaign`, `CampaignsSummaryReferralCampaign`, `CampaignsSummaryCampaignBase`, `CampaignsSummaryVouchersPublications`, `CampaignsSummaryDiscounts`, `CampaignsSummaryLoyalty`.
+
 ## 2025-06-11
 
 Remove `Beta` tag from pending point endpoints
+
+## 2025-06-04
+
+- Improved descriptions in the `StackingRules` and `ManagementProjectsStackingRules` schemas.
+- Added `no_effect_skip_categories`, `no_effect_redeem_anyway_categories` to the `StackingRules` schema.
+- Added `no_effect_skip_categories`, `redeemables_products_application_mode`, `redeemables_no_effect_rule`, `no_effect_redeem_anyway_categories` to the `ManagementProjectsStackingRules` schema.
+
+## 2025-05-23
+
+- Added `expiration_rules` to the `EarningRuleBase` schema.
 
 ## 2025-04-16
 

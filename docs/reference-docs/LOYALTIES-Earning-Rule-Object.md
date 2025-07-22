@@ -34,6 +34,7 @@ All of:
 | validity_day_of_week | See: [Validity Day Of Week](#validity-day-of-week) |
 | validity_hours | See: [Validity Hours](#validity-hours) |
 | metadata</br>`object` | <p>The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format.</p> |
+| expiration_rules | See: [Earning Rule Expiration Rules](#earning-rule-expiration-rules) |
 
 ## Define fixed amount of points
 | Attributes |  Description |
@@ -62,6 +63,16 @@ One of:
 | Attributes |  Description |
 |:-----|:--------|
 | daily</br>`array` | <p>Defines the reccuring period(s) when the resource is active. The periods should not overlap.</p> Array of: <table><thead><tr><th style="text-align:left">Attributes</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">start_time</br><code>string</code></td><td style="text-align:left"><p>Defines the starting hour of validity in the HH:mm format. The resource is <em>inactive before</em> this time.</p> <strong>Example:</strong> <p>12:00</p></td></tr><tr><td style="text-align:left">days_of_week</br><code>array</code></td><td style="text-align:left"><p>Integer array corresponding to the particular days of the week in which the resource is valid.</p><ul><li><code>0</code> Sunday</li><li><code>1</code> Monday</li><li><code>2</code> Tuesday</li><li><code>3</code>  Wednesday</li><li><code>4</code> Thursday</li><li><code>5</code> Friday</li><li><code>6</code> Saturday</li></ul></td></tr><tr><td style="text-align:left">expiration_time</br><code>string</code></td><td style="text-align:left"><p>Defines the ending hour of validity in the HH:mm format. The resource is <em>inactive after</em> this time.</p> <strong>Example:</strong> <p>14:00</p></td></tr></tbody></table> |
+
+## Earning Rule Expiration Rules
+| Attributes |  Description |
+|:-----|:--------|
+| period_type</br>`string` | <p>Type of period. Can be set for <code>MONTH</code> or <code>FIXED_DAY_OF_YEAR</code>. <code>MONTH</code> requires the <code>period_value</code> field. <code>FIXED_DAY_OF_YEAR</code> requires the <code>fixed_month</code> and <code>fixed_day</code> fields.</p> Available values: `FIXED_DAY_OF_YEAR`, `MONTH` |
+| period_value</br>`integer` | <p>Value of the period. Required for the <code>period_type: MONTH</code>.</p> |
+| rounding_type</br>`string` | <p>Type of rounding of the expiration period. Optional for the <code>period_type: MONTH</code>.</p> Available values: `END_OF_MONTH`, `END_OF_QUARTER`, `END_OF_HALF_YEAR`, `END_OF_YEAR`, `PARTICULAR_MONTH` |
+| rounding_value</br>`integer` | <p>Value of rounding of the expiration period. Required for the <code>rounding_type</code>.</p> |
+| fixed_month</br>`integer` | <p>Determines the month when the points expire; <code>1</code> is January, <code>2</code> is February, and so on. Required for the <code>period_type: FIXED_DAY_OF_YEAR</code>.</p> |
+| fixed_day</br>`integer` | <p>Determines the day of the month when the points expire. Required for the <code>period_type: FIXED_DAY_OF_YEAR</code>.</p> |
 
 ## Define amount of points proportional to the order
 One of:

@@ -7,6 +7,23 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2025-07-07
+
+- Updated Key-concepts.md with object relation tables. Also, updated the article and added new content.
+
+## 2025-06-25
+
+Add info about the Brand new day to `Loyalty program.md`
+
+## 2025-06-18
+
+- Hid the following articles:
+  - `Prepaid-Gift-Cards.md`
+  - `Stacking-Promotion-Tiers.md`
+  - `Free-Shipping-Discount.md`
+  - `Product-Specific-Discounts.md`
+- Updated `Import-Legacy-Codes.md`
+
 ## 2025-05-29
 
 Small improvements to `Welcome-to-Voucherify.md`.
