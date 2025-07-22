@@ -514,7 +514,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published",
             "enum": [
               "AUTO_UPDATE",
               "STATIC"
@@ -523,7 +523,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. For loyalty campaigns, it's forced to `true`, even if `join_once: false` is passed in the request.",
             "nullable": true
           },
           "auto_join": {
@@ -710,7 +710,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
             "enum": [
               "AUTO_UPDATE",
               "STATIC",
@@ -728,7 +728,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns and it cannot be changed in them.",
             "nullable": true
           },
           "use_voucher_metadata_schema": {
@@ -825,7 +825,7 @@
           },
           "readonly": {
             "type": "boolean",
-            "description": "Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles.",
+            "description": "Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles. It is also not returned for restricted users who use the [GET Campaign summary](ref:campaign-summary) endpoint.",
             "nullable": true
           },
           "protected": {
@@ -842,7 +842,7 @@
           "categories": {
             "title": "CampaignsCreateResponseBodyCategories",
             "type": "array",
-            "description": "Contains details about the category.",
+            "description": "Contains details about the campaign category. For the GET [List campaigns](ref:list-campaigns) endpoint, this is returned only if the `expand=category` query parameter is passed in the request. Otherwise, it is returned as an empty array. For GET [Campaign summary](ref:get-campaign-summary) endpoint, it is always returned as an empty array.",
             "items": {
               "$ref": "#/components/schemas/Category"
             },
@@ -928,7 +928,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
             "enum": [
               "AUTO_UPDATE",
               "STATIC",
@@ -946,7 +946,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns and it cannot be changed in them.",
             "nullable": true
           },
           "use_voucher_metadata_schema": {
@@ -1043,7 +1043,7 @@
           },
           "readonly": {
             "type": "boolean",
-            "description": "Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles.",
+            "description": "Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles. It is also not returned for restricted users who use the [GET Campaign summary](ref:campaign-summary) endpoint.",
             "nullable": true
           },
           "protected": {
@@ -1060,7 +1060,7 @@
           "categories": {
             "title": "CampaignsGetResponseBodyCategories",
             "type": "array",
-            "description": "Contains details about the category.",
+            "description": "Contains details about the campaign category. For the GET [List campaigns](ref:list-campaigns) endpoint, this is returned only if the `expand=category` query parameter is passed in the request. Otherwise, it is returned as an empty array. For GET [Campaign summary](ref:get-campaign-summary) endpoint, it is always returned as an empty array.",
             "items": {
               "$ref": "#/components/schemas/Category"
             },
@@ -1152,6 +1152,218 @@
           "total": {
             "type": "integer",
             "description": "Total number of campaigns.",
+            "nullable": true
+          }
+        }
+      },
+      "CampaignsSummaryGetResponseBody": {
+        "title": "CampaignsSummaryGetResponseBody",
+        "type": "object",
+        "properties": {
+          "object": {
+            "type": "string",
+            "description": "The type of the object, which is `campaign_summary`.",
+            "enum": [
+              "campaign_summary"
+            ],
+            "nullable": true
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/CampaignBase"
+          },
+          "redemptions": {
+            "type": "integer",
+            "description": "Total number of redemptions, which includes successful and failed redemptions.",
+            "nullable": true
+          },
+          "redemptions_succeeded": {
+            "type": "integer",
+            "description": "Total number of successful redemptions.",
+            "nullable": true
+          },
+          "redemptions_failed": {
+            "type": "integer",
+            "description": "Total number of failed redemptions.",
+            "nullable": true
+          },
+          "rollbacks": {
+            "type": "integer",
+            "description": "Total number of rollbacks, which includes successful and failed rollbacks.",
+            "nullable": true
+          },
+          "rollbacks_succeeded": {
+            "type": "integer",
+            "description": "Total number of successful rollbacks.",
+            "nullable": true
+          },
+          "rollbacks_failed": {
+            "type": "integer",
+            "description": "Total number of failed rollbacks.",
+            "nullable": true
+          },
+          "validations": {
+            "type": "integer",
+            "description": "Total number of validations, which includes successful and failed validations.",
+            "nullable": true
+          },
+          "validations_succeeded": {
+            "type": "integer",
+            "description": "Total number of successful validations.",
+            "nullable": true
+          },
+          "validations_failed": {
+            "type": "integer",
+            "description": "Total number of failed validations.",
+            "nullable": true
+          },
+          "orders_amount": {
+            "type": "integer",
+            "description": "Total amount of orders related to the campaign. This amount is not reduced by `orders_rolledback_amount`. The value is multiplied by `100` to precisely represent 2 decimal places. For example, `$10` is represented as `1000`.",
+            "nullable": true
+          },
+          "orders_rolledback_amount": {
+            "type": "integer",
+            "description": "Total amount of orders that were rolled back and are related to the campaign. The value is multiplied by `100` to precisely represent 2 decimal places. For example, `$10` is represented as `1000`.",
+            "nullable": true
+          },
+          "vouchers_created": {
+            "type": "integer",
+            "description": "Total number of vouchers created within the campaign. Includes vouchers generated when the campaign was created, vouchers added manually, or vouchers generated automatically when a new customer joined the campaign.",
+            "nullable": true
+          },
+          "vouchers_deleted": {
+            "type": "integer",
+            "description": "Total number of vouchers deleted within the campaign. Includes vouchers moved to the bin and vouchers deleted permanently. Vouchers moved to the bin and then deleted permanently are counted once.",
+            "nullable": true
+          },
+          "publications": {
+            "type": "integer",
+            "description": "Total number of publications, which includes successful and failed publications.",
+            "nullable": true
+          },
+          "publications_succeeded": {
+            "type": "integer",
+            "description": "Total number of successful publications.",
+            "nullable": true
+          },
+          "publications_failed": {
+            "type": "integer",
+            "description": "Total number of failed publications.",
+            "nullable": true
+          },
+          "discounted_amount": {
+            "type": "integer",
+            "description": "Total amount of discounts related to the campaign. This amount is not reduced by the `rolledback_discounted_amount`. The value is multiplied by `100` to precisely represent 2 decimal places. For example, `$10` is represented as `1000`.",
+            "nullable": true
+          },
+          "rolledback_discounted_amount": {
+            "type": "integer",
+            "description": "Total amount of discounts orders that were rolled back and are related to the campaign. The value is multiplied by `100` to precisely represent 2 decimal places. For example, `$10` is represented as `1000`.",
+            "nullable": true
+          },
+          "created_vouchers_amount": {
+            "type": "integer",
+            "description": "The total credit amount for all created gift cards. The value is multiplied by `100` to precisely represent 2 decimal places. For example, `$10` is represented as `1000`.",
+            "nullable": true
+          },
+          "amount_added": {
+            "type": "integer",
+            "description": "The total credit amount that was added. The value is multiplied by `100` to precisely represent 2 decimal places. For example, `$10` is represented as `1000`.",
+            "nullable": true
+          },
+          "amount_deleted": {
+            "type": "integer",
+            "description": "The total credit amount that was deleted by deleting gift cards. The value is multiplied by `100` to precisely represent 2 decimal places. For example, `$10` is represented as `1000`.",
+            "nullable": true
+          },
+          "amount_redeemed": {
+            "type": "integer",
+            "description": "The total credit amount that was redeemed. This amount is not reduced by the `amount_rolledback`. The value is multiplied by `100` to precisely represent 2 decimal places. For example, `$10` is represented as `1000`.",
+            "nullable": true
+          },
+          "amount_rolledback": {
+            "type": "integer",
+            "description": "The total credit amount that was rolled back. The value is multiplied by `100` to precisely represent 2 decimal places. For example, `$10` is represented as `1000`.",
+            "nullable": true
+          },
+          "amount_subtracted": {
+            "type": "integer",
+            "description": "The total credit amount that was subtracted. The value is multiplied by `100` to precisely represent 2 decimal places. For example, `$10` is represented as `1000`.",
+            "nullable": true
+          },
+          "created_vouchers_points": {
+            "type": "integer",
+            "description": "Total number of points added to newly created loyalty cards. This also counts points added for the loyalty cards which are created by importing a CSV file to a campaign.",
+            "nullable": true
+          },
+          "points_deleted": {
+            "type": "integer",
+            "description": "Total number of points that were deleted.",
+            "nullable": true
+          },
+          "points_subtracted": {
+            "type": "integer",
+            "description": "Total number of points that were subtracted.",
+            "nullable": true
+          },
+          "points_added": {
+            "type": "integer",
+            "description": "Total number of points that were added. This includes points added manually or automatically by redeeming a reward that adds loyalty points to cards in this campaign.",
+            "nullable": true
+          },
+          "points_rewarded": {
+            "type": "integer",
+            "description": "Total number of points that were rewarded to loyalty cards through earning rules. This includes pending points that were activated.",
+            "nullable": true
+          },
+          "points_redeemed": {
+            "type": "integer",
+            "description": "Total number of points that were redeemed for rewards.",
+            "nullable": true
+          },
+          "points_rolledback": {
+            "type": "integer",
+            "description": "Total number of points that were rolled back for reward redemptions.",
+            "nullable": true
+          },
+          "points_expired": {
+            "type": "integer",
+            "description": "Total number of points that have expired.",
+            "nullable": true
+          },
+          "points_transferred_out": {
+            "type": "integer",
+            "description": "Total number of points transferred out of loyalty cards covered by the campaign.",
+            "nullable": true
+          },
+          "points_transferred_in": {
+            "type": "integer",
+            "description": "Total number of points transferred into loyalty cards covered by the campaign.",
+            "nullable": true
+          },
+          "pending_points_added": {
+            "type": "integer",
+            "description": "Total number of pending points that were added either as part of earning rules or added manually to an existing pending point bucket. Pending points that were activated manually or automatically or that were canceled do not affect this number.",
+            "nullable": true
+          },
+          "pending_points_subtracted": {
+            "type": "integer",
+            "description": "Total number of pending points that were subtracted from existing pending point buckets.",
+            "nullable": true
+          },
+          "pending_points_activated": {
+            "type": "integer",
+            "description": "Total number of pending points that were activated manually or automatically.",
+            "nullable": true
+          },
+          "pending_points_canceled": {
+            "type": "integer",
+            "description": "Total number of pending points that were canceled.",
+            "nullable": true
+          },
+          "referred_customers": {
+            "type": "integer",
+            "description": "Total number of all referred customers.",
             "nullable": true
           }
         }
@@ -1477,7 +1689,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns and it cannot be changed in them.",
             "nullable": true
           },
           "auto_join": {
@@ -1554,7 +1766,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
             "enum": [
               "AUTO_UPDATE",
               "STATIC",
@@ -1572,7 +1784,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns and it cannot be changed in them.",
             "nullable": true
           },
           "use_voucher_metadata_schema": {
@@ -1669,7 +1881,7 @@
           },
           "readonly": {
             "type": "boolean",
-            "description": "Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles.",
+            "description": "Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles. It is also not returned for restricted users who use the [GET Campaign summary](ref:campaign-summary) endpoint.",
             "nullable": true
           },
           "protected": {
@@ -1686,7 +1898,7 @@
           "categories": {
             "title": "CampaignsUpdateResponseBodyCategories",
             "type": "array",
-            "description": "Contains details about the category.",
+            "description": "Contains details about the campaign category. For the GET [List campaigns](ref:list-campaigns) endpoint, this is returned only if the `expand=category` query parameter is passed in the request. Otherwise, it is returned as an empty array. For GET [Campaign summary](ref:get-campaign-summary) endpoint, it is always returned as an empty array.",
             "items": {
               "$ref": "#/components/schemas/Category"
             },
@@ -2794,6 +3006,22 @@
           },
           "options": {
             "$ref": "#/components/schemas/QualificationsOption"
+          },
+          "session": {
+            "title": "ClientQualificationsCheckEligibilityRequestBodySession",
+            "type": "object",
+            "description": "Parameter to return details about `locked_credits` on a gift card which has locked credits under a validation session.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Parameter required to return the details about the `locked_credits`.",
+                "enum": [
+                  "LOCK"
+                ],
+                "nullable": true
+              }
+            },
+            "nullable": true
           },
           "metadata": {
             "title": "ClientQualificationsCheckEligibilityRequestBodyMetadata",
@@ -5990,7 +6218,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published",
             "enum": [
               "AUTO_UPDATE",
               "STATIC"
@@ -5999,7 +6227,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. For loyalty campaigns, it's forced to `true`, even if `join_once: false` is passed in the request.",
             "nullable": true
           },
           "auto_join": {
@@ -6125,7 +6353,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once.",
+            "description": "Always set to `true` for loyalty campaigns, meaning customers can join the campaign only once. It can't be changed to `false`.",
             "nullable": true
           },
           "use_voucher_metadata_schema": {
@@ -6586,14 +6814,14 @@
               "type": "string",
               "example": "2022-02-02T13:00:00.000Z",
               "format": "date-time",
-              "description": "Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. Earning rule is *inactive before* this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default. ",
+              "description": "Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. Earning rule is *inactive before* this date. If you don't define the start date for an earning rule, it will inherit the campaign start date by default. ",
               "nullable": true
             },
             "expiration_date": {
               "type": "string",
               "format": "date-time",
               "example": "2022-03-03T14:30:00.000Z",
-              "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default.",
+              "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it will inherit the campaign expiration date by default.",
               "nullable": true
             },
             "pending_points": {
@@ -6618,6 +6846,9 @@
                   "nullable": true
                 }
               }
+            },
+            "expiration_rules": {
+              "$ref": "#/components/schemas/EarningRuleExpirationRules"
             },
             "validity_timeframe": {
               "$ref": "#/components/schemas/ValidityTimeframe"
@@ -7102,6 +7333,9 @@
             "description": "The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format.",
             "nullable": true
           },
+          "expiration_rules": {
+            "$ref": "#/components/schemas/EarningRuleExpirationRules"
+          },
           "validation_rule_id": {
             "type": "string",
             "nullable": true,
@@ -7545,6 +7779,9 @@
             "description": "The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format.",
             "nullable": true
           },
+          "expiration_rules": {
+            "$ref": "#/components/schemas/EarningRuleExpirationRules"
+          },
           "updated_at": {
             "type": "string",
             "nullable": true,
@@ -7982,6 +8219,9 @@
             "type": "object",
             "description": "The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format.",
             "nullable": true
+          },
+          "expiration_rules": {
+            "$ref": "#/components/schemas/EarningRuleExpirationRules"
           },
           "updated_at": {
             "type": "string",
@@ -8421,6 +8661,9 @@
             "description": "The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format.",
             "nullable": true
           },
+          "expiration_rules": {
+            "$ref": "#/components/schemas/EarningRuleExpirationRules"
+          },
           "validation_rule_id": {
             "type": "string",
             "nullable": true,
@@ -8783,14 +9026,14 @@
             "type": "string",
             "example": "2022-02-02T13:00:00.000Z",
             "format": "date-time",
-            "description": "Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. Earning rule is *inactive before* this date. If you don't define the start date for an earning rule, it'll inherit the campaign start date by default. ",
+            "description": "Start date defines when the earning rule starts to be active. Activation timestamp is presented in the ISO 8601 format. Earning rule is *inactive before* this date. If you don't define the start date for an earning rule, it will inherit the campaign start date by default. ",
             "nullable": true
           },
           "expiration_date": {
             "type": "string",
             "format": "date-time",
             "example": "2022-03-03T14:30:00.000Z",
-            "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it'll inherit the campaign expiration date by default.",
+            "description": "Expiration date defines when the earning rule expires. Expiration timestamp is presented in the ISO 8601 format.  Earning rule is *inactive after* this date.If you don't define the expiration date for an earning rule, it will inherit the campaign expiration date by default.",
             "nullable": true
           },
           "pending_points": {
@@ -8815,6 +9058,9 @@
                 "nullable": true
               }
             }
+          },
+          "expiration_rules": {
+            "$ref": "#/components/schemas/EarningRuleExpirationRules"
           },
           "validity_timeframe": {
             "$ref": "#/components/schemas/ValidityTimeframe"
@@ -9257,6 +9503,9 @@
             "description": "The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format.",
             "nullable": true
           },
+          "expiration_rules": {
+            "$ref": "#/components/schemas/EarningRuleExpirationRules"
+          },
           "validation_rule_id": {
             "type": "string",
             "nullable": true,
@@ -9322,7 +9571,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once.",
+            "description": "Always set to `true` for loyalty campaigns, meaning customers can join the campaign only once. It can't be changed to `false`.",
             "nullable": true
           },
           "use_voucher_metadata_schema": {
@@ -10222,6 +10471,75 @@
           },
           "related_object": {
             "title": "LoyaltiesMembersPendingPointsActivateResponseBodyRelatedObject",
+            "type": "object",
+            "description": "Defines the resource that is being modified.",
+            "required": [],
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The object being modified, i.e. `voucher`.",
+                "enum": [
+                  "voucher"
+                ],
+                "nullable": true
+              },
+              "id": {
+                "type": "string",
+                "description": "Identifies the voucher that is being modified. This is the unique identifer that was assigned by Voucherify.",
+                "example": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc",
+                "nullable": true
+              }
+            },
+            "nullable": true
+          },
+          "operation_type": {
+            "type": "string",
+            "description": "The type of the operation being performed.",
+            "enum": [
+              "MANUAL"
+            ],
+            "nullable": true
+          }
+        },
+        "required": []
+      },
+      "LoyaltiesMembersPendingPointsBalanceRequestBody": {
+        "title": "LoyaltiesMembersPendingPointsBalanceRequestBody",
+        "type": "object",
+        "description": "Request body schema for **POST** `v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/balance`.",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "Add or subtract pending points with a given ID. A negative value subtracts the points.",
+            "nullable": true
+          }
+        }
+      },
+      "LoyaltiesMembersPendingPointsBalanceResponseBody": {
+        "title": "LoyaltiesMembersPendingPointsBalanceResponseBody",
+        "type": "object",
+        "description": "Response body schema for **POST** `/loyalties/members/{memberId}/pending-points/{pendingPointsId}/balance`.",
+        "properties": {
+          "points": {
+            "type": "integer",
+            "description": "The number of pending points added to or subtracted from the loyalty card.",
+            "nullable": true
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total number of pending points currently on a loyalty card.",
+            "nullable": true
+          },
+          "object": {
+            "type": "string",
+            "description": "The type of the object represented by JSON. Default is `balance`.",
+            "enum": [
+              "balance"
+            ],
+            "nullable": true
+          },
+          "related_object": {
+            "title": "LoyaltiesMembersPendingPointsBalanceResponseBodyRelatedObject",
             "type": "object",
             "description": "Defines the resource that is being modified.",
             "required": [],
@@ -12665,7 +12983,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns and it cannot be changed in them.",
             "nullable": true
           },
           "auto_join": {
@@ -12746,7 +13064,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once.",
+            "description": "Always set to `true` for loyalty campaigns, meaning customers can join the campaign only once. It can't be changed to `false`.",
             "nullable": true
           },
           "use_voucher_metadata_schema": {
@@ -15119,7 +15437,7 @@
           "exclusive_categories": {
             "title": "ManagementProjectsStackingRulesCreateRequestBodyExclusiveCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are exclusive.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "ManagementProjectsStackingRulesCreateRequestBodyExclusiveCategoriesItem",
               "type": "string"
@@ -15129,7 +15447,7 @@
           "joint_categories": {
             "title": "ManagementProjectsStackingRulesCreateRequestBodyJointCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are joint.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "ManagementProjectsStackingRulesCreateRequestBodyJointCategoriesItem",
               "type": "string"
@@ -15138,25 +15456,28 @@
           },
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "minimum": 1,
             "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
+            "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "minimum": 1,
+            "maximum": 30
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 5,
             "nullable": true
@@ -15164,7 +15485,9 @@
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`. The number must be less than or equal to `applicable_exclusive_redeemables_limit`.",
+            "minimum": 1,
+            "maximum": 30
           },
           "discount_calculation_mode": {
             "type": "string",
@@ -15206,11 +15529,49 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
             ],
+            "nullable": true
+          },
+          "redeemables_products_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
+            "enum": [
+              "STACK",
+              "ONCE"
+            ],
+            "nullable": true
+          },
+          "redeemables_no_effect_rule": {
+            "type": "string",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
+            "enum": [
+              "REDEEM_ANYWAY",
+              "SKIP"
+            ],
+            "nullable": true
+          },
+          "no_effect_skip_categories": {
+            "title": "ManagementProjectsStackingRulesCreateRequestBodyNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`. Category IDs can't overlap with the IDs in `no_effect_redeem_anyway_categories`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesCreateRequestBodyNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "ManagementProjectsStackingRulesCreateRequestBodyNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`. Category IDs can't overlap with the IDs in `no_effect_skip_categories`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesCreateRequestBodyNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
             "nullable": true
           },
           "redeemables_rollback_order_mode": {
@@ -15238,7 +15599,7 @@
           "exclusive_categories": {
             "title": "ManagementProjectsStackingRulesCreateResponseBodyExclusiveCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are exclusive.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "ManagementProjectsStackingRulesCreateResponseBodyExclusiveCategoriesItem",
               "type": "string"
@@ -15248,7 +15609,7 @@
           "joint_categories": {
             "title": "ManagementProjectsStackingRulesCreateResponseBodyJointCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are joint.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "ManagementProjectsStackingRulesCreateResponseBodyJointCategoriesItem",
               "type": "string"
@@ -15257,25 +15618,28 @@
           },
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "minimum": 1,
             "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
+            "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "minimum": 1,
+            "maximum": 30
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 5,
             "nullable": true
@@ -15283,7 +15647,9 @@
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`. The number must be less than or equal to `applicable_exclusive_redeemables_limit`.",
+            "minimum": 1,
+            "maximum": 30
           },
           "discount_calculation_mode": {
             "type": "string",
@@ -15325,11 +15691,49 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
             ],
+            "nullable": true
+          },
+          "redeemables_products_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
+            "enum": [
+              "STACK",
+              "ONCE"
+            ],
+            "nullable": true
+          },
+          "redeemables_no_effect_rule": {
+            "type": "string",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
+            "enum": [
+              "REDEEM_ANYWAY",
+              "SKIP"
+            ],
+            "nullable": true
+          },
+          "no_effect_skip_categories": {
+            "title": "ManagementProjectsStackingRulesCreateResponseBodyNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`. Category IDs can't overlap with the IDs in `no_effect_redeem_anyway_categories`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesCreateResponseBodyNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "ManagementProjectsStackingRulesCreateResponseBodyNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`. Category IDs can't overlap with the IDs in `no_effect_skip_categories`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesCreateResponseBodyNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
             "nullable": true
           },
           "redeemables_rollback_order_mode": {
@@ -15370,7 +15774,7 @@
           "exclusive_categories": {
             "title": "ManagementProjectsStackingRulesGetResponseBodyExclusiveCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are exclusive.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "ManagementProjectsStackingRulesGetResponseBodyExclusiveCategoriesItem",
               "type": "string"
@@ -15380,7 +15784,7 @@
           "joint_categories": {
             "title": "ManagementProjectsStackingRulesGetResponseBodyJointCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are joint.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "ManagementProjectsStackingRulesGetResponseBodyJointCategoriesItem",
               "type": "string"
@@ -15389,25 +15793,28 @@
           },
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "minimum": 1,
             "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
+            "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "minimum": 1,
+            "maximum": 30
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 5,
             "nullable": true
@@ -15415,7 +15822,9 @@
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`. The number must be less than or equal to `applicable_exclusive_redeemables_limit`.",
+            "minimum": 1,
+            "maximum": 30
           },
           "discount_calculation_mode": {
             "type": "string",
@@ -15457,11 +15866,49 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
             ],
+            "nullable": true
+          },
+          "redeemables_products_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
+            "enum": [
+              "STACK",
+              "ONCE"
+            ],
+            "nullable": true
+          },
+          "redeemables_no_effect_rule": {
+            "type": "string",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
+            "enum": [
+              "REDEEM_ANYWAY",
+              "SKIP"
+            ],
+            "nullable": true
+          },
+          "no_effect_skip_categories": {
+            "title": "ManagementProjectsStackingRulesGetResponseBodyNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`. Category IDs can't overlap with the IDs in `no_effect_redeem_anyway_categories`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesGetResponseBodyNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "ManagementProjectsStackingRulesGetResponseBodyNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`. Category IDs can't overlap with the IDs in `no_effect_skip_categories`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesGetResponseBodyNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
             "nullable": true
           },
           "redeemables_rollback_order_mode": {
@@ -15534,7 +15981,7 @@
           "exclusive_categories": {
             "title": "ManagementProjectsStackingRulesUpdateRequestBodyExclusiveCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are exclusive.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "ManagementProjectsStackingRulesUpdateRequestBodyExclusiveCategoriesItem",
               "type": "string"
@@ -15544,7 +15991,7 @@
           "joint_categories": {
             "title": "ManagementProjectsStackingRulesUpdateRequestBodyJointCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are joint.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "ManagementProjectsStackingRulesUpdateRequestBodyJointCategoriesItem",
               "type": "string"
@@ -15553,25 +16000,28 @@
           },
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "minimum": 1,
             "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
+            "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "minimum": 1,
+            "maximum": 30
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 5,
             "nullable": true
@@ -15579,7 +16029,9 @@
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`. The number must be less than or equal to `applicable_exclusive_redeemables_limit`.",
+            "minimum": 1,
+            "maximum": 30
           },
           "discount_calculation_mode": {
             "type": "string",
@@ -15621,11 +16073,49 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
             ],
+            "nullable": true
+          },
+          "redeemables_products_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
+            "enum": [
+              "STACK",
+              "ONCE"
+            ],
+            "nullable": true
+          },
+          "redeemables_no_effect_rule": {
+            "type": "string",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
+            "enum": [
+              "REDEEM_ANYWAY",
+              "SKIP"
+            ],
+            "nullable": true
+          },
+          "no_effect_skip_categories": {
+            "title": "ManagementProjectsStackingRulesUpdateRequestBodyNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`. Category IDs can't overlap with the IDs in `no_effect_redeem_anyway_categories`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesUpdateRequestBodyNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "ManagementProjectsStackingRulesUpdateRequestBodyNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`. Category IDs can't overlap with the IDs in `no_effect_skip_categories`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesUpdateRequestBodyNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
             "nullable": true
           },
           "redeemables_rollback_order_mode": {
@@ -15653,7 +16143,7 @@
           "exclusive_categories": {
             "title": "ManagementProjectsStackingRulesUpdateResponseBodyExclusiveCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are exclusive.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "ManagementProjectsStackingRulesUpdateResponseBodyExclusiveCategoriesItem",
               "type": "string"
@@ -15663,7 +16153,7 @@
           "joint_categories": {
             "title": "ManagementProjectsStackingRulesUpdateResponseBodyJointCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are joint.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "ManagementProjectsStackingRulesUpdateResponseBodyJointCategoriesItem",
               "type": "string"
@@ -15672,25 +16162,28 @@
           },
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "minimum": 1,
             "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
+            "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "minimum": 1,
+            "maximum": 30
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 5,
             "nullable": true
@@ -15698,7 +16191,9 @@
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`. The number must be less than or equal to `applicable_exclusive_redeemables_limit`.",
+            "minimum": 1,
+            "maximum": 30
           },
           "discount_calculation_mode": {
             "type": "string",
@@ -15740,11 +16235,49 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
             ],
+            "nullable": true
+          },
+          "redeemables_products_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
+            "enum": [
+              "STACK",
+              "ONCE"
+            ],
+            "nullable": true
+          },
+          "redeemables_no_effect_rule": {
+            "type": "string",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
+            "enum": [
+              "REDEEM_ANYWAY",
+              "SKIP"
+            ],
+            "nullable": true
+          },
+          "no_effect_skip_categories": {
+            "title": "ManagementProjectsStackingRulesUpdateResponseBodyNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`. Category IDs can't overlap with the IDs in `no_effect_redeem_anyway_categories`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesUpdateResponseBodyNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "ManagementProjectsStackingRulesUpdateResponseBodyNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`. Category IDs can't overlap with the IDs in `no_effect_skip_categories`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesUpdateResponseBodyNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
             "nullable": true
           },
           "redeemables_rollback_order_mode": {
@@ -18366,6 +18899,12 @@
         "type": "string",
         "example": "2023-12-22T10:13:06.487Z",
         "format": "date-time"
+      },
+      "ParameterDateOnly": {
+        "title": "ParameterDateOnly",
+        "type": "string",
+        "example": "2023-12-22T10:13:06.487Z",
+        "format": "date"
       },
       "ParameterEarningRuleId": {
         "title": "ParameterEarningRuleId",
@@ -23292,6 +23831,22 @@
           "options": {
             "$ref": "#/components/schemas/QualificationsOption"
           },
+          "session": {
+            "title": "QualificationsCheckEligibilityRequestBodySession",
+            "type": "object",
+            "description": "Parameter to return details about `locked_credits` on a gift card which has locked credits under a validation session.",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "Parameter required to return the details about the `locked_credits`.",
+                "enum": [
+                  "LOCK"
+                ],
+                "nullable": true
+              }
+            },
+            "nullable": true
+          },
           "metadata": {
             "title": "QualificationsCheckEligibilityRequestBodyMetadata",
             "type": "object",
@@ -27450,7 +28005,8 @@
             "type": "string",
             "enum": [
               "auto-update",
-              "static"
+              "static",
+              "passive"
             ],
             "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).",
             "nullable": true
@@ -27506,7 +28062,8 @@
             "type": "string",
             "enum": [
               "auto-update",
-              "static"
+              "static",
+              "passive"
             ],
             "description": "Describes whether the segment is dynamic (customers come in and leave based on set criteria) or static (manually selected customers).",
             "nullable": true
@@ -27664,7 +28221,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published",
             "enum": [
               "AUTO_UPDATE",
               "STATIC"
@@ -27673,7 +28230,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. For loyalty campaigns, it's forced to `true`, even if `join_once: false` is passed in the request.",
             "nullable": true
           },
           "auto_join": {
@@ -31335,16 +31892,19 @@
       "VouchersImportCSVRequestBody": {
         "title": "VouchersImportCSVRequestBody",
         "type": "object",
-        "format": "binary",
         "properties": {
           "file": {
             "type": "string",
             "format": "binary",
             "description": "File path.",
             "nullable": true
+          },
+          "webhooks_enable": {
+            "type": "boolean",
+            "description": "Triggers a webhook sendout for new and updated vouchers if the voucher created and voucher updated webhooks are configured in Project settings.",
+            "nullable": true
           }
         },
-        "required": [],
         "description": "Request body schema for **POST** `v1/vouchers/importCSV`."
       },
       "VouchersImportCreateRequestBody": {
@@ -32179,7 +32739,7 @@
       "AccessSettingsCampaignAssignmentsList": {
         "title": "AccessSettingsCampaignAssignmentsList",
         "type": "object",
-        "description": "Lists all assignments of the campaign to areas and stores. For [GET List Campaigns](ref:list-campaigns), this is returned if the `expand=access_settings_assignments` query parameter is passed in the request.\n\n**NOTE**: This object is returned only if the Areas and Stores enterprise feature is enabled. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.",
+        "description": "Lists all assignments of the campaign to areas and stores. For [GET List Campaigns](ref:list-campaigns), this is returned if the `expand=access_settings_assignments` query parameter is passed in the request. This object is not returned for the [GET Campaign summary endpoint](ref:get-campaign-summary).\n\n**NOTE**: This object is returned only if the Areas and Stores enterprise feature is enabled. Contact [Voucherify Sales](https://www.voucherify.io/contact-sales) to learn more.",
         "properties": {
           "object": {
             "type": "string",
@@ -32339,7 +32899,6 @@
           }
         },
         "required": [
-          "strict",
           "effect"
         ]
       },
@@ -32538,7 +33097,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
             "enum": [
               "AUTO_UPDATE",
               "STATIC",
@@ -32556,7 +33115,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns and it cannot be changed in them.",
             "nullable": true
           },
           "use_voucher_metadata_schema": {
@@ -32653,7 +33212,7 @@
           },
           "readonly": {
             "type": "boolean",
-            "description": "Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles.",
+            "description": "Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles. It is also not returned for restricted users who use the [GET Campaign summary](ref:campaign-summary) endpoint.",
             "nullable": true
           },
           "protected": {
@@ -32670,7 +33229,7 @@
           "categories": {
             "title": "CampaignCategories",
             "type": "array",
-            "description": "Contains details about the category.",
+            "description": "Contains details about the campaign category. For the GET [List campaigns](ref:list-campaigns) endpoint, this is returned only if the `expand=category` query parameter is passed in the request. Otherwise, it is returned as an empty array. For GET [Campaign summary](ref:get-campaign-summary) endpoint, it is always returned as an empty array.",
             "items": {
               "$ref": "#/components/schemas/Category"
             },
@@ -32733,7 +33292,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
             "enum": [
               "AUTO_UPDATE",
               "STATIC",
@@ -32751,7 +33310,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns and it cannot be changed in them.",
             "nullable": true
           },
           "use_voucher_metadata_schema": {
@@ -32848,7 +33407,7 @@
           },
           "readonly": {
             "type": "boolean",
-            "description": "Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles.",
+            "description": "Indicates whether the campaign can be only read by a restricted user in the Areas and Stores enterprise feature. It is returned only to restricted users; this field is not returned for users with other roles. It is also not returned for restricted users who use the [GET Campaign summary](ref:campaign-summary) endpoint.",
             "nullable": true
           },
           "protected": {
@@ -32865,7 +33424,7 @@
           "categories": {
             "title": "CampaignBaseCategories",
             "type": "array",
-            "description": "Contains details about the category.",
+            "description": "Contains details about the campaign category. For the GET [List campaigns](ref:list-campaigns) endpoint, this is returned only if the `expand=category` query parameter is passed in the request. Otherwise, it is returned as an empty array. For GET [Campaign summary](ref:get-campaign-summary) endpoint, it is always returned as an empty array.",
             "items": {
               "$ref": "#/components/schemas/Category"
             },
@@ -32901,22 +33460,24 @@
           "expiration_rules": {
             "title": "CampaignLoyaltyCardExpirationRules",
             "type": "object",
+            "description": "Defines the loyalty point expiration rule. This expiration rule applies when there are no `expiration_rules` defined for an earning rule.",
             "properties": {
               "period_type": {
                 "type": "string",
+                "description": "Type of period. Currently, only `MONTH` is allowed.",
                 "enum": [
                   "MONTH"
                 ],
-                "description": "Type of period",
                 "nullable": true
               },
               "period_value": {
                 "type": "integer",
-                "description": "Value of the period",
+                "description": "Value of the period.",
                 "nullable": true
               },
               "rounding_type": {
                 "type": "string",
+                "description": "Type of rounding of the expiration period.",
                 "enum": [
                   "END_OF_MONTH",
                   "END_OF_QUARTER",
@@ -32924,12 +33485,11 @@
                   "END_OF_YEAR",
                   "PARTICULAR_MONTH"
                 ],
-                "description": "Type of rounding",
                 "nullable": true
               },
               "rounding_value": {
                 "type": "integer",
-                "description": "Value of rounding",
+                "description": "Value of rounding of the expiration period.",
                 "nullable": true
               }
             },
@@ -34405,6 +34965,9 @@
             "description": "The metadata object stores all custom attributes assigned to the earning rule. A set of key/value pairs that you can attach to an earning rule object. It can be useful for storing additional information about the earning rule in a structured format.",
             "nullable": true
           },
+          "expiration_rules": {
+            "$ref": "#/components/schemas/EarningRuleExpirationRules"
+          },
           "validation_rule_id": {
             "type": "string",
             "nullable": true,
@@ -34427,6 +34990,44 @@
         "title": "EarningRuleEvent",
         "example": "`order.paid`, `customer.segment.entered`, `customer.loyalty.tier.upgraded`, `customer.loyalty.tier.downgraded`, `customer.loyalty.tier.prolonged`, `customer.loyalty.tier.joined`, `customer.loyalty.tier.left`",
         "type": "string"
+      },
+      "EarningRuleExpirationRules": {
+        "title": "EarningRuleExpirationRules",
+        "type": "object",
+        "description": "Defines the loyalty point expiration rule. This expiration rule applies only to this earning rule and supersedes `expiration_rules` defined in the `voucher.loyalty_card` object.",
+        "properties": {
+          "period_type": {
+            "type": "string",
+            "description": "Type of period. Currently, only `MONTH` is allowed.",
+            "enum": [
+              "MONTH"
+            ],
+            "nullable": true
+          },
+          "period_value": {
+            "type": "integer",
+            "description": "Value of the period.",
+            "nullable": true
+          },
+          "rounding_type": {
+            "type": "string",
+            "description": "Type of rounding of the expiration period.",
+            "enum": [
+              "END_OF_MONTH",
+              "END_OF_QUARTER",
+              "END_OF_HALF_YEAR",
+              "END_OF_YEAR",
+              "PARTICULAR_MONTH"
+            ],
+            "nullable": true
+          },
+          "rounding_value": {
+            "type": "integer",
+            "description": "Value of rounding of the expiration period.",
+            "nullable": true
+          }
+        },
+        "required": []
       },
       "Error": {
         "title": "Error",
@@ -35181,7 +35782,7 @@
           "fields": {
             "title": "LoyaltiesPointsExpirationExportCreateRequestBodyParametersFields",
             "type": "array",
-            "description": "Array of strings containing the data that was exported. These fields define the headers in the CSV file. \n\n The array can be a combination of any of the following available fields:  \n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Loyalty points bucket ID. | lopb_Wl1o3EjJIHSNjvO5BDLy4z1n |\n| campaign_id | Campaign ID of the parent loyalty campaign. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| voucher_id | Voucher ID of the parent loyalty card. | v_YLn0WVWXSXbUfDvxgrgUbtfJ3SQIY655 |\n| status | Status of the loyalty points bucket. | `ACTIVE` or `INACTIVE` |\n| expires_at | Timestamp in ISO 8601 format representing the date when the points expire. | 2022-06-30 |\n| points | Number of points. | 1000 |",
+            "description": "Array of strings containing the data that was exported. These fields define the headers in the CSV file. \n\n The array can be a combination of any of the following available fields:  \n\n| **Field** | **Definition** | **Example Export** |\n|:---|:---|:---|\n| id | Loyalty points bucket ID. | lopb_Wl1o3EjJIHSNjvO5BDLy4z1n |\n| campaign_id | Campaign ID of the parent loyalty campaign. | camp_7s3uXI44aKfIk5IhmeOPr6ic |\n| voucher_id | Voucher ID of the parent loyalty card. | v_YLn0WVWXSXbUfDvxgrgUbtfJ3SQIY655 |\n| status | Status of the loyalty point bucket. | `ACTIVE` or `EXPIRED` |\n| expires_at | Timestamp in ISO 8601 format representing the date when the points expire. | 2022-06-30 |\n| points | Number of points. | 1000 |",
             "items": {
               "title": "LoyaltiesPointsExpirationExportCreateRequestBodyParametersFieldsItem",
               "type": "string",
@@ -35353,7 +35954,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once.",
+            "description": "Always set to `true` for loyalty campaigns, meaning customers can join the campaign only once. It can't be changed to `false`.",
             "nullable": true
           },
           "use_voucher_metadata_schema": {
@@ -37200,7 +37801,7 @@
           "exclusive_categories": {
             "title": "ManagementProjectsStackingRulesExclusiveCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are exclusive.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "ManagementProjectsStackingRulesExclusiveCategoriesItem",
               "type": "string"
@@ -37210,7 +37811,7 @@
           "joint_categories": {
             "title": "ManagementProjectsStackingRulesJointCategories",
             "type": "array",
-            "description": "Lists the IDs of the categories that are joint.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "ManagementProjectsStackingRulesJointCategoriesItem",
               "type": "string"
@@ -37219,25 +37820,28 @@
           },
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent to Voucherify for validation at the same time.",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "minimum": 1,
             "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be applied at the same time. The number must be less than or equal to `\"redeemables_limit\"`.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
+            "maximum": 30,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_redeemables_limit\"`."
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "minimum": 1,
+            "maximum": 30
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an assigned exclusive category can be applied at the same time.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "minimum": 1,
             "maximum": 5,
             "nullable": true
@@ -37245,7 +37849,9 @@
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
             "nullable": true,
-            "description": "Defines how many exclusive redeemables with the same category can be applied at the same time. The number must be less than or equal to `\"applicable_exclusive_redeemables_limit\"`."
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`. The number must be less than or equal to `applicable_exclusive_redeemables_limit`.",
+            "minimum": 1,
+            "maximum": 30
           },
           "discount_calculation_mode": {
             "type": "string",
@@ -37287,11 +37893,49 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines the sorting rule for redeemables.\n`\"CATEGORY_HIERARCHY\"` means that redeemables are applied with the order established by the hierarchy of the categories.\n`\"REQUESTED_ORDER\"` means that redeemables are applied with the order established in the request.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
             ],
+            "nullable": true
+          },
+          "redeemables_products_application_mode": {
+            "type": "string",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
+            "enum": [
+              "STACK",
+              "ONCE"
+            ],
+            "nullable": true
+          },
+          "redeemables_no_effect_rule": {
+            "type": "string",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
+            "enum": [
+              "REDEEM_ANYWAY",
+              "SKIP"
+            ],
+            "nullable": true
+          },
+          "no_effect_skip_categories": {
+            "title": "ManagementProjectsStackingRulesNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`. Category IDs can't overlap with the IDs in `no_effect_redeem_anyway_categories`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "ManagementProjectsStackingRulesNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`. Category IDs can't overlap with the IDs in `no_effect_skip_categories`.",
+            "items": {
+              "title": "ManagementProjectsStackingRulesNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
             "nullable": true
           },
           "redeemables_rollback_order_mode": {
@@ -42264,35 +42908,35 @@
         "properties": {
           "redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables can be sent in one stacking request (note: more redeemables means more processing time!).",
+            "description": "Defines how many redeemables can be sent in one request. Note: more redeemables means more processing time.",
             "maximum": 30,
             "minimum": 1,
             "nullable": true
           },
           "applicable_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many of the sent redeemables will be applied to the order. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be labelled as SKIPPED.",
+            "description": "Defines how many redeemables can be applied in one request. The number must be less than or equal to `redeemables_limit`. For example, a user can select 30 discounts but only 5 will be applied to the order and the remaining will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "maximum": 30,
             "minimum": 1,
             "nullable": true
           },
           "applicable_redeemables_per_category_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables per category can be applied in one request.",
-            "maximum": 5,
+            "description": "Defines how many redeemables with the same category can be applied in one request. The number must be less than or equal to `applicable_redeemables_limit`. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
+            "maximum": 30,
             "minimum": 1,
             "nullable": true
           },
           "applicable_exclusive_redeemables_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an exclusive category can be applied in one request.",
+            "description": "Defines how many redeemables with an assigned exclusive category can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "maximum": 5,
             "minimum": 1,
             "nullable": true
           },
           "applicable_exclusive_redeemables_per_category_limit": {
             "type": "integer",
-            "description": "Defines how many redeemables with an exclusive category per category in stacking rules can be applied in one request.",
+            "description": "Defines how many redeemables with an exclusive category per category in stacking rules can be applied in one request. The ones above the limit will be `SKIPPED` according to the `redeemables_sorting_rule`.",
             "maximum": 5,
             "minimum": 1,
             "nullable": true
@@ -42300,7 +42944,7 @@
           "exclusive_categories": {
             "title": "StackingRulesExclusiveCategories",
             "type": "array",
-            "description": "Lists all exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
+            "description": "Lists the IDs of exclusive categories. A redeemable from a campaign with an exclusive category is the only redeemable to be redeemed when applied with redeemables from other campaigns unless these campaigns are exclusive or joint.",
             "items": {
               "title": "StackingRulesExclusiveCategoriesItem",
               "type": "string"
@@ -42310,7 +42954,7 @@
           "joint_categories": {
             "title": "StackingRulesJointCategories",
             "type": "array",
-            "description": "Lists all joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
+            "description": "Lists the IDs of the joint categories. A campaign with a joint category is always applied regardless of the exclusivity of other campaigns.",
             "items": {
               "title": "StackingRulesJointCategoriesItem",
               "type": "string"
@@ -42319,7 +42963,7 @@
           },
           "redeemables_application_mode": {
             "type": "string",
-            "description": "Defines redeemables application mode.",
+            "description": "Defines the application mode for redeemables.\n`\"ALL\"` means that all redeemables must be validated for the redemption to be successful.\n`\"PARTIAL\"` means that only those redeemables that can be validated will be redeemed. The redeemables that fail validaton will be skipped.",
             "enum": [
               "ALL",
               "PARTIAL"
@@ -42328,7 +42972,7 @@
           },
           "redeemables_sorting_rule": {
             "type": "string",
-            "description": "Defines redeemables sorting rule.",
+            "description": "Defines redeemables sorting rule. `CATEGORY_HIERARCHY` means that redeemables are applied oaccording to the category priority. `REQUESTED_ORDER` means that redeemables are applied in the sequence provided in the request.",
             "enum": [
               "CATEGORY_HIERARCHY",
               "REQUESTED_ORDER"
@@ -42337,7 +42981,7 @@
           },
           "redeemables_products_application_mode": {
             "type": "string",
-            "description": "Defines redeemables products application mode.",
+            "description": "Defines redeemables products application mode. `STACK` means that multiple discounts can be applied to a product. `ONCE` means that only one discount can be applied to the same product.",
             "enum": [
               "STACK",
               "ONCE"
@@ -42346,16 +42990,36 @@
           },
           "redeemables_no_effect_rule": {
             "type": "string",
-            "description": "Defines redeemables no effect rule.",
+            "description": "Defines redeemables no effect rule. `REDEEM_ANYWAY` means that the redeemable will be redeemed regardless of any restrictions or conditions in place. `SKIP` means that the redeemable will be processed only when an applicable effect is calculated.",
             "enum": [
               "REDEEM_ANYWAY",
               "SKIP"
             ],
             "nullable": true
           },
+          "no_effect_skip_categories": {
+            "title": "StackingRulesNoEffectSkipCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are skipped even if the `redeemables_no_effect_rule` is set to `REDEEM_ANYWAY`. Category IDs can't overlap with the IDs in `no_effect_redeem_anyway_categories`.",
+            "items": {
+              "title": "StackingRulesNoEffectSkipCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "no_effect_redeem_anyway_categories": {
+            "title": "StackingRulesNoEffectRedeemAnywayCategories",
+            "type": "array",
+            "description": "Lists category IDs. Redeemables with a given category are redeemed anyway even if the `redeemables_no_effect_rule` is set to `SKIP`. Category IDs can't overlap with the IDs in `no_effect_skip_categories`.",
+            "items": {
+              "title": "StackingRulesNoEffectRedeemAnywayCategoriesItem",
+              "type": "string"
+            },
+            "nullable": true
+          },
           "redeemables_rollback_order_mode": {
             "type": "string",
-            "description": "Defines the rollback mode for the order. `WITH_ORDER` is a default setting. The redemption is rolled back together with the data about the order, including related discount values. `WITHOUT_ORDER` allows rolling the redemption back without affecting order data.",
+            "description": "Defines the rollback mode for the order. `WITH_ORDER` is a default setting. The redemption is rolled back together with the data about the order, including related discount values. `WITHOUT_ORDER` allows rolling the redemption back without affecting order data, including the applied discount values.",
             "enum": [
               "WITH_ORDER",
               "WITHOUT_ORDER"
@@ -42416,7 +43080,7 @@
           "resource_parent_id": {
             "type": "string",
             "nullable": true,
-            "description": "Unique identifier of the parent resource. For a voucher, it is a campaign ID, except for standalone vouchers. For an SKU, it is the product ID. It returns `null` for campaigns and base products.",
+            "description": "Unique identifier of the parent resource. For a voucher, it is a campaign ID, except for generic (standalone) voucherss. For an SKU, it is the product ID. It returns `null` for campaigns and base products.",
             "example": "camp_snn0eQL0PYWl5b6lY6HQNPfb"
           },
           "object": {
@@ -44611,7 +45275,6 @@
           }
         },
         "required": [
-          "strict",
           "effect"
         ]
       },
@@ -49369,7 +50032,7 @@
           },
           "type": {
             "type": "string",
-            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of standalone vouchers.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
+            "description": "Defines whether the campaign can be updated with new vouchers after campaign creation or if the campaign consists of generic (standalone) voucherss.\n\n- `AUTO_UPDATE`: the campaign is dynamic, i.e. vouchers will generate based on set criteria\n-  `STATIC`: vouchers need to be manually published\n- `STANDALONE`: campaign for single vouchers",
             "enum": [
               "AUTO_UPDATE",
               "STATIC",
@@ -49395,7 +50058,7 @@
           },
           "join_once": {
             "type": "boolean",
-            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for standalone voucher campaigns and it cannot be changed in them.",
+            "description": "If this value is set to `true`, customers will be able to join the campaign only once. It is always `false` for generic (standalone) vouchers campaigns and it cannot be changed in them. It is always `true` for loyalty campaigns and it cannot be changed in them.",
             "nullable": true
           },
           "active": {
@@ -49962,6 +50625,11 @@
           "credits": {
             "type": "number",
             "description": "The number of credits that the user wants to use from the gift card to fulfil the order. The value of credits cannot be higher than the current balance on the gift card. If the user gives more points than he has on the gift card, the application will return an error code in response. The value is multiplied by 100 to represent 2 decimal places. For example `10000 cents` for `$100.00`.",
+            "nullable": true
+          },
+          "locked_credits": {
+            "type": "number",
+            "description": "The number of credits that are locked under a validation session. This is returned if the qualification request includes `session.type: LOCK` parameter in the body. The value is multiplied by 100 to represent 2 decimal places. For example `10000` for `$100.00`. Returns `0` if there aren't any active validation sessions for the gift card.",
             "nullable": true
           }
         }
@@ -50661,7 +51329,6 @@
                                 {
                                   "object": "products_collection",
                                   "id": "pc_nw1xRgXB8cBzDJSrSbdSqJP4",
-                                  "strict": false,
                                   "effect": "APPLY_TO_EVERY",
                                   "skip_initially": 0,
                                   "repeat": 1,
@@ -50799,6 +51466,19 @@
                 "$ref": "#/components/schemas/ValidationsValidateRequestBody"
               },
               "examples": {
+                "Sandbox onboarding validation": {
+                  "value": {
+                    "redeemables": [
+                      {
+                        "object": "voucher",
+                        "id": "BLCKFRDY"
+                      }
+                    ],
+                    "order": {
+                      "amount": 5500
+                    }
+                  }
+                },
                 "1 Redeemable": {
                   "value": {
                     "customer": {
@@ -51021,7 +51701,6 @@
                               {
                                 "object": "products_collection",
                                 "id": "pc_a11pr0dUc75",
-                                "strict": false,
                                 "effect": "APPLY_TO_EVERY"
                               },
                               {
@@ -51030,14 +51709,12 @@
                                 "source_id": "test_standard_ultra_hd",
                                 "product_id": "prod_s3C0nDpr0DuC7",
                                 "product_source_id": "test_prod_id_2",
-                                "strict": true,
                                 "effect": "APPLY_TO_EVERY"
                               },
                               {
                                 "object": "product",
                                 "id": "prod_0bc3bd8a4e072c5275",
                                 "source_id": "prod_0bc3bd8a4e072c5275",
-                                "strict": true,
                                 "effect": "APPLY_TO_EVERY"
                               }
                             ],
@@ -51277,14 +51954,12 @@
                                 "source_id": "test_standard_ultra_hd",
                                 "product_id": "prod_s3C0nDpr0DuC7",
                                 "product_source_id": "test_prod_id_2",
-                                "strict": true,
                                 "effect": "APPLY_TO_EVERY"
                               },
                               {
                                 "object": "product",
                                 "id": "prod_0bc3bd8a4e072c5275",
                                 "source_id": "prod_0bc3bd8a4e072c5275",
-                                "strict": true,
                                 "effect": "APPLY_TO_EVERY"
                               }
                             ],
@@ -51298,7 +51973,6 @@
                                 "object": "product",
                                 "id": "prod_0b2c2ddf35150b83bb",
                                 "source_id": "97",
-                                "strict": false,
                                 "effect": "APPLY_TO_EVERY"
                               }
                             ],
@@ -51378,14 +52052,12 @@
                                 "source_id": "test_standard_ultra_hd",
                                 "product_id": "prod_s3C0nDpr0DuC7",
                                 "product_source_id": "test_prod_id_2",
-                                "strict": true,
                                 "effect": "APPLY_TO_EVERY"
                               },
                               {
                                 "object": "product",
                                 "id": "prod_0bc3bd8a4e072c5275",
                                 "source_id": "prod_0bc3bd8a4e072c5275",
-                                "strict": true,
                                 "effect": "APPLY_TO_EVERY"
                               }
                             ],
@@ -51399,7 +52071,6 @@
                                 "object": "product",
                                 "id": "prod_0b2c2ddf35150b83bb",
                                 "source_id": "97",
-                                "strict": false,
                                 "effect": "APPLY_TO_EVERY"
                               }
                             ],
@@ -52018,7 +52689,20 @@
                 "$ref": "#/components/schemas/RedemptionsRedeemRequestBody"
               },
               "examples": {
-                "Example": {
+                "Sandbox onboarding redemption": {
+                  "value": {
+                    "redeemables": [
+                      {
+                        "object": "voucher",
+                        "id": "BLCKFRDY"
+                      }
+                    ],
+                    "order": {
+                      "amount": 5500
+                    }
+                  }
+                },
+                "General example": {
                   "value": {
                     "customer": {
                       "source_id": "sample_customer",
@@ -52323,7 +53007,7 @@
           "Vouchers"
         ],
         "summary": "Generate Random Code",
-        "description": "Create a standalone voucher. You can choose to create a GIFT_VOUCHER, a DISCOUNT_VOUCHER, or a LOYALTY_CARD. \nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new standalone voucher if no campaign name or campaign_id is provided. However, if an ID or name of a campaign with the type set to STANDALONE is provided, the voucher will be added to such campaign. In case of the loyalty card, a campaign name is required.\nYou can optionally use the code parameter to define a specific code or the code_config parameter to design rules for Voucherify API to create a random code. If neither of the two parameters are passed, then a random code is generated by the Voucherify API.\nThis method will return an error when trying to create a voucher that already exists.\n🚧 Standalone Vouchers and Campaigns\nIn version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), standalone vouchers created through the Voucherify dashboard create a campaign for that voucher. However, vouchers created through the API do not have a campaign attached, so the values for campaign and campaign_id are null.\nVoucherify developers work on adding an optional feature to create a standalone voucher campaign through the API.\nFollow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004) for more details about released features.",
+        "description": "Create a generic (standalone) vouchers. You can choose to create a GIFT_VOUCHER, a DISCOUNT_VOUCHER, or a LOYALTY_CARD. \nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new generic (standalone) vouchers if no campaign name or campaign_id is provided. However, if an ID or name of a campaign with the type set to STANDALONE is provided, the voucher will be added to such campaign. In case of the loyalty card, a campaign name is required.\nYou can optionally use the code parameter to define a specific code or the code_config parameter to design rules for Voucherify API to create a random code. If neither of the two parameters are passed, then a random code is generated by the Voucherify API.\nThis method will return an error when trying to create a voucher that already exists.\n🚧 Standalone Vouchers and Campaigns\nIn version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), generic (standalone) voucherss created through the Voucherify dashboard create a campaign for that voucher. However, vouchers created through the API do not have a campaign attached, so the values for campaign and campaign_id are null.\nVoucherify developers work on adding an optional feature to create a generic (standalone) vouchers campaign through the API.\nFollow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004) for more details about released features.",
         "parameters": [],
         "security": [
           {
@@ -53961,7 +54645,7 @@
           "Vouchers"
         ],
         "summary": "Create Voucher",
-        "description": "Create a standalone voucher. You can choose to create a GIFT_VOUCHER, a DISCOUNT_VOUCHER, or a LOYALTY_CARD. The code path parameter can use all letters of the English alphabet, Arabic numerals and special characters.\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new standalone voucher if no campaign name or campaign_id is provided. However, if an ID or name of a campaign with the type set to STANDALONE is provided, the voucher will be added to such campaign. In the case of the loyalty card, a campaign name or ID is required.\n🚧 Standalone Vouchers and Campaigns\nIn version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), standalone vouchers created through the Voucherify dashboard create a campaign for that voucher. However, vouchers created through the API do not have a campaign attached, so the values for campaign and campaign_id are null.\nVoucherify developers work on adding an optional feature to create a standalone voucher campaign through the API.\nFollow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004) for more details about released features.",
+        "description": "Create a generic (standalone) vouchers. You can choose to create a GIFT_VOUCHER, a DISCOUNT_VOUCHER, or a LOYALTY_CARD. The code path parameter can use all letters of the English alphabet, Arabic numerals and special characters.\nWhen you create a new voucher, you can specify a type to create it.\nCreating a new voucher will create a new generic (standalone) vouchers if no campaign name or campaign_id is provided. However, if an ID or name of a campaign with the type set to STANDALONE is provided, the voucher will be added to such campaign. In the case of the loyalty card, a campaign name or ID is required.\n🚧 Standalone Vouchers and Campaigns\nIn version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), generic (standalone) voucherss created through the Voucherify dashboard create a campaign for that voucher. However, vouchers created through the API do not have a campaign attached, so the values for campaign and campaign_id are null.\nVoucherify developers work on adding an optional feature to create a generic (standalone) vouchers campaign through the API.\nFollow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004) for more details about released features.",
         "parameters": [],
         "security": [
           {
@@ -55192,7 +55876,7 @@
           "Vouchers"
         ],
         "summary": "Import Vouchers",
-        "description": "Import standalone vouchers and gift cards into the repository.\n 📘 Important notes\n - **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.\n - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n - You **cannot import the same codes** to a single Voucherify Project.\nAny parameters not provided in the payload will be left blank or null.\nFor both **standalone discount vouchers and gift cards**, you can import the following fields:  \n- code\n- category\n- active\n- type\n- start_date\n- expiration_date\n- redemption.quantity\n- additional_info\n- metadata\nFor **gift cards**, you can also import the following field:\n- gift.amount\nFor **discount vouchers**, you can import the discount object. The object will slightly vary depending on the type of discount. Each discount type **requires** the type to be defined in the import.\n\n\nFields other than the ones listed above wont be imported. Even if provided, they will be silently skipped.\nThis API request starts a process that affects Voucherify data in bulk. \nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the IN_PROGRESS status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \nThe result will return the async ID. You can verify the status of your request via this API request.\n🚧 Standalone Vouchers and Campaigns\nIn version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), standalone vouchers created through the Voucherify dashboard create a campaign for that voucher. However, vouchers imported through the dashboard in the Vouchers section or through the API do not have a campaign attached, so the values for campaign and campaign_id are null.",
+        "description": "Import generic (standalone) voucherss and gift cards into the repository.\n 📘 Important notes\n - **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.\n - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n - You **cannot import the same codes** to a single Voucherify Project.\nAny parameters not provided in the payload will be left blank or null.\nFor both **standalone discount vouchers and gift cards**, you can import the following fields:  \n- code\n- category\n- active\n- type\n- start_date\n- expiration_date\n- redemption.quantity\n- additional_info\n- metadata\nFor **gift cards**, you can also import the following field:\n- gift.amount\nFor **discount vouchers**, you can import the discount object. The object will slightly vary depending on the type of discount. Each discount type **requires** the type to be defined in the import.\n\n\nFields other than the ones listed above wont be imported. Even if provided, they will be silently skipped.\nThis API request starts a process that affects Voucherify data in bulk. \nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the IN_PROGRESS status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \nThe result will return the async ID. You can verify the status of your request via this API request.\n🚧 Standalone Vouchers and Campaigns\nIn version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), generic (standalone) voucherss created through the Voucherify dashboard create a campaign for that voucher. However, vouchers imported through the dashboard in the Vouchers section or through the API do not have a campaign attached, so the values for campaign and campaign_id are null.",
         "parameters": [],
         "security": [
           {
@@ -55469,7 +56153,7 @@
           "Vouchers"
         ],
         "summary": "Import Vouchers using CSV",
-        "description": "Import standalone vouchers into the repository using a CSV file.\nThe CSV file has to include headers in the first line. All properties listed in the file headers that cannot be mapped to standard voucher fields will be added to the metadata object.  \nYou can find an example CSV file [here](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally#coupons).\n___\n 📘 Standard voucher fields mapping\n - Go to the import vouchers endpoint to see all standard CSV fields description (body params section).\n - Supported CSV file headers: Code,Voucher Type,Value,Discount Type,Category,Start Date,Expiration Date,Redemption Limit,Redeemed Quantity, Redeemed Amount,Active,Additional Info,Custom Metadata Property Name\n- **Start and expiration dates** need to be provided in compliance with the ISO 8601 norms. For example, 2020-03-11T09:00:00.000Z.  \n    - YYYY-MM-DD\n    - YYYY-MM-DDTHH\n    - YYYY-MM-DDTHH:mm\n    - YYYY-MM-DDTHH:mm:ss\n    - YYYY-MM-DDTHH:mm:ssZ\n    - YYYY-MM-DDTHH:mm:ssZ\n    - YYYY-MM-DDTHH:mm:ss.SSSZ\n - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n - You **cannot import the same codes** to a single Voucherify Project.\n 📘 Categories\n In the structure representing your data, you can define a category that the voucher belongs to. You can later use the category of a voucher to group and search by specific criteria in the Dashboard and using the List Vouchers endpoint.\nThis API request starts a process that affects Voucherify data in bulk. \nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the IN_PROGRESS status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \nThe result will return the async ID. You can verify the status of your request via this API request.\n🚧 Standalone Vouchers and Campaigns\nIn version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), standalone vouchers created through the Voucherify dashboard create a campaign for that voucher. However, vouchers imported through the dashboard in the Vouchers section or through the API do not have a campaign attached, so the values for campaign and campaign_id are null.",
+        "description": "Import generic (standalone) voucherss into the repository using a CSV file.\nThe CSV file has to include headers in the first line. All properties listed in the file headers that cannot be mapped to standard voucher fields will be added to the metadata object.  \nYou can find an example CSV file [here](https://support.voucherify.io/article/45-import-codes-and-share-them-digitally#coupons).\n___\n 📘 Standard voucher fields mapping\n - Go to the import vouchers endpoint to see all standard CSV fields description (body params section).\n - Supported CSV file headers: Code,Voucher Type,Value,Discount Type,Category,Start Date,Expiration Date,Redemption Limit,Redeemed Quantity, Redeemed Amount,Active,Additional Info,Custom Metadata Property Name\n- **Start and expiration dates** need to be provided in compliance with the ISO 8601 standard. For example, 2020-03-11T09:00:00.000Z.  \n    - YYYY-MM-DD\n    - YYYY-MM-DDTHH\n    - YYYY-MM-DDTHH:mm\n    - YYYY-MM-DDTHH:mm:ss\n    - YYYY-MM-DDTHH:mm:ssZ\n    - YYYY-MM-DDTHH:mm:ssZ\n    - YYYY-MM-DDTHH:mm:ss.SSSZ\n - Custom code attributes (not supported by-default) need to be added as code **metadata**.\n - You **cannot import the same codes** to a single Voucherify project.\n - You can, however, upload the same codes to update them.\n 📘 Categories\n In the structure representing your data, you can define a category that the voucher belongs to. You can later use the category of a voucher to group and search by specific criteria in the Dashboard and using the List Vouchers endpoint.\nThis API request starts a process that affects Voucherify data in bulk. \nIn case of small jobs (like bulk update) the request is put into a queue and processed once every other bulk request placed in the queue prior to this request is finished. However, when the job takes a longer time (like vouchers generation) then it is processed in small portions in a round-robin fashion. When there is a list of vouchers generation scheduled, then they will all have the IN_PROGRESS status shortly. This way, small jobs added just after scheduling big jobs of the same type will be processed in a short time window. \nThe result will return the async ID. You can verify the status of your request via this API request.\nYou can pass the webhooks_enable true parameter to trigger a webhook sendout for created or updated vouchers. Configure the respective webhooks in Project settings. For updated webhooks, a webhook is sent even if the voucher hasnt been changed in the CSV file.\n🚧 Generic (standalone) vouchers and campaigns\nIn version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), generic (standalone) voucherss created through the Voucherify dashboard create a campaign for that voucher. However, vouchers imported through the dashboard in the Vouchers section or through the API do not have a campaign attached, so the values for campaign and campaign_id are null.",
         "parameters": [],
         "security": [
           {
@@ -55677,7 +56361,7 @@
           "Vouchers"
         ],
         "summary": "Release Validation Session",
-        "description": "Manually release a validation session that has been set up for the voucher. This method undos the actions that are explained in our guide on how a validation session was established, you can read more here. \n 📘 Release Session using Dashboard\n You can also use the Validations Manager in the Dashboard to unlock sessions. [Read more](https://support.voucherify.io/article/16-dashboard-sections#validations).",
+        "description": "Manually release a validation session that has been set up for the voucher. This method undoes the actions that are explained in the Locking validation session guide. \n 📘 Release session in the Dashboard\n You can also use the [Validations Manager](https://support.voucherify.io/article/16-dashboard-sections#sessions) in the Dashboard to unlock sessions.",
         "parameters": [],
         "security": [
           {
@@ -55703,7 +56387,7 @@
           "Campaigns"
         ],
         "summary": "Create Campaign",
-        "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n 📘 Global uniqueness\n All campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.  \n 🚧 Code generation status\n This is an asynchronous action; you cant read or modify a newly created campaign until the code generation is completed. See the creation_status field in the campaign object description.\n🚧 Standalone Vouchers and Campaigns\nIn version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), standalone vouchers created through the Voucherify dashboard create a campaign for that voucher. However, you cannot create a standalone discount or gift voucher campaign with the type: STANDALONE through the API. Voucherify developers work on adding that feature.\nFollow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004) for more details about released features.",
+        "description": "Method to create a batch of vouchers aggregated in one campaign. You can choose a variety of voucher types and define a unique pattern for generating codes.  \n 📘 Global uniqueness\n All campaign codes are unique across the whole project. Voucherify will not allow you to generate 2 campaigns with the same coupon code.  \n 🚧 Code generation status\n This is an asynchronous action; you cant read or modify a newly created campaign until the code generation is completed. See the creation_status field in the campaign object description.\n🚧 Standalone Vouchers and Campaigns\nIn version [v20241004](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004), generic (standalone) voucherss created through the Voucherify dashboard create a campaign for that voucher. However, you cannot create a standalone discount or gift voucher campaign with the type: STANDALONE through the API. Voucherify developers work on adding that feature.\nFollow the [Voucherify Release Notes](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20241004) for more details about released features.",
         "parameters": [],
         "security": [
           {
@@ -57933,6 +58617,123 @@
                       },
                       "result": null,
                       "user_id": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/campaigns/{campaignId}/summary": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "campaignId",
+          "description": "You can either pass the campaign ID, which was assigned by Voucherify, or the name of the campaign as the path parameter value.",
+          "schema": {
+            "$ref": "#/components/schemas/ParameterCampaignId"
+          },
+          "required": true
+        }
+      ],
+      "get": {
+        "operationId": "get-campaign-summary",
+        "tags": [
+          "Campaigns"
+        ],
+        "summary": "Get Campaign Summary",
+        "description": "Returns data for campaign analytics, covering validations, redemptions, publications, and other details specific to a given campaign type.\nUse start_date and end_date to narrow down the data to specific periods.\n🚧 Campaigns created before v20250602 version\nThis endpoint returns analytics data for campaigns that were created after the [v20250602 version](https://support.voucherify.io/article/23-whats-new-in-voucherify#v20250602) was released on 17 June 2025. Older campaigns return empty data.",
+        "parameters": [
+          {
+            "name": "start_date",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterDateOnly"
+            },
+            "description": "Timestamp representing the date which results must begin on. Represented in ISO 8601 format."
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ParameterDateOnly"
+            },
+            "description": "Timestamp representing the date which results must end on. Represented in ISO 8601 format."
+          }
+        ],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "campaigns"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns campaign analytics data. Returns different data depending on the campaign type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignsSummaryGetResponseBody"
+                },
+                "examples": {
+                  "Generic code discount campaign": {
+                    "value": {
+                      "object": "campaign_summary",
+                      "campaign": {
+                        "id": "camp_WaZ6r4LSF1alRaIwJVKS07bs",
+                        "name": "Summer-2025",
+                        "campaign_type": "DISCOUNT_COUPONS",
+                        "type": "STANDALONE",
+                        "voucher": {
+                          "type": "DISCOUNT_VOUCHER",
+                          "discount": {
+                            "type": "AMOUNT",
+                            "amount_off": 2000,
+                            "effect": "APPLY_TO_ORDER"
+                          },
+                          "redemption": {
+                            "quantity": null
+                          },
+                          "is_referral_code": false
+                        },
+                        "auto_join": false,
+                        "join_once": false,
+                        "use_voucher_metadata_schema": true,
+                        "vouchers_count": 1,
+                        "active": true,
+                        "metadata": {},
+                        "created_at": "2025-06-17T08:05:57.720Z",
+                        "creation_status": "DONE",
+                        "vouchers_generation_status": "DONE",
+                        "protected": false,
+                        "category_id": null,
+                        "categories": [],
+                        "object": "campaign"
+                      },
+                      "redemptions": 10,
+                      "redemptions_succeeded": 8,
+                      "redemptions_failed": 2,
+                      "rollbacks": 1,
+                      "rollbacks_succeeded": 1,
+                      "rollbacks_failed": 0,
+                      "validations": 10,
+                      "validations_succeeded": 8,
+                      "validations_failed": 2,
+                      "vouchers_created": 1,
+                      "vouchers_deleted": 0,
+                      "publications": 0,
+                      "publications_succeeded": 0,
+                      "publications_failed": 0,
+                      "discounted_amount": 20000,
+                      "rolledback_discounted_amount": 200,
+                      "orders_amount": 19453,
+                      "orders_rolledback_amount": 800
                     }
                   }
                 }
@@ -64762,7 +65563,7 @@
           "Loyalties"
         ],
         "summary": "List Campaign Pending Points",
-        "description": ">🚧 Beta endpoint\nThe endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\nAll current parameters and fields are listed and described.\nLists all pending points that are currently assigned to all loyalty cards in a campaign. Once the points are added to the card, the entry is no longer returned.\n👍 Configuring pending points\nPending points are configured as part of an earning rule with POST Create earning rule or PUT Update earning rule.",
+        "description": "Lists all pending points that are currently assigned to all loyalty cards in a campaign. Once the points are added to the card, the entry is no longer returned.\n👍 Configuring pending points\nPending points are configured as part of an earning rule with POST Create earning rule or PUT Update earning rule.",
         "parameters": [
           {
             "schema": {
@@ -64974,7 +65775,7 @@
           "Loyalties"
         ],
         "summary": "List Member Pending Points",
-        "description": ">🚧 Beta endpoint\nThe endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\nAll current parameters and fields are listed and described.\nLists all pending points that are currently assigned to the loyalty card. Once the points are added to the card, the entry is no longer returned.\n👍 Configuring pending points\nPending points are configured as part of an earning rule with POST Create earning rule or PUT Update earning rule.",
+        "description": "Lists all pending points that are currently assigned to the loyalty card. Once the points are added to the card, the entry is no longer returned.\n👍 Configuring pending points\nPending points are configured as part of an earning rule with POST Create earning rule or PUT Update earning rule.",
         "parameters": [
           {
             "schema": {
@@ -65177,7 +65978,7 @@
           "Loyalties"
         ],
         "summary": "List Member Pending Points",
-        "description": ">🚧 Beta endpoint\nThe endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\nAll current parameters and fields are listed and described.\n 📘 Alternative endpoint\n This endpoint is an alternative to this endpoint. The URL was re-designed to list member pending points without having to provide the campaignId as a path parameter.\nLists all pending points that are currently assigned to the loyalty card. Once the points are added to the card, the entry is no longer returned.\n👍 Configuring pending points\nPending points are configured as part of an earning rule with POST Create earning rule or PUT Update earning rule.",
+        "description": "\n 📘 Alternative endpoint\n This endpoint is an alternative to this endpoint. The URL was re-designed to list member pending points without having to provide the campaignId as a path parameter.\nLists all pending points that are currently assigned to the loyalty card. Once the points are added to the card, the entry is no longer returned.\n👍 Configuring pending points\nPending points are configured as part of an earning rule with POST Create earning rule or PUT Update earning rule.",
         "parameters": [
           {
             "schema": {
@@ -65389,7 +66190,7 @@
           "Loyalties"
         ],
         "summary": "Activate Member Pending Points",
-        "description": ">🚧 Beta endpoint\nThe endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\nAll current parameters and fields are listed and described.\nActivate manually the pending points and add them to the loyalty card. The pending points are determined by the pending point ID.\nOnce activated, the pending point entry with that ID is not listed by the endpoints: List member (with campaign ID, without campaign ID), List campaign pending points.\nThis **POST** method does not require a request body.\n👍 Configuring pending points\nPending points are configured as part of an earning rule with POST Create earning rule or PUT Update earning rule.",
+        "description": "Activate manually the pending points and add them to the loyalty card. The pending points are determined by the pending point ID.\nOnce activated, the pending point entry with that ID is not listed by the endpoints: List member (with campaign ID, without campaign ID), List campaign pending points.\nThis **POST** method does not require a request body.\n👍 Configuring pending points\nPending points are configured as part of an earning rule with POST Create earning rule or PUT Update earning rule.",
         "parameters": [],
         "security": [
           {
@@ -65416,6 +66217,95 @@
                       "total": 11,
                       "balance": 10,
                       "type": "loyalty_card",
+                      "object": "balance",
+                      "related_object": {
+                        "type": "voucher",
+                        "id": "v_abCdEfghI1JKLMNPqRS2Tu3vWXyza4bc"
+                      },
+                      "operation_type": "MANUAL"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/loyalties/members/{memberId}/pending-points/{pendingPointsId}/balance": {
+      "parameters": [
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterMemberId"
+          },
+          "name": "memberId",
+          "in": "path",
+          "required": true,
+          "description": "Unique loyalty card code assigned to a particular customer."
+        },
+        {
+          "schema": {
+            "$ref": "#/components/schemas/ParameterString"
+          },
+          "name": "pendingPointsId",
+          "in": "path",
+          "required": true,
+          "description": "Unique pending point identifier, assigned by Voucherify."
+        }
+      ],
+      "post": {
+        "operationId": "adjust-member-pending-points",
+        "tags": [
+          "Loyalties"
+        ],
+        "summary": "Adjust Member Pending Points",
+        "description": "Adjusts the pending points with a given ID. You can add or subtract the number of points.\n👍 Configuring pending points\nPending points are configured as part of an earning rule with POST Create earning rule or PUT Update earning rule.",
+        "parameters": [],
+        "security": [
+          {
+            "X-App-Id": [],
+            "X-App-Token": [],
+            "X-Voucherify-OAuth": [
+              "api",
+              "loyalties"
+            ]
+          }
+        ],
+        "requestBody": {
+          "description": "Define the number of pending points to be added or subtracted.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoyaltiesMembersPendingPointsBalanceRequestBody"
+              },
+              "examples": {
+                "Add pending points": {
+                  "value": {
+                    "points": 10
+                  }
+                },
+                "Subtract pending points": {
+                  "value": {
+                    "points": -10
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the details about the balance adjustment of the pending points with a given ID for a loyalty card.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoyaltiesMembersPendingPointsBalanceResponseBody"
+                },
+                "examples": {
+                  "Example": {
+                    "value": {
+                      "points": 5,
+                      "total": 16,
                       "object": "balance",
                       "related_object": {
                         "type": "voucher",
@@ -65458,7 +66348,7 @@
           "Loyalties"
         ],
         "summary": "Cancel Member Pending Points",
-        "description": ">🚧 Beta endpoint\nThe endpoint is behind a feature flag as it is still in development. Contact [Voucherify support](https://www.voucherify.io/contact-support) to unlock the feature for your organization.\nAll current parameters and fields are listed and described.\nCancel manually the pending points for the loyalty card. The pending points are determined by the pending point ID.\nOnce canceled, the pending point entry with that ID is not listed by the endpoints: List member (with campaign ID, without campaign ID), List campaign pending points.\nThis **POST** method does not require a request body and it returns an empty, 204, response.\n👍 Configuring pending points\nPending points are configured as part of an earning rule with POST Create earning rule or PUT Update earning rule.",
+        "description": "Cancel manually the pending points for the loyalty card. The pending points are determined by the pending point ID.\nOnce canceled, the pending point entry with that ID is not listed by the endpoints: List member (with campaign ID, without campaign ID), List campaign pending points.\nThis **POST** method does not require a request body and it returns an empty, 204, response.\n👍 Configuring pending points\nPending points are configured as part of an earning rule with POST Create earning rule or PUT Update earning rule.",
         "parameters": [],
         "security": [
           {
@@ -67396,7 +68286,7 @@
           "Loyalties"
         ],
         "summary": "Export Loyalty Campaign Point Expiration",
-        "description": "Schedule the generation of a points expiration CSV file for a particular campaign.",
+        "description": "Schedule the generation of a point expiration CSV file for a particular campaign. It can list point buckets, which can have an ACTIVE or EXPIRED status.",
         "parameters": [],
         "security": [
           {
@@ -77314,7 +78204,7 @@
           }
         ],
         "requestBody": {
-          "description": "List the product fields to be updated in each customer object.",
+          "description": "List the product fields to be updated in each product object.",
           "content": {
             "application/json": {
               "schema": {
@@ -78729,8 +79619,7 @@
                               {
                                 "object": "product",
                                 "id": "prod_0a41dd45dc85fcab40",
-                                "source_id": "10474",
-                                "strict": false
+                                "source_id": "10474"
                               }
                             ],
                             "included_all": false
@@ -78790,7 +79679,6 @@
                           "object": "product",
                           "id": "prod_0bae45ffc7003ffc52",
                           "source_id": "second_product",
-                          "strict": false,
                           "effect": "APPLY_TO_EVERY"
                         }
                       ],
@@ -78915,7 +79803,6 @@
                             "object": "product",
                             "id": "string",
                             "source_id": "string",
-                            "strict": true,
                             "effect": "APPLY_TO_EVERY"
                           }
                         ],
@@ -78924,7 +79811,6 @@
                             "object": "product",
                             "id": "string",
                             "source_id": "string",
-                            "strict": true,
                             "effect": "APPLY_TO_EVERY",
                             "quantity_limit": 0
                           }
@@ -79057,7 +79943,6 @@
                           "object": "product",
                           "id": "prod_0bae45ffc7003ffccc",
                           "source_id": "second_product",
-                          "strict": false,
                           "effect": "APPLY_TO_EVERY"
                         }
                       ],
@@ -79208,7 +80093,6 @@
                             "object": "product",
                             "id": "prod_0bae45ffc7003ffccc",
                             "source_id": "second_product",
-                            "strict": false,
                             "effect": "APPLY_TO_EVERY"
                           }
                         ],
@@ -79217,7 +80101,6 @@
                             "object": "product",
                             "id": "prod_0b72b00ffed198e333",
                             "source_id": null,
-                            "strict": false,
                             "effect": "APPLY_TO_CHEAPEST",
                             "quantity_limit": 1
                           },
@@ -79225,7 +80108,6 @@
                             "object": "products_collection",
                             "id": "pc_4ndRXAsTOzwSdHcQcxf489uU",
                             "source_id": null,
-                            "strict": false,
                             "effect": "APPLY_TO_EVERY",
                             "quantity_limit": 5
                           }
@@ -84925,7 +85807,7 @@
           "Management"
         ],
         "summary": "Create Stacking Rules",
-        "description": "Overwrites the default stacking rules.\nIf new stacking rules have been created for the project earlier (e.g. in the user interface), it returns an error. Use Update Stacking Rules endpoint to change the rules.\n 📘 Stacking Rules Documentation\n Read [the Stacking Rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
+        "description": "Overwrites the default stacking rules.\nIf new stacking rules have been created for the project earlier (e.g. in the user interface), it returns an error. Use Update stacking rules endpoint to change the rules.\n 📘 Stacking rules documentation\n Read [the Stacking rules article](https://support.voucherify.io/article/604-stacking-rules) to learn how they work.",
         "parameters": [],
         "security": [
           {
