@@ -17,8 +17,6 @@ Follow this blueprint for a successful launch:
 - **Deploy**: Go live! Launch your campaigns to production and start engaging customers.
 - **Track and maintain**: Monitor results in real-time and optimize your campaigns for peak performance.
 
-![Diagram of how Voucherify is integrated with a store](https://files.readme.io/2c7eff2-guides_integration_blueprint_modeling-voucherify-integration-01.png "How Voucherify is integrated with a store")
-
 ## Discover
 
 During the planning phase, you and your team are going to determine what you want to achieve with Voucherify and how to execute it.
@@ -48,7 +46,7 @@ Begin by [signing up for a Voucherify account](doc:getting-started). You’ll ha
 
 Consider these key points in your planning:
 - **Team roles and access**: Define how various departments will use Voucherify and invite as many [team members](https://support.voucherify.io/article/120-account-settings) (marketing, engineering, support) as you need to the Voucherify dashboard. Determine roles, scopes of responsibilities, and generate separate API keys, if necessary. You can assign appropriate user roles to control access and maintain security.
-- **API touchpoints**: Examine your customer journey to decide where and how customers will redeem incentives. Determine if your flow requires [qualification](doc:checking-eligibility) (show available incentives to customers), [validation](ref:validate-stacked-discounts) (check if the customer is eligible for an incentive), or [redemption](ref:redeem-stacked-discounts) (actual use of the incentive at checkout) endpoints. Consider which systems (e-commerce platform, mobile app, POS, and so on) need to call Voucherify to validate or apply promotions.
+- **API touchpoints**: Examine your customer journey to decide where and how customers will redeem incentives in [your integration](doc:integration-processes). Determine if your flow requires [qualification](doc:checking-eligibility) (show available incentives to customers), [validation](ref:validate-stacked-discounts) (check if the customer is eligible for an incentive), or [redemption](ref:redeem-stacked-discounts) (actual use of the incentive at checkout) endpoints. Consider which systems (e-commerce platform, mobile app, POS, and so on) need to call Voucherify to validate or apply promotions.
 - **Data model and preparation**: Define what kind of data you need and prepare them beforehand.
 - **Distribution channels**: Decide how you will deliver promo codes or promotion notifications to customers. You can use Voucherify’s built-in [Distributions](https://support.voucherify.io/article/19-how-does-the-distribution-manager-work) or use your own communication tools. 
 - **Reporting needs**: Consider how you will track campaign performance and extract data, for example through Voucherify dashboards or by exporting data. If you have a business intelligence tool, outline how Voucherify data will be exported or synced for analysis (for example, with [CSV exports](https://support.voucherify.io/article/543-data-export "Data export"), APIs, or [webhooks](ref:introduction-to-webhooks)). This ensures you can measure success metrics like redemption rates and ROI.
@@ -56,9 +54,12 @@ Consider these key points in your planning:
 - **Scale and volume**: Estimate the expected load on Voucherify, including API call volumes, number of users, and so on. High traffic or large datasets might influence your approach; for example, you may request a dedicated cluster for performance for high traffic or large datasets. Knowing your approximate peak redemption rate helps ensure you stay within API rate limits and choose the right subscription plan. Also, consider how to handle data: in bulk imports, through the Dashboard, API, or using the create or update entity API calls.
 - **Security and compliance**: Review any [security](doc:security) requirements and data policies before integrating. Identify sensitive data (PII) that will be sent to Voucherify and ensure it aligns with GDPR or other regulations. Plan to use secure practices such as server-side API keys for critical operations, implementing appropriate encryption for data in transit, and controlling access with Voucherify’s roles and project scoping. If fraud prevention is a concern, consider what rules or monitoring to put in place.
 
-Integration planning can take a few weeks of coordination, depending on the complexity of your use cases. Voucherify itself is modular, so you can choose to integrate only the features you need initially and add more over time.
-
 By the end of this phase, you should have a clear implementation plan, an understanding of Voucherify’s key concepts and all prerequisites to begin development.
+
+> 👍
+> 
+> Integration planning can take a few weeks of coordination, depending on the complexity of your use cases. Voucherify itself is modular, so you can choose to integrate only the features you need initially and add more over time.
+
 
 ## Model and prepare data
 
@@ -112,7 +113,9 @@ For each campaign type and user story, perform tests within your application:
 - **Referrals**: Simulate referral flows using two test customer accounts, verifying incentives for both the referred and referrer.
 - **Distribution flows**: Trigger conditions for automatic distributions (emails, etc.) and confirm messages are sent.
 
-Also, intentionally test failure scenarios and edge cases. This includes making API calls with malformed requests or missing data, disabling networks, or using incorrect API keys to verify error handling. Test complex campaign rules, such as mutually exclusive promotions or budget limits, to confirm correct behavior.
+> 👍
+> 
+> Intentionally test failure scenarios and edge cases. This includes making API calls with malformed requests or missing data, disabling networks, or using incorrect API keys to verify error handling. Test complex campaign rules, such as mutually exclusive promotions or budget limits, to confirm correct behavior.
 
 ### Data integrity checks
 
