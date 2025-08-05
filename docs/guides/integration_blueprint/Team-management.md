@@ -24,7 +24,7 @@ User management starts with mapping how various departments, such as marketing, 
 
 * **[Default and custom user roles](https://support.voucherify.io/article/40-how-does-the-access-control-work-in-voucherify "User roles and access control")** – Admin, User, Viewer, Merchant, and Custom with fine-grained rights.
 * **Approval workflows** – requesting campaign approval with email and in-app notifications.
-* **Separate API keys** – each user can have separate API keys. You can also add separate API keys per integration. 
+* **Separate API keys** – each user can have [separate API keys](doc:getting-started#get-your-api-keys). You can also add separate API keys per integration. 
 * **Account security** – MFA and SAML. 
 
 > 📘 Access and users
