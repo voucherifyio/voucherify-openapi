@@ -199,7 +199,7 @@ You can use different conditions to filter data; see the table below.
 | `$before_equal`              |                            |                                                                                                                                |
 | `$before_start`              |                            |                                                                                                                                |
 | `$before`                    | date, date time            | Returns results which occur before the specified value.                                                                        |
-| `$contains`                  |                            |                                                                                                                                |
+| `$contains`                  | image URL, string                           | Returns results that contain the specified value.                                                                                                                               |
 | `$count_less`                |                            |                                                                                                                                |
 | `$count_more`                |                            |                                                                                                                                |
 | `$count`                     |                            |                                                                                                                                |
@@ -209,7 +209,7 @@ You can use different conditions to filter data; see the table below.
 | `$expired`                   |                            |                                                                                                                                |
 | `$failed`                    |                            |                                                                                                                                |
 | `$has_value`                 | boolean, image URL, string | Returns results that have any value.                                                                                           |
-| `$in_location`               |                            |                                                                                                                                |
+| `$in_location`               | geopoint                           | Returns results from the specified area.                                                                                                                               |
 | `$in_progress`               |                            |                                                                                                                                |
 | `$in`                        | image URL, string          |                                                                                                                                |
 | `$includes`                  | array of different types   | Compares values in an array. Returns results that have **all** of the values listed.                                           |
@@ -236,11 +236,11 @@ You can use different conditions to filter data; see the table below.
 | `$last_week`                 | date                       | Returns results that occurred in the previous week. It takes `true` as the value.                                              |
 | `$last_year`                 | date                       | Returns results that occurred in the previous year, e.g. 2024. It takes `true` as the value.                                   |
 | `$less_than_ago`             |                            |                                                                                                                                |
-| `$less_than_equal`           |                            |                                                                                                                                |
+| `$less_than_equal`           | string                           | Returns results with the same or lower value.                                                                                                                                |
 | `$less_than_future`          |                            |                                                                                                                                |
 | `$less_than`                 |                            |                                                                                                                                |
 | `$more_than_ago`             |                            |                                                                                                                                |
-| `$more_than_equal`           |                            |                                                                                                                                |
+| `$more_than_equal`           | string                           | Returns results with the same or higher value.                                                                                                                                |
 | `$more_than_future`          |                            |                                                                                                                                |
 | `$more_than`                 |                            |                                                                                                                                |
 | `$next_month_md`             |                            |                                                                                                                                |
@@ -249,7 +249,7 @@ You can use different conditions to filter data; see the table below.
 | `$next_week`                 | date                       | Returns results that will occur in the next week. It takes `true` as the value.                                                |
 | `$next_year`                 | date                       | Returns results that will occur in the next year, e.g. 2026. It takes `true` as the value.                                     |
 | `$not_contain`               |                            |                                                                                                                                |
-| `$not_in_location`           |                            |                                                                                                                                |
+| `$not_in_location`           |geopoint                            | Returns results outside from the specified area.                                                                                                                                |
 | `$not_in`                    | image URL, string          |                                                                                                                                |
 | `$redeemable`                |                            |                                                                                                                                |
 | `$redeemed`                  |                            |                                                                                                                                |
@@ -265,4 +265,34 @@ You can use different conditions to filter data; see the table below.
 | `$tomorrow`                  | date                       | Returns results that will occur the following day, e.g. 02 January 2025 if today is 01 January. It takes `true` as the value.  |
 | `$yesterday_md`              |                            |                                                                                                                                |
 | `$yesterday`                 | date                       | Returns results that occurred the day before, e.g. 31 December 2024 if today is 01 January 2025. It takes `true` as the value. |
+| `$is_days_ago_md`              |                            |                                                                                                                                |
+| `$is_days_ago`                 | date                       | Returns results that occurred on the specified day. |
+| `$is_more_days_ago_md`              |                            |                                                                                                                                |
+| `$is_more_days_ago`                 | date                       | Returns results that occurred more than X days ago. |
+| `$is_less_days_ago_md`              |                            |                                                                                                                                |
+| `$is_less_days_ago`                 | date                       | Returns results that occurred less than X days ago. |
+| `$more_than_ago`                 | date                       | Returns results that occurred more than X days ago. |
+| `$less_than_ago`                 | date                       | Returns results that occurred less than X days ago. |
+| `$is_days_ago`                 | date                       | Returns results that occurred exactly X days ago. |
+| `$more_than_future`                 | date                       | Returns results that will occur in more than X days. |
+| `$less_than_future`                 | date                       | Returns results that will occur in less than X days. |
+| `$is_days_in_future`                 | date                       | Returns results that will occur exactly in X days. |
+| `$is_days_in_future`                 | date                       | Returns results that will occur exactly in X days. |
+| `$today`                 | date                       | Returns results that are occurring today. It takes `true` as the value. |
+| `$tomorrow`                 | date                       | Returns results that will occur tomorrow. It takes `true` as the value. |
+| `$yesterday`                 | date                       | Returns results that occurred yesterday. It takes `true` as the value. |
+| `$this_week`                 | date                       | Returns results that are occurring this week. It takes `true` as the value. |
+| `$last_week`                 | date                       | Returns results that occurred last week. It takes `true` as the value. |
+| `$next_week`                 | date                       | Returns results that will occur next week. It takes `true` as the value. |
+| `$this_month`                 | date                       | Returns results that are occurring this month. It takes `true` as the value. |
+| `$last_month`                 | date                       | Returns results that occurred last month. It takes `true` as the value. |
+| `$next_month`                 | date                       | Returns results that will occur next month. It takes `true` as the value. |
+| `$this_year`                 | date                       | Returns results that are occurring this year. It takes `true` as the value. |
+| `$last_year`                 | date                       | Returns results that occurred last year. It takes `true` as the value. |
+| `$next_year`                 | date                       | Returns results that will occur next year. It takes `true` as the value. |
+| `$is_years_ago`                 | date                       | Returns results that occurred exactly X years ago. |
+| `$is_day_of_month`                 | date                       | Returns results that occurred on the specified day of the month, regardless of month or year. |
+| `$is_day`                 | date                       | Returns results that occurred on the specified day and month, regardless of year. |
+| `$is_month`                 | date                       | Returns results that occurred in the specified month, regardless of year. |
+| `$is_year`                 | date                       | Returns results that occurred in the specified year. |
 --->
