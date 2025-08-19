@@ -148,7 +148,7 @@ You can check details about a webhook sendout. In Voucherify dashboard, go to Au
 The Audit Log includes the following details:
 - Webhook status
 - Webhook type
-- Webhook ID
+- Webhook sendout ID
 - Source
 - Target URL
 - Request ID
