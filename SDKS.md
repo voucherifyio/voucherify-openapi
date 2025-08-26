@@ -126,6 +126,24 @@ Manual steps checklist:
 - **minor** - backward compatible changes - new endpoints or properties.
 - **major** - breaking changes - new schemas, naming changes, removing endpoints or properties, changes in the mustache logic.
 
+### Version Update Process
+
+When updating the version number from X.Y.Z to U.I.O:
+
+1. Search and replace all version number occurrences across:
+    - Main repository
+    - All language-specific SDK in `sdks/**language*` directories
+
+2. **Important Exception:**
+    - Skip version number updates in `sdks/**language**/README.md` files where X.Y.Z appears in changelog entries
+    - These changelog entries should be preserved for historical documentation
+
+3. **Search Pattern:**
+    - Look for exact matches of the previous version number (X.Y.Z)
+    - Replace with new version number (U.I.O)
+
+Note: This process ensures version consistency across the codebase while maintaining changelog history.
+
 #### Breaking changes
 
 The following changes to the `OpenAPI.json` file consistent breaking changes:

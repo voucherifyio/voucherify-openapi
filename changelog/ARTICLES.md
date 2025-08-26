@@ -12,6 +12,10 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
   - `distribution-webhooks.md`
   - `project-settings-webhooks.md`
 
+## 2025-08-01
+
+- Changed content in the `integration-overview.md` to a new one.
+
 ## 2025-07-07
 
 - Updated Key-concepts.md with object relation tables. Also, updated the article and added new content.
