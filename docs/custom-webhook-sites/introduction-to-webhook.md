@@ -10,15 +10,14 @@ Webhooks in Voucherify are automated messages sent from Voucherify to your appli
 
 Voucherify offers two types of webhooks:
 
-- Project-level webhooks – triggered by general events across your entire project (like voucher redemption, customer updates, or order events).
-
-- Distribution-based webhooks – triggered specifically by voucher distribution events (for example, when a voucher is successfully sent or fails to send).
+- [Project-level webhooks](ref:project-settings-webhooks) – triggered by general events across your entire project (like voucher redemption, customer updates, or order events).
+- [Distribution-based webhooks](ref:distribution-webhooks) – triggered specifically by voucher distribution events (for example, when a voucher is successfully sent or fails to send).
 
 You can set up each webhook separately based on your application's needs.
 
-The v2024-01-01 webhook version can be used to inform your system about various events that are triggered in Voucherify. The v2024-01-01 webhooks work for [distributions](#webhooks-available-in-distributions) and events listed in the [Project settings](#webhooks-available-in-project-settings).
+## Voucherify webhook structure
 
-The v2024-01-01 webhooks (both for distributions and project settings) share the same data structure, consisting of the following keys:
+The Voucherify webhooks share the same data structure, consisting of the following keys:
 - `id`
 - `project_id`
 - `created_at`
@@ -125,7 +124,7 @@ verifySignature: function (signature, message, secretKey) {
 }
 ```
 
-## IP Whitelisting
+## IP whitelisting
 
 When Voucherify sends a webhook, the Voucherify servers make network requests to tenants’ or third parties’ servers.
 
@@ -139,7 +138,9 @@ Voucherify sends webhooks from the IP ranges below. Add all three addressses for
 | us1          | 100.25.106.67<br>18.209.236.215<br>34.192.255.99 |
 | as1          | 52.76.98.82<br>54.169.8.101<br>13.214.87.160     |
 
-## Webhook monitoring and tracking
+## Webhook tracking and monitoring
+
+You can track and monitor webhook sendouts and other details in a couple of ways.
 
 ### Audit log
 
@@ -158,13 +159,13 @@ The Audit Log includes the following details:
 
 You can also send a failed webhook again. Go to the three dot menu on the right > Retry.
 
-### Get Notified About Failed Sendouts
+### Get notified about failed sendouts
 
 You can set up notifications to inform you via email or in the app that a webhook did not reach the destination.
 
 Go to the Notification Center > Account Settings and scroll down to Webhook callout notifications to configure notifications.
 
-### Responding to Webhooks
+### Responding to webhooks
 
 Voucherify expects your webhook to return a response with a `2XX` HTTP status code, indicating that the webhook has been received successfully. If a webhook is not successfully received for any reason, Voucherify will continue trying to send the webhook in the following intervals:
 
@@ -190,4 +191,4 @@ Voucherify expects your webhook to return a response with a `2XX` HTTP status co
 > 📘 What happens after the 12th try?
 >
 >  - Project-level webhooks that are set in Project Settings are disabled after 12 unsuccessful tries.
-> - Distribution-based webhooks that are set up as channels in the Distributions manager are paused after 12 unsuccessful tries.|
+> - Distribution-based webhooks that are set up as channels in the Distributions manager are paused after 12 unsuccessful tries.
