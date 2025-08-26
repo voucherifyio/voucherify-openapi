@@ -4,7 +4,7 @@ type: basic
 categorySlug: events
 slug: introduction-to-webhooks
 hidden: false
-order: -2
+order: -30
 ---
 Webhooks in Voucherify are automated messages sent from Voucherify to your application when specific events happen. For example, when a voucher is redeemed, Voucherify can instantly notify your app about it. You set up webhooks by providing a URL (endpoint) in Voucherify, and Voucherify sends event notifications directly to this URL. 
 

@@ -4,7 +4,7 @@ type: basic
 categorySlug: events
 slug: project-settings-webhooks
 hidden: false
-order: -3
+order: -20
 ---
 Project-level webhooks in Voucherify are notifications sent automatically to your application whenever certain actions happen in your project. Examples include when a voucher is redeemed, a customer profile changes, or an order is created.
 
