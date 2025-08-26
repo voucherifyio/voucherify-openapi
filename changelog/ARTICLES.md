@@ -7,6 +7,11 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2025-08-26
+- Moved part of the `introduction-to-webhook.md` file into new files:
+  - `distribution-webhooks.md`
+  - `project-settings-webhooks.md`
+
 ## 2025-07-07
 
 - Updated Key-concepts.md with object relation tables. Also, updated the article and added new content.
