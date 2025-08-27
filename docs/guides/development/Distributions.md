@@ -1,8 +1,8 @@
 ---
-title: Setting up distributions
+title: Distributions
 excerpt: Distribute incentives through preferred channels
 categorySlug: development
-slug: distribution-set-up
+slug: distributions
 type: basic
 hidden: false
 order: 95
