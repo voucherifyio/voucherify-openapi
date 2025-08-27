@@ -7,6 +7,9 @@ Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
 # Articles – changelog
 
+## 2025-08-27
+- Added `custom-events-in-referral-programs.md` from the Support documentation.
+
 ## 2025-08-26
 - Moved part of the `introduction-to-webhook.md` file into new files:
   - `distribution-webhooks.md`
