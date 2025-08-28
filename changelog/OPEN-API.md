@@ -4,6 +4,9 @@
 
 Older changes in [DEPRECATED.md](deprecated/DEPRECATED.md)
 
+## 2025-08-28
+- Added `passive` to `Segment` and `SegmentsCreateRequestBodyDynamic` schemas.
+
 ## 2025-07-16
 
 - Added `points_formula` to earning rule schemas.
